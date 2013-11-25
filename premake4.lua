@@ -36,7 +36,7 @@ solution "RiotGame"
         kind "ConsoleApp"
         files { "src/core/**.hpp", "src/core/**.h", "src/core/**.cpp" }
         includedirs { "src/core", "src/include" }
-        links { "gfx", "sfx", "contentmanager" }     
+        --links { "gfx", "sfx", "contentmanager" }     
         targetname ( "RiotGame" )
 
     project "gfx"
