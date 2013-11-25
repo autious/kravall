@@ -1,10 +1,8 @@
 #include <iostream>
 
-
-
 int main(int argc, char** argv)
 {
-	std::cout << "Hej jag är ett program.\n";
+	std::cout << "Hello world.\n";
 	system("pause");
 
 	return 0;
