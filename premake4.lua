@@ -5,7 +5,7 @@ solution "RiotGame"
     configurations {"Debug", "Release"}
         flags{ "Unicode", "ExtraWarnings", "NoPCH" } 
         libdirs { translateOS[os.get()] .. "/lib" }
-        includedirs { translateOS[os.get()] .. "/include", "include" }
+        includedirs { translateOS[os.get()] .. "/deps", "deps", "include"}
     
     local location_path = "build"
 
