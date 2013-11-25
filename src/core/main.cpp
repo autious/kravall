@@ -8,8 +8,17 @@ int main(int argc, char** argv)
 
 	InitializeGLFW(&window, 1280, 720);
 
-	std::cout << "Hello world.\n";
-	system("pause");
+	while (!glfwWindowShouldClose(window))
+	{
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		if (glfwGetKey(window, GLFW_KEY_ESCAPE))
+			break;
+
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
+
+	glfwTerminate();
 	return 0;
 }

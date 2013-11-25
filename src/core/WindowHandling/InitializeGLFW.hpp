@@ -58,7 +58,7 @@ int InitializeGLFW(GLFWwindow** window, int width, int height)
 
 	// if 1 then limits system to max 60 fps!
 	glfwSwapInterval(0);
-	glClearColor(0, 0, 0, 0);
+	glClearColor(100.0f / 255.0f, 149.0f / 255.0f, 237.0f / 255.0f, 1.0f);
 
 	// init glew
 	glewExperimental = true;

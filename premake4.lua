@@ -37,7 +37,7 @@ solution "RiotGame"
         files { "src/core/**.hpp", "src/core/**.h", "src/core/**.cpp" }
         includedirs { "src/core", "src/include" }
         --links { "gfx", "sfx", "contentmanager" }     
-        links { "glfw3" }
+        links { "glfw3", "glew32", "glfw3dll", "opengl32" }
         targetname ( "RiotGame" )
 
 --    project "gfx"
