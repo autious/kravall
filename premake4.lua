@@ -37,34 +37,35 @@ solution "RiotGame"
         files { "src/core/**.hpp", "src/core/**.h", "src/core/**.cpp" }
         includedirs { "src/core", "src/include" }
         --links { "gfx", "sfx", "contentmanager" }     
+        links { "glfw3" }
         targetname ( "RiotGame" )
 
-    project "gfx"
-        location ( location_path )
-        language "C++"
-        kind "SharedLib"
-        files { "src/gfx/**.hpp", "src/gfx/**.h", "src/gfx/**.cpp" }
-        includedirs { "src/gfx" }       
-
-        configurations "Release"
-            defines { "DLL_EXPORT" }
-
-    project "sfx"
-        location ( location_path )
-        language "C++"
-        kind "SharedLib"        
-        files { "src/sfx/**.hpp", "src/sfx/**.h", "src/sfx/**.cpp" }
-        includedirs { "src/sfx" }        
-
-        configurations "Release"
-            defines { "DLL_EXPORT" }
-
-    project "contentmanager"
-        location ( location_path )
-        language "C++"
-        kind "SharedLib"        
-        files { "src/contentmanager/**.hpp", "src/contentmanager/**.h", "src/contentmanager/**.cpp" }
-        includedirs { "src/contentmanager" }
+--    project "gfx"
+--        location ( location_path )
+--        language "C++"
+--        kind "SharedLib"
+--        files { "src/gfx/**.hpp", "src/gfx/**.h", "src/gfx/**.cpp" }
+--        includedirs { "src/gfx" }       
+--
+--        configurations "Release"
+--            defines { "DLL_EXPORT" }
+--
+--    project "sfx"
+--        location ( location_path )
+--        language "C++"
+--        kind "SharedLib"        
+--        files { "src/sfx/**.hpp", "src/sfx/**.h", "src/sfx/**.cpp" }
+--        includedirs { "src/sfx" }        
+--
+--        configurations "Release"
+--            defines { "DLL_EXPORT" }
+--
+--    project "contentmanager"
+--        location ( location_path )
+--        language "C++"
+--        kind "SharedLib"        
+--        files { "src/contentmanager/**.hpp", "src/contentmanager/**.h", "src/contentmanager/**.cpp" }
+--        includedirs { "src/contentmanager" }
 
         configurations "Release"
             defines { "DLL_EXPORT" }
