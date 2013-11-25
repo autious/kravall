@@ -40,16 +40,16 @@ solution "RiotGame"
         links { "glfw3", "glew32", "glfw3dll", "opengl32" }
         targetname ( "RiotGame" )
 
---    project "gfx"
---        location ( location_path )
---        language "C++"
---        kind "SharedLib"
---        files { "src/gfx/**.hpp", "src/gfx/**.h", "src/gfx/**.cpp" }
---        includedirs { "src/gfx" }       
---
---        configurations "Release"
---            defines { "DLL_EXPORT" }
---
+    project "gfx"
+        location ( location_path )
+        language "C++"
+        kind "SharedLib"
+        files { "src/gfx/**.hpp", "src/gfx/**.h", "src/gfx/**.cpp" }
+        includedirs { "src/gfx" }       
+		links { "glfw3", "glew32", "glfw3dll", "opengl32" }
+        configurations "Release"
+            defines { "DLL_EXPORT" }
+ 
 --    project "sfx"
 --        location ( location_path )
 --        language "C++"
