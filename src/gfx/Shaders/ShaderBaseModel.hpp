@@ -3,6 +3,7 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <Utility/GLFWInclude.hpp>
 
 #include <map>
 #include <string>

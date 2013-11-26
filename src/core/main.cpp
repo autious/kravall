@@ -11,7 +11,7 @@ int main(int argc, char** argv)
 	
 	Core::InitializeGLFW(&window, 1280, 720);
 
-	if (GFX::Init(1280, 720) == GFX_FAIL)
+	if (GFX::Init(1280,720) == GFX_FAIL)
 		return -1;
 
 

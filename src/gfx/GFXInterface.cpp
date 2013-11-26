@@ -1,10 +1,13 @@
-
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <GFXInterface.hpp>
 
 #include <iostream>
+
 #include <Shaders/ShaderManager.hpp>
+#include <Utility/GLFWInclude.hpp>
+#include <GFXInterface.hpp>
+#include <Renderer/RenderCore.hpp>
 
 void APIENTRY glErrorCallback(GLenum _source, GLenum _type, GLuint _id, GLenum _severity, GLsizei _length, const char* _message, void* _userParam)
 {
@@ -37,7 +40,7 @@ namespace GFX
 		err = glGetError();
 		glClearColor(100.0f / 255.0f, 149.0f / 255.0f, 237.0f / 255.0f, 1.0f);
 
-		// assign callback functions...
+		// assign callback functions
 		glDebugMessageCallbackARB(glErrorCallback, NULL);
 		err = glGetError();
 
@@ -56,12 +59,16 @@ namespace GFX
 		err = glGetError();
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 		err = glGetError();
+
+		//Initialize RenderCore
+		Renderer().Initialize(windowWidth, windowHeight);
+
 		return GFX_SUCCESS;
 	}
 
 	void Render()
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+		Renderer().Render();
 	}
 }
