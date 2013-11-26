@@ -39,11 +39,11 @@ solution "RiotGame"
         --links { "gfx", "sfx", "contentmanager" }
         --
         links { "glfw3", "gfx" }
+        targetname ( "RiotGame" )
         configuration{ "windows" }
             links { "glew32", "glfw3dll", "opengl32" }
         configuration{ "linux" }
             links { "GLEW", "GL" }
-        targetname ( "RiotGame" )
 
     project "gfx"
         location ( location_path )
