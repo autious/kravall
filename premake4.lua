@@ -11,7 +11,7 @@ solution "RiotGame"
 
     if os.is( "linux" ) then
         buildoptions { "-std=c++11" }
-        location_path = location_path .. "/make/"
+        location_path = "" 
     elseif(os.is("windows")) then
         location_path = location_path .."/win32/" .. _ACTION
         location ( location_path )
@@ -39,11 +39,11 @@ solution "RiotGame"
         --links { "gfx", "sfx", "contentmanager" }
         --
         links { "glfw3", "gfx" }
+        targetname ( "RiotGame" )
         configuration{ "windows" }
             links { "glew32", "glfw3dll", "opengl32" }
         configuration{ "linux" }
             links { "GLEW", "GL" }
-        targetname ( "RiotGame" )
 
     project "gfx"
         location ( location_path )
