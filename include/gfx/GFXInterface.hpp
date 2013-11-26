@@ -4,7 +4,6 @@
 #define DLL_API __declspec(dllimport)
 #endif
 
-#include <GLFW/glfw3.h>
 
 #define GFX_SUCCESS 0
 #define GFX_FAIL 1
@@ -12,17 +11,16 @@
 namespace GFX
 {
 	/*!
-	Binds a context to a window and initializes the graphics engine.
-	\param window "window" is the window you wish to bind the context to
+	Initializes the graphics engine on the currently bound context.
 	\return Returns GFX_SUCCESS if successful, else returns GFX_FAIL
 	*/
-	DLL_API int Init(GLFWwindow* window);
+	DLL_API int Init();
 
 	/*!
 	Executes all draw calls made to the graphics engine and
 	renders it to the screen.
 	*/
-	DLL_API void Render(GLFWwindow* window);
+	DLL_API void Render();
 }
 
 namespace GFXDebug
