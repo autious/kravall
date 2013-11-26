@@ -17,12 +17,16 @@ namespace GFX
 		void Initialize(int windowWidth, int windowHeight);
 		void Render();
 
+		void Resize(int width, int height);
+
+
 	private:
 		RenderCore();
 		~RenderCore();
 
 		void InitializeDummyVAO();
 		void InitializeGBuffer();
+
 
 		void ResizeGBuffer();
 
@@ -39,6 +43,7 @@ namespace GFX
 		GLuint m_dummyVAO;
 
 		ShaderManager* m_shaderManager;
+		BufferManager* m_bufferManager;
 
 		DeferredPainter* m_deferredPainter;
 	};

@@ -2,6 +2,7 @@
 #define SRC_GFX_RENDERER_BASE_PAINTER_HPP
 
 #include "../Shaders/ShaderManager.hpp"
+#include "../Buffers/BufferManager.hpp"
 #include <gl/glew.h>
 
 namespace GFX
@@ -9,7 +10,7 @@ namespace GFX
 	class BasePainter
 	{
 	public:
-		BasePainter(ShaderManager* shaderManager);
+		BasePainter(ShaderManager* shaderManager, BufferManager* bufferManager);
 		~BasePainter();
 
 		virtual void Initialize(GLuint FBO, GLuint dummyVAO);
@@ -18,6 +19,7 @@ namespace GFX
 	protected:
 
 		ShaderManager* m_shaderManager;
+		BufferManager* m_bufferManager;
 
 		GLuint m_dummyVAO;
 		GLuint m_FBO;

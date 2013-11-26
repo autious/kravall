@@ -20,8 +20,9 @@ namespace GFX
 		m_glowMatID		= new FBOTexture();
 
 		m_shaderManager = new ShaderManager();
-		
-		m_deferredPainter = new DeferredPainter(m_shaderManager);
+		m_bufferManager = new BufferManager();
+
+		m_deferredPainter = new DeferredPainter(m_shaderManager, m_bufferManager);
 	}
 
 	RenderCore::~RenderCore()
@@ -40,6 +41,15 @@ namespace GFX
 
 		m_deferredPainter->Initialize(m_FBO, m_dummyVAO);
 
+	}
+
+	void RenderCore::Resize(int width, int height)
+	{
+		m_windowWidth = width;
+		m_windowHeight = height;
+
+		glViewport(0, 0, m_windowWidth, m_windowHeight);
+		ResizeGBuffer();
 	}
 
 	void RenderCore::Render()

@@ -23,6 +23,11 @@ namespace GFX
 		return m_VBO;
 	}
 
+	GLuint StaticMesh::GetIBO()
+	{
+		return m_IBO;
+	}
+
 	void StaticMesh::Load(const StaticMeshData& meshData)
 	{
 		//Generate VBO
@@ -55,5 +60,11 @@ namespace GFX
 		glGenBuffers(1, &m_IBO);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IBO);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, meshData.indices.size() * sizeof(int), meshData.indices.data(), GL_STATIC_DRAW);
+	}
+
+	void StaticMesh::BindMesh()
+	{
+		glBindVertexArray(m_VAO);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IBO);
 	}
 }

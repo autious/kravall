@@ -15,8 +15,11 @@ namespace GFX
 		
 		void Load(const StaticMeshData& meshData);
 
+		void BindMesh();
+
 		GLuint GetVBO();
 		GLuint GetVAO();
+		GLuint GetIBO();
 
 	private:
 		GLuint m_VBO;
