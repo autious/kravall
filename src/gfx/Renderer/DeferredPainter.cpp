@@ -17,10 +17,13 @@ namespace GFX
 
 		m_shaderManager->CreateProgram("StaticMesh");
 
+		//m_shaderManager->LoadShader("shaders/StaticMesh.vertex", "StaticMeshVS", GL_VERTEX_SHADER);
+		//m_shaderManager->LoadShader("shaders/StaticMesh.fragment", "StaticMeshFS", GL_FRAGMENT_SHADER);
+
 		m_shaderManager->LoadShader("shaders/PassThrough.vertex", "StaticMeshVS", GL_VERTEX_SHADER);
 		m_shaderManager->LoadShader("shaders/FSQuad.geometry", "StaticMeshGS", GL_GEOMETRY_SHADER);
 		m_shaderManager->LoadShader("shaders/WaveRipple.fragment", "StaticMeshFS", GL_FRAGMENT_SHADER);
-
+		
 		m_shaderManager->AttachShader("StaticMeshVS", "StaticMesh");
 		m_shaderManager->AttachShader("StaticMeshGS", "StaticMesh");
 		m_shaderManager->AttachShader("StaticMeshFS", "StaticMesh");

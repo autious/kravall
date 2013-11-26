@@ -4,13 +4,12 @@ uniform PerFrameBlock
 {
 	mat4 gWVP;
 	mat4 gView;
-}
+};
 
 uniform PerObjectBlock
 {
 	mat4 modelMatrix;
-	float materialID;
-}
+};
 
 layout ( location = 0 ) in vec4 positionIN;
 layout ( location = 1 ) in vec4 normalIN;
