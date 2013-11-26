@@ -12,7 +12,7 @@ namespace GFX
 	class DeferredPainter : public BasePainter
 	{
 	public:
-		DeferredPainter(ShaderManager* shaderManager);
+		DeferredPainter(ShaderManager* shaderManager, BufferManager* bufferManager);
 		~DeferredPainter();
 
 		void Initialize(GLuint FBO, GLuint dummyVAO);

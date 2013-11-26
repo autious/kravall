@@ -3,13 +3,14 @@
 
 #include "Utility/GLFWInclude.hpp"
 #include "../Shaders/ShaderManager.hpp"
+#include "../Buffers/BufferManager.hpp"
 
 namespace GFX
 {
 	class BasePainter
 	{
 	public:
-		BasePainter(ShaderManager* shaderManager);
+		BasePainter(ShaderManager* shaderManager, BufferManager* bufferManager);
 		~BasePainter();
 
 		virtual void Initialize(GLuint FBO, GLuint dummyVAO);
@@ -18,6 +19,7 @@ namespace GFX
 	protected:
 
 		ShaderManager* m_shaderManager;
+		BufferManager* m_bufferManager;
 
 		GLuint m_dummyVAO;
 		GLuint m_FBO;

@@ -2,8 +2,8 @@
 
 namespace GFX
 {
-	DeferredPainter::DeferredPainter(ShaderManager* shaderManager)
-		: BasePainter(shaderManager)
+	DeferredPainter::DeferredPainter(ShaderManager* shaderManager, BufferManager* bufferManager)
+		: BasePainter(shaderManager, bufferManager)
 	{
 	}
 
@@ -32,14 +32,14 @@ namespace GFX
 	{
 		BasePainter::Render();
 
+		//BindGBuffer(normalDepth, diffuse, specular, glowMatID);
+
 		m_shaderManager->UseProgram("StaticMesh");
 		glBindVertexArray(m_dummyVAO);
 		glDrawArrays(GL_POINTS, 0, 1);
 
-
 		m_shaderManager->ResetProgram();
 
-		//BindGBuffer(normalDepth, diffuse, specular, glowMatID);
 		ClearFBO();
 	}
 

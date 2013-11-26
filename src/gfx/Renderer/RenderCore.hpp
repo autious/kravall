@@ -39,6 +39,7 @@ namespace GFX
 		GLuint m_dummyVAO;
 
 		ShaderManager* m_shaderManager;
+		BufferManager* m_bufferManager;
 
 		DeferredPainter* m_deferredPainter;
 	};

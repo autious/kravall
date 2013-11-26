@@ -18,6 +18,8 @@ namespace GFX
 
 		void LoadStaticMesh(const StaticMeshData& meshData);
 		void BindMesh(GLuint id);
+		void UnbindMesh();
+
 	private:
 		std::vector<StaticMesh*> m_staticMeshes;
 	};

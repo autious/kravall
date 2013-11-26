@@ -20,8 +20,9 @@ namespace GFX
 		m_glowMatID		= new FBOTexture();
 
 		m_shaderManager = new ShaderManager();
-		
-		m_deferredPainter = new DeferredPainter(m_shaderManager);
+		m_bufferManager = new BufferManager();
+
+		m_deferredPainter = new DeferredPainter(m_shaderManager, m_bufferManager);
 	}
 
 	RenderCore::~RenderCore()
