@@ -3,6 +3,9 @@
 
 #include <fstream>
 #include <string>
+#include <exception>
+#include <cstring>
+
 namespace GFX
 {
 	class TextFile

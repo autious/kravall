@@ -1,7 +1,11 @@
+#ifdef _WIN32
 #ifdef GFX_DLL_EXPORT
 #define DLL_API __declspec(dllexport)
 #else
 #define DLL_API __declspec(dllimport)
+#endif
+#else
+#define DLL_API 
 #endif
 
 #define GFX_SUCCESS 0
