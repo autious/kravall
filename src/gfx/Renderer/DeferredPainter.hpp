@@ -2,25 +2,25 @@
 #define SRC_GFX_RENDERER_DEFERRED_PAINTER_HPP
 
 #include "Utility/GLFWInclude.hpp"
+#include "BasePainter.hpp"
 #include "..\Shaders\ShaderManager.hpp"
 
 #include "FBOTexture.hpp"
 
 namespace GFX
 {
-	class DeferredPainter
+	class DeferredPainter : public BasePainter
 	{
 	public:
 		DeferredPainter(ShaderManager* shaderManager);
 		~DeferredPainter();
 
-		void Initialize();
-		void Render(GLuint FBO, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID);
+		void Initialize(GLuint FBO, GLuint dummyVAO);
+		void Render(FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID);
 
 	private:
-		void BindGBuffer(GLuint FBO, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID);
+		void BindGBuffer(FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID);
 
-		ShaderManager* m_shaderManager;
 	};
 }
 

@@ -36,11 +36,15 @@ namespace GFX
 
 		InitializeDummyVAO();
 		InitializeGBuffer();
+
+
+		m_deferredPainter->Initialize(m_FBO, m_dummyVAO);
+
 	}
 
 	void RenderCore::Render()
 	{
-		m_deferredPainter->Render(m_FBO, m_normalDepth, m_diffuse, m_specular, m_glowMatID);
+		m_deferredPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID);
 	}
 
 	void RenderCore::InitializeGBuffer()

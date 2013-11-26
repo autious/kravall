@@ -3,29 +3,51 @@
 namespace GFX
 {
 	DeferredPainter::DeferredPainter(ShaderManager* shaderManager)
+		: BasePainter(shaderManager)
 	{
-		m_shaderManager = shaderManager;
 	}
 
 	DeferredPainter::~DeferredPainter()
 	{
-
+		BasePainter::~BasePainter();
 	}
 
-	void DeferredPainter::Initialize()
+	void DeferredPainter::Initialize(GLuint FBO, GLuint dummyVAO)
 	{
+		BasePainter::Initialize(FBO, dummyVAO);
 
+		m_shaderManager->CreateProgram("StaticMesh");
+
+		m_shaderManager->LoadShader("shaders/PassThrough.vertex", "StaticMeshVS", GL_VERTEX_SHADER);
+		m_shaderManager->LoadShader("shaders/FSQuad.geometry", "StaticMeshGS", GL_GEOMETRY_SHADER);
+		m_shaderManager->LoadShader("shaders/WaveRipple.fragment", "StaticMeshFS", GL_FRAGMENT_SHADER);
+
+		m_shaderManager->AttachShader("StaticMeshVS", "StaticMesh");
+		m_shaderManager->AttachShader("StaticMeshGS", "StaticMesh");
+		m_shaderManager->AttachShader("StaticMeshFS", "StaticMesh");
+
+		m_shaderManager->LinkProgram("StaticMesh");
 	}
 
-	void DeferredPainter::Render(GLuint FBO, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID)
+	void DeferredPainter::Render(FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID)
 	{
-		BindGBuffer(FBO, normalDepth, diffuse, specular, glowMatID);
+		BasePainter::Render();
+
+		m_shaderManager->UseProgram("StaticMesh");
+		glBindVertexArray(m_dummyVAO);
+		glDrawArrays(GL_POINTS, 0, 1);
+
+
+		m_shaderManager->ResetProgram();
+
+		//BindGBuffer(normalDepth, diffuse, specular, glowMatID);
+		ClearFBO();
 	}
 
 
-	void DeferredPainter::BindGBuffer(GLuint FBO, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID)
+	void DeferredPainter::BindGBuffer(FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID)
 	{
-		glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+		glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, normalDepth->GetTextureHandle(),	0);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, diffuse->GetTextureHandle(),		0);
