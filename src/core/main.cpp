@@ -4,23 +4,25 @@
 
 #include <gfx/GFXInterface.hpp>
 
+
 int main(int argc, char** argv)
 {
 	GLFWwindow* window;
 	
 	Core::InitializeGLFW(&window, 1280, 720);
 
-	if (GFX::Init(&window) == GFX_FAIL)
+	if (GFX::Init() == GFX_FAIL)
 		return -1;
 
 
 	while (!glfwWindowShouldClose(window))
 	{
-		
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE))
 			break;
 
-		GFX::Render(window);
+		GFX::Render();
+
+		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 
