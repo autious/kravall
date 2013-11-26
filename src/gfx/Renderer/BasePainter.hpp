@@ -1,9 +1,12 @@
 #ifndef SRC_GFX_RENDERER_BASE_PAINTER_HPP
 #define SRC_GFX_RENDERER_BASE_PAINTER_HPP
 
-#include "Utility/GLFWInclude.hpp"
 #include "../Shaders/ShaderManager.hpp"
+<<<<<<< HEAD
 #include "../Buffers/BufferManager.hpp"
+=======
+#include <gl/glew.h>
+>>>>>>> b189fcd0611f0e370fc89a77269c09bd63f0a87b
 
 namespace GFX
 {

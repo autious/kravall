@@ -11,6 +11,8 @@
 #	define GLFW_EXPOSE_NATIVE_X11
 #	define GLFW_EXPOSE_NATIVE_GLX
 #endif
+#pragma warning( disable : 4005 )
 #include <GLFW/glfw3native.h>
+#pragma warning( default : 4005 )
 
 #endif
