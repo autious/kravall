@@ -29,60 +29,8 @@ namespace Core
 
 	int InitializeGLFW(GLFWwindow** window, int width, int height)
 	{
-		/* Initialize the library */
-		if (!glfwInit())
-		{
-			std::cout << "Unable to init GLFW." << std::endl;
-			return -1;
-		}
-
-		//Set context to version 4.4, not forward compatible (for compute shader support)
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
-		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_FALSE);
-		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
-
-		/* Create a windowed mode window and its OpenGL context */
-		(*window) = glfwCreateWindow(width, height, "RIOT", nullptr, nullptr);
-
-		if (!(*window))
-		{
-			glfwTerminate();
-			std::cout << "Unable to create window" << std::endl;
-			return -1;
-		}
-
-		/* Make the window's context current */
-		glfwMakeContextCurrent(*window);
-
-		std::cout << "OpenGL version: " << glfwGetWindowAttrib((*window), GLFW_CONTEXT_VERSION_MAJOR) << "." << glfwGetWindowAttrib((*window), GLFW_CONTEXT_VERSION_MINOR) << std::endl;
-
-		// if 1 then limits system to max 60 fps!
-		glfwSwapInterval(0);
-		glClearColor(100.0f / 255.0f, 149.0f / 255.0f, 237.0f / 255.0f, 1.0f);
-
-		// init glew
-		glewExperimental = true;
-		GLenum err = glewInit();
-
-		if (GLEW_OK != err)
-		{
-			std::cout << "Unable to init GLEW." << std::endl;
-			return -1;
-		}
-
-		// assign callback functions...
-		glDebugMessageCallbackARB(glErrorCallback, NULL);
-		glfwSetFramebufferSizeCallback((*window), framebuffer_size_callback);
-
-		glEnable(GL_DEPTH_TEST);
-		glDepthFunc(GL_LESS);
-		glEnable(GL_CULL_FACE);
-
-		glCullFace(GL_BACK);
-		glFrontFace(GL_CW);
-		glBlendEquation(GL_FUNC_ADD);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+		
+		
 
 		return 0;
 	}

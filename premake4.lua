@@ -44,7 +44,7 @@ solution "RiotGame"
         location ( location_path )
         language "C++"
         kind "SharedLib"
-        files { "src/gfx/**.hpp", "src/gfx/**.h", "src/gfx/**.cpp", "include/gfx/**.hpp", "shaders/**.vs", "shaders/**.gs", "shaders/**.fs", "shaders/**.cs" }
+        files { "src/gfx/**.hpp", "src/gfx/**.h", "src/gfx/**.cpp", "include/gfx/**.hpp", "shaders/**.vertex", "shaders/**.geometry", "shaders/**.fragment", "shaders/**.compute" }
         includedirs { "src/gfx", "include/gfx", "shaders" }       
 		links { "glfw3", "glew32", "glfw3dll", "opengl32" }
         configurations { "Release", "Debug" }
