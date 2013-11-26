@@ -2,7 +2,7 @@ translateOS = { windows="win32", linux="linux"}
 
 solution "RiotGame"
 
-    configurations {"Debug", "Release"}
+    configurations {"Debug", "Release", "ReleaseTest", "DebugTest"}
         flags{ "Unicode", "ExtraWarnings", "NoPCH" } 
         libdirs { translateOS[os.get()] .. "/lib" }
         includedirs { translateOS[os.get()] .. "/deps", "deps", "include"}
@@ -18,28 +18,30 @@ solution "RiotGame"
         location_path = location_path .. "/projects"
     end
     
-    configuration "Debug"
+    configuration { "Debug or DebugTest" }
         defines { "DEBUG" }
         flags { "Symbols" }
         
         targetdir ( "bin/" .. translateOS[os.get()] .. "/debug" )
 
-    configuration "Release"
+    configuration { "Release or ReleaseTest" }
         defines { "NDEBUG", "RELEASE" }
         flags { "Optimize", "FloatFast" }
         targetdir ( "bin/" .. translateOS[os.get()] .. "/release" )   
 
+    configuration { "ReleaseTest or DebugTest" }
+        defines { "GTEST" }
+
     project "core"
+        targetname "RiotGame" 
         debugdir ""
         location ( location_path )
         language "C++"
         kind "ConsoleApp"
         files { "src/core/**.hpp", "src/core/**.h", "src/core/**.cpp" }
         includedirs { "src/core", "include" }
-        --links { "gfx", "sfx", "contentmanager" }
-        --
+
         links { "glfw3", "gfx" }
-        targetname ( "RiotGame" )
         configuration{ "windows" }
             links { "glew32", "glfw3dll", "opengl32" }
         configuration{ "linux" }
@@ -51,13 +53,14 @@ solution "RiotGame"
         kind "SharedLib"
         files { "src/gfx/**.hpp", "src/gfx/**.h", "src/gfx/**.cpp", "include/gfx/**.hpp", "shaders/**.vertex", "shaders/**.geometry", "shaders/**.fragment", "shaders/**.compute" }
         includedirs { "src/gfx", "include/gfx", "shaders" }       
+
+        defines { "GFX_DLL_EXPORT" }
+
         links { "glfw3" }
         configuration{ "windows" }
             links { "glew32", "glfw3dll", "opengl32" }
         configuration{ "linux" }
             links { "GLEW", "GL" }
-        configuration { "Release", "Debug" }
-            defines { "GFX_DLL_EXPORT" }
  
 --    project "sfx"
 --        location ( location_path )
@@ -75,6 +78,3 @@ solution "RiotGame"
 --        kind "SharedLib"        
 --        files { "src/contentmanager/**.hpp", "src/contentmanager/**.h", "src/contentmanager/**.cpp" }
 --        includedirs { "src/contentmanager" }
-
-        configuration "Release"
-            defines { "DLL_EXPORT" }
