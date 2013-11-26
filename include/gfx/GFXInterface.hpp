@@ -17,6 +17,8 @@
 typedef struct GFXVec2 { float x, y; }			GFXVec2;
 typedef struct GFXVec3 { float x, y, z; }		GFXVec3;
 typedef struct GFXVec4 { float x, y, z, w; }	GFXVec4;
+typedef struct GFXMat4x4 { float d[4][4]; }		GFXMat4x4;
+
 typedef GFXVec4 GFXColor;
 
 namespace GFX
@@ -41,6 +43,19 @@ namespace GFX
 	\param height Height to use for rendering
 	*/
 	DLL_API void Resize(int width, int height);
+
+	/*!
+	Sets the view matrix used by the main camera.
+	\param matrix Pointer to a 4x4 matrix
+	*/
+	DLL_API void SetViewMatrix(GFXMat4x4 matrix);
+
+	/*!
+	Sets the projection matrix used by the main camera.
+	\param matrix Pointer to a 4x4 matrix
+	*/
+	DLL_API void SetProjectionMatrix(GFXMat4x4 matrix);
+
 
 
 	//-----##----------##----####----########------//
