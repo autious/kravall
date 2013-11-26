@@ -9,7 +9,6 @@ namespace GFX
 
 	DeferredPainter::~DeferredPainter()
 	{
-		BasePainter::~BasePainter();
 	}
 
 	void DeferredPainter::Initialize(GLuint FBO, GLuint dummyVAO)

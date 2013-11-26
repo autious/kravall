@@ -1,7 +1,8 @@
 #ifndef SRC_GFX_RENDERER_FBO_TEXTURE_HPP
 #define SRC_GFX_RENDERER_FBO_TEXTURE_HPP
 
-#include "Utility/GLFWInclude.hpp"
+#include <GL/glew.h>
+#include <Utility/GLFWInclude.hpp>
 
 namespace GFX
 {

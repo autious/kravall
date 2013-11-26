@@ -14,7 +14,11 @@ namespace GFX
 
 	void BufferManager::BindMesh(GLuint id)
 	{
+		bool found = false;
 
+		//loop through list until id found
+		//bind
+		//return
 	}
 
 	void BufferManager::LoadStaticMesh(const StaticMeshData& meshData)

@@ -34,7 +34,7 @@ namespace GFX
 
 		if (file.fail())
 		{
-			throw std::exception("Corrupt file!");
+			throw std::exception(); //std::exception doesn't take a string.
 		}
 		else
 		{

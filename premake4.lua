@@ -37,7 +37,12 @@ solution "RiotGame"
         files { "src/core/**.hpp", "src/core/**.h", "src/core/**.cpp" }
         includedirs { "src/core", "include" }
         --links { "gfx", "sfx", "contentmanager" }
-        links { "glfw3", "glew32", "glfw3dll", "opengl32", "gfx" }
+        --
+        links { "glfw3", "gfx" }
+        configuration{ "windows" }
+            links { "glew32", "glfw3dll", "opengl32" }
+        configuration{ "linux" }
+            links { "GLEW", "GL" }
         targetname ( "RiotGame" )
 
     project "gfx"
@@ -46,7 +51,11 @@ solution "RiotGame"
         kind "SharedLib"
         files { "src/gfx/**.hpp", "src/gfx/**.h", "src/gfx/**.cpp", "include/gfx/**.hpp", "shaders/**.vertex", "shaders/**.geometry", "shaders/**.fragment", "shaders/**.compute" }
         includedirs { "src/gfx", "include/gfx", "shaders" }       
-		links { "glfw3", "glew32", "glfw3dll", "opengl32" }
+        links { "glfw3" }
+        configuration{ "windows" }
+            links { "glew32", "glfw3dll", "opengl32" }
+        configuration{ "linux" }
+            links { "GLEW", "GL" }
         configuration { "Release", "Debug" }
             defines { "GFX_DLL_EXPORT" }
  

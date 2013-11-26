@@ -2,7 +2,7 @@
 #define SRC_GFX_SHADERS_SHADER_MANAGER_HPP
 
 #include "ShaderBaseModel.hpp"
-#include "..\Utility\TextFile.hpp"
+#include <Utility/TextFile.hpp>
 
 #include <iostream>
 
