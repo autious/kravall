@@ -1,7 +1,10 @@
 #ifndef SRC_GFX_RENDERER_RENDER_CORE_HPP
 #define SRC_GFX_RENDERER_RENDER_CORE_HPP
 
+#include "..\Shaders\ShaderManager.hpp"
 #include "FBOTexture.hpp"
+#include "DeferredPainter.hpp"
+
 #include <iostream>
 
 namespace GFX
@@ -9,13 +12,15 @@ namespace GFX
 	class RenderCore
 	{
 	public:
-		RenderCore(int windowWidth, int windowHeight);
-		~RenderCore();
+		friend RenderCore& Renderer();
 
-		void Initialize();
+		void Initialize(int windowWidth, int windowHeight);
 		void Render();
 
 	private:
+		RenderCore();
+		~RenderCore();
+
 		void InitializeDummyVAO();
 		void InitializeGBuffer();
 
@@ -32,7 +37,13 @@ namespace GFX
 		FBOTexture* m_glowMatID;
 
 		GLuint m_dummyVAO;
+
+		ShaderManager* m_shaderManager;
+
+		DeferredPainter* m_deferredPainter;
 	};
+
+	RenderCore& Renderer();
 }
 
 #endif
