@@ -1,0 +1,18 @@
+:map <F2><F2> :!export CGCC_FORCE_COLOR=true; premake4 gmake &> output.sock; make &> output.sock; unset CGCC_FORCE_COLOR
+:map <F2><F3> :!./survival survival_game &> output.sock
+:map <F2><F4> :!premake4 clean
+
+:map <F3><F2> :!git status
+:map <F3><F3> :!git commit
+:map <F3><F4> :execute "!git add " . expand( "%:p" )
+:map <F3><F5> :!git add -A
+:map <F3><F6> :!git diff --color
+:map <F3><F7> :!git push
+:map <F3><F8> :!git pull
+
+:map! <F4><F2> <C-R>='#ifndef '.substitute(substitute(toupper(expand('%:r')),'\.',"_","g"),'\/',"_","g")."_H\n".'#define '.substitute(substitute(toupper(expand('%:r')),'\.',"_","g"),'\/',"_","g")."_H\n\n".'#endif'<CR><Esc>
+:inoremap jk <esc> 
+:map! <F4><F2> <C-R>=expand('%:t:r')<CR>
+
+autocmd VimEnter * NERDTree
+autocmd VimEnter * wincmd p
