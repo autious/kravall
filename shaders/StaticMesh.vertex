@@ -1,0 +1,5 @@
+uniform MatrixBlock
+{
+	mat4 modelMatrix;
+	mat4 worldViewProject;
+}

@@ -1,11 +1,10 @@
 #ifndef SRC_GFX_SHADERS_SHADER_BASE_MODEL_HPP
 #define SRC_GFX_SHADERS_SHADER_BASE_MODEL_HPP
 
-#include <glew/glew.h>
-#include <GLFW/glfw3.h>
-
 #include <map>
 #include <string>
+
+#include <gl/glew.h>
 
 namespace GFX
 {

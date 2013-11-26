@@ -11,7 +11,7 @@ solution "RiotGame"
 
     if os.is( "linux" ) then
         buildoptions { "-std=c++11" }
-        location_path = location_path .. "/make/"
+        location_path = "" 
     elseif(os.is("windows")) then
         location_path = location_path .."/win32/" .. _ACTION
         location ( location_path )
@@ -37,17 +37,25 @@ solution "RiotGame"
         files { "src/core/**.hpp", "src/core/**.h", "src/core/**.cpp" }
         includedirs { "src/core", "include" }
         --links { "gfx", "sfx", "contentmanager" }
-        links { "glfw3", "glew32", "glfw3dll", "opengl32", "gfx", "logger" }
+        links { "glfw3", "gfx" }
         targetname ( "RiotGame" )
+        configuration{ "windows" }
+            links { "glew32", "glfw3dll", "opengl32" }
+        configuration{ "linux" }
+            links { "GLEW", "GL" }
 
     project "gfx"
         location ( location_path )
         language "C++"
         kind "SharedLib"
-        files { "src/gfx/**.hpp", "src/gfx/**.h", "src/gfx/**.cpp", "include/gfx/**.hpp" }
-        includedirs { "src/gfx", "include/gfx" }       
-		links { "glfw3", "glew32", "glfw3dll", "opengl32" }
-		configurations { "Release", "Debug" }
+        files { "src/gfx/**.hpp", "src/gfx/**.h", "src/gfx/**.cpp", "include/gfx/**.hpp", "shaders/**.vertex", "shaders/**.geometry", "shaders/**.fragment", "shaders/**.compute" }
+        includedirs { "src/gfx", "include/gfx", "shaders" }       
+        links { "glfw3" }
+        configuration{ "windows" }
+            links { "glew32", "glfw3dll", "opengl32" }
+        configuration{ "linux" }
+            links { "GLEW", "GL" }
+        configuration { "Release", "Debug" }
             defines { "GFX_DLL_EXPORT" }
 			
 	project "logger"
@@ -62,6 +70,18 @@ solution "RiotGame"
 		configurations "Release"
             defines { "LOGGER_DLL_EXPORT" }
 			
+ 
+	project "logger"
+        location ( location_path )
+        language "C++"
+		--kind "SharedLib"
+		kind "ConsoleApp"
+        files { "src/logger/**.hpp", "src/logger/**.h", "src/logger/**.cpp", "include/logger/**.hpp" }
+		includedirs { "include/logger", "src/logger" }       
+        configurations "Debug"
+            defines { "LOGGER_DLL_EXPORT" }
+		configurations "Release"
+            defines { "LOGGER_DLL_EXPORT" }
  
 --    project "sfx"
 --        location ( location_path )
@@ -80,5 +100,5 @@ solution "RiotGame"
 --        files { "src/contentmanager/**.hpp", "src/contentmanager/**.h", "src/contentmanager/**.cpp" }
 --        includedirs { "src/contentmanager" }
 
-        configurations "Release"
+        configuration "Release"
             defines { "DLL_EXPORT" }
