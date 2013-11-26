@@ -4,6 +4,9 @@
 
 #include <gfx/GFXInterface.hpp>
 
+/*!
+ *  Program main function, test comment
+ */
 int main(int argc, char** argv)
 {
 	GLFWwindow* window;
