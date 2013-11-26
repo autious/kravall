@@ -3,7 +3,7 @@ translateOS = { windows="win32", linux="linux"}
 solution "RiotGame"
 
     configurations {"Debug", "Release"}
-        flags{ "Unicode", "ExtraWarnings", "NoPCH" } 
+        flags{ "Unicode", "NoPCH" } 
         libdirs { translateOS[os.get()] .. "/lib" }
         includedirs { translateOS[os.get()] .. "/deps", "deps", "include"}
     
@@ -56,7 +56,9 @@ solution "RiotGame"
             links { "glew32", "glfw3dll", "opengl32" }
         configuration{ "linux" }
             links { "GLEW", "GL" }
-        configuration { "Release", "Debug" }
+        configuration { "Release" }
+            defines { "GFX_DLL_EXPORT" }
+        configuration { "Debug" }
             defines { "GFX_DLL_EXPORT" }
  
 --    project "sfx"
@@ -76,5 +78,5 @@ solution "RiotGame"
 --        files { "src/contentmanager/**.hpp", "src/contentmanager/**.h", "src/contentmanager/**.cpp" }
 --        includedirs { "src/contentmanager" }
 
-        configuration "Release"
-            defines { "DLL_EXPORT" }
+--        configuration "Release"
+--            defines { "DLL_EXPORT" }
