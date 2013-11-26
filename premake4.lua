@@ -37,7 +37,7 @@ solution "RiotGame"
         files { "src/core/**.hpp", "src/core/**.h", "src/core/**.cpp" }
         includedirs { "src/core", "src/include" }
         --links { "gfx", "sfx", "contentmanager" }     
-        links { "glfw3", "glew32", "glfw3dll", "opengl32" }
+        links { "glfw3", "glew32", "glfw3dll", "opengl32", "logger" }
         targetname ( "RiotGame" )
 
     project "gfx"
@@ -49,6 +49,18 @@ solution "RiotGame"
 		links { "glfw3", "glew32", "glfw3dll", "opengl32" }
         configurations "Release"
             defines { "DLL_EXPORT" }
+			
+	project "logger"
+        location ( location_path )
+        language "C++"
+		kind "SharedLib"
+        files { "src/logger/**.hpp", "src/logger/**.h", "src/logger/**.cpp", "include/logger/**.hpp" }
+		includedirs { "include/logger", "src/logger" }       
+        configurations "Debug"
+            defines { "LOGGER_DLL_EXPORT" }
+		configurations "Release"
+            defines { "LOGGER_DLL_EXPORT" }
+			
  
 --    project "sfx"
 --        location ( location_path )
