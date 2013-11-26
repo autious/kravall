@@ -8,5 +8,5 @@
 
 namespace GFX
 {
-	static DLL_API void Render();
+	DLL_API void Render();
 }
