@@ -1,26 +1,21 @@
-#ifndef LOGGERHPP
-#define LOGGERHPP
+#ifndef LogSystemHPP
+#define LogSystemHPP
 
 
 
-#ifdef LOGGER_DLL_EXPORT
+#ifdef LogSystem_DLL_EXPORT
 #define DLLSETTING __declspec(dllexport)
 #else 
 #define DLLSETTING __declspec(dllimport)
 #endif
 
-#include <LoggerSystem.hpp>
 
-namespace logger
-{
-	LoggerSystem debug;
-	LoggerSystem fatal;
-	LoggerSystem error;
-	LoggerSystem warning;
-}
+
+
+
 
 //template< class T >
-//DLLSETTING void loggerprint( T );
+//DLLSETTING void LogSystemprint( T );
 
 
 
