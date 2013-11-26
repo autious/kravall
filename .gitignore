@@ -169,6 +169,7 @@ $RECYCLE.BIN/
 
 #Linux build files
 Makefile
+*.make
 
 # dlls
 
