@@ -3,7 +3,7 @@
 
 #include "Utility/GLFWInclude.hpp"
 #include "BasePainter.hpp"
-#include "..\Shaders\ShaderManager.hpp"
+#include <Shaders/ShaderManager.hpp>
 
 #include "FBOTexture.hpp"
 

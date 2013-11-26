@@ -1,7 +1,9 @@
 #ifndef SRC_GFX_SHADERS_SHADER_BASE_MODEL_HPP
 #define SRC_GFX_SHADERS_SHADER_BASE_MODEL_HPP
 
-#include "Utility/GLFWInclude.hpp"
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+#include <Utility/GLFWInclude.hpp>
 
 #include <map>
 #include <string>

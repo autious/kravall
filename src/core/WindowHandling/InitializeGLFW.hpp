@@ -2,7 +2,7 @@
 #define SRC_CORE_WINDOWHANDLING_INITIALIZE_GLFW_HPP
 
 #include <iostream>
-#include <glew/glew.h>
+#include <GL/glew.h>
 
 #include "GLFWInclude.hpp"
 

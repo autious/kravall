@@ -1,7 +1,7 @@
 #ifndef SRC_GFX_RENDERER_RENDER_CORE_HPP
 #define SRC_GFX_RENDERER_RENDER_CORE_HPP
 
-#include "..\Shaders\ShaderManager.hpp"
+#include <Shaders/ShaderManager.hpp>
 #include "FBOTexture.hpp"
 #include "DeferredPainter.hpp"
 

@@ -1,7 +1,7 @@
 #ifndef SRC_CORE_WINDOWHANDLING_GLFW_INCLUDE_HPP
 #define SRC_CORE_WINDOWHANDLING_GLFW_INCLUDE_HPP
 
-#include <glew/glew.h>
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 #ifdef _WIN32
