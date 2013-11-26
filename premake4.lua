@@ -53,7 +53,8 @@ solution "RiotGame"
 	project "logger"
         location ( location_path )
         language "C++"
-		kind "SharedLib"
+		--kind "SharedLib"
+		kind "ConsoleApp"
         files { "src/logger/**.hpp", "src/logger/**.h", "src/logger/**.cpp", "include/logger/**.hpp" }
 		includedirs { "include/logger", "src/logger" }       
         configurations "Debug"

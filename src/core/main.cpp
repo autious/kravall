@@ -1,7 +1,7 @@
 #include <iostream>
 
 
-#include <logger/Logger.hpp>
+//#include <logger/Logger.hpp>
 
 
 #include "WindowHandling/InitializeGLFW.hpp"
@@ -12,7 +12,7 @@ int main(int argc, char** argv)
 {
 	GLFWwindow* window;
 
-	loggerprint( "check!" );
+	
 
 	Core::InitializeGLFW(&window, 1280, 720);
 

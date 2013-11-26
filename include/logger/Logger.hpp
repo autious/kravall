@@ -1,8 +1,6 @@
 #ifndef LOGGERHPP
 #define LOGGERHPP
 
-#include <iostream>
-
 
 
 #ifdef LOGGER_DLL_EXPORT
@@ -11,10 +9,18 @@
 #define DLLSETTING __declspec(dllimport)
 #endif
 
+#include <LoggerSystem.hpp>
 
+namespace logger
+{
+	LoggerSystem debug;
+	LoggerSystem fatal;
+	LoggerSystem error;
+	LoggerSystem warning;
+}
 
-
-DLLSETTING void loggerprint(char text[]);
+//template< class T >
+//DLLSETTING void loggerprint( T );
 
 
 
