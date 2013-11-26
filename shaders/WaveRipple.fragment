@@ -1,0 +1,21 @@
+#version 440
+
+out vec4 color;
+
+in vec2 uv;
+
+void main()
+{
+	float i = uv.s;
+	float j = uv.t;
+    float coordinate_x = 0.5;
+    float coordinate_y = 0.5;
+    float x_squared = (i - coordinate_x)*(i - coordinate_x);
+    float y_squared = (j - coordinate_y)*(j - coordinate_y);
+    float wave_ripple = abs(sin(1.0 / sqrt(x_squared + y_squared)));
+     
+    color.r = wave_ripple;
+    color.g = color.r;
+    color.b = color.r;
+     
+}

@@ -4,6 +4,7 @@
 #include <GFXInterface.hpp>
 
 #include <iostream>
+#include "Shaders/ShaderManager.hpp"
 
 void APIENTRY glErrorCallback(GLenum _source, GLenum _type, GLuint _id, GLenum _severity, GLsizei _length, const char* _message, void* _userParam)
 {
@@ -19,18 +20,16 @@ void APIENTRY glErrorCallback(GLenum _source, GLenum _type, GLuint _id, GLenum _
 	std::cout << "OPENGL_ERROR: id:" << source << ":" << _type << ":" << _message << std::endl;
 }
 
-
-
 namespace GFX
 {
-	int Init()
+
+	int Init(int windowWidth, int windowHeight)
 	{
 		// TODO: Init graphics engine
 		GLenum err;
 
 		err = glGetError();
 		glClearColor(100.0f / 255.0f, 149.0f / 255.0f, 237.0f / 255.0f, 1.0f);
-
 
 		// assign callback functions...
 		glDebugMessageCallbackARB(glErrorCallback, NULL);
@@ -56,9 +55,7 @@ namespace GFX
 
 	void Render()
 	{
-		// TODO: implement render function
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		std::cout << "I'm a rendered picture!\n";
-		
+
 	}
 }

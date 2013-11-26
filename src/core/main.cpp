@@ -17,7 +17,6 @@ int main(int argc, char** argv)
 
 	while (!glfwWindowShouldClose(window))
 	{
-
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE))
 			break;
 
