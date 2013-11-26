@@ -56,8 +56,8 @@ namespace GFX
 		glActiveTexture(GL_TEXTURE0 + m_textureHandle);
 		glBindTexture(m_textureTarget, m_textureHandle);
 
-		glTexParameterf(m_textureTarget, GL_TEXTURE_MAG_FILTER, m_magFilter);
-		glTexParameterf(m_textureTarget, GL_TEXTURE_MIN_FILTER, m_minFilter);
+		glTexParameteri(m_textureTarget, GL_TEXTURE_MAG_FILTER, m_magFilter);
+		glTexParameteri(m_textureTarget, GL_TEXTURE_MIN_FILTER, m_minFilter);
 		glTexParameteri(m_textureTarget, GL_TEXTURE_WRAP_S, m_wrapS);
 		glTexParameteri(m_textureTarget, GL_TEXTURE_WRAP_T, m_wrapT);
 	}

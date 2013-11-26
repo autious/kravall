@@ -1,3 +1,6 @@
+#ifndef GFXINTERFACE_INCLUDE_HPP
+#define GFXINTERFACE_INCLUDE_HPP
+
 #ifdef _WIN32
 #ifdef GFX_DLL_EXPORT
 #define DLL_API __declspec(dllexport)
@@ -221,3 +224,5 @@ namespace GFX
 	} // namespace Settings
 
 } // namespace GFX
+
+#endif //GFXINTERFACE_INCLUDE_HPP

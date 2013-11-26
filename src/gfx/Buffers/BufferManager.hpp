@@ -1,12 +1,12 @@
 #ifndef SRC_GFX_BUFFERS_BUFFER_MANAGER_HPP
 #define SRC_GFX_BUFFERS_BUFFER_MANAGER_HPP
 
-#include "..\Utility\GLFWInclude.hpp"
 #include "Vertex.hpp"
 
 #include "StaticMesh.hpp"
 
 #include <vector>
+#include <gl/glew.h>
 
 namespace GFX
 {
