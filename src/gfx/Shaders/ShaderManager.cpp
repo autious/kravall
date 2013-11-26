@@ -6,6 +6,7 @@ namespace GFX
 	{
 		m_shaderData = new ShaderBaseModel();
 		m_textFile = new TextFile();
+
 	}
 
 	ShaderManager::~ShaderManager()

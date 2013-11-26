@@ -35,8 +35,8 @@ solution "RiotGame"
         language "C++"
         kind "ConsoleApp"
         files { "src/core/**.hpp", "src/core/**.h", "src/core/**.cpp" }
-        includedirs { "src/core", "src/include" }
-        --links { "gfx", "sfx", "contentmanager" }     
+        includedirs { "src/core", "include" }
+        --links { "gfx", "sfx", "contentmanager" }
         links { "glfw3", "glew32", "glfw3dll", "opengl32" }
         targetname ( "RiotGame" )
 
@@ -44,10 +44,10 @@ solution "RiotGame"
         location ( location_path )
         language "C++"
         kind "SharedLib"
-        files { "src/gfx/**.hpp", "src/gfx/**.h", "src/gfx/**.cpp" }
-        includedirs { "src/gfx" }       
+        files { "src/gfx/**.hpp", "src/gfx/**.h", "src/gfx/**.cpp", "include/gfx/**.hpp" }
+        includedirs { "src/gfx", "include/gfx" }       
 		links { "glfw3", "glew32", "glfw3dll", "opengl32" }
-        configurations "Release"
+        configurations { "Release", "Debug" }
             defines { "DLL_EXPORT" }
  
 --    project "sfx"
