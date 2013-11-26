@@ -1,13 +1,11 @@
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <GFXInterface.hpp>
-
 #include <iostream>
 
-#include <Shaders/ShaderManager.hpp>
-#include <Utility/GLFWInclude.hpp>
-#include <GFXInterface.hpp>
 #include <Renderer/RenderCore.hpp>
+#include <Shaders/ShaderManager.hpp>
+
+#include <GFXInterface.hpp>
+#include <gl/glew.h>
+#include <GLFW/glfw3.h>
 
 void APIENTRY glErrorCallback(GLenum _source, GLenum _type, GLuint _id, GLenum _severity, GLsizei _length, const char* _message, void* _userParam)
 {

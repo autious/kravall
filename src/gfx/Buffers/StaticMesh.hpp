@@ -1,9 +1,9 @@
 #ifndef SRC_GFX_BUFFERS_STATIC_MESH_HPP
 #define SRC_GFX_BUFFERS_STATIC_MESH_HPP
 
-#include "../Utility/GLFWInclude.hpp"
 #include "Vertex.hpp"
 #include "MeshData.hpp"
+#include <gl/glew.h>
 
 namespace GFX
 {
