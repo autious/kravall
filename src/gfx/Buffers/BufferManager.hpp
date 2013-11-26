@@ -2,7 +2,6 @@
 #define SRC_GFX_BUFFERS_BUFFER_MANAGER_HPP
 
 #include "Vertex.hpp"
-
 #include "StaticMesh.hpp"
 
 #include <vector>

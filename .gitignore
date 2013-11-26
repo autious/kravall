@@ -168,7 +168,8 @@ $RECYCLE.BIN/
 .DS_Store
 
 #Linux build files
-linux/Makefile
+Makefile
+*.make
 
 # dlls
 
