@@ -11,7 +11,7 @@ solution "RiotGame"
 
     if os.is( "linux" ) then
         buildoptions { "-std=c++11" }
-        location_path = location_path .. "/make/"
+        location_path = "" 
     elseif(os.is("windows")) then
         location_path = location_path .."/win32/" .. _ACTION
         location ( location_path )

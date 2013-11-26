@@ -14,15 +14,15 @@ all: $(PROJECTS)
 
 core: gfx
 	@echo "==== Building core ($(config)) ===="
-	@${MAKE} --no-print-directory -C build/make -f core.make
+	@${MAKE} --no-print-directory -C . -f core.make
 
 gfx: 
 	@echo "==== Building gfx ($(config)) ===="
-	@${MAKE} --no-print-directory -C build/make -f gfx.make
+	@${MAKE} --no-print-directory -C . -f gfx.make
 
 clean:
-	@${MAKE} --no-print-directory -C build/make -f core.make clean
-	@${MAKE} --no-print-directory -C build/make -f gfx.make clean
+	@${MAKE} --no-print-directory -C . -f core.make clean
+	@${MAKE} --no-print-directory -C . -f gfx.make clean
 
 help:
 	@echo "Usage: make [config=name] [target]"
