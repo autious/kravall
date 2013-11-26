@@ -64,6 +64,11 @@ namespace GFX
 		return GFX_SUCCESS;
 	}
 
+	void Resize(int width, int height)
+	{
+		Renderer().Resize(width, height);
+	}
+
 	void Render()
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

@@ -43,6 +43,15 @@ namespace GFX
 
 	}
 
+	void RenderCore::Resize(int width, int height)
+	{
+		m_windowWidth = width;
+		m_windowHeight = height;
+
+		glViewport(0, 0, m_windowWidth, m_windowHeight);
+		ResizeGBuffer();
+	}
+
 	void RenderCore::Render()
 	{
 		m_deferredPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID);
