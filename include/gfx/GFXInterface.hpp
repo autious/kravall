@@ -11,7 +11,7 @@ namespace GFX
 {
 	/*!
 	Initializes the graphics engine on the currently bound context.
-	\return Returns GFX_SUCCESS if successful, else returns GFX_FAIL
+	\return Returns #GFX_SUCCESS if successful, else returns #GFX_FAIL
 	*/
 	DLL_API int Init(int windowWidth, int windowHeight);
 
