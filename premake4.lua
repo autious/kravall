@@ -47,7 +47,7 @@ solution "RiotGame"
         files { "src/gfx/**.hpp", "src/gfx/**.h", "src/gfx/**.cpp", "include/gfx/**.hpp", "shaders/**.vertex", "shaders/**.geometry", "shaders/**.fragment", "shaders/**.compute" }
         includedirs { "src/gfx", "include/gfx", "shaders" }       
 		links { "glfw3", "glew32", "glfw3dll", "opengl32" }
-        configurations { "Release", "Debug" }
+        configuration { "Release", "Debug" }
             defines { "GFX_DLL_EXPORT" }
  
 --    project "sfx"
@@ -67,5 +67,5 @@ solution "RiotGame"
 --        files { "src/contentmanager/**.hpp", "src/contentmanager/**.h", "src/contentmanager/**.cpp" }
 --        includedirs { "src/contentmanager" }
 
-        configurations "Release"
+        configuration "Release"
             defines { "DLL_EXPORT" }
