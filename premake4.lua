@@ -37,7 +37,7 @@ solution "RiotGame"
         files { "src/core/**.hpp", "src/core/**.h", "src/core/**.cpp" }
         includedirs { "src/core", "include" }
         --links { "gfx", "sfx", "contentmanager" }
-        links { "glfw3", "glew32", "glfw3dll", "opengl32" }
+        links { "glfw3", "glew32", "glfw3dll", "opengl32", "gfx" }
         targetname ( "RiotGame" )
 
     project "gfx"
@@ -48,7 +48,7 @@ solution "RiotGame"
         includedirs { "src/gfx", "include/gfx", "shaders" }       
 		links { "glfw3", "glew32", "glfw3dll", "opengl32" }
         configurations { "Release", "Debug" }
-            defines { "DLL_EXPORT" }
+            defines { "GFX_DLL_EXPORT" }
  
 --    project "sfx"
 --        location ( location_path )
