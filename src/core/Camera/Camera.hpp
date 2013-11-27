@@ -90,10 +90,6 @@ namespace Core
 		*/
 		inline glm::mat4x4 GetProjectionMatrix() const { return m_projectionMatrix; }
 
-		float* GetProjectionMatrixAsArray();
-
-		float* GetViewMatrixAsArray();
-
 		/*!
 		Sets the camera field of view.
 		\param fov The Field of view in degrees

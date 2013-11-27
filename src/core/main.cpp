@@ -2,6 +2,8 @@
     #include <gtest/gtest.h>
 #endif
 
+#include <Windows.h>
+
 #include <iostream>
 
 #include <WindowHandling/GLFWInclude.hpp>
@@ -10,6 +12,7 @@
 #include <gfx/GFXInterface.hpp>
 
 #include "Camera/Camera.hpp"
+
 
 
 GLFWwindow* init()
@@ -30,18 +33,19 @@ void run( GLFWwindow * window )
 	gCamera = new Core::Camera(45.0f, 1.0f, 1000.0f);
 	gCamera->CalculateProjectionMatrix(1280, 720);
 
-	GFX::SetProjectionMatrix(gCamera->GetProjectionMatrixAsArray());
+	GFX::SetProjectionMatrix(gCamera->GetProjectionMatrix());
 
 	while (!glfwWindowShouldClose(window))
 	{
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE))
 			break;
-
-		GFX::Debug::DrawPoint(glm::vec2(100.0f, 100.0f), glm::vec4(1.0f, 1.0f, 0.0f, 1.0f));
+		GFX::Debug::DrawPoint(glm::vec2(20.0f, 20.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), 10.0f);
+		GFX::Debug::DrawPoint(glm::vec2(640.0f, 360.0f), glm::vec4(1.0f, 0.0f, 1.0f, 0.5f), 100.0f);
+		GFX::Debug::DrawPoint(glm::vec2(800.0f, 600.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), 10.0f);
 
 
 		gCamera->CalculateViewMatrix();
-		GFX::SetViewMatrix(gCamera->GetViewMatrixAsArray());
+		GFX::SetViewMatrix(gCamera->GetViewMatrix());
 
 		GFX::Render();
 

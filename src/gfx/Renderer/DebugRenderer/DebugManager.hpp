@@ -1,5 +1,6 @@
 #ifndef SRC_GFX_RENDERER_DEBUG_MANAGER_HPP
 #define SRC_GFX_RENDERER_DEBUG_MANAGER_HPP
+
 #include <gl/glew.h>
 #include <glm/glm.hpp>
 #include <vector>
@@ -66,6 +67,9 @@ namespace GFX
 		void AddSphere(DebugSphere sphere, bool filled);
 		void AddCircle(DebugCircle circle, bool filled);
 
+		inline std::vector<DebugPoint>& GetPoints(){ return m_points; }
+		inline std::vector<DebugLine>& GetLines(){ return m_lines; }
+
 	private:
 		// Points
 		std::vector<DebugPoint> m_points;
@@ -82,9 +86,6 @@ namespace GFX
 		std::vector<DebugBox> m_filledBoxes;
 		std::vector<DebugSphere> m_filledSpheres;
 		std::vector<DebugCircle> m_filledCircles;
-
-		// VAO
-		GLuint m_pointVAO;
 	};
 
 	/*!

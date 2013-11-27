@@ -24,6 +24,7 @@ namespace GFX
 		m_uniformBufferManager = new UniformBufferManager();
 
 		m_deferredPainter = new DeferredPainter(m_shaderManager, m_bufferManager, m_uniformBufferManager);
+		m_debugPainter = new DebugPainter(m_shaderManager, m_bufferManager, m_uniformBufferManager);
 	}
 
 	RenderCore::~RenderCore()
@@ -41,6 +42,7 @@ namespace GFX
 
 
 		m_deferredPainter->Initialize(m_FBO, m_dummyVAO);
+		m_debugPainter->Initialize(m_FBO, m_dummyVAO);
 
 	}
 
@@ -56,6 +58,9 @@ namespace GFX
 	void RenderCore::Render()
 	{
 		m_deferredPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
+
+		// Render debug
+		m_debugPainter->Render(m_viewMatrix, m_projMatrix);
 	}
 
 	void RenderCore::InitializeGBuffer()

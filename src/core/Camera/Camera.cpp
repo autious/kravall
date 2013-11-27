@@ -76,16 +76,4 @@ namespace Core
 		int halfHeight = height / 2;
 		m_projectionMatrix = glm::ortho(-halfWidth, halfWidth, halfHeight, -halfHeight);
 	}
-
-
-	float* Camera::GetProjectionMatrixAsArray()
-	{
-		return (float*)glm::value_ptr(m_projectionMatrix);
-	}
-
-	float* Camera::GetViewMatrixAsArray()
-	{
-		return (float*)glm::value_ptr(m_viewMatrix);
-	}
-
 }

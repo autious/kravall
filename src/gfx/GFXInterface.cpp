@@ -50,13 +50,12 @@ namespace GFX
 		glEnable(GL_CULL_FACE);
 		err = glGetError();
 
+		glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
+		glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+
 		glCullFace(GL_BACK);
 		err = glGetError();
 		glFrontFace(GL_CW);
-		err = glGetError();
-		glBlendEquation(GL_FUNC_ADD);
-		err = glGetError();
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 		err = glGetError();
 
 		//Initialize RenderCore
@@ -78,12 +77,12 @@ namespace GFX
 
 	void SetViewMatrix(GFXMat4x4 matrix)
 	{
-		Renderer().SetViewMatrix(glm::make_mat4(matrix));
+		Renderer().SetViewMatrix(matrix);
 	}
 
 	void SetProjectionMatrix(GFXMat4x4 matrix)
 	{
-		Renderer().SetProjMatrix(glm::make_mat4(matrix));
+		Renderer().SetProjMatrix(matrix);
 	}
 
 }
@@ -98,8 +97,11 @@ namespace GFX
 	void Debug::DrawPoint(GFXVec2 point, GFXColor color, float size)
 	{
 		DebugPoint p;
-		p.position = glm::vec3(point, 1.0f);
-		p.size = 1.0f;
+		p.position = glm::vec3(
+			point.x / float(Renderer().GetWindowWidth()/2) - 1.0f,
+			1.0f - point.y / float(Renderer().GetWindowHeight()/2),
+			0.0);
+		p.size = size;
 		p.color = color;
 		DebugDrawing().AddPoint(p);
 	}

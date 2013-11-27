@@ -7,9 +7,9 @@
 
 #include "FBOTexture.hpp"
 #include "DeferredPainter.hpp"
-#include "DebugPainter.hpp"
+#include "DebugRenderer/DebugPainter.hpp"
 
-#include "DebugManager.hpp"
+#include "DebugRenderer/DebugManager.hpp"
 
 #include <iostream>
 
@@ -46,6 +46,9 @@ namespace GFX
 
 		void SetViewMatrix(glm::mat4 view);
 		void SetProjMatrix(glm::mat4 proj);
+
+		inline int GetWindowWidth() const { return m_windowWidth; }
+		inline int GetWindowHeight() const { return m_windowHeight; }
 
 	private:
 		RenderCore();
@@ -84,6 +87,8 @@ namespace GFX
 		
 
 		DeferredPainter* m_deferredPainter;
+
+		DebugPainter* m_debugPainter;
 
 		glm::mat4 m_viewMatrix;
 		glm::mat4 m_projMatrix;

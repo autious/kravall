@@ -1,11 +1,11 @@
 #ifndef SRC_GFX_RENDERER_DEBUG_PAINTER_HPP
 #define SRC_GFX_RENDERER_DEBUG_PAINTER_HPP
 
-#include "BasePainter.hpp"
+#include "../BasePainter.hpp"
 #include <Shaders/ShaderManager.hpp>
 
-#include "FBOTexture.hpp"
-#include "../Buffers/UniformBufferManager.hpp"
+#include "../FBOTexture.hpp"
+#include "../../Buffers/UniformBufferManager.hpp"
 #include <GL/glew.h>
 
 namespace GFX
@@ -45,7 +45,10 @@ namespace GFX
 		*/
 		void DetachTextures();
 
-		GLuint debugUniform;
+		// Uniforms
+		GLuint m_pointPositionUniform;
+		GLuint m_colorUniform;
+		GLuint m_sizeUniform;
 	};
 }
 

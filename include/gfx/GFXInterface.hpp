@@ -19,7 +19,7 @@
 typedef glm::vec2 GFXVec2;
 typedef glm::vec3 GFXVec3;
 typedef glm::vec4 GFXVec4;
-typedef float* GFXMat4x4;
+typedef glm::mat4x4 GFXMat4x4;
 
 typedef GFXVec4 GFXColor;
 
