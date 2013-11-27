@@ -9,14 +9,19 @@
 #define DLLSETTING __declspec(dllimport)
 #endif
 
-
+/*!
+	Potential child to LogHandler and will print messages to std::cout
+*/
 DLLSETTING class ConsoleHandler : public LogHandler
 {
 public:
 	DLLSETTING ConsoleHandler();
+
+	/*!	\param Type is the channel to use this object. */
 	DLLSETTING ConsoleHandler( LogSystem::LogType type );
 	DLLSETTING virtual ~ConsoleHandler() override;
 
+	/*! \param message will be printed to std::cout */
 	DLLSETTING virtual void Log( const char* message ) override;
 
 private:
