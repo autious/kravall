@@ -10,7 +10,7 @@ solution "RiotGame"
     local location_path = "build"
 
     if os.is( "linux" ) then
-        buildoptions { "-std=c++11" }
+        buildoptions { "-std=c++11 -Wno-unused-parameter" }
         location_path = "" 
     elseif(os.is("windows")) then
         location_path = location_path .."/win32/" .. _ACTION
@@ -22,15 +22,24 @@ solution "RiotGame"
         defines { "DEBUG" }
         flags { "Symbols" }
         
-        targetdir ( "bin/" .. translateOS[os.get()] .. "/debug" )
-
     configuration { "Release or ReleaseTest" }
         defines { "NDEBUG", "RELEASE" }
         flags { "Optimize", "FloatFast" }
-        targetdir ( "bin/" .. translateOS[os.get()] .. "/release" )   
 
     configuration { "ReleaseTest or DebugTest" }
-        defines { "GTEST" }
+        defines { "RUN_GTEST" }
+
+    configuration { "Debug" }
+        targetdir ( "bin/" .. translateOS[os.get()] .. "/debug" )
+
+    configuration { "Release" } 
+        targetdir ( "bin/" .. translateOS[os.get()] .. "/release" )   
+
+    configuration { "DebugTest" }
+        targetdir ( "bin/" .. translateOS[os.get()] .. "/debugtest" )
+
+    configuration { "ReleaseTest" } 
+        targetdir ( "bin/" .. translateOS[os.get()] .. "/releasetest" )   
 
     project "core"
         targetname "RiotGame" 
@@ -42,6 +51,10 @@ solution "RiotGame"
         includedirs { "src/core", "include" }
 
         links { "glfw3", "gfx" }
+
+        configuration{ "ReleaseTest or ReleaseDebug" }
+            files { "gtest/core/**.hpp", "gtest/core/**.cpp" }
+            links { "gtest" }
         configuration{ "windows" }
             links { "glew32", "glfw3dll", "opengl32" }
         configuration{ "linux" }
@@ -57,6 +70,9 @@ solution "RiotGame"
         defines { "GFX_DLL_EXPORT" }
 
         links { "glfw3" }
+        configuration{ "ReleaseTest or ReleaseDebug" }
+            files { "gtest/gfx/**.hpp", "gtest/gfx/**.cpp" }
+            links { "gtest" }
         configuration{ "windows" }
             links { "glew32", "glfw3dll", "opengl32" }
         configuration{ "linux" }
@@ -66,15 +82,23 @@ solution "RiotGame"
 --        location ( location_path )
 --        language "C++"
 --        kind "SharedLib"        
---        files { "src/sfx/**.hpp", "src/sfx/**.h", "src/sfx/**.cpp" }
+--        files { "src/sfx/**.hpp", "include/sfx/**.h", "src/sfx/**.cpp" }
 --        includedirs { "src/sfx" }        
+--        defines { "SFX_DLL_EXPORT" }
 --
---        configurations "Release"
---            defines { "DLL_EXPORT" }
+--        configuration{ "ReleaseTest or ReleaseDebug" }
+--            links { "gtest" }
+--            files { "gtest/sfx/**.hpp", "gtest/sfx/**.cpp" }
+--
 --
 --    project "contentmanager"
 --        location ( location_path )
 --        language "C++"
 --        kind "SharedLib"        
---        files { "src/contentmanager/**.hpp", "src/contentmanager/**.h", "src/contentmanager/**.cpp" }
+--        files { "src/contentmanager/**.hpp", "include/contentmanager/**.h", "src/contentmanager/**.cpp" }
 --        includedirs { "src/contentmanager" }
+--        defines { "CONTENT_MANAGER_DLL_EXPORT" }
+--
+--        configuration{ "ReleaseTest or ReleaseDebug" }
+--            links { "gtest" }
+--            files { "gtest/contentmanager/**.hpp", "gtest/contentmanager/**.cpp" }
