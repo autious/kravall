@@ -5,8 +5,8 @@
 #include <Shaders/ShaderManager.hpp>
 
 #include "FBOTexture.hpp"
-#include <gl/glew.h>
 #include "../Buffers/UniformBufferManager.hpp"
+#include <GL/glew.h>
 
 namespace GFX
 {

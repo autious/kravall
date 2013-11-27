@@ -4,7 +4,7 @@
 #include "../Shaders/ShaderManager.hpp"
 #include "../Buffers/BufferManager.hpp"
 #include "../Buffers/UniformBufferManager.hpp"
-#include <gl/glew.h>
+#include <GL/glew.h>
 
 namespace GFX
 {
