@@ -1,4 +1,4 @@
-#include "ConsoleHandler.hpp"
+#include "internal/ConsoleHandler.hpp"
 
 
 #include <iostream>
@@ -24,11 +24,10 @@ ConsoleHandler::~ConsoleHandler()
 }
 
 
- void ConsoleHandler::Log( std::string message )
+ void ConsoleHandler::Log( const char* message )
  {
 
-
-
+	 /*
  #ifdef _WIN32
 
 	 switch( m_type )
@@ -55,6 +54,7 @@ ConsoleHandler::~ConsoleHandler()
 	 // e warning	 
 	 
 #endif
+	 */
 
 
 	 std::cout << message;

@@ -1,19 +1,20 @@
 #include <iostream>
 
 
-//#include <logger/Logger.hpp>
 
 
 #include "WindowHandling/InitializeGLFW.hpp"
 
 #include <gfx/GFXInterface.hpp>
 
+#include <logger/Logger.hpp>
+
+
+
 
 int main(int argc, char** argv)
 {
 	GLFWwindow* window;
-
-	
 
 	Core::InitializeGLFW(&window, 1280, 720);
 

@@ -3,22 +3,19 @@
 
 
 #include <string>
-#include "LogData.hpp"
+#include <internal/LogData.hpp>
 
 
 class LogHandler
 {
 public:
 	LogHandler();
-	~LogHandler();
+	virtual ~LogHandler();
 
-	virtual void Log( std::string message ) { }
+	virtual void Log( const char* message ) { }
 
 protected:
-
 	LogSystem::LogType m_type;
-
-
 };
 
 

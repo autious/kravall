@@ -1,4 +1,4 @@
-#include "LogHandler.hpp"
+#include <internal/LogHandler.hpp>
 
 #include <ostream>
 #include <iostream>
