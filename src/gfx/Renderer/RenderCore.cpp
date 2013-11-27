@@ -115,4 +115,14 @@ namespace GFX
 
 		glBindVertexArray(0);
 	}
+
+	void RenderCore::SetViewMatrix(glm::mat4 view)
+	{
+		m_viewMatrix = view;
+	}
+
+	void RenderCore::SetProjMatrix(glm::mat4 proj)
+	{
+		m_projMatrix = proj;
+	}
 }

@@ -41,7 +41,8 @@ namespace GFX
 		*/
 		void Resize(int width, int height);
 
-
+		void SetViewMatrix(glm::mat4 view);
+		void SetProjMatrix(glm::mat4 proj);
 	private:
 		RenderCore();
 		~RenderCore();
@@ -79,6 +80,9 @@ namespace GFX
 		
 
 		DeferredPainter* m_deferredPainter;
+
+		glm::mat4 m_viewMatrix;
+		glm::mat4 m_projMatrix;
 	};
 
 	/*!

@@ -7,7 +7,6 @@
 #include "GLFWInclude.hpp"
 
 #include <gfx/GFXInterface.hpp>
-
 namespace Core
 {
 
