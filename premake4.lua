@@ -1,8 +1,7 @@
 translateOS = { windows="win32", linux="linux"}
 
 solution "RiotGame"
-
-    configurations {"Debug", "Release", "ReleaseTest", "DebugTest"}
+    configurations {"Debug", "Release", "ReleaseTest", "DebugTest", "PureReleaseTest", "PureDebugTest"}
         flags{ "Unicode", "ExtraWarnings", "NoPCH" } 
         libdirs { translateOS[os.get()] .. "/lib" }
         includedirs { translateOS[os.get()] .. "/deps", "deps", "include"}
@@ -18,16 +17,19 @@ solution "RiotGame"
         location_path = location_path .. "/projects"
     end
     
-    configuration { "Debug or DebugTest" }
+    configuration { "Debug or DebugTest or PureDebugTest" }
         defines { "DEBUG" }
         flags { "Symbols" }
         
-    configuration { "Release or ReleaseTest" }
+    configuration { "Release or ReleaseTest or PureReleaseTest" }
         defines { "NDEBUG", "RELEASE" }
         flags { "Optimize", "FloatFast" }
 
-    configuration { "ReleaseTest or DebugTest" }
+    configuration { "*Test" }
         defines { "RUN_GTEST" }
+
+    configuration { "Pure*Test" }
+        defines { "SKIP_RUN" }
 
     configuration { "Debug" }
         targetdir ( "bin/" .. translateOS[os.get()] .. "/debug" )
@@ -40,6 +42,12 @@ solution "RiotGame"
 
     configuration { "ReleaseTest" } 
         targetdir ( "bin/" .. translateOS[os.get()] .. "/releasetest" )   
+    
+    configuration { "PureReleaseTest" } 
+        targetdir ( "bin/" .. translateOS[os.get()] .. "/purereleasetest" )   
+
+    configuration { "PureDebugTest" } 
+        targetdir ( "bin/" .. translateOS[os.get()] .. "/puredebugtest" )   
 
     project "core"
         targetname "RiotGame" 
@@ -47,13 +55,12 @@ solution "RiotGame"
         location ( location_path )
         language "C++"
         kind "ConsoleApp"
-        files { "src/core/**.hpp", "src/core/**.h", "src/core/**.cpp" }
+        files { "gtest/core/**.cpp", "src/core/**.hpp", "src/core/**.h", "src/core/**.cpp" }
         includedirs { "src/core", "include" }
 
         links { "glfw3", "gfx" }
 
-        configuration{ "ReleaseTest or ReleaseDebug" }
-            files { "gtest/core/**.hpp", "gtest/core/**.cpp" }
+        configuration{ "*Test" }
             links { "gtest" }
         configuration{ "windows" }
             links { "glew32", "glfw3dll", "opengl32" }
@@ -64,14 +71,13 @@ solution "RiotGame"
         location ( location_path )
         language "C++"
         kind "SharedLib"
-        files { "src/gfx/**.hpp", "src/gfx/**.h", "src/gfx/**.cpp", "include/gfx/**.hpp", "shaders/**.vertex", "shaders/**.geometry", "shaders/**.fragment", "shaders/**.compute" }
+        files { "gtest/gfx/**.cpp", "src/gfx/**.hpp", "src/gfx/**.h", "src/gfx/**.cpp", "include/gfx/**.hpp", "shaders/**.vertex", "shaders/**.geometry", "shaders/**.fragment", "shaders/**.compute" }
         includedirs { "src/gfx", "include/gfx", "shaders" }       
 
         defines { "GFX_DLL_EXPORT" }
 
         links { "glfw3" }
-        configuration{ "ReleaseTest or ReleaseDebug" }
-            files { "gtest/gfx/**.hpp", "gtest/gfx/**.cpp" }
+        configuration{ "*Test" }
             links { "gtest" }
         configuration{ "windows" }
             links { "glew32", "glfw3dll", "opengl32" }
@@ -82,23 +88,20 @@ solution "RiotGame"
 --        location ( location_path )
 --        language "C++"
 --        kind "SharedLib"        
---        files { "src/sfx/**.hpp", "include/sfx/**.h", "src/sfx/**.cpp" }
+--        files { "gtest/sfx/**.cpp", "src/sfx/**.hpp", "include/sfx/**.h", "src/sfx/**.cpp" }
 --        includedirs { "src/sfx" }        
 --        defines { "SFX_DLL_EXPORT" }
 --
---        configuration{ "ReleaseTest or ReleaseDebug" }
+--        configuration{ "*Test" }
 --            links { "gtest" }
---            files { "gtest/sfx/**.hpp", "gtest/sfx/**.cpp" }
---
 --
 --    project "contentmanager"
 --        location ( location_path )
 --        language "C++"
 --        kind "SharedLib"        
---        files { "src/contentmanager/**.hpp", "include/contentmanager/**.h", "src/contentmanager/**.cpp" }
+--        files { "gtest/contentmanager/*.cpp", "src/contentmanager/**.hpp", "include/contentmanager/**.h", "src/contentmanager/**.cpp" }
 --        includedirs { "src/contentmanager" }
 --        defines { "CONTENT_MANAGER_DLL_EXPORT" }
 --
---        configuration{ "ReleaseTest or ReleaseDebug" }
+--        configuration{ "*Test" }
 --            links { "gtest" }
---            files { "gtest/contentmanager/**.hpp", "gtest/contentmanager/**.cpp" }
