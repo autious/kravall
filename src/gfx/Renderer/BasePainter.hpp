@@ -3,6 +3,7 @@
 
 #include "../Shaders/ShaderManager.hpp"
 #include "../Buffers/BufferManager.hpp"
+#include "../Buffers/UniformBufferManager.hpp"
 #include <GL/glew.h>
 
 namespace GFX
@@ -16,7 +17,7 @@ namespace GFX
 		\param shaderManager Pointer to ShaderManager present in RenderCore
 		\param bufferManager Pointer to BufferManager present in RenderCore
 		*/
-		BasePainter(ShaderManager* shaderManager, BufferManager* bufferManager);
+		BasePainter(ShaderManager* shaderManager, BufferManager* bufferManager, UniformBufferManager* uniformBufferManager);
 
 		~BasePainter();
 
@@ -38,8 +39,9 @@ namespace GFX
 		void ClearFBO();
 	protected:
 
-		ShaderManager* m_shaderManager;
-		BufferManager* m_bufferManager;
+		UniformBufferManager*	m_uniformBufferManager;
+		ShaderManager*			m_shaderManager;
+		BufferManager*			m_bufferManager;
 
 		GLuint m_dummyVAO;
 		GLuint m_FBO;

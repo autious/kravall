@@ -2,7 +2,7 @@ translateOS = { windows="win32", linux="linux"}
 
 solution "RiotGame"
     configurations {"Debug", "Release", "ReleaseTest", "DebugTest", "PureReleaseTest", "PureDebugTest"}
-        flags{ "Unicode", "ExtraWarnings", "NoPCH" } 
+        flags{ "Unicode", "NoPCH" } 
         libdirs { translateOS[os.get()] .. "/lib" }
         includedirs { translateOS[os.get()] .. "/deps", "deps", "include"}
     
@@ -74,8 +74,6 @@ solution "RiotGame"
         files { "gtest/gfx/**.cpp", "src/gfx/**.hpp", "src/gfx/**.h", "src/gfx/**.cpp", "include/gfx/**.hpp", "shaders/**.vertex", "shaders/**.geometry", "shaders/**.fragment", "shaders/**.compute" }
         includedirs { "src/gfx", "include/gfx", "shaders" }       
 
-        defines { "GFX_DLL_EXPORT" }
-
         links { "glfw3" }
         configuration{ "*Test" }
             links { "gtest" }
@@ -83,6 +81,8 @@ solution "RiotGame"
             links { "glew32", "glfw3dll", "opengl32" }
         configuration{ "linux" }
             links { "GLEW", "GL" }
+        configuration { "*" }
+            defines { "GFX_DLL_EXPORT" }
  
 	project "logger"
       location ( location_path )
