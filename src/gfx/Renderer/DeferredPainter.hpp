@@ -6,6 +6,7 @@
 
 #include "FBOTexture.hpp"
 #include <gl/glew.h>
+#include "../Buffers/UniformBufferManager.hpp"
 
 namespace GFX
 {
@@ -18,7 +19,7 @@ namespace GFX
 		\param shaderManager Pointer to ShaderManager present in RenderCore
 		\param bufferManager Pointer to BufferManager present in RenderCore
 		*/
-		DeferredPainter(ShaderManager* shaderManager, BufferManager* bufferManager);
+		DeferredPainter(ShaderManager* shaderManager, BufferManager* bufferManager, UniformBufferManager* uniformBufferManager);
 
 		~DeferredPainter();
 
@@ -50,6 +51,7 @@ namespace GFX
 		*/
 		void BindGBuffer(FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID);
 
+		GLuint exampleUniform;
 	};
 }
 

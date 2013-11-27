@@ -2,6 +2,9 @@
 #define SRC_GFX_RENDERER_RENDER_CORE_HPP
 
 #include <Shaders/ShaderManager.hpp>
+#include <Buffers/BufferManager.hpp>
+#include <Buffers/UniformBufferManager.hpp>
+
 #include "FBOTexture.hpp"
 #include "DeferredPainter.hpp"
 
@@ -70,8 +73,10 @@ namespace GFX
 
 		GLuint m_dummyVAO;
 
-		ShaderManager* m_shaderManager;
-		BufferManager* m_bufferManager;
+		UniformBufferManager*	m_uniformBufferManager;
+		ShaderManager*			m_shaderManager;
+		BufferManager*			m_bufferManager;
+		
 
 		DeferredPainter* m_deferredPainter;
 	};

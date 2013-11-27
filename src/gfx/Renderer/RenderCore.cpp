@@ -21,8 +21,9 @@ namespace GFX
 
 		m_shaderManager = new ShaderManager();
 		m_bufferManager = new BufferManager();
+		m_uniformBufferManager = new UniformBufferManager();
 
-		m_deferredPainter = new DeferredPainter(m_shaderManager, m_bufferManager);
+		m_deferredPainter = new DeferredPainter(m_shaderManager, m_bufferManager, m_uniformBufferManager);
 	}
 
 	RenderCore::~RenderCore()
