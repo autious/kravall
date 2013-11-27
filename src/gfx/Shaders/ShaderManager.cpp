@@ -238,4 +238,59 @@ namespace GFX
 	{
 		glUseProgram(0);
 	}
+
+
+	GLuint ShaderManager::GetUniformLocation(std::string shaderProgramKey, std::string uniformName)
+	{
+		return glGetUniformLocation(GetShaderProgramID(shaderProgramKey), uniformName.c_str());
+	}
+
+	void ShaderManager::SetUniform(GLfloat x, GLuint uniformLocation)
+	{
+		glUniform1f(uniformLocation, x);
+	}
+	void ShaderManager::SetUniform(GLfloat x, GLfloat y, GLuint uniformLocation)
+	{
+		glUniform2f(uniformLocation, x, y);
+	}
+
+	void ShaderManager::SetUniform(GLfloat x, GLfloat y, GLfloat z, GLuint uniformLocation)
+	{
+		glUniform3f(uniformLocation, x, y, z);
+	}
+
+	void ShaderManager::SetUniform(GLfloat x, GLfloat y, GLfloat z, GLfloat w, GLuint uniformLocation)
+	{
+		glUniform4f(uniformLocation, x, y, z, w);
+	}
+
+	void ShaderManager::SetUniform(int count, glm::vec2 vec, GLuint uniformLocation)
+	{
+		glUniform2fv(uniformLocation, count, &vec[0]);
+	}
+
+	void ShaderManager::SetUniform(int count, glm::vec3 vec, GLuint uniformLocation)
+	{
+		glUniform3fv(uniformLocation, count, &vec[0]);
+	}
+
+	void ShaderManager::SetUniform(int count, glm::vec4 vec, GLuint uniformLocation)
+	{
+		glUniform4fv(uniformLocation, count, &vec[0]);
+	}
+
+	void ShaderManager::SetUniform(int count, glm::mat2 mat, GLuint uniformLocation)
+	{
+		glUniformMatrix2fv(uniformLocation, count, GL_FALSE, &mat[0][0]);
+	}
+
+	void ShaderManager::SetUniform(int count, glm::mat3 mat, GLuint uniformLocation)
+	{
+		glUniformMatrix3fv(uniformLocation, count, GL_FALSE, &mat[0][0]);
+	}
+
+	void ShaderManager::SetUniform(int count, glm::mat4 mat, GLuint uniformLocation)
+	{
+		glUniformMatrix4fv(uniformLocation, count, GL_FALSE, &mat[0][0]);
+	}
 }

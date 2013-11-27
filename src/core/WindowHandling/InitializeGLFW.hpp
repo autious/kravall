@@ -6,12 +6,14 @@
 
 #include "GLFWInclude.hpp"
 
+#include <gfx/GFXInterface.hpp>
+
 namespace Core
 {
 
 	void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	{
-		//Resize framebuffer here
+		GFX::Resize(width, height);
 	}
 	int InitializeGLFW(GLFWwindow** window, int width, int height)
 	{

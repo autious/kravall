@@ -4,6 +4,8 @@ out vec4 color;
 
 in vec2 uv;
 
+uniform vec4 inputColor;
+
 void main()
 {
 	float i = uv.s;
@@ -17,5 +19,5 @@ void main()
     color.r = wave_ripple;
     color.g = color.r;
     color.b = color.r;
-     
+    color *= inputColor;
 }

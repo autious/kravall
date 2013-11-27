@@ -14,11 +14,25 @@ namespace GFX
 
 	void BufferManager::BindMesh(GLuint id)
 	{
-		bool found = false;
+
+		for (int i = 0; i < m_staticMeshes.size(); i++)
+		{
+			if (id == m_staticMeshes.at(i)->GetVBO())
+			{
+				m_staticMeshes.at(i)->BindMesh();
+				return;
+			}
+		}
 
 		//loop through list until id found
 		//bind
 		//return
+	}
+
+	void BufferManager::UnbindMesh()
+	{
+		glBindVertexArray(0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 
 	void BufferManager::LoadStaticMesh(const StaticMeshData& meshData)

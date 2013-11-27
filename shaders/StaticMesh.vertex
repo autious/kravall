@@ -1,5 +1,45 @@
-uniform MatrixBlock
+#version 440
+
+uniform PerFrameBlock
+{
+	mat4 gWVP;
+	mat4 gView;
+};
+
+uniform PerObjectBlock
 {
 	mat4 modelMatrix;
-	mat4 worldViewProject;
+};
+
+layout ( location = 0 ) in vec4 positionIN;
+layout ( location = 1 ) in vec4 normalIN;
+layout ( location = 2 ) in vec4 tangentIN;
+layout ( location = 3 ) in vec2 uvIN;
+
+out vec4 positionOUT;
+out vec4 normalOUT;
+out vec4 tangentOUT;
+out vec2 uvOUT;
+out vec2 depthOUT;
+
+void main()
+{
+	//Move position to clip space
+	vec4 instancePos = modelMatrix * positionIN;
+	positionOUT = instancePos * gWVP;
+
+	//Transform normal with model matrix
+	normalOUT = normalize( normalIN * modelMatrix );
+
+	//Transform tangent with model matrix
+	tangentOUT = normalize( tangentIN * modelMatrix );
+
+	//UV is a direct match
+	uvOUT = uvIN;
+
+	//get the depth
+	depthOUT.x = instancePos.z;
+	depthOUT.y = instancePos.w;
+
+	gl_Position = positionOUT;
 }

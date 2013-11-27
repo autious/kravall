@@ -84,6 +84,16 @@ solution "RiotGame"
         configuration{ "linux" }
             links { "GLEW", "GL" }
  
+	project "logger"
+      location ( location_path )
+      language "C++"
+		--kind "SharedLib"
+		kind "ConsoleApp"
+        files { "src/logger/**.hpp", "src/logger/**.h", "src/logger/**.cpp", "include/logger/**.hpp" }
+		includedirs { "include/logger", "src/logger" }       
+        configurations{ "Debug", "Release" }
+            defines { "LOGGER_DLL_EXPORT" }
+ 
 --    project "sfx"
 --        location ( location_path )
 --        language "C++"

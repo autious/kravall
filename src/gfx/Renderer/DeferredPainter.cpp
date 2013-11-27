@@ -2,44 +2,50 @@
 
 namespace GFX
 {
-	DeferredPainter::DeferredPainter(ShaderManager* shaderManager)
-		: BasePainter(shaderManager)
+	DeferredPainter::DeferredPainter(ShaderManager* shaderManager, BufferManager* bufferManager)
+		: BasePainter(shaderManager, bufferManager)
 	{
 	}
 
 	DeferredPainter::~DeferredPainter()
 	{
 	}
-
+	GLuint ul;
 	void DeferredPainter::Initialize(GLuint FBO, GLuint dummyVAO)
 	{
 		BasePainter::Initialize(FBO, dummyVAO);
 
 		m_shaderManager->CreateProgram("StaticMesh");
 
+		//m_shaderManager->LoadShader("shaders/StaticMesh.vertex", "StaticMeshVS", GL_VERTEX_SHADER);
+		//m_shaderManager->LoadShader("shaders/StaticMesh.fragment", "StaticMeshFS", GL_FRAGMENT_SHADER);
+
 		m_shaderManager->LoadShader("shaders/PassThrough.vertex", "StaticMeshVS", GL_VERTEX_SHADER);
 		m_shaderManager->LoadShader("shaders/FSQuad.geometry", "StaticMeshGS", GL_GEOMETRY_SHADER);
 		m_shaderManager->LoadShader("shaders/WaveRipple.fragment", "StaticMeshFS", GL_FRAGMENT_SHADER);
-
+		
 		m_shaderManager->AttachShader("StaticMeshVS", "StaticMesh");
 		m_shaderManager->AttachShader("StaticMeshGS", "StaticMesh");
 		m_shaderManager->AttachShader("StaticMeshFS", "StaticMesh");
 
 		m_shaderManager->LinkProgram("StaticMesh");
+
+		ul = m_shaderManager->GetUniformLocation("StaticMesh", "inputColor");
 	}
 
 	void DeferredPainter::Render(FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID)
 	{
 		BasePainter::Render();
 
+		//BindGBuffer(normalDepth, diffuse, specular, glowMatID);
+
 		m_shaderManager->UseProgram("StaticMesh");
+		m_shaderManager->SetUniform(1, glm::vec4(1, 0, 0, 1), ul);
 		glBindVertexArray(m_dummyVAO);
 		glDrawArrays(GL_POINTS, 0, 1);
 
-
 		m_shaderManager->ResetProgram();
 
-		//BindGBuffer(normalDepth, diffuse, specular, glowMatID);
 		ClearFBO();
 	}
 
