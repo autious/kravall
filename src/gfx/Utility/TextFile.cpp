@@ -1,4 +1,6 @@
 #include "TextFile.hpp"
+#include <cstring>
+
 namespace GFX
 {
 	TextFile::TextFile()
@@ -61,7 +63,7 @@ namespace GFX
 
 			unsigned int size = m_text.length() + 1;
 			m_cText = new char[size];	//+1 for the null-termination
-			strcpy_s(m_cText, size, m_text.c_str());
+			strcpy(m_cText, m_text.c_str());
 			m_loadedFile = true;
 		}
 

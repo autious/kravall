@@ -2,7 +2,7 @@
 #define SRC_GFX_RENDERER_BASE_PAINTER_HPP
 
 #include "../Shaders/ShaderManager.hpp"
-#include <gl/glew.h>
+#include <GL/glew.h>
 
 namespace GFX
 {

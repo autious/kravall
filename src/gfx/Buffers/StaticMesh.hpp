@@ -3,7 +3,7 @@
 
 #include "Vertex.hpp"
 #include "MeshData.hpp"
-#include <gl/glew.h>
+#include <GL/glew.h>
 
 namespace GFX
 {
