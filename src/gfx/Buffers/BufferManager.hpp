@@ -16,7 +16,7 @@ namespace GFX
 		~BufferManager();
 
 		/*!
-		Load a static mesh into a VBO, VAO and IBO
+		Load a static mesh into a VBO, VAO and IBO, save it in the vector for static meshes
 		\param meshData Vertex and index data for a static mesh
 		*/
 		void LoadStaticMesh(const StaticMeshData& meshData);

@@ -4,6 +4,8 @@
 #include "ShaderBaseModel.hpp"
 #include <Utility/TextFile.hpp>
 
+#include <glm/glm.hpp>
+
 #include <iostream>
 
 namespace GFX
@@ -88,6 +90,27 @@ namespace GFX
 		Reset the GPU to use no program
 		*/
 		void ResetProgram();
+
+
+		/*!
+		Get the location of a uniform in a program
+		\param shaderProgramKey Name of the program to look for the uniform
+		\param uniformName Name of the uniform to look for
+		\return GLuint Location of the uniform
+		*/
+		GLuint GetUniformLocation(std::string shaderProgramKey, std::string uniformName);
+
+		void SetUniform(GLfloat x, GLuint uniformLocation);
+		void SetUniform(GLfloat x, GLfloat y, GLuint uniformLocation);
+		void SetUniform(GLfloat x, GLfloat y, GLfloat z, GLuint uniformLocation);
+		void SetUniform(GLfloat x, GLfloat y, GLfloat z, GLfloat w, GLuint uniformLocation);
+
+		void SetUniform(int count, glm::vec2 vec, GLuint uniformLocation);
+		void SetUniform(int count, glm::vec3 vec, GLuint uniformLocation);
+		void SetUniform(int count, glm::vec4 vec, GLuint uniformLocation);
+		void SetUniform(int count, glm::mat2 mat, GLuint uniformLocation);
+		void SetUniform(int count, glm::mat3 mat, GLuint uniformLocation);
+		void SetUniform(int count, glm::mat4 mat, GLuint uniformLocation);
 	};
 }
 
