@@ -6,6 +6,6 @@
 
 #include "internal\LogHandler.hpp"
 #include "internal\ConsoleHandler.hpp"
-#include "internal\FileHandler.hpp"
+//#include "internal\FileHandler.hpp"
 
 #endif

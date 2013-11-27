@@ -56,7 +56,7 @@ solution "RiotGame"
         language "C++"
         kind "ConsoleApp"
         files { "gtest/core/**.cpp", "src/core/**.hpp", "src/core/**.h", "src/core/**.cpp" }
-        includedirs { "src/core", "include" }
+        includedirs { "src/core", "include", "include/logger" }
         links { "glfw3", "gfx", "logger" }
 
         configuration{ "*Test" }
@@ -71,7 +71,7 @@ solution "RiotGame"
         language "C++"
         kind "SharedLib"
         files { "gtest/gfx/**.cpp", "src/gfx/**.hpp", "src/gfx/**.h", "src/gfx/**.cpp", "include/gfx/**.hpp", "shaders/**.vertex", "shaders/**.geometry", "shaders/**.fragment", "shaders/**.compute" }
-        includedirs { "src/gfx", "include/gfx", "shaders" }       
+        includedirs { "src/gfx", "include/gfx", "shaders", "include/logger" }       
 
         links { "glfw3" }
         configuration{ "*Test" }

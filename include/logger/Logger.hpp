@@ -1,7 +1,7 @@
 #ifndef LogSystemHPP
 #define LogSystemHPP
 
-#ifdef LogSystem_DLL_EXPORT
+#ifdef LOGGER_DLL_EXPORT
 #define DLLSETTING __declspec(dllexport)
 #else 
 #define DLLSETTING __declspec(dllimport)

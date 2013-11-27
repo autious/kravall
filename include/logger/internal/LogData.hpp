@@ -1,7 +1,7 @@
 #ifndef LOGDATAHPP
 #define LOGDATAHPP
 
-#ifdef LogSystem_DLL_EXPORT
+#ifdef LOGGER_DLL_EXPORT
 #define DLLSETTING __declspec(dllexport)
 #else 
 #define DLLSETTING __declspec(dllimport)
@@ -44,10 +44,10 @@ namespace LogSystem
 	extern LogData error;
 	extern LogData warning;
 	
-	extern LogHandler* debugHandler;
-	extern LogHandler* fatalHandler;
-	extern LogHandler* errorHandler;
-	extern LogHandler* warningHandler;
+	DLLSETTING extern LogHandler* debugHandler;
+	DLLSETTING extern LogHandler* fatalHandler;
+	DLLSETTING extern LogHandler* errorHandler;
+	DLLSETTING extern LogHandler* warningHandler;
 
 	extern char* ignoreList;
 	DLLSETTING void Mute( const char* prefix );

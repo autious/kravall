@@ -11,3 +11,7 @@ LogHandler::LogHandler()
 LogHandler::~LogHandler()
 {
 }
+
+void LogHandler::Log( const char* message )
+{
+}
