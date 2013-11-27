@@ -57,10 +57,13 @@ namespace LogSystem
 		LogType m_type;
 	};
 	
-	// only here for intelisense help, logger::debug will be overrided by macro.
+	/*! only here for intelisense help, will be overrided by macro. */
 	extern LogData debug;
+	/*! only here for intelisense help, will be overrided by macro. */
 	extern LogData fatal;
+	/*! only here for intelisense help, will be overrided by macro. */
 	extern LogData error;
+	/*! only here for intelisense help, will be overrided by macro. */
 	extern LogData warning;
 	
 	/*! channel for 'debug' messages, default is ConsoleHandler */

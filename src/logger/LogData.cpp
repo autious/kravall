@@ -4,6 +4,9 @@
 #include "internal/ConsoleHandler.hpp"
 #include <sstream>
 
+#include <mutex>
+
+
 LogHandler* LogSystem::debugHandler		= new ConsoleHandler( LogSystem::LogType::logType_debug );
 LogHandler* LogSystem::fatalHandler		= new ConsoleHandler( LogSystem::LogType::logType_fatal );
 LogHandler* LogSystem::errorHandler		= new ConsoleHandler( LogSystem::LogType::logType_error );
@@ -11,8 +14,12 @@ LogHandler* LogSystem::warningHandler	= new ConsoleHandler( LogSystem::LogType::
 
 char* LogSystem::ignoreList = "";
 
+static std::mutex logMutex
+;
 void LogSystem::Mute( const char* prefix )
 {
+	logMutex.lock();
+
 	std::stringstream ss;
 	ss << prefix << " " << ignoreList;
 
@@ -21,10 +28,14 @@ void LogSystem::Mute( const char* prefix )
 	std::strcpy( temp, msg.c_str() );
 
 	ignoreList = temp;
+
+	logMutex.unlock();
 }
 
 void LogSystem::Unmute( const char* prefix )
 {
+	logMutex.lock();
+
 	std::stringstream ss;
 	std::stringstream out;
 	ss << ignoreList;
@@ -41,14 +52,20 @@ void LogSystem::Unmute( const char* prefix )
 	char* temp = new char[msg.size()];
 	std::strcpy( temp, msg.c_str() );
 	ignoreList = temp;
+
+	logMutex.unlock();
 }
 
-
+//static std::mutex alterLogHandlerMutex;
 void LogSystem::SetNewLogHandler( LogHandler** handlerChannel, LogHandler* newHandler )
 {
+	logMutex.lock();
+
 	if( *handlerChannel )
 		delete *handlerChannel;
 	*handlerChannel = newHandler;
+
+	logMutex.unlock();
 }
 
 LogSystem::LogData& operator<< ( LogSystem::LogData& data, StandardEndLine obj )
@@ -74,6 +91,8 @@ LogSystem::LogData::LogData(LogType type, const char* prefix )
 
 LogSystem::LogData::~LogData()
 {
+	logMutex.lock();
+
 	{
 		std::stringstream ss;
 		ss << ignoreList;
@@ -113,4 +132,6 @@ LogSystem::LogData::~LogData()
 			LogSystem::warningHandler->Log( msg.c_str() );
 		break;
 	}
+
+	logMutex.unlock();
 }

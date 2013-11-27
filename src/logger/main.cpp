@@ -16,6 +16,31 @@
 
 #define gfx LogData( LogSystem::LogType::logType_debug,		"gfx" )
 
+
+#include <logger/Logger.hpp>
+
+void testPrintFunction1()
+{
+	logger::SetNewLogHandler( &logger::debugHandler, 
+		new FileHandler( logger::LogType::logType_debug, "../../../../riot_log1.txt", true) );
+	
+	for( int i = 0; i < 50; i++ )
+		logger::debug << "1 2 3 4 5 6 7 8 9" << std::endl;
+}
+
+void testPrintFunction2()
+{
+	logger::SetNewLogHandler( &logger::debugHandler, 
+		new FileHandler( logger::LogType::logType_debug, "../../../../riot_log2.txt", true) );
+
+	for( int i = 0; i < 50; i++ )
+		logger::debug << "a b c d e f g h i" << std::endl;
+}
+
+#include <thread>
+
+
+
 /*! 
 	Contains example code for the log system.
 */
@@ -25,7 +50,19 @@ int main(int args, char argch[])
 	logger::SetNewLogHandler( &logger::debugHandler, 
 		new FileHandler( logger::LogType::logType_debug, "../../../../riot_log.txt", true) );
 
-	logger::debug << " detta ska gå till en fil! " << std::endl;	
+	std::thread threads[200];
+	for( int i = 0; i < 200; i++ )
+		threads[i] = (i % 2) == 0 ? std::thread( testPrintFunction1 ) : std::thread( testPrintFunction2 );
+
+	for( int i = 0; i < 200; i++ )
+		threads[i].join();
+
+	//std::thread one( testPrintFunction1 );
+	//std::thread two( testPrintFunction2 );
+	//one.join();
+	//two.join();
+
+	//logger::debug << " detta ska gå till en fil! " << std::endl;	
 
 	LogSystem::SetNewLogHandler( &LogSystem::debugHandler, new ConsoleHandler( LogSystem::LogType::logType_error ) );
 

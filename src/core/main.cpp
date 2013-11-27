@@ -11,8 +11,6 @@
 
 #include "Camera/Camera.hpp"
 
-#include <logger/Logger.hpp>
-#include <logger/Handlers.hpp>
 
 
 GLFWwindow* init()
@@ -56,6 +54,7 @@ void run( GLFWwindow * window )
 
 	glfwTerminate();
 }
+
 
 int main(int argc, char** argv)
 {
