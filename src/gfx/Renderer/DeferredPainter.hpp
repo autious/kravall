@@ -5,6 +5,7 @@
 #include <Shaders/ShaderManager.hpp>
 
 #include "FBOTexture.hpp"
+#include "../Buffers/UniformBufferManager.hpp"
 #include <GL/glew.h>
 
 namespace GFX
@@ -18,7 +19,7 @@ namespace GFX
 		\param shaderManager Pointer to ShaderManager present in RenderCore
 		\param bufferManager Pointer to BufferManager present in RenderCore
 		*/
-		DeferredPainter(ShaderManager* shaderManager, BufferManager* bufferManager);
+		DeferredPainter(ShaderManager* shaderManager, BufferManager* bufferManager, UniformBufferManager* uniformBufferManager);
 
 		~DeferredPainter();
 
@@ -37,7 +38,7 @@ namespace GFX
 		\param specular Rendertarget for specular
 		\param glowMatID Rendertarget for glow and materialID
 		*/
-		void Render(FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID);
+		void Render(FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix);
 
 	private:
 
@@ -50,6 +51,7 @@ namespace GFX
 		*/
 		void BindGBuffer(FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID);
 
+		GLuint exampleUniform;
 	};
 }
 

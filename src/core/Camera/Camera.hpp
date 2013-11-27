@@ -19,7 +19,7 @@ namespace Core
 		\param near Near clipping plane distance
 		\param far Far clipping plane distance
 		*/
-		Camera(const float& fov, const float& near, const float& far);
+		Camera(const float& fov, const float& nearZ, const float& farZ);
 
 		/*!
 		Destructor.
@@ -90,6 +90,10 @@ namespace Core
 		*/
 		inline glm::mat4x4 GetProjectionMatrix() const { return m_projectionMatrix; }
 
+		float* GetProjectionMatrixAsArray();
+
+		float* GetViewMatrixAsArray();
+
 		/*!
 		Sets the camera field of view.
 		\param fov The Field of view in degrees
@@ -100,7 +104,7 @@ namespace Core
 		Sets the near and far clipping plane of the camera.
 		\return Returns the projection matrix.
 		*/
-		inline void SetNearFar(const float& near, const float& far) { m_near = near; m_far = far; }
+		inline void SetNearFar(const float& nearZ, const float& farZ) { m_near = nearZ; m_far = farZ; }
 
 
 	private:

@@ -2,15 +2,15 @@
 
 namespace GFX
 {
-	DeferredPainter::DeferredPainter(ShaderManager* shaderManager, BufferManager* bufferManager)
-		: BasePainter(shaderManager, bufferManager)
+	DeferredPainter::DeferredPainter(ShaderManager* shaderManager, BufferManager* bufferManager, UniformBufferManager* uniformBufferManager)
+		: BasePainter(shaderManager, bufferManager, uniformBufferManager)
 	{
 	}
 
 	DeferredPainter::~DeferredPainter()
 	{
 	}
-	GLuint ul;
+	
 	void DeferredPainter::Initialize(GLuint FBO, GLuint dummyVAO)
 	{
 		BasePainter::Initialize(FBO, dummyVAO);
@@ -30,18 +30,36 @@ namespace GFX
 
 		m_shaderManager->LinkProgram("StaticMesh");
 
-		ul = m_shaderManager->GetUniformLocation("StaticMesh", "inputColor");
+		exampleUniform = m_shaderManager->GetUniformLocation("StaticMesh", "inputColor");
+
+		m_uniformBufferManager->CreateExampleBuffer(m_shaderManager->GetShaderProgramID("StaticMesh"));
+		m_uniformBufferManager->CreateBasicCameraUBO(m_shaderManager->GetShaderProgramID("StaticMesh"));
 	}
 
-	void DeferredPainter::Render(FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID)
+	void DeferredPainter::Render(FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix)
 	{
 		BasePainter::Render();
 
 		//BindGBuffer(normalDepth, diffuse, specular, glowMatID);
 
 		m_shaderManager->UseProgram("StaticMesh");
-		m_shaderManager->SetUniform(1, glm::vec4(1, 0, 0, 1), ul);
+		m_shaderManager->SetUniform(1, glm::vec4(1, 0, 0, 1), exampleUniform);
+		
+		BasicCamera bc;
+		bc.viewMatrix = viewMatrix;
+		bc.projMatrix = projMatrix;
+
+		ExampleBuffer eb;
+		eb.colorOne = glm::vec4(1.0f);
+		eb.colorTwo = glm::vec4(0.05f);
+		eb.floatOne = 0.0f;
+		eb.floatTwo = 1.0f;
+
+		m_uniformBufferManager->SetBasicCameraUBO(bc);
+		m_uniformBufferManager->SetExampleBufferData(eb);
+		
 		glBindVertexArray(m_dummyVAO);
+
 		glDrawArrays(GL_POINTS, 0, 1);
 
 		m_shaderManager->ResetProgram();

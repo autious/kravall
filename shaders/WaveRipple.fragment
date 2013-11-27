@@ -6,6 +6,20 @@ in vec2 uv;
 
 uniform vec4 inputColor;
 
+layout (std140) uniform PerFrameBlock
+{
+	mat4 view;
+	mat4 projection;
+};
+
+layout (std140) uniform ExampleBlock
+{
+	vec4 colorOne;
+	vec4 colorTwo;
+	float floatOne;
+	float floatTwo;
+};
+
 void main()
 {
 	float i = uv.s;
@@ -19,5 +33,5 @@ void main()
     color.r = wave_ripple;
     color.g = color.r;
     color.b = color.r;
-    color *= inputColor;
+    color *= colorOne.x;
 }

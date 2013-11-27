@@ -5,6 +5,7 @@
 #include <Shaders/ShaderManager.hpp>
 
 #include "FBOTexture.hpp"
+#include "../Buffers/UniformBufferManager.hpp"
 #include <GL/glew.h>
 
 namespace GFX
@@ -18,38 +19,33 @@ namespace GFX
 		\param shaderManager Pointer to ShaderManager present in RenderCore
 		\param bufferManager Pointer to BufferManager present in RenderCore
 		*/
-		DebugPainter(ShaderManager* shaderManager, BufferManager* bufferManager);
+		DebugPainter(ShaderManager* shaderManager, BufferManager* bufferManager, UniformBufferManager* uniformBufferManager);
 
 		~DebugPainter();
 
 		/*!
 		Initialization function which sets the dummyVAO and FBO for later use in the painter.
-		Loads all shaders associated with deferred rendering.
+		Loads all shaders associated with debug rendering.
 		\param FBO ID of FBO used for rendertargets
 		\param dummyVAO ID of an empty VAO used for screenspace rendering
 		*/
 		void Initialize(GLuint FBO, GLuint dummyVAO);
 
 		/*!
-		Main deferred rendering loop
-		\param normalDepth Rendertarget for normals and depth
-		\param diffuse Rendertarget for diffuse
-		\param specular Rendertarget for specular
-		\param glowMatID Rendertarget for glow and materialID
+		Main debug rendering loop
+		\param viewMatrix View matrix for the shader
+		\param projMatrix Projection matrix for the shader
 		*/
-		void Render(FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID);
+		void Render(glm::mat4 viewMatrix, glm::mat4 projMatrix);
 
 	private:
 
 		/*!
-		Binds all the rendertargets to the FBO and GPU
-		\param normalDepth Rendertarget for normals and depth
-		\param diffuse Rendertarget for diffuse
-		\param specular Rendertarget for specular
-		\param glowMatID Rendertarget for glow and materialID
+		Detaches all textures used in the deferred pipeline
 		*/
-		void BindGBuffer(FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID);
+		void DetachTextures();
 
+		GLuint debugUniform;
 	};
 }
 
