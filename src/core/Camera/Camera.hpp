@@ -15,6 +15,9 @@ namespace Core
 	public:
 		/*!
 		Constructor.
+		\param fov Field of view for the camera projection
+		\param near Near clipping plane distance
+		\param far Far clipping plane distance
 		*/
 		Camera(const float& fov, const float& near, const float& far);
 
