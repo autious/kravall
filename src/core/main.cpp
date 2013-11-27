@@ -8,11 +8,12 @@
 
 #include <gfx/GFXInterface.hpp>
 
+#include "Camera/Camera.hpp"
 
 GLFWwindow* init()
 {
 	GLFWwindow* window;
-	
+
 	Core::InitializeGLFW(&window, 1280, 720);
 
 	if (GFX::Init(1280,720) == GFX_FAIL)
@@ -23,10 +24,19 @@ GLFWwindow* init()
 
 void run( GLFWwindow * window )
 {
+	Core::Camera* gCamera;
+	gCamera = new Core::Camera(45.0f, 1.0f, 1000.0f);
+	gCamera->CalculateProjectionMatrix(1280, 720);
+
+	GFX::SetProjectionMatrix(gCamera->GetProjectionMatrixAsArray());
+
 	while (!glfwWindowShouldClose(window))
 	{
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE))
 			break;
+
+		gCamera->CalculateViewMatrix();
+		GFX::SetViewMatrix(gCamera->GetViewMatrixAsArray());
 
 		GFX::Render();
 

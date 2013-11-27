@@ -55,7 +55,7 @@ namespace GFX
 
 	void RenderCore::Render()
 	{
-		m_deferredPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID);
+		m_deferredPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
 	}
 
 	void RenderCore::InitializeGBuffer()
@@ -114,5 +114,15 @@ namespace GFX
 		glVertexAttribPointer(0, 1, GL_FLOAT, GL_FALSE, 0, (GLubyte*)NULL);
 
 		glBindVertexArray(0);
+	}
+
+	void RenderCore::SetViewMatrix(glm::mat4 view)
+	{
+		m_viewMatrix = view;
+	}
+
+	void RenderCore::SetProjMatrix(glm::mat4 proj)
+	{
+		m_projMatrix = proj;
 	}
 }

@@ -16,12 +16,17 @@ namespace GFX
 		UniformBufferManager();
 		~UniformBufferManager();
 
+		void CreateBasicCameraUBO(GLuint programID);
+		void SetBasicCameraUBO(const BasicCamera& basicCamera);
+		GLuint GetBasicCameraUBO();
+
 		void CreateExampleBuffer(GLuint programID);
 		void SetExampleBufferData(const ExampleBuffer& eb);
 		GLuint GetExampleBuffer();
 		
 	private:
 		GLuint m_exampleUBO;
+		GLuint m_basicCameraUBO;
 	};
 }
 

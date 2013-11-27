@@ -6,6 +6,7 @@
 #include <GFXInterface.hpp>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <glm/gtc/type_ptr.hpp>
 
 void APIENTRY glErrorCallback(GLenum _source, GLenum _type, GLuint _id, GLenum _severity, GLsizei _length, const char* _message, void* _userParam)
 {
@@ -73,5 +74,15 @@ namespace GFX
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		Renderer().Render();
+	}
+
+	void SetViewMatrix(GFXMat4x4 matrix)
+	{
+		Renderer().SetViewMatrix(glm::make_mat4(matrix));
+	}
+
+	void SetProjectionMatrix(GFXMat4x4 matrix)
+	{
+		Renderer().SetProjMatrix(glm::make_mat4(matrix));
 	}
 }

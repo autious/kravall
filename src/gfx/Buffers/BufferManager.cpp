@@ -42,5 +42,4 @@ namespace GFX
 		m_staticMeshes.push_back(mesh);
 	}
 
-
 }

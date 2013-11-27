@@ -33,9 +33,10 @@ namespace GFX
 		exampleUniform = m_shaderManager->GetUniformLocation("StaticMesh", "inputColor");
 
 		m_uniformBufferManager->CreateExampleBuffer(m_shaderManager->GetShaderProgramID("StaticMesh"));
+		m_uniformBufferManager->CreateBasicCameraUBO(m_shaderManager->GetShaderProgramID("StaticMesh"));
 	}
 
-	void DeferredPainter::Render(FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID)
+	void DeferredPainter::Render(FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix)
 	{
 		BasePainter::Render();
 
@@ -44,12 +45,17 @@ namespace GFX
 		m_shaderManager->UseProgram("StaticMesh");
 		m_shaderManager->SetUniform(1, glm::vec4(1, 0, 0, 1), exampleUniform);
 		
+		BasicCamera bc;
+		bc.viewMatrix = viewMatrix;
+		bc.projMatrix = projMatrix;
+
 		ExampleBuffer eb;
 		eb.colorOne = glm::vec4(1.0f);
 		eb.colorTwo = glm::vec4(0.05f);
 		eb.floatOne = 0.0f;
 		eb.floatTwo = 1.0f;
 
+		m_uniformBufferManager->SetBasicCameraUBO(bc);
 		m_uniformBufferManager->SetExampleBufferData(eb);
 		
 		glBindVertexArray(m_dummyVAO);

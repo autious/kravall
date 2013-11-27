@@ -17,7 +17,7 @@
 typedef struct GFXVec2 { float x, y; }			GFXVec2;
 typedef struct GFXVec3 { float x, y, z; }		GFXVec3;
 typedef struct GFXVec4 { float x, y, z, w; }	GFXVec4;
-typedef struct GFXMat4x4 { float d[4][4]; }		GFXMat4x4;
+typedef float* GFXMat4x4;
 
 typedef GFXVec4 GFXColor;
 

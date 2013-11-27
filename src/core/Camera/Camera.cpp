@@ -4,11 +4,11 @@
 namespace Core
 {
 
-	Camera::Camera(const float& fov, const float& near, const float& far)
+	Camera::Camera(const float& fov, const float& nearZ, const float& farZ)
 	{
 		m_fov = fov;
-		m_near = near;
-		m_far = far;
+		m_near = nearZ;
+		m_far = farZ;
 		m_position = glm::vec3(0.0f, 0.0f, 0.0f);
 		m_rotationXYZ = glm::vec3(0.0f, 0.0f, 0.0f);
 
@@ -75,6 +75,17 @@ namespace Core
 		unsigned int halfWidth = width / 2;
 		unsigned int halfHeight = height / 2;
 		m_projectionMatrix = glm::ortho(-halfWidth, halfWidth, halfHeight, -halfHeight);
+	}
+
+
+	float* Camera::GetProjectionMatrixAsArray()
+	{
+		return (float*)glm::value_ptr(m_projectionMatrix);
+	}
+
+	float* Camera::GetViewMatrixAsArray()
+	{
+		return (float*)glm::value_ptr(m_viewMatrix);
 	}
 
 }
