@@ -131,6 +131,7 @@ namespace GFX
 		\param position World space position for the center of the sphere
 		\param radius Sphere radius
 		\param solid If true, the sphere will be filled, else only outlines will be shown
+		\param color Color of the sphere
 		*/
 		DLL_API void DrawSphere(GFXVec3 position, float radius, bool solid, GFXColor color);
 
@@ -139,6 +140,7 @@ namespace GFX
 		\param position Screen space position for the center of the circle
 		\param radius Circle radius
 		\param solid If true, the circle will be filled, else only outlines will be shown
+		\param color Color of the circle
 		*/
 		DLL_API void DrawCircle(GFXVec2 position, float radius, bool solid, GFXColor color);
 	} // namespace Debug
