@@ -3,15 +3,21 @@
 
 #include <internal/LogHandler.hpp>
 
+#ifdef LOGGER_DLL_EXPORT
+#define DLLSETTING __declspec(dllexport)
+#else 
+#define DLLSETTING __declspec(dllimport)
+#endif
 
-class ConsoleHandler : public LogHandler
+
+DLLSETTING class ConsoleHandler : public LogHandler
 {
 public:
-	ConsoleHandler();
-	ConsoleHandler( LogSystem::LogType type );
-	virtual ~ConsoleHandler() override;
+	DLLSETTING ConsoleHandler();
+	DLLSETTING ConsoleHandler( LogSystem::LogType type );
+	DLLSETTING virtual ~ConsoleHandler() override;
 
-	virtual void Log( const char* message ) override;
+	DLLSETTING virtual void Log( const char* message ) override;
 
 private:
 
@@ -20,5 +26,5 @@ private:
 
 
 
-
+#undef DLLSETTING
 #endif

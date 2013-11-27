@@ -1,18 +1,22 @@
 #ifndef LOGHANDLERHPP
 #define LOGHANDLERHPP
 
-
 #include <string>
 #include <internal/LogData.hpp>
 
+#ifdef LOGGER_DLL_EXPORT
+#define DLLSETTING __declspec(dllexport)
+#else 
+#define DLLSETTING __declspec(dllimport)
+#endif
 
-class LogHandler
+DLLSETTING class LogHandler
 {
 public:
-	LogHandler();
-	virtual ~LogHandler();
+	DLLSETTING LogHandler();
+	DLLSETTING virtual ~LogHandler();
 
-	virtual void Log( const char* message ) { }
+	DLLSETTING virtual void Log( const char* message );
 
 protected:
 	LogSystem::LogType m_type;
@@ -20,5 +24,5 @@ protected:
 
 
 
-
+#undef DLLSETTING
 #endif
