@@ -11,6 +11,9 @@
 
 #include "Camera/Camera.hpp"
 
+#include <logger/Logger.hpp>
+#include <logger/Handlers.hpp>
+
 
 GLFWwindow* init()
 {
