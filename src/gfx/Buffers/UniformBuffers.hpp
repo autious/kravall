@@ -14,6 +14,11 @@ namespace GFX
 		GLfloat floatTwo;
 	};
 
+	struct BasicCamera
+	{
+		glm::mat4 viewMatrix;
+		glm::mat4 projMatrix;
+	};
 }
 
 #endif
