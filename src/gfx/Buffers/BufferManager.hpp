@@ -15,8 +15,21 @@ namespace GFX
 		BufferManager();
 		~BufferManager();
 
+		/*!
+		Load a static mesh into a VBO, VAO and IBO
+		\param meshData Vertex and index data for a static mesh
+		*/
 		void LoadStaticMesh(const StaticMeshData& meshData);
+
+		/*!
+		Bind the VAO and IBO of a mesh which matches id
+		\param id The id of the mesh to be bound
+		*/
 		void BindMesh(GLuint id);
+
+		/*!
+		Unbind any mesh from the GPU
+		*/
 		void UnbindMesh();
 
 	private:
