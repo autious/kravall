@@ -7,6 +7,9 @@
 
 #include "FBOTexture.hpp"
 #include "DeferredPainter.hpp"
+#include "DebugPainter.hpp"
+
+#include "DebugManager.hpp"
 
 #include <iostream>
 
@@ -43,6 +46,7 @@ namespace GFX
 
 		void SetViewMatrix(glm::mat4 view);
 		void SetProjMatrix(glm::mat4 proj);
+
 	private:
 		RenderCore();
 		~RenderCore();
@@ -83,6 +87,7 @@ namespace GFX
 
 		glm::mat4 m_viewMatrix;
 		glm::mat4 m_projMatrix;
+
 	};
 
 	/*!

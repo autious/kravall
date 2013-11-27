@@ -15,7 +15,7 @@ namespace GFX
 	void BufferManager::BindMesh(GLuint id)
 	{
 
-		for (int i = 0; i < m_staticMeshes.size(); i++)
+		for (unsigned int i = 0; i < m_staticMeshes.size(); i++)
 		{
 			if (id == m_staticMeshes.at(i)->GetVBO())
 			{

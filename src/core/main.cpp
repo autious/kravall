@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-
+#include <WindowHandling/GLFWInclude.hpp>
 #include "WindowHandling/InitializeGLFW.hpp"
 
 #include <gfx/GFXInterface.hpp>
@@ -36,6 +36,9 @@ void run( GLFWwindow * window )
 	{
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE))
 			break;
+
+		GFX::Debug::DrawPoint(glm::vec2(100.0f, 100.0f), glm::vec4(1.0f, 1.0f, 0.0f, 1.0f));
+
 
 		gCamera->CalculateViewMatrix();
 		GFX::SetViewMatrix(gCamera->GetViewMatrixAsArray());

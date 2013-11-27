@@ -1,8 +1,8 @@
 #ifndef SRC_CORE_CAMERA_CAMERA_HPP
 #define SRC_CORE_CAMERA_CAMERA_HPP
 
-#include <glm/glm.hpp>
 #include <glm/ext.hpp>
+#include <glm/glm.hpp>
 
 namespace Core
 {
@@ -15,6 +15,9 @@ namespace Core
 	public:
 		/*!
 		Constructor.
+		\param fov Field of view for the camera projection
+		\param near Near clipping plane distance
+		\param far Far clipping plane distance
 		*/
 		Camera(const float& fov, const float& nearZ, const float& farZ);
 

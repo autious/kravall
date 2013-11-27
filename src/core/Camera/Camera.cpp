@@ -72,8 +72,8 @@ namespace Core
 	void Camera::CalculateProjectionOrtho(const unsigned int &width, const unsigned int &height)
 	{
 		// TODO: Verify
-		unsigned int halfWidth = width / 2;
-		unsigned int halfHeight = height / 2;
+		int halfWidth = width / 2;
+		int halfHeight = height / 2;
 		m_projectionMatrix = glm::ortho(-halfWidth, halfWidth, halfHeight, -halfHeight);
 	}
 

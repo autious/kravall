@@ -1,6 +1,11 @@
 #ifndef SRC_CORE_WINDOWHANDLING_GLFW_INCLUDE_HPP
 #define SRC_CORE_WINDOWHANDLING_GLFW_INCLUDE_HPP
 
+#include <glm/glm.hpp> //For some reason glm refuses to compile if included after this header
+                       //Therefore i put a copy here.
+#include <glm/ext.hpp>
+
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 #ifdef _WIN32

@@ -11,12 +11,14 @@
 #define DLL_API 
 #endif
 
+#include <glm/glm.hpp>
+
 #define GFX_SUCCESS 0
 #define GFX_FAIL 1
 
-typedef struct GFXVec2 { float x, y; }			GFXVec2;
-typedef struct GFXVec3 { float x, y, z; }		GFXVec3;
-typedef struct GFXVec4 { float x, y, z, w; }	GFXVec4;
+typedef glm::vec2 GFXVec2;
+typedef glm::vec3 GFXVec3;
+typedef glm::vec4 GFXVec4;
 typedef float* GFXMat4x4;
 
 typedef GFXVec4 GFXColor;

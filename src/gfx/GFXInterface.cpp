@@ -85,4 +85,22 @@ namespace GFX
 	{
 		Renderer().SetProjMatrix(glm::make_mat4(matrix));
 	}
+
+}
+
+// Separated for debug interface
+namespace GFX
+{
+	void Debug::DrawPoint(GFXVec2 point, GFXColor color)
+	{
+		Debug::DrawPoint(point, color, 1.0f);
+	}
+	void Debug::DrawPoint(GFXVec2 point, GFXColor color, float size)
+	{
+		DebugPoint p;
+		p.position = glm::vec3(point, 1.0f);
+		p.size = 1.0f;
+		p.color = color;
+		DebugDrawing().AddPoint(p);
+	}
 }
