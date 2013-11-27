@@ -59,17 +59,15 @@ solution "RiotGame"
         configuration { "Release", "Debug" }
             defines { "GFX_DLL_EXPORT" }
  
---	project "logger"
---        location ( location_path )
---        language "C++"
+	project "logger"
+      location ( location_path )
+      language "C++"
 		--kind "SharedLib"
---		kind "ConsoleApp"
---        files { "src/logger/**.hpp", "src/logger/**.h", "src/logger/**.cpp", "include/logger/**.hpp" }
---		includedirs { "include/logger", "src/logger" }       
---        configurations "Debug"
---            defines { "LOGGER_DLL_EXPORT" }
---		configurations "Release"
---            defines { "LOGGER_DLL_EXPORT" }
+		kind "ConsoleApp"
+        files { "src/logger/**.hpp", "src/logger/**.h", "src/logger/**.cpp", "include/logger/**.hpp" }
+		includedirs { "include/logger", "src/logger" }       
+        configurations{ "Debug", "Release" }
+            defines { "LOGGER_DLL_EXPORT" }
  
 --    project "sfx"
 --        location ( location_path )

@@ -10,7 +10,7 @@ namespace GFX
 	DeferredPainter::~DeferredPainter()
 	{
 	}
-
+	GLuint ul;
 	void DeferredPainter::Initialize(GLuint FBO, GLuint dummyVAO)
 	{
 		BasePainter::Initialize(FBO, dummyVAO);
@@ -29,6 +29,8 @@ namespace GFX
 		m_shaderManager->AttachShader("StaticMeshFS", "StaticMesh");
 
 		m_shaderManager->LinkProgram("StaticMesh");
+
+		ul = m_shaderManager->GetUniformLocation("StaticMesh", "inputColor");
 	}
 
 	void DeferredPainter::Render(FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID)
@@ -38,6 +40,7 @@ namespace GFX
 		//BindGBuffer(normalDepth, diffuse, specular, glowMatID);
 
 		m_shaderManager->UseProgram("StaticMesh");
+		m_shaderManager->SetUniform(1, glm::vec4(1, 0, 0, 1), ul);
 		glBindVertexArray(m_dummyVAO);
 		glDrawArrays(GL_POINTS, 0, 1);
 
