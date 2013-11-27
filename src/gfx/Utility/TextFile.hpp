@@ -28,7 +28,7 @@ namespace GFX
 
 		std::string GetString();
 		const char* GetCString();
-		char* GetNonConstantChar();
+		//char* GetNonConstantChar(); See body
 
 		void Clear();
 	};
