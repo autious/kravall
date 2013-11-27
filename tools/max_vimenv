@@ -10,7 +10,7 @@
 :map <F3><F7> :!git push
 :map <F3><F8> :!git pull
 
-:map! <F4><F2> <C-R>='#ifndef '.substitute(substitute(toupper(expand('%:r')),'\.',"_","g"),'\/',"_","g")."_H\n".'#define '.substitute(substitute(toupper(expand('%:r')),'\.',"_","g"),'\/',"_","g")."_H\n\n".'#endif'<CR><Esc>
+:map! <F4><F3> <C-R>='#ifndef '.substitute(substitute(toupper(expand('%:r')),'\.',"_","g"),'\/',"_","g")."_H\n".'#define '.substitute(substitute(toupper(expand('%:r')),'\.',"_","g"),'\/',"_","g")."_H\n\n".'#endif'<CR><Esc>
 :inoremap jk <esc> 
 :map! <F4><F2> <C-R>=expand('%:t:r')<CR>
 
