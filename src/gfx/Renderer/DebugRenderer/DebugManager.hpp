@@ -27,6 +27,7 @@ namespace GFX
 		glm::vec3 position;
 		glm::vec3 dimensions;
 		glm::vec4 color;
+		float lineWidth;
 	};
 
 	struct DebugBox
@@ -59,7 +60,7 @@ namespace GFX
 		void AddRect(DebugRect rect, bool filled);
 		void AddBox(DebugBox box, bool filled);
 		void AddSphere(DebugSphere sphere, bool filled);
-		void AddCircle(DebugRect circle, bool filled);
+		void AddCircle(DebugRect circle);
 
 		inline std::vector<DebugPoint>& GetPoints(){ return m_points; }
 		inline std::vector<DebugLine>& GetLines(){ return m_lines; }

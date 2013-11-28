@@ -158,10 +158,10 @@ namespace GFX
 		Draws a screen space circle on the screen.
 		\param position Screen space position for the center of the circle
 		\param radius Circle radius
-		\param solid If true, the circle will be filled, else only outlines will be shown
+		\param lineWidth Width of the outline line, the circle will be filled if this value is 0
 		\param color Color of the circle
 		*/
-		DLL_API void DrawCircle(GFXVec2 position, float radius, bool solid, GFXColor color);
+		DLL_API void DrawCircle(GFXVec2 position, float radius, unsigned int lineWidth, GFXColor color);
 	} // namespace Debug
 
 	namespace Settings

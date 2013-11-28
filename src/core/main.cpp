@@ -63,7 +63,11 @@ void run( GLFWwindow * window )
 
 		GFX::Debug::DrawBox(glm::vec3(-0.5f, 0.0f, 0.0f), glm::vec3(0.2f, 0.7f, 0.2f), false, glm::vec4(0.4f, 1.0f, 0.0f, 1.0f));
 
-		GFX::Debug::DrawCircle(glm::vec2(100.0f, 100.0f), 200.0f, true, glm::vec4(1.0f, 1.0f, 0.0f, 0.5f));
+		GFX::Debug::DrawCircle(glm::vec2(100.0f, 100.0f), 200.0f, 0, glm::vec4(1.0f, 1.0f, 0.0f, 0.5f));
+
+		GFX::Debug::DrawCircle(glm::vec2(800.0f, 600.0f), 250.0f, 1, glm::vec4(1.0f, 1.0f, 1.0f, 0.5f));
+
+		GFX::Debug::DrawCircle(glm::vec2(800.0f, 100.0f), 56.0f, 4, glm::vec4(0.5f, 0.0f, 1.0f, 0.5f));
 
 		//gCamera->CalculateViewMatrix();
 		gCamera->LookAt(glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));

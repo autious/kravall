@@ -51,7 +51,7 @@ namespace GFX
 		m_circlePosUniform = m_shaderManager->GetUniformLocation("DebugCircle", "pointPosition");
 		m_circleDimUniform = m_shaderManager->GetUniformLocation("DebugCircle", "pointPosition2");
 		m_circleColorUniform = m_shaderManager->GetUniformLocation("DebugCircle", "inColor");
-		m_screenSizeUniform = m_shaderManager->GetUniformLocation("DebugCircle", "screenSize");
+		m_screenSizeUniform = m_shaderManager->GetUniformLocation("DebugCircle", "screenSizeAndLinewidth");
 
 		m_uniformBufferManager->CreateBasicCameraUBO(m_shaderManager->GetShaderProgramID("DebugCircle"));
 
@@ -187,7 +187,7 @@ namespace GFX
 			m_shaderManager->SetUniform(1, r.position, m_circlePosUniform);
 			m_shaderManager->SetUniform(1, r.dimensions, m_circleDimUniform);
 			m_shaderManager->SetUniform(1, 
-				glm::vec2(Renderer().GetWindowWidth(), Renderer().GetWindowHeight()), 
+				glm::vec3(Renderer().GetWindowWidth(), Renderer().GetWindowHeight(), r.lineWidth), 
 				m_screenSizeUniform);
 			
 
