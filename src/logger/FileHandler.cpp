@@ -8,7 +8,7 @@ FileHandler::FileHandler()
 {
 	m_type = LogSystem::LogType::logType_debug;
 }
-/*
+
 FileHandler::FileHandler( LogSystem::LogType type, std::string path, bool append )
 {
 	m_type = type;
@@ -23,19 +23,17 @@ FileHandler::FileHandler( LogSystem::LogType type, std::string path, bool append
 	if( append )
 		m_file << "=========" << std::endl << "=========" << std::endl;
 }
-*/
-/*
+
+
 FileHandler::~FileHandler()
 {
 	if( m_file.is_open() )
 		m_file.close();
 }
-*/
 
-/*
- void FileHandler::Log( const char* message )
+
+void FileHandler::Log( const char* message )
  {
 	 if( m_file.is_open() )
 		 m_file << message;
  }
- */

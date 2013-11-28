@@ -1,7 +1,6 @@
 #ifndef FILEHANDLERHPP
 #define FILEHANDLERHPP
 
-#include <iostream>
 #include <fstream>
 #include <internal/LogHandler.hpp>
 
@@ -28,35 +27,14 @@ public:
 	\param Path is the relative path to the file.
 	\param Append will cause the messages to be appended to the file.
 	*/
-	FileHandler( LogSystem::LogType type, std::string path, bool append )
-	{
-		m_type = type;
-		m_file.open( path, std::fstream::out | (append ? std::fstream::app : std::fstream::trunc ) );
-
-		if( !m_file.is_open() )
-		{
-			std::cout << "FileHandler cannot open path for debug output: " << path << std::endl;
-			return;
-		}
-
-		if( append )
-			m_file << "=========" << std::endl << "=========" << std::endl;
-	}
+	FileHandler( LogSystem::LogType type, std::string path, bool append );
 	
-	virtual ~FileHandler() override
-	{
-		if( m_file.is_open() )
-			m_file.close();
-	}
+	virtual ~FileHandler() override;
 
 	/*! 
 		\param message will print message to file if file is open 
 	*/
-	virtual void Log( const char* message ) override
-	{
-		if( m_file.is_open() )
-		 m_file << message;
-	}
+	virtual void Log( const char* message ) override;
 
 private:
 	std::fstream m_file;
