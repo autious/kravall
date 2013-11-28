@@ -40,30 +40,6 @@ void run( GLFWwindow * window )
 	{
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE))
 			break;
-		GFX::Debug::DrawPoint(glm::vec2(20.0f, 20.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), 10.0f);
-
-		GFX::Debug::DrawPoint(glm::vec2(800.0f, 600.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), 10.0f);
-
-
-		GFX::Debug::DrawLine(glm::vec3(-0.5f, 0.0f, -1.0f),
-			glm::vec3(0.5f, 0.0f, 0.0f), glm::vec4(0.5f, 0.0f, 1.0f, 1.0f));
-
-		GFX::Debug::DrawLine(glm::vec2(20.0f, 20.0f),
-			glm::vec2(800.0f, 600.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
-
-
-		GFX::Debug::DrawRectangle(glm::vec2(400.0f, 400.0f), glm::vec2(100.0f, 20.0f), 
-			false, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-
-		GFX::Debug::DrawRectangle(glm::vec2(400.0f, 380.0f), glm::vec2(100.0f, 20.0f), 
-			true, glm::vec4(0.0f, 0.0f, 1.0f, 0.3f));
-
-
-		GFX::Debug::DrawBox(glm::vec3(-0.5f, 0.0f, 0.0f), glm::vec3(0.2f, 0.7f, 0.2f), true, glm::vec4(0.4f, 1.0f, 0.0f, 0.2f));
-
-		GFX::Debug::DrawBox(glm::vec3(-0.5f, 0.0f, 0.0f), glm::vec3(0.2f, 0.7f, 0.2f), false, glm::vec4(0.4f, 1.0f, 0.0f, 1.0f));
-
-		GFX::Debug::DrawCircle(glm::vec2(100.0f, 100.0f), 200.0f, true, glm::vec4(1.0f, 1.0f, 0.0f, 0.5f));
 
 		//gCamera->CalculateViewMatrix();
 		gCamera->LookAt(glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
