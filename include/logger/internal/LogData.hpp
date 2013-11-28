@@ -49,6 +49,11 @@ namespace LogSystem
 		*/
 		DLLSETTING LogData( LogType type, const char* prefix );
 
+        /*! 
+            Copy constructor
+        */
+        LogData( LogData&);
+
 		/*!
 			Once the LogData object is destroyed the printing goes into 
 			action using other utility in the LogSystem namespace.
@@ -63,13 +68,9 @@ namespace LogSystem
 	};
 	
 	/*! only here for intelisense help, will be overrided by macro. */
-	extern LogData debug;
 	/*! only here for intelisense help, will be overrided by macro. */
-	extern LogData fatal;
 	/*! only here for intelisense help, will be overrided by macro. */
-	extern LogData error;
 	/*! only here for intelisense help, will be overrided by macro. */
-	extern LogData warning;
 	
 	/*! channel for 'debug' messages, default is ConsoleHandler */
 	DLLSETTING extern LogHandler* debugHandler;
@@ -106,7 +107,7 @@ typedef CoutType& (*StandardEndLine)(CoutType&);
 DLLSETTING LogSystem::LogData& operator<< ( LogSystem::LogData& data, StandardEndLine obj );
 
 template < class T >
-LogSystem::LogData& operator<< ( LogSystem::LogData& data, const T& obj )
+LogSystem::LogData& operator<< ( LogSystem::LogData data, const T& obj )
 {
 	std::stringstream ss;
 	ss << data.m_message;
@@ -116,7 +117,7 @@ LogSystem::LogData& operator<< ( LogSystem::LogData& data, const T& obj )
 	char* temp = new char[msg.size()];
 	std::strcpy( temp, msg.c_str() );
 	data.m_message = temp;
-
+    
 	return data;
 }
 

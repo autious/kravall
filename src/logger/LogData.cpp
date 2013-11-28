@@ -14,8 +14,8 @@ LogHandler* LogSystem::warningHandler	= new ConsoleHandler( LogSystem::LogType::
 
 char* LogSystem::ignoreList = "";
 
-static std::mutex logMutex
-;
+static std::mutex logMutex;
+
 void LogSystem::Mute( const char* prefix )
 {
 	logMutex.lock();
