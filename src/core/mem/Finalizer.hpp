@@ -15,7 +15,7 @@ namespace Core
     template<typename T> 
     void DestructorCall(void* pointer)
     {
-    static_cast<T*>(pointer)->~T();
+        static_cast<T*>(pointer)->~T();
     }
 }
 
