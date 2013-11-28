@@ -101,19 +101,20 @@ namespace LogSystem
 
 typedef std::basic_ostream<char, std::char_traits<char> > CoutType;
 typedef CoutType& (*StandardEndLine)(CoutType&);
-DLLSETTING LogSystem::LogData& operator<< ( LogSystem::LogData& data, StandardEndLine obj );
+DLLSETTING LogSystem::LogData& operator<< ( const LogSystem::LogData& data, StandardEndLine obj );
 
 template < class T >
-LogSystem::LogData& operator<< ( LogSystem::LogData& data, const T& obj )
+LogSystem::LogData& operator<< ( const LogSystem::LogData& data, const T& obj )
 {
+	LogSystem::LogData& temp = (LogSystem::LogData&)data;
 	std::stringstream ss;
 	ss << data.m_message;
 	ss << obj;
 
 	std::string msg = ss.str();
-	std::strcpy( data.m_message, msg.c_str() );
+	std::strcpy( temp.m_message, msg.c_str() );
 
-	return data;
+	return temp;
 }
 
 

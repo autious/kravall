@@ -72,16 +72,17 @@ void LogSystem::SetNewLogHandler( LogHandler** handlerChannel, LogHandler* newHa
 	logMutex.unlock();
 }
 
-LogSystem::LogData& operator<< ( LogSystem::LogData& data, StandardEndLine obj )
+LogSystem::LogData& operator<< ( const LogSystem::LogData& data, StandardEndLine obj )
 {
+	LogSystem::LogData& temp = (LogSystem::LogData&)data;
 	std::stringstream ss;
 	ss << data.m_message;
 	obj( ss );
 	
 	std::string msg = ss.str();
-	std::strcpy( data.m_message, msg.c_str() );
+	std::strcpy( temp.m_message, msg.c_str() );
 
-	return data;
+	return temp;
 }
 
 LogSystem::LogData::LogData(LogType type, const char* prefix )

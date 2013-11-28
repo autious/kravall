@@ -86,6 +86,7 @@ solution "RiotGame"
       location ( location_path )
       language "C++"
 		kind "SharedLib"
+		--kind "ConsoleApp"
         files { "gtest/logger/**.cpp", "src/logger/**.hpp", "src/logger/**.h", "src/logger/**.cpp", "include/logger/**.hpp" }
 		includedirs { "include/logger", "src/logger" }       
 		defines { "LOGGER_DLL_EXPORT" }
