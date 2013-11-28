@@ -43,13 +43,6 @@ namespace GFX
 		glm::vec4 color;
 	};
 
-	struct DebugCircle
-	{
-		glm::vec2 position;
-		float radius;
-		glm::vec4 color;
-	};
-
 	class DebugManager
 	{
 	public:
@@ -66,14 +59,14 @@ namespace GFX
 		void AddRect(DebugRect rect, bool filled);
 		void AddBox(DebugBox box, bool filled);
 		void AddSphere(DebugSphere sphere, bool filled);
-		void AddCircle(DebugCircle circle, bool filled);
+		void AddCircle(DebugRect circle, bool filled);
 
 		inline std::vector<DebugPoint>& GetPoints(){ return m_points; }
 		inline std::vector<DebugLine>& GetLines(){ return m_lines; }
 		inline std::vector<DebugLine>& GetLinesWorld(){ return m_linesWorld; }
 		inline std::vector<DebugRect>& GetFilledRects(){ return m_filledRects; }
 		inline std::vector<DebugBox>& GetFilledBoxes(){ return m_filledBoxes; }
-		inline std::vector<DebugCircle>& GetFilledCircles(){ return m_filledCircles; }
+		inline std::vector<DebugRect>& GetFilledCircles(){ return m_filledCircles; }
 
 	private:
 		// Points
@@ -87,7 +80,7 @@ namespace GFX
 		std::vector<DebugRect> m_filledRects;
 		std::vector<DebugBox> m_filledBoxes;
 		std::vector<DebugSphere> m_filledSpheres;
-		std::vector<DebugCircle> m_filledCircles;
+		std::vector<DebugRect> m_filledCircles;
 	};
 
 	/*!

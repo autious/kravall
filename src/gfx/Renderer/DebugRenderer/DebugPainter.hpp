@@ -57,6 +57,8 @@ namespace GFX
 		GLuint m_rectPosUniform;
 		GLuint m_rectDimUniform;
 		GLuint m_rectColorUniform;
+
+		GLuint m_screenSizeUniform;
 	};
 }
 

@@ -1,6 +1,8 @@
 #include "DebugPainter.hpp"
 #include "DebugManager.hpp"
 
+#include "../RenderCore.hpp"
+
 namespace GFX
 {
 	DebugPainter::DebugPainter(ShaderManager* shaderManager, BufferManager* bufferManager, UniformBufferManager* uniformBufferManager)
@@ -42,12 +44,14 @@ namespace GFX
 		// Create and attach circle debug shaders
 		m_shaderManager->CreateProgram("DebugCircle");
 		m_shaderManager->AttachShader("DebugVS", "DebugCircle");
+		m_shaderManager->AttachShader("DebugRectGS", "DebugCircle");
 		m_shaderManager->AttachShader("DebugCircleFS", "DebugCircle");
 		m_shaderManager->LinkProgram("DebugCircle");
 
-		m_pointPositionUniform = m_shaderManager->GetUniformLocation("DebugCircle", "pointPosition");
-		m_pointColorUniform = m_shaderManager->GetUniformLocation("DebugCircle", "inColor");
-		m_pointSizeUniform = m_shaderManager->GetUniformLocation("DebugCircle", "pointSize");
+		m_rectPosUniform = m_shaderManager->GetUniformLocation("DebugCircle", "pointPosition");
+		m_rectDimUniform = m_shaderManager->GetUniformLocation("DebugCircle", "pointPosition2");
+		m_rectColorUniform = m_shaderManager->GetUniformLocation("DebugCircle", "inColor");
+		m_screenSizeUniform = m_shaderManager->GetUniformLocation("DebugCircle", "screenSize");
 
 		m_uniformBufferManager->CreateBasicCameraUBO(m_shaderManager->GetShaderProgramID("DebugCircle"));
 
@@ -172,21 +176,23 @@ namespace GFX
 		}
 		m_shaderManager->ResetProgram();
 
-		// Draw points
+		// Draw filled circles
 		m_shaderManager->UseProgram("DebugCircle");
 		while (!DebugDrawing().GetFilledCircles().empty())
 		{
-			DebugCircle dc = DebugDrawing().GetFilledCircles().back();
+			DebugRect r = DebugDrawing().GetFilledCircles().back();
 			DebugDrawing().GetFilledCircles().pop_back();
 
-			m_shaderManager->SetUniform(1, dc.color, m_pointColorUniform);
-			m_shaderManager->SetUniform(1, dc.position, m_pointPositionUniform);
-			m_shaderManager->SetUniform(1, dc.radius, m_pointSizeUniform);
+			m_shaderManager->SetUniform(1, r.color, m_rectColorUniform);
+			m_shaderManager->SetUniform(1, r.position, m_rectPosUniform);
+			m_shaderManager->SetUniform(1, r.dimensions, m_rectDimUniform);
+			m_shaderManager->SetUniform(1, 
+				glm::vec2(Renderer().GetWindowWidth(), Renderer().GetWindowHeight()), 
+				m_screenSizeUniform);
+			
 
-			glPointSize(dc.radius);
 			glDrawArrays(GL_POINTS, 0, 1);
 		}
-		glPointSize(1.0f);
 		m_shaderManager->ResetProgram();
 
 		// Draw points
@@ -197,8 +203,11 @@ namespace GFX
 			DebugDrawing().GetPoints().pop_back();
 
 			m_shaderManager->SetUniform(1, dp.color, m_pointColorUniform);
+			err = glGetError();
 			m_shaderManager->SetUniform(1, dp.position, m_pointPositionUniform);
-			m_shaderManager->SetUniform(1, dp.size, m_pointSizeUniform);
+			err = glGetError();
+			m_shaderManager->SetUniform(dp.size, m_pointSizeUniform);
+			err = glGetError();
 
 			glPointSize(dp.size);
 			glDrawArrays(GL_POINTS, 0, 1);

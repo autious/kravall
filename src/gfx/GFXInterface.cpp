@@ -165,5 +165,18 @@ namespace GFX
 		b.dimensions = dimensions;
 		DebugDrawing().AddBox(b, solid);
 	}
+	void Debug::DrawCircle(GFXVec2 position, float radius, bool solid, GFXColor color)
+	{
+		DebugRect c;
+		c.position = glm::vec3(
+			(position.x-radius) / float(Renderer().GetWindowWidth() / 2) - 1.0f,
+			1.0f - (position.y+radius) / float(Renderer().GetWindowHeight() / 2), 0.0f);
+		c.color = color;
+		c.dimensions = glm::vec3(
+			radius*2 / float(Renderer().GetWindowWidth() / 2),
+			radius * 2 / float(Renderer().GetWindowHeight() / 2), 
+			0.0f);
+		DebugDrawing().AddCircle(c, solid);
+	}
 
 }

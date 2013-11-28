@@ -148,7 +148,7 @@ namespace GFX
 
 		}
 	}
-	void DebugManager::AddCircle(DebugCircle circle, bool filled)
+	void DebugManager::AddCircle(DebugRect circle, bool filled)
 	{
 		if (filled)
 			m_filledCircles.push_back(circle);
