@@ -50,7 +50,7 @@ namespace LogSystem
 		*/
 		DLLSETTING ~LogData();
 
-		char* m_message;
+		char m_message[512];
 		char* m_prefix;
 
 	private:		
@@ -76,7 +76,7 @@ namespace LogSystem
 	DLLSETTING extern LogHandler* warningHandler;
 
 	/*! space spearated list of prefixes to mute */
-	extern char* ignoreList;
+	extern char ignoreList[1024];
 
 	/*!
 		\param prefix to be muted, same one as stated in the macro function for that channel. eg. "debug"
@@ -108,9 +108,7 @@ LogSystem::LogData& operator<< ( LogSystem::LogData& data, const T& obj )
 	ss << obj;
 
 	std::string msg = ss.str();
-	char* temp = new char[msg.size()];
-	std::strcpy( temp, msg.c_str() );
-	data.m_message = temp;
+	std::strcpy( data.m_message, msg.c_str() );
 
 	return data;
 }
