@@ -2,6 +2,7 @@
 #define SRC_CORE_COMPONENTFRAMEWORK_SYSTEMHANDLER_H
 
 #include "BaseSystem.hpp"
+#include "PVector.hpp"
 
 namespace Core
 {

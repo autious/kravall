@@ -19,6 +19,11 @@ namespace Core
     {
         Component2 comp;
     };
+    
+    struct NotComponent1
+    {
+        int data;
+    };
 
     typedef EntityHandlerTemplate<Component1,Component2,Component3> EntityHandler;
 
