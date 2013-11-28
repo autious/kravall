@@ -9,7 +9,7 @@ namespace Core
     {
         std::function<void(void*)> m_destructorCall;
         Finalizer* m_finalizerChain;
-    }
+    };
 
 
     template<typename T> 
