@@ -58,7 +58,6 @@ solution "RiotGame"
         files { "gtest/core/**.cpp", "src/core/**.hpp", "src/core/**.h", "src/core/**.cpp" }
         includedirs { "src/core", "include" }
         links { "glfw3", "gfx", "logger" }
-
         configuration{ "*Test" }
             links { "gtest" }
         configuration{ "windows" }
@@ -73,7 +72,8 @@ solution "RiotGame"
         files { "gtest/gfx/**.cpp", "src/gfx/**.hpp", "src/gfx/**.h", "src/gfx/**.cpp", "include/gfx/**.hpp", "shaders/**.vertex", "shaders/**.geometry", "shaders/**.fragment", "shaders/**.compute" }
         includedirs { "src/gfx", "include/gfx", "shaders" }       
 		defines { "GFX_DLL_EXPORT" }
-		
+        includedirs { "src/gfx", "include/gfx", "shaders", "include" }       
+
         links { "glfw3" }
         configuration{ "*Test" }
             links { "gtest" }
@@ -92,8 +92,6 @@ solution "RiotGame"
 		defines { "LOGGER_DLL_EXPORT" }
         configuration{ "*Test" }
             links { "gtest" }
-            
-			
 
  
 --    project "sfx"

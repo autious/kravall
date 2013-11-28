@@ -5,18 +5,19 @@
 
 #ifdef _WIN32
 	#ifdef LOGGER_DLL_EXPORT
-	#define DLLSETTING __declspec(dllexport)
+		#define DLLSETTING __declspec(dllexport)
 	#else 
-	#define DLLSETTING __declspec(dllimport)
+		#define DLLSETTING __declspec(dllimport)
 	#endif
 #else 
-#define DLLSETTING
+	#define DLLSETTING
 #endif
 
 
 #include <iostream>
 #include <ostream>
 #include <sstream>
+#include <cstring>
 
 class LogHandler;
 

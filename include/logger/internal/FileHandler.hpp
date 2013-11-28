@@ -1,17 +1,18 @@
 #ifndef FILEHANDLERHPP
 #define FILEHANDLERHPP
 
-#include <internal/LogHandler.hpp>
+#include <iostream>
 #include <fstream>
+#include <internal/LogHandler.hpp>
 
 #ifdef _WIN32
 	#ifdef LOGGER_DLL_EXPORT
-	#define DLLSETTING __declspec(dllexport)
+		#define DLLSETTING __declspec(dllexport)
 	#else 
-	#define DLLSETTING __declspec(dllimport)
+		#define DLLSETTING __declspec(dllimport)
 	#endif
 #else 
-#define DLLSETTING
+	#define DLLSETTING
 #endif
 
 /*!
