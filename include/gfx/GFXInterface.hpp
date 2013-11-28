@@ -95,11 +95,28 @@ namespace GFX
 
 		/*!
 		Draws a line on the screen.
+		\param p1 World space position of the starting point of the line
+		\param p2 World space position of the end point of the line
+		\param color Color of the line
+		*/
+		DLL_API void DrawLine(GFXVec3 p1, GFXVec3 p2, GFXColor color);
+
+		/*!
+		Draws a line on the screen.
+		\param p1 The world space position of the starting point of the line
+		\param p2 The world space position of the end point of the line
+		\param color Color of the line
+		\param thickness Thickness of the line
+		*/
+		DLL_API void DrawLine(GFXVec3 p1, GFXVec3 p2, GFXColor color, float thickness);
+
+		/*!
+		Draws a line on the screen.
 		\param p1 Screen space position of the starting point of the line
 		\param p2 Screen space position of the end point of the line
 		\param color Color of the line
 		*/
-		DLL_API void DrawLine(GFXVec3 p1, GFXVec3 p2, GFXColor color);
+		DLL_API void DrawLine(GFXVec2 p1, GFXVec2 p2, GFXColor color);
 
 		/*!
 		Draws a line on the screen.
@@ -108,7 +125,7 @@ namespace GFX
 		\param color Color of the line
 		\param thickness Thickness of the line
 		*/
-		DLL_API void DrawLine(GFXVec3 p1, GFXVec3 p2, GFXColor color, float thickness);
+		DLL_API void DrawLine(GFXVec2 p1, GFXVec2 p2, GFXColor color, float thickness);
 
 		/*!
 		Draws a rectangle on the screen.

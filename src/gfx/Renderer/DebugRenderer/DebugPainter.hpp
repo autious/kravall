@@ -47,8 +47,16 @@ namespace GFX
 
 		// Uniforms
 		GLuint m_pointPositionUniform;
-		GLuint m_colorUniform;
-		GLuint m_sizeUniform;
+		GLuint m_pointColorUniform;
+		GLuint m_pointSizeUniform;
+
+		GLuint m_lineStartUniform;
+		GLuint m_lineEndUniform;
+		GLuint m_lineColorUniform;
+
+		GLuint m_rectPosUniform;
+		GLuint m_rectDimUniform;
+		GLuint m_rectColorUniform;
 	};
 }
 

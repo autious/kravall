@@ -94,6 +94,7 @@ namespace GFX
 	{
 		Debug::DrawPoint(point, color, 1.0f);
 	}
+
 	void Debug::DrawPoint(GFXVec2 point, GFXColor color, float size)
 	{
 		DebugPoint p;
@@ -105,4 +106,64 @@ namespace GFX
 		p.color = color;
 		DebugDrawing().AddPoint(p);
 	}
+
+	void Debug::DrawLine(GFXVec3 p1, GFXVec3 p2, GFXColor color)
+	{
+		Debug::DrawLine(p1, p2, color, 1.0f);
+	}
+
+	void Debug::DrawLine(GFXVec3 p1, GFXVec3 p2, GFXColor color, float thickness)
+	{
+		DebugLine l;
+		l.color = color;
+		l.start = p1;
+		l.end = p2;
+		l.thickness = thickness;
+		DebugDrawing().AddLineWorld(l);
+	}
+
+	void Debug::DrawLine(GFXVec2 p1, GFXVec2 p2, GFXColor color)
+	{
+		Debug::DrawLine(p1, p2, color, 1.0f);
+	}
+
+	void Debug::DrawLine(GFXVec2 p1, GFXVec2 p2, GFXColor color, float thickness)
+	{
+		DebugLine l;
+		l.color = color;
+		l.start = glm::vec3(
+			p1.x / float(Renderer().GetWindowWidth() / 2) - 1.0f,
+			1.0f - p1.y / float(Renderer().GetWindowHeight() / 2),
+			0.0);
+		l.end = glm::vec3(
+			p2.x / float(Renderer().GetWindowWidth() / 2) - 1.0f,
+			1.0f - p2.y / float(Renderer().GetWindowHeight() / 2),
+			0.0);
+		l.thickness = thickness;
+		DebugDrawing().AddLine(l);
+	}
+
+	void Debug::DrawRectangle(GFXVec2 position, GFXVec2 dimensions, 
+		bool solid, GFXColor color)
+	{
+		DebugRect r;
+		r.color = color;
+		r.position = glm::vec3(
+			position.x / float(Renderer().GetWindowWidth() / 2) - 1.0f,
+			1.0f - position.y / float(Renderer().GetWindowHeight() / 2), 0.0f);
+		r.dimensions = glm::vec3(
+			dimensions.x / float(Renderer().GetWindowWidth() / 2),
+			dimensions.y / float(Renderer().GetWindowHeight() / 2), 0.0f);
+		DebugDrawing().AddRect(r, solid);
+	}
+
+	void Debug::DrawBox(GFXVec3 position, GFXVec3 dimensions, bool solid, GFXColor color)
+	{
+		DebugBox b;
+		b.color = color;
+		b.position = position;
+		b.dimensions = dimensions;
+		DebugDrawing().AddBox(b, solid);
+	}
+
 }
