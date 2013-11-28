@@ -10,7 +10,7 @@
 #include <gfx/GFXInterface.hpp>
 
 #include "Camera/Camera.hpp"
-#include <ComponentFramework/SystemHandler.hpp>
+#include <ComponentFramework/SystemHandlerTemplate.hpp>
 
 
 GLFWwindow* init()

@@ -9,15 +9,15 @@ namespace Core
         This shit be cray
     */
     template<typename... Args>
-    class SystemHandler
+    class SystemHandlerTemplate
     {
     public: 
-        SystemHandler( )
+        SystemHandlerTemplate( )
         {
             AddSystems<Args...>( sizeof...(Args) ); 
         }
 
-        ~SystemHandler()
+        ~SystemHandlerTemplate()
         {
             for( int i = 0; i < sizeof...(Args); i++ )
             {

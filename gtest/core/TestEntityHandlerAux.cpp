@@ -4,9 +4,9 @@
 
 namespace Core
 {
-    int AuxFunction( SEntityHandler& handler )
+    int AuxFunction( EntityHandler& handler )
     {
-        return handler.GetComponentType<Component1>(); 
+        return handler.GetComponentTypeId<Component1>(); 
     }
 }
 

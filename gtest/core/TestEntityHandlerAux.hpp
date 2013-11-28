@@ -1,7 +1,7 @@
 #ifndef GTEST_CORE_TESTENTITYHANDLERAUX_H
 #define GTEST_CORE_TESTENTITYHANDLERAUX_H
 
-#include <ComponentFramework/EntityHandler.hpp>
+#include <ComponentFramework/EntityHandlerTemplate.hpp>
 
 namespace Core
 {
@@ -20,8 +20,8 @@ namespace Core
         Component2 comp;
     };
 
-    typedef EntityHandler<Component1,Component2,Component3> SEntityHandler;
+    typedef EntityHandlerTemplate<Component1,Component2,Component3> EntityHandler;
 
-    int AuxFunction( SEntityHandler& );
+    int AuxFunction( EntityHandler& );
 }
 #endif

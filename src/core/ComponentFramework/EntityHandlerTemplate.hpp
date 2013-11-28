@@ -12,7 +12,7 @@ namespace Core
     typedef unsigned int Entity;
 
     template<typename... Components>
-    class EntityHandler
+    class EntityHandlerTemplate
     {
         /*!
             This is a template hack that allows us to calculate a static
@@ -41,21 +41,21 @@ namespace Core
         int m_initialComponentSize = 1024;
         int m_componentStepSize = 64;
 
-      
-        template<typename A, typename... AspectComponents>
-        Aspect constexpr GenerateAspectInternal( Aspect aspect )
+        template<typename AB> 
+        void GenerateAspectInternal( Aspect aspect )
         {
-            return (1UL << GetComponentTypeId<A>()) | GenerateAspectInternal<AspectComponents...>( aspect );
+            aspect |= (1UL << GetComponentTypeId<AB>());
         }
 
-        template<typename A> 
-        Aspect constexpr GenerateAspectInternal( Aspect aspect )
+        template<typename AB, typename... AspectComponents>
+        void GenerateAspectInternal( Aspect aspect )
         {
-            return (1UL << GetComponentTypeId<A>());
+            //GenerateAspectInternal<AspectComponents...>( aspect );
+            aspect |= (1UL << GetComponentTypeId<AB>());
         }
 
     public:
-        EntityHandler()
+        EntityHandlerTemplate()
         {
             
         }
@@ -73,11 +73,11 @@ namespace Core
         }
 
         template<typename... AspectComponents>
-        Aspect contexpr GenerateAspect( )
+        Aspect GenerateAspect( )
         {
-            return GenerateAspectInternal<AspectComponents...>(0ULL);
+            Aspect asp = 0ULL;
+            GenerateAspectInternal<AspectComponents...>(asp);
         }
     };
 }
-
 #endif
