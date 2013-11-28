@@ -2,7 +2,6 @@
 #define LOGDATAHPP
 
 
-
 #ifdef _WIN32
 	#ifdef LOGGER_DLL_EXPORT
 		#define DLLSETTING __declspec(dllexport)
@@ -42,20 +41,20 @@ namespace LogSystem
 	/*!
 		Container object for one "<<" chain. Should only be used via macros.
 	*/
-	DLLSETTING class LogData
+	class LogData
 	{
 	public:
 		/*!
 			\param type is which channel to use.
 			\param prefix is what prefix to use. Should be set via macro. Messages can be muted via this prefix.
 		*/
-		LogData( LogType type, const char* prefix );
+		DLLSETTING LogData( LogType type, const char* prefix );
 
 		/*!
 			Once the LogData object is destroyed the printing goes into 
 			action using other utility in the LogSystem namespace.
 		*/
-		~LogData();
+		DLLSETTING ~LogData();
 
 		char m_message[512];
 		char* m_prefix;
