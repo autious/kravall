@@ -70,10 +70,9 @@ solution "RiotGame"
         language "C++"
         kind "SharedLib"
         files { "gtest/gfx/**.cpp", "src/gfx/**.hpp", "src/gfx/**.h", "src/gfx/**.cpp", "include/gfx/**.hpp", "shaders/**.vertex", "shaders/**.geometry", "shaders/**.fragment", "shaders/**.compute" }
-        includedirs { "src/gfx", "include/gfx", "shaders" }       
+		includedirs { "src/gfx", "include/gfx", "shaders", "include" }       
 		defines { "GFX_DLL_EXPORT" }
-        includedirs { "src/gfx", "include/gfx", "shaders", "include" }       
-
+		
         links { "glfw3" }
         configuration{ "*Test" }
             links { "gtest" }
@@ -92,6 +91,7 @@ solution "RiotGame"
 		defines { "LOGGER_DLL_EXPORT" }
         configuration{ "*Test" }
             links { "gtest" }
+
 
  
 --    project "sfx"

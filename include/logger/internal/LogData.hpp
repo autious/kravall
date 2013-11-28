@@ -2,7 +2,6 @@
 #define LOGDATAHPP
 
 
-
 #ifdef _WIN32
 	#ifdef LOGGER_DLL_EXPORT
 		#define DLLSETTING __declspec(dllexport)
