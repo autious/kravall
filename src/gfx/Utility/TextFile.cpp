@@ -79,6 +79,9 @@ namespace GFX
 		return m_text.c_str();
 	}
 
+    /* I'm disabling this function because the return "" is an invalid cast from const char* to char*
+       I'm avoiding making the change to const char* return due to the functions name.
+       Reimplement this function if it's ever useful in the future. //Max
 	char* TextFile::GetNonConstantChar()
 	{
 		if (m_nonConstantChar && m_loadedFile)
@@ -90,6 +93,7 @@ namespace GFX
 			return "";
 		}
 	}
+    */
 
 	void TextFile::Clear()
 	{

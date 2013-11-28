@@ -1,17 +1,17 @@
-#include "DeferredPainter.hpp"
+#include "DebugPainter.hpp"
 
 namespace GFX
 {
-	DeferredPainter::DeferredPainter(ShaderManager* shaderManager, BufferManager* bufferManager, UniformBufferManager* uniformBufferManager)
+	DebugPainter::DebugPainter(ShaderManager* shaderManager, BufferManager* bufferManager, UniformBufferManager* uniformBufferManager)
 		: BasePainter(shaderManager, bufferManager, uniformBufferManager)
 	{
 	}
 
-	DeferredPainter::~DeferredPainter()
+	DebugPainter::~DebugPainter()
 	{
 	}
-	
-	void DeferredPainter::Initialize(GLuint FBO, GLuint dummyVAO)
+
+	void DebugPainter::Initialize(GLuint FBO, GLuint dummyVAO)
 	{
 		BasePainter::Initialize(FBO, dummyVAO);
 
@@ -23,28 +23,28 @@ namespace GFX
 		m_shaderManager->LoadShader("shaders/PassThrough.vertex", "StaticMeshVS", GL_VERTEX_SHADER);
 		m_shaderManager->LoadShader("shaders/FSQuad.geometry", "StaticMeshGS", GL_GEOMETRY_SHADER);
 		m_shaderManager->LoadShader("shaders/WaveRipple.fragment", "StaticMeshFS", GL_FRAGMENT_SHADER);
-		
+
 		m_shaderManager->AttachShader("StaticMeshVS", "StaticMesh");
 		m_shaderManager->AttachShader("StaticMeshGS", "StaticMesh");
 		m_shaderManager->AttachShader("StaticMeshFS", "StaticMesh");
 
 		m_shaderManager->LinkProgram("StaticMesh");
 
-		exampleUniform = m_shaderManager->GetUniformLocation("StaticMesh", "inputColor");
+		debugUniform = m_shaderManager->GetUniformLocation("StaticMesh", "inputColor");
 
 		m_uniformBufferManager->CreateExampleBuffer(m_shaderManager->GetShaderProgramID("StaticMesh"));
 		m_uniformBufferManager->CreateBasicCameraUBO(m_shaderManager->GetShaderProgramID("StaticMesh"));
 	}
 
-	void DeferredPainter::Render(FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix)
+	void DebugPainter::Render(glm::mat4 viewMatrix, glm::mat4 projMatrix)
 	{
 		BasePainter::Render();
 
-		//BindGBuffer(normalDepth, diffuse, specular, glowMatID);
+		//DetachTextures()
 
 		m_shaderManager->UseProgram("StaticMesh");
-		m_shaderManager->SetUniform(1, glm::vec4(1, 0, 0, 1), exampleUniform);
-		
+		m_shaderManager->SetUniform(1, glm::vec4(1, 0, 0, 1), debugUniform);
+
 		BasicCamera bc;
 		bc.viewMatrix = viewMatrix;
 		bc.projMatrix = projMatrix;
@@ -57,7 +57,7 @@ namespace GFX
 
 		m_uniformBufferManager->SetBasicCameraUBO(bc);
 		m_uniformBufferManager->SetExampleBufferData(eb);
-		
+
 		glBindVertexArray(m_dummyVAO);
 
 		glDrawArrays(GL_POINTS, 0, 1);
@@ -68,17 +68,17 @@ namespace GFX
 	}
 
 
-	void DeferredPainter::BindGBuffer(FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID)
+	void DebugPainter::DetachTextures()
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, normalDepth->GetTextureHandle(),	0);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, diffuse->GetTextureHandle(),		0);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, specular->GetTextureHandle(),		0);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, glowMatID->GetTextureHandle(),		0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, 0, 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, 0, 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, 0, 0);
 
 		// define outputs
-		GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
+		GLenum drawBuffers[] = { GL_NONE, GL_NONE, GL_NONE, GL_NONE };
 		glDrawBuffers(4, drawBuffers);
 	}
 }

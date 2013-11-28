@@ -2,8 +2,14 @@
 #define SRC_GFX_RENDERER_RENDER_CORE_HPP
 
 #include <Shaders/ShaderManager.hpp>
+#include <Buffers/BufferManager.hpp>
+#include <Buffers/UniformBufferManager.hpp>
+
 #include "FBOTexture.hpp"
 #include "DeferredPainter.hpp"
+#include "DebugPainter.hpp"
+
+#include "DebugManager.hpp"
 
 #include <iostream>
 
@@ -38,6 +44,8 @@ namespace GFX
 		*/
 		void Resize(int width, int height);
 
+		void SetViewMatrix(glm::mat4 view);
+		void SetProjMatrix(glm::mat4 proj);
 
 	private:
 		RenderCore();
@@ -70,10 +78,16 @@ namespace GFX
 
 		GLuint m_dummyVAO;
 
-		ShaderManager* m_shaderManager;
-		BufferManager* m_bufferManager;
+		UniformBufferManager*	m_uniformBufferManager;
+		ShaderManager*			m_shaderManager;
+		BufferManager*			m_bufferManager;
+		
 
 		DeferredPainter* m_deferredPainter;
+
+		glm::mat4 m_viewMatrix;
+		glm::mat4 m_projMatrix;
+
 	};
 
 	/*!

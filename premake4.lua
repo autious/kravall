@@ -2,7 +2,7 @@ translateOS = { windows="win32", linux="linux"}
 
 solution "RiotGame"
     configurations {"Debug", "Release", "ReleaseTest", "DebugTest", "PureReleaseTest", "PureDebugTest"}
-        flags{ "Unicode", "ExtraWarnings", "NoPCH" } 
+        flags{ "Unicode", "NoPCH" } 
         libdirs { translateOS[os.get()] .. "/lib" }
         includedirs { translateOS[os.get()] .. "/deps", "deps", "include"}
     
@@ -51,15 +51,13 @@ solution "RiotGame"
 
     project "core"
         targetname "RiotGame" 
-        debugdir ""
+        --debugdir "" -- fungerade inte för utskrift av textfiler, lämnar detta så det syns utifall något faller iom. det / John
         location ( location_path )
         language "C++"
         kind "ConsoleApp"
         files { "gtest/core/**.cpp", "src/core/**.hpp", "src/core/**.h", "src/core/**.cpp" }
         includedirs { "src/core", "include" }
-
-        links { "glfw3", "gfx" }
-
+        links { "glfw3", "gfx", "logger" }
         configuration{ "*Test" }
             links { "gtest" }
         configuration{ "windows" }
@@ -72,31 +70,28 @@ solution "RiotGame"
         language "C++"
         kind "SharedLib"
         files { "gtest/gfx/**.cpp", "src/gfx/**.hpp", "src/gfx/**.h", "src/gfx/**.cpp", "include/gfx/**.hpp", "shaders/**.vertex", "shaders/**.geometry", "shaders/**.fragment", "shaders/**.compute" }
-        includedirs { "src/gfx", "include/gfx", "shaders" }       
-
-        defines { "GFX_DLL_EXPORT" }
+        includedirs { "src/gfx", "include/gfx", "shaders", "include" }       
 
         links { "glfw3" }
         configuration{ "*Test" }
             links { "gtest" }
         configuration{ "windows" }
-            links { "glew32", "glfw3dll", "opengl32" }
+            links { "glew32", "glfw3dll", "opengl32", "logger" }
         configuration{ "linux" }
             links { "GLEW", "GL" }
- 
---	project "logger"
---      location ( location_path )
---      language "C++"
-		--kind "SharedLib"
---		kind "ConsoleApp"
---        files { "gtest/logger/**.cpp", "src/logger/**.hpp", "src/logger/**.h", "src/logger/**.cpp", "include/logger/**.hpp" }
---		includedirs { "include/logger", "src/logger" }       
-
---        configuration{ "*Test" }
---            links { "gtest" }
-
---        configurations{ "Debug", "Release" }
---            defines { "LOGGER_DLL_EXPORT" }
+        configuration { "*" }
+            defines { "GFX_DLL_EXPORT" }
+			
+	project "logger"
+      location ( location_path )
+      language "C++"
+		kind "SharedLib"
+        files { "gtest/logger/**.cpp", "src/logger/**.hpp", "src/logger/**.h", "src/logger/**.cpp", "include/logger/**.hpp" }
+		includedirs { "include/logger", "src/logger" }       
+        configuration{ "*Test" }
+            links { "gtest" }
+        configurations { "*" }
+            defines { "LOGGER_DLL_EXPORT" }
  
 --    project "sfx"
 --        location ( location_path )

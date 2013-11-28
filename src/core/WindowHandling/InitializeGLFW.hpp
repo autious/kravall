@@ -2,19 +2,17 @@
 #define SRC_CORE_WINDOWHANDLING_INITIALIZE_GLFW_HPP
 
 #include <iostream>
-#include <GL/glew.h>
 
 #include "GLFWInclude.hpp"
-
 #include <gfx/GFXInterface.hpp>
 
 namespace Core
 {
-
 	void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	{
 		GFX::Resize(width, height);
 	}
+
 	int InitializeGLFW(GLFWwindow** window, int width, int height)
 	{
 		/* Initialize the library */
