@@ -10,7 +10,7 @@ namespace {
 
     TEST( DummyFunctionTest, HandlesPositiveInput )
     {
-        EXPECT_EQ( 9, DummyFunction( 3 ) );
+        EXPECT_EQ( 9, DummyFunction( 9 ) );
     }
 }
 #endif
