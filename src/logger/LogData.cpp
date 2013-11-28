@@ -13,12 +13,13 @@ LogHandler* LogSystem::errorHandler		= new ConsoleHandler( LogSystem::LogType::l
 LogHandler* LogSystem::warningHandler	= new ConsoleHandler( LogSystem::LogType::logType_warning );
 
 
-char LogSystem::ignoreList[1024];
+char ignoreList[1024];
+
 struct IgnoreListnitializer
 {
 	IgnoreListnitializer()
 	{
-		LogSystem::ignoreList[0] = '\0';
+		ignoreList[0] = '\0';
 	}
 
 } onlyUsedToInitIgnoreList;

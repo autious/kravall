@@ -3,16 +3,19 @@
 
 #include <internal/LogHandler.hpp>
 
-#ifdef LOGGER_DLL_EXPORT
-#define DLLSETTING __declspec(dllexport)
+#ifdef _WIN32
+	#ifdef LOGGER_DLL_EXPORT
+	#define DLLSETTING __declspec(dllexport)
+	#else 
+	#define DLLSETTING __declspec(dllimport)
+	#endif
 #else 
-#define DLLSETTING __declspec(dllimport)
+#define DLLSETTING
 #endif
-
 /*!
 	Potential child to LogHandler and will print messages to std::cout
 */
-DLLSETTING class ConsoleHandler : public LogHandler
+class ConsoleHandler : public LogHandler
 {
 public:
 	DLLSETTING ConsoleHandler();
@@ -22,7 +25,7 @@ public:
 	DLLSETTING virtual ~ConsoleHandler() override;
 
 	/*! \param message will be printed to std::cout */
-	DLLSETTING virtual void Log( const char* message ) override;
+	DLLSETTING  virtual void Log( const char* message ) override;
 
 private:
 
