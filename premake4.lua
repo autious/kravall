@@ -56,7 +56,7 @@ solution "RiotGame"
         language "C++"
         kind "ConsoleApp"
         files { "gtest/core/**.cpp", "src/core/**.hpp", "src/core/**.h", "src/core/**.cpp" }
-        includedirs { "src/core", "include", "include/logger" }
+        includedirs { "src/core", "include" }
         links { "glfw3", "gfx", "logger" }
 
         configuration{ "*Test" }
@@ -71,8 +71,9 @@ solution "RiotGame"
         language "C++"
         kind "SharedLib"
         files { "gtest/gfx/**.cpp", "src/gfx/**.hpp", "src/gfx/**.h", "src/gfx/**.cpp", "include/gfx/**.hpp", "shaders/**.vertex", "shaders/**.geometry", "shaders/**.fragment", "shaders/**.compute" }
-        includedirs { "src/gfx", "include/gfx", "shaders", "include/logger" }       
-
+        includedirs { "src/gfx", "include/gfx", "shaders" }       
+		defines { "GFX_DLL_EXPORT" }
+		
         links { "glfw3" }
         configuration{ "*Test" }
             links { "gtest" }
@@ -80,20 +81,18 @@ solution "RiotGame"
             links { "glew32", "glfw3dll", "opengl32", "logger" }
         configuration{ "linux" }
             links { "GLEW", "GL" }
-        configuration { "*" }
-            defines { "GFX_DLL_EXPORT" }
+            
 			
 	project "logger"
       location ( location_path )
       language "C++"
-		--kind "SharedLib"
-		kind "ConsoleApp"
+		kind "SharedLib"
         files { "gtest/logger/**.cpp", "src/logger/**.hpp", "src/logger/**.h", "src/logger/**.cpp", "include/logger/**.hpp" }
 		includedirs { "include/logger", "src/logger" }       
+		defines { "LOGGER_DLL_EXPORT" }
         configuration{ "*Test" }
             links { "gtest" }
-        configurations { "*" }
-            defines { "LOGGER_DLL_EXPORT" }
+            
 			
 
  

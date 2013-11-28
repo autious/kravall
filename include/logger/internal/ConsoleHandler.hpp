@@ -12,7 +12,7 @@
 /*!
 	Potential child to LogHandler and will print messages to std::cout
 */
-DLLSETTING class ConsoleHandler : public LogHandler
+class ConsoleHandler : public LogHandler
 {
 public:
 	DLLSETTING ConsoleHandler();
@@ -22,7 +22,7 @@ public:
 	DLLSETTING virtual ~ConsoleHandler() override;
 
 	/*! \param message will be printed to std::cout */
-	DLLSETTING virtual void Log( const char* message ) override;
+	DLLSETTING  virtual void Log( const char* message ) override;
 
 private:
 

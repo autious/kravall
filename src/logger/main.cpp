@@ -1,23 +1,19 @@
 
 
 
+//#include <string>
+
+//#include <iostream>
+
+
 #include <Logger.hpp>
-#include <string>
-
-#include <iostream>
-
-
-#include <logger.hpp>
-
-#include <handlers.hpp>
+#include <Handlers.hpp>
 
 
 
 
 #define gfx LogData( LogSystem::LogType::logType_debug,		"gfx" )
 
-
-#include <logger/Logger.hpp>
 
 void testPrintFunction1()
 {

@@ -1,6 +1,8 @@
 #ifndef LOGDATAHPP
 #define LOGDATAHPP
 
+
+
 #ifdef LOGGER_DLL_EXPORT
 #define DLLSETTING __declspec(dllexport)
 #else 
@@ -42,13 +44,13 @@ namespace LogSystem
 			\param type is which channel to use.
 			\param prefix is what prefix to use. Should be set via macro. Messages can be muted via this prefix.
 		*/
-		DLLSETTING LogData( LogType type, const char* prefix );
+		LogData( LogType type, const char* prefix );
 
 		/*!
 			Once the LogData object is destroyed the printing goes into 
 			action using other utility in the LogSystem namespace.
 		*/
-		DLLSETTING ~LogData();
+		~LogData();
 
 		char m_message[512];
 		char* m_prefix;
@@ -74,9 +76,6 @@ namespace LogSystem
 	DLLSETTING extern LogHandler* errorHandler;
 	/*! channel for 'warning' messages, default is ConsoleHandler */
 	DLLSETTING extern LogHandler* warningHandler;
-
-	/*! space spearated list of prefixes to mute */
-	extern char ignoreList[1024];
 
 	/*!
 		\param prefix to be muted, same one as stated in the macro function for that channel. eg. "debug"

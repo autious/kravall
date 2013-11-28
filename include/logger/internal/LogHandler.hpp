@@ -4,6 +4,7 @@
 #include <string>
 #include <internal/LogData.hpp>
 
+
 #ifdef LOGGER_DLL_EXPORT
 #define DLLSETTING __declspec(dllexport)
 #else 
@@ -14,7 +15,7 @@
 	Virutal object for indirection of output options. 
 	Parent for ConsoleHandler and FileHandler etc. 
 */
-DLLSETTING class LogHandler
+class LogHandler
 {
 public:
 	DLLSETTING LogHandler();
