@@ -23,7 +23,7 @@ namespace Core
         */
         PVector( size_t initialSize, size_t growStep )
         {
-            static_assert(std::is_pod<Component>::value, "******Components must be Pure Data Objects*******");
+            static_assert(std::is_pod<Component>::value, "Components must be Pure Data Objects");
 
             m_data = (Component*)malloc( initialSize * sizeof( Component) );
             m_size = initialSize;
@@ -53,7 +53,7 @@ namespace Core
             if( m_count >= m_size )
             {
                 m_size += m_growStep;
-                m_data = (Component*)relloc( m_data, m_size * sizeof( Component ) );
+                m_data = (Component*)realloc( m_data, m_size * sizeof( Component ) );
 
                 assert( m_data != NULL );
             } 

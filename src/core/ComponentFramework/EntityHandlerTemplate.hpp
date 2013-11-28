@@ -6,7 +6,7 @@
 #include <cstddef>
 #include <cstdint>
 
-#define SA_COMPONENT_USE "*****Component doesn't exist in EntityHandler. Maybe you forgot to add it? *****"
+#define SA_COMPONENT_USE "Component doesn't exist in EntityHandler. Maybe you forgot to add it?"
 
 namespace Core
 {
