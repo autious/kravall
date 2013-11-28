@@ -58,6 +58,10 @@ namespace GFX
 		GLuint m_rectDimUniform;
 		GLuint m_rectColorUniform;
 
+		GLuint m_circlePosUniform;
+		GLuint m_circleDimUniform;
+		GLuint m_circleColorUniform;
+
 		GLuint m_screenSizeUniform;
 	};
 }

@@ -173,9 +173,9 @@ namespace GFX
 			1.0f - (position.y+radius) / float(Renderer().GetWindowHeight() / 2), 0.0f);
 		c.color = color;
 		c.dimensions = glm::vec3(
-			radius*2 / float(Renderer().GetWindowWidth() / 2),
+			radius * 2 / float(Renderer().GetWindowWidth() / 2),
 			radius * 2 / float(Renderer().GetWindowHeight() / 2), 
-			0.0f);
+			radius);
 		DebugDrawing().AddCircle(c, solid);
 	}
 

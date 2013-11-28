@@ -20,14 +20,14 @@ namespace GFX
 
 
 		// Load shared shaders (vertex and fragment)
-		m_shaderManager->LoadShader("shaders/debug/Debug.vertex", "DebugVS", GL_VERTEX_SHADER);
-		m_shaderManager->LoadShader("shaders/debug/Debug.fragment", "DebugFS", GL_FRAGMENT_SHADER);
-		m_shaderManager->LoadShader("shaders/debug/DebugCircle.fragment", "DebugCircleFS", GL_FRAGMENT_SHADER);
+		m_shaderManager->LoadShader("shaders/debug_shaders/Debug.vertex", "DebugVS", GL_VERTEX_SHADER);
+		m_shaderManager->LoadShader("shaders/debug_shaders/Debug.fragment", "DebugFS", GL_FRAGMENT_SHADER);
+		m_shaderManager->LoadShader("shaders/debug_shaders/DebugCircle.fragment", "DebugCircleFS", GL_FRAGMENT_SHADER);
 
 		// Load specific geometry shaders
-		m_shaderManager->LoadShader("shaders/debug/DebugLine.geometry", "DebugLineGS", GL_GEOMETRY_SHADER);
-		m_shaderManager->LoadShader("shaders/debug/DebugRect.geometry", "DebugRectGS", GL_GEOMETRY_SHADER);
-		m_shaderManager->LoadShader("shaders/debug/DebugBox.geometry", "DebugBoxGS", GL_GEOMETRY_SHADER);
+		m_shaderManager->LoadShader("shaders/debug_shaders/DebugLine.geometry", "DebugLineGS", GL_GEOMETRY_SHADER);
+		m_shaderManager->LoadShader("shaders/debug_shaders/DebugRect.geometry", "DebugRectGS", GL_GEOMETRY_SHADER);
+		m_shaderManager->LoadShader("shaders/debug_shaders/DebugBox.geometry", "DebugBoxGS", GL_GEOMETRY_SHADER);
 
 		// Create and attach point debug shaders
 		m_shaderManager->CreateProgram("DebugPoint");
@@ -48,9 +48,9 @@ namespace GFX
 		m_shaderManager->AttachShader("DebugCircleFS", "DebugCircle");
 		m_shaderManager->LinkProgram("DebugCircle");
 
-		m_rectPosUniform = m_shaderManager->GetUniformLocation("DebugCircle", "pointPosition");
-		m_rectDimUniform = m_shaderManager->GetUniformLocation("DebugCircle", "pointPosition2");
-		m_rectColorUniform = m_shaderManager->GetUniformLocation("DebugCircle", "inColor");
+		m_circlePosUniform = m_shaderManager->GetUniformLocation("DebugCircle", "pointPosition");
+		m_circleDimUniform = m_shaderManager->GetUniformLocation("DebugCircle", "pointPosition2");
+		m_circleColorUniform = m_shaderManager->GetUniformLocation("DebugCircle", "inColor");
 		m_screenSizeUniform = m_shaderManager->GetUniformLocation("DebugCircle", "screenSize");
 
 		m_uniformBufferManager->CreateBasicCameraUBO(m_shaderManager->GetShaderProgramID("DebugCircle"));
@@ -183,9 +183,9 @@ namespace GFX
 			DebugRect r = DebugDrawing().GetFilledCircles().back();
 			DebugDrawing().GetFilledCircles().pop_back();
 
-			m_shaderManager->SetUniform(1, r.color, m_rectColorUniform);
-			m_shaderManager->SetUniform(1, r.position, m_rectPosUniform);
-			m_shaderManager->SetUniform(1, r.dimensions, m_rectDimUniform);
+			m_shaderManager->SetUniform(1, r.color, m_circleColorUniform);
+			m_shaderManager->SetUniform(1, r.position, m_circlePosUniform);
+			m_shaderManager->SetUniform(1, r.dimensions, m_circleDimUniform);
 			m_shaderManager->SetUniform(1, 
 				glm::vec2(Renderer().GetWindowWidth(), Renderer().GetWindowHeight()), 
 				m_screenSizeUniform);
