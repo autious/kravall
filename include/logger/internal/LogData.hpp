@@ -106,7 +106,7 @@ DLLSETTING LogSystem::LogData& operator<< ( const LogSystem::LogData& data, Stan
 template < class T >
 LogSystem::LogData& operator<< ( const LogSystem::LogData& data, const T& obj )
 {
-	LogSystem::LogData& temp = (LogSystem::LogData&)data;
+	LogSystem::LogData& temp = (LogSystem::LogData&)data; // unix hack, nab compiler...
 	std::stringstream ss;
 	ss << data.m_message;
 	ss << obj;

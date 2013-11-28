@@ -74,7 +74,7 @@ void LogSystem::SetNewLogHandler( LogHandler** handlerChannel, LogHandler* newHa
 
 LogSystem::LogData& operator<< ( const LogSystem::LogData& data, StandardEndLine obj )
 {
-	LogSystem::LogData& temp = (LogSystem::LogData&)data;
+	LogSystem::LogData& temp = (LogSystem::LogData&)data; // unix hack, nab compiler...
 	std::stringstream ss;
 	ss << data.m_message;
 	obj( ss );
@@ -141,3 +141,6 @@ LogSystem::LogData::~LogData()
 
 	logMutex.unlock();
 }
+
+
+
