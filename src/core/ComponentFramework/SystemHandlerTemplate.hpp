@@ -12,14 +12,15 @@ namespace Core
     class SystemHandlerTemplate
     {
     public: 
+        static const int SYSTEM_COUNT = sizeof...(Args);
         SystemHandlerTemplate( )
         {
-            AddSystems<Args...>( sizeof...(Args) ); 
+            AddSystems<Args...>( SYSTEM_COUNT ); 
         }
 
         ~SystemHandlerTemplate()
         {
-            for( int i = 0; i < sizeof...(Args); i++ )
+            for( int i = 0; i < SYSTEM_COUNT; i++ )
             {
                 delete systemList[i];
             }
@@ -27,22 +28,21 @@ namespace Core
 
         int GetSystemCount();
 
-        static const int SYSTEM_COUNT = sizeof...(Args);
     private:
         template<typename A, typename... Systems>
         void AddSystems(int size)
         {
-            systemList[sizeof...(Args)-size] = new A();
+            systemList[SYSTEM_COUNT-size] = new A();
             AddSystems<Systems...>(size-1);
         }
 
         template<typename A>
         void AddSystems(int size)
         {
-            systemList[sizeof...(Args)-size] = new A();
+            systemList[SYSTEM_COUNT-size] = new A();
         }
 
-        BaseSystem *systemList[sizeof...(Args)];
+        BaseSystem *systemList[SYSTEM_COUNT];
     };
 }
 #endif

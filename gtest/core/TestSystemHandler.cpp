@@ -15,13 +15,21 @@ namespace Core {
     {
         public:
             virtual ~System2() {};
+    };
 
+    class System3 : public BaseSystem
+    {
+        public:
+            virtual ~System3() {};
     };
 
     TEST( SystemHandlerTest, VariadicTemplateSize )
     {
         int count = SystemHandlerTemplate<System1,System2>::SYSTEM_COUNT;
         ASSERT_EQ( 2, count );
+
+        count = SystemHandlerTemplate<System1,System2,System3>::SYSTEM_COUNT;
+        ASSERT_EQ( 3, count );
     }
 }
 #endif
