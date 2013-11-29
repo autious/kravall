@@ -39,7 +39,8 @@ namespace GFX
 	void DeferredPainter::Render(FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix)
 	{
 		BasePainter::Render();
-
+		glEnable(GL_DEPTH_TEST);
+		glDisable(GL_BLEND);
 		//BindGBuffer(normalDepth, diffuse, specular, glowMatID);
 
 		m_shaderManager->UseProgram("StaticMesh");

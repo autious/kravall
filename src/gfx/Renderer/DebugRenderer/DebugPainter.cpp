@@ -112,7 +112,7 @@ namespace GFX
 		err = glGetError();
 
 		// Draw 3D
-		glEnable(GL_DEPTH_TEST);
+		glDisable(GL_DEPTH_TEST);
 
 		BasicCamera bc;
 		bc.viewMatrix = viewMatrix;

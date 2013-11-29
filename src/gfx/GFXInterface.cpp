@@ -11,7 +11,6 @@
 void APIENTRY glErrorCallback(GLenum _source, GLenum _type, GLuint _id, GLenum _severity, GLsizei _length, const char* _message, void* _userParam)
 {
 	const char* source = "";
-
 	if ( _source == GL_DEBUG_SOURCE_API_ARB )
     {
 		source = "The GL";
@@ -158,8 +157,8 @@ namespace GFX
 			position.x / float(Renderer().GetWindowWidth() / 2) - 1.0f,
 			1.0f - position.y / float(Renderer().GetWindowHeight() / 2), 0.0f);
 		r.dimensions = glm::vec3(
-			dimensions.x / float(Renderer().GetWindowWidth() / 2),
-			dimensions.y / float(Renderer().GetWindowHeight() / 2), 0.0f);
+			dimensions.x / float(Renderer().GetWindowWidth())*2,
+			dimensions.y / float(Renderer().GetWindowHeight())*2, 0.0f);
 		DebugDrawing().AddRect(r, solid);
 	}
 
@@ -184,6 +183,15 @@ namespace GFX
 			radius);
 		c.lineWidth = (lineWidth == 0) ? -1.0f : (float)lineWidth;
 		DebugDrawing().AddCircle(c);
+	}
+
+	void Debug::DrawSphere(GFXVec3 position, float radius, GFXColor color)
+	{
+		DebugSphere s;
+		s.position = position;
+		s.radius = radius;
+		s.color = color;
+		DebugDrawing().AddSphere(s, false);
 	}
 
 }

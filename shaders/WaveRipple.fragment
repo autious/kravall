@@ -33,5 +33,5 @@ void main()
     color.r = wave_ripple;
     color.g = color.r;
     color.b = color.r;
-    color *= colorOne.x;
+    color *= inputColor;
 }

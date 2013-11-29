@@ -158,10 +158,9 @@ namespace GFX
 		Draws a sphere on the screen.
 		\param position World space position for the center of the sphere
 		\param radius Sphere radius
-		\param solid If true, the sphere will be filled, else only outlines will be shown
 		\param color Color of the sphere
 		*/
-		DLL_API void DrawSphere(GFXVec3 position, float radius, bool solid, GFXColor color);
+		DLL_API void DrawSphere(GFXVec3 position, float radius, GFXColor color);
 
 		/*!
 		Draws a screen space circle on the screen.
