@@ -141,9 +141,4 @@ LogSystem::LogData::~LogData()
 
 	logMutex.unlock();
 }
-<<<<<<< HEAD
-=======
 
-
-
->>>>>>> development
