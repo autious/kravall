@@ -26,6 +26,7 @@ namespace GFX
 		m_deferredPainter = new DeferredPainter(m_shaderManager, m_bufferManager, m_uniformBufferManager);
 		m_debugPainter = new DebugPainter(m_shaderManager, m_bufferManager, m_uniformBufferManager);
 		m_textPainter = new TextPainter(m_shaderManager, m_bufferManager, m_uniformBufferManager);
+		m_consolePainter = new ConsolePainter(m_shaderManager, m_bufferManager, m_uniformBufferManager);
 	}
 
 	RenderCore::~RenderCore()
@@ -45,9 +46,10 @@ namespace GFX
 		m_deferredPainter->Initialize(m_FBO, m_dummyVAO);
 		m_debugPainter->Initialize(m_FBO, m_dummyVAO);
 		m_textPainter->Initialize(m_FBO, m_dummyVAO);
+		m_consolePainter->Initialize(m_FBO, m_dummyVAO);
 
 		// Set console width
-		DebugDrawing().SetConsoleHeight(m_windowHeight);
+		m_consolePainter->SetConsoleHeight(m_windowHeight);
 	}
 
 	void RenderCore::Resize(int width, int height)
@@ -59,15 +61,20 @@ namespace GFX
 		ResizeGBuffer();
 
 		// Set console width
-		DebugDrawing().SetConsoleHeight(m_windowHeight);
+		m_consolePainter->SetConsoleHeight(m_windowHeight);
 	}
 
 	void RenderCore::Render()
 	{
-		m_deferredPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
+		//m_deferredPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
 
 		// Render debug
 		m_debugPainter->Render(m_viewMatrix, m_projMatrix);
+
+		// Render console
+		m_consolePainter->Render();
+
+		// Render text
 		m_textPainter->Render();
 	}
 
@@ -137,5 +144,15 @@ namespace GFX
 	void RenderCore::SetProjMatrix(glm::mat4 proj)
 	{
 		m_projMatrix = proj;
+	}
+
+	bool RenderCore::GetConsoleVisible()
+	{
+		return m_consolePainter->GetConsoleVisible();
+	}
+
+	void RenderCore::SetConsoleVisible(bool visible)
+	{
+		m_consolePainter->SetConsoleVisible(visible);
 	}
 }

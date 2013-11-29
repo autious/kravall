@@ -115,7 +115,8 @@ namespace GFX
 			err = glGetError();
 
 			// Draw 3D
-			glEnable(GL_DEPTH_TEST);
+			//Disable depth for debug
+			glDisable(GL_DEPTH_TEST);
 
 			BasicCamera bc;
 			bc.viewMatrix = viewMatrix;
@@ -128,8 +129,7 @@ namespace GFX
 			m_shaderManager->UseProgram("DebugLine");
 			for (unsigned int i = 0; i < DebugDrawing().GetLinesWorld().size(); ++i)
 			{
-				DebugLine dl = DebugDrawing().GetLinesWorld().back();
-				DebugDrawing().GetLinesWorld().pop_back();
+				DebugLine dl = DebugDrawing().GetLinesWorld()[i];
 
 				m_shaderManager->SetUniform(1, dl.color, m_lineColorUniform);
 				m_shaderManager->SetUniform(1, dl.start, m_lineStartUniform);
@@ -145,8 +145,7 @@ namespace GFX
 			m_shaderManager->UseProgram("DebugBox");
 			for (unsigned int i = 0; i < DebugDrawing().GetFilledBoxes().size(); ++i)
 			{
-				DebugBox b = DebugDrawing().GetFilledBoxes().back();
-				DebugDrawing().GetFilledBoxes().pop_back();
+				DebugBox b = DebugDrawing().GetFilledBoxes()[i];
 
 				m_shaderManager->SetUniform(1, b.color, m_rectColorUniform);
 				m_shaderManager->SetUniform(1, b.position, m_rectPosUniform);
@@ -161,15 +160,12 @@ namespace GFX
 			bc.projMatrix = glm::mat4x4(1.0f);
 			m_uniformBufferManager->SetBasicCameraUBO(bc);
 
-			//Disable depth for debug
-			glDisable(GL_DEPTH_TEST);
 
 			// Draw filled rectangles
 			m_shaderManager->UseProgram("DebugRect");
 			for (unsigned int i = 0; i < DebugDrawing().GetFilledRects().size(); ++i)
 			{
-				DebugRect r = DebugDrawing().GetFilledRects().back();
-				DebugDrawing().GetFilledRects().pop_back();
+				DebugRect r = DebugDrawing().GetFilledRects()[i];
 
 				m_shaderManager->SetUniform(1, r.color, m_rectColorUniform);
 				m_shaderManager->SetUniform(1, r.position, m_rectPosUniform);
@@ -183,8 +179,7 @@ namespace GFX
 			m_shaderManager->UseProgram("DebugCircle");
 			for (unsigned int i = 0; i < DebugDrawing().GetFilledCircles().size(); ++i)
 			{
-				DebugRect r = DebugDrawing().GetFilledCircles().back();
-				DebugDrawing().GetFilledCircles().pop_back();
+				DebugRect r = DebugDrawing().GetFilledCircles()[i];
 
 				m_shaderManager->SetUniform(1, r.color, m_circleColorUniform);
 				m_shaderManager->SetUniform(1, r.position, m_circlePosUniform);
@@ -202,8 +197,7 @@ namespace GFX
 			m_shaderManager->UseProgram("DebugPoint");
 			for (unsigned int i = 0; i < DebugDrawing().GetPoints().size(); ++i)
 			{
-				DebugPoint dp = DebugDrawing().GetPoints().back();
-				DebugDrawing().GetPoints().pop_back();
+				DebugPoint dp = DebugDrawing().GetPoints()[i];
 
 				m_shaderManager->SetUniform(1, dp.color, m_pointColorUniform);
 				err = glGetError();
@@ -223,8 +217,7 @@ namespace GFX
 
 			for (unsigned int i = 0; i < DebugDrawing().GetLines().size(); ++i)
 			{
-				DebugLine dl = DebugDrawing().GetLines().back();
-				DebugDrawing().GetLines().pop_back();
+				DebugLine dl = DebugDrawing().GetLines()[i];
 
 				m_shaderManager->SetUniform(1, dl.color, m_lineColorUniform);
 				m_shaderManager->SetUniform(1, dl.start, m_lineStartUniform);
@@ -234,21 +227,6 @@ namespace GFX
 				glDrawArrays(GL_POINTS, 0, 1);
 			}
 			glLineWidth(1.0f);
-			m_shaderManager->ResetProgram();
-		}
-
-		// Render console
-		if (DebugDrawing().GetConsoleVisible())
-		{
-			glDisable(GL_DEPTH_TEST);
-			// Draw filled rectangles
-			m_shaderManager->UseProgram("DebugRect");
-
-			m_shaderManager->SetUniform(1, DebugDrawing().GetConsoleRect().color, m_rectColorUniform);
-			m_shaderManager->SetUniform(1, DebugDrawing().GetConsoleRect().position, m_rectPosUniform);
-			m_shaderManager->SetUniform(1, DebugDrawing().GetConsoleRect().dimensions, m_rectDimUniform);
-
-			glDrawArrays(GL_POINTS, 0, 1);
 			m_shaderManager->ResetProgram();
 		}
 

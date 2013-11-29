@@ -91,15 +91,15 @@ namespace GFX
 	}
 	void ShowConsole()
 	{
-		DebugDrawing().SetConsoleVisible(true);
+		Renderer().SetConsoleVisible(true);
 	}
 	void HideConsole()
 	{
-		DebugDrawing().SetConsoleVisible(false);
+		Renderer().SetConsoleVisible(false);
 	}
 	void ToggleConsole()
 	{
-		DebugDrawing().SetConsoleVisible(!DebugDrawing().GetConsoleVisible());
+		Renderer().SetConsoleVisible(!Renderer().GetConsoleVisible());
 	}
 }
 

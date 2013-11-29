@@ -11,9 +11,6 @@ namespace GFX
 	DebugManager::DebugManager()
 	{
 		m_shouldRender = false;
-		m_showConsole = false;
-		m_consoleHeight = 200;
-		m_consoleColor = glm::vec4(0.0f, 0.0f, 0.0f, 0.75f);
 	}
 	DebugManager::~DebugManager()
 	{
@@ -28,12 +25,6 @@ namespace GFX
 		m_filledCircles.clear();
 
 		bool m_shouldRender = false;
-	}
-	void DebugManager::SetConsoleHeight(int height)
-	{ 
-		m_consoleRect.position = glm::vec3(-1.0f, 1.0f, 0.0f);
-		m_consoleRect.color = m_consoleColor;
-		m_consoleRect.dimensions = glm::vec3(2.0f, (m_consoleHeight/static_cast<float>(height)) * 2.0f, 0.0f);
 	}
 	void DebugManager::AddPoint(DebugPoint point)
 	{

@@ -68,10 +68,6 @@ namespace GFX
 		inline std::vector<DebugBox>& GetFilledBoxes(){ return m_filledBoxes; }
 		inline std::vector<DebugRect>& GetFilledCircles(){ return m_filledCircles; }
 
-		inline void SetConsoleVisible(bool visible){ m_showConsole = visible; }
-		inline bool GetConsoleVisible(){ return m_showConsole; }
-		inline DebugRect GetConsoleRect(){ return m_consoleRect; }
-
 		void SetConsoleHeight(int height);
 
 	private:
@@ -92,12 +88,6 @@ namespace GFX
 		std::vector<DebugRect> m_filledCircles;
 
 		bool m_shouldRender;
-
-		bool m_showConsole;
-
-		DebugRect m_consoleRect;
-		int m_consoleHeight;
-		glm::vec4 m_consoleColor;
 
 	};
 

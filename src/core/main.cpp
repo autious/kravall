@@ -57,9 +57,9 @@ void run( GLFWwindow * window )
 		gCamera->LookAt(glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		GFX::SetViewMatrix(gCamera->GetViewMatrix());
 
-		GFX::Debug::DrawBox(glm::vec3(2, 0, 0), glm::vec3(2, 2, 10), false, Colors::Black);
-		GFX::Debug::DrawBox(glm::vec3(2, 0, 0), glm::vec3(2, 2, 10), true, glm::vec4(Colors::Black.x, Colors::Black.y, Colors::Black.z, 0.5f));
-		GFX::Debug::DrawSphere(glm::vec3(2, 0, 0), 2.0f, Colors::Black);
+		GFX::Debug::DrawBox(glm::vec3(2, 0, 0), glm::vec3(2, 2, 2), false, Colors::Black);
+		GFX::Debug::DrawBox(glm::vec3(2, 0, 0), glm::vec3(2, 2, 2), true, glm::vec4(Colors::Black.x, Colors::Black.y, Colors::Black.z, 0.5f));
+		GFX::Debug::DrawSphere(glm::vec3(2, 0, 0), 1.0f, Colors::Black);
 		
 		GFX::Debug::DrawLine(glm::vec2(100, 50), glm::vec2(1200, 600), Colors::CornflowerBlue);
 		GFX::Debug::DrawPoint(glm::vec2(100, 50), Colors::Green, 10);
