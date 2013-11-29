@@ -8,7 +8,8 @@
 #include "FBOTexture.hpp"
 #include "DeferredPainter.hpp"
 #include "DebugRenderer/DebugPainter.hpp"
-
+#include "TextRenderer/TextPainter.hpp"
+#include "TextRenderer/TextManager.hpp"
 #include "DebugRenderer/DebugManager.hpp"
 
 #include <iostream>
@@ -87,7 +88,7 @@ namespace GFX
 		
 
 		DeferredPainter* m_deferredPainter;
-
+		TextPainter* m_textPainter;
 		DebugPainter* m_debugPainter;
 
 		glm::mat4 m_viewMatrix;

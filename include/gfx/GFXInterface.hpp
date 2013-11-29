@@ -73,6 +73,15 @@ namespace GFX
 	\param data A pointer to the data used for rendering
 	*/
 	DLL_API void Draw(unsigned int bitmask, void* data);
+	
+	/*!
+	Issues a draw  text command to the graphics engine.
+	\param position Position of the starting letter
+	\param size Vertical and horizontal size of each letter
+	\param color The color of the text
+	\param text The text to be rendered
+	*/
+	DLL_API void RenderText(GFXVec2 position, GFXVec2 size, GFXVec4 color, const char* text);
 
 
 	namespace Debug
