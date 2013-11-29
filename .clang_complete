@@ -1,0 +1,6 @@
+-I include
+-I src/core
+-I src/gfx
+-I src/contentmanager
+-I linux/deps
+-I deps

@@ -56,14 +56,17 @@ void run( GLFWwindow * window )
 	glfwTerminate();
 }
 
+
 int main(int argc, char** argv)
 {
 #ifdef RUN_GTEST
     ::testing::InitGoogleTest(&argc, argv);
 #endif
-    GLFWwindow* window = init();
-    if( window == nullptr )
-       return -1; 
+#ifndef SKIP_RUN
+	GLFWwindow* window = init();
+	if( window == nullptr )
+		return -1; 
+#endif
 #ifdef RUN_GTEST
     int gtestReturn = RUN_ALL_TESTS();
     if( gtestReturn != 0 )
@@ -71,7 +74,10 @@ int main(int argc, char** argv)
 #endif
 #ifndef SKIP_RUN
     run( window );
+#elif _WIN32
+	std::cin.get();
 #endif
+
 #ifdef RUN_GTEST
     return gtestReturn;
 #else
