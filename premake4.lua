@@ -77,7 +77,7 @@ solution "RiotGame"
         configuration{ "*Test" }
             links { "gtest" }
         configuration{ "windows" }
-            links { "glew32", "glfw3dll", "opengl32", "logger" }
+            links { "glew32", "glfw3dll", "opengl32", "logger", "freetype" }
         configuration{ "linux" }
             links { "GLEW", "GL" }
             

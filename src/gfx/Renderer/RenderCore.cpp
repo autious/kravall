@@ -25,6 +25,7 @@ namespace GFX
 
 		m_deferredPainter = new DeferredPainter(m_shaderManager, m_bufferManager, m_uniformBufferManager);
 		m_debugPainter = new DebugPainter(m_shaderManager, m_bufferManager, m_uniformBufferManager);
+		m_textPainter = new TextPainter(m_shaderManager, m_bufferManager, m_uniformBufferManager);
 	}
 
 	RenderCore::~RenderCore()
@@ -43,7 +44,7 @@ namespace GFX
 
 		m_deferredPainter->Initialize(m_FBO, m_dummyVAO);
 		m_debugPainter->Initialize(m_FBO, m_dummyVAO);
-
+		m_textPainter->Initialize(m_FBO, m_dummyVAO);
 	}
 
 	void RenderCore::Resize(int width, int height)
@@ -61,6 +62,7 @@ namespace GFX
 
 		// Render debug
 		m_debugPainter->Render(m_viewMatrix, m_projMatrix);
+		m_textPainter->Render();
 	}
 
 	void RenderCore::InitializeGBuffer()
