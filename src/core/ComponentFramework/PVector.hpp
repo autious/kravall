@@ -4,14 +4,14 @@
 
 namespace Core
 {
-    template<typename Component>
     class PVector
     {
     private:
-        Component* m_data = nullptr;
+        void *m_data = nullptr;
         size_t m_size;
         size_t m_count;
         size_t m_growStep;
+        size_t m_typesize;
         std::vector<int> deleted;
     public:
 
@@ -21,14 +21,13 @@ namespace Core
             
             /param growStep size step growth for each time the array isn't large enough.
         */
-        PVector( size_t initialSize, size_t growStep )
+        PVector( size_t initialSize, size_t growStep, size_t typesize )
         {
-            static_assert(std::is_pod<Component>::value, "Components must be Pure Data Objects");
-
-            m_data = (Component*)malloc( initialSize * sizeof( Component) );
+            m_data = malloc( initialSize * typesize );
             m_size = initialSize;
             m_count = 0;
             m_growStep = growStep;
+            m_typesize = typesize;
         }
 
         ~PVector( )
@@ -53,7 +52,7 @@ namespace Core
             if( m_count >= m_size )
             {
                 m_size += m_growStep;
-                m_data = (Component*)realloc( m_data, m_size * sizeof( Component ) );
+                m_data = realloc( m_data, m_size * m_typesize );
 
                 assert( m_data != NULL );
             } 
@@ -87,10 +86,12 @@ namespace Core
             Retrieves a temporary pointer to data in
             this structure.
         */
+        template<class Component>
         Component* Get( int id )
         {
+            assert( sizeof(Component) == m_typesize );
             assert( id > 0 && id < m_count );
-            return &m_data[id*sizeof(Component)]; 
+            return &((Component*)m_data)[id];
         }
 
         /*!

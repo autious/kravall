@@ -70,23 +70,6 @@ namespace Core
         
         static const int COMPONENT_COUNT = sizeof...(Components);
 
-        /*!
-            Data block of component data packed in an array for each respective
-            type
-        */
-        void *m_components[COMPONENT_COUNT];
-        /*!
-            The entity size is how much memory there's currently allocated
-            for each respective component type.
-        */
-        int m_componentSizes[COMPONENT_COUNT];
-        /*!
-            The component counts is how many currently active components there are in existance
-        */
-        int m_componentCounts[COMPONENT_COUNT];
-        /*!
-            A two dimensional array of component ids for a specific entity id
-        */
         int *m_entityIds[COMPONENT_COUNT];
 
         /*!
@@ -112,9 +95,7 @@ namespace Core
         {
             for( int i = 0; i < COMPONENT_COUNT; i++ )
             {
-                m_components[i] = nullptr;
-                m_componentSizes[i] = 0;
-                m_componentCounts[i] = 0;
+
             } 
         }
     
@@ -127,6 +108,7 @@ namespace Core
         template<typename Component>
         size_t constexpr GetComponentTypeId( )
         {
+            static_assert(std::is_pod<Component>::value, "Components must be Pure Data Objects");
             static_assert( Match<Component,Components...>::exists, SA_COMPONENT_USE );
             return Index<Component,std::tuple<Components...>>::value;
         }
@@ -135,7 +117,6 @@ namespace Core
         Component* GetComponentTmpPointer( Entity entity )
         {
             static_assert( Match<Component,Components...>::exists, SA_COMPONENT_USE );
-            
         }
 
         template<typename... AspectComponents>
