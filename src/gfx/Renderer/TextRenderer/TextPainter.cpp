@@ -24,7 +24,7 @@ namespace GFX
 		/* Load a font */
 		if (FT_New_Face(m_library, "assets/Fonts/DentonBETA2.ttf", 0, &m_face))
 		{
-			std::cout << "Could not open font\n";
+			assert(0 && "Could not open font file in TextPainter.Initialize()\n");
 		}
 
 		m_shaderManager->CreateProgram("BasicText");
