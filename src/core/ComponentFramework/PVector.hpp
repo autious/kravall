@@ -1,6 +1,10 @@
+#ifndef SRC_CORE_COMPONENTFRAMEWORK_PVECTOR_H
+#define SRC_CORE_COMPONENTFRAMEWORK_PVECTOR_H
+
 #include <cstdint>
 #include <cstdlib>
 #include <vector>
+#include <cassert>
 
 namespace Core
 {
@@ -21,19 +25,9 @@ namespace Core
             
             /param growStep size step growth for each time the array isn't large enough.
         */
-        PVector( size_t initialSize, size_t growStep, size_t typesize )
-        {
-            m_data = malloc( initialSize * typesize );
-            m_size = initialSize;
-            m_count = 0;
-            m_growStep = growStep;
-            m_typesize = typesize;
-        }
+        PVector( size_t initialSize, size_t growStep, size_t typesize );
 
-        ~PVector( )
-        {
-            free( m_data );
-        }
+        ~PVector( );
 
         /*!
             Adds a given data into the array.
@@ -46,41 +40,13 @@ namespace Core
 
             \param source data to copy into index 
         */
-        int Alloc( )
-        {
-            int id = -1;
-            if( m_count >= m_size )
-            {
-                m_size += m_growStep;
-                m_data = realloc( m_data, m_size * m_typesize );
-
-                assert( m_data != NULL );
-            } 
-
-            if( deleted.size() > 0 )
-            {
-                id = deleted.back();
-                deleted.pop_back();
-            }
-            else
-            {
-                id = m_count;
-            }
-
-            m_count++;
-
-            return id;
-        }
+        int Alloc( );
 
         /*!
             Releses a component from the array, making it available 
             for reallocation.
         */
-        void Release( int id )
-        {
-            deleted.push_back( id );
-            m_count--;
-        }
+        void Release( int id );
 
         /*!
             Retrieves a temporary pointer to data in
@@ -97,17 +63,13 @@ namespace Core
         /*!
             Returns how many active components there are.
         */
-        size_t GetCount()
-        {
-            return m_count;
-        }
+        size_t GetCount();
     
         /*!
             Returns how many components slots there are allocated in memory.
         */
-        size_t GetAllocation()
-        {
-            return m_size;
-        }
+        size_t GetAllocation();
     };
 }
+
+#endif

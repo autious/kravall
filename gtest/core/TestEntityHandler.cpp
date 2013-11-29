@@ -16,6 +16,7 @@ namespace Core
         ASSERT_EQ( 1, instance.GetComponentTypeId<Component2>() );
         ASSERT_EQ( 2, instance.GetComponentTypeId<Component3>() );
 
+
         //This should always generate a static assert error.
         //instance.GetComponentTypeId<NotComponent1>();
 
@@ -34,5 +35,4 @@ namespace Core
 
     }
 }
-
 #endif

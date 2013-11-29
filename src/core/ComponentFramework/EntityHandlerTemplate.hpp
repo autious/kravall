@@ -5,6 +5,11 @@
 #include <tuple>
 #include <cstddef>
 #include <cstdint>
+#include <vector>
+#include <cassert>
+#include <array>
+
+#include "PVector.hpp"
 
 #define SA_COMPONENT_USE "Component doesn't exist in EntityHandler. Maybe you forgot to add it?"
 
@@ -70,36 +75,16 @@ namespace Core
         
         static const int COMPONENT_COUNT = sizeof...(Components);
 
-        int *m_entityIds[COMPONENT_COUNT];
+        std::vector<int[COMPONENT_COUNT]> m_entityIds;
 
-        /*!
-            size increase value in component amount if an array of components runs out
-        */
-        int m_componentStepSize = 64;
-
-        template<typename AB> 
-        void GenerateAspectInternal( Aspect aspect )
-        {
-            aspect |= (1UL << GetComponentTypeId<AB>());
-        }
-
-        template<typename AB, typename... AspectComponents>
-        void GenerateAspectInternal( Aspect aspect )
-        {
-            //GenerateAspectInternal<AspectComponents...>( aspect );
-            aspect |= (1UL << GetComponentTypeId<AB>());
-        }
+        std::array<PVector,sizeof...(Components)> p = {{PVector(1024,64,sizeof(Components))...}};
 
     public:
         EntityHandlerTemplate()
         {
-            for( int i = 0; i < COMPONENT_COUNT; i++ )
-            {
-
-            } 
         }
-    
-        template<typename ...EntityComponents>
+
+        template<typename... EntityComponents>
         Entity CreateEntity()
         {
             
@@ -120,11 +105,18 @@ namespace Core
         }
 
         template<typename... AspectComponents>
-        Aspect GenerateAspect( )
+        Aspect constexpr GenerateAspect( )
         {
-            Aspect asp = 0ULL;
-            GenerateAspectInternal<AspectComponents...>(asp);
+            static const size_t ids[] = { GetComponentTypeId<AspectComponents>()... };
+            return GenerateAspect( ids, Aspect(), 0, sizeof...(AspectComponents) ); 
         }
+
+        Aspect constexpr GenerateAspect( const size_t *id, Aspect asp, int i, int size )
+        {
+               return asp |= (1ULL << id[i] | (i < size ? GenerateAspect(id,asp,i+1,size) : 0ULL )); 
+        }
+
+    private:
     };
 }
 #endif

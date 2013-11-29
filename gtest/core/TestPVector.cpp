@@ -34,7 +34,7 @@ namespace Core
     {
         PVector pvec(64,16, sizeof( DataType ));
 
-        for( int i = 0; i < 50; i++ )
+        for( int i = 0; i < 40; i++ )
         {
             pvec.Alloc();
         }
@@ -44,15 +44,17 @@ namespace Core
             pvec.Release(pvec.Alloc());
         }
 
-        for( int i = 0; i < 50; i++ )
+        int last = 0;
+        for( int i = 0; i < 25; i++ )
         {
-            pvec.Alloc();
+            last = pvec.Alloc();
         }
 
-        ASSERT_EQ( 64+16, pvec.GetAllocation() );
+        pvec.Release(last); 
+
+        ASSERT_EQ( (64+16), pvec.GetAllocation() );
 
         ASSERT_EQ( 64, pvec.GetCount() );
-
     }
 
     TEST( PVectorTest, CorrectGetData )

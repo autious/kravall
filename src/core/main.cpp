@@ -11,6 +11,7 @@
 
 #include "Camera/Camera.hpp"
 #include <ComponentFramework/SystemHandlerTemplate.hpp>
+#include <ComponentFramework/EntityHandlerTemplate.hpp>
 
 
 GLFWwindow* init()
