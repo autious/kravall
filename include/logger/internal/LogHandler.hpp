@@ -4,21 +4,22 @@
 #include <string>
 #include <internal/LogData.hpp>
 
+
 #ifdef _WIN32
-#   ifdef LOGGER_DLL_EXPORT
-#   define DLLSETTING __declspec(dllexport)
-#   else 
-#   define DLLSETTING __declspec(dllimport)
-#   endif
-#else
-#   define DLLSETTING
+	#ifdef LOGGER_DLL_EXPORT
+		#define DLLSETTING __declspec(dllexport)
+	#else 
+		#define DLLSETTING __declspec(dllimport)
+	#endif
+#else 
+	#define DLLSETTING
 #endif
 
 /*!
 	Virutal object for indirection of output options. 
 	Parent for ConsoleHandler and FileHandler etc. 
 */
-DLLSETTING class LogHandler
+class LogHandler
 {
 public:
 	DLLSETTING LogHandler();

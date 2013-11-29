@@ -5,7 +5,7 @@
 // where one whishes to alter the default handers.
 
 #include "internal/FileHandler.hpp"
-#include "internal/ConsoleHandler.hpp"
 #include "internal/LogHandler.hpp"
+#include "internal/ConsoleHandler.hpp"
 
 #endif

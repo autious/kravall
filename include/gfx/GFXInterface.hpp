@@ -19,7 +19,7 @@
 typedef glm::vec2 GFXVec2;
 typedef glm::vec3 GFXVec3;
 typedef glm::vec4 GFXVec4;
-typedef float* GFXMat4x4;
+typedef glm::mat4x4 GFXMat4x4;
 
 typedef GFXVec4 GFXColor;
 
@@ -73,6 +73,15 @@ namespace GFX
 	\param data A pointer to the data used for rendering
 	*/
 	DLL_API void Draw(unsigned int bitmask, void* data);
+	
+	/*!
+	Issues a draw  text command to the graphics engine.
+	\param position Position of the starting letter
+	\param size Vertical and horizontal size of each letter
+	\param color The color of the text
+	\param text The text to be rendered
+	*/
+	DLL_API void RenderText(GFXVec2 position, GFXVec2 size, GFXVec4 color, const char* text);
 
 
 	namespace Debug
@@ -95,11 +104,28 @@ namespace GFX
 
 		/*!
 		Draws a line on the screen.
+		\param p1 World space position of the starting point of the line
+		\param p2 World space position of the end point of the line
+		\param color Color of the line
+		*/
+		DLL_API void DrawLine(GFXVec3 p1, GFXVec3 p2, GFXColor color);
+
+		/*!
+		Draws a line on the screen.
+		\param p1 The world space position of the starting point of the line
+		\param p2 The world space position of the end point of the line
+		\param color Color of the line
+		\param thickness Thickness of the line
+		*/
+		DLL_API void DrawLine(GFXVec3 p1, GFXVec3 p2, GFXColor color, float thickness);
+
+		/*!
+		Draws a line on the screen.
 		\param p1 Screen space position of the starting point of the line
 		\param p2 Screen space position of the end point of the line
 		\param color Color of the line
 		*/
-		DLL_API void DrawLine(GFXVec3 p1, GFXVec3 p2, GFXColor color);
+		DLL_API void DrawLine(GFXVec2 p1, GFXVec2 p2, GFXColor color);
 
 		/*!
 		Draws a line on the screen.
@@ -108,7 +134,7 @@ namespace GFX
 		\param color Color of the line
 		\param thickness Thickness of the line
 		*/
-		DLL_API void DrawLine(GFXVec3 p1, GFXVec3 p2, GFXColor color, float thickness);
+		DLL_API void DrawLine(GFXVec2 p1, GFXVec2 p2, GFXColor color, float thickness);
 
 		/*!
 		Draws a rectangle on the screen.
@@ -132,19 +158,18 @@ namespace GFX
 		Draws a sphere on the screen.
 		\param position World space position for the center of the sphere
 		\param radius Sphere radius
-		\param solid If true, the sphere will be filled, else only outlines will be shown
 		\param color Color of the sphere
 		*/
-		DLL_API void DrawSphere(GFXVec3 position, float radius, bool solid, GFXColor color);
+		DLL_API void DrawSphere(GFXVec3 position, float radius, GFXColor color);
 
 		/*!
 		Draws a screen space circle on the screen.
 		\param position Screen space position for the center of the circle
 		\param radius Circle radius
-		\param solid If true, the circle will be filled, else only outlines will be shown
+		\param lineWidth Width of the outline line, the circle will be filled if this value is 0
 		\param color Color of the circle
 		*/
-		DLL_API void DrawCircle(GFXVec2 position, float radius, bool solid, GFXColor color);
+		DLL_API void DrawCircle(GFXVec2 position, float radius, unsigned int lineWidth, GFXColor color);
 	} // namespace Debug
 
 	namespace Settings

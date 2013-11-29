@@ -1,0 +1,73 @@
+#version 440
+
+uniform PerFrameBlock
+{
+	mat4 gView;
+	mat4 gProjection;
+};
+
+uniform vec3 pointPosition;
+uniform vec3 pointPosition2;
+uniform vec4 inColor;
+
+layout(points) in;
+layout(triangle_strip, max_vertices = 14) out;
+
+void main()
+{
+	vec4 p = gView * vec4(pointPosition, 1.0f);
+	vec4 r = gView * vec4(pointPosition2 / 2.0f, 0.0f);
+
+	vec4 p0 = gProjection * vec4( p.x - r.x, p.y - r.y, p.z + r.z, 1 );
+	vec4 p1 = gProjection * vec4( p.x + r.x, p.y - r.y, p.z + r.z, 1 );
+	vec4 p2 = gProjection * vec4( p.x - r.x, p.y + r.y, p.z + r.z, 1 );
+	vec4 p3 = gProjection * vec4( p.x + r.x, p.y + r.y, p.z + r.z, 1 );
+	vec4 p4 = gProjection * vec4( p.x - r.x, p.y - r.y, p.z - r.z, 1 );
+	vec4 p5 = gProjection * vec4( p.x + r.x, p.y - r.y, p.z - r.z, 1 );
+	vec4 p6 = gProjection * vec4( p.x - r.x, p.y + r.y, p.z - r.z, 1 );
+	vec4 p7 = gProjection * vec4( p.x + r.x, p.y + r.y, p.z - r.z, 1 );
+
+	gl_Position = p0;
+	EmitVertex();
+
+	gl_Position = p1;
+	EmitVertex();
+
+	gl_Position = p2;
+	EmitVertex();
+	
+	gl_Position = p3;
+	EmitVertex();	
+
+	gl_Position = p7;
+	EmitVertex();	
+
+	gl_Position = p1;
+	EmitVertex();	
+
+	gl_Position = p5;
+	EmitVertex();	
+
+	gl_Position = p4;
+	EmitVertex();	
+
+	gl_Position = p7;
+	EmitVertex();	
+
+	gl_Position = p6;
+	EmitVertex();	
+
+	gl_Position = p2;
+	EmitVertex();	
+
+	gl_Position = p4;
+	EmitVertex();	
+
+	gl_Position = p0;
+	EmitVertex();	
+
+	gl_Position = p1;
+	EmitVertex();	
+		
+	EndPrimitive();
+}

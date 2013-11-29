@@ -51,7 +51,7 @@ solution "RiotGame"
 
     project "core"
         targetname "RiotGame" 
-        --debugdir "" -- fungerade inte för utskrift av textfiler, lämnar detta så det syns utifall något faller iom. det / John
+        debugdir "" -- fungerade inte för utskrift av textfiler, lämnar detta så det syns utifall något faller iom. det / John
         location ( location_path )
         language "C++"
         kind "ConsoleApp"
@@ -69,18 +69,18 @@ solution "RiotGame"
         location ( location_path )
         language "C++"
         kind "SharedLib"
-        files { "gtest/gfx/**.cpp", "src/gfx/**.hpp", "src/gfx/**.h", "src/gfx/**.cpp", "include/gfx/**.hpp", "shaders/**.vertex", "shaders/**.geometry", "shaders/**.fragment", "shaders/**.compute" }
-        includedirs { "src/gfx", "include/gfx", "shaders", "include" }       
-
-        links { "glfw3" }
+        files { "gtest/gfx/**.cpp", "src/gfx/**.hpp", "src/gfx/**.h", "src/gfx/**.cpp", "include/gfx/**.hpp" ,"include/utility/**.hpp", "shaders/**.vertex", "shaders/**.geometry", "shaders/**.fragment", "shaders/**.compute" }
+		includedirs { "src/gfx", "include/gfx", "include/utility", "shaders", "include" }       
+		defines { "GFX_DLL_EXPORT" }
+		
+        links { "glfw3", "freetype" }
         configuration{ "*Test" }
             links { "gtest" }
         configuration{ "windows" }
             links { "glew32", "glfw3dll", "opengl32", "logger" }
         configuration{ "linux" }
             links { "GLEW", "GL" }
-        configuration { "*" }
-            defines { "GFX_DLL_EXPORT" }
+            
 			
 	project "logger"
       location ( location_path )
@@ -88,10 +88,11 @@ solution "RiotGame"
 		kind "SharedLib"
         files { "gtest/logger/**.cpp", "src/logger/**.hpp", "src/logger/**.h", "src/logger/**.cpp", "include/logger/**.hpp" }
 		includedirs { "include/logger", "src/logger" }       
+		defines { "LOGGER_DLL_EXPORT" }
         configuration{ "*Test" }
             links { "gtest" }
-        configurations { "*" }
-            defines { "LOGGER_DLL_EXPORT" }
+
+
  
 --    project "sfx"
 --        location ( location_path )

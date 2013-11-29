@@ -7,9 +7,10 @@
 
 #include "FBOTexture.hpp"
 #include "DeferredPainter.hpp"
-#include "DebugPainter.hpp"
-
-#include "DebugManager.hpp"
+#include "DebugRenderer/DebugPainter.hpp"
+#include "TextRenderer/TextPainter.hpp"
+#include "TextRenderer/TextManager.hpp"
+#include "DebugRenderer/DebugManager.hpp"
 
 #include <iostream>
 
@@ -44,8 +45,29 @@ namespace GFX
 		*/
 		void Resize(int width, int height);
 
+		/*!
+		Set the local view matrix
+		\param view New view matrix
+		*/
 		void SetViewMatrix(glm::mat4 view);
+
+		/*!
+		Set the local projection matrix
+		\param proj New projection matrix
+		*/
 		void SetProjMatrix(glm::mat4 proj);
+
+		/*!
+		Get window width
+		\return window width 
+		*/
+		inline int GetWindowWidth() const { return m_windowWidth; }
+
+		/*!
+		Get window height
+		\return window height
+		*/
+		inline int GetWindowHeight() const { return m_windowHeight; }
 
 	private:
 		RenderCore();
@@ -84,6 +106,8 @@ namespace GFX
 		
 
 		DeferredPainter* m_deferredPainter;
+		TextPainter* m_textPainter;
+		DebugPainter* m_debugPainter;
 
 		glm::mat4 m_viewMatrix;
 		glm::mat4 m_projMatrix;

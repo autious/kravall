@@ -1,0 +1,38 @@
+#version 440 core
+// Fragment Shader for debug drawing
+
+uniform PerFrameBlock
+{
+	mat4 gView;
+	mat4 gProjection;
+};
+
+uniform vec3 pointPosition;
+uniform vec3 pointPosition2;
+uniform vec4 inColor;
+uniform vec3 screenSizeAndLinewidth;
+
+out vec4 color;
+
+void main()
+{
+	float radius = pointPosition2.z;
+	vec2 center = vec2(
+		(pointPosition.x + pointPosition2.x/2 + 1.0f) * 0.5f,
+		-(pointPosition.y + pointPosition2.y/2 - 1.0f) * 0.5f
+	);
+	
+	vec2 circleScreenCenter = vec2(
+		center.x * screenSizeAndLinewidth.x, 
+		screenSizeAndLinewidth.y - center.y * screenSizeAndLinewidth.y
+	);
+	
+	float lineWidth = screenSizeAndLinewidth.z;
+	
+	if( distance( gl_FragCoord.xy, circleScreenCenter ) > radius)
+		discard;
+	else if(lineWidth > 0.0f && distance( gl_FragCoord.xy, circleScreenCenter ) < radius - lineWidth)
+		discard;
+	else
+		color = inColor;
+}

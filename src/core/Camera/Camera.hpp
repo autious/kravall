@@ -46,18 +46,6 @@ namespace Core
 		inline void SetPosition(const glm::vec3& position){ m_position = position; }
 
 		/*!
-		Gets the camera rotation in global space.
-		\return Returns the camera rotation in global space as a vector
-		*/
-		inline glm::vec3 GetRotationXYZ() const { return m_rotationXYZ; }
-
-		/*!
-		Sets the camera rotation in global space.
-		\param rotXYZ The rotation in global space to apply to the camera
-		*/
-		inline void SetRotationXYZ(const glm::vec3& rotXYZ){ m_rotationXYZ = rotXYZ; }
-
-		/*!
 		Recalculates the camera view matrix.
 		*/
 		void CalculateViewMatrix();
@@ -90,10 +78,6 @@ namespace Core
 		*/
 		inline glm::mat4x4 GetProjectionMatrix() const { return m_projectionMatrix; }
 
-		float* GetProjectionMatrixAsArray();
-
-		float* GetViewMatrixAsArray();
-
 		/*!
 		Sets the camera field of view.
 		\param fov The Field of view in degrees
@@ -110,7 +94,9 @@ namespace Core
 	private:
 
 		glm::vec3 m_position;
-		glm::vec3 m_rotationXYZ;
+
+		glm::vec3 m_forward;
+		glm::vec3 m_up;
 
 		glm::mat4x4 m_viewMatrix;
 		glm::mat4x4 m_projectionMatrix;

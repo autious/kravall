@@ -12,7 +12,17 @@ LogHandler* LogSystem::fatalHandler		= new ConsoleHandler( LogSystem::LogType::l
 LogHandler* LogSystem::errorHandler		= new ConsoleHandler( LogSystem::LogType::logType_error );
 LogHandler* LogSystem::warningHandler	= new ConsoleHandler( LogSystem::LogType::logType_warning );
 
-char* LogSystem::ignoreList = "";
+
+char ignoreList[1024];
+
+struct IgnoreListnitializer
+{
+	IgnoreListnitializer()
+	{
+		ignoreList[0] = '\0';
+	}
+
+} onlyUsedToInitIgnoreList;
 
 static std::mutex logMutex;
 
@@ -24,10 +34,7 @@ void LogSystem::Mute( const char* prefix )
 	ss << prefix << " " << ignoreList;
 
 	std::string msg = ss.str();
-	char* temp = new char[msg.size()];
-	std::strcpy( temp, msg.c_str() );
-
-	ignoreList = temp;
+	std::strcpy( ignoreList, msg.c_str() );
 
 	logMutex.unlock();
 }
@@ -49,14 +56,11 @@ void LogSystem::Unmute( const char* prefix )
 	}
 
 	std::string msg = out.str();
-	char* temp = new char[msg.size()];
-	std::strcpy( temp, msg.c_str() );
-	ignoreList = temp;
+	std::strcpy( ignoreList, msg.c_str() );
 
 	logMutex.unlock();
 }
 
-//static std::mutex alterLogHandlerMutex;
 void LogSystem::SetNewLogHandler( LogHandler** handlerChannel, LogHandler* newHandler )
 {
 	logMutex.lock();
@@ -68,25 +72,24 @@ void LogSystem::SetNewLogHandler( LogHandler** handlerChannel, LogHandler* newHa
 	logMutex.unlock();
 }
 
-LogSystem::LogData& operator<< ( LogSystem::LogData& data, StandardEndLine obj )
+LogSystem::LogData& operator<< ( const LogSystem::LogData& data, StandardEndLine obj )
 {
+	LogSystem::LogData& temp = (LogSystem::LogData&)data; // unix hack, nab compiler...
 	std::stringstream ss;
 	ss << data.m_message;
 	obj( ss );
 	
 	std::string msg = ss.str();
-	char* temp = new char[msg.size()];
-	std::strcpy( temp, msg.c_str() );
-	data.m_message = temp;
+	std::strcpy( temp.m_message, msg.c_str() );
 
-	return data;
+	return temp;
 }
 
 LogSystem::LogData::LogData(LogType type, const char* prefix )
 {
 	m_type = type;
 	m_prefix = (char*)prefix;
-	m_message = "";
+	m_message[0] = '\0';
 }
 
 LogSystem::LogData::~LogData()
@@ -102,7 +105,10 @@ LogSystem::LogData::~LogData()
 		{
 			ss >> tt;
 			if( std::strcmp( m_prefix, tt.c_str() ) == 0 )
+			{
+				logMutex.unlock();
 				return;
+			}
 		}
 	}
 	
@@ -135,3 +141,9 @@ LogSystem::LogData::~LogData()
 
 	logMutex.unlock();
 }
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> development

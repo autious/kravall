@@ -1,14 +1,15 @@
 #ifndef LOGDATAHPP
 #define LOGDATAHPP
 
+
 #ifdef _WIN32
-#   ifdef LOGGER_DLL_EXPORT
-#   define DLLSETTING __declspec(dllexport)
-#   else 
-#   define DLLSETTING __declspec(dllimport)
-#   endif
-#else
-#   define DLLSETTING
+	#ifdef LOGGER_DLL_EXPORT
+		#define DLLSETTING __declspec(dllexport)
+	#else 
+		#define DLLSETTING __declspec(dllimport)
+	#endif
+#else 
+	#define DLLSETTING
 #endif
 
 
@@ -40,7 +41,7 @@ namespace LogSystem
 	/*!
 		Container object for one "<<" chain. Should only be used via macros.
 	*/
-	DLLSETTING class LogData
+	class LogData
 	{
 	public:
 		/*!
@@ -60,7 +61,7 @@ namespace LogSystem
 		*/
 		DLLSETTING ~LogData();
 
-		char* m_message;
+		char m_message[512];
 		char* m_prefix;
 
 	private:		
@@ -80,9 +81,6 @@ namespace LogSystem
 	DLLSETTING extern LogHandler* errorHandler;
 	/*! channel for 'warning' messages, default is ConsoleHandler */
 	DLLSETTING extern LogHandler* warningHandler;
-
-	/*! space spearated list of prefixes to mute */
-	extern char* ignoreList;
 
 	/*!
 		\param prefix to be muted, same one as stated in the macro function for that channel. eg. "debug"
@@ -104,21 +102,20 @@ namespace LogSystem
 
 typedef std::basic_ostream<char, std::char_traits<char> > CoutType;
 typedef CoutType& (*StandardEndLine)(CoutType&);
-DLLSETTING LogSystem::LogData& operator<< ( LogSystem::LogData& data, StandardEndLine obj );
+DLLSETTING LogSystem::LogData& operator<< ( const LogSystem::LogData& data, StandardEndLine obj );
 
 template < class T >
-LogSystem::LogData& operator<< ( LogSystem::LogData data, const T& obj )
+LogSystem::LogData& operator<< ( const LogSystem::LogData& data, const T& obj )
 {
+	LogSystem::LogData& temp = (LogSystem::LogData&)data; // unix hack, nab compiler...
 	std::stringstream ss;
 	ss << data.m_message;
 	ss << obj;
 
 	std::string msg = ss.str();
-	char* temp = new char[msg.size()];
-	std::strcpy( temp, msg.c_str() );
-	data.m_message = temp;
-    
-	return data;
+	std::strcpy( temp.m_message, msg.c_str() );
+
+	return temp;
 }
 
 

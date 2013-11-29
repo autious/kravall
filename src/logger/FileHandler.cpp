@@ -32,7 +32,7 @@ FileHandler::~FileHandler()
 }
 
 
- void FileHandler::Log( const char* message )
+void FileHandler::Log( const char* message )
  {
 	 if( m_file.is_open() )
 		 m_file << message;

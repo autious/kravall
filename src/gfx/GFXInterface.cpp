@@ -11,7 +11,6 @@
 void APIENTRY glErrorCallback(GLenum _source, GLenum _type, GLuint _id, GLenum _severity, GLsizei _length, const char* _message, void* _userParam)
 {
 	const char* source = "";
-
 	if ( _source == GL_DEBUG_SOURCE_API_ARB )
     {
 		source = "The GL";
@@ -50,13 +49,12 @@ namespace GFX
 		glEnable(GL_CULL_FACE);
 		err = glGetError();
 
+		glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
+		glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+
 		glCullFace(GL_BACK);
 		err = glGetError();
 		glFrontFace(GL_CW);
-		err = glGetError();
-		glBlendEquation(GL_FUNC_ADD);
-		err = glGetError();
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 		err = glGetError();
 
 		//Initialize RenderCore
@@ -78,12 +76,18 @@ namespace GFX
 
 	void SetViewMatrix(GFXMat4x4 matrix)
 	{
-		Renderer().SetViewMatrix(glm::make_mat4(matrix));
+		Renderer().SetViewMatrix(matrix);
 	}
 
 	void SetProjectionMatrix(GFXMat4x4 matrix)
 	{
-		Renderer().SetProjMatrix(glm::make_mat4(matrix));
+		Renderer().SetProjMatrix(matrix);
+	}
+
+	void RenderText(GFXVec2 position, GFXVec2 size, GFXVec4 color, const char* text)
+	{
+		Text t(position.x, position.y, size.x, size.y, color, text, Renderer().GetWindowWidth(), Renderer().GetWindowHeight());
+		GetTextManager().AddText(t);
 	}
 
 }
@@ -95,12 +99,99 @@ namespace GFX
 	{
 		Debug::DrawPoint(point, color, 1.0f);
 	}
+
 	void Debug::DrawPoint(GFXVec2 point, GFXColor color, float size)
 	{
 		DebugPoint p;
-		p.position = glm::vec3(point, 1.0f);
-		p.size = 1.0f;
+		p.position = glm::vec3(
+			point.x / float(Renderer().GetWindowWidth()/2) - 1.0f,
+			1.0f - point.y / float(Renderer().GetWindowHeight()/2),
+			0.0);
+		p.size = size;
 		p.color = color;
 		DebugDrawing().AddPoint(p);
 	}
+
+	void Debug::DrawLine(GFXVec3 p1, GFXVec3 p2, GFXColor color)
+	{
+		Debug::DrawLine(p1, p2, color, 1.0f);
+	}
+
+	void Debug::DrawLine(GFXVec3 p1, GFXVec3 p2, GFXColor color, float thickness)
+	{
+		DebugLine l;
+		l.color = color;
+		l.start = p1;
+		l.end = p2;
+		l.thickness = thickness;
+		DebugDrawing().AddLineWorld(l);
+	}
+
+	void Debug::DrawLine(GFXVec2 p1, GFXVec2 p2, GFXColor color)
+	{
+		Debug::DrawLine(p1, p2, color, 1.0f);
+	}
+
+	void Debug::DrawLine(GFXVec2 p1, GFXVec2 p2, GFXColor color, float thickness)
+	{
+		DebugLine l;
+		l.color = color;
+		l.start = glm::vec3(
+			p1.x / float(Renderer().GetWindowWidth() / 2) - 1.0f,
+			1.0f - p1.y / float(Renderer().GetWindowHeight() / 2),
+			0.0);
+		l.end = glm::vec3(
+			p2.x / float(Renderer().GetWindowWidth() / 2) - 1.0f,
+			1.0f - p2.y / float(Renderer().GetWindowHeight() / 2),
+			0.0);
+		l.thickness = thickness;
+		DebugDrawing().AddLine(l);
+	}
+
+	void Debug::DrawRectangle(GFXVec2 position, GFXVec2 dimensions, 
+		bool solid, GFXColor color)
+	{
+		DebugRect r;
+		r.color = color;
+		r.position = glm::vec3(
+			position.x / float(Renderer().GetWindowWidth() / 2) - 1.0f,
+			1.0f - position.y / float(Renderer().GetWindowHeight() / 2), 0.0f);
+		r.dimensions = glm::vec3(
+			dimensions.x / float(Renderer().GetWindowWidth())*2,
+			dimensions.y / float(Renderer().GetWindowHeight())*2, 0.0f);
+		DebugDrawing().AddRect(r, solid);
+	}
+
+	void Debug::DrawBox(GFXVec3 position, GFXVec3 dimensions, bool solid, GFXColor color)
+	{
+		DebugBox b;
+		b.color = color;
+		b.position = position;
+		b.dimensions = dimensions;
+		DebugDrawing().AddBox(b, solid);
+	}
+	void Debug::DrawCircle(GFXVec2 position, float radius, unsigned int lineWidth, GFXColor color)
+	{
+		DebugRect c;
+		c.position = glm::vec3(
+			(position.x-radius) / float(Renderer().GetWindowWidth() / 2) - 1.0f,
+			1.0f - (position.y+radius) / float(Renderer().GetWindowHeight() / 2), 0.0f);
+		c.color = color;
+		c.dimensions = glm::vec3(
+			radius * 2 / float(Renderer().GetWindowWidth() / 2),
+			radius * 2 / float(Renderer().GetWindowHeight() / 2), 
+			radius);
+		c.lineWidth = (lineWidth == 0) ? -1.0f : (float)lineWidth;
+		DebugDrawing().AddCircle(c);
+	}
+
+	void Debug::DrawSphere(GFXVec3 position, float radius, GFXColor color)
+	{
+		DebugSphere s;
+		s.position = position;
+		s.radius = radius;
+		s.color = color;
+		DebugDrawing().AddSphere(s, false);
+	}
+
 }

@@ -1,0 +1,29 @@
+#version 440
+
+
+uniform PerFrameBlock
+{
+	mat4 gView;
+	mat4 gProjection;
+};
+
+uniform vec3 pointPosition;
+uniform vec3 pointPosition2;
+uniform vec4 inColor;
+
+layout(points) in;
+layout(line_strip, max_vertices = 2) out;
+
+void main()
+{
+	vec4 p = gView * vec4(pointPosition, 1.0f);
+	vec4 r = gView * vec4(pointPosition2, 1.0f);
+
+	gl_Position = gProjection * p;
+	EmitVertex();
+
+	gl_Position = gProjection * r;
+	EmitVertex();
+		
+	EndPrimitive();
+}
