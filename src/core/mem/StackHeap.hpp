@@ -1,15 +1,16 @@
 #ifndef CORE_STACK_HEAP_HPP
 #define CORE_STACK_HEAP_HPP
 
-#include <cstring>
-
-#include <mem/LinearAllocator.hpp>
 #include <mem/Finalizer.hpp>
+#include <mem/LinearAllocator.hpp>
+
+#include <cstring>
+#include <type_traits>
 
 namespace Core
 {
     /*!
-      Stack based memory manager, all objects that are allocated with the StackHeap are removed once the StackHeap goes out of scope. ObjectsAllocated with AllocateObject have their destructor called on removal.
+      Stack based memory manager, all objects that are allocated with the StackHeap are removed once the StackHeap goes out of scope. Objects allocated with AllocateObject have their destructor called on removal.
      */
     class StackHeap
     {
@@ -26,6 +27,7 @@ namespace Core
          */
        template<typename T> T* NewPOD()
        {
+           static_assert(std::is_pod<T>::value, "Allocation is not of plain old data type");
            return new (m_allocator.Allocate(sizeof(T))) T;
        }
 
@@ -45,8 +47,11 @@ namespace Core
 
     private:
        Core::Finalizer* AllocateWithFinalizer(size_t size);
+       inline void* GetFinalizerObject(Core::Finalizer* finalizer)
+       {
+           return reinterpret_cast<unsigned char*>(finalizer) + sizeof(Core::Finalizer);
+       }
 
-       inline void* GetFinalizerObject(Core::Finalizer* finalizer);
        Core::LinearAllocator m_allocator;
        void* m_rewindPoint;
        Core::Finalizer* m_finalizerChain;

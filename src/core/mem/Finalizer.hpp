@@ -7,7 +7,7 @@ namespace Core
 {
     struct Finalizer
     {
-        std::function<void(void*)> m_destructorCall;
+        void (*m_destructorCall)(void* pointer);
         Finalizer* m_finalizerChain;
     };
 

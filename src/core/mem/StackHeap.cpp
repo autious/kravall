@@ -12,7 +12,7 @@ namespace Core
 
     StackHeap::~StackHeap()
     {
-        for(Finalizer* f; f; f = f->m_finalizerChain)
+        for(Finalizer* f = m_finalizerChain; f; f = f->m_finalizerChain)
         {
            f->m_destructorCall(GetFinalizerObject(f)); 
         }
@@ -22,10 +22,5 @@ namespace Core
     Core::Finalizer* StackHeap::AllocateWithFinalizer(size_t size)
     {
         return static_cast<Core::Finalizer*>(m_allocator.Allocate(size + sizeof(Core::Finalizer)));
-    }
-
-    void* StackHeap::GetFinalizerObject(Core::Finalizer* finalizer)
-    {
-        return reinterpret_cast<unsigned char*>(finalizer) + sizeof(Core::Finalizer);
     }
 }
