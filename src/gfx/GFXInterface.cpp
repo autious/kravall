@@ -156,10 +156,10 @@ namespace GFX
 		r.color = color;
 		r.position = glm::vec3(
 			position.x / float(Renderer().GetWindowWidth() / 2) - 1.0f,
-			position.y / float(Renderer().GetWindowHeight() / 2) - 1.0f, 0.0f);
+			1.0f - position.y / float(Renderer().GetWindowHeight() / 2), 0.0f);
 		r.dimensions = glm::vec3(
-			dimensions.x / float(Renderer().GetWindowWidth() / 2),
-			dimensions.y / float(Renderer().GetWindowHeight() / 2), 0.0f);
+			dimensions.x / float(Renderer().GetWindowWidth())*2,
+			dimensions.y / float(Renderer().GetWindowHeight())*2, 0.0f);
 		DebugDrawing().AddRect(r, solid);
 	}
 

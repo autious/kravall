@@ -52,14 +52,14 @@ namespace GFX
 			DebugLine l2;
 			l2.color = rect.color;
 			l2.start = l1.end;
-			l2.end = glm::vec3(rect.position.x + rect.dimensions.x, rect.position.y + rect.dimensions.y, 0.0f);
+			l2.end = glm::vec3(rect.position.x + rect.dimensions.x, rect.position.y - rect.dimensions.y, 0.0f);
 			l2.thickness = 1.0f;
 			m_lines.push_back(l2);
 
 			DebugLine l3;
 			l3.color = rect.color;
 			l3.start = l2.end;
-			l3.end = glm::vec3(rect.position.x, rect.position.y + rect.dimensions.y, 0.0f);
+			l3.end = glm::vec3(rect.position.x, rect.position.y - rect.dimensions.y, 0.0f);
 			l3.thickness = 1.0f;
 			m_lines.push_back(l3);
 
