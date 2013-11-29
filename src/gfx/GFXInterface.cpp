@@ -85,6 +85,12 @@ namespace GFX
 		Renderer().SetProjMatrix(matrix);
 	}
 
+	void RenderText(GFXVec2 position, GFXVec2 size, GFXVec4 color, const char* text)
+	{
+		Text t(position.x, position.y, size.x, size.y, color, text, Renderer().GetWindowWidth(), Renderer().GetWindowHeight());
+		GetTextManager().AddText(t);
+	}
+
 }
 
 // Separated for debug interface
