@@ -58,15 +58,6 @@ namespace GFX
 	*/
 	DLL_API void SetProjectionMatrix(GFXMat4x4 matrix);
 
-
-
-	//-----##----------##----####----########------//
-	//-----##----##----##-----##-----##-----##-----//
-	//-----##---####---##-----##-----########------//
-	//------##-##--##-##------##-----##------------//
-	//-------###----###------####----##------------//
-	//Functions below are not specified yet, and thus cannot be implemented
-
 	/*!
 	Issues a draw command to the graphics engine. 
 	\param bitmask The bitmask containing the type of draw call to be queued.
@@ -82,6 +73,16 @@ namespace GFX
 	\param text The text to be rendered
 	*/
 	DLL_API void RenderText(GFXVec2 position, GFXVec2 size, GFXVec4 color, const char* text);
+
+	/*!
+	Shows the console window
+	*/
+	DLL_API void ShowConsole();
+
+	/*!
+	Hides the console window
+	*/
+	DLL_API void HideConsole();
 
 
 	namespace Debug

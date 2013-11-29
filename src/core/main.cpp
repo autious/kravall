@@ -37,7 +37,9 @@ void run( GLFWwindow * window )
 	gCamera->SetPosition(glm::vec3(0.0f, 0.0f, 10.0f));
 
 	GFX::SetProjectionMatrix(gCamera->GetProjectionMatrix());
-
+	bool showconsole = false;
+	bool keystate = false;
+	bool oldkeystate = false;
 	while (!glfwWindowShouldClose(window))
 	{
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE))
@@ -46,7 +48,7 @@ void run( GLFWwindow * window )
 		//gCamera->CalculateViewMatrix();
 		gCamera->LookAt(glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		GFX::SetViewMatrix(gCamera->GetViewMatrix());
-
+		
 		GFX::Debug::DrawBox(glm::vec3(2, 0, 0), glm::vec3(2, 2, 1), false, glm::vec4(0, 0, 0, 1));
 		GFX::Debug::DrawBox(glm::vec3(2, 0, 0), glm::vec3(2, 2, 1), true, glm::vec4(0, 0, 0, 0.5f));
 		GFX::Debug::DrawSphere(glm::vec3(2, 0, 0), 0.5f, glm::vec4(0, 0, 0, 1.0f));
@@ -57,13 +59,13 @@ void run( GLFWwindow * window )
 		
 		GFX::Debug::DrawRectangle(glm::vec2(0, 0), glm::vec2(200, 20), true, glm::vec4(0, 1, 1, 0.5f));
 		GFX::Debug::DrawRectangle(glm::vec2(100, 20), glm::vec2(100, 40), false, glm::vec4(0, 1, 1, 1.0f));
-
+		
 		GFX::RenderText(glm::vec2(0, 100), glm::vec2(8, 12), glm::vec4(0, 0, 0, 1), "The Quick Brown Fox Jumps Over The Lazy Dog");
 		GFX::RenderText(glm::vec2(10, 120), glm::vec2(7, 11), glm::vec4(0, 0, 1, 1), "The Quick Brown Fox Jumps Over The Lazy Dog");
 		GFX::RenderText(glm::vec2(20, 140), glm::vec2(6, 10), glm::vec4(0, 1, 0, 1), "The Quick Brown Fox Jumps Over The Lazy Dog");
 		GFX::RenderText(glm::vec2(30, 160), glm::vec2(5, 9), glm::vec4(1, 0, 0, 1), "The Quick Brown Fox Jumps Over The Lazy Dog");
 		GFX::RenderText(glm::vec2(40, 180), glm::vec2(4, 8), glm::vec4(1, 1, 1, 1), "The Quick Brown Fox Jumps Over The Lazy Dog");
-
+		
 		GFX::RenderText(glm::vec2(0, 200), glm::vec2(8, 12), glm::vec4(1, 1, 1, 1), "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890ÅÄÖ*'^&%#!?");
 		GFX::Render();
 

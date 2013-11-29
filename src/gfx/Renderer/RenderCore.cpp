@@ -45,6 +45,9 @@ namespace GFX
 		m_deferredPainter->Initialize(m_FBO, m_dummyVAO);
 		m_debugPainter->Initialize(m_FBO, m_dummyVAO);
 		m_textPainter->Initialize(m_FBO, m_dummyVAO);
+
+		// Set console width
+		DebugDrawing().SetConsoleHeight(m_windowHeight);
 	}
 
 	void RenderCore::Resize(int width, int height)
@@ -54,6 +57,9 @@ namespace GFX
 
 		glViewport(0, 0, m_windowWidth, m_windowHeight);
 		ResizeGBuffer();
+
+		// Set console width
+		DebugDrawing().SetConsoleHeight(m_windowHeight);
 	}
 
 	void RenderCore::Render()

@@ -90,7 +90,14 @@ namespace GFX
 		Text t(position.x, position.y, size.x, size.y, color, text, Renderer().GetWindowWidth(), Renderer().GetWindowHeight());
 		GetTextManager().AddText(t);
 	}
-
+	void ShowConsole()
+	{
+		DebugDrawing().SetConsoleVisible(true);
+	}
+	void HideConsole()
+	{
+		DebugDrawing().SetConsoleVisible(false);
+	}
 }
 
 // Separated for debug interface
@@ -192,7 +199,7 @@ namespace GFX
 		s.position = position;
 		s.radius = radius;
 		s.color = color;
-		DebugDrawing().AddSphere(s, false);
+		DebugDrawing().AddSphere(s);
 	}
 
 }
