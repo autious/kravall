@@ -1,7 +1,7 @@
 #ifndef SRC_GFX_RENDERER_DEBUG_MANAGER_HPP
 #define SRC_GFX_RENDERER_DEBUG_MANAGER_HPP
 
-#include <gl/glew.h>
+#include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <vector>
 

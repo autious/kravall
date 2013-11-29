@@ -35,6 +35,12 @@ namespace Core
         */
         void Rewind(void* pointer);
 
+
+        /*!
+          \return The current memory pointer
+          */
+        void* GetPointer() const;
+
     private:
         LinearAllocator();
 
