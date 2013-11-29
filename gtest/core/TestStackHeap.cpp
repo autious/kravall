@@ -29,7 +29,7 @@ namespace
         void* m_ptr;
     };
 
-    TEST(StackAllocation, ClearOnScopeExit)
+    TEST(StackAllocator, ClearOnScopeExit)
     {
         unsigned char* Memory[MEMORY_SIZE];
         Core::LinearAllocator alloc(&Memory[0], MEMORY_SIZE);
@@ -43,7 +43,7 @@ namespace
         ASSERT_EQ(alloc.GetPointer(), &Memory[0]);
     }
 
-    TEST(StackAllocation, AllocateObject)
+    TEST(StackAllocator, AllocateObject)
     {
         unsigned char* Memory[MEMORY_SIZE];
         Core::LinearAllocator alloc(Memory, MEMORY_SIZE);

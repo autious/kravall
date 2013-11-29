@@ -1,7 +1,5 @@
 #include "StackHeap.hpp"
 
-#include <mem/Finalizer.hpp>
-
 namespace Core
 {
     StackHeap::StackHeap(Core::LinearAllocator& allocator):
