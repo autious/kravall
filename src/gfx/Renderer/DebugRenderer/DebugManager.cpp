@@ -145,7 +145,42 @@ namespace GFX
 			m_filledSpheres.push_back(sphere);
 		else
 		{
+			int nPoints = 16;
+			float a = glm::radians(360.0f) / static_cast<float>(nPoints);
+			float r = sphere.radius;
 
+			// Create 3 circles in 3d-space
+			DebugLine l;
+			l.color = sphere.color;
+			l.thickness = 1.0f;
+			// xy-plane
+			for (int i = 0; i < nPoints; ++i)
+			{
+				float n = static_cast<float>(i);
+				l.start = sphere.position + r * glm::vec3(cos(n*a), sin(n*a), 0.0f);
+				n += 1.0f;
+				l.end = sphere.position + r * glm::vec3(cos(n*a), sin(n*a), 0.0f);
+				DebugDrawing().AddLineWorld(l);
+			}
+			// xz-plane
+			for (int i = 0; i < nPoints; ++i)
+			{
+				float n = static_cast<float>(i);
+				l.start = sphere.position + r * glm::vec3(cos(n*a), 0.0f, sin(n*a));
+				n += 1.0f;
+				l.end = sphere.position + r * glm::vec3(cos(n*a), 0.0f, sin(n*a));
+				DebugDrawing().AddLineWorld(l);
+			}
+
+			// yz-plane
+			for (int i = 0; i < nPoints; ++i)
+			{
+				float n = static_cast<float>(i);
+				l.start = sphere.position + r * glm::vec3(0.0f, cos(n*a), sin(n*a));
+				n += 1.0f;
+				l.end = sphere.position + r * glm::vec3(0.0f, cos(n*a), sin(n*a));
+				DebugDrawing().AddLineWorld(l);
+			}
 		}
 	}
 	void DebugManager::AddCircle(DebugRect circle)

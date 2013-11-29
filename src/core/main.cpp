@@ -32,7 +32,7 @@ void run( GLFWwindow * window )
 	Core::Camera* gCamera;
 	gCamera = new Core::Camera(45.0f, 1.0f, 1000.0f);
 	gCamera->CalculateProjectionMatrix(1280, 720);
-	gCamera->SetPosition(glm::vec3(0.0f, 0.0f, 2.0f));
+	gCamera->SetPosition(glm::vec3(0.0f, 0.0f, 6.0f));
 
 	GFX::SetProjectionMatrix(gCamera->GetProjectionMatrix());
 
@@ -40,6 +40,11 @@ void run( GLFWwindow * window )
 	{
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE))
 			break;
+
+		GFX::Debug::DrawBox(glm::vec3(1.0f, -1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), false, glm::vec4(1.0f, 0.7f, 0.0f, 1.0f));
+		GFX::Debug::DrawBox(glm::vec3(1.0f, -1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), true, glm::vec4(1.0f, 0.7f, 0.0f, 0.2f));
+
+		GFX::Debug::DrawSphere(glm::vec3(1.0f, -1.0f, 0.0f), 0.5f, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 
 		//gCamera->CalculateViewMatrix();
 		gCamera->LookAt(glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));

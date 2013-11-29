@@ -180,4 +180,13 @@ namespace GFX
 		DebugDrawing().AddCircle(c);
 	}
 
+	void Debug::DrawSphere(GFXVec3 position, float radius, GFXColor color)
+	{
+		DebugSphere s;
+		s.position = position;
+		s.radius = radius;
+		s.color = color;
+		DebugDrawing().AddSphere(s, false);
+	}
+
 }
