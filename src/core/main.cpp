@@ -15,7 +15,7 @@
 
 #include <Utility/Colors.hpp>
 
-
+#include "GLFWInput.hpp"
 
 GLFWwindow* init()
 {
@@ -31,6 +31,7 @@ GLFWwindow* init()
 
 void run( GLFWwindow * window )
 {
+	
 	Core::Camera* gCamera;
 	gCamera = new Core::Camera(45.0f, 1.0f, 1000.0f);
 	gCamera->CalculateProjectionMatrix(1280, 720);
@@ -38,9 +39,13 @@ void run( GLFWwindow * window )
 
 	GFX::SetProjectionMatrix(gCamera->GetProjectionMatrix());
 
+	Core::GLFWInput* input = new Core::GLFWInput(window);
+	
 	while (!glfwWindowShouldClose(window))
 	{
-		if (glfwGetKey(window, GLFW_KEY_ESCAPE))
+		input->UpdateInput();
+		
+		if (input->IsKeyPressedOnce(GLFW_KEY_ESCAPE))
 			break;
 
 		//gCamera->CalculateViewMatrix();
