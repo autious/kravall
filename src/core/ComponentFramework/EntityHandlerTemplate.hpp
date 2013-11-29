@@ -21,18 +21,27 @@ namespace Core
     private:
         static const int COMPONENT_COUNT = sizeof...(Components);
 
-        std::vector<int[COMPONENT_COUNT]> m_entityIds;
-        std::vector<int> m_deletedEntities;
-
-        std::array<PVector,sizeof...(Components)> p = {{PVector(1024,64,sizeof(Components))...}};
+        EntityVector<1024,64,Components...> m_entities;
+        std::array<PVector,sizeof...(Components)> m_components = {{PVector(1024,64,sizeof(Components))...}};
+        
     public:
         EntityHandlerTemplate()
         {
         }
 
         template<typename... EntityComponents>
-        Entity CreateEntity()
+        Entity CreateEntity( EntityComponents... c )
         {
+            Entity ent = m_entities.Alloc();        
+
+            AddComponent<EntityComponents...>( ent, c... );
+
+            return ent;
+        }
+
+        void DestroyEntity( Entity id )
+        {
+            m_entities.Release( id );
         }
 
         template<typename Component>
@@ -47,6 +56,14 @@ namespace Core
         Component* GetComponentTmpPointer( Entity entity )
         {
             static_assert( Match<Component,Components...>::exists, SA_COMPONENT_USE );
+
+            static const int componentType = GetComponentTypeId<Component>();
+
+            int componentId = m_entities.GetComponentId( entity );
+            
+            assert( componentId >= 0 );
+
+            return (Component*)m_components[componentType].Get( componentId );
         }
 
         template<typename... AspectComponents>
@@ -56,9 +73,37 @@ namespace Core
             return GenerateAspect( ids, Aspect(), 0, sizeof...(AspectComponents) ); 
         }
 
+    private:
+
         Aspect constexpr GenerateAspect( const size_t *id, Aspect asp, int i, int size )
         {
             return asp |= (1ULL << id[i] | (i < size-1 ? GenerateAspect(id,asp,i+1,size) : 0ULL )); 
+        }
+
+        template<typename Component, typename... RComponents>
+        void AddComponent( Entity ent, Component comp, RComponents... r  )
+        {
+            int componentType = GetComponentTypeId<Component>();
+            //Check so that this component doesn't overwrite an existing one.
+            assert( m_entities.GetComponentId(ent, componentType ) < 0 );
+
+            int compId  = m_components[componentType].Alloc();
+
+            m_entities.SetComponentId( ent, compId, componentType );
+
+            AddComponent<RComponents...>(ent, r...);
+        }
+
+        template<typename Component>
+        void AddComponent( Entity ent, Component comp )
+        {
+            int componentType = GetComponentTypeId<Component>();
+            //Check so that this component doesn't overwrite an existing one.
+            assert( m_entities.GetComponentId(ent, componentType ) < 0 );
+
+            int compId  = m_components[componentType].Alloc();
+
+            m_entities.SetComponentId( ent, compId, componentType );
         }
     };
 }

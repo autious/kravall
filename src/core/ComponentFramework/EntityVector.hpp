@@ -81,16 +81,25 @@ namespace Core
         template<typename Component>
         void SetComponentId( Entity id, int componentId )
         {
+            SetComponentId( id, componentId, Index<Component,std::tuple<Components...>>::value );
+        }
+
+        void SetComponentId( Entity id, int componentId, int componentType )
+        {
             assert( id > 0 && id < m_size );
-            int index = Index<Component,std::tuple<Components...>>::value;
-            assert( componentType > 0 &&  index < COMPONENT_COUNT );
-            m_entities[COMPONENT_COUNT*id+index] = componentId;
+            assert( componentType > 0 &&  componentType < COMPONENT_COUNT );
+            m_entities[COMPONENT_COUNT*id+componentType] = componentId;
         }
 
         template<typename Component>
         int GetComponentId( Entity id )
         {
-            return m_entities[COMPONENT_COUNT*id+Index<Component,std::tuple<Components...>>::value];
+            return GetComponentId( id, Index<Component,std::tuple<Components...>>::value );
+        }
+
+        int GetComponentId( Entity id, int componentType )
+        {
+            return m_entities[COMPONENT_COUNT*id+componentType];
         }
 
         /*!

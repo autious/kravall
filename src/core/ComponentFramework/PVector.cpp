@@ -46,6 +46,12 @@ void Core::PVector::Release( int id )
     m_count--;
 }
 
+void* Core::PVector::Get( int id )
+{
+    assert( id > 0 && id < m_count );
+    return &((unsigned char*)m_data)[id*m_typesize];
+}
+
 size_t Core::PVector::GetCount()
 {
     return m_count;

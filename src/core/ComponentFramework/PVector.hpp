@@ -56,9 +56,10 @@ namespace Core
         Component* Get( int id )
         {
             assert( sizeof(Component) == m_typesize );
-            assert( id > 0 && id < m_count );
-            return &((Component*)m_data)[id];
+            return (Component*)Get(id);
         }
+
+        void* Get( int id );
 
         /*!
             Returns how many active components there are.
