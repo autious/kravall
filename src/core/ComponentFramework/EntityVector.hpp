@@ -6,6 +6,7 @@
 
 #include <cstdlib>
 #include <cassert>
+#include <cstring>
 
 #include <vector>
 
@@ -31,7 +32,7 @@ namespace Core
             m_count = 0;
             m_size = Initial;
 
-            m_entities = malloc( m_size * ONE_ENT_SIZE );
+            m_entities = (int*)malloc( m_size * ONE_ENT_SIZE );
         }
 
         ~EntityVector()
@@ -39,13 +40,13 @@ namespace Core
             free( m_entities );
         }
 
-        Entity Allocate()
+        Entity Alloc()
         {
             Entity id = 0;
             if( m_count >= m_size )
             {
                 m_size += Step;
-                m_entities = realloc( m_entities, m_size * ONE_ENT_SIZE );
+                m_entities = (int*)realloc( m_entities, m_size * ONE_ENT_SIZE );
                 
                 assert( m_entities != nullptr );
             }
@@ -61,6 +62,8 @@ namespace Core
             }
 
             m_count++;
+
+            memset( &m_entities[id*COMPONENT_COUNT], 255, ONE_ENT_SIZE );
 
             return id;
         }
@@ -85,7 +88,7 @@ namespace Core
         }
 
         template<typename Component>
-        void GetComponentId( Entity id )
+        int GetComponentId( Entity id )
         {
             return m_entities[COMPONENT_COUNT*id+Index<Component,std::tuple<Components...>>::value];
         }

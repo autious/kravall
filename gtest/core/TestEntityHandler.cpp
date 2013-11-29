@@ -42,17 +42,17 @@ namespace Core
         Aspect asp1 = instance.GenerateAspect<Component1,Component2,Component3>();
         Aspect asp2 = 1ULL << 0 | 1ULL << 1 | 1ULL << 2;
 
-        ASSERT_EQ(asp1, asp2);
+        ASSERT_EQ(asp2, asp1);
 
         asp1 = instance.GenerateAspect<Component1,Component3>();
         asp2 = 1ULL << 0 |  1ULL << 2;
 
-        ASSERT_EQ(asp1, asp2);
+        ASSERT_EQ(asp2, asp1);
 
         asp1 = instance.GenerateAspect<Component3,Component1>();
         asp2 = 1ULL << 0 |  1ULL << 2;
 
-        ASSERT_EQ(asp1, asp2);
+        ASSERT_EQ(asp2, asp1);
     }
 }
 #endif

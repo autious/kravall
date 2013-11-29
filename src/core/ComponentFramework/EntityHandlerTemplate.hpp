@@ -9,22 +9,22 @@
 #include <cstdint>
 #include <cassert>
 #include <array>
+#include <iostream>
 
 #define SA_COMPONENT_USE "Component doesn't exist in EntityHandler. Maybe you forgot to add it?"
 
 namespace Core
 {
-
     template<typename... Components>
     class EntityHandlerTemplate
     {
+    private:
         static const int COMPONENT_COUNT = sizeof...(Components);
 
         std::vector<int[COMPONENT_COUNT]> m_entityIds;
         std::vector<int> m_deletedEntities;
 
         std::array<PVector,sizeof...(Components)> p = {{PVector(1024,64,sizeof(Components))...}};
-
     public:
         EntityHandlerTemplate()
         {
@@ -33,7 +33,6 @@ namespace Core
         template<typename... EntityComponents>
         Entity CreateEntity()
         {
-            
         }
 
         template<typename Component>
@@ -59,10 +58,8 @@ namespace Core
 
         Aspect constexpr GenerateAspect( const size_t *id, Aspect asp, int i, int size )
         {
-               return asp |= (1ULL << id[i] | (i < size ? GenerateAspect(id,asp,i+1,size) : 0ULL )); 
+            return asp |= (1ULL << id[i] | (i < size-1 ? GenerateAspect(id,asp,i+1,size) : 0ULL )); 
         }
-
-    private:
     };
 }
 #endif
