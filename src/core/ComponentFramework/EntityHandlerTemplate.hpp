@@ -1,42 +1,22 @@
 #ifndef SRC_CORE_COMPONENTFRAMEWORK_ENTITYHANDLER_H
 #define SRC_CORE_COMPONENTFRAMEWORK_ENTITYHANDLER_H
 
-#include <typeinfo>
-#include <tuple>
-#include <cstddef>
+#include "PVector.hpp"
+#include "EntityVector.hpp"
+#include "ComponentType.hpp"
+
 #include <cstdint>
-#include <vector>
 #include <cassert>
 #include <array>
-
-#include "PVector.hpp"
 
 #define SA_COMPONENT_USE "Component doesn't exist in EntityHandler. Maybe you forgot to add it?"
 
 namespace Core
 {
-    typedef uint64_t Aspect;
-    typedef unsigned int Entity;
 
     template<typename... Components>
     class EntityHandlerTemplate
     {
-        /*!
-            This is a template hack that allows us to calculate a static
-            Components id in compile-time
-        */
-        template <class T, class Tuple>
-        struct Index;
-
-        template <class T, class... Types>
-        struct Index<T, std::tuple<T, Types...>> {
-            static const std::size_t value = 0;
-        };
-
-        template <class T, class U, class... Types>
-        struct Index<T, std::tuple<U, Types...>> {
-            static const std::size_t value = 1 + Index<T, std::tuple<Types...>>::value;
-        };
 
         //**********************************************************************
         
@@ -76,6 +56,7 @@ namespace Core
         static const int COMPONENT_COUNT = sizeof...(Components);
 
         std::vector<int[COMPONENT_COUNT]> m_entityIds;
+        std::vector<int> m_deletedEntities;
 
         std::array<PVector,sizeof...(Components)> p = {{PVector(1024,64,sizeof(Components))...}};
 
