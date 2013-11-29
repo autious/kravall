@@ -50,6 +50,11 @@ namespace LogSystem
 		*/
 		DLLSETTING LogData( LogType type, const char* prefix );
 
+        /*! 
+            Copy constructor
+        */
+        LogData( LogData&);
+
 		/*!
 			Once the LogData object is destroyed the printing goes into 
 			action using other utility in the LogSystem namespace.
@@ -64,13 +69,9 @@ namespace LogSystem
 	};
 	
 	/*! only here for intelisense help, will be overrided by macro. */
-	extern LogData debug;
 	/*! only here for intelisense help, will be overrided by macro. */
-	extern LogData fatal;
 	/*! only here for intelisense help, will be overrided by macro. */
-	extern LogData error;
 	/*! only here for intelisense help, will be overrided by macro. */
-	extern LogData warning;
 	
 	/*! channel for 'debug' messages, default is ConsoleHandler */
 	DLLSETTING extern LogHandler* debugHandler;

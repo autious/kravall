@@ -1,11 +1,5 @@
-
-
-
 #include <Handlers.hpp>
 #include <Logger.hpp>
-
-
-
 
 
 #define gfx LogData( LogSystem::LogType::logType_debug,		"gfx" )

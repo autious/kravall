@@ -78,11 +78,16 @@ namespace GFX
 	Shows the console window
 	*/
 	DLL_API void ShowConsole();
-
+	
 	/*!
 	Hides the console window
 	*/
 	DLL_API void HideConsole();
+
+	/*!
+	Toggles the console window
+	*/
+	DLL_API void ToggleConsole();
 
 
 	namespace Debug

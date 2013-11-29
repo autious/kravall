@@ -64,7 +64,7 @@ namespace GFX
 
 	void RenderCore::Render()
 	{
-		//m_deferredPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
+		m_deferredPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
 
 		// Render debug
 		m_debugPainter->Render(m_viewMatrix, m_projMatrix);

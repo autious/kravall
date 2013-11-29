@@ -8,5 +8,4 @@
 #include "internal/LogHandler.hpp"
 #include "internal/ConsoleHandler.hpp"
 
-
 #endif

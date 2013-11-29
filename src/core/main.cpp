@@ -2,7 +2,9 @@
     #include <gtest/gtest.h>
 #endif
 
-#include <Windows.h>
+#ifdef _WIN32
+    #include <Windows.h>
+#endif
 
 #include <iostream>
 
@@ -10,12 +12,12 @@
 #include "WindowHandling/InitializeGLFW.hpp"
 
 #include <gfx/GFXInterface.hpp>
-
+#include <utility/Colors.hpp>
 #include "Camera/Camera.hpp"
 
 #include <Utility/Colors.hpp>
 
-
+#include "GLFWInput.hpp"
 
 GLFWwindow* init()
 {
@@ -31,42 +33,48 @@ GLFWwindow* init()
 
 void run( GLFWwindow * window )
 {
+	
 	Core::Camera* gCamera;
 	gCamera = new Core::Camera(45.0f, 1.0f, 1000.0f);
 	gCamera->CalculateProjectionMatrix(1280, 720);
 	gCamera->SetPosition(glm::vec3(0.0f, 0.0f, 10.0f));
 
 	GFX::SetProjectionMatrix(gCamera->GetProjectionMatrix());
-	bool showconsole = false;
-	bool keystate = false;
-	bool oldkeystate = false;
+
+	Core::GLFWInput* input = new Core::GLFWInput(window);
+	
 	while (!glfwWindowShouldClose(window))
 	{
-		if (glfwGetKey(window, GLFW_KEY_ESCAPE))
+		input->UpdateInput();
+		
+		if (input->IsKeyPressedOnce(GLFW_KEY_ESCAPE))
 			break;
+
+		if (input->IsKeyPressedOnce(GLFW_KEY_TAB))
+			GFX::ToggleConsole();
 
 		//gCamera->CalculateViewMatrix();
 		gCamera->LookAt(glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		GFX::SetViewMatrix(gCamera->GetViewMatrix());
+
+		GFX::Debug::DrawBox(glm::vec3(2, 0, 0), glm::vec3(2, 2, 10), false, Colors::Black);
+		GFX::Debug::DrawBox(glm::vec3(2, 0, 0), glm::vec3(2, 2, 10), true, glm::vec4(Colors::Black.x, Colors::Black.y, Colors::Black.z, 0.5f));
+		GFX::Debug::DrawSphere(glm::vec3(2, 0, 0), 2.0f, Colors::Black);
 		
-		GFX::Debug::DrawBox(glm::vec3(2, 0, 0), glm::vec3(2, 2, 1), false, glm::vec4(0, 0, 0, 1));
-		GFX::Debug::DrawBox(glm::vec3(2, 0, 0), glm::vec3(2, 2, 1), true, glm::vec4(0, 0, 0, 0.5f));
-		GFX::Debug::DrawSphere(glm::vec3(2, 0, 0), 0.5f, glm::vec4(0, 0, 0, 1.0f));
-		
-		GFX::Debug::DrawLine(glm::vec2(100, 50), glm::vec2(1200, 600), glm::vec4(1, 0, 0, 1));
-		GFX::Debug::DrawPoint(glm::vec2(100, 50), glm::vec4(0, 1, 0, 1), 10);
-		GFX::Debug::DrawPoint(glm::vec2(1200, 600), glm::vec4(0, 1, 0, 1), 10);
-		
-		GFX::Debug::DrawRectangle(glm::vec2(0, 0), glm::vec2(200, 20), true, glm::vec4(0, 1, 1, 0.5f));
-		GFX::Debug::DrawRectangle(glm::vec2(100, 20), glm::vec2(100, 40), false, glm::vec4(0, 1, 1, 1.0f));
-		
-		GFX::RenderText(glm::vec2(0, 100), glm::vec2(8, 12), glm::vec4(0, 0, 0, 1), "The Quick Brown Fox Jumps Over The Lazy Dog");
-		GFX::RenderText(glm::vec2(10, 120), glm::vec2(7, 11), glm::vec4(0, 0, 1, 1), "The Quick Brown Fox Jumps Over The Lazy Dog");
-		GFX::RenderText(glm::vec2(20, 140), glm::vec2(6, 10), glm::vec4(0, 1, 0, 1), "The Quick Brown Fox Jumps Over The Lazy Dog");
-		GFX::RenderText(glm::vec2(30, 160), glm::vec2(5, 9), glm::vec4(1, 0, 0, 1), "The Quick Brown Fox Jumps Over The Lazy Dog");
-		GFX::RenderText(glm::vec2(40, 180), glm::vec2(4, 8), glm::vec4(1, 1, 1, 1), "The Quick Brown Fox Jumps Over The Lazy Dog");
-		
-		GFX::RenderText(glm::vec2(0, 200), glm::vec2(8, 12), glm::vec4(1, 1, 1, 1), "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890ÅÄÖ*'^&%#!?");
+		GFX::Debug::DrawLine(glm::vec2(100, 50), glm::vec2(1200, 600), Colors::CornflowerBlue);
+		GFX::Debug::DrawPoint(glm::vec2(100, 50), Colors::Green, 10);
+		GFX::Debug::DrawPoint(glm::vec2(1200, 600), Colors::Green, 10);
+
+		GFX::Debug::DrawRectangle(glm::vec2(0, 0), glm::vec2(200, 20), true, Colors::Aquamarine);
+		GFX::Debug::DrawRectangle(glm::vec2(100, 20), glm::vec2(100, 40), false, Colors::Chocolate);
+
+		GFX::RenderText(glm::vec2(0, 100), glm::vec2(8, 12), Colors::Black, "The Quick Brown Fox Jumps Over The Lazy Dog");
+		GFX::RenderText(glm::vec2(10, 120), glm::vec2(7, 11), Colors::Blue, "The Quick Brown Fox Jumps Over The Lazy Dog");
+		GFX::RenderText(glm::vec2(20, 140), glm::vec2(6, 10), Colors::Green, "The Quick Brown Fox Jumps Over The Lazy Dog");
+		GFX::RenderText(glm::vec2(30, 160), glm::vec2(5, 9), Colors::CornflowerBlue, "The Quick Brown Fox Jumps Over The Lazy Dog");
+		GFX::RenderText(glm::vec2(40, 180), glm::vec2(8, 12), Colors::White, "The Quick Brown Fox Jumps Over The Lazy Dog????");
+
+		GFX::RenderText(glm::vec2(0, 200), glm::vec2(8, 12), Colors::Gold, "ABCDEFGHIJKLMNOPQRSTUVWXYZASIUHDOIASHUDIOASHDA1234567890*'^&%#!?");
 		GFX::Render();
 
 		glfwSwapBuffers(window);

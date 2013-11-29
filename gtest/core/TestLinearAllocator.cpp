@@ -2,6 +2,8 @@
 #include <gtest/gtest.h>
 #include <mem/LinearAllocator.hpp>
 
+#include <fstream>
+
 namespace 
 {
     TEST(LinearAllocatorTest, StackMemoryAllocation)

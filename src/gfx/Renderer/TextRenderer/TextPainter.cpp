@@ -24,7 +24,7 @@ namespace GFX
 		/* Load a font */
 		if (FT_New_Face(m_library, "assets/Fonts/DentonBETA2.ttf", 0, &m_face))
 		{
-			std::cout << "Could not open font\n";
+			assert(0 && "Could not open font file in TextPainter.Initialize()\n");
 		}
 
 		m_shaderManager->CreateProgram("BasicText");
@@ -146,6 +146,7 @@ namespace GFX
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		glEnable(GL_BLEND);
+		glDisable(GL_DEPTH_TEST);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		glActiveTexture(GL_TEXTURE0);
@@ -169,5 +170,8 @@ namespace GFX
 
 		glDisableVertexAttribArray(0);
 		m_shaderManager->ResetProgram();
+
+		glEnable(GL_DEPTH_TEST);
+		glDisable(GL_BLEND);
 	}
 }

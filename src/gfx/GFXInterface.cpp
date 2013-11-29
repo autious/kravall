@@ -11,7 +11,6 @@
 void APIENTRY glErrorCallback(GLenum _source, GLenum _type, GLuint _id, GLenum _severity, GLsizei _length, const char* _message, void* _userParam)
 {
 	const char* source = "";
-
 	if ( _source == GL_DEBUG_SOURCE_API_ARB )
     {
 		source = "The GL";
@@ -97,6 +96,10 @@ namespace GFX
 	void HideConsole()
 	{
 		DebugDrawing().SetConsoleVisible(false);
+	}
+	void ToggleConsole()
+	{
+		DebugDrawing().SetConsoleVisible(!DebugDrawing().GetConsoleVisible());
 	}
 }
 

@@ -142,5 +142,3 @@ LogSystem::LogData::~LogData()
 	logMutex.unlock();
 }
 
-
-

@@ -100,6 +100,7 @@ namespace GFX
 	void DebugPainter::Render(glm::mat4 viewMatrix, glm::mat4 projMatrix)
 	{
 		BasePainter::Render();
+
 		if (DebugDrawing().ShouldRender())
 		{
 

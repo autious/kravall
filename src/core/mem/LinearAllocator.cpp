@@ -24,4 +24,9 @@ namespace Core
     {
         m_memoryPointer = static_cast<unsigned char*>(pointer);
     }
+
+    void* LinearAllocator::GetPointer() const
+    {
+        return m_memoryPointer;
+    }
 }
