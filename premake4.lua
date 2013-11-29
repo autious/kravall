@@ -73,11 +73,11 @@ solution "RiotGame"
 		includedirs { "src/gfx", "include/gfx", "shaders", "include" }       
 		defines { "GFX_DLL_EXPORT" }
 		
-        links { "glfw3" }
+        links { "glfw3", "freetype" }
         configuration{ "*Test" }
             links { "gtest" }
         configuration{ "windows" }
-            links { "glew32", "glfw3dll", "opengl32", "logger", "freetype" }
+            links { "glew32", "glfw3dll", "opengl32", "logger" }
         configuration{ "linux" }
             links { "GLEW", "GL" }
             
