@@ -5,6 +5,7 @@ namespace Core
 {
     LinearHeap::LinearHeap(Core::LinearAllocator& allocator):
         m_allocator(allocator),
+        m_rewindPoint(allocator.GetPointer()),
         m_finalizerChain(nullptr)
         {}
 

@@ -57,6 +57,7 @@ namespace Core
        }
 
        Core::LinearAllocator m_allocator;
+       void* m_rewindPoint;
        Core::Finalizer* m_finalizerChain;
     };
 }
