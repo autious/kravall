@@ -15,9 +15,6 @@
 #include <utility/Colors.hpp>
 #include "Camera/Camera.hpp"
 
-#include <Utility/Colors.hpp>
-
-
 
 GLFWwindow* init()
 {
