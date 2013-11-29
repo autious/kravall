@@ -146,6 +146,7 @@ namespace GFX
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		glEnable(GL_BLEND);
+		glDisable(GL_DEPTH_TEST);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		glActiveTexture(GL_TEXTURE0);
@@ -169,5 +170,8 @@ namespace GFX
 
 		glDisableVertexAttribArray(0);
 		m_shaderManager->ResetProgram();
+
+		glEnable(GL_DEPTH_TEST);
+		glDisable(GL_BLEND);
 	}
 }
