@@ -106,6 +106,11 @@ namespace GFX
 	{
 		Renderer().SetSplash(renderSplash);
 	}
+
+	void DeleteGFX()
+	{
+		Renderer().Delete();
+	}
 }
 
 // Separated for debug interface

@@ -10,7 +10,14 @@ namespace GFX
 
 	ShaderBaseModel::~ShaderBaseModel()
 	{
+		for (std::map<std::string, GLuint>::iterator it = m_shaderProgram->begin(); it != m_shaderProgram->end(); it++)
+			glDeleteProgram(it->second);
 
+		for (std::map<std::string, GLuint>::iterator it = m_shader->begin(); it != m_shader->end(); it++)
+			glDeleteShader(it->second);
+
+		delete (m_shaderProgram);
+		delete (m_shader);
 	}
 
 	GLuint ShaderBaseModel::GetShaderID(std::string shaderKey)

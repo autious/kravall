@@ -9,7 +9,8 @@ namespace GFX
 
 	BufferManager::~BufferManager()
 	{
-
+		for (int i = 0; i < m_staticMeshes.size(); i++)
+			delete(m_staticMeshes.at(i));
 	}
 
 	void BufferManager::BindMesh(GLuint id)

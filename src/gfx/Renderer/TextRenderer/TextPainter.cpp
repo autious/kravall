@@ -10,6 +10,7 @@ namespace GFX
 
 	TextPainter::~TextPainter()
 	{
+		delete(m_atlas48);
 	}
 
 	void TextPainter::Initialize(GLuint FBO, GLuint dummyVAO)

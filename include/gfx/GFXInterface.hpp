@@ -94,6 +94,8 @@ namespace GFX
 	*/
 	DLL_API void RenderSplash(bool renderSplash);
 
+	DLL_API void DeleteGFX();
+
 	namespace Debug
 	{
 

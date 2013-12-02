@@ -85,10 +85,11 @@ namespace GFX
 
 		void SetSplash(bool splash);
 
+		void Delete();
+
 	private:
 		RenderCore();
 		~RenderCore();
-
 		/*!
 		Create an empty VBO and VAO to be used for screenspace rendering
 		*/

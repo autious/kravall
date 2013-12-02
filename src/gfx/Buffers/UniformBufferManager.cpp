@@ -9,7 +9,8 @@ namespace GFX
 
 	UniformBufferManager::~UniformBufferManager()
 	{
-
+		glDeleteBuffers(1, &m_basicCameraUBO);
+		glDeleteBuffers(1, &m_exampleUBO);
 	}
 
 	void UniformBufferManager::CreateBasicCameraUBO(GLuint programID)

@@ -12,6 +12,7 @@ namespace GFX
 	ShaderManager::~ShaderManager()
 	{
 		delete m_shaderData;
+		delete m_textFile;
 	}
 
 	void ShaderManager::LoadShader(const char* filepath, std::string shaderKey, GLenum type)

@@ -46,6 +46,7 @@ namespace Core
 		{
 			case WMODE_WINDOWED:
 			{
+				glfwWindowHint(GLFW_DECORATED, GL_TRUE);
 				/* Create a windowed mode window and its OpenGL context */
 				(*window) = glfwCreateWindow(width, height, "RIOT", nullptr, nullptr);
 
@@ -70,13 +71,13 @@ namespace Core
 			}
 			break;
 
-			//case WMODE_FULLSCREEN_BORDERLESS:
-			//{
-			//	glfwWindowHint(GLFW_DECORATED, GL_FALSE);
-			//	/* Create a windowed mode window and its OpenGL context */
-			//	(*window) = glfwCreateWindow(windowWidth, windowHeight, "RIOT", nullptr, nullptr);
-			//}
-			//	break;
+			case WMODE_FULLSCREEN_BORDERLESS:
+			{
+				glfwWindowHint(GLFW_DECORATED, GL_FALSE);
+				/* Create a windowed mode window and its OpenGL context */
+				(*window) = glfwCreateWindow(windowWidth, windowHeight, "RIOT", nullptr, nullptr);
+			}
+			break;
 		}
 
 

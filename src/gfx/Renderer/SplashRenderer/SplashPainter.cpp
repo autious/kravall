@@ -10,7 +10,8 @@ namespace GFX
 
 	SplashPainter::~SplashPainter()
 	{
-
+		delete(m_logoTexture);
+		delete(m_logoTextTexture);
 	}
 
 	void SplashPainter::Initialize(GLuint FBO, GLuint dummyVAO)

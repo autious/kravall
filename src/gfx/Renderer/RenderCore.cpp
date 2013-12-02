@@ -11,13 +11,40 @@ namespace GFX
 
 	RenderCore::RenderCore()
 	{
-		m_windowWidth	= 0;
-		m_windowHeight	= 0;
+	}
 
-		m_normalDepth	= new FBOTexture();
-		m_diffuse		= new FBOTexture();
-		m_specular		= new FBOTexture();
-		m_glowMatID		= new FBOTexture();
+	RenderCore::~RenderCore()
+	{
+	
+	}
+
+	void RenderCore::Delete()
+	{
+		delete(m_normalDepth);
+		delete(m_diffuse);
+		delete(m_specular);
+		delete(m_glowMatID);
+
+		delete(m_uniformBufferManager);
+		delete(m_shaderManager);
+		delete(m_bufferManager);
+
+		delete(m_deferredPainter);
+		delete(m_textPainter);
+		delete(m_debugPainter);
+		delete(m_consolePainter);
+		delete(m_splashPainter);
+	}
+
+	void RenderCore::Initialize(int windowWidth, int windowHeight)
+	{
+		m_windowWidth = 0;
+		m_windowHeight = 0;
+
+		m_normalDepth = new FBOTexture();
+		m_diffuse = new FBOTexture();
+		m_specular = new FBOTexture();
+		m_glowMatID = new FBOTexture();
 
 		m_shaderManager = new ShaderManager();
 		m_bufferManager = new BufferManager();
@@ -30,15 +57,8 @@ namespace GFX
 		m_splashPainter = new SplashPainter(m_shaderManager, m_bufferManager, m_uniformBufferManager);
 
 		m_playSplash = false;
-	}
 
-	RenderCore::~RenderCore()
-	{
 
-	}
-
-	void RenderCore::Initialize(int windowWidth, int windowHeight)
-	{
 		m_windowWidth = windowWidth;
 		m_windowHeight = windowHeight;
 
@@ -83,10 +103,10 @@ namespace GFX
 		
 		// Render debug
 		m_debugPainter->Render(m_viewMatrix, m_projMatrix);
-
+		
 		// Render console
 		m_consolePainter->Render();
-
+		
 		// Render text
 		m_textPainter->Render();
 	}

@@ -64,6 +64,8 @@ void run( GLFWwindow * window )
 
 	Core::GLFWInput* input = new Core::GLFWInput(window);
 	GFX::RenderSplash(true);
+	bool fs = false;
+
 	while (!glfwWindowShouldClose(window))
 	{
 		input->UpdateInput();
@@ -74,11 +76,38 @@ void run( GLFWwindow * window )
 		if (input->IsKeyPressedOnce(GLFW_KEY_TAB))
 			GFX::ToggleConsole();
 
+		if (input->IsKeyPressedOnce(GLFW_KEY_ENTER))
+		{
+			glfwDestroyWindow(window);
+			GFX::DeleteGFX();
+
+			GLFWmonitor* pMonitor = glfwGetPrimaryMonitor();
+
+			const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+			int windowWidth = mode->width;
+			int windowHeight = mode->height;
+
+
+			if (!fs)
+			{
+				Core::InitializeGLFW(&window, 1280, 720, Core::WindowMode::WMODE_FULLSCREEN_BORDERLESS);
+				GFX::Init(windowWidth, windowHeight);
+			}
+			else
+			{
+				Core::InitializeGLFW(&window, 1280, 720, Core::WindowMode::WMODE_WINDOWED_BORDERLESS);
+				GFX::Init(1280, 720);
+			}
+
+			fs = !fs;
+		}
+
 		//gCamera->CalculateViewMatrix();
 		gCamera->LookAt(glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		GFX::SetViewMatrix(gCamera->GetViewMatrix());
 
-		TestRendering();
+		//TestRendering();
 
 		GFX::Render();
 
