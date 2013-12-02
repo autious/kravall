@@ -14,7 +14,6 @@ namespace Core {
         ASSERT_EQ( 3, count );
     }
 
-
     #define TS1_INC Component1,Component4
     #define TS1_EXC Component2
 
@@ -31,6 +30,7 @@ namespace Core {
         public:
             TestSystem1() : BaseSystem( EH_L::GenerateAspect<TS1_INC>(),
                                         EH_L::GenerateAspect<TS1_EXC>()){};
+            virtual void Update( float delta ) override {}
             virtual ~TestSystem1() {};
             bool has( Entity id )
             {
@@ -50,6 +50,7 @@ namespace Core {
             TestSystem2() : BaseSystem( EH_L::GenerateAspect<TS2_INC>(),
                                         0ULL ){};
 
+            virtual void Update( float delta ) override {}
             bool has( Entity id )
             {
                 for( unsigned int i = 0; i < m_entities.size(); i++ )

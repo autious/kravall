@@ -26,6 +26,14 @@ namespace Core
         {
             return SYSTEM_COUNT;
         }
+
+        void Update( float delta )
+        {
+            for( int i = 0; i < SYSTEM_COUNT; i++ )
+            {
+                m_systems[i]->Update( delta );
+            }          
+        }
     
         void CallChangedEntity( Entity id, Aspect old_asp, Aspect new_asp )
         {

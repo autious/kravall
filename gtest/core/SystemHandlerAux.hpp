@@ -9,6 +9,7 @@ namespace Core
     {
         public:
             System1() : BaseSystem(0,0){};
+            virtual void Update( float delta ) override {}
             virtual ~System1() {};
 
     };
@@ -17,6 +18,7 @@ namespace Core
     {
         public:
             System2() : BaseSystem(0,0){};
+            virtual void Update( float delta ) override {}
             virtual ~System2() {};
     };
 
@@ -24,6 +26,7 @@ namespace Core
     {
         public:
             System3() : BaseSystem(0,0){};
+            virtual void Update( float delta ) override{}
             virtual ~System3() {};
     };
 

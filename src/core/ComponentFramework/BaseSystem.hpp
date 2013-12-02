@@ -12,6 +12,7 @@ namespace Core
     public:
         BaseSystem( Aspect inclusive, Aspect exclusive );
         virtual ~BaseSystem() {}
+        virtual void Update( float delta ) = 0;
 
         void ChangedEntity( Entity id, Aspect old_asp, Aspect new_asp );
 
