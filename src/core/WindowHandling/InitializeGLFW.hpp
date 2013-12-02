@@ -8,12 +8,19 @@
 
 namespace Core
 {
+	enum WindowMode
+	{
+		WMODE_WINDOWED = 0,
+		WMODE_WINDOWED_BORDERLESS,
+		WMODE_FULLSCREEN,
+		WMODE_FULLSCREEN_BORDERLESS
+	};
 	void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	{
 		GFX::Resize(width, height);
 	}
 
-	int InitializeGLFW(GLFWwindow** window, int width, int height)
+	int InitializeGLFW(GLFWwindow** window, int width, int height, enum WindowMode wMode )
 	{
 		/* Initialize the library */
 		if (!glfwInit())
@@ -28,8 +35,50 @@ namespace Core
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_FALSE);
 		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 
-		/* Create a windowed mode window and its OpenGL context */
-		(*window) = glfwCreateWindow(width, height, "RIOT", nullptr, nullptr);
+		GLFWmonitor* pMonitor = glfwGetPrimaryMonitor();
+
+		const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+		int windowWidth = mode->width;
+		int windowHeight = mode->height;
+
+		switch (wMode)
+		{
+			case WMODE_WINDOWED:
+			{
+				/* Create a windowed mode window and its OpenGL context */
+				(*window) = glfwCreateWindow(width, height, "RIOT", nullptr, nullptr);
+
+				glfwSetWindowPos(*window, windowWidth / 2 - width / 2, windowHeight / 2 - height / 2);
+			}
+			break;
+
+			case WMODE_WINDOWED_BORDERLESS:
+			{
+				glfwWindowHint(GLFW_DECORATED, GL_FALSE);
+				/* Create a windowed mode window and its OpenGL context */
+				(*window) = glfwCreateWindow(width, height, "RIOT", nullptr, nullptr);
+
+				glfwSetWindowPos(*window, windowWidth / 2 - width / 2, windowHeight / 2 - height / 2);
+			}
+			break;
+
+			case WMODE_FULLSCREEN:
+			{
+				/* Create a windowed mode window and its OpenGL context */
+				(*window) = glfwCreateWindow(width, height, "RIOT", pMonitor, nullptr);
+			}
+			break;
+
+			//case WMODE_FULLSCREEN_BORDERLESS:
+			//{
+			//	glfwWindowHint(GLFW_DECORATED, GL_FALSE);
+			//	/* Create a windowed mode window and its OpenGL context */
+			//	(*window) = glfwCreateWindow(windowWidth, windowHeight, "RIOT", nullptr, nullptr);
+			//}
+			//	break;
+		}
+
 
 		if (!(*window))
 		{
@@ -57,6 +106,8 @@ namespace Core
 			std::cout << "Unable to init GLEW." << std::endl;
 			return -1;
 		}
+
+		
 
 		return 0;
 	}

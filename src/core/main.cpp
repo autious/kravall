@@ -23,7 +23,7 @@ GLFWwindow* init()
 {
 	GLFWwindow* window;
 
-	Core::InitializeGLFW(&window, 1280, 720);
+	Core::InitializeGLFW(&window, 1280, 720, Core::WindowMode::WMODE_WINDOWED_BORDERLESS);
 
 	if (GFX::Init(1280,720) == GFX_FAIL)
 		return nullptr;
@@ -55,7 +55,6 @@ void TestRendering()
 
 void run( GLFWwindow * window )
 {
-	
 	Core::Camera* gCamera;
 	gCamera = new Core::Camera(45.0f, 1.0f, 1000.0f);
 	gCamera->CalculateProjectionMatrix(1280, 720);
@@ -65,7 +64,6 @@ void run( GLFWwindow * window )
 
 	Core::GLFWInput* input = new Core::GLFWInput(window);
 	GFX::RenderSplash(true);
-
 	while (!glfwWindowShouldClose(window))
 	{
 		input->UpdateInput();
