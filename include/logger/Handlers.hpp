@@ -7,5 +7,6 @@
 #include "internal/FileHandler.hpp"
 #include "internal/LogHandler.hpp"
 #include "internal/ConsoleHandler.hpp"
+#include "internal/TestHandler.hpp"
 
 #endif
