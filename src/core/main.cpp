@@ -15,7 +15,7 @@
 #include <utility/Colors.hpp>
 #include "Camera/Camera.hpp"
 
-#include <Utility/Colors.hpp>
+#include <utility/Colors.hpp>
 
 #include "GLFWInput.hpp"
 
