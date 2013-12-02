@@ -99,13 +99,14 @@ int main(int argc, char** argv)
 #endif
 #ifdef RUN_GTEST
     int gtestReturn = RUN_ALL_TESTS();
+#ifdef _WIN32 
+	std::cin.get();
+#endif
     if( gtestReturn != 0 )
         return gtestReturn;
 #endif
 #ifndef SKIP_RUN
     run( window );
-#elif _WIN32
-	std::cin.get();
 #endif
 
 #ifdef RUN_GTEST

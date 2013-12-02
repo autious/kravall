@@ -61,11 +61,13 @@ namespace LogSystem
 		*/
 		DLLSETTING ~LogData();
 
+		const char* GetPrefix() { return m_prefix; }
+
 		char m_message[512];
-		char* m_prefix;
 
 	private:		
 		LogType m_type;
+		char* m_prefix;
 	};
 	
 	/*! only here for intelisense help, will be overrided by macro. */

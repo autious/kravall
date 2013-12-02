@@ -2,7 +2,7 @@
 #define FILEHANDLERHPP
 
 #include <fstream>
-#include <internal/LogHandler.hpp>
+#include <logger/internal/LogHandler.hpp>
 
 #ifdef _WIN32
 	#ifdef LOGGER_DLL_EXPORT
@@ -27,7 +27,7 @@ public:
 	\param Path is the relative path to the file.
 	\param Append will cause the messages to be appended to the file.
 	*/
-	FileHandler( LogSystem::LogType type, std::string path, bool append );
+	DLLSETTING FileHandler( LogSystem::LogType type, std::string path, bool append );
 	
 	virtual ~FileHandler() override;
 
