@@ -75,7 +75,7 @@ namespace Core
             Calculated in compile-time making this function basically "free"
         */
         template<typename Component>
-        static size_t constexpr GetComponentTypeId( )
+        static size_t GetComponentTypeId( )
         {
             static_assert( std::is_pod<Component>::value, "Components must be Pure Data Objects" );
             static_assert( Match<Component,Components...>::exists, SA_COMPONENT_USE );
@@ -134,7 +134,7 @@ namespace Core
 
     private:
 
-        static Aspect constexpr GenerateAspect( const size_t *id, Aspect asp, int i, int size )
+        static Aspect GenerateAspect( const size_t *id, Aspect asp, int i, int size )
         {
             return asp |= (1ULL << id[i] | (i < size-1 ? GenerateAspect(id,asp,i+1,size) : 0ULL )); 
         }
