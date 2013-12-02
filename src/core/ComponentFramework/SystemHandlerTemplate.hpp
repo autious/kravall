@@ -7,9 +7,6 @@
 
 namespace Core
 {
-    /*!
-        This shit be cray
-    */
     template<typename... Args>
     class SystemHandlerTemplate
     {
