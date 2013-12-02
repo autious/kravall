@@ -65,7 +65,6 @@ namespace Core {
             virtual ~TestSystem2() {};
     };
 
-
     //Defins some component setups that match situations.
     // Exclusive on 1 inclusive match on 2
     #define TS2_OK_TS1_NO Component4,Component3,Component2,Component1
