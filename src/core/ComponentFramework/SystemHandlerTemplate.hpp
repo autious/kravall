@@ -31,9 +31,18 @@ namespace Core
         {
             for( int i = 0; i < SYSTEM_COUNT; i++ )
             {
-                m_systems[i].ChangedEntity( id, old_asp, new_asp );
+                m_systems[i]->ChangedEntity( id, old_asp, new_asp );
             }
         };
+
+        /*!
+            This function primarily exist for testing purposes,
+            don't use it without thinking about it first.
+        */
+        BaseSystem *GetSystem( int id )
+        {
+            return m_systems[id];
+        }
 
     private:
         std::array<BaseSystem*,SYSTEM_COUNT> m_systems;

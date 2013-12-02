@@ -52,5 +52,10 @@ namespace Core
 
         ASSERT_EQ(asp2, asp1);
     }
+
+    TEST( EntityHandlerTest, ComponentRetainData )
+    {
+        
+    }
 }
 #endif

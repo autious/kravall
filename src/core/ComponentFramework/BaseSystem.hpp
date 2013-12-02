@@ -14,9 +14,11 @@ namespace Core
         virtual ~BaseSystem() {}
 
         void ChangedEntity( Entity id, Aspect old_asp, Aspect new_asp );
+
+    protected:
+        std::vector<Entity> m_entities;
     private:
         Aspect m_inclusive, m_exclusive;
-        std::vector<Entity> m_entities;
 
         bool AspectMatch( Aspect asp );
     };

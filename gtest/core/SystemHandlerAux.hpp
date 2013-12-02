@@ -9,7 +9,6 @@ namespace Core
     {
         public:
             System1() : BaseSystem(0,0){};
-           
             virtual ~System1() {};
 
     };

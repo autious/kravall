@@ -42,6 +42,7 @@ namespace Core
 
             AddComponent<EntityComponents...>( ent, c... );
 
+            m_systemHandler->CallChangedEntity( ent, 0ULL, GenerateAspect<EntityComponents...>() );
             return ent;
         }
 
@@ -51,7 +52,16 @@ namespace Core
         */
         void DestroyEntity( Entity id )
         {
+            m_systemHandler->CallChangedEntity( id, GetEntityAspect( id ), 0ULL );
             m_entities.Release( id );
+        }
+
+        /*!
+            Retrieves entities current aspect
+        */
+        Aspect GetEntityAspect( Entity id )
+        {
+            return m_entities.GetAspect( id );
         }
 
         /*!
@@ -59,7 +69,7 @@ namespace Core
             Calculated in compile-time making this function basically "free"
         */
         template<typename Component>
-        size_t constexpr GetComponentTypeId( )
+        static size_t constexpr GetComponentTypeId( )
         {
             static_assert( std::is_pod<Component>::value, "Components must be Pure Data Objects" );
             static_assert( Match<Component,Components...>::exists, SA_COMPONENT_USE );
@@ -94,7 +104,7 @@ namespace Core
             This function is calculated in compile-time making this function "free". 
         */
         template<typename... AspectComponents>
-        Aspect constexpr GenerateAspect( )
+        static Aspect GenerateAspect( )
         {
             static const size_t ids[] = { GetComponentTypeId<AspectComponents>()... };
             return GenerateAspect( ids, Aspect(), 0, sizeof...(AspectComponents) ); 
@@ -102,7 +112,7 @@ namespace Core
 
     private:
 
-        Aspect constexpr GenerateAspect( const size_t *id, Aspect asp, int i, int size )
+        static Aspect constexpr GenerateAspect( const size_t *id, Aspect asp, int i, int size )
         {
             return asp |= (1ULL << id[i] | (i < size-1 ? GenerateAspect(id,asp,i+1,size) : 0ULL )); 
         }
@@ -116,6 +126,8 @@ namespace Core
 
             int compId  = m_components[componentType].Alloc();
 
+            m_components[componentType].Set( compId, &comp );
+            
             m_entities.SetComponentId( ent, compId, componentType );
 
             AddComponent<RComponents...>(ent, r...);
@@ -129,6 +141,7 @@ namespace Core
             assert( m_entities.GetComponentId(ent, componentType ) < 0 );
 
             int compId  = m_components[componentType].Alloc();
+            m_components[componentType].Set( compId, &comp );
 
             m_entities.SetComponentId( ent, compId, componentType );
         }

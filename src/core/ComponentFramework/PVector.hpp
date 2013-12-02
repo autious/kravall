@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <vector>
 #include <cassert>
+#include <cstring>
 
 namespace Core
 {
@@ -60,6 +61,17 @@ namespace Core
         }
 
         void* Get( int id );
+
+        template<class Component>
+        void Set( int id, const Component& comp )
+        {
+            memcpy( Get<Component>(id), &comp, sizeof(Component) ); 
+        }
+
+        void Set( int id, const void* component )
+        {
+            memcpy( Get(id), component, m_typesize );
+        }
 
         /*!
             Returns how many active components there are.

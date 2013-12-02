@@ -20,6 +20,11 @@ namespace Core
     {
         Component2 comp;
     };
+
+    struct Component4
+    {
+        float a,b,c,d;
+    };
     
     struct NotComponent1
     {
