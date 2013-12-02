@@ -23,12 +23,15 @@ namespace Core
 
         EntityVector<1024,64,Components...> m_entities;
         std::array<PVector,sizeof...(Components)> m_components = {{PVector(1024,64,sizeof(Components))...}};
-        
     public:
         EntityHandlerTemplate()
         {
         }
 
+        /*!
+            Create an entity instance with the given components
+            NOTE: Will need a future function that can add components with runtime data. (for ex, lua)
+        */
         template<typename... EntityComponents>
         Entity CreateEntity( EntityComponents... c )
         {
@@ -39,19 +42,33 @@ namespace Core
             return ent;
         }
 
+        /*!
+            Release an entity from allocation. Entity id'n are reused, so make sure to never reference
+            an entity after calling this function as the old id might end up pointing to new, unexpected data
+        */
         void DestroyEntity( Entity id )
         {
             m_entities.Release( id );
         }
 
+        /*!
+            Returns the static type id of the given component, used mainly internally.
+            Calculated in compile-time making this function basically "free"
+        */
         template<typename Component>
         size_t constexpr GetComponentTypeId( )
         {
-            static_assert(std::is_pod<Component>::value, "Components must be Pure Data Objects");
+            static_assert( std::is_pod<Component>::value, "Components must be Pure Data Objects" );
             static_assert( Match<Component,Components...>::exists, SA_COMPONENT_USE );
             return Index<Component,std::tuple<Components...>>::value;
         }
     
+        /*!
+            Returns a pointer to component. The pointer is invalidated as soon as 
+            a manipulating function is called (like release component or add component).
+            or anything that might trigger a sorting of the component lists. This function 
+            does not trigger any of these.
+        */
         template<typename Component>
         Component* GetComponentTmpPointer( Entity entity )
         {
@@ -66,6 +83,13 @@ namespace Core
             return (Component*)m_components[componentType].Get( componentId );
         }
 
+        /*!
+            Generates an aspect for the given group of components. An aspect is a generic single bitmask
+            representing a group of components. This aspect can be used for either inclusive or 
+            exclusive filtering. 
+
+            This function is calculated in compile-time making this function "free". 
+        */
         template<typename... AspectComponents>
         Aspect constexpr GenerateAspect( )
         {
