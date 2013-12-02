@@ -14,8 +14,10 @@
 #include <gfx/GFXInterface.hpp>
 #include <utility/Colors.hpp>
 #include "Camera/Camera.hpp"
+#include <ComponentFramework/SystemHandlerTemplate.hpp>
+#include <ComponentFramework/EntityHandlerTemplate.hpp>
 
-#include <Utility/Colors.hpp>
+#include <utility/Colors.hpp>
 
 #include "GLFWInput.hpp"
 

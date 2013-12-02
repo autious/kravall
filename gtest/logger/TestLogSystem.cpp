@@ -1,19 +1,23 @@
 #ifdef RUN_GTEST
 #include <gtest/gtest.h>
-#include <logger/Logger.hpp>
 #include <logger/Handlers.hpp>
+#include <logger/Logger.hpp>
 
 #include <fstream>
 #include <sstream>
 #include <string>
 
+#ifdef __WIN32
 #include <windows.h>
 #include <psapi.h>
+#endif
 
 namespace 
 {
 	TEST(LogSystemTest, FileTest )
 	{
+
+#ifdef __WIN32
 		logger::SetNewLogHandler( &logger::debugHandler, 
 			new FileHandler( logger::LogType::logType_debug, "loggerTestFile.txt", false) );
 
@@ -42,10 +46,12 @@ namespace
 		std::string test = std::string(logger::debug.GetPrefix()) + ":: This file is just for testing 123456789 ";
 		int diff = fromFile.compare( test );
 		ASSERT_TRUE( diff == 0 );
+#endif
 	}
 
 	TEST(LogSystemTest, TestMemory )
 	{
+#ifdef __WIN32
 		SIZE_T before;
 		SIZE_T after;
 		
@@ -73,6 +79,7 @@ namespace
 		int diff = after - before;
 
 		ASSERT_FALSE( diff );
+#endif
 	}
 }
 #endif
