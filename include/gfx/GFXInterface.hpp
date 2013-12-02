@@ -89,6 +89,10 @@ namespace GFX
 	*/
 	DLL_API void ToggleConsole();
 
+	/*!
+	Is this magic?
+	*/
+	DLL_API void RenderSplash(bool renderSplash);
 
 	namespace Debug
 	{
