@@ -26,6 +26,9 @@ namespace GFX
 		m_deferredPainter = new DeferredPainter(m_shaderManager, m_bufferManager, m_uniformBufferManager);
 		m_debugPainter = new DebugPainter(m_shaderManager, m_bufferManager, m_uniformBufferManager);
 		m_textPainter = new TextPainter(m_shaderManager, m_bufferManager, m_uniformBufferManager);
+		m_splashPainter = new SplashPainter(m_shaderManager, m_bufferManager, m_uniformBufferManager);
+
+		m_playSplash = false;
 	}
 
 	RenderCore::~RenderCore()
@@ -45,6 +48,7 @@ namespace GFX
 		m_deferredPainter->Initialize(m_FBO, m_dummyVAO);
 		m_debugPainter->Initialize(m_FBO, m_dummyVAO);
 		m_textPainter->Initialize(m_FBO, m_dummyVAO);
+		m_splashPainter->Initialize(m_FBO, m_dummyVAO);
 
 		// Set console width
 		DebugDrawing().SetConsoleHeight(m_windowHeight);
@@ -64,8 +68,16 @@ namespace GFX
 
 	void RenderCore::Render()
 	{
-		m_deferredPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
+		if (m_playSplash)
+		{
+			m_splashPainter->Render(m_windowWidth, m_windowHeight);
+			if (m_splashPainter->IsDone())
+				m_playSplash = false;
+			return;
+		}
 
+		m_deferredPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
+		
 		// Render debug
 		m_debugPainter->Render(m_viewMatrix, m_projMatrix);
 		m_textPainter->Render();
@@ -137,5 +149,10 @@ namespace GFX
 	void RenderCore::SetProjMatrix(glm::mat4 proj)
 	{
 		m_projMatrix = proj;
+	}
+
+	void RenderCore::SetSplash(bool splash)
+	{
+		m_playSplash = splash;
 	}
 }

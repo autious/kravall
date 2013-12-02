@@ -33,7 +33,12 @@ namespace GFX
 		/*!
 		Main rendering loop
 		*/
-		void Render();
+		void Render(const int& screenWidth, const int& screenHeight);
+		void RenderSplash(const int& screenWidth, const int& screenHeight);
+		void FadeToBlack(const int& screenWidth, const int& screenHeight);
+		void FadeToWhite(const int& screenWidth, const int& screenHeight);
+
+		inline bool IsDone(){ return m_done; }
 
 	private:
 		Texture* m_logoTexture;
@@ -44,8 +49,13 @@ namespace GFX
 		GLint m_positionUniform;
 		GLint m_sizeUniform;
 		GLint m_uvXUniform;
+		GLint m_screenDimensionUniform;
 
-		bool m_playSplash;
+		bool m_done;
+
+		float m_logoAlpha;
+		float m_logoTextAlpha;
+		float m_clearColor;
 	};
 }
 #endif

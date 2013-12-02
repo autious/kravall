@@ -9,6 +9,7 @@
 #include "DeferredPainter.hpp"
 #include "DebugRenderer/DebugPainter.hpp"
 #include "TextRenderer/TextPainter.hpp"
+#include "SplashRenderer/SplashPainter.hpp"
 #include "TextRenderer/TextManager.hpp"
 #include "DebugRenderer/DebugManager.hpp"
 
@@ -69,6 +70,8 @@ namespace GFX
 		*/
 		inline int GetWindowHeight() const { return m_windowHeight; }
 
+		void SetSplash(bool splash);
+
 	private:
 		RenderCore();
 		~RenderCore();
@@ -108,9 +111,12 @@ namespace GFX
 		DeferredPainter* m_deferredPainter;
 		TextPainter* m_textPainter;
 		DebugPainter* m_debugPainter;
+		SplashPainter* m_splashPainter;
 
 		glm::mat4 m_viewMatrix;
 		glm::mat4 m_projMatrix;
+
+		bool m_playSplash;
 
 	};
 

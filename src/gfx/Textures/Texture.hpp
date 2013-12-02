@@ -1,8 +1,9 @@
 #ifndef SRC_GFX_TEXTURES_TEXTURE_HPP
 #define SRC_GFX_TEXTURES_TEXTURE_HPP
 
+#define STBI_HEADER_FILE_ONLY
 #include <GL/glew.h>
-#include <stb_image.c>
+#include "stb_image.cpp"
 
 namespace GFX
 {
