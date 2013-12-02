@@ -3,11 +3,13 @@
 #include <gtest/gtest.h>
 #include <mem/LinearHeap.hpp>
 
+// change log; MEMORY_SIZE : expected constant expression @windows -> added const to declaration / John
+
 
 namespace
 {
 
-    unsigned int MEMORY_SIZE = 1000;
+    const unsigned int MEMORY_SIZE = 1000;
 
     struct TestObject
     {
@@ -63,5 +65,4 @@ namespace
         ASSERT_EQ(reinterpret_cast<void*>(test_char + sizeof(Core::Finalizer)), reinterpret_cast<void*>(test_obj));            
     }
 }
-
 #endif

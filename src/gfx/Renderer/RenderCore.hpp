@@ -10,6 +10,7 @@
 #include "Console/ConsolePainter.hpp"
 #include "DebugRenderer/DebugPainter.hpp"
 #include "TextRenderer/TextPainter.hpp"
+#include "SplashRenderer/SplashPainter.hpp"
 #include "TextRenderer/TextManager.hpp"
 #include "DebugRenderer/DebugManager.hpp"
 
@@ -82,6 +83,8 @@ namespace GFX
 		*/
 		bool GetConsoleVisible();
 
+		void SetSplash(bool splash);
+
 	private:
 		RenderCore();
 		~RenderCore();
@@ -122,9 +125,12 @@ namespace GFX
 		TextPainter* m_textPainter;
 		DebugPainter* m_debugPainter;
 		ConsolePainter* m_consolePainter;
+		SplashPainter* m_splashPainter;
 
 		glm::mat4 m_viewMatrix;
 		glm::mat4 m_projMatrix;
+
+		bool m_playSplash;
 
 	};
 

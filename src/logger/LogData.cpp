@@ -94,6 +94,9 @@ LogSystem::LogData::LogData(LogType type, const char* prefix )
 
 LogSystem::LogData::~LogData()
 {
+	if( strlen( m_message ) == 0 )
+		return;
+
 	logMutex.lock();
 
 	{

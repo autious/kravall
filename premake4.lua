@@ -70,7 +70,7 @@ solution "RiotGame"
         language "C++"
         kind "SharedLib"
         files { "gtest/gfx/**.cpp", "src/gfx/**.hpp", "src/gfx/**.h", "src/gfx/**.cpp", "include/gfx/**.hpp" ,"include/utility/**.hpp", "shaders/**.vertex", "shaders/**.geometry", "shaders/**.fragment", "shaders/**.compute" }
-		includedirs { "src/gfx", "include/gfx", "include/utility", "shaders", "include" }       
+		includedirs { "src/gfx", "include/gfx", "include/utility", "shaders", "include", "deps" }       
 		defines { "GFX_DLL_EXPORT" }
 		
         links { "glfw3", "freetype" }

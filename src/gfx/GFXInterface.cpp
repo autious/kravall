@@ -101,6 +101,11 @@ namespace GFX
 	{
 		Renderer().SetConsoleVisible(!Renderer().GetConsoleVisible());
 	}
+
+	void RenderSplash(bool renderSplash)
+	{
+		Renderer().SetSplash(renderSplash);
+	}
 }
 
 // Separated for debug interface
