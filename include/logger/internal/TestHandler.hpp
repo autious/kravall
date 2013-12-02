@@ -23,10 +23,9 @@ public:
 
 	virtual ~TestHandler() override { }
 
-	/*! \param message will be printed to std::cout */
+	/*! function does nothing, used for automated tests */
 	virtual void Log( const char* message ) override
 	{
-		__asm nop;
 	}
 
 private:
