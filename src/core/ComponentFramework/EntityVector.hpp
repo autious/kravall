@@ -3,6 +3,7 @@
 
 
 #include "ComponentType.hpp"
+#include "SystemTypes.hpp"
 
 #include <cstdlib>
 #include <cassert>
@@ -14,8 +15,6 @@
 
 namespace Core
 {
-    typedef unsigned int Entity;
-    typedef uint64_t Aspect;
     
     template<size_t Initial, size_t Step, typename... Components>
     class EntityVector
@@ -123,7 +122,8 @@ namespace Core
         */
         Aspect GetAspect( Entity id )
         {
-            Aspect asp;
+            Aspect asp = 0ULL;
+
             for( int i = 0; i < COMPONENT_COUNT; i++ )
             {
                 if( m_entities[COMPONENT_COUNT*id+i] >= 0 )

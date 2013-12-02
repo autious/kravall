@@ -2,6 +2,7 @@
 #define GTEST_CORE_TESTENTITYHANDLERAUX_H
 
 #include <ComponentFramework/EntityHandlerTemplate.hpp>
+#include "SystemHandlerAux.hpp"
 
 namespace Core
 {
@@ -25,8 +26,6 @@ namespace Core
         int data;
     };
 
-    typedef EntityHandlerTemplate<Component1,Component2,Component3> EntityHandler;
-
-    int AuxFunction( EntityHandler& );
+    typedef EntityHandlerTemplate<SystemHandler,Component1,Component2,Component3> EntityHandler;
 }
 #endif
