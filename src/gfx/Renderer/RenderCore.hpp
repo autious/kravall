@@ -87,6 +87,8 @@ namespace GFX
 
 		void Delete();
 
+		std::vector<StaticVertex>* testMesh;
+		StaticMesh sm;
 	private:
 		RenderCore();
 		~RenderCore();

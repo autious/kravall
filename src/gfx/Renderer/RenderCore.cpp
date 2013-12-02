@@ -74,6 +74,9 @@ namespace GFX
 
 		// Set console width
 		m_consolePainter->SetConsoleHeight(m_windowHeight);
+
+
+		testMesh = new std::vector<StaticVertex>();
 	}
 
 	void RenderCore::Resize(int width, int height)
@@ -99,16 +102,17 @@ namespace GFX
 			return;
 		}
 
+		sm.BindMesh();
 		m_deferredPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
 		
 		// Render debug
-		m_debugPainter->Render(m_viewMatrix, m_projMatrix);
+		//m_debugPainter->Render(m_viewMatrix, m_projMatrix);
 		
 		// Render console
-		m_consolePainter->Render();
+		//m_consolePainter->Render();
 		
 		// Render text
-		m_textPainter->Render();
+		//m_textPainter->Render();
 	}
 
 	void RenderCore::InitializeGBuffer()

@@ -41,8 +41,8 @@ namespace GFX
 		inline bool IsDone(){ return m_done; }
 
 	private:
-		Texture* m_logoTexture;
-		Texture* m_logoTextTexture;
+		GLuint m_logoTexture;
+		GLuint m_logoTextTexture;
 
 		GLint m_alphaUniform;
 		GLint m_textureUniform;

@@ -48,23 +48,25 @@ namespace GFX
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(StaticVertex), (void*)(4 * sizeof(float)));
 
-		//Tangent
-		glEnableVertexAttribArray(2);
-		glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(StaticVertex), (void*)(8 * sizeof(float)));
-
 		//UV
-		glEnableVertexAttribArray(3);
-		glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(StaticVertex), (void*)(12 * sizeof(float)));
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(StaticVertex), (void*)(8 * sizeof(float)));
 
-		//Generate IBO
-		glGenBuffers(1, &m_IBO);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IBO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, meshData.indices.size() * sizeof(int), meshData.indices.data(), GL_STATIC_DRAW);
+
+		////Tangent
+		//glEnableVertexAttribArray(2);
+		//glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(StaticVertex), (void*)(8 * sizeof(float)));
+
+		
+		////Generate IBO
+		//glGenBuffers(1, &m_IBO);
+		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IBO);
+		//glBufferData(GL_ELEMENT_ARRAY_BUFFER, meshData.indices.size() * sizeof(int), meshData.indices.data(), GL_STATIC_DRAW);
 	}
 
 	void StaticMesh::BindMesh()
 	{
 		glBindVertexArray(m_VAO);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IBO);
+		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IBO);
 	}
 }

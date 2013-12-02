@@ -111,6 +111,27 @@ namespace GFX
 	{
 		Renderer().Delete();
 	}
+
+	void test(std::vector<float>* t)
+	{
+		for (int i = 0; i < t->size();)
+		{
+			StaticVertex v;
+			v.position = glm::vec4(t->at(i++), t->at(i++), t->at(i++), 1.0f);
+			v.normal = glm::vec4(t->at(i++), t->at(i++), t->at(i++), 0.0f);
+			v.uv = glm::vec2(t->at(i++), t->at(i++));
+
+			Renderer().testMesh->push_back(v);
+		}
+
+		int size = Renderer().testMesh->size();
+		StaticMeshData smd;
+		smd.vertices = *Renderer().testMesh;
+
+		Renderer().sm.Load(smd);
+		GLuint asdf = Renderer().sm.GetVAO();
+		//Renderer().testMesh = t;
+	}
 }
 
 // Separated for debug interface

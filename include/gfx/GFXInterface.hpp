@@ -23,9 +23,12 @@ typedef glm::mat4x4 GFXMat4x4;
 
 typedef GFXVec4 GFXColor;
 
+#include <vector>
+#include <iostream>
+
 namespace GFX
 {
-
+	DLL_API void test(std::vector<float>* t);
 
 	/*!
 	Initializes the graphics engine on the currently bound context.

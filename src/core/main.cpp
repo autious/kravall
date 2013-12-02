@@ -21,6 +21,8 @@
 
 #include "GLFWInput.hpp"
 
+#include "BGnomeImporter.hpp"
+
 GLFWwindow* init()
 {
 	GLFWwindow* window;
@@ -58,15 +60,21 @@ void TestRendering()
 void run( GLFWwindow * window )
 {
 	Core::Camera* gCamera;
-	gCamera = new Core::Camera(45.0f, 1.0f, 1000.0f);
+	gCamera = new Core::Camera(45.0f, 1.0f, 2000.0f);
 	gCamera->CalculateProjectionMatrix(1280, 720);
-	gCamera->SetPosition(glm::vec3(0.0f, 0.0f, 10.0f));
+	gCamera->SetPosition(glm::vec3(0.0f, 100.0f, -1000.0f));
 
 	GFX::SetProjectionMatrix(gCamera->GetProjectionMatrix());
 
 	Core::GLFWInput* input = new Core::GLFWInput(window);
 	GFX::RenderSplash(true);
 	bool fs = false;
+
+	BGnomeImporter* BGI = new BGnomeImporter();
+
+	std::vector<float>* mesh = new std::vector<float>();
+	BGI->Go("assets/flag.GNOME", *mesh);
+	GFX::test(mesh);
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -76,8 +84,9 @@ void run( GLFWwindow * window )
 			break;
 
 		if (input->IsKeyPressedOnce(GLFW_KEY_TAB))
+		{
 			GFX::ToggleConsole();
-
+		}
 		if (input->IsKeyPressedOnce(GLFW_KEY_ENTER))
 		{
 			glfwDestroyWindow(window);

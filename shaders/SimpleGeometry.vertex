@@ -1,0 +1,29 @@
+#version 440
+
+uniform PerFrameBlock
+{
+	mat4 gView;
+	mat4 gProjection;
+};
+
+layout ( location = 0 ) in vec4 positionIN;
+layout ( location = 1 ) in vec4 normalIN;
+layout ( location = 2 ) in vec2 uvIN;
+
+out vec4 positionOUT;
+out vec4 normalOUT;
+out vec2 uvOUT;
+
+void main()
+{
+	//Move position to clip space
+	positionOUT = gProjection * gView * positionIN;
+
+	//Transform normal with model matrix
+	normalOUT = normalIN;
+	
+	//UV is a direct match
+	uvOUT = uvIN;
+	uvOUT = vec2(1,1);
+	gl_Position = positionOUT;
+}
