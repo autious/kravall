@@ -55,7 +55,21 @@ namespace Core
 
     TEST( EntityHandlerTest, ComponentRetainData )
     {
+        SystemHandler system;
+        EntityHandler instance(&system); 
         
+
+        Component1 comp1; comp1.value = 1;
+        Component1 comp2; comp2.value = 2;
+        Component1 comp3; comp3.value = 3;
+
+        Entity ent1 = instance.CreateEntity<Component1>(comp1);
+        Entity ent2 = instance.CreateEntity<Component1>(comp2);
+        Entity ent3 = instance.CreateEntity<Component1>(comp3);
+
+        EXPECT_EQ(1,instance.GetComponentTmpPointer<Component1>( ent1 )->value);
+        EXPECT_EQ(2,instance.GetComponentTmpPointer<Component1>( ent2 )->value);
+        EXPECT_EQ(3,instance.GetComponentTmpPointer<Component1>( ent3 )->value);
     }
 }
 #endif

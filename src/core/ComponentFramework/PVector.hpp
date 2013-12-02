@@ -49,29 +49,15 @@ namespace Core
         */
         void Release( int id );
 
-        /*!
-            Retrieves a temporary pointer to data in
-            this structure.
-        */
-        template<class Component>
-        Component* Get( int id )
+        template<typename T>
+        T* GetT( int id )
         {
-            assert( sizeof(Component) == m_typesize );
-            return (Component*)Get(id);
+            return (T*)Get(id);
         }
 
         void* Get( int id );
 
-        template<class Component>
-        void Set( int id, const Component& comp )
-        {
-            memcpy( Get<Component>(id), &comp, sizeof(Component) ); 
-        }
-
-        void Set( int id, const void* component )
-        {
-            memcpy( Get(id), component, m_typesize );
-        }
+        void Set( int id, const void* component );
 
         /*!
             Returns how many active components there are.

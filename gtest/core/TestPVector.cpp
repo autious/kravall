@@ -63,19 +63,19 @@ namespace Core
         
         for( int i = 0; i < 10; i++ )
         {
-            pvec.Get<DataType>(pvec.Alloc())->data = i;
+            pvec.GetT<DataType>(pvec.Alloc())->data = i;
         }
     
         int index = pvec.Alloc(); 
-        DataType* d = pvec.Get<DataType>(index);
+        DataType* d = pvec.GetT<DataType>(index);
         d->data = 30;
 
         for( int i = 0; i < 10; i++ )
         {
-            pvec.Get<DataType>(pvec.Alloc())->data = i;
+            pvec.GetT<DataType>(pvec.Alloc())->data = i;
         }
 
-        d = pvec.Get<DataType>(index);
+        d = pvec.GetT<DataType>(index);
 
         ASSERT_EQ( 30, d->data );
     }

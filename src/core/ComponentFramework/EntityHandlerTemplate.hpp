@@ -9,7 +9,6 @@
 #include <cstdint>
 #include <cassert>
 #include <array>
-#include <iostream>
 
 #define SA_COMPONENT_USE "Component doesn't exist in EntityHandler. Maybe you forgot to add it?"
 
@@ -89,7 +88,7 @@ namespace Core
 
             static const int componentType = GetComponentTypeId<Component>();
 
-            int componentId = m_entities.GetComponentId( entity );
+            int componentId = m_entities.GetComponentId( entity, componentType );
             
             assert( componentId >= 0 );
 
@@ -141,6 +140,7 @@ namespace Core
             assert( m_entities.GetComponentId(ent, componentType ) < 0 );
 
             int compId  = m_components[componentType].Alloc();
+
             m_components[componentType].Set( compId, &comp );
 
             m_entities.SetComponentId( ent, compId, componentType );

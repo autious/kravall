@@ -1,5 +1,7 @@
 #include "PVector.hpp"
 
+#include <iostream>
+
 Core::PVector::PVector( size_t initialSize, size_t growStep, size_t typesize )
 {
     m_data = malloc( initialSize * typesize );
@@ -49,7 +51,12 @@ void Core::PVector::Release( int id )
 void* Core::PVector::Get( int id )
 {
     assert( id > 0 && id < m_count );
-    return &((unsigned char*)m_data)[id*m_typesize];
+    return &(((unsigned char*)m_data)[id*m_typesize]);
+}
+
+void Core::PVector::Set( int id, const void *component )
+{
+    memcpy( Get(id), component, m_typesize );
 }
 
 size_t Core::PVector::GetCount()
