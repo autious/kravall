@@ -7,12 +7,20 @@
 
 namespace Core
 {
+    /*!
+        SystemHandler, stores systems, calls them and handles callbacks from EntityHandler to Systems.
+        Can be created and called every frame to apply the registered systems transformation on 
+        registered entities
+    */
     template<typename... Args>
     class SystemHandlerTemplate
     {
     public: 
         static const int SYSTEM_COUNT = sizeof...(Args);
 
+        /*!
+            Standard constructur, creates systemhandler
+        */
         SystemHandlerTemplate( )
         {
             m_systems = {{(new Args())...}};
@@ -22,11 +30,17 @@ namespace Core
         {
         } 
 
+        /*!
+            Returns how many systems were compiled into the systemhandler
+        */
         int GetSystemCount()
         {
             return SYSTEM_COUNT;
         }
 
+        /*!
+            Main update loop, called every frame to update all systems
+        */
         void Update( float delta )
         {
             for( int i = 0; i < SYSTEM_COUNT; i++ )
@@ -35,6 +49,9 @@ namespace Core
             }          
         }
     
+        /*!
+            Intended to be called by EntityHandler when entities are created, modified or removed.
+        */
         void CallChangedEntity( Entity id, Aspect old_asp, Aspect new_asp )
         {
             for( int i = 0; i < SYSTEM_COUNT; i++ )

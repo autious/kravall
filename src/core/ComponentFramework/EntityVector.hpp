@@ -16,6 +16,10 @@
 namespace Core
 {
     
+    /*!
+        EntityVector, internal datastructure used by the EntityHandler
+        to store entities id'n and their component makeup.
+    */
     template<size_t Initial, size_t Step, typename... Components>
     class EntityVector
     {
@@ -39,6 +43,10 @@ namespace Core
             free( m_entities );
         }
 
+        /*! 
+            Allocates an entity, might reuse previously destroyed entity idn
+            may result in a reallocation of memory.
+        */
         Entity Alloc()
         {
             Entity id = 0;
@@ -67,6 +75,9 @@ namespace Core
             return id;
         }
 
+        /*!
+            Releases the id of a given entity.
+        */
         void Release( Entity id )
         {
             //Reset all component variables

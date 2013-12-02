@@ -10,18 +10,37 @@ namespace Core
     class BaseSystem
     {
     public:
+        /*!
+            Base constructor, takes inclusive and exclusive aspects
+            used by the ChangedEntity function to determine if an entity 
+            should be saved in the internal entity list.
+        */
         BaseSystem( Aspect inclusive, Aspect exclusive );
+
         virtual ~BaseSystem() {}
+        
+        /*!
+            Update call
+        */
         virtual void Update( float delta ) = 0;
+
+        /*!
+            Changed entity, called every time entities are created, removed or if their
+            Aspect has changed
+        */
 
         void ChangedEntity( Entity id, Aspect old_asp, Aspect new_asp );
 
+        bool AspectMatch( Aspect asp );
     protected:
+        /*!
+            Systems personal entities list.
+        */
         std::vector<Entity> m_entities;
+
     private:
         Aspect m_inclusive, m_exclusive;
 
-        bool AspectMatch( Aspect asp );
     };
 }
 

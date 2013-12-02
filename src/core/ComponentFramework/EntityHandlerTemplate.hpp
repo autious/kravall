@@ -14,6 +14,11 @@
 
 namespace Core
 {
+    /*! 
+        EntityHandler, holds entity and component data. Keeps track on id's
+        Creation, Modification and Removal of components and entities
+        Is internally responsible for handling large amounts of game-data.
+    */
     template<typename SystemHandlerT, typename... Components>
     class EntityHandlerTemplate
     {
@@ -46,12 +51,14 @@ namespace Core
         }
 
         /*!
-            Release an entity from allocation. Entity id'n are reused, so make sure to never reference
-            an entity after calling this function as the old id might end up pointing to new, unexpected data
+            Release an entity from allocation. Entity idn are reused, so make sure to never reference
+            an entity after calling this function as the old id might end up pointing to a new one.
         */
         void DestroyEntity( Entity id )
         {
             m_systemHandler->CallChangedEntity( id, GetEntityAspect( id ), 0ULL );
+
+            ClearComponents( id );
             m_entities.Release( id );
         }
 
@@ -109,6 +116,22 @@ namespace Core
             return GenerateAspect( ids, Aspect(), 0, sizeof...(AspectComponents) ); 
         }
 
+        int GetEntityCount()
+        {
+            return m_entities.GetCount();
+        } 
+        
+        int GetComponentCount()
+        {
+            int all = 0;
+            
+            for( int i = 0; i < COMPONENT_COUNT; i++ )
+            {
+                all += m_components[i].GetCount();
+            }
+            return all;
+        }
+
     private:
 
         static Aspect constexpr GenerateAspect( const size_t *id, Aspect asp, int i, int size )
@@ -144,6 +167,24 @@ namespace Core
             m_components[componentType].Set( compId, &comp );
 
             m_entities.SetComponentId( ent, compId, componentType );
+        }
+
+
+        void ClearComponents( Entity id )
+        {
+            for( int i = 0; i < COMPONENT_COUNT; i++ )
+            {
+                RemoveComponent( id, i );    
+            }
+        }
+
+        void RemoveComponent( Entity ent, int componentType )
+        {
+            int componentId = m_entities.GetComponentId( ent, componentType );
+            if( componentId >= 0 )
+            {
+                m_components[componentType].Release( componentId );
+            }
         }
     };
 }

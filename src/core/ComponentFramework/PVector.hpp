@@ -9,6 +9,10 @@
 
 namespace Core
 {
+    /*!
+        PVector the datastructure class used by EntityHandler to 
+        store individual component types data in a consecutive list.
+    */
     class PVector
     {
     private:

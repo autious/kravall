@@ -71,5 +71,40 @@ namespace Core
         EXPECT_EQ(2,instance.GetComponentTmpPointer<Component1>( ent2 )->value);
         EXPECT_EQ(3,instance.GetComponentTmpPointer<Component1>( ent3 )->value);
     }
+
+    TEST( EntityHandlerTest, CleanRelease )
+    {
+        SystemHandler system;
+        EntityHandler instance(&system); 
+        
+        Entity ent1 = instance.CreateEntity<Component1,Component3>(Component1(),Component3());
+        Entity ent2 = instance.CreateEntity<Component1,Component2>(Component1(),Component2());
+        Entity ent3 = instance.CreateEntity<Component1,Component2,Component3>(Component1(),Component2(),Component3());
+        Entity ent4 = instance.CreateEntity<Component1>(Component1());
+
+        EXPECT_EQ(4,instance.GetEntityCount());
+        EXPECT_EQ(8,instance.GetComponentCount());
+
+        instance.DestroyEntity( ent1 );
+
+        EXPECT_EQ(3,instance.GetEntityCount());
+        EXPECT_EQ(6,instance.GetComponentCount());
+
+        instance.DestroyEntity( ent3 );
+
+        EXPECT_EQ(2,instance.GetEntityCount());
+        EXPECT_EQ(3,instance.GetComponentCount());
+
+        instance.DestroyEntity( ent2 );
+
+        EXPECT_EQ(1,instance.GetEntityCount());
+        EXPECT_EQ(1,instance.GetComponentCount());
+
+        instance.DestroyEntity( ent4 );
+
+        EXPECT_EQ(0,instance.GetEntityCount());
+        EXPECT_EQ(0,instance.GetComponentCount());
+
+    }
 }
 #endif
