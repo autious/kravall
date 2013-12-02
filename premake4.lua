@@ -9,7 +9,7 @@ solution "RiotGame"
     local location_path = "build"
 
     if os.is( "linux" ) then
-        buildoptions { "-std=c++11 -Wno-unused-parameter" }
+        buildoptions { "-std=c++11 -Wall"} -- -Wno-unused-parameter" }
         location_path = "" 
     elseif(os.is("windows")) then
         location_path = location_path .."/win32/" .. _ACTION
