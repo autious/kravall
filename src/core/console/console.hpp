@@ -4,35 +4,60 @@
 #include <vector>
 #include <string>
 
-class DebugConsole
+namespace Core
 {
-public:
-	/*!
-	Sets the string at the console input line
-	\param inputLine Value to set the input line
-	*/
-	void SetInputLine(std::string& inputLine);
 
-	/*!
-	Adds a line to the console window.
-	\param line The string to add to the console
-	*/
-	void AddLine(std::string& line);
+	class DebugConsole
+	{
+	public:
+		/*!
+		Sets the string at the console input line
+		\param inputLine Value to set the input line
+		*/
+		void SetInputLine(const std::string& inputLine);
 
-private:
-	friend DebugConsole& Console();
+		/*!
+		Executes the current line and adds the command to console and history.
+		*/
+		void Add();
 
-	DebugConsole();
-	~DebugConsole();
+		/*!
+		Sets the current input to last command in the history.
+		*/
+		void LastHistory();
 
-private:
-	bool m_visible;
+		/*!
+		Sets the current input to next command in the history.
+		*/
+		void NextHistory();
 
-	std::string m_inputLine;
-	std::vector<std::string> m_console;
-	std::vector<std::string> m_history;
+		/*!
+		Scrolls the console.
+		\param offset The number of rows to scroll the console text
+		*/
+		void Scroll(int offset);
 
-};
-DebugConsole& Console();
+	private:
+		friend DebugConsole& Console();
+
+		DebugConsole();
+		~DebugConsole();
+
+	private:
+		bool m_visible;
+
+		// Current position in the history list
+		unsigned int m_historyIndex;
+
+		int m_offset;
+
+		std::string m_inputLine;
+		std::vector<std::string> m_console;
+		std::vector<std::string> m_history;
+
+	};
+	DebugConsole& Console();
+
+}
 
 #endif
