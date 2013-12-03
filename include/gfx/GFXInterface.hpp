@@ -12,7 +12,7 @@
 #endif
 
 #include <glm/glm.hpp>
-#include <gl/glew.h>
+#include <GL/glew.h>
 
 #define GFX_SUCCESS 0
 #define GFX_FAIL 1

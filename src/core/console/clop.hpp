@@ -76,7 +76,7 @@ namespace clop
 	};
 
 	/* Returns a single instance of clop */
-	static CLI& cli();
+	CLI& cli();
 
 	/* Registers a function for specified command. */
 	void Register( CLOPSTR cmd, FunPtr cbptr );

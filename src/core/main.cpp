@@ -23,10 +23,10 @@
 #include "GLFWInput.hpp"
 #include <World.hpp>
 
-#include "console\console.hpp"
+#include "console/console.hpp"
 #include "BGnomeImporter.hpp"
 
-#include "console\clop.hpp"
+#include "console/clop.hpp"
 
 // Just an example of a clop function
 // This function gets registred in Init with clop::Register("exit", ClopCloseWindow);
