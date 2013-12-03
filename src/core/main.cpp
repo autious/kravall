@@ -12,6 +12,7 @@
 #include "WindowHandling/InitializeGLFW.hpp"
 
 #include <gfx/GFXInterface.hpp>
+#include <gfx/Material.hpp>
 #include <utility/Colors.hpp>
 #include "Camera/Camera.hpp"
 #include <ComponentFramework/SystemHandlerTemplate.hpp>
@@ -63,12 +64,12 @@ void run( GLFWwindow * window )
 	Core::Camera* gCamera;
 	gCamera = new Core::Camera(45.0f, 1.0f, 2000.0f);
 	gCamera->CalculateProjectionMatrix(1280, 720);
-	gCamera->SetPosition(glm::vec3(0.0f, 100.0f, -1000.0f));
+	gCamera->SetPosition(glm::vec3(0.0f, 0.0f, -500.0f));
 
 	GFX::SetProjectionMatrix(gCamera->GetProjectionMatrix());
 
 	Core::GLFWInput* input = new Core::GLFWInput(window);
-	GFX::RenderSplash(true);
+	GFX::RenderSplash(false);
 	bool fs = false;
 
 	BGnomeImporter* BGI = new BGnomeImporter();
@@ -91,6 +92,9 @@ void run( GLFWwindow * window )
 
 	std::cout << IBO << std::endl;
 	std::cout << VAO << std::endl;
+
+	GFX::Material* m = new GFX::Material();
+	m->diffuse = GFX::Content::LoadTexture2DFromFile("assets/GDM.png");
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -135,7 +139,7 @@ void run( GLFWwindow * window )
 		GFX::SetViewMatrix(gCamera->GetViewMatrix());
 
 		//TestRendering();
-		GFX::Draw(IBO, VAO, vSize);
+		GFX::Draw(IBO, VAO, vSize, m);
 		GFX::Render();
 
         Core::world.m_systemHandler.Update( 0.1f );

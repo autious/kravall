@@ -16,6 +16,7 @@
 #include "DebugRenderer/DebugManager.hpp"
 
 #include <iostream>
+#include <gfx/Material.hpp>
 
 namespace GFX
 {
@@ -88,7 +89,7 @@ namespace GFX
 
 		void Delete();
 
-		void AddRenderJob(const GLuint& ibo, const GLuint& vao, const int& size);
+		void AddRenderJob(const GLuint& ibo, const GLuint& vao, const int& size, Material* m);
 
 	private:
 		RenderCore();

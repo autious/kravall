@@ -114,9 +114,9 @@ namespace GFX
 		Renderer().Delete();
 	}
 
-	void Draw(const int& ibo, const int& vao, const int& size)
+	void Draw(const int& ibo, const int& vao, const int& size, Material* material)
 	{
-		Renderer().AddRenderJob(ibo, vao, size);
+		Renderer().AddRenderJob(ibo, vao, size, material);
 	}
 }
 
@@ -128,6 +128,12 @@ namespace GFX
 		{
 			return Texture::LoadFromMemory(data, GL_TEXTURE_2D, GL_RGBA, GL_RGBA, GL_LINEAR, GL_LINEAR,
 				GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, width, height);
+		}
+
+		unsigned int LoadTexture2DFromFile(const char* filepath)
+		{
+			return Texture::LoadFromFile(filepath, GL_TEXTURE_2D, GL_RGBA, GL_RGBA, GL_LINEAR, GL_LINEAR,
+				GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
 		}
 
 		void DeleteTexture(unsigned int textureHandle)

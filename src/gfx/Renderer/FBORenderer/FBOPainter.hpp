@@ -34,11 +34,13 @@ namespace GFX
 		/*!
 		Main rendering loop
 		*/
-		void Render(FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID);
+		void Render(FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, int screenWidth, int screenHeight, int current);
 		
 	private:
 
+		GLint m_alphaUniform;
 		GLint m_textureUniform;
+	
 	};
 }
 #endif

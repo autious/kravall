@@ -86,7 +86,12 @@ int BGnomeImporter::Go(std::string filePath, GFX::StaticVertex*& getMesh, int& s
 			for (int j = 0; j < 3; j++)
 				getMesh[i].normal[j] = mesh.vertices[i].normal[j];
 			for (int j = 0; j < 2; j++)
-				getMesh[i].uv[j] = mesh.vertices[i].uv[j];
+			{
+				//if (j == 1)
+				//	getMesh[i].uv[j] = 1 - mesh.vertices[i].uv[j];
+				//else
+					getMesh[i].uv[j] = mesh.vertices[i].uv[j];
+			}
 			for (int j = 0; j < 3; j++)
 				getMesh[i].tangent[j] = mesh.vertices[i].tangent[j];
 			for (int j = 0; j < 3; j++)

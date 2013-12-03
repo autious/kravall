@@ -25,17 +25,22 @@ namespace GFX
 
 		m_shaderManager->LinkProgram("StaticMesh");
 
-		exampleUniform = m_shaderManager->GetUniformLocation("StaticMesh", "inputColor");
+
+		m_diffuseUniform = m_shaderManager->GetUniformLocation("StaticMesh", "diffuseMap");
+		m_normalUniform = m_shaderManager->GetUniformLocation("StaticMesh", "normalMap");
+		m_specularUniform = m_shaderManager->GetUniformLocation("StaticMesh", "specularMap");
+		m_glowUniform = m_shaderManager->GetUniformLocation("StaticMesh", "glowMap");
 
 		m_uniformBufferManager->CreateBasicCameraUBO(m_shaderManager->GetShaderProgramID("StaticMesh"));
 	}
 
-	void DeferredPainter::AddRenderJob(const GLuint& ibo, const GLuint& vao, const int& size)
+	void DeferredPainter::AddRenderJob(const GLuint& ibo, const GLuint& vao, const int& size, Material* mat)
 	{
 		RenderJob rj;
 		rj.ibo = ibo;
 		rj.vao = vao;
 		rj.size = size;
+		rj.m = mat;
 		m_renderJobs.push_back(rj);
 	}
 
@@ -45,7 +50,7 @@ namespace GFX
 
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
-		//BindGBuffer(normalDepth, diffuse, specular, glowMatID);
+		BindGBuffer(normalDepth, diffuse, specular, glowMatID);
 		m_shaderManager->UseProgram("StaticMesh");
 		
 		BasicCamera bc;
@@ -54,8 +59,13 @@ namespace GFX
 		
 		m_uniformBufferManager->SetBasicCameraUBO(bc);
 		
-		for (int i = 0; i < m_renderJobs.size(); i++)
+		for (unsigned int i = 0; i < m_renderJobs.size(); i++)
 		{
+			Texture::BindTexture(m_renderJobs.at(i).m->diffuse, m_diffuseUniform, 0, GL_TEXTURE_2D);
+			Texture::BindTexture(m_renderJobs.at(i).m->normal, m_normalUniform, 1, GL_TEXTURE_2D);
+			Texture::BindTexture(m_renderJobs.at(i).m->specular, m_specularUniform, 2, GL_TEXTURE_2D);
+			Texture::BindTexture(m_renderJobs.at(i).m->glow, m_glowUniform, 3, GL_TEXTURE_2D);
+
 			glBindVertexArray(m_renderJobs.at(i).vao);
 			glDrawArrays(GL_TRIANGLES, 0, m_renderJobs.at(i).size);
 		}

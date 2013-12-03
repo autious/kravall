@@ -40,7 +40,7 @@ namespace GFX
 
 	void FBOTexture::UpdateResolution(int width, int height)
 	{
-		glActiveTexture(GL_TEXTURE0 + m_textureHandle);
+		//glActiveTexture(GL_TEXTURE0 + m_textureHandle);
 		glBindTexture(m_textureTarget, m_textureHandle);
 		glTexImage2D(m_textureTarget, 0, m_internalFormat, width, height, 0, m_format, GL_UNSIGNED_BYTE, nullptr);
 	}
@@ -54,7 +54,7 @@ namespace GFX
 	void FBOTexture::GenerateTexture()
 	{
 		glGenTextures(1, &m_textureHandle);
-		glActiveTexture(GL_TEXTURE0 + m_textureHandle);
+		//glActiveTexture(GL_TEXTURE0 + m_textureHandle);
 		glBindTexture(m_textureTarget, m_textureHandle);
 
 		glTexParameteri(m_textureTarget, GL_TEXTURE_MAG_FILTER, m_magFilter);

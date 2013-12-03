@@ -26,6 +26,7 @@ typedef GFXVec4 GFXColor;
 #include <vector>
 #include <iostream>
 #include <gfx/Vertex.hpp>
+#include <gfx/Material.hpp>
 
 namespace GFX
 {
@@ -69,7 +70,7 @@ namespace GFX
 	*/
 	DLL_API void Draw(unsigned int bitmask, void* data);
 
-	DLL_API void Draw(const int& ibo, const int& vao, const int& size);
+	DLL_API void Draw(const int& ibo, const int& vao, const int& size, Material* material);
 
 	/*!
 	Issues a draw  text command to the graphics engine.
@@ -115,6 +116,8 @@ namespace GFX
 		\return Handle of the texture
 		*/
 		DLL_API unsigned int LoadTexture2DFromMemory(int width, int height, unsigned char* data);
+
+		DLL_API unsigned int LoadTexture2DFromFile(const char* filepath);
 
 		/*!
 		Deletes a texture from the GPU

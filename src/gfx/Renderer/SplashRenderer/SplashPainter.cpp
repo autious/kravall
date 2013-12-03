@@ -33,7 +33,6 @@ namespace GFX
 		m_logoTexture = Texture::LoadFromFile("assets/Logo/xyz_logo.png", GL_TEXTURE_2D, GL_RGBA, GL_RGBA, GL_LINEAR, GL_LINEAR, 
 			GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
 
-		
 		m_logoTextTexture = Texture::LoadFromFile("assets/Logo/xyz_logo_text.png", GL_TEXTURE_2D, GL_RGBA, GL_RGBA, GL_LINEAR, GL_LINEAR,
 			GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
 

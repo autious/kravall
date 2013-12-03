@@ -88,9 +88,9 @@ namespace GFX
 		m_consolePainter->SetConsoleHeight(m_windowHeight);
 	}
 
-	void RenderCore::AddRenderJob(const GLuint& ibo, const GLuint& vao, const int& size)
+	void RenderCore::AddRenderJob(const GLuint& ibo, const GLuint& vao, const int& size, Material* m)
 	{
-		m_deferredPainter->AddRenderJob(ibo, vao, size);
+		m_deferredPainter->AddRenderJob(ibo, vao, size, m);
 	}
 
 	void RenderCore::Render()
@@ -106,7 +106,7 @@ namespace GFX
 
 		m_deferredPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
 		
-		//m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID);
+		m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, 2);
 
 		// Render debug
 		m_debugPainter->Render(m_viewMatrix, m_projMatrix);
