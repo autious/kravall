@@ -8,7 +8,6 @@
 
 namespace Core
 {
-
     class ExampleSystem;
     typedef SystemHandlerTemplate<ExampleSystem> SystemHandler;
     typedef EntityHandlerTemplate<SystemHandler,ExampleComponent1,ExampleComponent2> EntityHandler;

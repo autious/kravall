@@ -3,7 +3,13 @@
 
 #include "BaseSystem.hpp"
 #include "PVector.hpp"
+
 #include <array>
+#include <utility>
+#include <chrono>
+#include <vector>
+
+#define GNAME( name ) #name
 
 namespace Core
 {
@@ -43,9 +49,18 @@ namespace Core
         */
         void Update( float delta )
         {
+            
             for( int i = 0; i < SYSTEM_COUNT; i++ )
             {
+                auto start = std::chrono::high_resolution_clock::now();
+                 
                 m_systems[i]->Update( delta );
+
+                auto end = std::chrono::high_resolution_clock::now();
+
+                std::chrono::microseconds diff = std::chrono::duration_cast<std::chrono::microseconds>( end - start );
+
+                m_frameTimes[i] = diff; 
             }          
         }
     
@@ -69,8 +84,21 @@ namespace Core
             return m_systems[id];
         }
 
+        std::vector<std::pair<const char*,std::chrono::microseconds>> GetFrameTime()
+        {
+            std::vector<std::pair<const char*,std::chrono::microseconds>> ar;
+
+            for( int i = 0; i < SYSTEM_COUNT; i++ )
+            {
+                ar.push_back( std::pair<const char*, std::chrono::microseconds>( m_systems[i]->GetHumanName(), m_frameTimes[i] ) );
+            }
+
+            return ar;
+        }
+
     private:
         std::array<BaseSystem*,SYSTEM_COUNT> m_systems;
+        std::array<std::chrono::microseconds,SYSTEM_COUNT> m_frameTimes;
     };
 }
 #endif

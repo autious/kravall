@@ -11,6 +11,30 @@ Core::PVector::PVector( size_t initialSize, size_t growStep, size_t typesize )
     m_typesize = typesize;
 }
 
+Core::PVector::PVector( PVector& rhs )
+{
+    m_data = rhs.m_data;
+    m_size = rhs.m_size;
+    m_count = rhs.m_count;
+    m_growStep = rhs.m_growStep;
+    m_typesize = rhs.m_typesize;
+    rhs.m_data = nullptr;
+    rhs.m_size = 0;
+    rhs.m_count = 0;
+    rhs.m_growStep = 0;
+    rhs.m_typesize = 0;
+}
+
+Core::PVector::PVector( PVector&& rhs )
+{
+    m_data = rhs.m_data;
+    m_size = rhs.m_size;
+    m_count = rhs.m_count;
+    m_growStep = rhs.m_growStep;
+    m_typesize = rhs.m_typesize;
+    rhs.m_data = nullptr;
+}
+
 Core::PVector::~PVector( )
 {
     free( m_data );

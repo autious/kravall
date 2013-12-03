@@ -24,6 +24,7 @@ namespace Core
         std::vector<int> deleted;
     public:
 
+
         /*!
             Creates an instance of a packed vector with the initials memory size 
             of initialSize * sizeof(Component).
@@ -31,6 +32,8 @@ namespace Core
             /param growStep size step growth for each time the array isn't large enough.
         */
         PVector( size_t initialSize, size_t growStep, size_t typesize );
+        PVector( PVector& rhs );
+        PVector( PVector&& rhs );
 
         ~PVector( );
 
