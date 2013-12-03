@@ -22,6 +22,8 @@
 #include "GLFWInput.hpp"
 #include <World.hpp>
 
+#include "console\console.hpp"
+
 GLFWwindow* init()
 {
 	GLFWwindow* window;
@@ -66,7 +68,7 @@ void run( GLFWwindow * window )
 	GFX::SetProjectionMatrix(gCamera->GetProjectionMatrix());
 
 	Core::GLFWInput* input = new Core::GLFWInput(window);
-	GFX::RenderSplash(true);
+	GFX::RenderSplash(false);
 	bool fs = false;
 
     Entity ent1 = Core::world.m_entityHandler.CreateEntity<Core::ExampleComponent1,Core::ExampleComponent2>( Core::ExampleComponent1::D1(),
@@ -80,7 +82,20 @@ void run( GLFWwindow * window )
 			break;
 
 		if (input->IsKeyPressedOnce(GLFW_KEY_TAB))
-			GFX::ToggleConsole();
+			Core::Console().Toggle();
+		if (input->IsKeyPressedOnce(GLFW_KEY_UP))
+			Core::Console().LastHistory();
+		if (input->IsKeyPressedOnce(GLFW_KEY_DOWN))
+			Core::Console().NextHistory();
+		if (input->IsKeyPressedOnce(GLFW_KEY_PAGE_UP))
+			Core::Console().Scroll(-1);
+		if (input->IsKeyPressedOnce(GLFW_KEY_PAGE_DOWN))
+			Core::Console().Scroll(1);
+		if (input->IsKeyPressedOnce(GLFW_KEY_F))
+			Core::Console().SetInputLine("Command " + std::to_string(rand()));
+		if (input->IsKeyPressedOnce(GLFW_KEY_G))
+			Core::Console().Add();
+		Core::Console().Update();
 
 		if (input->IsKeyPressedOnce(GLFW_KEY_ENTER))
 		{
@@ -114,6 +129,7 @@ void run( GLFWwindow * window )
 		GFX::SetViewMatrix(gCamera->GetViewMatrix());
 
 		//TestRendering();
+
 
 		GFX::Render();
 

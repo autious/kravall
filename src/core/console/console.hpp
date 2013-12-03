@@ -37,6 +37,17 @@ namespace Core
 		*/
 		void Scroll(int offset);
 
+		/*!
+		Updates the console by sending draw calls to the graphics
+		*/
+		void Update();
+
+		void Show();
+
+		void Hide();
+
+		void Toggle();
+
 	private:
 		friend DebugConsole& Console();
 
@@ -47,7 +58,7 @@ namespace Core
 		bool m_visible;
 
 		// Current position in the history list
-		unsigned int m_historyIndex;
+		int m_historyIndex;
 
 		int m_offset;
 

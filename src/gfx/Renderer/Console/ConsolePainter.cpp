@@ -8,7 +8,7 @@ namespace GFX
 		: BasePainter(shaderManager, bufferManager, uniformBufferManager)
 	{
 		m_showConsole = false;
-		m_consoleHeight = 180;
+		m_consoleHeight = 380;
 		m_consoleColor = glm::vec4(0.0f, 0.0f, 0.0f, 0.75f);
 	}
 
