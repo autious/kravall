@@ -91,8 +91,6 @@ solution "RiotGame"
 		defines { "LOGGER_DLL_EXPORT" }
         configuration{ "*Test" }
             links { "gtest" }
-
-
  
 --    project "sfx"
 --        location ( location_path )
@@ -105,13 +103,13 @@ solution "RiotGame"
 --        configuration{ "*Test" }
 --            links { "gtest" }
 --
---    project "contentmanager"
---        location ( location_path )
---        language "C++"
---        kind "SharedLib"        
---        files { "gtest/contentmanager/*.cpp", "src/contentmanager/**.hpp", "include/contentmanager/**.h", "src/contentmanager/**.cpp" }
---        includedirs { "src/contentmanager" }
---        defines { "CONTENT_MANAGER_DLL_EXPORT" }
---
---        configuration{ "*Test" }
---            links { "gtest" }
+    project "contentmanager"
+        location ( location_path )
+        language "C++"
+        kind "SharedLib"        
+        files { "gtest/contentmanager/**.cpp", "src/contentmanager/**.hpp", "include/contentmanager/**.h", "src/contentmanager/**.cpp" }
+        includedirs { "src/contentmanager", "include/contentmanager" }
+        defines { "CM_DLL_EXPORT" }
+
+        configuration{ "*Test" }
+            links { "gtest" }
