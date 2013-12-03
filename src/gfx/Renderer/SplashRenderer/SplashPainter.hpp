@@ -18,7 +18,7 @@ namespace GFX
 		\param shaderManager Pointer to ShaderManager present in RenderCore
 		\param bufferManager Pointer to BufferManager present in RenderCore
 		*/
-		SplashPainter(ShaderManager* shaderManager, BufferManager* bufferManager, UniformBufferManager* uniformBufferManager);
+		SplashPainter(ShaderManager* shaderManager,UniformBufferManager* uniformBufferManager);
 
 		~SplashPainter();
 
@@ -41,8 +41,8 @@ namespace GFX
 		inline bool IsDone(){ return m_done; }
 
 	private:
-		Texture* m_logoTexture;
-		Texture* m_logoTextTexture;
+		GLuint m_logoTexture;
+		GLuint m_logoTextTexture;
 
 		GLint m_alphaUniform;
 		GLint m_textureUniform;

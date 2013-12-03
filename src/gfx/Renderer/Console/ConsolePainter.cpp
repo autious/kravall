@@ -4,8 +4,8 @@
 
 namespace GFX
 {
-	ConsolePainter::ConsolePainter(ShaderManager* shaderManager, BufferManager* bufferManager, UniformBufferManager* uniformBufferManager)
-		: BasePainter(shaderManager, bufferManager, uniformBufferManager)
+	ConsolePainter::ConsolePainter(ShaderManager* shaderManager, UniformBufferManager* uniformBufferManager)
+		: BasePainter(shaderManager, uniformBufferManager)
 	{
 		m_showConsole = false;
 		m_consoleHeight = 380;

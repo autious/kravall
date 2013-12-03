@@ -2,7 +2,7 @@
 
 uniform PerFrameBlock
 {
-	mat4 gWVP;
+	mat4 gProj;
 	mat4 gView;
 };
 

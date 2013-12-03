@@ -2,8 +2,10 @@
 
 #include <Renderer/RenderCore.hpp>
 #include <Shaders/ShaderManager.hpp>
-
+#include <Buffers/MeshManager.hpp>
+#include <gfx/Vertex.hpp>
 #include <GFXInterface.hpp>
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/gtc/type_ptr.hpp>
@@ -110,6 +112,38 @@ namespace GFX
 	void DeleteGFX()
 	{
 		Renderer().Delete();
+	}
+
+	void Draw(const int& ibo, const int& vao, const int& size)
+	{
+		Renderer().AddRenderJob(ibo, vao, size);
+	}
+}
+
+namespace GFX
+{
+	namespace Content
+	{
+		unsigned int LoadTexture2DFromMemory(int width, int height, unsigned char* data)
+		{
+			return Texture::LoadFromMemory(data, GL_TEXTURE_2D, GL_RGBA, GL_RGBA, GL_LINEAR, GL_LINEAR,
+				GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, width, height);
+		}
+
+		void DeleteTexture(unsigned int textureHandle)
+		{
+			glDeleteTextures(1, &textureHandle);
+		}
+
+		void LoadStaticMesh(GLuint& IBO, GLuint& VAO, int& sizeVerts, int& sizeIndices, GFX::StaticVertex* verts, int* indices)
+		{
+			MeshManager::LoadStaticMesh(IBO, VAO, sizeVerts, sizeIndices, verts, indices);
+		}
+
+		void DeleteStaticMesh(const GLuint& IBO, const GLuint& VAO)
+		{
+			MeshManager::DeleteMesh(IBO, VAO);
+		}
 	}
 }
 

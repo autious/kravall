@@ -23,6 +23,7 @@
 #include <World.hpp>
 
 #include "console\console.hpp"
+#include "BGnomeImporter.hpp"
 
 GLFWwindow* init()
 {
@@ -61,9 +62,9 @@ void TestRendering()
 void run( GLFWwindow * window )
 {
 	Core::Camera* gCamera;
-	gCamera = new Core::Camera(45.0f, 1.0f, 1000.0f);
+	gCamera = new Core::Camera(45.0f, 1.0f, 2000.0f);
 	gCamera->CalculateProjectionMatrix(1280, 720);
-	gCamera->SetPosition(glm::vec3(0.0f, 0.0f, 10.0f));
+	gCamera->SetPosition(glm::vec3(0.0f, 100.0f, -1000.0f));
 
 	GFX::SetProjectionMatrix(gCamera->GetProjectionMatrix());
 
@@ -71,8 +72,26 @@ void run( GLFWwindow * window )
 	GFX::RenderSplash(false);
 	bool fs = false;
 
+	BGnomeImporter* BGI = new BGnomeImporter();
     Entity ent1 = Core::world.m_entityHandler.CreateEntity<Core::ExampleComponent1,Core::ExampleComponent2>( Core::ExampleComponent1::D1(),
                                                                                    Core::ExampleComponent2::D2() );
+	GFX::StaticVertex* vs = nullptr;
+	GLuint IBO;
+	GLuint VAO;
+	int vSize;
+	int iSize;
+	BGI->Go("assets/flag.GNOME", vs, vSize);
+
+	int* indices = new int[vSize];
+	iSize = vSize;
+	for (int i = 0; i < vSize; i++)
+	{
+		indices[i] = i;
+	}
+	GFX::Content::LoadStaticMesh(IBO, VAO, vSize, iSize, vs, indices);
+
+	std::cout << IBO << std::endl;
+	std::cout << VAO << std::endl;
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -129,8 +148,7 @@ void run( GLFWwindow * window )
 		GFX::SetViewMatrix(gCamera->GetViewMatrix());
 
 		//TestRendering();
-
-
+		GFX::Draw(IBO, VAO, vSize);
 		GFX::Render();
 
         Core::world.m_systemHandler.Update( 0.1f );

@@ -2,7 +2,6 @@
 #define SRC_GFX_RENDERER_RENDER_CORE_HPP
 
 #include <Shaders/ShaderManager.hpp>
-#include <Buffers/BufferManager.hpp>
 #include <Buffers/UniformBufferManager.hpp>
 
 #include "FBOTexture.hpp"
@@ -11,6 +10,8 @@
 #include "DebugRenderer/DebugPainter.hpp"
 #include "TextRenderer/TextPainter.hpp"
 #include "SplashRenderer/SplashPainter.hpp"
+#include "FBORenderer/FBOPainter.hpp"
+
 #include "TextRenderer/TextManager.hpp"
 #include "DebugRenderer/DebugManager.hpp"
 
@@ -87,6 +88,8 @@ namespace GFX
 
 		void Delete();
 
+		void AddRenderJob(const GLuint& ibo, const GLuint& vao, const int& size);
+
 	private:
 		RenderCore();
 		~RenderCore();
@@ -119,7 +122,6 @@ namespace GFX
 
 		UniformBufferManager*	m_uniformBufferManager;
 		ShaderManager*			m_shaderManager;
-		BufferManager*			m_bufferManager;
 		
 
 		DeferredPainter* m_deferredPainter;
@@ -127,7 +129,7 @@ namespace GFX
 		DebugPainter* m_debugPainter;
 		ConsolePainter* m_consolePainter;
 		SplashPainter* m_splashPainter;
-
+		FBOPainter* m_fboPainter;
 		glm::mat4 m_viewMatrix;
 		glm::mat4 m_projMatrix;
 

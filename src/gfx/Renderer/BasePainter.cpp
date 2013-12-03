@@ -2,10 +2,9 @@
 
 namespace GFX
 {
-	BasePainter::BasePainter(ShaderManager* shaderManager, BufferManager* bufferManager, UniformBufferManager* uniformBufferManager)
+	BasePainter::BasePainter(ShaderManager* shaderManager, UniformBufferManager* uniformBufferManager)
 	{
 		m_shaderManager			= shaderManager;
-		m_bufferManager			= bufferManager;
 		m_uniformBufferManager	= uniformBufferManager;
 	}
 
