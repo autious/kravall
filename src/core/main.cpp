@@ -20,6 +20,7 @@
 #include <utility/Colors.hpp>
 
 #include "GLFWInput.hpp"
+#include <World.hpp>
 
 GLFWwindow* init()
 {
@@ -68,6 +69,9 @@ void run( GLFWwindow * window )
 	GFX::RenderSplash(true);
 	bool fs = false;
 
+    Entity ent1 = Core::world.m_entityHandler.CreateEntity<Core::ExampleComponent1,Core::ExampleComponent2>( Core::ExampleComponent1::D1(),
+                                                                                   Core::ExampleComponent2::D2() );
+
 	while (!glfwWindowShouldClose(window))
 	{
 		input->UpdateInput();
@@ -112,6 +116,11 @@ void run( GLFWwindow * window )
 		//TestRendering();
 
 		GFX::Render();
+
+        Core::world.m_systemHandler.Update( 0.1f );
+
+        // This shows that the system works.
+        //std::cout << WGETC<Core::ExampleComponent1>(ent1)->v << std::endl;
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
