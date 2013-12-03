@@ -35,6 +35,12 @@ namespace Core
             m_systemHandler = systemHandler;
         }
 
+        ~EntityHandlerTemplate()
+        {
+            for( int i = 0; i < COMPONENT_COUNT; i++ )
+                delete m_components[i];
+        }
+
         /*!
             Create an entity instance with the given components
             NOTE: Will need a future function that can add components with runtime data. (for ex, lua)
