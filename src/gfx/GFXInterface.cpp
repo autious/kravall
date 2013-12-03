@@ -113,6 +113,11 @@ namespace GFX
 	{
 		Renderer().Delete();
 	}
+
+	void Draw(const int& ibo, const int& vao, const int& size)
+	{
+		Renderer().AddRenderJob(ibo, vao, size);
+	}
 }
 
 namespace GFX
@@ -133,6 +138,11 @@ namespace GFX
 		void LoadStaticMesh(GLuint& IBO, GLuint& VAO, int& sizeVerts, int& sizeIndices, GFX::StaticVertex* verts, int* indices)
 		{
 			MeshManager::LoadStaticMesh(IBO, VAO, sizeVerts, sizeIndices, verts, indices);
+		}
+
+		void DeleteStaticMesh(const GLuint& IBO, const GLuint& VAO)
+		{
+			MeshManager::DeleteMesh(IBO, VAO);
 		}
 	}
 }

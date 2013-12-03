@@ -7,7 +7,7 @@
 #include "FBOTexture.hpp"
 #include "../Buffers/UniformBufferManager.hpp"
 #include <GL/glew.h>
-
+#include <vector>
 namespace GFX
 {
 	class DeferredPainter : public BasePainter
@@ -39,9 +39,16 @@ namespace GFX
 		\param glowMatID Rendertarget for glow and materialID
 		*/
 		void Render(FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix);
+		
+		void AddRenderJob(const GLuint& ibo, const GLuint& vao, const int& size);
 
 	private:
-
+		struct RenderJob
+		{
+			GLuint ibo;
+			GLuint vao;
+			GLuint size;
+		};
 		/*!
 		Binds all the rendertargets to the FBO and GPU
 		\param normalDepth Rendertarget for normals and depth
@@ -52,6 +59,10 @@ namespace GFX
 		void BindGBuffer(FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID);
 
 		GLuint exampleUniform;
+
+		std::vector<RenderJob> m_renderJobs;
+
+	
 	};
 }
 

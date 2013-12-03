@@ -19,13 +19,8 @@ namespace GFX
 
 		m_shaderManager->LoadShader("shaders/SimpleGeometry.vertex", "StaticMeshVS", GL_VERTEX_SHADER);
 		m_shaderManager->LoadShader("shaders/SimpleGeometry.fragment", "StaticMeshFS", GL_FRAGMENT_SHADER);
-
-		//m_shaderManager->LoadShader("shaders/PassThrough.vertex", "StaticMeshVS", GL_VERTEX_SHADER);
-		//m_shaderManager->LoadShader("shaders/FSQuad.geometry", "StaticMeshGS", GL_GEOMETRY_SHADER);
-		//m_shaderManager->LoadShader("shaders/WaveRipple.fragment", "StaticMeshFS", GL_FRAGMENT_SHADER);
 		
 		m_shaderManager->AttachShader("StaticMeshVS", "StaticMesh");
-		//m_shaderManager->AttachShader("StaticMeshGS", "StaticMesh");
 		m_shaderManager->AttachShader("StaticMeshFS", "StaticMesh");
 
 		m_shaderManager->LinkProgram("StaticMesh");
@@ -33,6 +28,15 @@ namespace GFX
 		exampleUniform = m_shaderManager->GetUniformLocation("StaticMesh", "inputColor");
 
 		m_uniformBufferManager->CreateBasicCameraUBO(m_shaderManager->GetShaderProgramID("StaticMesh"));
+	}
+
+	void DeferredPainter::AddRenderJob(const GLuint& ibo, const GLuint& vao, const int& size)
+	{
+		RenderJob rj;
+		rj.ibo = ibo;
+		rj.vao = vao;
+		rj.size = size;
+		m_renderJobs.push_back(rj);
 	}
 
 	void DeferredPainter::Render(FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix)
@@ -50,9 +54,15 @@ namespace GFX
 		
 		m_uniformBufferManager->SetBasicCameraUBO(bc);
 		
-		//glBindVertexArray(m_dummyVAO);
+		for (int i = 0; i < m_renderJobs.size(); i++)
+		{
+			glBindVertexArray(m_renderJobs.at(i).vao);
+			glDrawArrays(GL_TRIANGLES, 0, m_renderJobs.at(i).size);
+		}
 
-		glDrawArrays(GL_TRIANGLES, 0, 8127);
+		m_renderJobs.clear();
+		//glBindVertexArray(m_dummyVAO);
+		//glDrawArrays(GL_TRIANGLES, 0, 8127);
 
 		m_shaderManager->ResetProgram();
 

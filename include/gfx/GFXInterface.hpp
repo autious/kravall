@@ -68,7 +68,9 @@ namespace GFX
 	\param data A pointer to the data used for rendering
 	*/
 	DLL_API void Draw(unsigned int bitmask, void* data);
-	
+
+	DLL_API void Draw(const int& ibo, const int& vao, const int& size);
+
 	/*!
 	Issues a draw  text command to the graphics engine.
 	\param position Position of the starting letter
@@ -121,6 +123,8 @@ namespace GFX
 		DLL_API void DeleteTexture(unsigned int textureHandle);
 
 		DLL_API void LoadStaticMesh(GLuint& IBO, GLuint& VAO, int& sizeVerts, int& sizeIndices, GFX::StaticVertex* verts, int* indices);
+
+		DLL_API void DeleteStaticMesh(const GLuint& IBO, const GLuint& VAO);
 
 	}
 

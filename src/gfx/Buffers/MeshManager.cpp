@@ -21,6 +21,12 @@ namespace GFX
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		}
 
+		void DeleteMesh(const GLuint& IBO, const GLuint& VAO)
+		{
+			glDeleteVertexArrays(1, &VAO);
+			glDeleteBuffers(1, &IBO);
+		}
+
 		void LoadStaticMesh(GLuint& IBO, GLuint& VAO, int& sizeVerts, int& sizeIndices, StaticVertex* verts, int* indices)
 		{
 			GLuint VBO;

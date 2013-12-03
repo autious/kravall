@@ -10,6 +10,7 @@ namespace GFX
 		void BindMesh(const int& ibo, const int& vao);
 		void BindMesh(const int& vao);
 		void UnbindMesh();
+		void DeleteMesh(const GLuint& IBO, const GLuint& VAO);
 		void LoadStaticMesh(GLuint& IBO, GLuint& VAO, int& sizeVerts, int& sizeIndices, StaticVertex* verts, int* indices);
 	}
 }

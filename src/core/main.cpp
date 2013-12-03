@@ -20,6 +20,7 @@
 #include <utility/Colors.hpp>
 
 #include "GLFWInput.hpp"
+#include <World.hpp>
 
 #include "BGnomeImporter.hpp"
 
@@ -67,10 +68,29 @@ void run( GLFWwindow * window )
 	GFX::SetProjectionMatrix(gCamera->GetProjectionMatrix());
 
 	Core::GLFWInput* input = new Core::GLFWInput(window);
-	GFX::RenderSplash(false);
+	GFX::RenderSplash(true);
 	bool fs = false;
 
 	BGnomeImporter* BGI = new BGnomeImporter();
+    Entity ent1 = Core::world.m_entityHandler.CreateEntity<Core::ExampleComponent1,Core::ExampleComponent2>( Core::ExampleComponent1::D1(),
+                                                                                   Core::ExampleComponent2::D2() );
+	GFX::StaticVertex* vs = nullptr;
+	GLuint IBO;
+	GLuint VAO;
+	int vSize;
+	int iSize;
+	BGI->Go("assets/flag.GNOME", vs, vSize);
+
+	int* indices = new int[vSize];
+	iSize = vSize;
+	for (int i = 0; i < vSize; i++)
+	{
+		indices[i] = i;
+	}
+	GFX::Content::LoadStaticMesh(IBO, VAO, vSize, iSize, vs, indices);
+
+	std::cout << IBO << std::endl;
+	std::cout << VAO << std::endl;
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -114,9 +134,14 @@ void run( GLFWwindow * window )
 		gCamera->LookAt(glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		GFX::SetViewMatrix(gCamera->GetViewMatrix());
 
-		TestRendering();
-
+		//TestRendering();
+		GFX::Draw(IBO, VAO, vSize);
 		GFX::Render();
+
+        Core::world.m_systemHandler.Update( 0.1f );
+
+        // This shows that the system works.
+        //std::cout << WGETC<Core::ExampleComponent1>(ent1)->v << std::endl;
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

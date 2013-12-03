@@ -8,22 +8,27 @@ uniform PerFrameBlock
 
 layout ( location = 0 ) in vec4 positionIN;
 layout ( location = 1 ) in vec4 normalIN;
+layout ( location = 2 ) in vec4 tangentIN;
+layout ( location = 3 ) in vec4 binormalIN;
 layout ( location = 2 ) in vec2 uvIN;
 
-out vec4 positionOUT;
-out vec4 normalOUT;
-out vec2 uvOUT;
+out vec4 posFS;
+out vec4 normalFS;
+out vec4 tangentFS;
+out vec4 binormalFS;
+out vec2 uvFS;
 
 void main()
 {
 	//Move position to clip space
-	positionOUT = gProjection * gView * positionIN;
+	posFS = gProjection * gView * positionIN;
 
 	//Transform normal with model matrix
-	normalOUT = normalIN;
-	
-	//UV is a direct match
-	uvOUT = uvIN;
-	uvOUT = vec2(1,1);
-	gl_Position = positionOUT;
+	normalFS = normalIN;
+	tangentFS = tangentIN;
+	binormalFS = binormalIN;
+
+	uvFS = uvIN;
+
+	gl_Position = posFS;
 }

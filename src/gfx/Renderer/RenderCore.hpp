@@ -88,6 +88,8 @@ namespace GFX
 
 		void Delete();
 
+		void AddRenderJob(const GLuint& ibo, const GLuint& vao, const int& size);
+
 	private:
 		RenderCore();
 		~RenderCore();

@@ -49,10 +49,10 @@ int BGnomeImporter::Go(std::string filePath, std::vector<float> &getMesh)
 				getMesh.push_back(mesh.vertices[i].normal[j]);
 			for( int j = 0; j < 2; j++)
 				getMesh.push_back(mesh.vertices[i].uv[j]);
-			//for( int j = 0; j < 3; j++)
-			//	getMesh.push_back(mesh.vertices[i].tangent[j]);
-			//for( int j = 0; j < 3; j++)
-			//	getMesh.push_back(mesh.vertices[i].binormal[j]);
+			for( int j = 0; j < 3; j++)
+				getMesh.push_back(mesh.vertices[i].tangent[j]);
+			for( int j = 0; j < 3; j++)
+				getMesh.push_back(mesh.vertices[i].binormal[j]);
 		}
 
 		return 0;
@@ -62,6 +62,50 @@ int BGnomeImporter::Go(std::string filePath, std::vector<float> &getMesh)
 	std::cout << "ERROR" << std::endl;
 	return 1;
 }
+
+int BGnomeImporter::Go(std::string filePath, GFX::StaticVertex*& getMesh, int& size)
+{
+
+	std::cout << "reading file" << std::endl;
+
+	std::fstream m_file;
+
+	m_file.open(filePath, std::ios::in);
+	if (m_file)
+	{
+		ReadASCII(m_file);
+		m_file.close();
+
+		getMesh = new GFX::StaticVertex[header.numberOfVertices];
+		size = header.numberOfVertices;
+		for (int i = 0; i < header.numberOfVertices; i++)
+		{
+			GFX::StaticVertex v;
+			for (int j = 0; j < 3; j++)
+				getMesh[i].position[j] = mesh.vertices[i].position[j];
+			for (int j = 0; j < 3; j++)
+				getMesh[i].normal[j] = mesh.vertices[i].normal[j];
+			for (int j = 0; j < 2; j++)
+				getMesh[i].uv[j] = mesh.vertices[i].uv[j];
+			for (int j = 0; j < 3; j++)
+				getMesh[i].tangent[j] = mesh.vertices[i].tangent[j];
+			for (int j = 0; j < 3; j++)
+				getMesh[i].binormal[j] = mesh.vertices[i].binormal[j];
+
+			getMesh[i].position[3] = 1.0f;
+			getMesh[i].normal[3] = 0.0f;
+			getMesh[i].tangent[3] = 0.0f;
+			getMesh[i].tangent[3] = 0.0f;
+		}
+
+		return 0;
+
+	}
+	m_file.close();
+	std::cout << "ERROR" << std::endl;
+	return 1;
+}
+
 
 int BGnomeImporter::ReadASCII(std::fstream &file)
 {

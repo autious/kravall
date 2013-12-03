@@ -4,6 +4,7 @@
 #include <fstream>
 #include <vector>
 #include <map>
+#include <gfx/Vertex.hpp>
 
 class BGnomeImporter
 {
@@ -95,6 +96,7 @@ public:
 	Bone* bones;
 	
 	int Go(std::string filePath, std::vector<float> &mesh);
+	int Go(std::string filePath, GFX::StaticVertex*& getMesh, int& size);
 	int ReadASCII(std::fstream &file);
 
 	int HeaderASCII(std::fstream &file);
