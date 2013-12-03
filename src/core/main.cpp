@@ -28,6 +28,8 @@
 
 #include "console/clop.hpp"
 
+#include <iomanip>
+
 // Just an example of a clop function
 // This function gets registred in Init with clop::Register("exit", ClopCloseWindow);
 // And the command is sent to the command line by pressing 'E' (as seen in run()) with Core::Console().SetInputLine("exit");
@@ -70,6 +72,21 @@ void TestRendering()
 	GFX::RenderText(glm::vec2(40, 180), glm::vec2(8, 12), Colors::White, "The Quick Brown Fox Jumps Over The Lazy Dog????");
 
 	GFX::RenderText(glm::vec2(0, 200), glm::vec2(8, 12), Colors::Gold, "ABCDEFGHIJKLMNOPQRSTUVWXYZASIUHDOIASHUDIOASHDA1234567890*'^&%#!?");
+}
+
+void SystemTimeRender()
+{
+        std::vector<std::pair<const char *,std::chrono::microseconds>> times = Core::world.m_systemHandler.GetFrameTime();
+
+
+        for( int i = 0; i < times.size(); i++ )
+        {
+            std::stringstream ss;
+            
+            ss << times[i].first << ": " << std::fixed << std::setw( 7 ) << std::setprecision(4) << std::setfill( '0' ) << times[i].second.count() / 1000.0f << "ms";
+	        GFX::RenderText(glm::vec2(5, 400+20*i), glm::vec2(8, 12), Colors::White, ss.str().c_str());
+        }
+
 }
 
 void run( GLFWwindow * window )
@@ -173,9 +190,7 @@ void run( GLFWwindow * window )
 		GFX::Render();
 
         Core::world.m_systemHandler.Update( 0.1f );
-
-        // This shows that the system works.
-        //std::cout << WGETC<Core::ExampleComponent1>(ent1)->v << std::endl;
+        SystemTimeRender();
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -185,13 +200,6 @@ void run( GLFWwindow * window )
         */
 
 /*
-        std::vector<std::pair<const char *,std::chrono::microseconds>> times = Core::world.m_systemHandler.GetFrameTime();
-
-
-        for( int i = 0; i < times.size(); i++ )
-        {
-            std::cout << times[i].first << " " << times[i].second.count()/1000.0f << "ms" << std::endl;
-        }
     */
     }
 
