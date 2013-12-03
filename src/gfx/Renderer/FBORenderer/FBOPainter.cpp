@@ -95,7 +95,7 @@ namespace GFX
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
 
-		glViewport(0, 0, 1280, 720);
+		glViewport(0, 0, screenWidth, screenHeight);
 		BasePainter::ClearFBO();
 	}
 

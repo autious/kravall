@@ -85,9 +85,11 @@ void SystemTimeRender()
             std::stringstream ss;
             
             ss << times[i].first << ": " << std::fixed << std::setw( 7 ) << std::setprecision(4) << std::setfill( '0' ) << times[i].second.count() / 1000.0f << "ms";
-	        GFX::RenderText(glm::vec2(5, 400+20*i), glm::vec2(8, 12), Colors::White, ss.str().c_str());
+	        GFX::RenderText(glm::vec2(5, GFX::GetScreenHeight()-5-20*times.size()+20*i), glm::vec2(8, 12), Colors::White, ss.str().c_str());
         }
 
+	    GFX::Debug::DrawRectangle(glm::vec2(0,GFX::GetScreenHeight()-5-20-17*times.size() ), 
+            glm::vec2(500, 20*times.size()), true, glm::vec4( 0.5f,0.5f,0.5f,0.5f) );
 }
 
 void run( GLFWwindow * window )
