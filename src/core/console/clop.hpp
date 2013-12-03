@@ -55,7 +55,7 @@ namespace clop
 		friend CLI& cli();
 	private:
 		friend void Register( CLOPSTR cmd, FunPtr cbptr );
-		friend void Command( CLOPSTR cmd );
+		friend bool Command( CLOPSTR cmd );
 		
 		CLI();
 		CLI(CLI const&);
@@ -64,13 +64,13 @@ namespace clop
 		std::vector<Arg> parse_line( CLOPSTR cmd );
 
 		/* Calls the function associated with the command string cmd, with parameters in a void* array params. */
-		void call( CLOPSTR cmd, ArgList params );
+		bool call( CLOPSTR cmd, ArgList params );
 
 		/* Registers a callback and associates it with the string command cmd */
 		void register_callback( CLOPSTR cmd, FunPtr cbptr );
 
 		/* Calls the function associated with the specified command. */
-		void command( CLOPSTR cmd );
+		bool command( CLOPSTR cmd );
 	private:
 		std::map< CLOPSTR, FunPtr > callback_functions;
 	};
@@ -82,7 +82,7 @@ namespace clop
 	void Register( CLOPSTR cmd, FunPtr cbptr );
 
 	/* Parse and run a command cmd. */
-	void Command( CLOPSTR cmd );
+	bool Command( CLOPSTR cmd );
 }
 #undef CLOPSTR
 #endif

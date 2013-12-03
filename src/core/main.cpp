@@ -114,7 +114,8 @@ void run( GLFWwindow * window )
 		input->UpdateInput();
 		
 		if (input->IsKeyPressedOnce(GLFW_KEY_ESCAPE))
-			break;
+			Core::Console().ClearInput();
+		//	break;
 
 		if (input->IsKeyPressedOnce(GLFW_KEY_TAB))
 			Core::Console().Toggle();
@@ -130,6 +131,8 @@ void run( GLFWwindow * window )
 			Core::Console().SetInputLine("Command " + std::to_string(rand()));
 		if (input->IsKeyPressedOnce(GLFW_KEY_E))
 			Core::Console().SetInputLine("exit");
+		if (input->IsKeyPressedOnce(GLFW_KEY_C))
+			Core::Console().SetInputLine("clear");
 		if (input->IsKeyPressedOnce(GLFW_KEY_G))
 			Core::Console().Add();
 		Core::Console().Update();

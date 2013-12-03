@@ -130,16 +130,18 @@ namespace clop
 	}
 
 	/* Calls the function associated with the command string cmd, with parameters in a void* array params. */
-	void CLI::call( CLOPSTR cmd, ArgList params )
+	bool CLI::call( CLOPSTR cmd, ArgList params )
 	{
 		if( callback_functions.find( cmd ) != callback_functions.end() )
 		{
 			FunPtr callback = callback_functions[cmd];
 			callback(params);
+			return true;
 		}
 		else // The command does not exist
 		{
 			CLOPOUT << "Unknown command \"" << cmd << "\"\n";
+			return false;
 		}
 	}
 
@@ -157,13 +159,13 @@ namespace clop
 	}
 
 	/* Calls the function associated with the specified command. */
-	void CLI::command( CLOPSTR cmd )
+	bool CLI::command( CLOPSTR cmd )
 	{
 		// Extract the parameters
 		std::vector<Arg> args = parse_line( cmd );
 		if( !args.empty() )
 		{
-			call( args[0], args );
+			return call( args[0], args );
 		}
 	}
 
@@ -181,9 +183,9 @@ namespace clop
 	}
 
 	/* Parse and run a command cmd. */
-	void Command( CLOPSTR cmd )
+	bool Command( CLOPSTR cmd )
 	{
-		cli().command( cmd );
+		return cli().command( cmd );
 	}
 
 }

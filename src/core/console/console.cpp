@@ -5,11 +5,18 @@
 
 namespace Core
 {
+	void ClopClearConsole(clop::ArgList args)
+	{
+		Console().Clear();
+	}
+
 	DebugConsole::DebugConsole()
 	{
 		m_visible = false;
 		m_historyIndex = 0;
 		m_offset = 0;
+		clop::Register("clear", ClopClearConsole);
+		clop::Register("clr", ClopClearConsole);
 	}
 	DebugConsole::~DebugConsole()
 	{
@@ -26,7 +33,8 @@ namespace Core
 		if (!m_inputLine.empty())
 		{
 			// Add to console
-			m_console.push_back(m_inputLine);
+			Line line = {m_inputLine, Colors::Silver};
+			m_console.push_back(line);
 
 			// Add command to history
 			bool add = true;
@@ -44,7 +52,11 @@ namespace Core
 			}
 
 			// Execute command
-			clop::Command(m_inputLine);
+			if (!clop::Command(m_inputLine))
+			{
+				Line errLine = {"ERROR: Command \'" + m_inputLine + "\' not found", Colors::Red};
+				m_console.push_back(errLine);
+			}
 
 			// Reset input line
 			m_inputLine.clear();
@@ -75,11 +87,14 @@ namespace Core
 
 	void DebugConsole::Scroll(int offset)
 	{
-		m_offset += offset;
-		if (m_offset < 0)
-			m_offset = 0;
-		if (m_offset > m_console.size()-5)
-			m_offset = m_console.size()-5;
+		if (m_console.size() > 5)
+		{
+			m_offset += offset;
+			if (m_offset < 0)
+				m_offset = 0;
+			if (m_offset >(int)m_console.size() - 5)
+				m_offset = (int)m_console.size() - 5;
+		}
 		std::cout << m_offset << std::endl;
 	}
 
@@ -93,7 +108,7 @@ namespace Core
 			{
 				int index = m_console.size() - 1 - i - m_offset;
 				if (index >= 0 && index < m_console.size())
-					GFX::RenderText(glm::vec2(10, 376 - i * 20), glm::vec2(6, 12), Colors::Silver, m_console[index].c_str());
+					GFX::RenderText(glm::vec2(10, 376 - i * 20), glm::vec2(6, 12), m_console[index].color, m_console[index].text.c_str());
 			}
 
 			// Draw input line
@@ -120,6 +135,14 @@ namespace Core
 			Hide();
 		else
 			Show();
+	}
+	void DebugConsole::Clear()
+	{
+		m_console.clear();
+	}
+	void DebugConsole::ClearInput()
+	{
+		m_inputLine.clear();
 	}
 
 	DebugConsole& Console()

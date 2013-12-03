@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 
+#include <utility/Colors.hpp>
+
 namespace Core
 {
 
@@ -48,6 +50,10 @@ namespace Core
 
 		void Toggle();
 
+		void Clear();
+
+		void ClearInput();
+
 	private:
 		friend DebugConsole& Console();
 
@@ -55,6 +61,13 @@ namespace Core
 		~DebugConsole();
 
 	private:
+
+		struct Line
+		{
+			std::string text;
+			Color color;
+		};
+
 		bool m_visible;
 
 		// Current position in the history list
@@ -65,7 +78,7 @@ namespace Core
 		const int m_numRows = 20;
 
 		std::string m_inputLine;
-		std::vector<std::string> m_console;
+		std::vector<Line> m_console;
 		std::vector<std::string> m_history;
 
 	};
