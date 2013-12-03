@@ -168,7 +168,7 @@ namespace clop
 	}
 
 	/* Returns a single instance of clop */
-	static CLI& cli()
+	CLI& cli()
 	{
 		static CLI cli;
 		return cli;
