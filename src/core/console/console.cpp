@@ -112,7 +112,8 @@ namespace Core
 			}
 
 			// Draw input line
-			GFX::RenderText(glm::vec2(10, 397), glm::vec2(6, 12), Colors::Silver, m_inputLine.c_str());
+			GFX::RenderText(glm::vec2(10, 397), glm::vec2(6, 12), Colors::Silver, ("> " + m_inputLine).c_str());
+
 		}
 		else
 		{

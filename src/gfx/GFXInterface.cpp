@@ -118,6 +118,14 @@ namespace GFX
 	{
 		Renderer().AddRenderJob(ibo, vao, size, material);
 	}
+	int GetScreenWidth()
+	{
+		return Renderer().GetWindowWidth();
+	}
+	int GetScreenHeight()
+	{
+		return Renderer().GetWindowHeight();
+	}
 }
 
 namespace GFX

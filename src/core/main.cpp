@@ -40,7 +40,7 @@ GLFWwindow* init()
 {
 	GLFWwindow* window;
 
-	Core::InitializeGLFW(&window, 1280, 720, Core::WindowMode::WMODE_WINDOWED_BORDERLESS);
+	Core::InitializeGLFW(&window, 1280, 720, Core::WindowMode::WMODE_WINDOWED);
 
 	clop::Register("exit", ClopCloseWindow);
 
@@ -108,7 +108,7 @@ void run( GLFWwindow * window )
 
 	GFX::Material* m = new GFX::Material();
 	m->diffuse = GFX::Content::LoadTexture2DFromFile("assets/GDM.png");
-
+	std::cout << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " ";
 	while (!glfwWindowShouldClose(window))
 	{
 		input->UpdateInput();

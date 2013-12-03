@@ -106,6 +106,9 @@ namespace GFX
 	Deletes all of the dynamically allocated memory in GFX
 	*/
 	DLL_API void DeleteGFX();
+	
+	DLL_API int GetScreenWidth();
+	DLL_API int GetScreenHeight();
 
 	namespace Content
 	{

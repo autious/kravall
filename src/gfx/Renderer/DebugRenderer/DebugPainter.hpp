@@ -17,7 +17,6 @@ namespace GFX
 		/*!
 		Set ShaderManager and BufferManager pointers of the painter to point to the managers within the rendering core
 		\param shaderManager Pointer to ShaderManager present in RenderCore
-		\param bufferManager Pointer to BufferManager present in RenderCore
 		\param uniformBufferManager Pointer to uniformBufferManager present in RenderCore
 		*/
 		DebugPainter(ShaderManager* shaderManager, UniformBufferManager* uniformBufferManager);
