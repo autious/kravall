@@ -23,13 +23,26 @@
 #include "GLFWInput.hpp"
 #include <World.hpp>
 
+#include "console\console.hpp"
 #include "BGnomeImporter.hpp"
+
+#include "console\clop.hpp"
+
+// Just an example of a clop function
+// This function gets registred in Init with clop::Register("exit", ClopCloseWindow);
+// And the command is sent to the command line by pressing 'E' (as seen in run()) with Core::Console().SetInputLine("exit");
+void ClopCloseWindow(clop::ArgList args)
+{
+	exit(0);
+}
 
 GLFWwindow* init()
 {
 	GLFWwindow* window;
 
 	Core::InitializeGLFW(&window, 1280, 720, Core::WindowMode::WMODE_WINDOWED_BORDERLESS);
+
+	clop::Register("exit", ClopCloseWindow);
 
 	if (GFX::Init(1280,720) == GFX_FAIL)
 		return nullptr;
@@ -104,9 +117,23 @@ void run( GLFWwindow * window )
 			break;
 
 		if (input->IsKeyPressedOnce(GLFW_KEY_TAB))
-		{
-			GFX::ToggleConsole();
-		}
+			Core::Console().Toggle();
+		if (input->IsKeyPressedOnce(GLFW_KEY_UP))
+			Core::Console().LastHistory();
+		if (input->IsKeyPressedOnce(GLFW_KEY_DOWN))
+			Core::Console().NextHistory();
+		if (input->IsKeyPressedOnce(GLFW_KEY_PAGE_UP))
+			Core::Console().Scroll(1);
+		if (input->IsKeyPressedOnce(GLFW_KEY_PAGE_DOWN))
+			Core::Console().Scroll(-1);
+		if (input->IsKeyPressedOnce(GLFW_KEY_F))
+			Core::Console().SetInputLine("Command " + std::to_string(rand()));
+		if (input->IsKeyPressedOnce(GLFW_KEY_E))
+			Core::Console().SetInputLine("exit");
+		if (input->IsKeyPressedOnce(GLFW_KEY_G))
+			Core::Console().Add();
+		Core::Console().Update();
+
 		if (input->IsKeyPressedOnce(GLFW_KEY_ENTER))
 		{
 			glfwDestroyWindow(window);
