@@ -27,6 +27,7 @@
 #include "BGnomeImporter.hpp"
 
 #include "console/clop.hpp"
+#include <sstream>
 
 #include <iomanip>
 
