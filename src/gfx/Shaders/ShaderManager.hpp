@@ -98,9 +98,9 @@ namespace GFX
 		\param uniformName Name of the uniform to look for
 		\return GLuint Location of the uniform
 		*/
-		GLuint GetUniformLocation(std::string shaderProgramKey, std::string uniformName);
+		GLint GetUniformLocation(std::string shaderProgramKey, std::string uniformName);
 
-		GLuint GetUniformBlockLocation(std::string shaderProgramKey, std::string uniformBlockName);
+		GLint GetUniformBlockLocation(std::string shaderProgramKey, std::string uniformBlockName);
 
 		void SetUniform(GLfloat x, GLuint uniformLocation);
 		void SetUniform(GLfloat x, GLfloat y, GLuint uniformLocation);

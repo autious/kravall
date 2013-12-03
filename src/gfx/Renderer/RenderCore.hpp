@@ -7,8 +7,10 @@
 
 #include "FBOTexture.hpp"
 #include "DeferredPainter.hpp"
+#include "Console/ConsolePainter.hpp"
 #include "DebugRenderer/DebugPainter.hpp"
 #include "TextRenderer/TextPainter.hpp"
+#include "SplashRenderer/SplashPainter.hpp"
 #include "TextRenderer/TextManager.hpp"
 #include "DebugRenderer/DebugManager.hpp"
 
@@ -69,10 +71,25 @@ namespace GFX
 		*/
 		inline int GetWindowHeight() const { return m_windowHeight; }
 
+		/*!
+		Sets the console to show or hide
+		\param visible A boolean value specifying whether the console should shown, if true the console is visible
+		*/
+		void SetConsoleVisible(bool visible);
+
+		/*!
+		Gets whether the console is showing or not
+		\return Returns true if the console is visible, else returns false
+		*/
+		bool GetConsoleVisible();
+
+		void SetSplash(bool splash);
+
+		void Delete();
+
 	private:
 		RenderCore();
 		~RenderCore();
-
 		/*!
 		Create an empty VBO and VAO to be used for screenspace rendering
 		*/
@@ -108,9 +125,13 @@ namespace GFX
 		DeferredPainter* m_deferredPainter;
 		TextPainter* m_textPainter;
 		DebugPainter* m_debugPainter;
+		ConsolePainter* m_consolePainter;
+		SplashPainter* m_splashPainter;
 
 		glm::mat4 m_viewMatrix;
 		glm::mat4 m_projMatrix;
+
+		bool m_playSplash;
 
 	};
 

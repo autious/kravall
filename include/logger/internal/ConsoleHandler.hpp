@@ -1,7 +1,7 @@
 #ifndef CONSOLEHANDLERHPP
 #define CONSOLEHANDLERHPP
 
-#include <internal/LogHandler.hpp>
+#include <logger/internal/LogHandler.hpp>
 
 #ifdef _WIN32
 	#ifdef LOGGER_DLL_EXPORT

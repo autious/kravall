@@ -11,13 +11,40 @@ namespace GFX
 
 	RenderCore::RenderCore()
 	{
-		m_windowWidth	= 0;
-		m_windowHeight	= 0;
+	}
 
-		m_normalDepth	= new FBOTexture();
-		m_diffuse		= new FBOTexture();
-		m_specular		= new FBOTexture();
-		m_glowMatID		= new FBOTexture();
+	RenderCore::~RenderCore()
+	{
+	
+	}
+
+	void RenderCore::Delete()
+	{
+		delete(m_normalDepth);
+		delete(m_diffuse);
+		delete(m_specular);
+		delete(m_glowMatID);
+
+		delete(m_uniformBufferManager);
+		delete(m_shaderManager);
+		delete(m_bufferManager);
+
+		delete(m_deferredPainter);
+		delete(m_textPainter);
+		delete(m_debugPainter);
+		delete(m_consolePainter);
+		delete(m_splashPainter);
+	}
+
+	void RenderCore::Initialize(int windowWidth, int windowHeight)
+	{
+		m_windowWidth = 0;
+		m_windowHeight = 0;
+
+		m_normalDepth = new FBOTexture();
+		m_diffuse = new FBOTexture();
+		m_specular = new FBOTexture();
+		m_glowMatID = new FBOTexture();
 
 		m_shaderManager = new ShaderManager();
 		m_bufferManager = new BufferManager();
@@ -26,15 +53,12 @@ namespace GFX
 		m_deferredPainter = new DeferredPainter(m_shaderManager, m_bufferManager, m_uniformBufferManager);
 		m_debugPainter = new DebugPainter(m_shaderManager, m_bufferManager, m_uniformBufferManager);
 		m_textPainter = new TextPainter(m_shaderManager, m_bufferManager, m_uniformBufferManager);
-	}
+		m_consolePainter = new ConsolePainter(m_shaderManager, m_bufferManager, m_uniformBufferManager);
+		m_splashPainter = new SplashPainter(m_shaderManager, m_bufferManager, m_uniformBufferManager);
 
-	RenderCore::~RenderCore()
-	{
+		m_playSplash = false;
 
-	}
 
-	void RenderCore::Initialize(int windowWidth, int windowHeight)
-	{
 		m_windowWidth = windowWidth;
 		m_windowHeight = windowHeight;
 
@@ -45,6 +69,11 @@ namespace GFX
 		m_deferredPainter->Initialize(m_FBO, m_dummyVAO);
 		m_debugPainter->Initialize(m_FBO, m_dummyVAO);
 		m_textPainter->Initialize(m_FBO, m_dummyVAO);
+		m_consolePainter->Initialize(m_FBO, m_dummyVAO);
+		m_splashPainter->Initialize(m_FBO, m_dummyVAO);
+
+		// Set console width
+		m_consolePainter->SetConsoleHeight(m_windowHeight);
 	}
 
 	void RenderCore::Resize(int width, int height)
@@ -54,14 +83,31 @@ namespace GFX
 
 		glViewport(0, 0, m_windowWidth, m_windowHeight);
 		ResizeGBuffer();
+
+		// Set console width
+		m_consolePainter->SetConsoleHeight(m_windowHeight);
 	}
 
 	void RenderCore::Render()
 	{
-		m_deferredPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
 
+		if (m_playSplash)
+		{
+			m_splashPainter->Render(m_windowWidth, m_windowHeight);
+			if (m_splashPainter->IsDone())
+				m_playSplash = false;
+			return;
+		}
+
+		m_deferredPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
+		
 		// Render debug
 		m_debugPainter->Render(m_viewMatrix, m_projMatrix);
+		
+		// Render console
+		m_consolePainter->Render();
+		
+		// Render text
 		m_textPainter->Render();
 	}
 
@@ -131,5 +177,19 @@ namespace GFX
 	void RenderCore::SetProjMatrix(glm::mat4 proj)
 	{
 		m_projMatrix = proj;
+	}
+
+	bool RenderCore::GetConsoleVisible()
+	{
+		return m_consolePainter->GetConsoleVisible();
+	}
+
+	void RenderCore::SetConsoleVisible(bool visible)
+	{
+		m_consolePainter->SetConsoleVisible(visible);
+	}
+	void RenderCore::SetSplash(bool splash)
+	{
+		m_playSplash = splash;
 	}
 }

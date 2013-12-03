@@ -12,6 +12,7 @@ namespace GFX
 	ShaderManager::~ShaderManager()
 	{
 		delete m_shaderData;
+		delete m_textFile;
 	}
 
 	void ShaderManager::LoadShader(const char* filepath, std::string shaderKey, GLenum type)
@@ -240,12 +241,12 @@ namespace GFX
 	}
 
 
-	GLuint ShaderManager::GetUniformLocation(std::string shaderProgramKey, std::string uniformName)
+	GLint ShaderManager::GetUniformLocation(std::string shaderProgramKey, std::string uniformName)
 	{
 		return glGetUniformLocation(GetShaderProgramID(shaderProgramKey), uniformName.c_str());
 	}
 
-	GLuint ShaderManager::GetUniformBlockLocation(std::string shaderProgramKey, std::string uniformBlockName)
+	GLint ShaderManager::GetUniformBlockLocation(std::string shaderProgramKey, std::string uniformBlockName)
 	{
 		return glGetUniformBlockIndex(GetShaderProgramID(shaderProgramKey), uniformBlockName.c_str());
 	}

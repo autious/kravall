@@ -1,7 +1,7 @@
 translateOS = { windows="win32", linux="linux"}
 
 solution "RiotGame"
-    configurations {"Debug", "Release", "ReleaseTest", "DebugTest", "PureReleaseTest", "PureDebugTest"}
+    configurations {"DebugTest","Debug", "Release", "ReleaseTest", "PureReleaseTest", "PureDebugTest"}
         flags{ "Unicode", "NoPCH" } 
         libdirs { translateOS[os.get()] .. "/lib" }
         includedirs { translateOS[os.get()] .. "/deps", "deps", "include"}
@@ -9,7 +9,7 @@ solution "RiotGame"
     local location_path = "build"
 
     if os.is( "linux" ) then
-        buildoptions { "-std=c++11 -Wno-unused-parameter" }
+        buildoptions { "-std=c++11 -Wall"} -- -Wno-unused-parameter" }
         location_path = "" 
     elseif(os.is("windows")) then
         location_path = location_path .."/win32/" .. _ACTION
@@ -70,7 +70,13 @@ solution "RiotGame"
         language "C++"
         kind "SharedLib"
         files { "gtest/gfx/**.cpp", "src/gfx/**.hpp", "src/gfx/**.h", "src/gfx/**.cpp", "include/gfx/**.hpp" ,"include/utility/**.hpp", "shaders/**.vertex", "shaders/**.geometry", "shaders/**.fragment", "shaders/**.compute" }
-		includedirs { "src/gfx", "include/gfx", "include/utility", "shaders", "include" }       
+
+		includedirs { "src/gfx", "include/gfx", "include/utility", "shaders", "include", "deps" }       
+        
+        if os.is( "linux" ) then -- This is in accordance to pkg-config --cflags freetype2
+            includedirs { "/usr/include/freetype2" }
+        end
+            
 		defines { "GFX_DLL_EXPORT" }
 		
         links { "glfw3", "freetype" }

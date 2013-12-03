@@ -49,13 +49,13 @@ namespace GFX
 		BasicCamera bc;
 		bc.viewMatrix = viewMatrix;
 		bc.projMatrix = projMatrix;
-
+		
 		ExampleBuffer eb;
 		eb.colorOne = glm::vec4(1.0f);
 		eb.colorTwo = glm::vec4(0.05f);
 		eb.floatOne = 0.0f;
 		eb.floatTwo = 1.0f;
-
+		
 		m_uniformBufferManager->SetBasicCameraUBO(bc);
 		m_uniformBufferManager->SetExampleBufferData(eb);
 		

@@ -2,7 +2,7 @@
 #define LOGHANDLERHPP
 
 #include <string>
-#include <internal/LogData.hpp>
+#include <logger/internal/LogData.hpp>
 
 
 #ifdef _WIN32

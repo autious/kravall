@@ -3,9 +3,11 @@
 #include <gtest/gtest.h>
 #include <mem/StackHeap.hpp>
 
+// change log; MEMORY_SIZE : expected constant expression @windows -> added const to declaration / John
+
 namespace
 {
-    unsigned int MEMORY_SIZE = 1000;
+    const unsigned int MEMORY_SIZE = 1000;
 
     struct TestPOD
     {

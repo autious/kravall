@@ -47,19 +47,18 @@ namespace GFX
 	class DebugManager
 	{
 	public:
-		DebugManager();
-		~DebugManager();
+		friend DebugManager& DebugDrawing();
+		
+		bool ShouldRender() const { return m_shouldRender; }
 
-		void Init();
-
-		void Render();
+		void Clear();
 
 		void AddPoint(DebugPoint point);
 		void AddLine(DebugLine line);
 		void AddLineWorld(DebugLine line);
 		void AddRect(DebugRect rect, bool filled);
 		void AddBox(DebugBox box, bool filled);
-		void AddSphere(DebugSphere sphere, bool filled);
+		void AddSphere(DebugSphere sphere);
 		void AddCircle(DebugRect circle);
 
 		inline std::vector<DebugPoint>& GetPoints(){ return m_points; }
@@ -68,6 +67,12 @@ namespace GFX
 		inline std::vector<DebugRect>& GetFilledRects(){ return m_filledRects; }
 		inline std::vector<DebugBox>& GetFilledBoxes(){ return m_filledBoxes; }
 		inline std::vector<DebugRect>& GetFilledCircles(){ return m_filledCircles; }
+
+		void SetConsoleHeight(int height);
+
+	private:
+		DebugManager();
+		~DebugManager();
 
 	private:
 		// Points
@@ -80,8 +85,10 @@ namespace GFX
 		// Tris
 		std::vector<DebugRect> m_filledRects;
 		std::vector<DebugBox> m_filledBoxes;
-		std::vector<DebugSphere> m_filledSpheres;
 		std::vector<DebugRect> m_filledCircles;
+
+		bool m_shouldRender;
+
 	};
 
 	/*!

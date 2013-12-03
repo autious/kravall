@@ -18,6 +18,7 @@ namespace GFX
 	//implement this shit
 	FBOTexture::~FBOTexture()
 	{
+		glDeleteTextures(1, &m_textureHandle);
 	}
 
 	void FBOTexture::Initialize(GLenum textureTarget, GLint magFilter, GLint minFilter, GLint wrapModeS,
