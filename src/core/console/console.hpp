@@ -62,6 +62,8 @@ namespace Core
 
 		int m_offset;
 
+		const int m_numRows = 20;
+
 		std::string m_inputLine;
 		std::vector<std::string> m_console;
 		std::vector<std::string> m_history;
