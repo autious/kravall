@@ -39,7 +39,7 @@ namespace Core
 			// Add command to history
 			bool add = true;
 
-			if (m_history.size() > m_historyIndex && m_history[m_historyIndex].compare(m_inputLine) == 0)
+			if ((int)m_history.size() > m_historyIndex && m_history[m_historyIndex].compare(m_inputLine) == 0)
 			{
 				add = false;
 				m_historyIndex++;
@@ -107,7 +107,7 @@ namespace Core
 			for (int i = 0; i < m_numRows; i++)
 			{
 				int index = m_console.size() - 1 - i - m_offset;
-				if (index >= 0 && index < m_console.size())
+				if (index >= 0 && index < (int)m_console.size())
 					GFX::RenderText(glm::vec2(10, 376 - i * 20), glm::vec2(6, 12), m_console[index].color, m_console[index].text.c_str());
 			}
 

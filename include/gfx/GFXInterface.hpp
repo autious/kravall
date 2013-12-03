@@ -107,7 +107,14 @@ namespace GFX
 	*/
 	DLL_API void DeleteGFX();
 	
+	/*!
+	\return Returns the screen width
+	*/
 	DLL_API int GetScreenWidth();
+
+	/*!
+	\return Returns the screen height
+	*/
 	DLL_API int GetScreenHeight();
 
 	namespace Content

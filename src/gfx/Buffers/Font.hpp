@@ -190,14 +190,14 @@ namespace GFX
 					std::cout << "BORKED AGAIN\n";
 				}
 
-				characters[i].advanceX = glyphSlot->advance.x >> 6;
-				characters[i].advanceY = glyphSlot->advance.y >> 6;
+				characters[i].advanceX = static_cast<float>(glyphSlot->advance.x >> 6);
+				characters[i].advanceY = static_cast<float>(glyphSlot->advance.y >> 6);
 
-				characters[i].bitmapWidth = glyphSlot->bitmap.width;
-				characters[i].bitmapHeight = glyphSlot->bitmap.rows;
+				characters[i].bitmapWidth = static_cast<float>(glyphSlot->bitmap.width);
+				characters[i].bitmapHeight = static_cast<float>(glyphSlot->bitmap.rows);
 
-				characters[i].bitmapLeft = glyphSlot->bitmap_left;
-				characters[i].bitmapTop = glyphSlot->bitmap_top;
+				characters[i].bitmapLeft = static_cast<float>(glyphSlot->bitmap_left);
+				characters[i].bitmapTop = static_cast<float>(glyphSlot->bitmap_top);
 
 				characters[i].uvOffsetX = ox / (float)width;
 				characters[i].uvOffsetY = oy / (float)height;
