@@ -179,7 +179,21 @@ void run( GLFWwindow * window )
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
-	}
+
+
+        /* Exmaple of how to get and print timedata
+        */
+
+/*
+        std::vector<std::pair<const char *,std::chrono::microseconds>> times = Core::world.m_systemHandler.GetFrameTime();
+
+
+        for( int i = 0; i < times.size(); i++ )
+        {
+            std::cout << times[i].first << " " << times[i].second.count()/1000.0f << "ms" << std::endl;
+        }
+    */
+    }
 
     glfwDestroyWindow( window );
 

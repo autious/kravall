@@ -27,11 +27,11 @@ namespace Core
 
         EntityVector<1024,64,Components...> m_entities;
         std::array<PVector,sizeof...(Components)> m_components = {{PVector(1024,64,sizeof(Components))...}};
-
         SystemHandlerT *m_systemHandler;
     public:
         EntityHandlerTemplate( SystemHandlerT *systemHandler)
         {
+
             m_systemHandler = systemHandler;
         }
 

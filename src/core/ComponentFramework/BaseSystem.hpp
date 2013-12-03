@@ -32,6 +32,8 @@ namespace Core
         void ChangedEntity( Entity id, Aspect old_asp, Aspect new_asp );
 
         bool AspectMatch( Aspect asp );
+
+        virtual const char * GetHumanName() { return "System"; }
     protected:
         /*!
             Systems personal entities list.

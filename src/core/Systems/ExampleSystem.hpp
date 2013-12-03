@@ -10,11 +10,12 @@ namespace Core
     {
 
     public:
-        
         virtual void Update( float delta ) override;
 
         ExampleSystem() : BaseSystem( EntityHandler::GenerateAspect<ExampleComponent1,ExampleComponent2>(), 0ULL )
         {}
+
+        virtual const char* GetHumanName() { return "ExampleSystem"; }
     };
 }
 
