@@ -2,5 +2,5 @@
 
 namespace Core
 {
-    World world = World();
+    World world;
 }
