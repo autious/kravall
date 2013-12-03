@@ -21,7 +21,7 @@ namespace GFX
 		\param bufferManager Pointer to BufferManager present in RenderCore
 		\param uniformBufferManager Pointer to uniformBufferManager present in RenderCore
 		*/
-		ConsolePainter(ShaderManager* shaderManager, BufferManager* bufferManager, UniformBufferManager* uniformBufferManager);
+		ConsolePainter(ShaderManager* shaderManager, UniformBufferManager* uniformBufferManager);
 
 		~ConsolePainter();
 

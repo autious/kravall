@@ -20,7 +20,7 @@ namespace GFX
 		\param bufferManager Pointer to BufferManager present in RenderCore
 		\param uniformBufferManager Pointer to uniformBufferManager present in RenderCore
 		*/
-		DebugPainter(ShaderManager* shaderManager, BufferManager* bufferManager, UniformBufferManager* uniformBufferManager);
+		DebugPainter(ShaderManager* shaderManager, UniformBufferManager* uniformBufferManager);
 
 		~DebugPainter();
 

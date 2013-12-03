@@ -3,8 +3,8 @@
 namespace GFX
 {
 
-	TextPainter::TextPainter(ShaderManager* shaderManager, BufferManager* bufferManager, UniformBufferManager* uniformBufferManager)
-		: BasePainter(shaderManager, bufferManager, uniformBufferManager)
+	TextPainter::TextPainter(ShaderManager* shaderManager,UniformBufferManager* uniformBufferManager)
+		: BasePainter(shaderManager, uniformBufferManager)
 	{
 	}
 
@@ -53,7 +53,7 @@ namespace GFX
 
 		m_text = GetTextManager().GetText();
 
-		for (int i = 0; i < m_text.size(); i++)
+		for (unsigned int i = 0; i < m_text.size(); i++)
 		{
 			RenderText(
 				m_text[i].text.c_str(),

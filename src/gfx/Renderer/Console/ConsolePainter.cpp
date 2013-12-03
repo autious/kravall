@@ -4,12 +4,12 @@
 
 namespace GFX
 {
-	ConsolePainter::ConsolePainter(ShaderManager* shaderManager, BufferManager* bufferManager, UniformBufferManager* uniformBufferManager)
-		: BasePainter(shaderManager, bufferManager, uniformBufferManager)
+	ConsolePainter::ConsolePainter(ShaderManager* shaderManager, UniformBufferManager* uniformBufferManager)
+		: BasePainter(shaderManager, uniformBufferManager)
 	{
 		m_showConsole = false;
-		m_consoleHeight = 180;
-		m_consoleColor = glm::vec4(0.0f, 0.0f, 0.0f, 0.75f);
+		m_consoleHeight = 380;
+		m_consoleColor = glm::vec4(0.3f, 0.3f, 0.3f, 0.75f);
 	}
 
 	ConsolePainter::~ConsolePainter()

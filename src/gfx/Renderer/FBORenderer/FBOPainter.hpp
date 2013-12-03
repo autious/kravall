@@ -1,15 +1,16 @@
-#ifndef SRC_GFX_RENDERER_SPLASH_RENDERER_SPLASH_PAINTER_HPP
-#define SRC_GFX_RENDERER_SPLASH_RENDERER_SPLASH_PAINTER_HPP
+#ifndef SRC_GFX_RENDERER_FBO_RENDERER_FBO_PAINTER_HPP
+#define SRC_GFX_RENDERER_FBO_RENDERER_FBO_PAINTER_HPP
 
 #include "../BasePainter.hpp"
 #include <Shaders/ShaderManager.hpp>
 #include <Buffers/UniformBufferManager.hpp>
 #include "../../Textures/Texture.hpp"
+#include "../FBOTexture.hpp"
 
 namespace GFX
 {
 
-	class SplashPainter : public BasePainter
+	class FBOPainter : public BasePainter
 	{
 	public:
 
@@ -18,9 +19,9 @@ namespace GFX
 		\param shaderManager Pointer to ShaderManager present in RenderCore
 		\param bufferManager Pointer to BufferManager present in RenderCore
 		*/
-		SplashPainter(ShaderManager* shaderManager,UniformBufferManager* uniformBufferManager);
+		FBOPainter(ShaderManager* shaderManager, UniformBufferManager* uniformBufferManager);
 
-		~SplashPainter();
+		~FBOPainter();
 
 		/*!
 		Initialization function which sets the dummyVAO and FBO for later use in the painter.
@@ -33,29 +34,13 @@ namespace GFX
 		/*!
 		Main rendering loop
 		*/
-		void Render(const int& screenWidth, const int& screenHeight);
-		void RenderSplash(const int& screenWidth, const int& screenHeight);
-		void FadeToBlack(const int& screenWidth, const int& screenHeight);
-		void FadeToWhite(const int& screenWidth, const int& screenHeight);
-
-		inline bool IsDone(){ return m_done; }
-
+		void Render(FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, int screenWidth, int screenHeight, int current);
+		
 	private:
-		GLuint m_logoTexture;
-		GLuint m_logoTextTexture;
 
 		GLint m_alphaUniform;
 		GLint m_textureUniform;
-		GLint m_positionUniform;
-		GLint m_sizeUniform;
-		GLint m_uvXUniform;
-		GLint m_screenDimensionUniform;
-
-		bool m_done;
-
-		float m_logoAlpha;
-		float m_logoTextAlpha;
-		float m_clearColor;
+	
 	};
 }
 #endif
