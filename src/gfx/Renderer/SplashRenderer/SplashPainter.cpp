@@ -2,8 +2,8 @@
 
 namespace GFX
 {
-	SplashPainter::SplashPainter(ShaderManager* shaderManager, BufferManager* bufferManager, UniformBufferManager* uniformBufferManager)
-		: BasePainter(shaderManager, bufferManager, uniformBufferManager)
+	SplashPainter::SplashPainter(ShaderManager* shaderManager, UniformBufferManager* uniformBufferManager)
+		: BasePainter(shaderManager, uniformBufferManager)
 	{
 
 		}

@@ -67,14 +67,10 @@ void run( GLFWwindow * window )
 	GFX::SetProjectionMatrix(gCamera->GetProjectionMatrix());
 
 	Core::GLFWInput* input = new Core::GLFWInput(window);
-	GFX::RenderSplash(true);
+	GFX::RenderSplash(false);
 	bool fs = false;
 
 	BGnomeImporter* BGI = new BGnomeImporter();
-
-	std::vector<float>* mesh = new std::vector<float>();
-	BGI->Go("assets/flag.GNOME", *mesh);
-	GFX::test(mesh);
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -118,7 +114,7 @@ void run( GLFWwindow * window )
 		gCamera->LookAt(glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		GFX::SetViewMatrix(gCamera->GetViewMatrix());
 
-		//TestRendering();
+		TestRendering();
 
 		GFX::Render();
 

@@ -25,6 +25,7 @@ typedef GFXVec4 GFXColor;
 
 #include <vector>
 #include <iostream>
+#include <gfx/Vertex.hpp>
 
 namespace GFX
 {
@@ -97,7 +98,31 @@ namespace GFX
 	*/
 	DLL_API void RenderSplash(bool renderSplash);
 
+	/*!
+	Deletes all of the dynamically allocated memory in GFX
+	*/
 	DLL_API void DeleteGFX();
+
+	namespace Content
+	{
+		/*!
+		Loads a 2D RGBA texture onto the GPU
+		\param width Width of the texture
+		\param height Height of the texture
+		\param data Texture data
+		\return Handle of the texture
+		*/
+		DLL_API unsigned int LoadTexture2DFromMemory(int width, int height, unsigned char* data);
+
+		/*!
+		Deletes a texture from the GPU
+		\param textureHandle The handle of the texture to be deleted
+		*/
+		DLL_API void DeleteTexture(unsigned int textureHandle);
+
+		DLL_API void LoadStaticMesh(GLuint& IBO, GLuint& VAO, int& sizeVerts, int& sizeIndices, GFX::StaticVertex* verts, int* indices);
+
+	}
 
 	namespace Debug
 	{

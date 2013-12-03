@@ -19,7 +19,7 @@ namespace GFX
 		\param shaderManager Pointer to ShaderManager present in RenderCore
 		\param bufferManager Pointer to BufferManager present in RenderCore
 		*/
-		DeferredPainter(ShaderManager* shaderManager, BufferManager* bufferManager, UniformBufferManager* uniformBufferManager);
+		DeferredPainter(ShaderManager* shaderManager, UniformBufferManager* uniformBufferManager);
 
 		~DeferredPainter();
 

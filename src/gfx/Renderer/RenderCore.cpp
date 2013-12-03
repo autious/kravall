@@ -27,7 +27,6 @@ namespace GFX
 
 		delete(m_uniformBufferManager);
 		delete(m_shaderManager);
-		delete(m_bufferManager);
 
 		delete(m_deferredPainter);
 		delete(m_textPainter);
@@ -47,15 +46,14 @@ namespace GFX
 		m_glowMatID = new FBOTexture();
 
 		m_shaderManager = new ShaderManager();
-		m_bufferManager = new BufferManager();
 		m_uniformBufferManager = new UniformBufferManager();
 
-		m_deferredPainter = new DeferredPainter(m_shaderManager, m_bufferManager, m_uniformBufferManager);
-		m_debugPainter = new DebugPainter(m_shaderManager, m_bufferManager, m_uniformBufferManager);
-		m_textPainter = new TextPainter(m_shaderManager, m_bufferManager, m_uniformBufferManager);
-		m_consolePainter = new ConsolePainter(m_shaderManager, m_bufferManager, m_uniformBufferManager);
-		m_splashPainter = new SplashPainter(m_shaderManager, m_bufferManager, m_uniformBufferManager);
-
+		m_deferredPainter = new DeferredPainter(m_shaderManager, m_uniformBufferManager);
+		m_debugPainter = new DebugPainter(m_shaderManager, m_uniformBufferManager);
+		m_textPainter = new TextPainter(m_shaderManager, m_uniformBufferManager);
+		m_consolePainter = new ConsolePainter(m_shaderManager, m_uniformBufferManager);
+		m_splashPainter = new SplashPainter(m_shaderManager, m_uniformBufferManager);
+		m_fboPainter = new FBOPainter(m_shaderManager, m_uniformBufferManager);
 		m_playSplash = false;
 
 
@@ -71,12 +69,11 @@ namespace GFX
 		m_textPainter->Initialize(m_FBO, m_dummyVAO);
 		m_consolePainter->Initialize(m_FBO, m_dummyVAO);
 		m_splashPainter->Initialize(m_FBO, m_dummyVAO);
+		m_fboPainter->Initialize(m_FBO, m_dummyVAO);
 
 		// Set console width
 		m_consolePainter->SetConsoleHeight(m_windowHeight);
 
-
-		testMesh = new std::vector<StaticVertex>();
 	}
 
 	void RenderCore::Resize(int width, int height)
@@ -102,17 +99,18 @@ namespace GFX
 			return;
 		}
 
-		sm.BindMesh();
-		m_deferredPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
+		//m_deferredPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
 		
+		//m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID);
+
 		// Render debug
-		//m_debugPainter->Render(m_viewMatrix, m_projMatrix);
+		m_debugPainter->Render(m_viewMatrix, m_projMatrix);
 		
 		// Render console
-		//m_consolePainter->Render();
+		m_consolePainter->Render();
 		
 		// Render text
-		//m_textPainter->Render();
+		m_textPainter->Render();
 	}
 
 	void RenderCore::InitializeGBuffer()

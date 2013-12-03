@@ -2,8 +2,10 @@
 
 #include <Renderer/RenderCore.hpp>
 #include <Shaders/ShaderManager.hpp>
-
+#include <Buffers/MeshManager.hpp>
+#include <gfx/Vertex.hpp>
 #include <GFXInterface.hpp>
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/gtc/type_ptr.hpp>
@@ -111,26 +113,27 @@ namespace GFX
 	{
 		Renderer().Delete();
 	}
+}
 
-	void test(std::vector<float>* t)
+namespace GFX
+{
+	namespace Content
 	{
-		for (int i = 0; i < t->size();)
+		unsigned int LoadTexture2DFromMemory(int width, int height, unsigned char* data)
 		{
-			StaticVertex v;
-			v.position = glm::vec4(t->at(i++), t->at(i++), t->at(i++), 1.0f);
-			v.normal = glm::vec4(t->at(i++), t->at(i++), t->at(i++), 0.0f);
-			v.uv = glm::vec2(t->at(i++), t->at(i++));
-
-			Renderer().testMesh->push_back(v);
+			return Texture::LoadFromMemory(data, GL_TEXTURE_2D, GL_RGBA, GL_RGBA, GL_LINEAR, GL_LINEAR,
+				GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, width, height);
 		}
 
-		int size = Renderer().testMesh->size();
-		StaticMeshData smd;
-		smd.vertices = *Renderer().testMesh;
+		void DeleteTexture(unsigned int textureHandle)
+		{
+			glDeleteTextures(1, &textureHandle);
+		}
 
-		Renderer().sm.Load(smd);
-		GLuint asdf = Renderer().sm.GetVAO();
-		//Renderer().testMesh = t;
+		void LoadStaticMesh(GLuint& IBO, GLuint& VAO, int& sizeVerts, int& sizeIndices, GFX::StaticVertex* verts, int* indices)
+		{
+			MeshManager::LoadStaticMesh(IBO, VAO, sizeVerts, sizeIndices, verts, indices);
+		}
 	}
 }
 

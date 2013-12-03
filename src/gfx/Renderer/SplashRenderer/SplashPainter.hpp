@@ -18,7 +18,7 @@ namespace GFX
 		\param shaderManager Pointer to ShaderManager present in RenderCore
 		\param bufferManager Pointer to BufferManager present in RenderCore
 		*/
-		SplashPainter(ShaderManager* shaderManager, BufferManager* bufferManager, UniformBufferManager* uniformBufferManager);
+		SplashPainter(ShaderManager* shaderManager,UniformBufferManager* uniformBufferManager);
 
 		~SplashPainter();
 

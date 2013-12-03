@@ -2,8 +2,8 @@
 
 namespace GFX
 {
-	DeferredPainter::DeferredPainter(ShaderManager* shaderManager, BufferManager* bufferManager, UniformBufferManager* uniformBufferManager)
-		: BasePainter(shaderManager, bufferManager, uniformBufferManager)
+	DeferredPainter::DeferredPainter(ShaderManager* shaderManager, UniformBufferManager* uniformBufferManager)
+		: BasePainter(shaderManager, uniformBufferManager)
 	{
 	}
 
@@ -42,7 +42,6 @@ namespace GFX
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
 		//BindGBuffer(normalDepth, diffuse, specular, glowMatID);
-
 		m_shaderManager->UseProgram("StaticMesh");
 		
 		BasicCamera bc;

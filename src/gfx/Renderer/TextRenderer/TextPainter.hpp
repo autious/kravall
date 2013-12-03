@@ -25,7 +25,7 @@ namespace GFX
 		\param shaderManager Pointer to ShaderManager present in RenderCore
 		\param bufferManager Pointer to BufferManager present in RenderCore
 		*/
-		TextPainter(ShaderManager* shaderManager, BufferManager* bufferManager, UniformBufferManager* uniformBufferManager);
+		TextPainter(ShaderManager* shaderManager, UniformBufferManager* uniformBufferManager);
 
 		~TextPainter();
 

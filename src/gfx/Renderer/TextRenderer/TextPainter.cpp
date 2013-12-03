@@ -3,8 +3,8 @@
 namespace GFX
 {
 
-	TextPainter::TextPainter(ShaderManager* shaderManager, BufferManager* bufferManager, UniformBufferManager* uniformBufferManager)
-		: BasePainter(shaderManager, bufferManager, uniformBufferManager)
+	TextPainter::TextPainter(ShaderManager* shaderManager,UniformBufferManager* uniformBufferManager)
+		: BasePainter(shaderManager, uniformBufferManager)
 	{
 	}
 
