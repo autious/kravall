@@ -1,7 +1,7 @@
 #ifdef RUN_GTEST
 
 #include <gtest/gtest.h>
-#include <mem/LinearHeap.hpp>
+#include <Memory/LinearHeap.hpp>
 
 // change log; MEMORY_SIZE : expected constant expression @windows -> added const to declaration / John
 
@@ -49,7 +49,6 @@ namespace
         Core::LinearAllocator alloc(Memory, MEMORY_SIZE);
         Core::LinearHeap linearHeap(alloc);
         TestObject* test_obj = linearHeap.NewObject<TestObject>(&linearHeap);
-        int* test_int = linearHeap.NewPOD<int>();
         char* test_char = linearHeap.NewPOD<char>();
 
         //Calls destructor for test_obj

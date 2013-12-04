@@ -3,8 +3,9 @@
 
 #include <cstdint>
 #include <cstdlib>
+#include <cstddef>
 #include <utility>
-
+#include <memory>
 
 namespace Core
 {
@@ -45,7 +46,7 @@ namespace Core
             std::free(p);
         }
 
-        size_t max_size() const nothrow
+        size_t max_size() const
         {
             return m_maxAllocateSize;
         }
@@ -61,6 +62,22 @@ namespace Core
         {
             p->~U();
         }
+
+
+        typedef T value_type;
+        typedef T* pointer;
+        typedef T& reference;
+        typedef const T* const_pointer;
+        typedef const T& const_reference;
+        typedef size_t size_type;
+        typedef ptrdiff_t difference_type;
+
+        struct rebind
+        {
+            typedef std::allocator<T> other;
+        };
+
+
 
     private:
         int m_maxAllocateSize;
