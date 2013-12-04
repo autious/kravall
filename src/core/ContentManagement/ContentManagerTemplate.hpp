@@ -40,7 +40,7 @@ namespace Core
         }
 
         template<typename Loader>
-        void Load( const char* asset, std::function<void(Core::BaseAssetLoader*)> finisher, const bool async = false )
+        void Load( const char* asset, std::function<void(Core::BaseAssetLoader*, void* assetHandle)> finisher, const bool async = false )
         {
             static_assert(Core::Match<Loader, Loaders...>::exists, "Loader is not in loader list, add it to the ContentManager");           
             static const int loaderId = Core::Index<Loader, std::tuple<Loaders...>>::value;            
@@ -51,7 +51,7 @@ namespace Core
             if(IsCached<Loader>(asset, handle))
             {                
                 //Loading cached asset synchronous
-                finisher(m_loaders[loaderId]->GetReader(handle));
+                finisher(m_loaders[loaderId], handle);
                 IncreaseReference<Loader>(assetHash);
             }
             else
@@ -70,7 +70,7 @@ namespace Core
                     assert(result);
                    
                     AddReference(assetHash, handle);
-                    finisher(m_loaders[loaderId]->GetReader(handle));
+                    finisher(m_loaders[loaderId], handle);
                 }
             }
         }
@@ -116,6 +116,7 @@ namespace Core
             }
             m_finisherList.clear();
         }
+
     private:
         template<typename Loader>
         bool IsCached( const unsigned int assetHash, AssetHandle handle )
