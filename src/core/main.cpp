@@ -108,6 +108,10 @@ void run( GLFWwindow * window )
 	BGnomeImporter* BGI = new BGnomeImporter();
     Entity ent1 = Core::world.m_entityHandler.CreateEntity<Core::ExampleComponent1,Core::ExampleComponent2>( Core::ExampleComponent1::D1(),
                                                                                    Core::ExampleComponent2::D2() );
+
+	Entity e2 = Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent>
+		(Core::GraphicsComponent(), Core::WorldPositionComponent(), Core::RotationComponent(), Core::ScaleComponent());
+
 	GFX::StaticVertex* vs = nullptr;
 	GLuint IBO;
 	GLuint VAO;
@@ -127,7 +131,7 @@ void run( GLFWwindow * window )
 	std::cout << VAO << std::endl;
 
 	GFX::Material* m = new GFX::Material();
-	m->diffuse = GFX::Content::LoadTexture2DFromFile("assets/GDM.png");
+	m->diffuse = GFX::Content::LoadTexture2DFromFile("assets/GDM2.png");
 	std::cout << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " ";
 	while (!glfwWindowShouldClose(window))
 	{
@@ -188,7 +192,7 @@ void run( GLFWwindow * window )
 		gCamera->LookAt(glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		GFX::SetViewMatrix(gCamera->GetViewMatrix());
 
-		//TestRendering();
+		TestRendering();
 		GFX::Draw(IBO, VAO, vSize, m);
 		GFX::Render();
 

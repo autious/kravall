@@ -6,14 +6,21 @@
 #include <Components/ExampleComponent1.hpp>
 #include <Components/ExampleComponent2.hpp>
 
+#include <Components/WorldPositionComponent.hpp>
+#include <Components/RotationComponent.hpp>
+#include <Components/ScaleComponent.hpp>
+#include <Components/GraphicsComponent.hpp>
+
 namespace Core
 {
     class ExampleSystem;
-    typedef SystemHandlerTemplate<ExampleSystem> SystemHandler;
-    typedef EntityHandlerTemplate<SystemHandler,ExampleComponent1,ExampleComponent2> EntityHandler;
+	class RenderingSystem;
+    typedef SystemHandlerTemplate<ExampleSystem, RenderingSystem> SystemHandler;
+    typedef EntityHandlerTemplate<SystemHandler,ExampleComponent1,ExampleComponent2, 
+		WorldPositionComponent, RotationComponent, ScaleComponent, GraphicsComponent> EntityHandler;
 }
 
 /**********All systems after this line************/
 #include <Systems/ExampleSystem.hpp>
-
+#include <Systems/RenderingSystem.hpp>
 #endif

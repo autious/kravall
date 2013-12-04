@@ -73,6 +73,8 @@ namespace GFX
 
 	DLL_API void Draw(const int& ibo, const int& vao, const int& size, Material* material);
 
+	DLL_API void Draw(const unsigned int& ibo, const unsigned int& vao, const unsigned int& iboSize, const unsigned int& shader, Material* mat, glm::mat4* matrix);
+
 	/*!
 	Issues a draw  text command to the graphics engine.
 	\param position Position of the starting letter

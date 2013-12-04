@@ -88,9 +88,10 @@ namespace GFX
 		m_consolePainter->SetConsoleHeight(m_windowHeight);
 	}
 
-	void RenderCore::AddRenderJob(const GLuint& ibo, const GLuint& vao, const int& size, Material* m)
+	
+	void RenderCore::AddRenderJob(const GLuint& ibo, const GLuint& vao, const int& iboSize, const int& shaderID, Material* m, glm::mat4* matrix)
 	{
-		m_deferredPainter->AddRenderJob(ibo, vao, size, m);
+		m_deferredPainter->AddRenderJob(ibo, vao, iboSize, shaderID, matrix, m);
 	}
 
 	void RenderCore::Render()
