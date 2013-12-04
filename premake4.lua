@@ -105,6 +105,11 @@ solution "RiotGame"
         files { "gtest/logger/**.cpp", "src/logger/**.hpp", "src/logger/**.h", "src/logger/**.cpp", "include/logger/**.hpp" }
 		includedirs { "include/logger", "src/logger" }       
 		defines { "LOGGER_DLL_EXPORT" }
+
+        if os.is( "linux" ) then
+            defines { "LOGGER_LINUX_CONSOLE" }
+        end
+
         configuration{ "*Test" }
             links { "gtest" }
 

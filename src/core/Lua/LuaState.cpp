@@ -3,9 +3,12 @@
 
 #include <sstream>
 
+#include <logger/Logger.hpp>
+
 
 Core::LuaState::LuaState()
 {
+    LOG_DEBUG << "Creating lua state" << std::endl;
     m_state = luaL_newstate();
 
     luaL_openlibs( m_state ); 
@@ -33,7 +36,6 @@ Core::LuaState::~LuaState()
     lua_close( m_state );
 }
 
-#include <logger/Logger.hpp>
 
 void Core::LuaState::Execute( const char * filename )
 {
@@ -41,8 +43,6 @@ void Core::LuaState::Execute( const char * filename )
 
     if( error )
     {
-       LOG::ERROR << "Unable to load file." << std::endl; 
+       LOG_ERROR << "Unable to load file." << std::endl; 
     }
 }
-
-

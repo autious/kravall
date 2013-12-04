@@ -31,6 +31,8 @@
 
 #include <iomanip>
 
+#include <logger/Logger.hpp>
+
 // Just an example of a clop function
 // This function gets registred in Init with clop::Register("exit", ClopCloseWindow);
 // And the command is sent to the command line by pressing 'E' (as seen in run()) with Core::Console().SetInputLine("exit");
@@ -79,7 +81,6 @@ void SystemTimeRender()
 {
         std::vector<std::pair<const char *,std::chrono::microseconds>> times = Core::world.m_systemHandler.GetFrameTime();
 
-
         for( int i = 0; i < times.size(); i++ )
         {
             std::stringstream ss;
@@ -94,6 +95,7 @@ void SystemTimeRender()
 
 void run( GLFWwindow * window )
 {
+    LOG_INFO << "Starting program" << std::endl;
 	Core::Camera* gCamera;
 	gCamera = new Core::Camera(45.0f, 1.0f, 2000.0f);
 	gCamera->CalculateProjectionMatrix(1280, 720);
@@ -125,6 +127,7 @@ void run( GLFWwindow * window )
 
 	std::cout << IBO << std::endl;
 	std::cout << VAO << std::endl;
+    
 
 	GFX::Material* m = new GFX::Material();
 	m->diffuse = GFX::Content::LoadTexture2DFromFile("assets/GDM.png");
