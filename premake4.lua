@@ -62,7 +62,7 @@ solution "RiotGame"
             includedirs { "/usr/include/lua5.1" }
         end
 
-        links { "glfw3", "lua5.1", "gfx", "logger" }
+        links { "glfw3", "lua51", "gfx", "logger" }
         configuration{ "*Test" }
             links { "gtest" }
         configuration{ "windows" }

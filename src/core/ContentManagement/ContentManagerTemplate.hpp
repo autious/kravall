@@ -19,8 +19,8 @@
 namespace Core
 {    
     typedef void* AssetHandle;
-    typedef std::vector<std::tuple<short, unsigned int, unsigned int, AssetHandle>, Core::MallocCounter<std::tuple<short, unsigned int, unsigned int, AssetHandle>>> AssetVector;
-    typedef std::vector<std::tuple<unsigned int, std::future<void*>, std::function<void(Core::BaseAssetLoader*, AssetHandle)>>, Core::MallocCounter<std::tuple<short, unsigned int, unsigned int, std::future<void*>, std::function<void(Core::BaseAssetLoader*, AssetHandle)>>>> FinisherVector;
+    typedef std::vector<std::tuple<short, unsigned int, unsigned int, AssetHandle>> AssetVector;
+    typedef std::vector<std::tuple<unsigned int, std::future<void*>, std::function<void(Core::BaseAssetLoader*, AssetHandle)>>> FinisherVector;
 
     template<typename... Loaders>
     class ContentManagerTemplate
