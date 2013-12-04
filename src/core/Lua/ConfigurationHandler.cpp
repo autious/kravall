@@ -214,30 +214,71 @@ glm::vec4 Core::ConfigurationHandler::GetVec4( const char *name, glm::vec4 fallb
 
 void Core::ConfigurationHandler::SetString( const char *name, const char *value )
 {
+    PushConfigTable();
+    lua_pushstring( m_luaState->m_state, value );
+    lua_setfield( m_luaState->m_state, -2, name );
+    PopConfigTable();
 }
 
 void Core::ConfigurationHandler::SetDouble( const char *name, double& value )
 {
+    PushConfigTable();
+    lua_pushnumber( m_luaState->m_state, value );
+    lua_setfield( m_luaState->m_state, -2, name );
+    PopConfigTable();
 }
 
 void Core::ConfigurationHandler::SetInt( const char *name, int& value )
 {
+    PushConfigTable();
+    lua_pushinteger( m_luaState->m_state, value );
+    lua_setfield( m_luaState->m_state, -2, name );
+    PopConfigTable();
 }
 
 void Core::ConfigurationHandler::SetBool( const char *name, bool& value )
 {
+    PushConfigTable();
+    lua_pushboolean( m_luaState->m_state, value );
+    lua_setfield( m_luaState->m_state, -2, name );
+    PopConfigTable();
 }
 
 void Core::ConfigurationHandler::SetVec2( const char *name, glm::vec2& value )
 {
+    PushConfigTable();
+    lua_newtable( m_luaState->m_state );
+        PushVecX( &value[0], 2 );
+    lua_setfield( m_luaState->m_state, -2, name );
+    PopConfigTable();
 }
 
 void Core::ConfigurationHandler::SetVec3( const char *name, glm::vec3& value )
 {
+    PushConfigTable();
+    lua_newtable( m_luaState->m_state );
+        PushVecX( &value[0], 3 );
+    lua_setfield( m_luaState->m_state, -2, name );
+    PopConfigTable();
 }
 
 void Core::ConfigurationHandler::SetVec4( const char *name, glm::vec4& value )
 {
+    PushConfigTable();
+    lua_newtable( m_luaState->m_state );
+        PushVecX( &value[0], 4 );
+    lua_setfield( m_luaState->m_state, -2, name );
+    PopConfigTable();
+}
+
+void Core::ConfigurationHandler::PushVecX( float * val, int count )
+{
+    for( int i = 0; i < count; i++ )
+    {
+        lua_pushinteger( m_luaState->m_state, i+1 );
+        lua_pushnumber( m_luaState->m_state, val[i] );
+        lua_settable( m_luaState->m_state, -3 );
+    }
 }
 
 void Core::ConfigurationHandler::GetVecX( const char *name, float * val, int count )

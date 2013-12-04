@@ -36,6 +36,7 @@ namespace Core
         void        SetVec4( const char *name, glm::vec4& value );
 
     private: 
+        void PushVecX( float * val, int count );
         void GetVecX( const char *name, float *val, int count );
         void PushConfigTable();
         void PopConfigTable();

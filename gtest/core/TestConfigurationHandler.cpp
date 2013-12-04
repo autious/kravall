@@ -30,6 +30,8 @@ namespace Core
     "m_vec2 = {1,2},"
     "m_vec3 = {1,2,3},"
     "m_vec4 = {1,2,3,4}}";
+
+    const char * prep_config = "core = core or {}; core.config = {}";
         
 
     TEST( LuaConfigurationHandler, GetString )
@@ -156,6 +158,110 @@ namespace Core
         glm::vec4 correct = handler.GetVec4( "m_vec4", glm::vec4(10,20,30,40) );
 
         EXPECT_EQ( glm::vec4(1,2,3,4), correct );
+    }
+
+    TEST( LuaConfigurationHandler, SetString )
+    {
+        LuaState state;
+        ConfigurationHandler handler(&state);
+
+        state.DoBlock( prep_config );
+
+        handler.SetString( "val", "the" );
+
+        std::string str = handler.GetString( "val", "WRONG" );
+
+        EXPECT_STREQ( "the", str.c_str() );
+    }
+
+    TEST( LuaConfigurationHandler, SetDouble )
+    {
+        LuaState state;
+        ConfigurationHandler handler(&state);
+
+        state.DoBlock( prep_config );
+
+        double in = 1.5;
+        handler.SetDouble( "val", in );
+
+        double val = handler.GetDouble( "val", 5 );
+
+        EXPECT_EQ( in, val );
+    }
+
+    TEST( LuaConfigurationHandler, SetInt )
+    {
+        LuaState state;
+        ConfigurationHandler handler(&state);
+
+        state.DoBlock( prep_config );
+
+        int in = 1;
+        handler.SetInt( "val", in );
+
+        int val = handler.GetInt( "val", 2 );
+
+        EXPECT_EQ( in, val );
+    }
+
+    TEST( LuaConfigurationHandler, SetBool )
+    {
+        LuaState state;
+        ConfigurationHandler handler(&state);
+
+        state.DoBlock( prep_config );
+
+        bool in = true;
+        handler.SetBool( "val", in );
+
+        bool val = handler.GetBool( "val", false );
+
+        EXPECT_EQ( in, val );
+    }
+
+    TEST( LuaConfigurationHandler, SetVec2 )
+    {
+        LuaState state;
+        ConfigurationHandler handler(&state);
+
+        state.DoBlock( prep_config );
+
+        glm::vec2 in(1,2);
+        handler.SetVec2( "val", in );
+
+        glm::vec2 val = handler.GetVec2( "val", glm::vec2(10,20) );
+
+        EXPECT_EQ( in, val );
+    }
+
+    TEST( LuaConfigurationHandler, SetVec3 )
+    {
+        LuaState state;
+        ConfigurationHandler handler(&state);
+
+        state.DoBlock( prep_config );
+
+        glm::vec3 in(1,2,3);
+        handler.SetVec3( "val", in );
+
+        glm::vec3 val = handler.GetVec3( "val", glm::vec3(10,20,30) );
+
+        EXPECT_EQ( in, val );
+    }
+
+    TEST( LuaConfigurationHandler, SetVec4 )
+    {
+        LuaState state;
+        ConfigurationHandler handler(&state);
+
+        state.DoBlock( prep_config );
+
+        glm::vec4 in(1,2,3,4);
+        handler.SetVec4( "val", in );
+
+        glm::vec4 val = handler.GetVec4( "val", glm::vec4(10,20,30,40) );
+
+        EXPECT_EQ( in, val );
     }
 }
 
