@@ -6,6 +6,9 @@
 namespace Core
 {
     class ConfigurationHandler;
+    /*! 
+        lua_State wrapper, to make the lua interface slightly more object oriented.
+    */
     class LuaState
     {
         private:
