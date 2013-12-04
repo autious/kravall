@@ -1,14 +1,3 @@
-/*! \mainpage Our Index Page
-
-    \section intro_sec Introduction
-
-    This is the introduction.
-
-    \section install_sec Installation
-
-    \subsection step1 Step 1: Opening the box
-
-*/
 
 #ifdef RUN_GTEST 
     #include <gtest/gtest.h>
@@ -266,3 +255,15 @@ int main(int argc, char** argv)
 	return 0;
 #endif
 }
+
+/*! \mainpage Our Index Page
+
+    \section intro_sec Introduction
+
+    This is the introduction.
+
+    \section install_sec Installation
+
+    \subsection step1 Step 1: Opening the box
+
+*/
