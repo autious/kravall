@@ -3,8 +3,6 @@
 
 #include <ContentManagement/ContentManagerTemplate.hpp>
 
-#include <ContentManagerment/Loaders/TTFLoader.hpp>
-
 namespace Core
 {
     typedef Core::ContentManagerTemplate<Core::TTFLoader> ContentManager;

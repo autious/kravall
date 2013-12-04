@@ -12,9 +12,10 @@ namespace Core
         TTFLoader();
         ~TTFLoader();
 
-        bool Load(const char* assetName, void* assetHandle);
-        void Destroy(void* assetHandle);
+        bool Load(const char* assetName, void* &assetHandle) override;
+        void Destroy(const void* assetHandle) override;
     private:
+        
 
     };
 }

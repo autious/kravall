@@ -13,12 +13,12 @@ namespace Core
 
     }
 
-    bool TTFLoader::Load(const char* assetName, void* assetHandle)
+    bool TTFLoader::Load(const char* assetName, void* &assetHandle)
     {
         return true;
     }
 
-    void TTFLoader::Destroy(void* assetHandle)
+    void TTFLoader::Destroy(const void* assetHandle)
     {
 
     }

@@ -10,9 +10,11 @@
 #include <cstring>
 
 #include <Memory/MallocCounter.hpp>
-#include <ContentManagement/TemplatePresence.hpp>
-#include <ContentManagement/TemplateListIndex.hpp>
+#include <ComponentFramework/CheckTemplatePresence.hpp>
+#include <ComponentFramework/ComponentType.hpp>
+
 #include <ContentManagement/Loaders/BaseAssetLoader.hpp>
+#include <ContentManagement/LoaderIncludes.hpp>
 
 namespace Core
 {    
@@ -26,7 +28,15 @@ namespace Core
     public:
         ContentManagerTemplate()
         {
-            m_loaders = {(new Loaders())...};
+            m_loaders = {{(new Loaders())...}};
+        }
+        
+        ~ContentManagerTemplate()
+        {
+            for(int i=0; i < LOADER_COUNT; ++i)
+            {
+                delete m_loaders[i];
+            }
         }
 
         template<typename Loader>
