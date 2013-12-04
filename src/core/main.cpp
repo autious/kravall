@@ -131,34 +131,34 @@ void run( GLFWwindow * window )
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));
 	bool fs = false;
 
-	BGnomeImporter* BGI = new BGnomeImporter();
-    Entity ent1 = Core::world.m_entityHandler.CreateEntity<Core::ExampleComponent1,Core::ExampleComponent2>( Core::ExampleComponent1::D1(),
-                                                                                   Core::ExampleComponent2::D2() );
-	
-	Entity e2 = Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent>
-		(Core::GraphicsComponent(), Core::WorldPositionComponent(), Core::RotationComponent(), Core::ScaleComponent());
-	
-	GFX::StaticVertex* vs = nullptr;
-	GLuint IBO;
-	GLuint VAO;
-	int vSize;
-	int iSize;
-	BGI->Go("assets/flag.GNOME", vs, vSize);
-	
-	int* indices = new int[vSize];
-	iSize = vSize;
-	for (int i = 0; i < vSize; i++)
-	{
-		indices[i] = i;
-	}
-	GFX::Content::LoadStaticMesh(IBO, VAO, vSize, iSize, vs, indices);
-	
-	std::cout << IBO << std::endl;
-	std::cout << VAO << std::endl;
-    
-	
-	GFX::Material* m = new GFX::Material();
-	m->diffuse = GFX::Content::LoadTexture2DFromFile("assets/GDM.png");
+	//BGnomeImporter* BGI = new BGnomeImporter();
+    //Entity ent1 = Core::world.m_entityHandler.CreateEntity<Core::ExampleComponent1,Core::ExampleComponent2>( Core::ExampleComponent1::D1(),
+    //                                                                               Core::ExampleComponent2::D2() );
+	//
+	//Entity e2 = Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent>
+	//	(Core::GraphicsComponent(), Core::WorldPositionComponent(), Core::RotationComponent(), Core::ScaleComponent());
+	//
+	//GFX::StaticVertex* vs = nullptr;
+	//GLuint IBO;
+	//GLuint VAO;
+	//int vSize;
+	//int iSize;
+	//BGI->Go("assets/flag.GNOME", vs, vSize);
+	//
+	//int* indices = new int[vSize];
+	//iSize = vSize;
+	//for (int i = 0; i < vSize; i++)
+	//{
+	//	indices[i] = i;
+	//}
+	//GFX::Content::LoadStaticMesh(IBO, VAO, vSize, iSize, vs, indices);
+	//
+	//std::cout << IBO << std::endl;
+	//std::cout << VAO << std::endl;
+    //
+	//
+	//GFX::Material* m = new GFX::Material();
+	//m->diffuse = GFX::Content::LoadTexture2DFromFile("assets/GDM.png");
 
 	std::cout << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " ";
 	while (!glfwWindowShouldClose(window))
@@ -182,7 +182,7 @@ void run( GLFWwindow * window )
 		if (input->IsKeyPressedOnce(GLFW_KEY_F))
 			Core::Console().SetInputLine("lua print(\"Hello console\")");
 		if (input->IsKeyPressedOnce(GLFW_KEY_D))
-			Core::Console().SetInputLine("lua print(1)");
+			Core::Console().SetInputLine("Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
 		if (input->IsKeyPressedOnce(GLFW_KEY_E))
 			Core::Console().SetInputLine("exit");
 		if (input->IsKeyPressedOnce(GLFW_KEY_C))
@@ -225,7 +225,7 @@ void run( GLFWwindow * window )
 		GFX::SetViewMatrix(gCamera->GetViewMatrix());
 
 		//TestRendering();
-		GFX::Draw(IBO, VAO, vSize, m);
+		//GFX::Draw(IBO, VAO, vSize, m);
 
 		GFX::Render();
 

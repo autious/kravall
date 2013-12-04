@@ -113,6 +113,9 @@ namespace Core
 
 			// Reset input line
 			m_inputLine.clear();
+
+			if (m_offset != 0)
+				m_offset++;
 		}
 	}
 
@@ -145,18 +148,14 @@ namespace Core
 			m_offset += offset;
 			if (m_offset < 0)
 				m_offset = 0;
-			if (m_offset >(int)m_console.size() - 5)
-				m_offset = (int)m_console.size() - 5;
+			if (m_offset >(int)m_console.size() - 1)
+				m_offset = (int)m_console.size() - 1;
 		}
 	}
 
-#define DEBUG_LINE_NUMBER GFX::RenderText(glm::vec2(1, 377 - (i)* 15), 1.0f, Colors::Black, ("[" + std::to_string(i) + "]").c_str());\
-	GFX::RenderText(glm::vec2(0, 376 - (i)* 15), 1.0f, color, ("[" + std::to_string(i) + "]").c_str());
-	
-	
 	void DebugConsole::Update()
 	{
-		const int x = 40;
+		const int x = 10;
 		if (m_visible)
 		{
 			GFX::ShowConsole();
@@ -175,10 +174,10 @@ namespace Core
 
 					int wrapLength = (GFX::GetScreenWidth()-x-20) / m_wrapCharWidth;
 					int nrWraps = line.length() / wrapLength;
+					totalWraps += nrWraps;
 
 					if (nrWraps == 0) // Single line
 					{
-						DEBUG_LINE_NUMBER
 						GFX::RenderText(glm::vec2(x+1, 376+1 - (i) * 15), 1.0f,Colors::Black, line.c_str());
 						GFX::RenderText(glm::vec2(x, 376 - (i) * 15), 1.0f,color, line.c_str());
 					}
@@ -188,7 +187,6 @@ namespace Core
 						int remainder = line.length() % wrapLength;
 						if (remainder != 0)
 						{
-							DEBUG_LINE_NUMBER
 							line = std::string(
 								m_console[lineIndex].text.end() - remainder, 
 								m_console[lineIndex].text.end());
@@ -200,7 +198,6 @@ namespace Core
 						// Draw wrapped lines
 						for (int w = 0; w < nrWraps && i < m_numRows; w++)
 						{
-							DEBUG_LINE_NUMBER
 							line = std::string(
 								m_console[lineIndex].text.end() - remainder - wrapLength * (w+1), 
 								m_console[lineIndex].text.end() - remainder - wrapLength * (w));
@@ -214,6 +211,13 @@ namespace Core
 				}
 				lineIndex--;
 			}
+
+			// Draw scroll indicator
+			float sy = 80.0f + 300.0f / static_cast<float>(m_console.size() + 1);
+			float dy = (380.0f - sy) - 380.0f * (m_offset/static_cast<float>(m_console.size() + 1));
+			GFX::Debug::DrawRectangle(glm::vec2(0.0f, dy), glm::vec2(5.0f, sy), true, Colors::DarkGreen);
+
+			GFX::RenderText(glm::vec2(400, 500), 1.0f, Colors::White, (std::to_string(dy)).c_str());
 
 			// Draw input line
 			GFX::RenderText(glm::vec2(11, 398), 1.0f, Colors::Black, ("> " + m_inputLine).c_str());
@@ -249,6 +253,7 @@ namespace Core
 	void DebugConsole::ClearInput()
 	{
 		m_inputLine.clear();
+		m_offset = 0;
 	}
 
 	DebugConsole& Console()
