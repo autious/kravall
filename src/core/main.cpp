@@ -31,6 +31,8 @@
 
 #include <iomanip>
 
+#include <ContentManagement/ContentManager.hpp>
+
 // Just an example of a clop function
 // This function gets registred in Init with clop::Register("exit", ClopCloseWindow);
 // And the command is sent to the command line by pressing 'E' (as seen in run()) with Core::Console().SetInputLine("exit");
@@ -94,6 +96,9 @@ void SystemTimeRender()
 
 void run( GLFWwindow * window )
 {
+
+    Core::ContentManager CM;
+
 	Core::Camera* gCamera;
 	gCamera = new Core::Camera(45.0f, 1.0f, 2000.0f);
 	gCamera->CalculateProjectionMatrix(1280, 720);

@@ -1,6 +1,6 @@
 #ifdef RUN_GTEST
 #include <gtest/gtest.h>
-#include <mem/LinearAllocator.hpp>
+#include <Memory/LinearAllocator.hpp>
 
 #include <fstream>
 
