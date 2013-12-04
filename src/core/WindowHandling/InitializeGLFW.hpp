@@ -5,6 +5,7 @@
 
 #include "GLFWInclude.hpp"
 #include <gfx/GFXInterface.hpp>
+#include <World.hpp>
 
 namespace Core
 {
@@ -34,6 +35,7 @@ namespace Core
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_FALSE);
 		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+        glfwWindowHint(GLFW_RESIZABLE, Core::world.m_config.GetBool( "windowResizable", true ) );
 
 		GLFWmonitor* pMonitor = glfwGetPrimaryMonitor();
 
@@ -93,7 +95,7 @@ namespace Core
 		std::cout << "OpenGL version: " << glfwGetWindowAttrib((*window), GLFW_CONTEXT_VERSION_MAJOR) << "." << glfwGetWindowAttrib((*window), GLFW_CONTEXT_VERSION_MINOR) << std::endl;
 
 		// if 1 then limits system to max 60 fps!
-		glfwSwapInterval(0);
+		glfwSwapInterval( Core::world.m_config.GetInt( "vsync", 0 ));
 
 		// assign callback functions...
 		glfwSetFramebufferSizeCallback((*window), framebuffer_size_callback);

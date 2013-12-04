@@ -45,6 +45,9 @@ void ClopCloseWindow(clop::ArgList args)
 	exit(0);
 }
 
+int initScreenHeight;
+int initScreenWidth;
+
 GLFWwindow* init( int argc, char** argv )
 {
 	GLFWwindow* window;
@@ -59,11 +62,14 @@ GLFWwindow* init( int argc, char** argv )
         }
     }
 
-	Core::InitializeGLFW(&window, 1280, 720, Core::WindowMode::WMODE_WINDOWED);
+    initScreenWidth = Core::world.m_config.GetInt( "initScreenWidth", 1280 );
+    initScreenHeight = Core::world.m_config.GetInt( "initScreenHeight", 720 );
+    
+	Core::InitializeGLFW(&window, initScreenWidth, initScreenHeight, Core::WindowMode::WMODE_WINDOWED);
 
 	clop::Register("exit", ClopCloseWindow);
 
-	if (GFX::Init(1280,720) == GFX_FAIL)
+	if (GFX::Init(initScreenWidth,initScreenHeight) == GFX_FAIL)
 		return nullptr;
 
     return window;
@@ -116,13 +122,13 @@ void run( GLFWwindow * window )
 
 	Core::Camera* gCamera;
 	gCamera = new Core::Camera(45.0f, 1.0f, 2000.0f);
-	gCamera->CalculateProjectionMatrix(1280, 720);
+	gCamera->CalculateProjectionMatrix(initScreenWidth, initScreenHeight);
 	gCamera->SetPosition(glm::vec3(0.0f, 0.0f, -500.0f));
 
 	GFX::SetProjectionMatrix(gCamera->GetProjectionMatrix());
 
 	Core::GLFWInput* input = new Core::GLFWInput(window);
-	GFX::RenderSplash(false);
+	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));
 	bool fs = false;
 
 	BGnomeImporter* BGI = new BGnomeImporter();
@@ -197,13 +203,13 @@ void run( GLFWwindow * window )
 
 			if (!fs)
 			{
-				Core::InitializeGLFW(&window, 1280, 720, Core::WindowMode::WMODE_FULLSCREEN_BORDERLESS);
+				Core::InitializeGLFW(&window, initScreenWidth, initScreenHeight, Core::WindowMode::WMODE_FULLSCREEN_BORDERLESS);
 				GFX::Init(windowWidth, windowHeight);
 			}
 			else
 			{
-				Core::InitializeGLFW(&window, 1280, 720, Core::WindowMode::WMODE_WINDOWED_BORDERLESS);
-				GFX::Init(1280, 720);
+				Core::InitializeGLFW(&window, initScreenWidth, initScreenHeight, Core::WindowMode::WMODE_WINDOWED_BORDERLESS);
+				GFX::Init(initScreenWidth, initScreenHeight );
 			}
 
 			fs = !fs;
