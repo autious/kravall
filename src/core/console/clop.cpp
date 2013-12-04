@@ -23,7 +23,7 @@
 #define CLOPCH char
 #define CLOPSS std::stringstream
 #define TOSTRING(x) std::to_string(x)
-#define CLOPOUT std::cout
+#define CLOPOUT //std::cout
 namespace clop
 {
 	Arg::Arg(){}
@@ -140,7 +140,7 @@ namespace clop
 		}
 		else // The command does not exist
 		{
-			CLOPOUT << "Unknown command \"" << cmd << "\"\n";
+			//CLOPOUT << "Unknown command \"" << cmd << "\"\n";
 			return false;
 		}
 	}
@@ -154,7 +154,7 @@ namespace clop
 		}
 		else
 		{
-			CLOPOUT << "Command \"" << cmd << "\" attempt to register failed: Already exists.\n";
+			//CLOPOUT << "Command \"" << cmd << "\" attempt to register failed: Already exists.\n";
 		}
 	}
 

@@ -116,8 +116,15 @@ namespace GFX
 
 	void Draw(const int& ibo, const int& vao, const int& size, Material* material)
 	{
-		Renderer().AddRenderJob(ibo, vao, size, material);
+		Renderer().AddRenderJob(ibo, vao, size, 0, material, 0);
 	}
+	
+	void Draw(const unsigned int& ibo, const unsigned int& vao, const unsigned int& iboSize, const unsigned int& shader, Material* mat, glm::mat4* matrix)
+	{
+		Renderer().AddRenderJob(ibo, vao, iboSize, shader, mat, matrix);
+	}
+
+
 	int GetScreenWidth()
 	{
 		return Renderer().GetWindowWidth();

@@ -33,6 +33,7 @@ namespace GFX
 		delete(m_debugPainter);
 		delete(m_consolePainter);
 		delete(m_splashPainter);
+		delete(m_fboPainter);
 	}
 
 	void RenderCore::Initialize(int windowWidth, int windowHeight)
@@ -88,9 +89,10 @@ namespace GFX
 		m_consolePainter->SetConsoleHeight(m_windowHeight);
 	}
 
-	void RenderCore::AddRenderJob(const GLuint& ibo, const GLuint& vao, const int& size, Material* m)
+	
+	void RenderCore::AddRenderJob(const GLuint& ibo, const GLuint& vao, const int& iboSize, const int& shaderID, Material* m, glm::mat4* matrix)
 	{
-		m_deferredPainter->AddRenderJob(ibo, vao, size, m);
+		m_deferredPainter->AddRenderJob(ibo, vao, iboSize, shaderID, matrix, m);
 	}
 
 	void RenderCore::Render()

@@ -42,15 +42,17 @@ namespace GFX
 		*/
 		void Render(FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix);
 		
-		void AddRenderJob(const GLuint& ibo, const GLuint& vao, const int& size, Material* m);
+		void AddRenderJob(const GLuint& ibo, const GLuint& vao, const int& size, const unsigned int& shader, glm::mat4* mMatrix, Material* mat);
 
 	private:
 		struct RenderJob
 		{
-			GLuint ibo;
-			GLuint vao;
-			GLuint size;
-			Material* m;
+			GLuint VAO;
+			GLuint IBO;
+			GLuint IBOSize;
+			unsigned int shaderID;
+			glm::mat4* modelMatrix;
+			Material* material;
 		};
 		/*!
 		Binds all the rendertargets to the FBO and GPU

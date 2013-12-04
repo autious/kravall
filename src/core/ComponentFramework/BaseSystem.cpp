@@ -15,22 +15,29 @@ void Core::BaseSystem::ChangedEntity( Entity id, Aspect old_asp, Aspect new_asp 
     if( AspectMatch( old_asp ) )
     {
         bool found = false;
-        for( std::vector<Entity>::iterator it = m_entities.begin();
+		std::vector<Entity>::iterator it;
+		for (it = m_entities.begin();
              it != m_entities.end() && found == false;
-             it++ )
+              )
         {
             if( *it == id )
             {
-                found = true;
-                m_entities.erase( it );
+                found = true;  
             }
+			else
+			{
+				it++;
+			}
         }
+
+		if ( found )
+			m_entities.erase(it);
 
         assert( m_inclusive == 0 || found );
     }
 
     //Add if new matches
-    if( AspectMatch( new_asp ) )
+    if( AspectMatch( new_asp ) && new_asp != 0ULL )
     {
         m_entities.push_back( id );
     }

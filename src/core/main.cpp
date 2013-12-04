@@ -1,3 +1,4 @@
+
 #ifdef RUN_GTEST 
     #include <gtest/gtest.h>
 #endif
@@ -31,6 +32,11 @@
 
 #include <iomanip>
 
+#include <ContentManagement/ContentManager.hpp>
+#include <logger/Logger.hpp>
+
+#include <Lua/LuaState.hpp>
+
 // Just an example of a clop function
 // This function gets registred in Init with clop::Register("exit", ClopCloseWindow);
 // And the command is sent to the command line by pressing 'E' (as seen in run()) with Core::Console().SetInputLine("exit");
@@ -39,15 +45,31 @@ void ClopCloseWindow(clop::ArgList args)
 	exit(0);
 }
 
-GLFWwindow* init()
+int initScreenHeight;
+int initScreenWidth;
+
+GLFWwindow* init( int argc, char** argv )
 {
 	GLFWwindow* window;
 
-	Core::InitializeGLFW(&window, 1280, 720, Core::WindowMode::WMODE_WINDOWED);
+    Core::world.m_luaState.Execute( "scripts/config.lua" );
+
+    for( int i = 0; i < argc-1; i++ )
+    {
+        if( strcmp( argv[i], "--conf" ) == 0 )
+        {
+            Core::world.m_luaState.DoBlock( argv[i+1] ); 
+        }
+    }
+
+    initScreenWidth = Core::world.m_config.GetInt( "initScreenWidth", 1280 );
+    initScreenHeight = Core::world.m_config.GetInt( "initScreenHeight", 720 );
+    
+	Core::InitializeGLFW(&window, initScreenWidth, initScreenHeight, Core::WindowMode::WMODE_WINDOWED);
 
 	clop::Register("exit", ClopCloseWindow);
 
-	if (GFX::Init(1280,720) == GFX_FAIL)
+	if (GFX::Init(initScreenWidth,initScreenHeight) == GFX_FAIL)
 		return nullptr;
 
     return window;
@@ -79,7 +101,6 @@ void SystemTimeRender()
 {
         std::vector<std::pair<const char *,std::chrono::microseconds>> times = Core::world.m_systemHandler.GetFrameTime();
 
-
         for( int i = 0; i < times.size(); i++ )
         {
             std::stringstream ss;
@@ -94,20 +115,29 @@ void SystemTimeRender()
 
 void run( GLFWwindow * window )
 {
+
+    Core::ContentManager CM;
+
+    LOG_INFO << "Starting program" << std::endl;
+
 	Core::Camera* gCamera;
 	gCamera = new Core::Camera(45.0f, 1.0f, 2000.0f);
-	gCamera->CalculateProjectionMatrix(1280, 720);
+	gCamera->CalculateProjectionMatrix(initScreenWidth, initScreenHeight);
 	gCamera->SetPosition(glm::vec3(0.0f, 0.0f, -500.0f));
 
 	GFX::SetProjectionMatrix(gCamera->GetProjectionMatrix());
 
 	Core::GLFWInput* input = new Core::GLFWInput(window);
-	GFX::RenderSplash(false);
+	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));
 	bool fs = false;
 
 	//BGnomeImporter* BGI = new BGnomeImporter();
     //Entity ent1 = Core::world.m_entityHandler.CreateEntity<Core::ExampleComponent1,Core::ExampleComponent2>( Core::ExampleComponent1::D1(),
     //                                                                               Core::ExampleComponent2::D2() );
+	//
+	//Entity e2 = Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent>
+	//	(Core::GraphicsComponent(), Core::WorldPositionComponent(), Core::RotationComponent(), Core::ScaleComponent());
+	//
 	//GFX::StaticVertex* vs = nullptr;
 	//GLuint IBO;
 	//GLuint VAO;
@@ -125,9 +155,11 @@ void run( GLFWwindow * window )
 	//
 	//std::cout << IBO << std::endl;
 	//std::cout << VAO << std::endl;
+    //
 	//
 	//GFX::Material* m = new GFX::Material();
 	//m->diffuse = GFX::Content::LoadTexture2DFromFile("assets/GDM.png");
+
 	std::cout << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " ";
 	while (!glfwWindowShouldClose(window))
 	{
@@ -148,43 +180,43 @@ void run( GLFWwindow * window )
 		if (input->IsKeyPressedOnce(GLFW_KEY_PAGE_DOWN))
 			Core::Console().Scroll(-1);
 		if (input->IsKeyPressedOnce(GLFW_KEY_F))
-			Core::Console().SetInputLine("This is the first line.\nhere is another line!" + std::to_string(rand()));
+			Core::Console().SetInputLine("This is the first line...\nhere is another line!!!!" + std::to_string(rand()));
 		if (input->IsKeyPressedOnce(GLFW_KEY_E))
 			Core::Console().SetInputLine("exit");
 		if (input->IsKeyPressedOnce(GLFW_KEY_C))
 			Core::Console().SetInputLine("clear");
-		if (input->IsKeyPressedOnce(GLFW_KEY_G))
+		if (input->IsKeyPressedOnce(GLFW_KEY_ENTER))
 			Core::Console().Add();
 		if (input->IsKeyPressedOnce(GLFW_KEY_U))
-			Core::Console().Print("Woohoo\nyes\n\tawesome\nlol", Colors::Green);
+			Core::Console().PrintLine("Woohoo\nyes\n\tawesome\nlol\n..!!!!.", Colors::Green);
 		Core::Console().Update();
 
-		if (input->IsKeyPressedOnce(GLFW_KEY_ENTER))
-		{
-			glfwDestroyWindow(window);
-			GFX::DeleteGFX();
-
-			GLFWmonitor* pMonitor = glfwGetPrimaryMonitor();
-
-			const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-
-			int windowWidth = mode->width;
-			int windowHeight = mode->height;
-
-
-			if (!fs)
-			{
-				Core::InitializeGLFW(&window, 1280, 720, Core::WindowMode::WMODE_FULLSCREEN_BORDERLESS);
-				GFX::Init(windowWidth, windowHeight);
-			}
-			else
-			{
-				Core::InitializeGLFW(&window, 1280, 720, Core::WindowMode::WMODE_WINDOWED_BORDERLESS);
-				GFX::Init(1280, 720);
-			}
-
-			fs = !fs;
-		}
+		//if (input->IsKeyPressedOnce(GLFW_KEY_ENTER))
+		//{
+		//	glfwDestroyWindow(window);
+		//	GFX::DeleteGFX();
+		//
+		//	GLFWmonitor* pMonitor = glfwGetPrimaryMonitor();
+		//
+		//	const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+		//
+		//	int windowWidth = mode->width;
+		//	int windowHeight = mode->height;
+		//
+		//
+		//	if (!fs)
+		//	{
+		//		Core::InitializeGLFW(&window, initScreenWidth, initScreenHeight, Core::WindowMode::WMODE_FULLSCREEN_BORDERLESS);
+		//		GFX::Init(windowWidth, windowHeight);
+		//	}
+		//	else
+		//	{
+		//		Core::InitializeGLFW(&window, initScreenWidth, initScreenHeight, Core::WindowMode::WMODE_WINDOWED_BORDERLESS);
+		//		GFX::Init(initScreenWidth, initScreenHeight );
+		//	}
+		//
+		//	fs = !fs;
+		//}
 
 		//gCamera->CalculateViewMatrix();
 		gCamera->LookAt(glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -192,6 +224,7 @@ void run( GLFWwindow * window )
 
 		//TestRendering();
 		//GFX::Draw(IBO, VAO, vSize, m);
+
 		GFX::Render();
 
         Core::world.m_systemHandler.Update( 0.1f );
@@ -200,12 +233,6 @@ void run( GLFWwindow * window )
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 
-
-        /* Exmaple of how to get and print timedata
-        */
-
-/*
-    */
     }
 
     glfwDestroyWindow( window );
@@ -220,7 +247,7 @@ int main(int argc, char** argv)
     ::testing::InitGoogleTest(&argc, argv);
 #endif
 #ifndef SKIP_RUN
-	GLFWwindow* window = init();
+	GLFWwindow* window = init( argc, argv );
 	if( window == nullptr )
 		return -1; 
 #endif
@@ -242,3 +269,15 @@ int main(int argc, char** argv)
 	return 0;
 #endif
 }
+
+/*! \mainpage Our Index Page
+
+    \section intro_sec Introduction
+
+     [Main Wiki](http://kronosept.comproj.bth.se:5001/)
+
+    \section install_sec Installation
+
+    \subsection step1 Step 1: Opening the box
+
+*/

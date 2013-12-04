@@ -1,7 +1,7 @@
 #ifdef RUN_GTEST
 
 #include <gtest/gtest.h>
-#include <mem/StackHeap.hpp>
+#include <Memory/StackHeap.hpp>
 
 // change log; MEMORY_SIZE : expected constant expression @windows -> added const to declaration / John
 

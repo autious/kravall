@@ -1,8 +1,8 @@
 #ifndef CORE_TEMP_HEAP_HPP
 #define CORE_TEMP_HEAP_HPP
 
-#include <mem/Finalizer.hpp>
-#include <mem/LinearAllocator.hpp>
+#include <Memory/Finalizer.hpp>
+#include <Memory/LinearAllocator.hpp>
 
 #include <cstring>
 #include <type_traits>

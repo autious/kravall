@@ -32,7 +32,7 @@ namespace Core
 		m_inputLine = inputLine;
 	}
 
-	void DebugConsole::Print(std::string str, Color color)
+	void DebugConsole::PrintLine(std::string str, Color color)
 	{
 		// Add lines
 		std::string newLine;
@@ -95,7 +95,10 @@ namespace Core
 			// Execute command
 			if (!clop::Command(m_inputLine))
 			{
-				Line errLine = {"ERROR: Unknown command", Colors::Red};
+				std::istringstream ss(m_inputLine);
+				std::string uCmd;
+				ss >> uCmd;
+				Line errLine = {"ERROR: Unknown command \'"+ uCmd +"\'", Colors::Red};
 				m_console.push_back(errLine);
 			}
 
@@ -136,14 +139,13 @@ namespace Core
 			if (m_offset >(int)m_console.size() - 5)
 				m_offset = (int)m_console.size() - 5;
 		}
-		std::cout << m_offset << std::endl;
 	}
 
-#define DEBUG_LINE_NUMBER GFX::RenderText(glm::vec2(0, 376 - (i)* 15), 1.0f, color, ("[" + std::to_string(i) + "]").c_str());
+#define DEBUG_LINE_NUMBER //GFX::RenderText(glm::vec2(0, 376 - (i)* 15), 1.0f, color, ("[" + std::to_string(i) + "]").c_str());
 
 	void DebugConsole::Update()
 	{
-		const int x = 40;
+		const int x = 10;
 		if (m_visible)
 		{
 			GFX::ShowConsole();

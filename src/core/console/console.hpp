@@ -64,7 +64,7 @@ namespace Core
 
 		void ClearInput();
 
-		void Print(std::string str, Color color);
+		void PrintLine(std::string str, Color color);
 
 	private:
 
