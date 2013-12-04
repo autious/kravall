@@ -260,7 +260,7 @@ int main(int argc, char** argv)
 
     \section intro_sec Introduction
 
-    This is the introduction.
+     [Main Wiki](http://kronosept.comproj.bth.se:5001/)
 
     \section install_sec Installation
 
