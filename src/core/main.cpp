@@ -33,6 +33,8 @@
 
 #include <logger/Logger.hpp>
 
+#include <Lua/LuaState.hpp>
+
 // Just an example of a clop function
 // This function gets registred in Init with clop::Register("exit", ClopCloseWindow);
 // And the command is sent to the command line by pressing 'E' (as seen in run()) with Core::Console().SetInputLine("exit");
@@ -41,9 +43,19 @@ void ClopCloseWindow(clop::ArgList args)
 	exit(0);
 }
 
-GLFWwindow* init()
+GLFWwindow* init( int argc, char** argv )
 {
 	GLFWwindow* window;
+
+    Core::world.m_luaState.Execute( "scripts/config.lua" );
+
+    for( int i = 0; i < argc-1; i++ )
+    {
+        if( strcmp( argv[i], "--conf" ) == 0 )
+        {
+            Core::world.m_luaState.DoBlock( argv[i+1] ); 
+        }
+    }
 
 	Core::InitializeGLFW(&window, 1280, 720, Core::WindowMode::WMODE_WINDOWED);
 
@@ -201,12 +213,6 @@ void run( GLFWwindow * window )
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 
-
-        /* Exmaple of how to get and print timedata
-        */
-
-/*
-    */
     }
 
     glfwDestroyWindow( window );
@@ -221,7 +227,7 @@ int main(int argc, char** argv)
     ::testing::InitGoogleTest(&argc, argv);
 #endif
 #ifndef SKIP_RUN
-	GLFWwindow* window = init();
+	GLFWwindow* window = init( argc, argv );
 	if( window == nullptr )
 		return -1; 
 #endif

@@ -1,9 +1,12 @@
 #include "LuaState.hpp"
 
-
 #include <sstream>
 
 #include <logger/Logger.hpp>
+
+#include <lua.h>
+#include <lualib.h>
+#include <lauxlib.h>
 
 
 Core::LuaState::LuaState()
@@ -43,6 +46,18 @@ void Core::LuaState::Execute( const char * filename )
 
     if( error )
     {
-       LOG_ERROR << "Unable to load file." << std::endl; 
+        LOG_ERROR << "Unable to load file: " << lua_tostring( m_state, -1 ) << std::endl; 
+        lua_pop( m_state, 1 ); 
+    }
+}
+
+void Core::LuaState::DoBlock( const char * block )
+{
+    int error = luaL_loadstring( m_state, block ) || lua_pcall( m_state, 0,0,0 );
+
+    if( error )
+    {
+        LOG_ERROR << "Unable to parse block: " << lua_tostring( m_state, -1 ) << std::endl;
+        lua_pop( m_state, 1 );
     }
 }

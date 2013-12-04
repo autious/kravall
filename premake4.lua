@@ -107,7 +107,7 @@ solution "RiotGame"
 		defines { "LOGGER_DLL_EXPORT" }
 
         if os.is( "linux" ) then
-            defines { "LOGGER_LINUX_CONSOLE" }
+            defines { "LOGGER_LINUX_CONSOLE" } --Activate color output for linux console
         end
 
         configuration{ "*Test" }

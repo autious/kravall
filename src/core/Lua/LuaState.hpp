@@ -2,8 +2,6 @@
 #define SRC_CORE_LUA_MAINLUA_H
 
 #include <lua.h>
-#include <lualib.h>
-#include <lauxlib.h>
 
 namespace Core
 {
@@ -16,7 +14,7 @@ namespace Core
             ~LuaState();
 
             void Execute( const char *filename ); 
+            void DoBlock( const char *block );
     };
 }
-
 #endif
