@@ -24,6 +24,7 @@ namespace Core
         std::vector<int> deleted;
     public:
 
+
         /*!
             Creates an instance of a packed vector with the initials memory size 
             of initialSize * sizeof(Component).

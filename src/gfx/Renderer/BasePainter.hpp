@@ -2,7 +2,6 @@
 #define SRC_GFX_RENDERER_BASE_PAINTER_HPP
 
 #include "../Shaders/ShaderManager.hpp"
-#include "../Buffers/BufferManager.hpp"
 #include "../Buffers/UniformBufferManager.hpp"
 #include <GL/glew.h>
 
@@ -17,7 +16,7 @@ namespace GFX
 		\param shaderManager Pointer to ShaderManager present in RenderCore
 		\param bufferManager Pointer to BufferManager present in RenderCore
 		*/
-		BasePainter(ShaderManager* shaderManager, BufferManager* bufferManager, UniformBufferManager* uniformBufferManager);
+		BasePainter(ShaderManager* shaderManager, UniformBufferManager* uniformBufferManager);
 
 		~BasePainter();
 
@@ -41,7 +40,6 @@ namespace GFX
 
 		UniformBufferManager*	m_uniformBufferManager;
 		ShaderManager*			m_shaderManager;
-		BufferManager*			m_bufferManager;
 
 		GLuint m_dummyVAO;
 		GLuint m_FBO;

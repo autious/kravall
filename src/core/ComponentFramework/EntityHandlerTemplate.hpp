@@ -26,13 +26,19 @@ namespace Core
         static const int COMPONENT_COUNT = sizeof...(Components);
 
         EntityVector<1024,64,Components...> m_entities;
-        std::array<PVector,sizeof...(Components)> m_components = {{PVector(1024,64,sizeof(Components))...}};
-
+        std::array<PVector*,sizeof...(Components)> m_components = {{new PVector(1024,64,sizeof(Components))...}};
         SystemHandlerT *m_systemHandler;
     public:
         EntityHandlerTemplate( SystemHandlerT *systemHandler)
         {
+
             m_systemHandler = systemHandler;
+        }
+
+        ~EntityHandlerTemplate()
+        {
+            for( int i = 0; i < COMPONENT_COUNT; i++ )
+                delete m_components[i];
         }
 
         /*!
@@ -99,7 +105,7 @@ namespace Core
             
             assert( componentId >= 0 );
 
-            return (Component*)m_components[componentType].Get( componentId );
+            return (Component*)m_components[componentType]->Get( componentId );
         }
 
         /*!
@@ -127,7 +133,7 @@ namespace Core
             
             for( int i = 0; i < COMPONENT_COUNT; i++ )
             {
-                all += m_components[i].GetCount();
+                all += m_components[i]->GetCount();
             }
             return all;
         }
@@ -146,9 +152,9 @@ namespace Core
             //Check so that this component doesn't overwrite an existing one.
             assert( m_entities.GetComponentId(ent, componentType ) < 0 );
 
-            int compId  = m_components[componentType].Alloc();
+            int compId  = m_components[componentType]->Alloc();
 
-            m_components[componentType].Set( compId, &comp );
+            m_components[componentType]->Set( compId, &comp );
             
             m_entities.SetComponentId( ent, compId, componentType );
 
@@ -162,9 +168,9 @@ namespace Core
             //Check so that this component doesn't overwrite an existing one.
             assert( m_entities.GetComponentId(ent, componentType ) < 0 );
 
-            int compId  = m_components[componentType].Alloc();
+            int compId  = m_components[componentType]->Alloc();
 
-            m_components[componentType].Set( compId, &comp );
+            m_components[componentType]->Set( compId, &comp );
 
             m_entities.SetComponentId( ent, compId, componentType );
         }
@@ -183,7 +189,7 @@ namespace Core
             int componentId = m_entities.GetComponentId( ent, componentType );
             if( componentId >= 0 )
             {
-                m_components[componentType].Release( componentId );
+                m_components[componentType]->Release( componentId );
             }
         }
     };

@@ -11,8 +11,10 @@ void testPrintFunction1()
 	logger::SetNewLogHandler( &logger::debugHandler, 
 		new FileHandler( logger::LogType::logType_debug, "../../../../riot_log1.txt", true) );
 	*/
+    /*
 	for( int i = 0; i < 50; i++ )
 		logger::debug << "1 2 3 4 5 6 7 8 9" << std::endl;
+    */
 }
 
 void testPrintFunction2()
@@ -21,10 +23,11 @@ void testPrintFunction2()
 	logger::SetNewLogHandler( &logger::debugHandler, 
 		new FileHandler( logger::LogType::logType_debug, "../../../../riot_log2.txt", true) );
 	*/
-
+    /*
 	for( int i = 0; i < 5000; i++ )
 		logger::debug << "a b c d e f g h i" << std::endl;
 		//std::cout << "a b c d e f g h i" << std::endl;
+    */
 }
 
 #include <thread>
@@ -72,6 +75,7 @@ int main(int args, char argch[])
 
 	
 
+    /*
 	LogSystem::SetNewLogHandler( &LogSystem::debugHandler, new ConsoleHandler( LogSystem::LogType::logType_error ) );
 
 	LogSystem::Mute( "gfx" );
@@ -86,6 +90,7 @@ int main(int args, char argch[])
 	
 
 	std::cin.get();
+    */
 	return 0;
 }
 

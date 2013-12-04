@@ -2,16 +2,14 @@
 
 namespace GFX
 {
-	SplashPainter::SplashPainter(ShaderManager* shaderManager, BufferManager* bufferManager, UniformBufferManager* uniformBufferManager)
-		: BasePainter(shaderManager, bufferManager, uniformBufferManager)
+	SplashPainter::SplashPainter(ShaderManager* shaderManager, UniformBufferManager* uniformBufferManager)
+		: BasePainter(shaderManager, uniformBufferManager)
 	{
 
 		}
 
 	SplashPainter::~SplashPainter()
 	{
-		delete(m_logoTexture);
-		delete(m_logoTextTexture);
 	}
 
 	void SplashPainter::Initialize(GLuint FBO, GLuint dummyVAO)
@@ -31,12 +29,11 @@ namespace GFX
 		m_shaderManager->LinkProgram("TexturedQuad");
 
 		//load logo textures
-		m_logoTexture = new Texture();
-		m_logoTexture->LoadFromFile("assets/Logo/xyz_logo.png", GL_TEXTURE_2D, GL_RGBA, GL_RGBA, GL_LINEAR, GL_LINEAR, 
+	
+		m_logoTexture = Texture::LoadFromFile("assets/Logo/xyz_logo.png", GL_TEXTURE_2D, GL_RGBA, GL_RGBA, GL_LINEAR, GL_LINEAR, 
 			GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
 
-		m_logoTextTexture = new Texture();
-		m_logoTextTexture->LoadFromFile("assets/Logo/xyz_logo_text.png", GL_TEXTURE_2D, GL_RGBA, GL_RGBA, GL_LINEAR, GL_LINEAR,
+		m_logoTextTexture = Texture::LoadFromFile("assets/Logo/xyz_logo_text.png", GL_TEXTURE_2D, GL_RGBA, GL_RGBA, GL_LINEAR, GL_LINEAR,
 			GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
 
 		m_alphaUniform				= m_shaderManager->GetUniformLocation("TexturedQuad", "alphaIN");
@@ -104,7 +101,7 @@ namespace GFX
 		m_shaderManager->SetUniform(1, glm::vec2(screenWidth, screenHeight), m_screenDimensionUniform);
 		m_shaderManager->SetUniform(1.0f, m_uvXUniform);
 
-		m_logoTexture->BindTexture(m_textureUniform, 0, GL_TEXTURE_2D);
+		Texture::BindTexture(m_logoTexture, m_textureUniform, 0, GL_TEXTURE_2D);
 
 		glBindVertexArray(m_dummyVAO);
 		glDrawArrays(GL_POINTS, 0, 1);
@@ -132,7 +129,7 @@ namespace GFX
 		m_shaderManager->SetUniform(1, glm::vec2(700.0f, 90.0f), m_sizeUniform);
 		m_shaderManager->SetUniform(1, glm::vec2(screenWidth, screenHeight), m_screenDimensionUniform);
 
-		m_logoTextTexture->BindTexture(m_textureUniform, 0, GL_TEXTURE_2D);
+		Texture::BindTexture(m_logoTextTexture, m_textureUniform, 0, GL_TEXTURE_2D);
 		glBindVertexArray(m_dummyVAO);
 		glDrawArrays(GL_POINTS, 0, 1);
 	}

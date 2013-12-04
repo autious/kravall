@@ -7,33 +7,25 @@
 
 namespace GFX
 {
-	class Texture
+	namespace Texture
 	{
-	public:
-		Texture();
-		~Texture();
-
-		void LoadFromMemory(
+		GLuint LoadFromMemory(
 			unsigned char* data, const GLenum& target,
 			const GLenum& internalFormat, const GLenum& format,
 			const GLint& minFilter, const GLint& magFilter,
-			const GLint& wrapS, const GLint& wrapT);
+			const GLint& wrapS, const GLint& wrapT,
+			int width, int height);
 
-		void LoadFromFile(
+		GLuint LoadFromFile(
 			const char* filepath, const GLenum& target,
 			const GLenum& internalFormat, const GLenum& format,
 			const GLint& minFilter, const GLint& magFilter,
 			const GLint& wrapS, const GLint& wrapT);
 
-		void BindTexture(GLint uniform, GLuint position, GLenum target);
+		void BindTexture(GLuint textureHandle, GLint uniform, GLuint position, GLenum target);
 		void UnbindTexture();
-		inline GLuint GetHandle() { return m_textureHandle; }
 
-	private:
-		GLuint m_textureHandle;
-		int m_width;
-		int m_height;
-	};
+	}
 }
 
 #endif 

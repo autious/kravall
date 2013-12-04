@@ -12,6 +12,7 @@
 #endif
 
 #include <glm/glm.hpp>
+#include <GL/glew.h>
 
 #define GFX_SUCCESS 0
 #define GFX_FAIL 1
@@ -23,9 +24,14 @@ typedef glm::mat4x4 GFXMat4x4;
 
 typedef GFXVec4 GFXColor;
 
+#include <vector>
+#include <iostream>
+#include <gfx/Vertex.hpp>
+#include <gfx/Material.hpp>
+
 namespace GFX
 {
-
+	DLL_API void test(std::vector<float>* t);
 
 	/*!
 	Initializes the graphics engine on the currently bound context.
@@ -64,7 +70,9 @@ namespace GFX
 	\param data A pointer to the data used for rendering
 	*/
 	DLL_API void Draw(unsigned int bitmask, void* data);
-	
+
+	DLL_API void Draw(const int& ibo, const int& vao, const int& size, Material* material);
+
 	/*!
 	Issues a draw  text command to the graphics engine.
 	\param position Position of the starting letter
@@ -94,7 +102,38 @@ namespace GFX
 	*/
 	DLL_API void RenderSplash(bool renderSplash);
 
+	/*!
+	Deletes all of the dynamically allocated memory in GFX
+	*/
 	DLL_API void DeleteGFX();
+	
+	DLL_API int GetScreenWidth();
+	DLL_API int GetScreenHeight();
+
+	namespace Content
+	{
+		/*!
+		Loads a 2D RGBA texture onto the GPU
+		\param width Width of the texture
+		\param height Height of the texture
+		\param data Texture data
+		\return Handle of the texture
+		*/
+		DLL_API unsigned int LoadTexture2DFromMemory(int width, int height, unsigned char* data);
+
+		DLL_API unsigned int LoadTexture2DFromFile(const char* filepath);
+
+		/*!
+		Deletes a texture from the GPU
+		\param textureHandle The handle of the texture to be deleted
+		*/
+		DLL_API void DeleteTexture(unsigned int textureHandle);
+
+		DLL_API void LoadStaticMesh(GLuint& IBO, GLuint& VAO, int& sizeVerts, int& sizeIndices, GFX::StaticVertex* verts, int* indices);
+
+		DLL_API void DeleteStaticMesh(const GLuint& IBO, const GLuint& VAO);
+
+	}
 
 	namespace Debug
 	{

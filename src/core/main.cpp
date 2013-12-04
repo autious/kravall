@@ -12,6 +12,7 @@
 #include "WindowHandling/InitializeGLFW.hpp"
 
 #include <gfx/GFXInterface.hpp>
+#include <gfx/Material.hpp>
 #include <utility/Colors.hpp>
 #include "Camera/Camera.hpp"
 #include <ComponentFramework/SystemHandlerTemplate.hpp>
@@ -22,11 +23,29 @@
 #include "GLFWInput.hpp"
 #include <World.hpp>
 
+#include "console/console.hpp"
+#include "BGnomeImporter.hpp"
+
+#include "console/clop.hpp"
+#include <sstream>
+
+#include <iomanip>
+
+// Just an example of a clop function
+// This function gets registred in Init with clop::Register("exit", ClopCloseWindow);
+// And the command is sent to the command line by pressing 'E' (as seen in run()) with Core::Console().SetInputLine("exit");
+void ClopCloseWindow(clop::ArgList args)
+{
+	exit(0);
+}
+
 GLFWwindow* init()
 {
 	GLFWwindow* window;
 
-	Core::InitializeGLFW(&window, 1280, 720, Core::WindowMode::WMODE_WINDOWED_BORDERLESS);
+	Core::InitializeGLFW(&window, 1280, 720, Core::WindowMode::WMODE_WINDOWED);
+
+	clop::Register("exit", ClopCloseWindow);
 
 	if (GFX::Init(1280,720) == GFX_FAIL)
 		return nullptr;
@@ -56,31 +75,87 @@ void TestRendering()
 	GFX::RenderText(glm::vec2(0, 200), glm::vec2(8, 12), Colors::Gold, "ABCDEFGHIJKLMNOPQRSTUVWXYZASIUHDOIASHUDIOASHDA1234567890*'^&%#!?");
 }
 
+void SystemTimeRender()
+{
+        std::vector<std::pair<const char *,std::chrono::microseconds>> times = Core::world.m_systemHandler.GetFrameTime();
+
+
+        for( int i = 0; i < times.size(); i++ )
+        {
+            std::stringstream ss;
+            
+            ss << times[i].first << ": " << std::fixed << std::setw( 7 ) << std::setprecision(4) << std::setfill( '0' ) << times[i].second.count() / 1000.0f << "ms";
+	        GFX::RenderText(glm::vec2(5, GFX::GetScreenHeight()-5-20*times.size()+20*i), glm::vec2(8, 12), Colors::White, ss.str().c_str());
+        }
+
+	    GFX::Debug::DrawRectangle(glm::vec2(0,GFX::GetScreenHeight()-5-20-17*times.size() ), 
+            glm::vec2(500, 20*times.size()), true, glm::vec4( 0.5f,0.5f,0.5f,0.5f) );
+}
+
 void run( GLFWwindow * window )
 {
 	Core::Camera* gCamera;
-	gCamera = new Core::Camera(45.0f, 1.0f, 1000.0f);
+	gCamera = new Core::Camera(45.0f, 1.0f, 2000.0f);
 	gCamera->CalculateProjectionMatrix(1280, 720);
-	gCamera->SetPosition(glm::vec3(0.0f, 0.0f, 10.0f));
+	gCamera->SetPosition(glm::vec3(0.0f, 0.0f, -500.0f));
 
 	GFX::SetProjectionMatrix(gCamera->GetProjectionMatrix());
 
 	Core::GLFWInput* input = new Core::GLFWInput(window);
-	GFX::RenderSplash(true);
+	GFX::RenderSplash(false);
 	bool fs = false;
 
+	BGnomeImporter* BGI = new BGnomeImporter();
     Entity ent1 = Core::world.m_entityHandler.CreateEntity<Core::ExampleComponent1,Core::ExampleComponent2>( Core::ExampleComponent1::D1(),
                                                                                    Core::ExampleComponent2::D2() );
+	GFX::StaticVertex* vs = nullptr;
+	GLuint IBO;
+	GLuint VAO;
+	int vSize;
+	int iSize;
+	BGI->Go("assets/flag.GNOME", vs, vSize);
 
+	int* indices = new int[vSize];
+	iSize = vSize;
+	for (int i = 0; i < vSize; i++)
+	{
+		indices[i] = i;
+	}
+	GFX::Content::LoadStaticMesh(IBO, VAO, vSize, iSize, vs, indices);
+
+	std::cout << IBO << std::endl;
+	std::cout << VAO << std::endl;
+
+	GFX::Material* m = new GFX::Material();
+	m->diffuse = GFX::Content::LoadTexture2DFromFile("assets/GDM.png");
+	std::cout << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " ";
 	while (!glfwWindowShouldClose(window))
 	{
 		input->UpdateInput();
 		
 		if (input->IsKeyPressedOnce(GLFW_KEY_ESCAPE))
-			break;
+			Core::Console().ClearInput();
+		//	break;
 
 		if (input->IsKeyPressedOnce(GLFW_KEY_TAB))
-			GFX::ToggleConsole();
+			Core::Console().Toggle();
+		if (input->IsKeyPressedOnce(GLFW_KEY_UP))
+			Core::Console().LastHistory();
+		if (input->IsKeyPressedOnce(GLFW_KEY_DOWN))
+			Core::Console().NextHistory();
+		if (input->IsKeyPressedOnce(GLFW_KEY_PAGE_UP))
+			Core::Console().Scroll(1);
+		if (input->IsKeyPressedOnce(GLFW_KEY_PAGE_DOWN))
+			Core::Console().Scroll(-1);
+		if (input->IsKeyPressedOnce(GLFW_KEY_F))
+			Core::Console().SetInputLine("Command " + std::to_string(rand()));
+		if (input->IsKeyPressedOnce(GLFW_KEY_E))
+			Core::Console().SetInputLine("exit");
+		if (input->IsKeyPressedOnce(GLFW_KEY_C))
+			Core::Console().SetInputLine("clear");
+		if (input->IsKeyPressedOnce(GLFW_KEY_G))
+			Core::Console().Add();
+		Core::Console().Update();
 
 		if (input->IsKeyPressedOnce(GLFW_KEY_ENTER))
 		{
@@ -114,17 +189,22 @@ void run( GLFWwindow * window )
 		GFX::SetViewMatrix(gCamera->GetViewMatrix());
 
 		//TestRendering();
-
+		GFX::Draw(IBO, VAO, vSize, m);
 		GFX::Render();
 
         Core::world.m_systemHandler.Update( 0.1f );
-
-        // This shows that the system works.
-        //std::cout << WGETC<Core::ExampleComponent1>(ent1)->v << std::endl;
+        SystemTimeRender();
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
-	}
+
+
+        /* Exmaple of how to get and print timedata
+        */
+
+/*
+    */
+    }
 
     glfwDestroyWindow( window );
 

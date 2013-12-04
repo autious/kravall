@@ -55,8 +55,8 @@ solution "RiotGame"
         location ( location_path )
         language "C++"
         kind "ConsoleApp"
-        files { "gtest/core/**.cpp", "src/core/**.hpp", "src/core/**.h", "src/core/**.cpp" }
-        includedirs { "src/core", "include" }
+        files { "gtest/core/**.cpp", "src/core/**.hpp", "src/core/**.h", "src/core/**.cpp", "include/gfx/**.hpp" ,"include/utility/**.hpp" }
+        includedirs { "src/core", "include", "include/gfx" }
         links { "glfw3", "gfx", "logger" }
         configuration{ "*Test" }
             links { "gtest" }
