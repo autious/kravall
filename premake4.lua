@@ -62,7 +62,14 @@ solution "RiotGame"
             includedirs { "/usr/include/lua5.1" }
         end
 
-        links { "glfw3", "lua51", "gfx", "logger" }
+        --Idiotic non-matching naming convenstions.
+        if( os.is( "linux" ) ) then
+           links { "lua5.1" } 
+        else
+            links { "lua51" }
+        end
+
+        links { "glfw3", "gfx", "logger" }
         configuration{ "*Test" }
             links { "gtest" }
         configuration{ "windows" }
