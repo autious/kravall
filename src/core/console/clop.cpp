@@ -89,14 +89,14 @@ namespace clop
 				}
 				else if( ch == '\"' )
 				{
-					if( !tmp.empty() )
-					{
-						args.push_back( tmp );
-						tmp.clear();
-					}
+					//if( !tmp.empty() )
+					//{
+					//	args.push_back( tmp );
+					//	tmp.clear();
+					//}
 					quote = true;
 				}
-				else
+				//else
 				{
 					tmp.push_back( ch );
 				}
@@ -105,14 +105,14 @@ namespace clop
 			{
 				if( ch == '\"' )
 				{
-					if( !tmp.empty() )
-					{
-						args.push_back( tmp );
-						tmp.clear();
-					}
+					//if( !tmp.empty() )
+					//{
+					//	args.push_back( tmp );
+					//	tmp.clear();
+					//}
 					quote = false;
 				}
-				else
+				//else
 				{
 					tmp.push_back( ch );
 				}

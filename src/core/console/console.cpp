@@ -4,11 +4,23 @@
 #include <utility/Colors.hpp>
 #include <sstream>
 
+#include <Lua/LuaState.hpp>
+#include <World.hpp>
+
 namespace Core
 {
 	void ClopClearConsole(clop::ArgList args)
 	{
 		Console().Clear();
+	}
+	
+	void ClopLuaCommand( clop::ArgList args )
+	{
+		std::stringstream ss;
+		for (int i = 1; i < args.size(); i++)
+			ss << (std::string)args[i];
+		std::string src = ss.str();
+		Core::world.m_luaState.DoBlock(src.c_str());
 	}
 
 	DebugConsole::DebugConsole()
@@ -18,6 +30,9 @@ namespace Core
 		m_offset = 0;
 		clop::Register("clear", ClopClearConsole);
 		clop::Register("clr", ClopClearConsole);
+
+		// Register lua
+		clop::Register("lua", ClopLuaCommand);
 		
 		Line line = {"Welcome to the console, have a nice day.", Colors::Gold};
 		m_console.push_back(line);
@@ -50,9 +65,6 @@ namespace Core
 				newLine.replace(sIndex, tab.length(), "     ");
 				sIndex = newLine.find(tab);
 			}
-			
-
-
 			lines.push_back(newLine);
 		}
 
@@ -64,9 +76,6 @@ namespace Core
 			l.text = lines[i];
 			m_console.push_back(l);
 		}
-
-		// tabs
-		// Add to console
 	}
 
 	void DebugConsole::Add()
@@ -141,11 +150,13 @@ namespace Core
 		}
 	}
 
-#define DEBUG_LINE_NUMBER //GFX::RenderText(glm::vec2(0, 376 - (i)* 15), 1.0f, color, ("[" + std::to_string(i) + "]").c_str());
-
+#define DEBUG_LINE_NUMBER GFX::RenderText(glm::vec2(1, 377 - (i)* 15), 1.0f, Colors::Black, ("[" + std::to_string(i) + "]").c_str());\
+	GFX::RenderText(glm::vec2(0, 376 - (i)* 15), 1.0f, color, ("[" + std::to_string(i) + "]").c_str());
+	
+	
 	void DebugConsole::Update()
 	{
-		const int x = 10;
+		const int x = 40;
 		if (m_visible)
 		{
 			GFX::ShowConsole();
@@ -168,6 +179,7 @@ namespace Core
 					if (nrWraps == 0) // Single line
 					{
 						DEBUG_LINE_NUMBER
+						GFX::RenderText(glm::vec2(x+1, 376+1 - (i) * 15), 1.0f,Colors::Black, line.c_str());
 						GFX::RenderText(glm::vec2(x, 376 - (i) * 15), 1.0f,color, line.c_str());
 					}
 					else // Wrapped lines
@@ -180,6 +192,7 @@ namespace Core
 							line = std::string(
 								m_console[lineIndex].text.end() - remainder, 
 								m_console[lineIndex].text.end());
+							GFX::RenderText(glm::vec2(x+1, 376+1 - (i) * 15), 1.0f,Colors::Black, line.c_str());
 							GFX::RenderText(glm::vec2(x, 376 - (i)* 15), 1.0f, color, line.c_str());
 							i++;
 						}
@@ -191,6 +204,7 @@ namespace Core
 							line = std::string(
 								m_console[lineIndex].text.end() - remainder - wrapLength * (w+1), 
 								m_console[lineIndex].text.end() - remainder - wrapLength * (w));
+							GFX::RenderText(glm::vec2(x+1, 376+1 - (i) * 15), 1.0f,Colors::Black, line.c_str());
 							GFX::RenderText(glm::vec2(x, 376 - (i) * 15), 1.0f, color, line.c_str());
 							i++;
 						}
@@ -202,6 +216,7 @@ namespace Core
 			}
 
 			// Draw input line
+			GFX::RenderText(glm::vec2(11, 398), 1.0f, Colors::Black, ("> " + m_inputLine).c_str());
 			GFX::RenderText(glm::vec2(10, 397), 1.0f, Colors::Silver, ("> " + m_inputLine).c_str());
 
 		}
@@ -241,5 +256,6 @@ namespace Core
 		static DebugConsole console;
 		return console;
 	}
+
 
 }

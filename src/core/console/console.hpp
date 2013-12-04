@@ -96,6 +96,9 @@ namespace Core
 	};
 	DebugConsole& Console();
 
+	// List of commands
+	void ClopLuaCommand();
+
 }
 
 #endif
