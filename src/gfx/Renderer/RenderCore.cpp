@@ -33,6 +33,7 @@ namespace GFX
 		delete(m_debugPainter);
 		delete(m_consolePainter);
 		delete(m_splashPainter);
+		delete(m_fboPainter);
 	}
 
 	void RenderCore::Initialize(int windowWidth, int windowHeight)

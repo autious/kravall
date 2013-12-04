@@ -131,7 +131,7 @@ void run( GLFWwindow * window )
 	std::cout << VAO << std::endl;
 
 	GFX::Material* m = new GFX::Material();
-	m->diffuse = GFX::Content::LoadTexture2DFromFile("assets/GDM2.png");
+	m->diffuse = GFX::Content::LoadTexture2DFromFile("assets/GDM.png");
 	std::cout << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " ";
 	while (!glfwWindowShouldClose(window))
 	{
