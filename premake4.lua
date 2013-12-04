@@ -57,13 +57,23 @@ solution "RiotGame"
         kind "ConsoleApp"
         files { "gtest/core/**.cpp", "src/core/**.hpp", "src/core/**.h", "src/core/**.cpp", "include/gfx/**.hpp" ,"include/utility/**.hpp" }
         includedirs { "src/core", "include", "include/gfx" }
-        links { "glfw3", "gfx", "logger" }
+
+        if os.is( "linux" ) then
+            includedirs { "/usr/include/lua5.1" }
+        end
+
+        links { "glfw3", "lua5.1", "gfx", "logger" }
         configuration{ "*Test" }
             links { "gtest" }
         configuration{ "windows" }
             links { "glew32", "glfw3dll", "opengl32" }
         configuration{ "linux" }
             links { "GLEW", "GL" }
+        configuration{ "Debug*" }
+            defines{ "LUA_USE_APICHECK" }
+        configuration{ "PureDebugTest" }
+            defines{ "LUA_USE_APICHECK" }
+    
 
     project "gfx"
         location ( location_path )
@@ -95,6 +105,11 @@ solution "RiotGame"
         files { "gtest/logger/**.cpp", "src/logger/**.hpp", "src/logger/**.h", "src/logger/**.cpp", "include/logger/**.hpp" }
 		includedirs { "include/logger", "src/logger" }       
 		defines { "LOGGER_DLL_EXPORT" }
+
+        if os.is( "linux" ) then
+            defines { "LOGGER_LINUX_CONSOLE" } --Activate color output for linux console
+        end
+
         configuration{ "*Test" }
             links { "gtest" }
  

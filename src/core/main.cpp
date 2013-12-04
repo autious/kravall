@@ -32,6 +32,9 @@
 #include <iomanip>
 
 #include <ContentManagement/ContentManager.hpp>
+#include <logger/Logger.hpp>
+
+#include <Lua/LuaState.hpp>
 
 // Just an example of a clop function
 // This function gets registred in Init with clop::Register("exit", ClopCloseWindow);
@@ -41,9 +44,19 @@ void ClopCloseWindow(clop::ArgList args)
 	exit(0);
 }
 
-GLFWwindow* init()
+GLFWwindow* init( int argc, char** argv )
 {
 	GLFWwindow* window;
+
+    Core::world.m_luaState.Execute( "scripts/config.lua" );
+
+    for( int i = 0; i < argc-1; i++ )
+    {
+        if( strcmp( argv[i], "--conf" ) == 0 )
+        {
+            Core::world.m_luaState.DoBlock( argv[i+1] ); 
+        }
+    }
 
 	Core::InitializeGLFW(&window, 1280, 720, Core::WindowMode::WMODE_WINDOWED);
 
@@ -81,7 +94,6 @@ void SystemTimeRender()
 {
         std::vector<std::pair<const char *,std::chrono::microseconds>> times = Core::world.m_systemHandler.GetFrameTime();
 
-
         for( int i = 0; i < times.size(); i++ )
         {
             std::stringstream ss;
@@ -98,6 +110,8 @@ void run( GLFWwindow * window )
 {
 
     Core::ContentManager CM;
+
+    LOG_INFO << "Starting program" << std::endl;
 
 	Core::Camera* gCamera;
 	gCamera = new Core::Camera(45.0f, 1.0f, 2000.0f);
@@ -130,6 +144,7 @@ void run( GLFWwindow * window )
 
 	std::cout << IBO << std::endl;
 	std::cout << VAO << std::endl;
+    
 
 	GFX::Material* m = new GFX::Material();
 	m->diffuse = GFX::Content::LoadTexture2DFromFile("assets/GDM.png");
@@ -203,12 +218,6 @@ void run( GLFWwindow * window )
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 
-
-        /* Exmaple of how to get and print timedata
-        */
-
-/*
-    */
     }
 
     glfwDestroyWindow( window );
@@ -223,7 +232,7 @@ int main(int argc, char** argv)
     ::testing::InitGoogleTest(&argc, argv);
 #endif
 #ifndef SKIP_RUN
-	GLFWwindow* window = init();
+	GLFWwindow* window = init( argc, argv );
 	if( window == nullptr )
 		return -1; 
 #endif
