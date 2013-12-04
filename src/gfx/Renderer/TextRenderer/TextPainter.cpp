@@ -23,7 +23,7 @@ namespace GFX
 		}
 
 		/* Load a font */
-		if (FT_New_Face(m_library, "assets/Fonts/DentonBETA2.ttf", 0, &m_face))
+		if (FT_New_Face(m_library, "assets/Fonts/Terminus.ttf", 0, &m_face))
 		{
 			assert(0 && "Could not open font file in TextPainter.Initialize()\n");
 		}
@@ -44,7 +44,7 @@ namespace GFX
 		glGenBuffers(1, &m_textVBO);
 		glGenVertexArrays(1, &m_textVAO);
 
-		m_atlas48 = new FontTextureAtlas(m_face, 48, m_textureUniform);
+		m_atlas48 = new FontTextureAtlas(m_face, 18, m_textureUniform);
 
 	}
 
@@ -78,7 +78,7 @@ namespace GFX
 		std::vector<glm::vec4> coords;
 
 		int c = 0;
-
+		
 		for (p = (const unsigned char*)text; *p; p++)
 		{
 			float x2 = x + atlas->characters[*p].bitmapLeft * sx;
@@ -105,7 +105,7 @@ namespace GFX
 				glm::vec4(
 				x2 + w,
 				-y2,
-				atlas->characters[*p].uvOffsetX + atlas->characters[*p].bitmapWidth / atlas->width,
+				atlas->characters[*p].uvOffsetX + atlas->characters[*p].bitmapWidth / static_cast<float>(atlas->width),
 				atlas->characters[*p].uvOffsetY)
 				);
 
@@ -115,7 +115,7 @@ namespace GFX
 				x2,
 				-y2 - h,
 				atlas->characters[*p].uvOffsetX,
-				atlas->characters[*p].uvOffsetY + atlas->characters[*p].bitmapHeight / atlas->height)
+				atlas->characters[*p].uvOffsetY + atlas->characters[*p].bitmapHeight / static_cast<float>(atlas->height))
 				);
 
 
@@ -123,7 +123,7 @@ namespace GFX
 				glm::vec4(
 				x2 + w,
 				-y2,
-				atlas->characters[*p].uvOffsetX + atlas->characters[*p].bitmapWidth / atlas->width,
+				atlas->characters[*p].uvOffsetX + atlas->characters[*p].bitmapWidth / static_cast<float>(atlas->width),
 				atlas->characters[*p].uvOffsetY)
 				);
 
@@ -132,15 +132,15 @@ namespace GFX
 				x2,
 				-y2 - h,
 				atlas->characters[*p].uvOffsetX,
-				atlas->characters[*p].uvOffsetY + atlas->characters[*p].bitmapHeight / atlas->height)
+				atlas->characters[*p].uvOffsetY + atlas->characters[*p].bitmapHeight / static_cast<float>(atlas->height))
 				);
 
 			coords.push_back(
 				glm::vec4(
 				x2 + w,
 				-y2 - h,
-				atlas->characters[*p].uvOffsetX + atlas->characters[*p].bitmapWidth / atlas->width,
-				atlas->characters[*p].uvOffsetY + atlas->characters[*p].bitmapHeight / atlas->height)
+				atlas->characters[*p].uvOffsetX + atlas->characters[*p].bitmapWidth / static_cast<float>(atlas->width),
+				atlas->characters[*p].uvOffsetY + atlas->characters[*p].bitmapHeight / static_cast<float>(atlas->height))
 				);
 		}
 

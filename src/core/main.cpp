@@ -66,13 +66,13 @@ void TestRendering()
 	GFX::Debug::DrawRectangle(glm::vec2(0, 0), glm::vec2(200, 20), true, Colors::Aquamarine);
 	GFX::Debug::DrawRectangle(glm::vec2(100, 20), glm::vec2(100, 40), false, Colors::Chocolate);
 
-	GFX::RenderText(glm::vec2(0, 100), glm::vec2(8, 12), Colors::Black, "The Quick Brown Fox Jumps Over The Lazy Dog");
-	GFX::RenderText(glm::vec2(10, 120), glm::vec2(7, 11), Colors::Blue, "The Quick Brown Fox Jumps Over The Lazy Dog");
-	GFX::RenderText(glm::vec2(20, 140), glm::vec2(6, 10), Colors::Green, "The Quick Brown Fox Jumps Over The Lazy Dog");
-	GFX::RenderText(glm::vec2(30, 160), glm::vec2(5, 9), Colors::CornflowerBlue, "The Quick Brown Fox Jumps Over The Lazy Dog");
-	GFX::RenderText(glm::vec2(40, 180), glm::vec2(8, 12), Colors::White, "The Quick Brown Fox Jumps Over The Lazy Dog????");
+	GFX::RenderText(glm::vec2(0, 100), 12.0f, Colors::Black, "The Quick Brown Fox Jumps Over The Lazy Dog");
+	GFX::RenderText(glm::vec2(10, 120), 11.0f, Colors::Blue, "The Quick Brown Fox Jumps Over The Lazy Dog");
+	GFX::RenderText(glm::vec2(20, 140), 10.0f, Colors::Green, "The Quick Brown Fox Jumps Over The Lazy Dog");
+	GFX::RenderText(glm::vec2(30, 160), 9.0f, Colors::CornflowerBlue, "The Quick Brown Fox Jumps Over The Lazy Dog");
+	GFX::RenderText(glm::vec2(40, 180), 12.0f, Colors::White, "The Quick Brown Fox Jumps Over The Lazy Dog????");
 
-	GFX::RenderText(glm::vec2(0, 200), glm::vec2(8, 12), Colors::Gold, "ABCDEFGHIJKLMNOPQRSTUVWXYZASIUHDOIASHUDIOASHDA1234567890*'^&%#!?");
+	GFX::RenderText(glm::vec2(0, 200), 12.0f, Colors::Gold, "ABCDEFGHIJKLMNOPQRSTUVWXYZASIUHDOIASHUDIOASHDA1234567890*'^&%#!?");
 }
 
 void SystemTimeRender()
@@ -85,7 +85,7 @@ void SystemTimeRender()
             std::stringstream ss;
             
             ss << times[i].first << ": " << std::fixed << std::setw( 7 ) << std::setprecision(4) << std::setfill( '0' ) << times[i].second.count() / 1000.0f << "ms";
-	        GFX::RenderText(glm::vec2(5, GFX::GetScreenHeight()-5-20*times.size()+20*i), glm::vec2(8, 12), Colors::White, ss.str().c_str());
+	        GFX::RenderText(glm::vec2(5, GFX::GetScreenHeight()-5-20*times.size()+20*i), 1.0f, Colors::White, ss.str().c_str());
         }
 
 	    GFX::Debug::DrawRectangle(glm::vec2(0,GFX::GetScreenHeight()-5-20-17*times.size() ), 
@@ -105,29 +105,29 @@ void run( GLFWwindow * window )
 	GFX::RenderSplash(false);
 	bool fs = false;
 
-	BGnomeImporter* BGI = new BGnomeImporter();
-    Entity ent1 = Core::world.m_entityHandler.CreateEntity<Core::ExampleComponent1,Core::ExampleComponent2>( Core::ExampleComponent1::D1(),
-                                                                                   Core::ExampleComponent2::D2() );
-	GFX::StaticVertex* vs = nullptr;
-	GLuint IBO;
-	GLuint VAO;
-	int vSize;
-	int iSize;
-	BGI->Go("assets/flag.GNOME", vs, vSize);
-
-	int* indices = new int[vSize];
-	iSize = vSize;
-	for (int i = 0; i < vSize; i++)
-	{
-		indices[i] = i;
-	}
-	GFX::Content::LoadStaticMesh(IBO, VAO, vSize, iSize, vs, indices);
-
-	std::cout << IBO << std::endl;
-	std::cout << VAO << std::endl;
-
-	GFX::Material* m = new GFX::Material();
-	m->diffuse = GFX::Content::LoadTexture2DFromFile("assets/GDM.png");
+	//BGnomeImporter* BGI = new BGnomeImporter();
+    //Entity ent1 = Core::world.m_entityHandler.CreateEntity<Core::ExampleComponent1,Core::ExampleComponent2>( Core::ExampleComponent1::D1(),
+    //                                                                               Core::ExampleComponent2::D2() );
+	//GFX::StaticVertex* vs = nullptr;
+	//GLuint IBO;
+	//GLuint VAO;
+	//int vSize;
+	//int iSize;
+	//BGI->Go("assets/flag.GNOME", vs, vSize);
+	//
+	//int* indices = new int[vSize];
+	//iSize = vSize;
+	//for (int i = 0; i < vSize; i++)
+	//{
+	//	indices[i] = i;
+	//}
+	//GFX::Content::LoadStaticMesh(IBO, VAO, vSize, iSize, vs, indices);
+	//
+	//std::cout << IBO << std::endl;
+	//std::cout << VAO << std::endl;
+	//
+	//GFX::Material* m = new GFX::Material();
+	//m->diffuse = GFX::Content::LoadTexture2DFromFile("assets/GDM.png");
 	std::cout << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " ";
 	while (!glfwWindowShouldClose(window))
 	{
@@ -148,13 +148,15 @@ void run( GLFWwindow * window )
 		if (input->IsKeyPressedOnce(GLFW_KEY_PAGE_DOWN))
 			Core::Console().Scroll(-1);
 		if (input->IsKeyPressedOnce(GLFW_KEY_F))
-			Core::Console().SetInputLine("Command " + std::to_string(rand()));
+			Core::Console().SetInputLine("This is the first line.\nhere is another line!" + std::to_string(rand()));
 		if (input->IsKeyPressedOnce(GLFW_KEY_E))
 			Core::Console().SetInputLine("exit");
 		if (input->IsKeyPressedOnce(GLFW_KEY_C))
 			Core::Console().SetInputLine("clear");
 		if (input->IsKeyPressedOnce(GLFW_KEY_G))
 			Core::Console().Add();
+		if (input->IsKeyPressedOnce(GLFW_KEY_U))
+			Core::Console().Print("Woohoo\nyes\n\tawesome\nlol", Colors::Green);
 		Core::Console().Update();
 
 		if (input->IsKeyPressedOnce(GLFW_KEY_ENTER))
@@ -189,7 +191,7 @@ void run( GLFWwindow * window )
 		GFX::SetViewMatrix(gCamera->GetViewMatrix());
 
 		//TestRendering();
-		GFX::Draw(IBO, VAO, vSize, m);
+		//GFX::Draw(IBO, VAO, vSize, m);
 		GFX::Render();
 
         Core::world.m_systemHandler.Update( 0.1f );

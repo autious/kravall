@@ -2,6 +2,7 @@
 #include "clop.hpp"
 #include <gfx/GFXInterface.hpp>
 #include <utility/Colors.hpp>
+#include <sstream>
 
 namespace Core
 {
@@ -17,6 +18,9 @@ namespace Core
 		m_offset = 0;
 		clop::Register("clear", ClopClearConsole);
 		clop::Register("clr", ClopClearConsole);
+		
+		Line line = {"Welcome to the console, have a nice day.", Colors::Gold};
+		m_console.push_back(line);
 	}
 	DebugConsole::~DebugConsole()
 	{
@@ -26,6 +30,43 @@ namespace Core
 	void DebugConsole::SetInputLine(const std::string& inputLine)
 	{
 		m_inputLine = inputLine;
+	}
+
+	void DebugConsole::Print(std::string str, Color color)
+	{
+		// Add lines
+		std::string newLine;
+		std::string tab = "\t";
+		std::vector<std::string> lines;
+		std::istringstream ss(str);
+		while (!ss.eof())
+		{
+			std::getline(ss, newLine);
+			
+			//Find and replace \t with spaces
+			std::size_t sIndex = newLine.find(tab);
+			while (sIndex != newLine.npos)
+			{
+				newLine.replace(sIndex, tab.length(), "     ");
+				sIndex = newLine.find(tab);
+			}
+			
+
+
+			lines.push_back(newLine);
+		}
+
+		// Add all lines to the console
+		Line l;
+		l.color = color;
+		for (unsigned int i = 0; i < lines.size(); i++)
+		{
+			l.text = lines[i];
+			m_console.push_back(l);
+		}
+
+		// tabs
+		// Add to console
 	}
 
 	void DebugConsole::Add()
@@ -54,7 +95,7 @@ namespace Core
 			// Execute command
 			if (!clop::Command(m_inputLine))
 			{
-				Line errLine = {"ERROR: Command \'" + m_inputLine + "\' not found", Colors::Red};
+				Line errLine = {"ERROR: Unknown command", Colors::Red};
 				m_console.push_back(errLine);
 			}
 
@@ -98,21 +139,68 @@ namespace Core
 		std::cout << m_offset << std::endl;
 	}
 
+#define DEBUG_LINE_NUMBER GFX::RenderText(glm::vec2(0, 376 - (i)* 15), 1.0f, color, ("[" + std::to_string(i) + "]").c_str());
+
 	void DebugConsole::Update()
 	{
+		const int x = 40;
 		if (m_visible)
 		{
 			GFX::ShowConsole();
+
 			// Draw lines
+			int lineIndex = m_console.size() - 1 - m_offset;
+			int totalWraps = 0;
 			for (int i = 0; i < m_numRows; i++)
 			{
-				int index = m_console.size() - 1 - i - m_offset;
-				if (index >= 0 && index < (int)m_console.size())
-					GFX::RenderText(glm::vec2(10, 376 - i * 20), glm::vec2(6, 12), m_console[index].color, m_console[index].text.c_str());
+
+				if (lineIndex >= 0 && lineIndex < (int)m_console.size())
+				{
+					std::string line = m_console[lineIndex].text;
+					Color color = m_console[lineIndex].color;
+				
+
+					int wrapLength = (GFX::GetScreenWidth()-x-20) / m_wrapCharWidth;
+					int nrWraps = line.length() / wrapLength;
+
+					if (nrWraps == 0) // Single line
+					{
+						DEBUG_LINE_NUMBER
+						GFX::RenderText(glm::vec2(x, 376 - (i) * 15), 1.0f,color, line.c_str());
+					}
+					else // Wrapped lines
+					{
+						// Draw remainder
+						int remainder = line.length() % wrapLength;
+						if (remainder != 0)
+						{
+							DEBUG_LINE_NUMBER
+							line = std::string(
+								m_console[lineIndex].text.end() - remainder, 
+								m_console[lineIndex].text.end());
+							GFX::RenderText(glm::vec2(x, 376 - (i)* 15), 1.0f, color, line.c_str());
+							i++;
+						}
+
+						// Draw wrapped lines
+						for (int w = 0; w < nrWraps && i < m_numRows; w++)
+						{
+							DEBUG_LINE_NUMBER
+							line = std::string(
+								m_console[lineIndex].text.end() - remainder - wrapLength * (w+1), 
+								m_console[lineIndex].text.end() - remainder - wrapLength * (w));
+							GFX::RenderText(glm::vec2(x, 376 - (i) * 15), 1.0f, color, line.c_str());
+							i++;
+						}
+						i--;
+					}
+
+				}
+				lineIndex--;
 			}
 
 			// Draw input line
-			GFX::RenderText(glm::vec2(10, 397), glm::vec2(6, 12), Colors::Silver, ("> " + m_inputLine).c_str());
+			GFX::RenderText(glm::vec2(10, 397), 1.0f, Colors::Silver, ("> " + m_inputLine).c_str());
 
 		}
 		else
