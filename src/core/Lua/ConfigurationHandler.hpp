@@ -25,6 +25,7 @@ namespace Core
         glm::vec2   GetVec2( const char *name, glm::vec2 fallback );
         glm::vec3   GetVec3( const char *name, glm::vec3 fallback );
         glm::vec4   GetVec4( const char *name, glm::vec4 fallback );
+         
 
         void        SetString( const char *name, const char *value );
         void        SetDouble( const char *name, double& value );
@@ -35,6 +36,7 @@ namespace Core
         void        SetVec4( const char *name, glm::vec4& value );
 
     private: 
+        void GetVecX( const char *name, float *val, int count );
         void PushConfigTable();
         void PopConfigTable();
     };

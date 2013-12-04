@@ -5,9 +5,11 @@
 
 namespace Core
 {
+    class ConfigurationHandler;
     class LuaState
     {
         private:
+            friend class ConfigurationHandler;
             lua_State *m_state;
         public:
             LuaState();
