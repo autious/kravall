@@ -142,6 +142,16 @@ namespace Core
 		m_scrollY = y;
 	}
 
+	double GLFWInput::GetScrollX()
+	{
+		return m_scrollX;
+	}
+
+	double GLFWInput::GetScrollY()
+	{
+		return m_scrollY;
+	}
+
 	void GLFWInput::SetChar(char c)
 	{
 		m_inputChar = c;

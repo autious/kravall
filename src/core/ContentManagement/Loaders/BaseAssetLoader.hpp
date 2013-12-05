@@ -1,6 +1,10 @@
 #ifndef CORE_CONTENT_MANAGEMENT_LOADERS_BASE_ASSET_LOADER_HPP
 #define CORE_CONTENT_MANAGEMENT_LOADERS_BASE_ASSET_LOADER_HPP
 
+#include <mutex>
+
+#include <ContentManagement/Defines.hpp>
+
 namespace Core
 {
     class BaseAssetLoader
@@ -9,9 +13,11 @@ namespace Core
         BaseAssetLoader();
         virtual ~BaseAssetLoader();
 
-        virtual bool Load(const char* assetName, void* &handle) = 0;
-        virtual void Destroy(const void* handle) = 0;
+        virtual void* Load(const char* assetName) = 0;
+        virtual void* LoadAsync(const char* assetname, Core::FinisherVector& finisher, std::mutex& finisherMutex) = 0;
+        virtual void Destroy(const Core::AssetHandle handle) = 0;
     private:
+
     };
 }
 

@@ -34,33 +34,8 @@
 
 #include <ContentManagement/ContentManager.hpp>
 #include <logger/Logger.hpp>
-#include <logger/internal/ClopHandler.hpp>
-#include <logger/internal/LogData.hpp>
 
 #include <Lua/LuaState.hpp>
-
-void clopLoggerCallback( LogSystem::LogType m_type, const char * message )
-{
-    switch( m_type )
-    {
-    case LogSystem::LogType::logType_debug :
-        Core::Console().PrintLine(std::string( message ), Colors::White );
-        break;
-
-    case LogSystem::LogType::logType_error :
-        Core::Console().PrintLine(std::string( message ), Colors::Red );
-        break;
-
-    case LogSystem::LogType::logType_fatal :
-        Core::Console().PrintLine(std::string( message ), Colors::Red );
-        break;
-
-    case LogSystem::LogType::logType_warning :
-        Core::Console().PrintLine(std::string( message ), Colors::Yellow);
-        break;
-    }
-
-}
 
 // Just an example of a clop function
 // This function gets registred in Init with clop::Register("exit", ClopCloseWindow);
@@ -80,11 +55,6 @@ GLFWwindow* init( int argc, char** argv )
 	const char * string2  = "hej";
 
 	GLFWwindow* window;
-    
-    LogSystem::RegisterLogHandler( LogSystem::debugHandler, new ClopHandler( clopLoggerCallback ) );
-    LogSystem::RegisterLogHandler( LogSystem::fatalHandler, new ClopHandler( clopLoggerCallback ) );
-    LogSystem::RegisterLogHandler( LogSystem::errorHandler, new ClopHandler( clopLoggerCallback ) );
-    LogSystem::RegisterLogHandler( LogSystem::warningHandler, new ClopHandler( clopLoggerCallback ) );
 
     Core::world.m_luaState.Execute( "scripts/config.lua" );
 
@@ -150,7 +120,6 @@ void SystemTimeRender()
 void run( GLFWwindow * window )
 {
 
-    Core::ContentManager CM;
 
     LOG_INFO << "Starting program" << std::endl;
 
@@ -162,6 +131,31 @@ void run( GLFWwindow * window )
 	GFX::SetProjectionMatrix(gCamera->GetProjectionMatrix());
 
 	Core::GetInput().Initialize(window);
+
+    Entity ent1 = Core::world.m_entityHandler.CreateEntity<Core::ExampleComponent1,Core::ExampleComponent2>( Core::ExampleComponent1::D1(),
+                                                                                   Core::ExampleComponent2::D2() );
+    Core::ContentManager CM;
+
+	GLuint IBO;
+	GLuint VAO;
+    GLint vSize;
+    GLint iSize;
+
+    CM.Load<Core::GnomeLoader>("assets/flag.GNOME", [&VAO, &IBO, &vSize, &iSize](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+            {
+                Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
+                const Core::ModelData* data = gnomeLoader->getData(handle);
+                VAO = data->VAO;
+                IBO = data->IBO;
+                vSize = data->vSize;
+                iSize = data->iSize;
+
+                std::cout << data->IBO << std::endl;
+                std::cout << data->VAO << std::endl;
+            });
+
+    std::cout << IBO << std::endl;
+    std::cout << VAO << std::endl;
 
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));
 	bool fs = false;
@@ -192,8 +186,8 @@ void run( GLFWwindow * window )
 	//std::cout << VAO << std::endl;
     //
 	//
-	//GFX::Material* m = new GFX::Material();
-	//m->diffuse = GFX::Content::LoadTexture2DFromFile("assets/GDM.png");
+    GFX::Material* m = new GFX::Material();
+	m->diffuse = GFX::Content::LoadTexture2DFromFile("assets/GDM.png");
 
 	std::cout << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " ";
 
@@ -222,10 +216,11 @@ void run( GLFWwindow * window )
 			Core::Console().NextHistory();
 			inputline = Core::Console().GetInputLine();
 		}
-		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_PAGE_UP))
+		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_PAGE_UP) || Core::GetInput().GetScrollY() > 0)
 			Core::Console().Scroll(1);
-		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_PAGE_DOWN))
+		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_PAGE_DOWN) || Core::GetInput().GetScrollY() < 0)
 			Core::Console().Scroll(-1);
+
 		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_ENTER))
 		{
 			Core::Console().SetInputLine(inputline);
@@ -289,7 +284,7 @@ void run( GLFWwindow * window )
 		GFX::SetViewMatrix(gCamera->GetViewMatrix());
 
 		//TestRendering();
-		//GFX::Draw(IBO, VAO, vSize, m);
+		GFX::Draw(IBO, VAO, vSize, m);
 
 		GFX::Render();
 

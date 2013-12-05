@@ -3,25 +3,24 @@
 
 #include <functional>
 #include <future>
+#include <mutex>
 #include <array>
 #include <vector>
+#include <tuple>
 #include <chrono>
 #include <cassert>
 #include <cstring>
 
-#include <Memory/MallocCounter.hpp>
-#include <ComponentFramework/CheckTemplatePresence.hpp>
-#include <ComponentFramework/ComponentType.hpp>
-
 #include <ContentManagement/Loaders/BaseAssetLoader.hpp>
 #include <ContentManagement/LoaderIncludes.hpp>
 
+#include <ComponentFramework/CheckTemplatePresence.hpp>
+#include <ComponentFramework/ComponentType.hpp>
+
+#include <logger/Logger.hpp>
+
 namespace Core
 {    
-    typedef void* AssetHandle;
-    typedef std::vector<std::tuple<short, unsigned int, unsigned int, AssetHandle>> AssetVector;
-    typedef std::vector<std::tuple<unsigned int, std::future<void*>, std::function<void(Core::BaseAssetLoader*, AssetHandle)>>> FinisherVector;
-
     template<typename... Loaders>
     class ContentManagerTemplate
     {
@@ -40,18 +39,17 @@ namespace Core
         }
 
         template<typename Loader>
-        void Load( const char* asset, std::function<void(Core::BaseAssetLoader*)> finisher, const bool async = false )
+        void Load( const char* asset, std::function<void(Core::BaseAssetLoader*, Core::AssetHandle assetHandle)> finisher, const bool async = false )
         {
             static_assert(Core::Match<Loader, Loaders...>::exists, "Loader is not in loader list, add it to the ContentManager");           
             static const int loaderId = Core::Index<Loader, std::tuple<Loaders...>>::value;            
             unsigned int assetHash = MurmurHash2(asset, static_cast<int>(std::strlen(asset)), loaderId); 
+            Core::AssetHandle handle = nullptr;
 
-            AssetHandle handle;
-
-            if(IsCached<Loader>(asset, handle))
+            if(IsCached<Loader>(assetHash, handle))
             {                
                 //Loading cached asset synchronous
-                finisher(m_loaders[loaderId]->GetReader(handle));
+                finisher(m_loaders[loaderId], handle);
                 IncreaseReference<Loader>(assetHash);
             }
             else
@@ -63,14 +61,16 @@ namespace Core
                 else
                 {
                     //Loading un-cached asset synchronous.
-                    AssetHandle handle;
-                    bool result = m_loaders[loaderId]->Load(asset, handle);                                
+                    handle = m_loaders[loaderId]->Load(asset);                                
                     
-                    //TODO::Add log message
-                    assert(result);
-                   
-                    AddReference(assetHash, handle);
-                    finisher(m_loaders[loaderId]->GetReader(handle));
+                    if(handle == nullptr)
+                    {                        
+                        LOG_FATAL << "Fatal Error: Asset: " << asset << " not found" << std::endl;
+                        assert(false);
+                    }
+
+                    AddReference(assetHash, loaderId, handle);
+                    finisher(m_loaders[loaderId], handle);
                 }
             }
         }
@@ -82,19 +82,17 @@ namespace Core
             static const int loaderId = Core::Index<Loader, std::tuple<Loaders...>>::value;
             unsigned int assetHash = MurmurHash2(asset, static_cast<int>(std::strlen(asset)), loaderId); 
             
-            AssetHandle handle;
+            Core::AssetHandle handle;
 
-            if(IsCached(assetHash, handle))
+            if(IsCached<Loader>(assetHash, handle))
             {
                 if(DecreaseReference<Loader>(assetHash) == 0)
                 {                     
-                    std::promise<AssetHandle> promise;
                     
-                    m_finisherList.push_back(std::make_tuple(Core::Index<Loader, std::tuple<Loaders...>>::value, promise.get_future(),[](Core::BaseAssetLoader* assetLoader, AssetHandle handle)
+                    m_finisherList.push_back(std::make_tuple(m_loaders[Core::Index<Loader, std::tuple<Loaders...>>::value], [](Core::BaseAssetLoader* assetLoader, AssetHandle handle)
                         {   
                             assetLoader->Destroy(handle); 
                         }));
-                    promise.set_value(handle);
                 }
             }
             else
@@ -103,22 +101,36 @@ namespace Core
                 assert(false);
             }
         }
-
+        
+        /*!
+          Checks if asynchrounous content has been loaded and calls the user specified application functions if it has. 
+          Also calls removal and finishing functions for loaders. 
+          This function should only be called from the thread which has an active rendering context.
+        */
 
         void CallFinishers()
         {
-            for(FinisherVector::iterator it = m_finisherList.begin(); it != m_finisherList.end(); ++it)
+            std::lock_guard<std::mutex> load(m_finisherLock);
+            for(AsyncVector::iterator it = m_asyncList.begin(); it != m_asyncList.end(); ++it)
             {
                 if(std::get<1>(*it).wait_for(std::chrono::seconds(0)) == std::future_status::ready)
                 {
-                    std::get<2>(*it)(m_loaders[std::get<0>(*it)], std::get<1>(*it).get());
+                    m_finisherList.push_back(std::make_tuple(m_loaders[std::get<0>(*it)], std::get<1>(*it).get(), std::get<2>(*it)));
+                    m_asyncList.erase(it);
+                    it = m_asyncList.begin();
                 }
+            }
+
+            for(FinisherVector::iterator it = m_finisherList.begin(); it != m_finisherList.end(); ++it)
+            {
+                std::get<2>(*it)(std::get<0>(*it), std::get<1>(*it));
             }
             m_finisherList.clear();
         }
+
     private:
         template<typename Loader>
-        bool IsCached( const unsigned int assetHash, AssetHandle handle )
+        bool IsCached( const unsigned int assetHash, AssetHandle& handle )
         {
             for(AssetVector::iterator it = m_assetList.begin(); it != m_assetList.end(); ++it)
             {
@@ -164,10 +176,9 @@ namespace Core
             assert(false);
         }
 
-        template<typename Loader>
-        void AddReference( const unsigned int assetHash, AssetHandle handle)
+        void AddReference( const unsigned int assetHash, int loaderId, AssetHandle handle)
         {
-            m_loaders.push_back(std::make_tuple(1, Core::Index<Loader, std::tuple<Loaders...>>::value, assetHash, handle));            
+            m_assetList.push_back(std::make_tuple(1, loaderId, assetHash, handle));            
         }
 
         template<typename Loader>
@@ -238,10 +249,10 @@ namespace Core
 
         static const int LOADER_COUNT = sizeof...(Loaders);
         std::array<Core::BaseAssetLoader*, LOADER_COUNT> m_loaders;
+        std::mutex m_finisherLock;
 
-        //|-----------------Key--------------------|---Value-----|
-        // Users, Loader index, Hash of asset name, AssetHandle
         AssetVector m_assetList;
+        AsyncVector m_asyncList;
         FinisherVector m_finisherList;
 
     };

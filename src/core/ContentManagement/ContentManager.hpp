@@ -5,7 +5,7 @@
 
 namespace Core
 {
-    typedef Core::ContentManagerTemplate<Core::TTFLoader> ContentManager;
+    typedef Core::ContentManagerTemplate<Core::TTFLoader, Core::GnomeLoader> ContentManager;
 }
 
 #endif
