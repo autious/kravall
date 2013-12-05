@@ -30,6 +30,7 @@ namespace Core
 		m_historyIndex = 0;
 		m_offset = 0;
 		m_cursorOffset = 0;
+		m_cursorVisibilityTick = 0;
 
 		clop::Register("clear", ClopClearConsole);
 		clop::Register("clr", ClopClearConsole);
@@ -116,6 +117,7 @@ namespace Core
 
 			// Reset input line
 			m_inputLine.clear();
+			m_cursorOffset = 0;
 
 			if (m_offset != 0)
 				m_offset++;
@@ -130,6 +132,7 @@ namespace Core
 			if (m_historyIndex < 0)
 				m_historyIndex = 0;
 			m_inputLine = m_history[m_historyIndex];
+			m_cursorOffset = m_inputLine.length();
 		}
 	}
 
@@ -141,6 +144,7 @@ namespace Core
 			if (m_historyIndex >= (int)m_history.size())
 				m_historyIndex = m_history.size()-1;
 			m_inputLine = m_history[m_historyIndex];
+			m_cursorOffset = m_inputLine.length();
 		}
 	}
 
@@ -155,6 +159,264 @@ namespace Core
 				m_offset = (int)m_console.size() - 1;
 		}
 	}
+	
+	void DebugConsole::MoveCursorLeft()
+	{
+		m_cursorOffset--;
+		if (m_cursorOffset < 0)
+			m_cursorOffset = 0;
+	}
+
+	void DebugConsole::MoveCursorRight()
+	{
+		m_cursorOffset++;
+		if (m_cursorOffset > m_inputLine.length())
+			m_cursorOffset = m_inputLine.length();
+	}
+
+	void DebugConsole::JumpCursorLeft()
+	{
+		int pos = m_cursorOffset-1;
+		if (pos < 0)
+		{
+			m_cursorOffset = 0;
+			return;
+		}
+
+		bool isDelimiter = false;
+		char del = '\0';
+
+		//Check if delimiter
+		for (int i = 0; i < m_delChars.length(); i++)
+		{
+			if (m_inputLine[pos] == m_delChars[i])
+			{
+				del = m_delChars[i];
+				isDelimiter = true;
+				break;
+			}
+		}
+
+		if (isDelimiter)
+		{
+			bool found = false;
+			while (pos > 0)
+			{
+				for (int i = 0; i < m_delChars.length(); i++)
+				{
+
+					if (m_inputLine[pos] != del)
+					{
+						m_cursorOffset = pos + 1;
+						found = true;
+						break;
+					}
+				}
+				if (found)
+					break;
+				pos--;
+			}
+			if (!found)
+				m_cursorOffset = 0;
+		}
+		else
+		{
+			bool found = false;
+			while (pos > 0)
+			{
+				for (int i = 0; i < m_delChars.length(); i++)
+				{
+					if (m_inputLine[pos] == m_delChars[i])
+					{
+						m_cursorOffset = pos + 1;
+						found = true;
+						break;
+					}
+				}
+				if (found)
+					break;
+				pos--;
+			}
+			if (!found)
+				m_cursorOffset = 0;
+		}
+
+		if (m_cursorOffset < 0)
+			m_cursorOffset = 0;
+		if (m_cursorOffset > m_inputLine.length())
+			m_cursorOffset = m_inputLine.length();
+	}
+
+	void DebugConsole::JumpCursorRight()
+	{
+		int pos = m_cursorOffset;
+		int l = m_inputLine.length();
+		if (pos > l)
+		{
+			m_cursorOffset = l;
+			return;
+		}
+
+		bool isDelimiter = false;
+		char del = '\0';
+
+		//Check if delimiter
+		for (int i = 0; i < m_delChars.length(); i++)
+		{
+			if (m_inputLine[pos] == m_delChars[i])
+			{
+				del = m_delChars[i];
+				isDelimiter = true;
+				break;
+			}
+		}
+
+		if (isDelimiter)
+		{
+			bool found = false;
+			while (pos < l)
+			{
+				for (int i = 0; i < m_delChars.length(); i++)
+				{
+
+					if (m_inputLine[pos] != del)
+					{
+						m_cursorOffset = pos;
+						found = true;
+						break;
+					}
+				}
+				if (found)
+					break;
+				pos++;
+			}
+			if (!found)
+				m_cursorOffset = l;
+		}
+		else
+		{
+			bool found = false;
+			while (pos < l)
+			{
+				for (int i = 0; i < m_delChars.length(); i++)
+				{
+					if (m_inputLine[pos] == m_delChars[i])
+					{
+						m_cursorOffset = pos;
+						found = true;
+						break;
+					}
+				}
+				if (found)
+					break;
+				pos++;
+			}
+			if (!found)
+				m_cursorOffset = l;
+		}
+
+		if (m_cursorOffset < 0)
+			m_cursorOffset = 0;
+		if (m_cursorOffset > m_inputLine.length())
+			m_cursorOffset = m_inputLine.length();
+	}
+
+	void DebugConsole::DeleteWord()
+	{
+		int pos = m_cursorOffset-1;
+		int endPos = pos;
+		if (pos < 0)
+		{
+			m_cursorOffset = 0;
+			return;
+		}
+
+		bool isDelimiter = false;
+		char del = '\0';
+
+		//Check if delimiter
+		for (int i = 0; i < m_delChars.length(); i++)
+		{
+			if (m_inputLine[pos] == m_delChars[i])
+			{
+				del = m_delChars[i];
+				isDelimiter = true;
+				break;
+			}
+		}
+
+		if (isDelimiter)
+		{
+			bool found = false;
+			while (pos > 0)
+			{
+				for (int i = 0; i < m_delChars.length(); i++)
+				{
+
+					if (m_inputLine[pos] != del)
+					{
+						m_cursorOffset = pos + 1;
+						found = true;
+						break;
+					}
+				}
+				if (found)
+					break;
+				pos--;
+			}
+			if (!found)
+				m_cursorOffset = 0;
+		}
+		else
+		{
+			bool found = false;
+			while (pos > 0)
+			{
+				for (int i = 0; i < m_delChars.length(); i++)
+				{
+					if (m_inputLine[pos] == m_delChars[i])
+					{
+						m_cursorOffset = pos + 1;
+						found = true;
+						break;
+					}
+				}
+				if (found)
+					break;
+				pos--;
+			}
+			if (!found)
+				m_cursorOffset = 0;
+		}
+
+		if (m_cursorOffset < 0)
+			m_cursorOffset = 0;
+		if (m_cursorOffset > m_inputLine.length())
+			m_cursorOffset = m_inputLine.length();
+
+		// Remove
+		for (int i = 0; i <= endPos - m_cursorOffset; i++)
+			if (m_inputLine.length() > 0)
+			{
+				m_inputLine.erase(m_inputLine.begin() + m_cursorOffset);
+			}
+			else
+			{
+				break;
+			}
+
+	}
+
+	void DebugConsole::DeleteLetter()
+	{
+		if (m_inputLine.length() > 0)
+		{
+			m_inputLine.erase(m_inputLine.begin() + m_cursorOffset - 1);
+			m_cursorOffset--;
+			if (m_cursorOffset < 0)
+				m_cursorOffset = 0;
+		}
+	}
 
 	void DebugConsole::HandleInput()
 	{
@@ -162,43 +424,64 @@ namespace Core
 			ClearInput();
 		
 		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_UP))
-		{
 			LastHistory();
-		}
+
 		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_DOWN))
-		{
 			NextHistory();
+
+		// Word jump functions
+		if (Core::GetInput().IsKeyPressed(GLFW_KEY_LEFT_CONTROL))
+		{
+			if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_LEFT))
+				JumpCursorLeft();
+
+			if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_RIGHT))
+				JumpCursorRight();
+
+			if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_BACKSPACE))
+				DeleteWord();
 		}
+		else
+		{
+			if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_LEFT))
+				MoveCursorLeft();
+
+			if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_RIGHT))
+				MoveCursorRight();
+			
+			if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_BACKSPACE))
+				DeleteLetter();
+		}
+		
+		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_HOME))
+			m_cursorOffset = 0;
+
+		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_END))
+			m_cursorOffset = m_inputLine.length();
+
 		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_PAGE_UP) || Core::GetInput().GetScrollY() > 0)
 			Scroll(1);
+
 		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_PAGE_DOWN) || Core::GetInput().GetScrollY() < 0)
 			Scroll(-1);
 
 		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_ENTER))
-		{
 			Add();
-		}
-		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_BACKSPACE))
-		{
-			if (m_inputLine.size() > 1)
-				m_inputLine.erase(m_inputLine.end() - 1);
-			else
-			{
-				m_inputLine.clear();
-			}
-		}
 
 		char c = Core::GetInput().GetChar();
-
 		if (c != 0)
 		{
-			m_inputLine.insert(m_inputLine.end(), 1, c);
+			m_inputLine.insert(m_inputLine.begin()+m_cursorOffset, 1, c);
+			m_cursorOffset++;
 		}
 	}
 
 	void DebugConsole::Update()
 	{
-		
+		// TODO: Change frames to time
+		m_cursorVisibilityTick = (++m_cursorVisibilityTick) % 80;
+		bool showCursor = (m_cursorVisibilityTick < 40) ? true : false;
+
 		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_TAB))
 		{
 			Toggle();
@@ -268,9 +551,14 @@ namespace Core
 			float dy = (380.0f - sy) - 380.0f * (m_offset/static_cast<float>(m_console.size() + 1));
 			GFX::Debug::DrawRectangle(glm::vec2(0.0f, dy), glm::vec2(5.0f, sy), true, Colors::DarkGreen);
 
-			// Draw input line
-			GFX::RenderText(glm::vec2(11, 398), 1.0f, Colors::Black, ("> " + m_inputLine).c_str());
-			GFX::RenderText(glm::vec2(10, 397), 1.0f, Colors::Silver, ("> " + m_inputLine).c_str());
+			// Append cursor to input line
+			std::string outInputLine = m_inputLine;
+			if (showCursor)
+				outInputLine.replace(m_cursorOffset, 1, 1, '_');
+
+
+			GFX::RenderText(glm::vec2(11, 398), 1.0f, Colors::Black, (outInputLine).c_str());
+			GFX::RenderText(glm::vec2(10, 397), 1.0f, Colors::Silver, (outInputLine).c_str());
 
 		}
 		else
@@ -303,6 +591,7 @@ namespace Core
 	{
 		m_inputLine.clear();
 		m_offset = 0;
+		m_cursorOffset = 0;
 	}
 
 	DebugConsole& Console()

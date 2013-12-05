@@ -74,6 +74,14 @@ namespace Core
 
 		void DebugConsole::HandleInput();
 
+		void MoveCursorLeft();
+		void MoveCursorRight();
+		void JumpCursorLeft();
+		void JumpCursorRight();
+		
+		void DeleteWord();
+		void DeleteLetter();
+
 		DebugConsole();
 		~DebugConsole();
 
@@ -87,6 +95,9 @@ namespace Core
 
 		int m_offset;
 		int m_cursorOffset;
+		int m_cursorVisibilityTick;
+
+		const std::string m_delChars = " +-*/\"\'.,!?";
 
 		const int m_numRows = 25;
 
