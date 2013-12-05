@@ -2,6 +2,11 @@
 
 
 #include <iostream>
+#include <string>
+#include <algorithm> 
+#include <functional> 
+#include <cctype>
+#include <locale>
 
 ClopHandler::ClopHandler( clopback * cb )
 {
@@ -23,7 +28,9 @@ ClopHandler::~ClopHandler()
 
 void ClopHandler::Log( const char* message )
 {
-    m_clopCallback( m_type, message );
+    std::string str( message );
+    str.erase(std::find_if(str.rbegin(), str.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), str.end());
+    m_clopCallback( m_type, str.c_str() );
     /*
      switch( m_type )
      {
