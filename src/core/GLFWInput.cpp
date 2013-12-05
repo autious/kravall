@@ -58,7 +58,7 @@ namespace Core
 	{
 		if (IsMouseButtonPressed(GLFW_MouseButton))
 		{
-
+			
 			if (!m_mouseButtonPressed[GLFW_MouseButton])
 			{
 				m_mouseButtonPressed[GLFW_MouseButton] = true;
