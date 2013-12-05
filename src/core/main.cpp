@@ -122,7 +122,8 @@ void run( GLFWwindow * window )
 	GFX::SetProjectionMatrix(gCamera->GetProjectionMatrix());
 
 	Core::GLFWInput* input = new Core::GLFWInput(window);
-	GFX::RenderSplash(false);
+	
+	GFX::RenderSplash(Core::world.m_config.GetBool("playSplash", false));
 	bool fs = false;
 
 	BGnomeImporter* BGI = new BGnomeImporter();
