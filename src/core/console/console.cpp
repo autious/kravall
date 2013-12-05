@@ -6,6 +6,7 @@
 
 #include <Lua/LuaState.hpp>
 #include <World.hpp>
+#include <GLFWInput.hpp>
 
 namespace Core
 {
@@ -153,11 +154,59 @@ namespace Core
 		}
 	}
 
+	void DebugConsole::HandleInput()
+	{
+		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_ESCAPE))
+			ClearInput();
+		
+		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_UP))
+		{
+			LastHistory();
+		}
+		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_DOWN))
+		{
+			NextHistory();
+		}
+		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_PAGE_UP) || Core::GetInput().GetScrollY() > 0)
+			Scroll(1);
+		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_PAGE_DOWN) || Core::GetInput().GetScrollY() < 0)
+			Scroll(-1);
+
+		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_ENTER))
+		{
+			Add();
+		}
+		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_BACKSPACE))
+		{
+			if (m_inputLine.size() > 1)
+				m_inputLine.erase(m_inputLine.end() - 1);
+			else
+			{
+				m_inputLine.clear();
+			}
+		}
+
+		char c = Core::GetInput().GetChar();
+
+		if (c != 0)
+		{
+			m_inputLine.insert(m_inputLine.end(), 1, c);
+		}
+	}
+
 	void DebugConsole::Update()
 	{
+		
+		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_TAB))
+		{
+			Toggle();
+			Core::GetInput().SetCharCallback(Core::Console().IsVisible());
+		}
 		const int x = 10;
 		if (m_visible)
 		{
+			HandleInput();
+
 			GFX::ShowConsole();
 
 			// Draw lines

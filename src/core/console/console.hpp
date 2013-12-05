@@ -28,9 +28,6 @@ namespace Core
 		*/
 		void SetInputLine(const std::string& inputLine);
 
-		
-		inline const std::string& GetInputLine() { return m_inputLine; };
-
 		/*!
 		Executes the current line and adds the command to console and history.
 		*/
@@ -74,7 +71,8 @@ namespace Core
 	private:
 
 		friend DebugConsole& Console();
-		
+
+		void DebugConsole::HandleInput();
 
 		DebugConsole();
 		~DebugConsole();
