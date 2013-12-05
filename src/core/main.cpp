@@ -132,6 +132,8 @@ void TestRendering()
 
 void SystemTimeRender()
 {
+    if( Core::world.m_config.GetBool( "showSystems", false ) )
+    {
         std::vector<std::pair<const char *,std::chrono::microseconds>> times = Core::world.m_systemHandler.GetFrameTime();
 
         for( int i = 0; i < times.size(); i++ )
@@ -144,6 +146,7 @@ void SystemTimeRender()
 
 	    GFX::Debug::DrawRectangle(glm::vec2(0,GFX::GetScreenHeight()-5-20-17*times.size() ), 
             glm::vec2(500, 20*times.size()), true, glm::vec4( 0.5f,0.5f,0.5f,0.5f) );
+    }
 }
 
 void run( GLFWwindow * window )
