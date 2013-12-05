@@ -74,6 +74,7 @@ void LogSystem::RegisterLogHandler( LogHandler** handlerChannel, LogHandler* new
         {
             handlerChannel[i] = newHandler;
             worked = true;
+            break;
         } 
     }
 
@@ -137,7 +138,7 @@ LogSystem::LogData::~LogData()
 	}
 	
 	std::stringstream ss;
-	ss << m_prefix << ":: " << m_message;
+	ss << "[" << m_prefix << "]:" << m_message;
 	std::string msg = ss.str();
 
     for( int i = 0; i < LOGGER_LIMIT; i++ )

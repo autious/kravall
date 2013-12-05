@@ -34,8 +34,32 @@
 
 #include <ContentManagement/ContentManager.hpp>
 #include <logger/Logger.hpp>
+#include <logger/internal/ClopHandler.hpp>
 
 #include <Lua/LuaState.hpp>
+
+void clopLoggerCallback( LogSystem::LogType m_type, const char * message )
+{
+    switch( m_type )
+    {
+    case LogSystem::LogType::logType_debug :
+        Core::Console().PrintLine(std::string( message ), Colors::White );
+        break;
+
+    case LogSystem::LogType::logType_error :
+        Core::Console().PrintLine(std::string( message ), Colors::Red );
+        break;
+
+    case LogSystem::LogType::logType_fatal :
+        Core::Console().PrintLine(std::string( message ), Colors::Red );
+        break;
+
+    case LogSystem::LogType::logType_warning :
+        Core::Console().PrintLine(std::string( message ), Colors::Yellow);
+        break;
+    }
+
+}
 
 // Just an example of a clop function
 // This function gets registred in Init with clop::Register("exit", ClopCloseWindow);
@@ -51,6 +75,11 @@ int initScreenWidth;
 GLFWwindow* init( int argc, char** argv )
 {
 	GLFWwindow* window;
+
+    LogSystem::RegisterLogHandler( LogSystem::debugHandler,     new ClopHandler( clopLoggerCallback, LogSystem::LogType::logType_debug ) );
+    LogSystem::RegisterLogHandler( LogSystem::fatalHandler,     new ClopHandler( clopLoggerCallback, LogSystem::LogType::logType_fatal ) );
+    LogSystem::RegisterLogHandler( LogSystem::errorHandler,     new ClopHandler( clopLoggerCallback, LogSystem::LogType::logType_error ) );
+    LogSystem::RegisterLogHandler( LogSystem::warningHandler,   new ClopHandler( clopLoggerCallback, LogSystem::LogType::logType_warning) );
 
     Core::world.m_luaState.Execute( "scripts/config.lua" );
 
