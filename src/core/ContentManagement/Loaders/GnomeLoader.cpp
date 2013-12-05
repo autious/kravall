@@ -1,7 +1,8 @@
 #include "GnomeLoader.hpp"
 
+#include <iostream>
+#include <string>
 #include <fstream>
-
 #include <gfx/GFXInterface.hpp>
 
 namespace Core
@@ -49,18 +50,25 @@ namespace Core
             Core::GnomeLoader::Vertex vertex;
             Core::GnomeLoader::Header header;
 
-            file >> header.numberOfMaterials;
-            file >> header.numberOfVertices;
-            file >> header.numberOfTriangles;
-            file >> header.numberOfBones;
-            file >> header.numberOfAnimations;
-           
+			file >> line;
+
+			file >> line;
+			file >> header.numberOfMaterials;
+			file >> line;
+			file >> header.numberOfVertices;
+			file >> line;
+			file >> header.numberOfTriangles;
+			file >> line;
+			file >> header.numberOfBones;
+			file >> line;
+			file >> header.numberOfAnimations;
+
             Core::GnomeLoader::Mesh mesh;
             Core::GnomeLoader::Bone* bones;
             Core::GnomeLoader::Animation* animations;
 
 
-            mesh.vertices = new Core::GnomeLoader::Vertex[header.numberOfMaterials];
+			mesh.vertices = new Core::GnomeLoader::Vertex[header.numberOfVertices];
             mesh.materials = new Core::GnomeLoader::Material[header.numberOfMaterials];
             mesh.numberOfVertices = header.numberOfVertices;
             bones = new Core::GnomeLoader::Bone[header.numberOfBones];
