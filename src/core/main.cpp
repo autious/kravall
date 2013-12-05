@@ -77,10 +77,10 @@ GLFWwindow* init( int argc, char** argv )
 {
 	GLFWwindow* window;
     
-    LogSystem::RegisterLogHandler( LogSystem::debugHandler, new ClopHandler( clopLoggerCallback ) );
-    LogSystem::RegisterLogHandler( LogSystem::fatalHandler, new ClopHandler( clopLoggerCallback ) );
-    LogSystem::RegisterLogHandler( LogSystem::errorHandler, new ClopHandler( clopLoggerCallback ) );
-    LogSystem::RegisterLogHandler( LogSystem::warningHandler, new ClopHandler( clopLoggerCallback ) );
+    LogSystem::RegisterLogHandler( LogSystem::debugHandler,     new ClopHandler( clopLoggerCallback, LogSystem::LogType::logType_debug ) );
+    LogSystem::RegisterLogHandler( LogSystem::fatalHandler,     new ClopHandler( clopLoggerCallback, LogSystem::LogType::logType_fatal ) );
+    LogSystem::RegisterLogHandler( LogSystem::errorHandler,     new ClopHandler( clopLoggerCallback, LogSystem::LogType::logType_error ) );
+    LogSystem::RegisterLogHandler( LogSystem::warningHandler,   new ClopHandler( clopLoggerCallback, LogSystem::LogType::logType_warning) );
 
     Core::world.m_luaState.Execute( "scripts/config.lua" );
 
@@ -284,7 +284,9 @@ int main(int argc, char** argv)
 		return -1; 
 #endif
 #ifdef RUN_GTEST
+    LOG_INFO << "Running tests..." <<  std::endl;
     int gtestReturn = RUN_ALL_TESTS();
+    LOG_INFO << "Tests all finished!" <<  std::endl;
 #ifdef _WIN32 
 	std::cin.get();
 #endif

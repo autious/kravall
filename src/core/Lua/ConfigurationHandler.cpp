@@ -310,4 +310,3 @@ void Core::ConfigurationHandler::PopConfigTable()
 {
     lua_pop( m_luaState->m_state, 2 );
 }
-

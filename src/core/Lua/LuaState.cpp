@@ -8,6 +8,49 @@
 #include <lualib.h>
 #include <lauxlib.h>
 
+extern "C" 
+{
+    static int LuaPrintDebug( lua_State * L )
+    {
+       int nargs = lua_gettop(L);
+
+        std::stringstream ss; 
+
+        for (int i=1; i <= nargs; i++) {
+            if (lua_isstring(L, i)) {
+                ss << lua_tostring( L, i );
+            }
+            else {
+            /* Do something with non-strings if you like */
+            }
+        }
+
+        LogSystem::LogData( LogSystem::LogType::logType_warning,	"lua" ) <<  ss.str() << std::endl;
+
+        return 0; 
+    }
+
+    static int LuaPrint( lua_State * L )
+    {
+       int nargs = lua_gettop(L);
+
+        std::stringstream ss; 
+
+        for (int i=1; i <= nargs; i++) {
+            if (lua_isstring(L, i)) {
+                ss << lua_tostring( L, i );
+            }
+            else {
+            /* Do something with non-strings if you like */
+            }
+        }
+
+        LogSystem::LogData( LogSystem::LogType::logType_warning,	"lua" ) << ss.str() << std::endl;
+
+        return 0; 
+    }
+}
+
 
 Core::LuaState::LuaState()
 {
@@ -15,6 +58,7 @@ Core::LuaState::LuaState()
     m_state = luaL_newstate();
 
     luaL_openlibs( m_state ); 
+    OpenLibs();
 
     //Add extra paths for require commands.
     lua_getglobal( m_state, "package" );
@@ -39,6 +83,14 @@ Core::LuaState::~LuaState()
     lua_close( m_state );
 }
 
+void Core::LuaState::OpenLibs()
+{
+    lua_pushcfunction( m_state, LuaPrintDebug );
+    lua_setglobal( m_state, "log" );
+
+    lua_pushcfunction( m_state, LuaPrint );
+    lua_setglobal( m_state, "print" );
+}
 
 void Core::LuaState::Execute( const char * filename )
 {
