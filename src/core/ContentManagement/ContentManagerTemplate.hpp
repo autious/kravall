@@ -19,6 +19,8 @@
 
 #include <logger/Logger.hpp>
 
+#define LOADER_ERROR_MESSAGE "Loader is not in loader list, add it to the ContentManager in ContentManager.hpp"
+
 namespace Core
 {    
     template<typename... Loaders>
@@ -41,7 +43,7 @@ namespace Core
         template<typename Loader>
         void Load( const char* asset, std::function<void(Core::BaseAssetLoader*, Core::AssetHandle assetHandle)> finisher, const bool async = false )
         {
-            static_assert(Core::Match<Loader, Loaders...>::exists, "Loader is not in loader list, add it to the ContentManager");           
+            static_assert(Core::Match<Loader, Loaders...>::exists, LOADER_ERROR_MESSAGE);           
             static const int loaderId = Core::Index<Loader, std::tuple<Loaders...>>::value;            
             unsigned int assetHash = MurmurHash2(asset, static_cast<int>(std::strlen(asset)), loaderId); 
             Core::AssetHandle handle = nullptr;
@@ -69,7 +71,7 @@ namespace Core
                         assert(false);
                     }
 
-                    AddReference(assetHash, loaderId, handle);
+                    AddReference<Loader>(assetHash, handle);
                     finisher(m_loaders[loaderId], handle);
                 }
             }
@@ -176,9 +178,11 @@ namespace Core
             assert(false);
         }
 
-        void AddReference( const unsigned int assetHash, int loaderId, AssetHandle handle)
+        template<typename Loader>
+        void AddReference( const unsigned int assetHash, AssetHandle handle)
         {
-            m_assetList.push_back(std::make_tuple(1, loaderId, assetHash, handle));            
+            const int id = Core::Index<Loader, std::tuple<Loaders...>>::value;
+            m_assetList.push_back(std::make_tuple(1, id, assetHash, handle));            
         }
 
         template<typename Loader>
