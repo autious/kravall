@@ -183,6 +183,21 @@ void run( GLFWwindow * window )
                 std::cout << data->VAO << std::endl;
             });
 
+    CM.Load<Core::GnomeLoader>("assets/flag.GNOME", [&VAO, &IBO, &vSize, &iSize](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+            {
+                Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
+                const Core::ModelData* data = gnomeLoader->getData(handle);
+                VAO = data->VAO;
+                IBO = data->IBO;
+                vSize = data->vSize;
+                iSize = data->iSize;
+
+                std::cout << data->IBO << std::endl;
+                std::cout << data->VAO << std::endl;
+            });
+
+    CM.Free<Core::GnomeLoader>("assets/flag.GNOME");
+
     std::cout << IBO << std::endl;
     std::cout << VAO << std::endl;
 

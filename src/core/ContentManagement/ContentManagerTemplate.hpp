@@ -51,8 +51,9 @@ namespace Core
             if(IsCached<Loader>(assetHash, handle))
             {                
                 //Loading cached asset synchronous
+                LOG_INFO << "Loading cached asset: " << asset 
+                    << " now has: " << IncreaseReference<Loader>(assetHash) << " references" << std::endl;
                 finisher(m_loaders[loaderId], handle);
-                IncreaseReference<Loader>(assetHash);
             }
             else
             {
@@ -67,7 +68,7 @@ namespace Core
                     
                     if(handle == nullptr)
                     {                        
-                        LOG_FATAL << "Fatal Error: Asset: " << asset << " not found" << std::endl;
+                        LOG_FATAL << "Asset: " << asset << " not found" << std::endl;
                         assert(false);
                     }
 
@@ -88,18 +89,25 @@ namespace Core
 
             if(IsCached<Loader>(assetHash, handle))
             {
-                if(DecreaseReference<Loader>(assetHash) == 0)
-                {                     
+                int refsRemaining = DecreaseReference<Loader>(assetHash);
+                LOG_INFO << "Reducing reference of cached asset: " << asset
+                    << " now has: " << refsRemaining << " references" << std::endl;
+                if( refsRemaining == 0)
+                {
+                    LOG_INFO << "Adding destroying finisher for asset: " << asset 
+                        << " with handle: " << std::hex << handle << std::endl;
                     
-                    m_finisherList.push_back(std::make_tuple(m_loaders[Core::Index<Loader, std::tuple<Loaders...>>::value], [](Core::BaseAssetLoader* assetLoader, AssetHandle handle)
+                    m_finisherList.push_back(std::make_tuple(m_loaders[Core::Index<Loader, std::tuple<Loaders...>>::value]
+                                , handle, [](Core::BaseAssetLoader* assetLoader, AssetHandle handle)
                         {   
+                            LOG_INFO << "Destroying asset with handle: " << std::hex << handle << std::endl;
                             assetLoader->Destroy(handle); 
                         }));
                 }
             }
             else
             {
-                LOG_FATAL << "Fatal Error: Trying to Free unexsisting asset: " << asset << std::endl;
+                LOG_FATAL << "Trying to Free unexsisting asset: " << asset << std::endl;
                 assert(false);
             }
         }
@@ -157,7 +165,7 @@ namespace Core
                    return std::get<0>(*it) = std::get<0>(*it) + 1;
                 }
             }           
-            LOG_FATAL << "Fatal Error: Trying to increase reference of unexisting asset with hash: " << assetHash << std::endl;
+            LOG_FATAL << "Trying to increase reference of unexisting asset with hash: " << assetHash << std::endl;
             assert(false);
         }
 
@@ -170,11 +178,11 @@ namespace Core
                 if( std::get<1>(*it) == Core::Index<Loader, std::tuple<Loaders...>>::value 
                     && std::get<2>(*it) == assetHash)
                 {
-                    return std::get<0>(*it) = std::get<0>(*it) ;
+                    return std::get<0>(*it) = std::get<0>(*it) - 1;
                 }
             }
             
-            LOG_FATAL << "Fatal Error: Trying to decrease reference of unexisting asset with hash: " << assetHash << std::endl;
+            LOG_FATAL << "Trying to decrease reference of unexisting asset with hash: " << assetHash << std::endl;
             assert(false);
         }
 
@@ -198,7 +206,7 @@ namespace Core
                 }
             }
 
-            LOG_FATAL << "Fatal Error: Trying to remove unexisting asset with hash: " << assetHash << std::endl;
+            LOG_FATAL << "Trying to remove unexisting asset with hash: " << assetHash << std::endl;
             assert(false);
         }
 
