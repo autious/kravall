@@ -323,6 +323,101 @@ namespace Core
 
 	void DebugConsole::DeleteWord()
 	{
+		int pos = m_cursorOffset;
+		int l = m_inputLine.length();
+		int startPos = pos;
+		if (pos > l)
+		{
+			m_cursorOffset = l;
+			return;
+		}
+
+		bool isDelimiter = false;
+		char del = '\0';
+
+		//Check if delimiter
+		for (int i = 0; i < m_delChars.length(); i++)
+		{
+			if (m_inputLine[pos] == m_delChars[i])
+			{
+				del = m_delChars[i];
+				isDelimiter = true;
+				break;
+			}
+		}
+
+		if (isDelimiter)
+		{
+			bool found = false;
+			while (pos < l)
+			{
+				for (int i = 0; i < m_delChars.length(); i++)
+				{
+
+					if (m_inputLine[pos] != del)
+					{
+						m_cursorOffset = pos;
+						found = true;
+						break;
+					}
+				}
+				if (found)
+					break;
+				pos++;
+			}
+			if (!found)
+				m_cursorOffset = l;
+		}
+		else
+		{
+			bool found = false;
+			while (pos < l)
+			{
+				for (int i = 0; i < m_delChars.length(); i++)
+				{
+					if (m_inputLine[pos] == m_delChars[i])
+					{
+						m_cursorOffset = pos;
+						found = true;
+						break;
+					}
+				}
+				if (found)
+					break;
+				pos++;
+			}
+			if (!found)
+				m_cursorOffset = l;
+		}
+
+		// Remove
+		if (m_cursorOffset < 0)
+			m_cursorOffset = 0;
+		if (m_cursorOffset > m_inputLine.length())
+			m_cursorOffset = m_inputLine.length();
+
+		for (int i = 0; i <= m_cursorOffset - startPos - 1; i++)
+			if (startPos < m_inputLine.length())
+			{
+				m_inputLine.erase(m_inputLine.begin() + startPos);
+			}
+			else
+			{
+				break;
+			}
+			m_cursorOffset = startPos;
+	}
+
+	void DebugConsole::DeleteLetter()
+	{
+		if (m_cursorOffset < m_inputLine.length())
+		{
+			m_inputLine.erase(m_inputLine.begin() + m_cursorOffset);
+		}
+	}
+	
+	void DebugConsole::BackspaceWord()
+	{
 		int pos = m_cursorOffset-1;
 		int endPos = pos;
 		if (pos < 0)
@@ -407,7 +502,7 @@ namespace Core
 
 	}
 
-	void DebugConsole::DeleteLetter()
+	void DebugConsole::BackspaceLetter()
 	{
 		if (m_inputLine.length() > 0)
 		{
@@ -439,6 +534,9 @@ namespace Core
 				JumpCursorRight();
 
 			if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_BACKSPACE))
+				BackspaceWord();
+
+			if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_DELETE))
 				DeleteWord();
 		}
 		else
@@ -450,6 +548,9 @@ namespace Core
 				MoveCursorRight();
 			
 			if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_BACKSPACE))
+				BackspaceLetter();
+
+			if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_DELETE))
 				DeleteLetter();
 		}
 		

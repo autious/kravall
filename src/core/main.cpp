@@ -169,39 +169,39 @@ void run( GLFWwindow * window )
     GLint vSize;
     GLint iSize;
 
-    CM.Load<Core::GnomeLoader>("assets/flag.GNOME", [&VAO, &IBO, &vSize, &iSize](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
-            {
-                Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
-                const Core::ModelData* data = gnomeLoader->getData(handle);
-                VAO = data->VAO;
-                IBO = data->IBO;
-                vSize = data->vSize;
-                iSize = data->iSize;
-            });
-
-    CM.Load<Core::GnomeLoader>("assets/flag.GNOME", [&VAO, &IBO, &vSize, &iSize](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
-            {
-                Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
-                const Core::ModelData* data = gnomeLoader->getData(handle);
-                VAO = data->VAO;
-                IBO = data->IBO;
-                vSize = data->vSize;
-                iSize = data->iSize;
-            });
-
-    CM.Free<Core::GnomeLoader>("assets/flag.GNOME");
-    CM.Free<Core::GnomeLoader>("assets/flag.GNOME");
-
-    CM.Load<Core::GnomeLoader>("assets/flag.GNOME", [&VAO, &IBO, &vSize, &iSize](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
-            {
-                Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
-                const Core::ModelData* data = gnomeLoader->getData(handle);
-                VAO = data->VAO;
-                IBO = data->IBO;
-                vSize = data->vSize;
-                iSize = data->iSize;
-            });
-
+    //CM.Load<Core::GnomeLoader>("assets/flag.GNOME", [&VAO, &IBO, &vSize, &iSize](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+    //        {
+    //            Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
+    //            const Core::ModelData* data = gnomeLoader->getData(handle);
+    //            VAO = data->VAO;
+    //            IBO = data->IBO;
+    //            vSize = data->vSize;
+    //            iSize = data->iSize;
+    //        });
+	//
+    //CM.Load<Core::GnomeLoader>("assets/flag.GNOME", [&VAO, &IBO, &vSize, &iSize](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+    //        {
+    //            Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
+    //            const Core::ModelData* data = gnomeLoader->getData(handle);
+    //            VAO = data->VAO;
+    //            IBO = data->IBO;
+    //            vSize = data->vSize;
+    //            iSize = data->iSize;
+    //        });
+	//
+    //CM.Free<Core::GnomeLoader>("assets/flag.GNOME");
+    //CM.Free<Core::GnomeLoader>("assets/flag.GNOME");
+	//
+    //CM.Load<Core::GnomeLoader>("assets/flag.GNOME", [&VAO, &IBO, &vSize, &iSize](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+    //        {
+    //            Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
+    //            const Core::ModelData* data = gnomeLoader->getData(handle);
+    //            VAO = data->VAO;
+    //            IBO = data->IBO;
+    //            vSize = data->vSize;
+    //            iSize = data->iSize;
+    //        });
+	//
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));
 	bool fs = false;
 

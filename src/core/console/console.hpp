@@ -82,6 +82,9 @@ namespace Core
 		void DeleteWord();
 		void DeleteLetter();
 
+		void BackspaceWord();
+		void BackspaceLetter();
+
 		DebugConsole();
 		~DebugConsole();
 
