@@ -181,9 +181,6 @@ void run( GLFWwindow * window )
                 IBO = data->IBO;
                 vSize = data->vSize;
                 iSize = data->iSize;
-
-                std::cout << data->IBO << std::endl;
-                std::cout << data->VAO << std::endl;
             });
 
     CM.Load<Core::GnomeLoader>("assets/flag.GNOME", [&VAO, &IBO, &vSize, &iSize](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
@@ -194,9 +191,6 @@ void run( GLFWwindow * window )
                 IBO = data->IBO;
                 vSize = data->vSize;
                 iSize = data->iSize;
-
-                std::cout << data->IBO << std::endl;
-                std::cout << data->VAO << std::endl;
             });
 
     CM.Free<Core::GnomeLoader>("assets/flag.GNOME");
@@ -210,13 +204,7 @@ void run( GLFWwindow * window )
                 IBO = data->IBO;
                 vSize = data->vSize;
                 iSize = data->iSize;
-
-                std::cout << data->IBO << std::endl;
-                std::cout << data->VAO << std::endl;
             });
-
-    std::cout << IBO << std::endl;
-    std::cout << VAO << std::endl;
 
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));
 	bool fs = false;
