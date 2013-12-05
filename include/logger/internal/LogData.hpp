@@ -12,11 +12,12 @@
 	#define DLLSETTING
 #endif
 
-
 #include <iostream>
 #include <ostream>
 #include <sstream>
 #include <cstring>
+
+#define LOGGER_LIMIT 4
 
 class LogHandler;
 
@@ -69,20 +70,16 @@ namespace LogSystem
 		LogType m_type;
 		char* m_prefix;
 	};
-	
-	/*! only here for intelisense help, will be overrided by macro. */
-	/*! only here for intelisense help, will be overrided by macro. */
-	/*! only here for intelisense help, will be overrided by macro. */
-	/*! only here for intelisense help, will be overrided by macro. */
+
 	
 	/*! channel for 'debug' messages, default is ConsoleHandler */
-	DLLSETTING extern LogHandler* debugHandler;
+	DLLSETTING extern LogHandler* debugHandler[LOGGER_LIMIT];
 	/*! channel for 'fatal' messages, default is ConsoleHandler */
-	DLLSETTING extern LogHandler* fatalHandler;
+	DLLSETTING extern LogHandler* fatalHandler[LOGGER_LIMIT];
 	/*! channel for 'error' messages, default is ConsoleHandler */
-	DLLSETTING extern LogHandler* errorHandler;
+	DLLSETTING extern LogHandler* errorHandler[LOGGER_LIMIT];
 	/*! channel for 'warning' messages, default is ConsoleHandler */
-	DLLSETTING extern LogHandler* warningHandler;
+	DLLSETTING extern LogHandler* warningHandler[LOGGER_LIMIT];
 
 	/*!
 		\param prefix to be muted, same one as stated in the macro function for that channel. eg. "debug"
@@ -100,6 +97,8 @@ namespace LogSystem
 		\param newHander is a pointer to the new hadler for this channel. eg. ConsoleHandler.
 	*/
 	DLLSETTING void SetNewLogHandler( LogHandler** handlerChannel, LogHandler* newHandler );
+
+    DLLSETTING void RegisterLogHandler( LogHandler** handlerChannel, LogHandler* newHandler );
 }
 
 typedef std::basic_ostream<char, std::char_traits<char> > CoutType;
@@ -123,6 +122,7 @@ LogSystem::LogData& operator<< ( const LogSystem::LogData& data, const T& obj )
 
 /*! Macros overriding logger::debug etc. to use a temp object. */
 #define LOG_DEBUG	LogSystem::LogData( LogSystem::LogType::logType_debug,		"debug" )
+#define LOG_INFO    LogSystem::LogData( LogSystem::LogType::logType_warning,    "info" )
 #define LOG_FATAL	LogSystem::LogData( LogSystem::LogType::logType_fatal,		"fatal" )
 #define LOG_ERROR	LogSystem::LogData( LogSystem::LogType::logType_error,		"error" )
 #define LOG_WARNING	LogSystem::LogData( LogSystem::LogType::logType_warning,	"warning" )

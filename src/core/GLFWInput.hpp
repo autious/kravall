@@ -6,24 +6,30 @@
 
 #include <map>
 #include <algorithm>
+#include <iostream>
+
 namespace Core
 {
 
 	class GLFWInput
 	{
+		friend GLFWInput& GetInput();
 	private:
 		double m_posX;
 		double m_posY;
+		double m_scrollX;
+		double m_scrollY;
+		char m_inputChar;
 
 		std::map<int, int> m_keyPressed;
 
 		bool m_mouseButtonPressed[3];
 		GLFWwindow* m_window;
 
-	public:
-		GLFWInput(GLFWwindow* window);
+		GLFWInput();
 		~GLFWInput();
-
+	public:
+		void Initialize(GLFWwindow* window);
 		void UpdateInput();
 
 		bool IsKeyPressed(int GLFW_Key);
@@ -42,6 +48,18 @@ namespace Core
 
 		void SetMousePos(int xpos, int ypos);
 		void SetMouseWheel(int pos);
+
+		void SetScroll(double x, double y);
+
+		void SetChar(char c);
+
+		char GetChar();
+
+		void ResetInput();
+
+		void SetCharCallback(bool on);
 	};
+
+	GLFWInput& GetInput();
 }
 #endif

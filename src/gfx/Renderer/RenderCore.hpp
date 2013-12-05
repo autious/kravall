@@ -89,7 +89,7 @@ namespace GFX
 
 		void Delete();
 
-		void AddRenderJob(const GLuint& ibo, const GLuint& vao, const int& size, Material* m);
+		void AddRenderJob(const GLuint& ibo, const GLuint& vao, const int& iboSize, const int& shaderID, Material* m, glm::mat4* matrix);
 
 	private:
 		RenderCore();

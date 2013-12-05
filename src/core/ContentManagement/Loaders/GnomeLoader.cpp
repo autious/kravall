@@ -257,6 +257,6 @@ namespace Core
 
     const ModelData* GnomeLoader::getData(const Core::AssetHandle handle) const
     {
-        return m_modelData[*static_cast<int*>(handle)];
+        return static_cast<const Core::ModelData*>(handle);
     }
 }

@@ -23,7 +23,7 @@
 #define CLOPCH char
 #define CLOPSS std::stringstream
 #define TOSTRING(x) std::to_string(x)
-#define CLOPOUT std::cout
+#define CLOPOUT //std::cout
 namespace clop
 {
 	Arg::Arg(){}
@@ -89,14 +89,14 @@ namespace clop
 				}
 				else if( ch == '\"' )
 				{
-					if( !tmp.empty() )
-					{
-						args.push_back( tmp );
-						tmp.clear();
-					}
+					//if( !tmp.empty() )
+					//{
+					//	args.push_back( tmp );
+					//	tmp.clear();
+					//}
 					quote = true;
 				}
-				else
+				//else
 				{
 					tmp.push_back( ch );
 				}
@@ -105,14 +105,14 @@ namespace clop
 			{
 				if( ch == '\"' )
 				{
-					if( !tmp.empty() )
-					{
-						args.push_back( tmp );
-						tmp.clear();
-					}
+					//if( !tmp.empty() )
+					//{
+					//	args.push_back( tmp );
+					//	tmp.clear();
+					//}
 					quote = false;
 				}
-				else
+				//else
 				{
 					tmp.push_back( ch );
 				}
@@ -140,7 +140,7 @@ namespace clop
 		}
 		else // The command does not exist
 		{
-			CLOPOUT << "Unknown command \"" << cmd << "\"\n";
+			//CLOPOUT << "Unknown command \"" << cmd << "\"\n";
 			return false;
 		}
 	}
@@ -154,7 +154,7 @@ namespace clop
 		}
 		else
 		{
-			CLOPOUT << "Command \"" << cmd << "\" attempt to register failed: Already exists.\n";
+			//CLOPOUT << "Command \"" << cmd << "\" attempt to register failed: Already exists.\n";
 		}
 	}
 

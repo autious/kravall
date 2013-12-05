@@ -12,6 +12,16 @@ namespace Core
 	class DebugConsole
 	{
 	public:
+		
+		/*!
+		Struct used for sending text to the console
+		*/
+		struct Line
+		{
+			std::string text;
+			Color color;
+		};
+	public:
 		/*!
 		Sets the string at the console input line
 		\param inputLine Value to set the input line
@@ -54,19 +64,20 @@ namespace Core
 
 		void ClearInput();
 
+		void PrintLine(std::string str, Color color);
+
+		inline bool IsVisible() { return m_visible; }
+
 	private:
+
 		friend DebugConsole& Console();
+		
 
 		DebugConsole();
 		~DebugConsole();
 
 	private:
 
-		struct Line
-		{
-			std::string text;
-			Color color;
-		};
 
 		bool m_visible;
 
@@ -75,7 +86,10 @@ namespace Core
 
 		int m_offset;
 
-		const int m_numRows = 20;
+		const int m_numRows = 25;
+
+		// "Width" of a character in the console to use as reference for wrapping text
+		const float m_wrapCharWidth = 8.9f;
 
 		std::string m_inputLine;
 		std::vector<Line> m_console;
@@ -83,6 +97,9 @@ namespace Core
 
 	};
 	DebugConsole& Console();
+
+	// List of commands
+	void ClopLuaCommand();
 
 }
 

@@ -73,14 +73,16 @@ namespace GFX
 
 	DLL_API void Draw(const int& ibo, const int& vao, const int& size, Material* material);
 
+	DLL_API void Draw(const unsigned int& ibo, const unsigned int& vao, const unsigned int& iboSize, const unsigned int& shader, Material* mat, glm::mat4* matrix);
+
 	/*!
 	Issues a draw  text command to the graphics engine.
 	\param position Position of the starting letter
-	\param size Vertical and horizontal size of each letter
+	\param size Vertical size of each letter
 	\param color The color of the text
 	\param text The text to be rendered
 	*/
-	DLL_API void RenderText(GFXVec2 position, GFXVec2 size, GFXVec4 color, const char* text);
+	DLL_API void RenderText(GFXVec2 position, float size, GFXVec4 color, const char* text);
 
 	/*!
 	Shows the console window
@@ -107,7 +109,14 @@ namespace GFX
 	*/
 	DLL_API void DeleteGFX();
 	
+	/*!
+	\return Returns the screen width
+	*/
 	DLL_API int GetScreenWidth();
+
+	/*!
+	\return Returns the screen height
+	*/
 	DLL_API int GetScreenHeight();
 
 	namespace Content

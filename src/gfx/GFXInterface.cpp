@@ -86,9 +86,9 @@ namespace GFX
 		Renderer().SetProjMatrix(matrix);
 	}
 
-	void RenderText(GFXVec2 position, GFXVec2 size, GFXVec4 color, const char* text)
+	void RenderText(GFXVec2 position, float size, GFXVec4 color, const char* text)
 	{
-		Text t(position.x, position.y, size.x, size.y, color, text, Renderer().GetWindowWidth(), Renderer().GetWindowHeight());
+		Text t(position.x, position.y, size, size, color, text, Renderer().GetWindowWidth(), Renderer().GetWindowHeight());
 		GetTextManager().AddText(t);
 	}
 	void ShowConsole()
@@ -116,8 +116,15 @@ namespace GFX
 
 	void Draw(const int& ibo, const int& vao, const int& size, Material* material)
 	{
-		Renderer().AddRenderJob(ibo, vao, size, material);
+		Renderer().AddRenderJob(ibo, vao, size, 0, material, 0);
 	}
+	
+	void Draw(const unsigned int& ibo, const unsigned int& vao, const unsigned int& iboSize, const unsigned int& shader, Material* mat, glm::mat4* matrix)
+	{
+		Renderer().AddRenderJob(ibo, vao, iboSize, shader, mat, matrix);
+	}
+
+
 	int GetScreenWidth()
 	{
 		return Renderer().GetWindowWidth();

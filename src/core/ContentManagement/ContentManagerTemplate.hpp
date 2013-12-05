@@ -17,6 +17,7 @@
 #include <ComponentFramework/CheckTemplatePresence.hpp>
 #include <ComponentFramework/ComponentType.hpp>
 
+#include <logger/Logger.hpp>
 
 namespace Core
 {    
@@ -61,7 +62,13 @@ namespace Core
                 {
                     //Loading un-cached asset synchronous.
                     handle = m_loaders[loaderId]->Load(asset);                                
-                   
+                    
+                    if(handle == nullptr)
+                    {                        
+                        LOG_FATAL << "Fatal Error: Asset: " << asset << " not found" << std::endl;
+                        assert(false);
+                    }
+
                     AddReference(assetHash, loaderId, handle);
                     finisher(m_loaders[loaderId], handle);
                 }
