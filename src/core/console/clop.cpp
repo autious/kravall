@@ -83,7 +83,8 @@ namespace clop
 				{
 					if( !tmp.empty() )
 					{
-						args.push_back( tmp );
+						std::string tmp2(tmp.c_str());
+						args.push_back( tmp2 );
 						tmp.clear();
 					}
 				}
@@ -122,7 +123,8 @@ namespace clop
 		// Add last command only if quotes are closed
 		if( !tmp.empty() && !quote)
 		{
-			args.push_back( tmp );
+			std::string tmp2(tmp.c_str());
+			args.push_back( tmp2 );
 			tmp.clear();
 		}
 		return args;
@@ -148,6 +150,11 @@ namespace clop
 	/* Registers a callback and associates it with the string command cmd */
 	void CLI::register_callback( CLOPSTR cmd, FunPtr cbptr )
 	{
+		if (cmd.compare("exit") == 0)
+		{
+			char c = cmd[4];
+			int i = 0;
+		}
 		if( callback_functions.find( cmd ) == callback_functions.end() ) // The command does not exist
 		{
 			callback_functions[cmd] = cbptr;

@@ -35,7 +35,6 @@
 #include <ContentManagement/ContentManager.hpp>
 #include <logger/Logger.hpp>
 #include <logger/internal/ClopHandler.hpp>
-#include <logger/internal/LogData.hpp>
 
 #include <Lua/LuaState.hpp>
 
@@ -75,8 +74,12 @@ int initScreenWidth;
 
 GLFWwindow* init( int argc, char** argv )
 {
+
+	std::string cppString = "hej";
+	const char * string2  = "hej";
+
 	GLFWwindow* window;
-    
+
     LogSystem::RegisterLogHandler( LogSystem::debugHandler,     new ClopHandler( clopLoggerCallback, LogSystem::LogType::logType_debug ) );
     LogSystem::RegisterLogHandler( LogSystem::fatalHandler,     new ClopHandler( clopLoggerCallback, LogSystem::LogType::logType_fatal ) );
     LogSystem::RegisterLogHandler( LogSystem::errorHandler,     new ClopHandler( clopLoggerCallback, LogSystem::LogType::logType_error ) );
@@ -146,7 +149,6 @@ void SystemTimeRender()
 void run( GLFWwindow * window )
 {
 
-    Core::ContentManager CM;
 
     LOG_INFO << "Starting program" << std::endl;
 
@@ -157,7 +159,33 @@ void run( GLFWwindow * window )
 
 	GFX::SetProjectionMatrix(gCamera->GetProjectionMatrix());
 
-	Core::GLFWInput* input = new Core::GLFWInput(window);
+	Core::GetInput().Initialize(window);
+
+    Entity ent1 = Core::world.m_entityHandler.CreateEntity<Core::ExampleComponent1,Core::ExampleComponent2>( Core::ExampleComponent1::D1(),
+                                                                                   Core::ExampleComponent2::D2() );
+    Core::ContentManager CM;
+
+	GLuint IBO;
+	GLuint VAO;
+    GLint vSize;
+    GLint iSize;
+
+    CM.Load<Core::GnomeLoader>("assets/flag.GNOME", [&VAO, &IBO, &vSize, &iSize](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+            {
+                Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
+                const Core::ModelData* data = gnomeLoader->getData(handle);
+                VAO = data->VAO;
+                IBO = data->IBO;
+                vSize = data->vSize;
+                iSize = data->iSize;
+
+                std::cout << data->IBO << std::endl;
+                std::cout << data->VAO << std::endl;
+            });
+
+    std::cout << IBO << std::endl;
+    std::cout << VAO << std::endl;
+
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));
 	bool fs = false;
 
@@ -187,40 +215,70 @@ void run( GLFWwindow * window )
 	//std::cout << VAO << std::endl;
     //
 	//
-	//GFX::Material* m = new GFX::Material();
-	//m->diffuse = GFX::Content::LoadTexture2DFromFile("assets/GDM.png");
+    GFX::Material* m = new GFX::Material();
+	m->diffuse = GFX::Content::LoadTexture2DFromFile("assets/GDM.png");
 
 	std::cout << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " ";
+
+	std::string inputline = "";
+	//inputline.resize(1);
+
 	while (!glfwWindowShouldClose(window))
 	{
-		input->UpdateInput();
+		Core::GetInput().UpdateInput();
 		
-		if (input->IsKeyPressedOnce(GLFW_KEY_ESCAPE))
+		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_ESCAPE))
 			Core::Console().ClearInput();
-		//	break;
-
-		if (input->IsKeyPressedOnce(GLFW_KEY_TAB))
+		
+		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_TAB))
+		{
 			Core::Console().Toggle();
-		if (input->IsKeyPressedOnce(GLFW_KEY_UP))
+			Core::GetInput().SetCharCallback(Core::Console().IsVisible());
+		}
+		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_UP))
+		{
 			Core::Console().LastHistory();
-		if (input->IsKeyPressedOnce(GLFW_KEY_DOWN))
+			inputline = Core::Console().GetInputLine();
+		}
+		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_DOWN))
+		{
 			Core::Console().NextHistory();
-		if (input->IsKeyPressedOnce(GLFW_KEY_PAGE_UP))
+			inputline = Core::Console().GetInputLine();
+		}
+		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_PAGE_UP) || Core::GetInput().GetScrollY() > 0)
 			Core::Console().Scroll(1);
-		if (input->IsKeyPressedOnce(GLFW_KEY_PAGE_DOWN))
+		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_PAGE_DOWN) || Core::GetInput().GetScrollY() < 0)
 			Core::Console().Scroll(-1);
-		if (input->IsKeyPressedOnce(GLFW_KEY_F))
-			Core::Console().SetInputLine("lua print(\"Hello console\")");
-		if (input->IsKeyPressedOnce(GLFW_KEY_D))
-			Core::Console().SetInputLine("Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
-		if (input->IsKeyPressedOnce(GLFW_KEY_E))
-			Core::Console().SetInputLine("exit");
-		if (input->IsKeyPressedOnce(GLFW_KEY_C))
-			Core::Console().SetInputLine("clear");
-		if (input->IsKeyPressedOnce(GLFW_KEY_ENTER))
+
+		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_ENTER))
+		{
+			Core::Console().SetInputLine(inputline);
 			Core::Console().Add();
-		if (input->IsKeyPressedOnce(GLFW_KEY_U))
-			Core::Console().PrintLine("Woohoo\nyes\n\tawesome\nlol\n..!!!!.", Colors::Green);
+			inputline.clear();
+		}
+		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_BACKSPACE))
+		{
+			if (inputline.size() > 1)
+				inputline.erase(inputline.end() - 1);
+			else
+			{
+				inputline.clear();
+				//inputline.resize(1);
+			}
+
+			Core::Console().SetInputLine(inputline);
+		}
+
+		char c = Core::GetInput().GetChar();
+
+		if (c != 0)
+		{
+			//inputline[inputline.size() - 1] = c;
+			//inputline.resize(inputline.size() + 1);
+			inputline.insert(inputline.end(), 1, c);
+			Core::Console().SetInputLine(inputline);
+		}
+
 		Core::Console().Update();
 
 		//if (input->IsKeyPressedOnce(GLFW_KEY_ENTER))
@@ -255,13 +313,13 @@ void run( GLFWwindow * window )
 		GFX::SetViewMatrix(gCamera->GetViewMatrix());
 
 		//TestRendering();
-		//GFX::Draw(IBO, VAO, vSize, m);
+		GFX::Draw(IBO, VAO, vSize, m);
 
 		GFX::Render();
 
         Core::world.m_systemHandler.Update( 0.1f );
         SystemTimeRender();
-
+		Core::GetInput().ResetInput();
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 
@@ -284,9 +342,7 @@ int main(int argc, char** argv)
 		return -1; 
 #endif
 #ifdef RUN_GTEST
-    LOG_INFO << "Running tests..." <<  std::endl;
     int gtestReturn = RUN_ALL_TESTS();
-    LOG_INFO << "Tests all finished!" <<  std::endl;
 #ifdef _WIN32 
 	std::cin.get();
 #endif

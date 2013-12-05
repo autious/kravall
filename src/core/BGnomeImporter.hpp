@@ -19,13 +19,13 @@ public:
 	};
 
 	struct Bone
-{
-	int parentID;
-	//std::vector<int> childIDs;
-	std::string Name;
-	int id;
-	float offsetMatrix[4][4];
-};
+    {
+        int parentID;
+        //std::vector<int> childIDs;
+        std::string Name;
+        int id;
+        float offsetMatrix[4][4];
+    };
 
 
 
