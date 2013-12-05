@@ -75,6 +75,10 @@ int initScreenWidth;
 
 GLFWwindow* init( int argc, char** argv )
 {
+
+	std::string cppString = "hej";
+	const char * string2  = "hej";
+
 	GLFWwindow* window;
     
     LogSystem::RegisterLogHandler( LogSystem::debugHandler, new ClopHandler( clopLoggerCallback ) );
@@ -193,8 +197,8 @@ void run( GLFWwindow * window )
 
 	std::cout << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " ";
 
-	std::string inputline;
-	inputline.resize(1);
+	std::string inputline = "";
+	//inputline.resize(1);
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -209,31 +213,33 @@ void run( GLFWwindow * window )
 			Core::GetInput().SetCharCallback(Core::Console().IsVisible());
 		}
 		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_UP))
+		{
 			Core::Console().LastHistory();
+			inputline = Core::Console().GetInputLine();
+		}
 		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_DOWN))
+		{
 			Core::Console().NextHistory();
+			inputline = Core::Console().GetInputLine();
+		}
 		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_PAGE_UP))
 			Core::Console().Scroll(1);
 		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_PAGE_DOWN))
 			Core::Console().Scroll(-1);
 		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_ENTER))
 		{
-			inputline.resize(inputline.size() - 1);
 			Core::Console().SetInputLine(inputline);
 			Core::Console().Add();
 			inputline.clear();
-			inputline.resize(1);
 		}
 		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_BACKSPACE))
 		{
-			inputline.erase(inputline.size() - 1);
-
 			if (inputline.size() > 1)
-				inputline.resize(inputline.size() - 1);
+				inputline.erase(inputline.end() - 1);
 			else
 			{
 				inputline.clear();
-				inputline.resize(1);
+				//inputline.resize(1);
 			}
 
 			Core::Console().SetInputLine(inputline);
@@ -243,8 +249,9 @@ void run( GLFWwindow * window )
 
 		if (c != 0)
 		{
-			inputline[inputline.size() - 1] = c;
-			inputline.resize(inputline.size() + 1);
+			//inputline[inputline.size() - 1] = c;
+			//inputline.resize(inputline.size() + 1);
+			inputline.insert(inputline.end(), 1, c);
 			Core::Console().SetInputLine(inputline);
 		}
 
