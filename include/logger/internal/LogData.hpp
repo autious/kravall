@@ -12,11 +12,12 @@
 	#define DLLSETTING
 #endif
 
-
 #include <iostream>
 #include <ostream>
 #include <sstream>
 #include <cstring>
+
+#define LOGGER_LIMIT 4
 
 class LogHandler;
 
@@ -72,13 +73,13 @@ namespace LogSystem
 
 	
 	/*! channel for 'debug' messages, default is ConsoleHandler */
-	DLLSETTING extern LogHandler* debugHandler;
+	DLLSETTING extern LogHandler* debugHandler[LOGGER_LIMIT];
 	/*! channel for 'fatal' messages, default is ConsoleHandler */
-	DLLSETTING extern LogHandler* fatalHandler;
+	DLLSETTING extern LogHandler* fatalHandler[LOGGER_LIMIT];
 	/*! channel for 'error' messages, default is ConsoleHandler */
-	DLLSETTING extern LogHandler* errorHandler;
+	DLLSETTING extern LogHandler* errorHandler[LOGGER_LIMIT];
 	/*! channel for 'warning' messages, default is ConsoleHandler */
-	DLLSETTING extern LogHandler* warningHandler;
+	DLLSETTING extern LogHandler* warningHandler[LOGGER_LIMIT];
 
 	/*!
 		\param prefix to be muted, same one as stated in the macro function for that channel. eg. "debug"
@@ -96,6 +97,8 @@ namespace LogSystem
 		\param newHander is a pointer to the new hadler for this channel. eg. ConsoleHandler.
 	*/
 	DLLSETTING void SetNewLogHandler( LogHandler** handlerChannel, LogHandler* newHandler );
+
+    DLLSETTING void RegisterLogHandler( LogHandler** handlerChannel, LogHandler* newHandler );
 }
 
 typedef std::basic_ostream<char, std::char_traits<char> > CoutType;

@@ -5,12 +5,13 @@
 #include <sstream>
 
 #include <mutex>
+#include <cassert>
 
 
-LogHandler* LogSystem::debugHandler		= new ConsoleHandler( LogSystem::LogType::logType_debug );
-LogHandler* LogSystem::fatalHandler		= new ConsoleHandler( LogSystem::LogType::logType_fatal );
-LogHandler* LogSystem::errorHandler		= new ConsoleHandler( LogSystem::LogType::logType_error );
-LogHandler* LogSystem::warningHandler	= new ConsoleHandler( LogSystem::LogType::logType_warning );
+LogHandler* LogSystem::debugHandler[]		= {new ConsoleHandler( LogSystem::LogType::logType_debug ),nullptr,nullptr,nullptr};
+LogHandler* LogSystem::fatalHandler[]		= {new ConsoleHandler( LogSystem::LogType::logType_fatal ),nullptr,nullptr,nullptr};
+LogHandler* LogSystem::errorHandler[]		= {new ConsoleHandler( LogSystem::LogType::logType_error ),nullptr,nullptr,nullptr};
+LogHandler* LogSystem::warningHandler[]	    = {new ConsoleHandler( LogSystem::LogType::logType_warning ),nullptr,nullptr,nullptr};
 
 
 char ignoreList[1024];
@@ -61,13 +62,33 @@ void LogSystem::Unmute( const char* prefix )
 	logMutex.unlock();
 }
 
+void LogSystem::RegisterLogHandler( LogHandler** handlerChannel, LogHandler* newHandler )
+{
+	logMutex.lock();
+
+    bool worked = false;
+
+    for( int i = 0; i < LOGGER_LIMIT; i++ )
+    {
+        if( handlerChannel[i] == nullptr )
+        {
+            handlerChannel[i] = newHandler;
+            worked = true;
+        } 
+    }
+
+    assert( worked );
+
+	logMutex.unlock();
+}
+
 void LogSystem::SetNewLogHandler( LogHandler** handlerChannel, LogHandler* newHandler )
 {
 	logMutex.lock();
 
-	if( *handlerChannel )
-		delete *handlerChannel;
-	*handlerChannel = newHandler;
+	if( handlerChannel[0] )
+		delete handlerChannel[0];
+	handlerChannel[0] = newHandler;
 
 	logMutex.unlock();
 }
@@ -119,28 +140,31 @@ LogSystem::LogData::~LogData()
 	ss << m_prefix << ":: " << m_message;
 	std::string msg = ss.str();
 
-	switch( m_type )
-	{
-	case LogType::logType_debug :
-		if( LogSystem::debugHandler )
-			LogSystem::debugHandler->Log( msg.c_str() );
-		break;
+    for( int i = 0; i < LOGGER_LIMIT; i++ )
+    {
+        switch( m_type )
+        {
+        case LogType::logType_debug :
+            if( debugHandler[i] )
+                debugHandler[i]->Log( msg.c_str() );
+            break;
 
-	case LogType::logType_fatal :
-		if( LogSystem::fatalHandler )
-			LogSystem::fatalHandler->Log( msg.c_str() );
-		break;
+        case LogType::logType_fatal :
+            if( fatalHandler[i] )
+                fatalHandler[i]->Log( msg.c_str() );
+            break;
 
-	case LogType::logType_error :
-		if( LogSystem::errorHandler )
-			LogSystem::errorHandler->Log( msg.c_str() );
-		break;
+        case LogType::logType_error :
+            if( errorHandler[i] )
+                errorHandler[i]->Log( msg.c_str() );
+            break;
 
-	case LogType::logType_warning :
-		if( LogSystem::warningHandler )
-			LogSystem::warningHandler->Log( msg.c_str() );
-		break;
-	}
+        case LogType::logType_warning :
+            if( warningHandler[i] )
+                warningHandler[i]->Log( msg.c_str() );
+            break;
+        }
+    }
 
 	logMutex.unlock();
 }
