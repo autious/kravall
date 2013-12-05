@@ -128,6 +128,8 @@ void TestRendering()
 
 void SystemTimeRender()
 {
+    if( Core::world.m_config.GetBool( "showSystems", false ) )
+    {
         std::vector<std::pair<const char *,std::chrono::microseconds>> times = Core::world.m_systemHandler.GetFrameTime();
 
         for( int i = 0; i < times.size(); i++ )
@@ -140,6 +142,7 @@ void SystemTimeRender()
 
 	    GFX::Debug::DrawRectangle(glm::vec2(0,GFX::GetScreenHeight()-5-20-17*times.size() ), 
             glm::vec2(500, 20*times.size()), true, glm::vec4( 0.5f,0.5f,0.5f,0.5f) );
+    }
 }
 
 void run( GLFWwindow * window )
@@ -166,21 +169,38 @@ void run( GLFWwindow * window )
     GLint vSize;
     GLint iSize;
 
-    //CM.Load<Core::GnomeLoader>("assets/flag.GNOME", [&VAO, &IBO, &vSize, &iSize](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
-    //        {
-    //            Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
-    //            const Core::ModelData* data = gnomeLoader->getData(handle);
-    //            VAO = data->VAO;
-    //            IBO = data->IBO;
-    //            vSize = data->vSize;
-    //            iSize = data->iSize;
-	//
-    //            std::cout << data->IBO << std::endl;
-    //            std::cout << data->VAO << std::endl;
-    //        });
-	//
-    //std::cout << IBO << std::endl;
-    //std::cout << VAO << std::endl;
+    CM.Load<Core::GnomeLoader>("assets/flag.GNOME", [&VAO, &IBO, &vSize, &iSize](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+            {
+                Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
+                const Core::ModelData* data = gnomeLoader->getData(handle);
+                VAO = data->VAO;
+                IBO = data->IBO;
+                vSize = data->vSize;
+                iSize = data->iSize;
+            });
+
+    CM.Load<Core::GnomeLoader>("assets/flag.GNOME", [&VAO, &IBO, &vSize, &iSize](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+            {
+                Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
+                const Core::ModelData* data = gnomeLoader->getData(handle);
+                VAO = data->VAO;
+                IBO = data->IBO;
+                vSize = data->vSize;
+                iSize = data->iSize;
+            });
+
+    CM.Free<Core::GnomeLoader>("assets/flag.GNOME");
+    CM.Free<Core::GnomeLoader>("assets/flag.GNOME");
+
+    CM.Load<Core::GnomeLoader>("assets/flag.GNOME", [&VAO, &IBO, &vSize, &iSize](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+            {
+                Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
+                const Core::ModelData* data = gnomeLoader->getData(handle);
+                VAO = data->VAO;
+                IBO = data->IBO;
+                vSize = data->vSize;
+                iSize = data->iSize;
+            });
 
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));
 	bool fs = false;
@@ -250,6 +270,8 @@ void run( GLFWwindow * window )
 		//
 		//	fs = !fs;
 		//}
+
+        CM.CallFinishers();
 
 		//gCamera->CalculateViewMatrix();
 		gCamera->LookAt(glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
