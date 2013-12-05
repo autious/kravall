@@ -95,13 +95,20 @@ namespace Core
                 if( refsRemaining == 0)
                 {
                     LOG_INFO << "Adding destroying finisher for asset: " << asset 
-                        << " with handle: " << std::hex << handle << std::endl;
+                        << " with hash: " << assetHash << std::endl;
                     
                     m_finisherList.push_back(std::make_tuple(m_loaders[Core::Index<Loader, std::tuple<Loaders...>>::value]
-                                , handle, [](Core::BaseAssetLoader* assetLoader, AssetHandle handle)
-                        {   
-                            LOG_INFO << "Destroying asset with handle: " << std::hex << handle << std::endl;
-                            assetLoader->Destroy(handle); 
+                                , handle, [assetHash, this](Core::BaseAssetLoader* assetLoader, AssetHandle handle)
+                        {
+                            if(!this->IsCached<Loader>(assetHash, handle))
+                            {
+                                LOG_INFO << "Destroying asset with hash: " << assetHash << std::endl;
+                                assetLoader->Destroy(handle); 
+                            }
+                            else
+                            {
+                                LOG_INFO << "Prevented destruction of asset with hash: " << assetHash << std::endl;
+                            }
                         }));
                 }
             }
