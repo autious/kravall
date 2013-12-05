@@ -97,7 +97,7 @@ namespace Core
             }
             else
             {
-                //TODO: Add log message
+                LOG_FATAL << "Fatal Error: Trying to Free unexsisting asset: " << asset << std::endl;
                 assert(false);
             }
         }
@@ -155,7 +155,7 @@ namespace Core
                    return std::get<0>(*it) = std::get<0>(*it) + 1;
                 }
             }           
-            //TODO: Add log message
+            LOG_FATAL << "Fatal Error: Trying to increase reference of unexisting asset with hash: " << assetHash << std::endl;
             assert(false);
         }
 
@@ -172,7 +172,7 @@ namespace Core
                 }
             }
             
-            //TODO: Add log message
+            LOG_FATAL << "Fatal Error: Trying to decrease reference of unexisting asset with hash: " << assetHash << std::endl;
             assert(false);
         }
 
@@ -194,6 +194,8 @@ namespace Core
                 }
             }
 
+            LOG_FATAL << "Fatal Error: Trying to remove unexisting asset with hash: " << assetHash << std::endl;
+            assert(false);
         }
 
         static unsigned int MurmurHash2 ( const void* key, int len, unsigned int seed )
