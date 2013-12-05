@@ -217,8 +217,6 @@ namespace Core
 			float dy = (380.0f - sy) - 380.0f * (m_offset/static_cast<float>(m_console.size() + 1));
 			GFX::Debug::DrawRectangle(glm::vec2(0.0f, dy), glm::vec2(5.0f, sy), true, Colors::DarkGreen);
 
-			GFX::RenderText(glm::vec2(400, 500), 1.0f, Colors::White, (std::to_string(dy)).c_str());
-
 			// Draw input line
 			GFX::RenderText(glm::vec2(11, 398), 1.0f, Colors::Black, ("> " + m_inputLine).c_str());
 			GFX::RenderText(glm::vec2(10, 397), 1.0f, Colors::Silver, ("> " + m_inputLine).c_str());
