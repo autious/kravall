@@ -69,11 +69,7 @@ namespace LogSystem
 		LogType m_type;
 		char* m_prefix;
 	};
-	
-	/*! only here for intelisense help, will be overrided by macro. */
-	/*! only here for intelisense help, will be overrided by macro. */
-	/*! only here for intelisense help, will be overrided by macro. */
-	/*! only here for intelisense help, will be overrided by macro. */
+
 	
 	/*! channel for 'debug' messages, default is ConsoleHandler */
 	DLLSETTING extern LogHandler* debugHandler;
