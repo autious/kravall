@@ -29,6 +29,8 @@ namespace Core
 		m_visible = false;
 		m_historyIndex = 0;
 		m_offset = 0;
+		m_cursorOffset = 0;
+
 		clop::Register("clear", ClopClearConsole);
 		clop::Register("clr", ClopClearConsole);
 

@@ -86,6 +86,7 @@ namespace Core
 		int m_historyIndex;
 
 		int m_offset;
+		int m_cursorOffset;
 
 		const int m_numRows = 25;
 

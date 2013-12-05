@@ -137,21 +137,21 @@ void run( GLFWwindow * window )
     GLint vSize;
     GLint iSize;
 
-    CM.Load<Core::GnomeLoader>("assets/flag.GNOME", [&VAO, &IBO, &vSize, &iSize](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
-            {
-                Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
-                const Core::ModelData* data = gnomeLoader->getData(handle);
-                VAO = data->VAO;
-                IBO = data->IBO;
-                vSize = data->vSize;
-                iSize = data->iSize;
-
-                std::cout << data->IBO << std::endl;
-                std::cout << data->VAO << std::endl;
-            });
-
-    std::cout << IBO << std::endl;
-    std::cout << VAO << std::endl;
+    //CM.Load<Core::GnomeLoader>("assets/flag.GNOME", [&VAO, &IBO, &vSize, &iSize](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+    //        {
+    //            Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
+    //            const Core::ModelData* data = gnomeLoader->getData(handle);
+    //            VAO = data->VAO;
+    //            IBO = data->IBO;
+    //            vSize = data->vSize;
+    //            iSize = data->iSize;
+	//
+    //            std::cout << data->IBO << std::endl;
+    //            std::cout << data->VAO << std::endl;
+    //        });
+	//
+    //std::cout << IBO << std::endl;
+    //std::cout << VAO << std::endl;
 
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));
 	bool fs = false;
@@ -227,7 +227,7 @@ void run( GLFWwindow * window )
 		GFX::SetViewMatrix(gCamera->GetViewMatrix());
 
 		//TestRendering();
-		GFX::Draw(IBO, VAO, vSize, m);
+		//GFX::Draw(IBO, VAO, vSize, m);
 
 		GFX::Render();
 
