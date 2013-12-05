@@ -127,7 +127,8 @@ void run( GLFWwindow * window )
 
 	GFX::SetProjectionMatrix(gCamera->GetProjectionMatrix());
 
-	Core::GLFWInput* input = new Core::GLFWInput(window);
+	Core::GetInput().Initialize(window);
+
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));
 	bool fs = false;
 
@@ -161,36 +162,62 @@ void run( GLFWwindow * window )
 	//m->diffuse = GFX::Content::LoadTexture2DFromFile("assets/GDM.png");
 
 	std::cout << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " ";
+
+	std::string inputline;
+	inputline.resize(1);
+
 	while (!glfwWindowShouldClose(window))
 	{
-		input->UpdateInput();
+		Core::GetInput().UpdateInput();
 		
-		if (input->IsKeyPressedOnce(GLFW_KEY_ESCAPE))
+		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_ESCAPE))
 			Core::Console().ClearInput();
-		//	break;
-
-		if (input->IsKeyPressedOnce(GLFW_KEY_TAB))
+		
+		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_TAB))
+		{
 			Core::Console().Toggle();
-		if (input->IsKeyPressedOnce(GLFW_KEY_UP))
+			Core::GetInput().SetCharCallback(Core::Console().IsVisible());
+		}
+		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_UP))
 			Core::Console().LastHistory();
-		if (input->IsKeyPressedOnce(GLFW_KEY_DOWN))
+		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_DOWN))
 			Core::Console().NextHistory();
-		if (input->IsKeyPressedOnce(GLFW_KEY_PAGE_UP))
+		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_PAGE_UP))
 			Core::Console().Scroll(1);
-		if (input->IsKeyPressedOnce(GLFW_KEY_PAGE_DOWN))
+		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_PAGE_DOWN))
 			Core::Console().Scroll(-1);
-		if (input->IsKeyPressedOnce(GLFW_KEY_F))
-			Core::Console().SetInputLine("lua print(\"Hello console\")");
-		if (input->IsKeyPressedOnce(GLFW_KEY_D))
-			Core::Console().SetInputLine("Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
-		if (input->IsKeyPressedOnce(GLFW_KEY_E))
-			Core::Console().SetInputLine("exit");
-		if (input->IsKeyPressedOnce(GLFW_KEY_C))
-			Core::Console().SetInputLine("clear");
-		if (input->IsKeyPressedOnce(GLFW_KEY_ENTER))
+		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_ENTER))
+		{
+			inputline.resize(inputline.size() - 1);
+			Core::Console().SetInputLine(inputline);
 			Core::Console().Add();
-		if (input->IsKeyPressedOnce(GLFW_KEY_U))
-			Core::Console().PrintLine("Woohoo\nyes\n\tawesome\nlol\n..!!!!.", Colors::Green);
+			inputline.clear();
+			inputline.resize(1);
+		}
+		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_BACKSPACE))
+		{
+			inputline.erase(inputline.size() - 1);
+
+			if (inputline.size() > 1)
+				inputline.resize(inputline.size() - 1);
+			else
+			{
+				inputline.clear();
+				inputline.resize(1);
+			}
+
+			Core::Console().SetInputLine(inputline);
+		}
+
+		char c = Core::GetInput().GetChar();
+
+		if (c != 0)
+		{
+			inputline[inputline.size() - 1] = c;
+			inputline.resize(inputline.size() + 1);
+			Core::Console().SetInputLine(inputline);
+		}
+
 		Core::Console().Update();
 
 		//if (input->IsKeyPressedOnce(GLFW_KEY_ENTER))
@@ -231,7 +258,7 @@ void run( GLFWwindow * window )
 
         Core::world.m_systemHandler.Update( 0.1f );
         SystemTimeRender();
-
+		Core::GetInput().ResetInput();
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 

@@ -3,11 +3,25 @@
 
 namespace Core
 {
+	void ScrollCallback(GLFWwindow* window, double x, double y)
+	{
+		GetInput().SetScroll(x, y);
+	}
 
-	GLFWInput::GLFWInput(GLFWwindow* window)
+	void CharCallback(GLFWwindow* window, unsigned int codepoint)
+	{
+		GetInput().SetChar((char)codepoint);
+	}
+
+	GLFWInput& GetInput()
+	{
+		static GLFWInput gi;
+		return gi;
+	}
+
+	GLFWInput::GLFWInput()
 	{
 		m_mouseButtonPressed[0] = m_mouseButtonPressed[1] = m_mouseButtonPressed[2] = false;
-		m_window = window;
 	}
 
 	GLFWInput::~GLFWInput()
@@ -15,11 +29,16 @@ namespace Core
 
 	}
 
+	void GLFWInput::Initialize(GLFWwindow* window)
+	{
+		m_window = window;
+		glfwSetScrollCallback(window, ScrollCallback);
+	}
+
 	void GLFWInput::UpdateInput()
 	{
 		glfwPollEvents();
 		glfwGetCursorPos(m_window, &m_posX, &m_posY);
-
 	}
 
 	bool GLFWInput::IsKeyPressedOnce(int GLFW_Key)
@@ -107,6 +126,37 @@ namespace Core
 		int diff = ypos - m_posY;
 
 		return diff;
+	}
+
+	void GLFWInput::SetCharCallback(bool on)
+	{
+		if (on)
+			glfwSetCharCallback(m_window, CharCallback);
+		else
+			glfwSetCharCallback(m_window, 0);
+	}
+
+	void GLFWInput::SetScroll(double x, double y)
+	{
+		m_scrollX = x;
+		m_scrollY = y;
+	}
+
+	void GLFWInput::SetChar(char c)
+	{
+		m_inputChar = c;
+	}
+
+	char GLFWInput::GetChar()
+	{
+		return m_inputChar;
+	}
+
+	void GLFWInput::ResetInput()
+	{
+		m_scrollX = 0;
+		m_scrollY = 0;
+		m_inputChar = 0;
 	}
 
 	int GLFWInput::GetMouseWheel()

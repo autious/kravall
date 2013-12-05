@@ -66,6 +66,8 @@ namespace Core
 
 		void PrintLine(std::string str, Color color);
 
+		inline bool IsVisible() { return m_visible; }
+
 	private:
 
 		friend DebugConsole& Console();
