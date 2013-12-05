@@ -50,6 +50,8 @@ namespace Core
 		void SetMouseWheel(int pos);
 
 		void SetScroll(double x, double y);
+		double GetScrollX();
+		double GetScrollY();
 
 		void SetChar(char c);
 
