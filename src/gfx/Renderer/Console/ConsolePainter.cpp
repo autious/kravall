@@ -9,7 +9,7 @@ namespace GFX
 	{
 		m_showConsole = false;
 		m_consoleHeight = 380;
-		m_consoleColor = glm::vec4(0.3f, 0.3f, 0.3f, 0.75f);
+		m_consoleColor = glm::vec4(0.1f, 0.18f, 0.1f, 0.75f);
 	}
 
 	ConsolePainter::~ConsolePainter()

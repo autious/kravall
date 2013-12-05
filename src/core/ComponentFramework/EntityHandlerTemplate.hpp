@@ -83,7 +83,9 @@ namespace Core
         template<typename Component>
         static size_t GetComponentTypeId( )
         {
+            #ifndef __GNUG__ //Sadly the gnucompiler hasn't implemented this yet =(
             static_assert( std::is_trivially_copyable<Component>::value, "Components must be Pure Data Objects" );
+            #endif
             static_assert( Match<Component,Components...>::exists, SA_COMPONENT_USE );
             return Index<Component,std::tuple<Components...>>::value;
         }
