@@ -216,8 +216,8 @@ void run( GLFWwindow * window )
 	//std::cout << VAO << std::endl;
     //
 	//
-	//GFX::Material* m = new GFX::Material();
-	//m->diffuse = GFX::Content::LoadTexture2DFromFile("assets/GDM.png");
+    GFX::Material* m = new GFX::Material();
+	m->diffuse = GFX::Content::LoadTexture2DFromFile("assets/GDM.png");
 
 	std::cout << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " ";
 
@@ -310,7 +310,7 @@ void run( GLFWwindow * window )
 		GFX::SetViewMatrix(gCamera->GetViewMatrix());
 
 		//TestRendering();
-		//GFX::Draw(IBO, VAO, vSize, m);
+		GFX::Draw(IBO, VAO, vSize, m);
 
 		GFX::Render();
 
