@@ -97,7 +97,6 @@ void SystemTimeRender()
 void run( GLFWwindow * window )
 {
 
-    Core::ContentManager CM;
 
 	Core::Camera* gCamera;
 	gCamera = new Core::Camera(45.0f, 1.0f, 2000.0f);
@@ -113,23 +112,22 @@ void run( GLFWwindow * window )
 	BGnomeImporter* BGI = new BGnomeImporter();
     Entity ent1 = Core::world.m_entityHandler.CreateEntity<Core::ExampleComponent1,Core::ExampleComponent2>( Core::ExampleComponent1::D1(),
                                                                                    Core::ExampleComponent2::D2() );
-	GFX::StaticVertex* vs = nullptr;
+    Core::ContentManager CM;
+
 	GLuint IBO;
 	GLuint VAO;
-	int vSize;
-	int iSize;
-	BGI->Go("assets/flag.GNOME", vs, vSize);
+    GLint vSize;
+    GLint iSize;
 
-	int* indices = new int[vSize];
-	iSize = vSize;
-	for (int i = 0; i < vSize; i++)
-	{
-		indices[i] = i;
-	}
-	GFX::Content::LoadStaticMesh(IBO, VAO, vSize, iSize, vs, indices);
-
-	std::cout << IBO << std::endl;
-	std::cout << VAO << std::endl;
+    CM.Load<Core::GnomeLoader>("assets/flag.GNOME", [&VAO, &IBO, &vSize, &iSize](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+            {
+                Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
+                const Core::ModelData* data = gnomeLoader->getData(handle);
+                VAO = data->VAO;
+                IBO = data->IBO;
+                vSize = data->vSize;
+                iSize = data->iSize;
+            });
 
 	GFX::Material* m = new GFX::Material();
 	m->diffuse = GFX::Content::LoadTexture2DFromFile("assets/GDM.png");

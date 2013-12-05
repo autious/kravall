@@ -12,8 +12,9 @@ namespace Core
         TTFLoader();
         ~TTFLoader();
 
-        bool Load(const char* assetName, void* &assetHandle) override;
-        void Destroy(const void* assetHandle) override;
+        void* Load(const char* assetName) override;
+        void* LoadAsync(const char* assetName, Core::FinisherVector& finisherList, std::mutex& finisherMutex) override;
+        void Destroy(const Core::AssetHandle assetHandle) override;
     private:
         
 
