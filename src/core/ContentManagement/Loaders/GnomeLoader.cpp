@@ -73,6 +73,36 @@ namespace Core
             mesh.numberOfVertices = header.numberOfVertices;
             bones = new Core::GnomeLoader::Bone[header.numberOfBones];
             animations = new Core::GnomeLoader::Animation[header.numberOfBones];
+
+
+			//Material
+			file >> line;
+			for (int i = 0; i < header.numberOfMaterials; ++i)
+			{
+				file >> material.name;
+				file >> line;
+				file >> material.ambient[0] >> material.ambient[1] >> material.ambient[2];
+				file >> line;
+				file >> material.diffuse[0] >> material.diffuse[1] >> material.diffuse[2];
+				file >> line;
+				file >> material.specularity[0] >> material.specularity[1] >> material.specularity[2];
+				file >> line;
+				file >> material.specularityPower;
+				file >> line;
+				file >> material.reflectivity;
+				file >> line;
+				file >> material.transparency;
+				file >> line;
+				file >> material.alphaClip;
+				file >> line;
+				file >> material.diffuseTexture;
+				file >> line;
+				file >> material.normalMap;
+				file >> line;
+				file >> material.alphaMap;
+
+				mesh.materials[i] = material;
+			}
            
 
             file >> line;
@@ -99,34 +129,6 @@ namespace Core
             }
 
 
-            //Material
-            file >> line;
-            for (int i = 0; i < header.numberOfMaterials; ++i)
-            {
-                file >> material.name;
-                file >> line;
-                file >> material.ambient[0]		>> material.ambient[1]		>> material.ambient[2];
-                file >> line;
-                file >> material.diffuse[0]		>> material.diffuse[1]		>> material.diffuse[2];
-                file >> line;
-                file >> material.specularity[0] >> material.specularity[1]	>> material.specularity[2];
-                file >> line;
-                file >> material.specularityPower;
-                file >> line;
-                file >> material.reflectivity;
-                file >> line;
-                file >> material.transparency;
-                file >> line;
-                file >> material.alphaClip;
-                file >> line;
-                file >> material.diffuseTexture;
-                file >> line;
-                file >> material.normalMap;
-                file >> line;
-                file >> material.alphaMap;
-
-                mesh.materials[i] = material;
-            }
 
             //Bones
             file >> line;
