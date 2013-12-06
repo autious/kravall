@@ -7,6 +7,8 @@
 #include <ContentManagement/Loaders/BaseAssetLoader.hpp>
 #include <ContentManagement/AssetStructs/ModelData.hpp>
 
+#include <gfx/GFXInterface.hpp>
+
 namespace Core
 {
     class GnomeLoader : public BaseAssetLoader
@@ -15,14 +17,14 @@ namespace Core
         GnomeLoader();
         ~GnomeLoader();
 
-        void* Load(const char* assetName) override;
-        void* LoadAsync(const char* assetName, Core::FinisherVector& finisherList, std::mutex& finisherMutex) override;
+        AssetHandle Load(const char* assetName) override;
+        AssetHandle LoadAsync(const char* assetName) override;
+        void FinishLoadAsync(Core::AssetHandle& handle) override;
         void Destroy(const Core::AssetHandle handle) override;
 
         const Core::ModelData* getData(const Core::AssetHandle handle) const;
 
     private:
-
         std::vector<Core::ModelData*> m_modelData;
 
         struct Header
@@ -42,8 +44,6 @@ namespace Core
             int id;
             float offsetMatrix[4][4];
         };
-
-
 
         struct Keyframe
         {
@@ -107,6 +107,19 @@ namespace Core
             Vertex* vertices;
             Material* materials;
         };
+
+        struct Gnome
+        {
+            int numberOfVertices;
+            GFX::StaticVertex* vertices;
+            int numberOfIndices;
+            int* indices;
+            Core::GnomeLoader::Bone* bones;
+            Core::GnomeLoader::Animation* animations;
+            Core::GnomeLoader::Material* materials;
+        };
+
+        Core::GnomeLoader::Gnome* LoadGnomeFromFile(const char* fileName);
     };
 }
 
