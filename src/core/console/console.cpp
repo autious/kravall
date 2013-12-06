@@ -15,6 +15,20 @@ namespace Core
 		Console().Clear();
 	}
 	
+	void ClopShowSys(clop::ArgList args)
+	{
+		clop::Command("lua showSys()");
+	}
+
+	void ClopLipsum(clop::ArgList args)
+	{
+		int nr = 1;
+		if (args.size() == 2)
+			nr = (int)args[1];
+		for (int i = 0; i < nr; i++)
+			Console().PrintLine("Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", Colors::Silver);
+	}
+
 	void ClopLuaCommand( clop::ArgList args )
 	{
 		std::stringstream ss;
@@ -34,9 +48,15 @@ namespace Core
 
 		clop::Register("clear", ClopClearConsole);
 		clop::Register("clr", ClopClearConsole);
+		
+		clop::Register("lipsum", ClopLipsum);
+
 
 		// Register lua
 		clop::Register("lua", ClopLuaCommand);
+		
+		clop::Register("showSys", ClopShowSys);
+		clop::Register("sysinfo", ClopShowSys);
 		
 		Line line = {"Welcome to the console, have a nice day.", Colors::Gold};
 		m_console.push_back(line);

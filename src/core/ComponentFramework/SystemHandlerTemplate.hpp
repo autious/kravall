@@ -6,10 +6,12 @@
 
 #include <array>
 #include <utility>
-#include <chrono>
 #include <vector>
 
+#include <Timer.hpp>
+
 #define GNAME( name ) #name
+
 
 namespace Core
 {
@@ -49,19 +51,18 @@ namespace Core
         */
         void Update( float delta )
         {
-            
             for( int i = 0; i < SYSTEM_COUNT; i++ )
             {
-                auto start = std::chrono::high_resolution_clock::now();
+				Timer().Start();
                  
                 m_systems[i]->Update( delta );
 
-                auto end = std::chrono::high_resolution_clock::now();
+				Timer().Stop();
 
-                std::chrono::microseconds diff = std::chrono::duration_cast<std::chrono::microseconds>( end - start );
+				std::chrono::microseconds diff = Timer().GetDelta();
 
                 m_frameTimes[i] = diff; 
-            }          
+            } 
         }
     
         /*!

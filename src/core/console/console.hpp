@@ -100,7 +100,7 @@ namespace Core
 		int m_cursorOffset;
 		int m_cursorVisibilityTick;
 
-		const std::string m_delChars = " +-*/\"\'.,!?";
+		const std::string m_delChars = " +-*/\"\'.,!?(){}[]";
 
 		const int m_numRows = 25;
 
