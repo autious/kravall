@@ -56,7 +56,7 @@ namespace GFX
 
 		glCullFace(GL_BACK);
 		err = glGetError();
-		glFrontFace(GL_CW);
+		glFrontFace(GL_CCW);
 		err = glGetError();
 
 		//Initialize RenderCore

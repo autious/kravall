@@ -25,7 +25,7 @@ namespace GFX
 		/* Load a font */
 		if (FT_New_Face(m_library, "assets/Fonts/terminus.ttf", 0, &m_face))
 		{
-			assert(0 && "Could not open font file in TextPainter.Initialize()\n");
+			assert(0 && "Could not	open font file in TextPainter.Initialize()\n");
 		}
 
 		m_shaderManager->CreateProgram("BasicText");
@@ -95,12 +95,12 @@ namespace GFX
 			coords.push_back(
 				glm::vec4(
 				x2,
-				-y2,
+				-y2 - h,
 				atlas->characters[*p].uvOffsetX,
-				atlas->characters[*p].uvOffsetY)
+				atlas->characters[*p].uvOffsetY + atlas->characters[*p].bitmapHeight / static_cast<float>(atlas->height))
 				);
 
-
+			
 			coords.push_back(
 				glm::vec4(
 				x2 + w,
@@ -113,20 +113,22 @@ namespace GFX
 			coords.push_back(
 				glm::vec4(
 				x2,
-				-y2 - h,
+				-y2,
 				atlas->characters[*p].uvOffsetX,
-				atlas->characters[*p].uvOffsetY + atlas->characters[*p].bitmapHeight / static_cast<float>(atlas->height))
+				atlas->characters[*p].uvOffsetY)
 				);
 
 
 			coords.push_back(
 				glm::vec4(
 				x2 + w,
-				-y2,
+				-y2 - h,
 				atlas->characters[*p].uvOffsetX + atlas->characters[*p].bitmapWidth / static_cast<float>(atlas->width),
-				atlas->characters[*p].uvOffsetY)
+				atlas->characters[*p].uvOffsetY + atlas->characters[*p].bitmapHeight / static_cast<float>(atlas->height))
 				);
 
+
+			
 			coords.push_back(
 				glm::vec4(
 				x2,
@@ -138,10 +140,12 @@ namespace GFX
 			coords.push_back(
 				glm::vec4(
 				x2 + w,
-				-y2 - h,
+				-y2,
 				atlas->characters[*p].uvOffsetX + atlas->characters[*p].bitmapWidth / static_cast<float>(atlas->width),
-				atlas->characters[*p].uvOffsetY + atlas->characters[*p].bitmapHeight / static_cast<float>(atlas->height))
+				atlas->characters[*p].uvOffsetY)
 				);
+
+
 		}
 
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
