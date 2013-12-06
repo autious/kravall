@@ -45,6 +45,7 @@ namespace GFX
 		m_diffuse = new FBOTexture();
 		m_specular = new FBOTexture();
 		m_glowMatID = new FBOTexture();
+		m_depthBuffer = new FBOTexture();
 
 		m_shaderManager = new ShaderManager();
 		m_uniformBufferManager = new UniformBufferManager();
@@ -106,9 +107,9 @@ namespace GFX
 			return;
 		}
 
-		m_deferredPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
+		m_deferredPainter->Render(m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
 		
-		m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, 2);
+		m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, 1);
 
 		// Render debug
 		m_debugPainter->Render(m_viewMatrix, m_projMatrix);
@@ -127,6 +128,7 @@ namespace GFX
 		glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 
 		//Initialize GBuffer textures, second to last parameter should be configurable through settings
+		m_depthBuffer->Initialize(GL_TEXTURE_2D, GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT);
 		m_normalDepth->Initialize(GL_TEXTURE_2D, GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, GL_RGBA32F, GL_RGBA);
 		m_diffuse->Initialize(GL_TEXTURE_2D, GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, GL_RGBA32F, GL_RGBA);
 		m_specular->Initialize(GL_TEXTURE_2D, GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, GL_RGBA32F, GL_RGBA);
@@ -134,14 +136,15 @@ namespace GFX
 
 		ResizeGBuffer();
 
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthBuffer->GetTextureHandle(), 0);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_normalDepth->GetTextureHandle(), 0);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, m_diffuse->GetTextureHandle(), 0);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, m_specular->GetTextureHandle(), 0);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, m_glowMatID->GetTextureHandle(), 0);
 
 		// define outputs
-		GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
-		glDrawBuffers(4, drawBuffers);
+		GLenum drawBuffers[] = { GL_NONE, GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
+		glDrawBuffers(5, drawBuffers);
 
 		GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 		if (status != GL_FRAMEBUFFER_COMPLETE)
@@ -153,6 +156,7 @@ namespace GFX
 
 	void RenderCore::ResizeGBuffer()
 	{
+		m_depthBuffer->UpdateResolution(m_windowWidth, m_windowHeight);
 		m_normalDepth->UpdateResolution(m_windowWidth, m_windowHeight);
 		m_diffuse->UpdateResolution(m_windowWidth, m_windowHeight);
 		m_specular->UpdateResolution(m_windowWidth, m_windowHeight);

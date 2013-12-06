@@ -51,7 +51,6 @@ namespace GFX
 		{
 			BasePainter::Render();
 
-			GLenum err;
 			glBindVertexArray(m_dummyVAO);
 			glDisable(GL_PROGRAM_POINT_SIZE);
 

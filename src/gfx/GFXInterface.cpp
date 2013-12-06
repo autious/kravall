@@ -9,6 +9,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/gtc/type_ptr.hpp>
+#include <logger/Logger.hpp>
 
 void APIENTRY glErrorCallback(GLenum _source, GLenum _type, GLuint _id, GLenum _severity, GLsizei _length, const char* _message, void* _userParam)
 {
@@ -35,29 +36,68 @@ namespace GFX
 	int Init(int windowWidth, int windowHeight)
 	{
 		// TODO: Init graphics engine
-		GLenum err;
+		GLenum err = 0;
 
 		err = glGetError();
+
+        if( err )
+        {
+            LOG_ERROR << "Got GL error:" << err << std::endl;
+            err = 0;
+        }
 		glClearColor(100.0f / 255.0f, 149.0f / 255.0f, 237.0f / 255.0f, 1.0f);
 
 		// assign callback functions
 		glDebugMessageCallbackARB(glErrorCallback, NULL);
 		err = glGetError();
+        if( err )
+        {
+            LOG_ERROR << "Got GL error:" << err << std::endl;
+            err = 0;
+        }
 
 		glEnable(GL_DEPTH_TEST);
 		err = glGetError();
+        if( err )
+        {
+            LOG_ERROR << "Got GL error:" << err << std::endl;
+            err = 0;
+        }
+
 		glDepthFunc(GL_LESS);
 		err = glGetError();
+        if( err )
+        {
+            LOG_ERROR << "Got GL error:" << err << std::endl;
+            err = 0;
+        }
+
 		glEnable(GL_CULL_FACE);
 		err = glGetError();
+        if( err )
+        {
+            LOG_ERROR << "Got GL error:" << err << std::endl;
+            err = 0;
+        }
 
 		glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
 		glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
 
 		glCullFace(GL_BACK);
 		err = glGetError();
-		glFrontFace(GL_CW);
+        if( err )
+        {
+            LOG_ERROR << "Got GL error:" << err << std::endl;
+            err = 0;
+        }
+
+		glFrontFace(GL_CCW);
 		err = glGetError();
+        if( err )
+        {
+            LOG_ERROR << "Got GL error:" << err << std::endl;
+            err = 0;
+        }
 
 		//Initialize RenderCore
 		Renderer().Initialize(windowWidth, windowHeight);

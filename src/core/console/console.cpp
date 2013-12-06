@@ -34,7 +34,7 @@ namespace Core
 	void ClopLuaCommand( clop::ArgList args )
 	{
 		std::stringstream ss;
-		for (int i = 1; i < args.size(); i++)
+		for (unsigned int i = 1; i < args.size(); i++)
 			ss << (std::string)args[i];
 		std::string src = ss.str();
 		Core::world.m_luaState.DoBlock(src.c_str());
@@ -191,7 +191,7 @@ namespace Core
 	void DebugConsole::MoveCursorRight()
 	{
 		m_cursorOffset++;
-		if (m_cursorOffset > m_inputLine.length())
+		if (m_cursorOffset > (int)m_inputLine.length())
 			m_cursorOffset = m_inputLine.length();
 	}
 
@@ -208,7 +208,7 @@ namespace Core
 		char del = '\0';
 
 		//Check if delimiter
-		for (int i = 0; i < m_delChars.length(); i++)
+		for (unsigned int i = 0; i < m_delChars.length(); i++)
 		{
 			if (m_inputLine[pos] == m_delChars[i])
 			{
@@ -223,7 +223,7 @@ namespace Core
 			bool found = false;
 			while (pos > 0)
 			{
-				for (int i = 0; i < m_delChars.length(); i++)
+				for (unsigned int i = 0; i < m_delChars.length(); i++)
 				{
 
 					if (m_inputLine[pos] != del)
@@ -245,7 +245,7 @@ namespace Core
 			bool found = false;
 			while (pos > 0)
 			{
-				for (int i = 0; i < m_delChars.length(); i++)
+				for (unsigned int i = 0; i < m_delChars.length(); i++)
 				{
 					if (m_inputLine[pos] == m_delChars[i])
 					{
@@ -264,7 +264,7 @@ namespace Core
 
 		if (m_cursorOffset < 0)
 			m_cursorOffset = 0;
-		if (m_cursorOffset > m_inputLine.length())
+		if (m_cursorOffset > (int)m_inputLine.length())
 			m_cursorOffset = m_inputLine.length();
 	}
 
@@ -282,7 +282,7 @@ namespace Core
 		char del = '\0';
 
 		//Check if delimiter
-		for (int i = 0; i < m_delChars.length(); i++)
+		for (unsigned int i = 0; i < m_delChars.length(); i++)
 		{
 			if (m_inputLine[pos] == m_delChars[i])
 			{
@@ -297,7 +297,7 @@ namespace Core
 			bool found = false;
 			while (pos < l)
 			{
-				for (int i = 0; i < m_delChars.length(); i++)
+				for (unsigned int i = 0; i < m_delChars.length(); i++)
 				{
 
 					if (m_inputLine[pos] != del)
@@ -319,7 +319,7 @@ namespace Core
 			bool found = false;
 			while (pos < l)
 			{
-				for (int i = 0; i < m_delChars.length(); i++)
+				for (unsigned int i = 0; i < m_delChars.length(); i++)
 				{
 					if (m_inputLine[pos] == m_delChars[i])
 					{
@@ -338,7 +338,7 @@ namespace Core
 
 		if (m_cursorOffset < 0)
 			m_cursorOffset = 0;
-		if (m_cursorOffset > m_inputLine.length())
+		if (m_cursorOffset > (int)m_inputLine.length())
 			m_cursorOffset = m_inputLine.length();
 	}
 
@@ -357,7 +357,7 @@ namespace Core
 		char del = '\0';
 
 		//Check if delimiter
-		for (int i = 0; i < m_delChars.length(); i++)
+		for (unsigned int i = 0; i < m_delChars.length(); i++)
 		{
 			if (m_inputLine[pos] == m_delChars[i])
 			{
@@ -372,7 +372,7 @@ namespace Core
 			bool found = false;
 			while (pos < l)
 			{
-				for (int i = 0; i < m_delChars.length(); i++)
+				for (unsigned int i = 0; i < m_delChars.length(); i++)
 				{
 
 					if (m_inputLine[pos] != del)
@@ -394,7 +394,7 @@ namespace Core
 			bool found = false;
 			while (pos < l)
 			{
-				for (int i = 0; i < m_delChars.length(); i++)
+				for (unsigned int i = 0; i < m_delChars.length(); i++)
 				{
 					if (m_inputLine[pos] == m_delChars[i])
 					{
@@ -414,11 +414,11 @@ namespace Core
 		// Remove
 		if (m_cursorOffset < 0)
 			m_cursorOffset = 0;
-		if (m_cursorOffset > m_inputLine.length())
+		if (m_cursorOffset > (int)m_inputLine.length())
 			m_cursorOffset = m_inputLine.length();
 
 		for (int i = 0; i <= m_cursorOffset - startPos - 1; i++)
-			if (startPos < m_inputLine.length())
+			if (startPos < (int)m_inputLine.length())
 			{
 				m_inputLine.erase(m_inputLine.begin() + startPos);
 			}
@@ -431,7 +431,7 @@ namespace Core
 
 	void DebugConsole::DeleteLetter()
 	{
-		if (m_cursorOffset < m_inputLine.length())
+		if (m_cursorOffset < (int)m_inputLine.length())
 		{
 			m_inputLine.erase(m_inputLine.begin() + m_cursorOffset);
 		}
@@ -451,7 +451,7 @@ namespace Core
 		char del = '\0';
 
 		//Check if delimiter
-		for (int i = 0; i < m_delChars.length(); i++)
+		for (unsigned int i = 0; i < m_delChars.length(); i++)
 		{
 			if (m_inputLine[pos] == m_delChars[i])
 			{
@@ -466,7 +466,7 @@ namespace Core
 			bool found = false;
 			while (pos > 0)
 			{
-				for (int i = 0; i < m_delChars.length(); i++)
+				for (unsigned int i = 0; i < m_delChars.length(); i++)
 				{
 
 					if (m_inputLine[pos] != del)
@@ -488,7 +488,7 @@ namespace Core
 			bool found = false;
 			while (pos > 0)
 			{
-				for (int i = 0; i < m_delChars.length(); i++)
+				for (unsigned int i = 0; i < m_delChars.length(); i++)
 				{
 					if (m_inputLine[pos] == m_delChars[i])
 					{
@@ -507,7 +507,7 @@ namespace Core
 
 		if (m_cursorOffset < 0)
 			m_cursorOffset = 0;
-		if (m_cursorOffset > m_inputLine.length())
+		if (m_cursorOffset > (int)m_inputLine.length())
 			m_cursorOffset = m_inputLine.length();
 
 		// Remove

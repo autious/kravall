@@ -37,7 +37,7 @@ void testPrintFunction2()
 /*! 
 	Contains example code for the log system.
 */
-int main(int args, char argch[])
+int main(int args, char* argch[])
 {
 	//std::cin.get();
 
