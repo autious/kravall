@@ -174,6 +174,8 @@ namespace clop
 		{
 			return call( args[0], args );
 		}
+
+        return false;
 	}
 
 	/* Returns a single instance of clop */
