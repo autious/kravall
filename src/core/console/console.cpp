@@ -8,6 +8,8 @@
 #include <World.hpp>
 #include <GLFWInput.hpp>
 
+#include <Timer.hpp>
+
 namespace Core
 {
 	void ClopClearConsole(clop::ArgList args)
@@ -44,7 +46,6 @@ namespace Core
 		m_historyIndex = 0;
 		m_offset = 0;
 		m_cursorOffset = 0;
-		m_cursorVisibilityTick = 0;
 
 		clop::Register("clear", ClopClearConsole);
 		clop::Register("clr", ClopClearConsole);
@@ -599,9 +600,8 @@ namespace Core
 
 	void DebugConsole::Update()
 	{
-		// TODO: Change frames to time
-		m_cursorVisibilityTick = (++m_cursorVisibilityTick) % 80;
-		bool showCursor = (m_cursorVisibilityTick < 40) ? true : false;
+		long long t = (Timer().GetTotal()) % 1000;
+		bool showCursor = (t < 500) ? true : false;
 
 		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_TAB))
 		{
@@ -707,6 +707,7 @@ namespace Core
 	void DebugConsole::Clear()
 	{
 		m_console.clear();
+		m_offset = 0;
 	}
 	void DebugConsole::ClearInput()
 	{

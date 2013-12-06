@@ -98,7 +98,6 @@ namespace Core
 
 		int m_offset;
 		int m_cursorOffset;
-		int m_cursorVisibilityTick;
 
 		const std::string m_delChars = " +-*/\"\'.,!?(){}[]";
 

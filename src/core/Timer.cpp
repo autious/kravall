@@ -5,8 +5,10 @@ namespace Core
 	HighresTimer::HighresTimer()
 	{
 	#ifndef WCLOCK
+		m_totalStart = std::chrono::high_resolution_clock::now();
 	#else
 		QueryPerformanceFrequency(&m_frequency);
+		QueryPerformanceCounter(&m_totalStart);
 	#endif
 	}
 
@@ -38,6 +40,20 @@ namespace Core
 		return std::chrono::duration_cast<std::chrono::microseconds>( ms );
 	#endif
 	}
+
+	long long HighresTimer::GetTotal()
+	{
+	#ifndef WCLOCK
+		std::chrono::high_resolution_clock::time_point now = std::chrono::high_resolution_clock::now();
+		return std::chrono::duration_cast<std::chrono::milliseconds>( now - m_totalStart ).count();
+	#else
+		LARGE_INTEGER now;
+		QueryPerformanceCounter(&now);
+		long long elapsed = 1000 * (now.QuadPart - m_totalStart.QuadPart)/m_frequency.QuadPart;
+		return elapsed;
+	#endif
+	}
+
 	HighresTimer& Timer()
 	{
 		static HighresTimer timer;
