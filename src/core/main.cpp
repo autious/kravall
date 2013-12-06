@@ -117,13 +117,13 @@ void TestRendering()
 	GFX::Debug::DrawRectangle(glm::vec2(0, 0), glm::vec2(200, 20), true, Colors::Aquamarine);
 	GFX::Debug::DrawRectangle(glm::vec2(100, 20), glm::vec2(100, 40), false, Colors::Chocolate);
 
-	GFX::RenderText(glm::vec2(0, 100), 12.0f, Colors::Black, "The Quick Brown Fox Jumps Over The Lazy Dog");
-	GFX::RenderText(glm::vec2(10, 120), 11.0f, Colors::Blue, "The Quick Brown Fox Jumps Over The Lazy Dog");
-	GFX::RenderText(glm::vec2(20, 140), 10.0f, Colors::Green, "The Quick Brown Fox Jumps Over The Lazy Dog");
-	GFX::RenderText(glm::vec2(30, 160), 9.0f, Colors::CornflowerBlue, "The Quick Brown Fox Jumps Over The Lazy Dog");
-	GFX::RenderText(glm::vec2(40, 180), 12.0f, Colors::White, "The Quick Brown Fox Jumps Over The Lazy Dog????");
+	GFX::RenderText(glm::vec2(0, 100), 1.0f, Colors::Black, "The Quick Brown Fox Jumps Over The Lazy Dog");
+	GFX::RenderText(glm::vec2(10, 120), 1.0f, Colors::Blue, "The Quick Brown Fox Jumps Over The Lazy Dog");
+	GFX::RenderText(glm::vec2(20, 140), 1.0f, Colors::Green, "The Quick Brown Fox Jumps Over The Lazy Dog");
+	GFX::RenderText(glm::vec2(30, 160), 1.0f, Colors::CornflowerBlue, "The Quick Brown Fox Jumps Over The Lazy Dog");
+	GFX::RenderText(glm::vec2(40, 180), 1.0f, Colors::White, "The Quick Brown Fox Jumps Over The Lazy Dog????");
 
-	GFX::RenderText(glm::vec2(0, 200), 12.0f, Colors::Gold, "ABCDEFGHIJKLMNOPQRSTUVWXYZASIUHDOIASHUDIOASHDA1234567890*'^&%#!?");
+	GFX::RenderText(glm::vec2(0, 200), 1.0f, Colors::Gold, "ABCDEFGHIJKLMNOPQRSTUVWXYZASIUHDOIASHUDIOASHDA1234567890*'^&%#!?");
 }
 
 void SystemTimeRender()
@@ -132,7 +132,7 @@ void SystemTimeRender()
     {
         std::vector<std::pair<const char *,std::chrono::microseconds>> times = Core::world.m_systemHandler.GetFrameTime();
 
-        for( int i = 0; i < times.size(); i++ )
+        for( int i = 0; i < (int)times.size(); i++ )
         {
             std::stringstream ss;
             
@@ -158,6 +158,7 @@ void run( GLFWwindow * window )
 
 	Core::GetInput().Initialize(window);
 
+    
     Entity ent1 = Core::world.m_entityHandler.CreateEntity<Core::ExampleComponent1,Core::ExampleComponent2>( Core::ExampleComponent1::D1(),
                                                                                    Core::ExampleComponent2::D2() );
     Core::ContentManager CM;
@@ -179,32 +180,8 @@ void run( GLFWwindow * window )
    std::cout << "ASDF" << std::endl;
    
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));
-
-	
     GFX::Material* m = new GFX::Material();
 	m->diffuse = GFX::Content::LoadTexture2DFromFile("assets/GDM.png");
-
-	//Entity e2 = Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent>
-	//	(Core::GraphicsComponent(), Core::WorldPositionComponent(), Core::RotationComponent(), Core::ScaleComponent());
-	//
-	//Core::GraphicsComponent* gc = WGETC<Core::GraphicsComponent>(e2);
-	//
-	//gc->ibo = IBO;
-	//gc->iboSize = vSize;
-	//gc->vao = VAO;
-	//gc->material = m;
-	//gc->shader = 0;
-	//
-	//Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(e2);
-	//wpc->position[0] = 0;
-	//wpc->position[1] = 0;
-	//
-	//Core::ScaleComponent* sc = WGETC<Core::ScaleComponent>(e2);
-	//sc->scale = 1.5f;
-	//
-	//Core::RotationComponent* rc = WGETC<Core::RotationComponent>(e2);
-	//rc->rotation[0] = -0.5f;
-	//rc->rotation[1] = -0.5f;
 
 	for (int i = -100; i < 100; i++)
 	{
@@ -254,13 +231,8 @@ void run( GLFWwindow * window )
 		gCamera->LookAt(glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		GFX::SetViewMatrix(gCamera->GetViewMatrix());
 
-		//TestRendering();
-		//GFX::Draw(IBO, VAO, vSize, m);
-		//if (Core::GetInput().IsKeyPressed(GLFW_KEY_LEFT))
-		//	rc->rotation[0] += 0.1f;
-		//
-		//if (Core::GetInput().IsKeyPressed(GLFW_KEY_RIGHT))
-		//	rc->rotation[0] -= 0.1f;
+		TestRendering();
+		
 		GFX::Render();
 
         Core::world.m_systemHandler.Update( 0.1f );

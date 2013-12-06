@@ -30,7 +30,7 @@ namespace GFX
 		{
 			if (FT_Load_Char(face, i, FT_LOAD_RENDER))
 			{
-				std::cout << "Loading character %c failed\n", i;
+				std::cout << "Loading character " << i << " failed" << std::endl;
 				continue;
 			}
 
@@ -127,7 +127,7 @@ namespace GFX
 		{
 			if (FT_Load_Char(face, i, FT_LOAD_RENDER))
 			{
-				std::cout << "Loading character %c failed\n", i;
+				std::cout << "Loading character " << i << " failed" << std::endl;
 				continue;
 			}
 

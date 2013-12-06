@@ -23,7 +23,7 @@ namespace GFX
 		}
 
 		/* Load a font */
-		if (FT_New_Face(m_library, "assets/Fonts/terminus.ttf", 0, &m_face))
+		if (FT_New_Face(m_library, "assets/Fonts/Terminus.ttf", 0, &m_face))
 		{
 			assert(0 && "Could not	open font file in TextPainter.Initialize()\n");
 		}

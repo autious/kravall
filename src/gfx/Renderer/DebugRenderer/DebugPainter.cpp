@@ -2,6 +2,7 @@
 #include "DebugManager.hpp"
 
 #include "../RenderCore.hpp"
+#include <logger/Logger.hpp>
 
 namespace GFX
 {
@@ -105,14 +106,25 @@ namespace GFX
 		{
 
 			//DetachTextures();
-			GLenum err;
+			GLenum err = 0;
 			err = glGetError();
+        
+            if( err )
+            {
+                LOG_ERROR << "Got GL error: " << err << std::endl;
+                err = 0;
+            }
 
 			glBindVertexArray(m_dummyVAO);
 			glDisable(GL_PROGRAM_POINT_SIZE);
 
 			glEnable(GL_BLEND);
 			err = glGetError();
+            
+            if( err )
+            {
+                LOG_ERROR << "Got GL error: " << err << std::endl;
+            }
 
 			// Draw 3D
 			//Disable depth for debug

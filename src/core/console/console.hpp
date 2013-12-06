@@ -72,7 +72,7 @@ namespace Core
 
 		friend DebugConsole& Console();
 
-		void DebugConsole::HandleInput();
+		void HandleInput();
 
 		void MoveCursorLeft();
 		void MoveCursorRight();
