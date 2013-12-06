@@ -1,11 +1,11 @@
 core = core or {}
 
 core.config = {
-showSplash = true,
+showSplash = false,
 vsync = 0,
 windowResizable = true,
-initScreenWidth = 800,
-initScreenHeight = 600,
+initScreenWidth = 1280,
+initScreenHeight = 720,
 showSystems = false
 }
 

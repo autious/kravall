@@ -30,7 +30,7 @@ namespace Core
 
 		static glm::vec3 GetVec3(float* position)
 		{
-			return glm::vec3(*position);
+			return glm::vec3(position[0], position[1], position[2]);
 		}
 
 		static void SetPosition(glm::vec3 newPos, float*& targetPos)

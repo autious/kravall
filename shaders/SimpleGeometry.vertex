@@ -6,6 +6,8 @@ uniform PerFrameBlock
 	mat4 gProjection;
 };
 
+uniform mat4 modelMatrix;
+
 layout ( location = 0 ) in vec4 positionIN;
 layout ( location = 1 ) in vec4 normalIN;
 layout ( location = 2 ) in vec4 tangentIN;
@@ -21,12 +23,12 @@ out vec2 uvFS;
 void main()
 {
 	//Move position to clip space
-	posFS = gProjection * gView * positionIN;
+	posFS = gProjection * gView * modelMatrix * positionIN;
 
 	//Transform normal with model matrix
-	normalFS = normalIN;
-	tangentFS = tangentIN;
-	binormalFS = binormalIN;
+	normalFS = modelMatrix * normalIN;
+	tangentFS = modelMatrix * tangentIN;
+	binormalFS = modelMatrix * binormalIN;
 
 	uvFS = uvIN;
 
