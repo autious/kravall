@@ -101,6 +101,7 @@ namespace GFX
 
 	/*!
 	Is this magic?
+	\param renderSplash If true, the splash screen will render at start
 	*/
 	DLL_API void RenderSplash(bool renderSplash);
 

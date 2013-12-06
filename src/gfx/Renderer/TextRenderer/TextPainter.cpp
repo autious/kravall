@@ -30,9 +30,11 @@ namespace GFX
 
 		m_shaderManager->CreateProgram("BasicText");
 		m_shaderManager->LoadShader("shaders/text/Text.vertex", "BasicTextVS", GL_VERTEX_SHADER);
+		m_shaderManager->LoadShader("shaders/text/Text.geometry", "BasicTextGS", GL_GEOMETRY_SHADER);
 		m_shaderManager->LoadShader("shaders/text/Text.fragment", "BasicTextFS", GL_FRAGMENT_SHADER);
 
 		m_shaderManager->AttachShader("BasicTextVS", "BasicText");
+		m_shaderManager->AttachShader("BasicTextGS", "BasicText");
 		m_shaderManager->AttachShader("BasicTextFS", "BasicText");
 
 		m_shaderManager->LinkProgram("BasicText");
@@ -75,10 +77,12 @@ namespace GFX
 
 		const unsigned char* p;
 
-		std::vector<glm::vec4> coords;
+		std::vector<TextVertex> coords;
 
 		int c = 0;
 		
+		TextVertex tv;
+
 		for (p = (const unsigned char*)text; *p; p++)
 		{
 			float x2 = x + atlas->characters[*p].bitmapLeft * sx;
@@ -88,10 +92,20 @@ namespace GFX
 
 			x += atlas->characters[*p].advanceX * sx;
 			y += atlas->characters[*p].advanceY * sy;
-
+			
 			if (!w || !h)
 				continue;
 
+			tv.pos_dim = glm::vec4( x2, y2, w, h );
+			tv.uv = glm::vec4(
+				atlas->characters[*p].uvOffsetX,
+				atlas->characters[*p].uvOffsetY,
+				atlas->characters[*p].uvOffsetX + atlas->characters[*p].bitmapWidth / static_cast<float>(atlas->width),
+				atlas->characters[*p].uvOffsetY + atlas->characters[*p].bitmapHeight / static_cast<float>(atlas->height)
+				);
+			coords.push_back(tv);
+			
+			/*
 			coords.push_back(
 				glm::vec4(
 				x2,
@@ -141,7 +155,7 @@ namespace GFX
 				-y2 - h,
 				atlas->characters[*p].uvOffsetX + atlas->characters[*p].bitmapWidth / static_cast<float>(atlas->width),
 				atlas->characters[*p].uvOffsetY + atlas->characters[*p].bitmapHeight / static_cast<float>(atlas->height))
-				);
+				);*/
 		}
 
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -157,17 +171,21 @@ namespace GFX
 		m_shaderManager->SetUniform(1, color, m_colorUniform);
 
 		glBindBuffer(GL_ARRAY_BUFFER, m_textVBO);
-		glBufferData(GL_ARRAY_BUFFER, coords.size() * sizeof(glm::vec4), coords.data(), GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, coords.size() * sizeof(TextVertex), coords.data(), GL_DYNAMIC_DRAW);
 
 		//Generate VAO
 		glBindVertexArray(m_textVAO);
 
-		//Position
+		//Position dimension
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), (void*)0);
+		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(TextVertex), (void*)0);
+
+		//UV
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(TextVertex), (void*)(4 * sizeof(float)));
 
 		glBindVertexArray(m_textVAO);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, coords.size());
+		glDrawArrays(GL_POINTS, 0, coords.size());
 
 		glDisableVertexAttribArray(0);
 		m_shaderManager->ResetProgram();

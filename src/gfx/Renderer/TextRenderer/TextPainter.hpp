@@ -44,6 +44,12 @@ namespace GFX
 
 	private:
 
+		struct TextVertex
+		{
+			glm::vec4 pos_dim;
+			glm::vec4 uv;
+		};
+
 		FT_Library m_library;
 		FT_Face m_face;
 

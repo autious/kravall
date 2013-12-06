@@ -1,0 +1,39 @@
+#version 440
+
+in vec2 v_dim[];
+in vec4 v_uv[];
+
+out vec2 uv;
+
+layout(points) in;
+layout(triangle_strip, max_vertices = 4) out;
+
+void main()
+{
+	vec2 dim = v_dim[0];
+	vec4 l_uv = v_uv[0];
+
+	gl_Position = gl_in[0].gl_Position + vec4(dim.x, 0, 0.0f, 0.0f);
+	//uv = vec2( 1.0, 0.0 );
+	uv = vec2( l_uv.z, l_uv.y );
+	EmitVertex();
+
+	gl_Position = gl_in[0].gl_Position;
+	//uv = vec2( 0.0, 0.0 );
+	uv = vec2( l_uv.x, l_uv.y );
+	EmitVertex();
+
+	gl_Position = gl_in[0].gl_Position + vec4(dim.x, dim.y, 0.0f, 0.0f);
+	//uv = vec2( 1.0, 1.0 );
+	uv = vec2( l_uv.z, l_uv.w );
+	EmitVertex();
+	
+	gl_Position = gl_in[0].gl_Position + vec4(0, dim.y, 0.0f, 0.0f);
+	//uv = vec2( 0.0, 1.0 );
+	uv = vec2( l_uv.x, l_uv.w );
+	EmitVertex();	
+		
+	EndPrimitive();
+}
+
+

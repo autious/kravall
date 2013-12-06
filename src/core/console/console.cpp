@@ -546,7 +546,7 @@ namespace Core
 			NextHistory();
 
 		// Word jump functions
-		if (Core::GetInput().IsKeyPressed(GLFW_KEY_LEFT_CONTROL))
+		if (Core::GetInput().IsKeyPressed(GLFW_KEY_LEFT_CONTROL) || Core::GetInput().IsKeyPressed(GLFW_KEY_RIGHT_CONTROL))
 		{
 			if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_LEFT))
 				JumpCursorLeft();
@@ -587,7 +587,7 @@ namespace Core
 		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_PAGE_DOWN) || Core::GetInput().GetScrollY() < 0)
 			Scroll(-1);
 
-		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_ENTER))
+		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_ENTER) || Core::GetInput().IsKeyPressedOnce(GLFW_KEY_KP_ENTER))
 			Add();
 
 		char c = Core::GetInput().GetChar();

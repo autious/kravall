@@ -6,10 +6,10 @@ namespace GFX
 	Text::Text(float _posx, float _posy, float _sizex, float _sizey, glm::vec4 _color, std::string _text, int screenWidth, int screenHeight)
 	{
 		posX = ((2 * _posx) / static_cast<float>(screenWidth)) - 1.0f;
-		posY = -((2 * _posy) / static_cast<float>(screenHeight)) + 1.0f;
+		posY = ((2 * _posy) / static_cast<float>(screenHeight)) - 1.0f;
 
 		sizeX = _sizex * (2 / static_cast<float>(screenWidth));
-		sizeY = _sizey * (2 / static_cast<float>(screenHeight));
+		sizeY = -_sizey * (2 / static_cast<float>(screenHeight));
 		color = _color;
 		text = _text;
 	}
