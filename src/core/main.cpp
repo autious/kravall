@@ -74,10 +74,6 @@ int initScreenWidth;
 
 GLFWwindow* init( int argc, char** argv )
 {
-
-	std::string cppString = "hej";
-	const char * string2  = "hej";
-
 	GLFWwindow* window;
 
     LogSystem::RegisterLogHandler( LogSystem::debugHandler,     new ClopHandler( clopLoggerCallback, LogSystem::LogType::logType_debug ) );
@@ -171,39 +167,39 @@ void run( GLFWwindow * window )
     GLint vSize;
     GLint iSize;
 
-    CM.Load<Core::GnomeLoader>("assets/flag.GNOME", [&VAO, &IBO, &vSize, &iSize](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
-            {
-                Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
-                const Core::ModelData* data = gnomeLoader->getData(handle);
-                VAO = data->VAO;
-                IBO = data->IBO;
-                vSize = data->vSize;
-                iSize = data->iSize;
-            });
-
-    CM.Load<Core::GnomeLoader>("assets/flag.GNOME", [&VAO, &IBO, &vSize, &iSize](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
-            {
-                Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
-                const Core::ModelData* data = gnomeLoader->getData(handle);
-                VAO = data->VAO;
-                IBO = data->IBO;
-                vSize = data->vSize;
-                iSize = data->iSize;
-            });
-
-    CM.Free<Core::GnomeLoader>("assets/flag.GNOME");
-    CM.Free<Core::GnomeLoader>("assets/flag.GNOME");
-
-    CM.Load<Core::GnomeLoader>("assets/flag.GNOME", [&VAO, &IBO, &vSize, &iSize](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
-            {
-                Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
-                const Core::ModelData* data = gnomeLoader->getData(handle);
-                VAO = data->VAO;
-                IBO = data->IBO;
-                vSize = data->vSize;
-                iSize = data->iSize;
-            });
-
+    //CM.Load<Core::GnomeLoader>("assets/flag.GNOME", [&VAO, &IBO, &vSize, &iSize](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+    //        {
+    //            Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
+    //            const Core::ModelData* data = gnomeLoader->getData(handle);
+    //            VAO = data->VAO;
+    //            IBO = data->IBO;
+    //            vSize = data->vSize;
+    //            iSize = data->iSize;
+    //        });
+	//
+    //CM.Load<Core::GnomeLoader>("assets/flag.GNOME", [&VAO, &IBO, &vSize, &iSize](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+    //        {
+    //            Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
+    //            const Core::ModelData* data = gnomeLoader->getData(handle);
+    //            VAO = data->VAO;
+    //            IBO = data->IBO;
+    //            vSize = data->vSize;
+    //            iSize = data->iSize;
+    //        });
+	//
+    //CM.Free<Core::GnomeLoader>("assets/flag.GNOME");
+    //CM.Free<Core::GnomeLoader>("assets/flag.GNOME");
+	//
+    //CM.Load<Core::GnomeLoader>("assets/flag.GNOME", [&VAO, &IBO, &vSize, &iSize](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+    //        {
+    //            Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
+    //            const Core::ModelData* data = gnomeLoader->getData(handle);
+    //            VAO = data->VAO;
+    //            IBO = data->IBO;
+    //            vSize = data->vSize;
+    //            iSize = data->iSize;
+    //        });
+	//
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));
 	bool fs = false;
 
@@ -238,65 +234,12 @@ void run( GLFWwindow * window )
 
 	std::cout << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " ";
 
-	std::string inputline = "";
 	//inputline.resize(1);
 
 	while (!glfwWindowShouldClose(window))
 	{
 		Core::GetInput().UpdateInput();
 		
-		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_ESCAPE))
-			Core::Console().ClearInput();
-		
-		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_TAB))
-		{
-			Core::Console().Toggle();
-			Core::GetInput().SetCharCallback(Core::Console().IsVisible());
-		}
-		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_UP))
-		{
-			Core::Console().LastHistory();
-			inputline = Core::Console().GetInputLine();
-		}
-		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_DOWN))
-		{
-			Core::Console().NextHistory();
-			inputline = Core::Console().GetInputLine();
-		}
-		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_PAGE_UP) || Core::GetInput().GetScrollY() > 0)
-			Core::Console().Scroll(1);
-		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_PAGE_DOWN) || Core::GetInput().GetScrollY() < 0)
-			Core::Console().Scroll(-1);
-
-		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_ENTER))
-		{
-			Core::Console().SetInputLine(inputline);
-			Core::Console().Add();
-			inputline.clear();
-		}
-		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_BACKSPACE))
-		{
-			if (inputline.size() > 1)
-				inputline.erase(inputline.end() - 1);
-			else
-			{
-				inputline.clear();
-				//inputline.resize(1);
-			}
-
-			Core::Console().SetInputLine(inputline);
-		}
-
-		char c = Core::GetInput().GetChar();
-
-		if (c != 0)
-		{
-			//inputline[inputline.size() - 1] = c;
-			//inputline.resize(inputline.size() + 1);
-			inputline.insert(inputline.end(), 1, c);
-			Core::Console().SetInputLine(inputline);
-		}
-
 		Core::Console().Update();
 
 		//if (input->IsKeyPressedOnce(GLFW_KEY_ENTER))
@@ -333,7 +276,7 @@ void run( GLFWwindow * window )
 		GFX::SetViewMatrix(gCamera->GetViewMatrix());
 
 		//TestRendering();
-		GFX::Draw(IBO, VAO, vSize, m);
+		//GFX::Draw(IBO, VAO, vSize, m);
 
 		GFX::Render();
 
