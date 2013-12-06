@@ -18,7 +18,7 @@ namespace GFX
 		*/
 		BasePainter(ShaderManager* shaderManager, UniformBufferManager* uniformBufferManager);
 
-		~BasePainter();
+		virtual ~BasePainter();
 
 		/*!
 		Initialization function which sets the dummyVAO and FBO for later use in the painter

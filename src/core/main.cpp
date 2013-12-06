@@ -132,7 +132,7 @@ void SystemTimeRender()
     {
         std::vector<std::pair<const char *,std::chrono::microseconds>> times = Core::world.m_systemHandler.GetFrameTime();
 
-        for( int i = 0; i < times.size(); i++ )
+        for( int i = 0; i < (int)times.size(); i++ )
         {
             std::stringstream ss;
             
@@ -158,6 +158,7 @@ void run( GLFWwindow * window )
 
 	Core::GetInput().Initialize(window);
 
+    
     Entity ent1 = Core::world.m_entityHandler.CreateEntity<Core::ExampleComponent1,Core::ExampleComponent2>( Core::ExampleComponent1::D1(),
                                                                                    Core::ExampleComponent2::D2() );
     Core::ContentManager CM;
@@ -201,7 +202,7 @@ void run( GLFWwindow * window )
     //        });
 	//
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));
-	bool fs = false;
+	//bool fs = false;
 
 	//BGnomeImporter* BGI = new BGnomeImporter();
     //Entity ent1 = Core::world.m_entityHandler.CreateEntity<Core::ExampleComponent1,Core::ExampleComponent2>( Core::ExampleComponent1::D1(),

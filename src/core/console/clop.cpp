@@ -152,8 +152,8 @@ namespace clop
 	{
 		if (cmd.compare("exit") == 0)
 		{
-			char c = cmd[4];
-			int i = 0;
+			//char c = cmd[4];
+			//int i = 0;
 		}
 		if( callback_functions.find( cmd ) == callback_functions.end() ) // The command does not exist
 		{
