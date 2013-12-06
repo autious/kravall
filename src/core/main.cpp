@@ -147,8 +147,6 @@ void SystemTimeRender()
 
 void run( GLFWwindow * window )
 {
-
-
     LOG_INFO << "Starting program" << std::endl;
 
 	Core::Camera* gCamera;
