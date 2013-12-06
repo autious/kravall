@@ -18,7 +18,7 @@ namespace Core
 			glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), WorldPositionComponent::GetVec3(wpc->position));
 			glm::mat4 scaleMatrix = glm::scale(sc->scale, sc->scale, sc->scale);
 
-			//Build modelMatrix using linear allocator (FIX THIS)
+			//Build modelMatrix using linear allocator (FIX THIS) höhöh
 			glm::mat4* modelMatrix = new glm::mat4(translationMatrix * rotationMatrix * scaleMatrix);
 
 			GFX::Draw(gc->ibo, gc->vao, gc->iboSize, gc->shader, gc->material, modelMatrix);
