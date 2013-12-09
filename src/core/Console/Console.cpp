@@ -1,5 +1,5 @@
-#include "console.hpp"
-#include "clop.hpp"
+#include "Console.hpp"
+#include "CLOP.hpp"
 #include <gfx/GFXInterface.hpp>
 #include <utility/Colors.hpp>
 #include <sstream>

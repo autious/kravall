@@ -24,10 +24,10 @@
 #include "GLFWInput.hpp"
 #include <World.hpp>
 
-#include "console/console.hpp"
+#include "Console/Console.hpp"
 #include "BGnomeImporter.hpp"
 
-#include "console/clop.hpp"
+#include "Console/CLOP.hpp"
 #include <sstream>
 
 #include <iomanip>
