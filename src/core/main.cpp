@@ -71,7 +71,6 @@ void ClopCloseWindow(clop::ArgList args)
 
 int initScreenHeight;
 int initScreenWidth;
-
 GLFWwindow* init( int argc, char** argv )
 {
 	GLFWwindow* window;
@@ -168,7 +167,7 @@ void run( GLFWwindow * window )
     GLint vSize;
     GLint iSize;
 
-   CM.Load<Core::GnomeLoader>("assets/tomte.gnome", [&VAO, &IBO, &vSize, &iSize](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+   CM.Load<Core::GnomeLoader>("assets/cube.gnome", [&VAO, &IBO, &vSize, &iSize](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
            {
                Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
                const Core::ModelData* data = gnomeLoader->getData(handle);

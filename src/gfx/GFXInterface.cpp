@@ -173,6 +173,7 @@ namespace GFX
 	{
 		return Renderer().GetWindowHeight();
 	}
+
 }
 
 namespace GFX

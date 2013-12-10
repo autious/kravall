@@ -2,6 +2,7 @@
 #define SRC_CORE_COMPONENTS_GRAPHICS_COMPONENT_HPP
 
 #include <gfx/Material.hpp>
+#include <gfx/BitmaskDefinitions.hpp>
 namespace Core
 {
 	struct GraphicsComponent
@@ -12,12 +13,13 @@ namespace Core
 		GFX::Material* material;
 		unsigned int shader;
 
+		GFX::GFXBitmask bitmask;
+
 		static GraphicsComponent GC()
 		{
 			GraphicsComponent gc;
 			return gc;
 		}
-
 	};
 }
 

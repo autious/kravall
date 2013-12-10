@@ -28,6 +28,7 @@ typedef GFXVec4 GFXColor;
 #include <iostream>
 #include <gfx/Vertex.hpp>
 #include <gfx/Material.hpp>
+#include <gfx/BitmaskDefinitions.hpp>
 
 namespace GFX
 {
@@ -69,7 +70,7 @@ namespace GFX
 	\param bitmask The bitmask containing the type of draw call to be queued.
 	\param data A pointer to the data used for rendering
 	*/
-	DLL_API void Draw(unsigned int bitmask, void* data);
+	DLL_API void Draw(GFXBitmask bitmask, void* data);
 
 	DLL_API void Draw(const int& ibo, const int& vao, const int& size, Material* material);
 
