@@ -154,17 +154,11 @@ namespace GFX
 		Renderer().Delete();
 	}
 
-	void Draw(const int& ibo, const int& vao, const int& size, Material* material)
+	void Draw(GFXBitmask bitmask, void* value)
 	{
-		Renderer().AddRenderJob(ibo, vao, size, 0, material, 0);
+		Renderer().AddRenderJob(bitmask, value);
 	}
 	
-	void Draw(const unsigned int& ibo, const unsigned int& vao, const unsigned int& iboSize, const unsigned int& shader, Material* mat, glm::mat4* matrix)
-	{
-		Renderer().AddRenderJob(ibo, vao, iboSize, shader, mat, matrix);
-	}
-
-
 	int GetScreenWidth()
 	{
 		return Renderer().GetWindowWidth();
@@ -180,31 +174,49 @@ namespace GFX
 {
 	namespace Content
 	{
-		unsigned int LoadTexture2DFromMemory(int width, int height, unsigned char* data)
+		void LoadTexture2DFromMemory(unsigned int& id, unsigned char* data, int width, int height)
 		{
-			return Texture::LoadFromMemory(data, GL_TEXTURE_2D, GL_RGBA, GL_RGBA, GL_LINEAR, GL_LINEAR,
-				GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, width, height);
+			Renderer().LoadTexture(id, data, width, height);
 		}
 
-		unsigned int LoadTexture2DFromFile(const char* filepath)
+		void DeleteTexture(unsigned int id)
 		{
-			return Texture::LoadFromFile(filepath, GL_TEXTURE_2D, GL_RGBA, GL_RGBA, GL_LINEAR, GL_LINEAR,
-				GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+			Renderer().DeleteTexture(id);
 		}
 
-		void DeleteTexture(unsigned int textureHandle)
+		void LoadStaticMesh(unsigned int& meshID, int& sizeVerts, int& sizeIndices, GFX::StaticVertex* verts, int* indices)
 		{
-			glDeleteTextures(1, &textureHandle);
+			Renderer().LoadStaticMesh(meshID, sizeVerts, sizeIndices, verts, indices);
 		}
 
-		void LoadStaticMesh(GLuint& IBO, GLuint& VAO, int& sizeVerts, int& sizeIndices, GFX::StaticVertex* verts, int* indices)
+		void DeleteStaticMesh(unsigned long long int id)
 		{
-			MeshManager::LoadStaticMesh(IBO, VAO, sizeVerts, sizeIndices, verts, indices);
+			Renderer().DeleteMesh(id);
 		}
 
-		void DeleteStaticMesh(const GLuint& IBO, const GLuint& VAO)
+		void CreateMaterial(unsigned long long int& out_id)
 		{
-			MeshManager::DeleteMesh(IBO, VAO);
+			Renderer().CreateMaterial(out_id);
+		}
+
+		void DeleteMaterial(const unsigned long long int& id)
+		{
+			Renderer().DeleteMaterial(id);
+		}
+
+		void AddTextureToMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID)
+		{
+			Renderer().AddTextureToMaterial(materialID, textureID);
+		}
+
+		void RemoveTextureFromMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID)
+		{
+			Renderer().RemoveTextureFromMaterial(materialID, textureID);
+		}
+
+		void AttachShaderToMaterial(const unsigned long long int& materialID, const unsigned int& shaderID)
+		{
+			Renderer().SetShaderToMaterial(materialID, shaderID);
 		}
 	}
 }

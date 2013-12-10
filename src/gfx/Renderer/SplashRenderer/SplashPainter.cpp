@@ -30,10 +30,10 @@ namespace GFX
 
 		//load logo textures
 	
-		m_logoTexture = Texture::LoadFromFile("assets/Logo/xyz_logo.png", GL_TEXTURE_2D, GL_RGBA, GL_RGBA, GL_LINEAR, GL_LINEAR, 
+		m_logoTexture = TextureManager::LoadFromFile("assets/Logo/xyz_logo.png", GL_TEXTURE_2D, GL_RGBA, GL_RGBA, GL_LINEAR, GL_LINEAR, 
 			GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
 
-		m_logoTextTexture = Texture::LoadFromFile("assets/Logo/xyz_logo_text.png", GL_TEXTURE_2D, GL_RGBA, GL_RGBA, GL_LINEAR, GL_LINEAR,
+		m_logoTextTexture = TextureManager::LoadFromFile("assets/Logo/xyz_logo_text.png", GL_TEXTURE_2D, GL_RGBA, GL_RGBA, GL_LINEAR, GL_LINEAR,
 			GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
 
 		m_alphaUniform				= m_shaderManager->GetUniformLocation("TexturedQuad", "alphaIN");
@@ -101,7 +101,7 @@ namespace GFX
 		m_shaderManager->SetUniform(1, glm::vec2(screenWidth, screenHeight), m_screenDimensionUniform);
 		m_shaderManager->SetUniform(1.0f, m_uvXUniform);
 
-		Texture::BindTexture(m_logoTexture, m_textureUniform, 0, GL_TEXTURE_2D);
+		TextureManager::BindTexture(m_logoTexture, m_textureUniform, 0, GL_TEXTURE_2D);
 
 		glBindVertexArray(m_dummyVAO);
 		glDrawArrays(GL_POINTS, 0, 1);
@@ -129,7 +129,7 @@ namespace GFX
 		m_shaderManager->SetUniform(1, glm::vec2(700.0f, 90.0f), m_sizeUniform);
 		m_shaderManager->SetUniform(1, glm::vec2(screenWidth, screenHeight), m_screenDimensionUniform);
 
-		Texture::BindTexture(m_logoTextTexture, m_textureUniform, 0, GL_TEXTURE_2D);
+		TextureManager::BindTexture(m_logoTextTexture, m_textureUniform, 0, GL_TEXTURE_2D);
 		glBindVertexArray(m_dummyVAO);
 		glDrawArrays(GL_POINTS, 0, 1);
 	}

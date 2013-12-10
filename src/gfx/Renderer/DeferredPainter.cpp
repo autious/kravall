@@ -1,10 +1,16 @@
 #include "DeferredPainter.hpp"
+#include <gfx/BitmaskDefinitions.hpp>
 
 namespace GFX
 {
-	DeferredPainter::DeferredPainter(ShaderManager* shaderManager, UniformBufferManager* uniformBufferManager)
+	DeferredPainter::DeferredPainter(ShaderManager* shaderManager, UniformBufferManager* uniformBufferManager, RenderJobManager* renderJobManager,
+		MeshManager* meshManager, TextureManager* textureManager, MaterialManager* materialManager)
 		: BasePainter(shaderManager, uniformBufferManager)
 	{
+		m_renderJobManager = renderJobManager;
+		m_meshManager = meshManager;
+		m_textureManager = textureManager;
+		m_materialManager = materialManager;
 	}
 
 	DeferredPainter::~DeferredPainter()
@@ -25,27 +31,15 @@ namespace GFX
 
 		m_shaderManager->LinkProgram("StaticMesh");
 
-
-		m_diffuseUniform = m_shaderManager->GetUniformLocation("StaticMesh", "diffuseMap");
-		m_normalUniform = m_shaderManager->GetUniformLocation("StaticMesh", "normalMap");
-		m_specularUniform = m_shaderManager->GetUniformLocation("StaticMesh", "specularMap");
-		m_glowUniform = m_shaderManager->GetUniformLocation("StaticMesh", "glowMap");
+		// TODO: Change texture names in shader
+		m_uniformTexture0 = m_shaderManager->GetUniformLocation("StaticMesh", "diffuseMap");
+		m_uniformTexture1 = m_shaderManager->GetUniformLocation("StaticMesh", "normalMap");
+		m_uniformTexture2 = m_shaderManager->GetUniformLocation("StaticMesh", "specularMap");
+		m_uniformTexture3 = m_shaderManager->GetUniformLocation("StaticMesh", "glowMap");
 
 		m_modelMatrixUniform = m_shaderManager->GetUniformLocation("StaticMesh", "modelMatrix");
 
 		m_uniformBufferManager->CreateBasicCameraUBO(m_shaderManager->GetShaderProgramID("StaticMesh"));
-	}
-
-	void DeferredPainter::AddRenderJob(const GLuint& ibo, const GLuint& vao, const int& size, const unsigned int& shader, glm::mat4* mMatrix, Material* mat)
-	{
-		RenderJob rj;
-		rj.IBO = ibo;
-		rj.VAO = vao;
-		rj.IBOSize = size;
-		rj.shaderID = shader;
-		rj.modelMatrix = mMatrix;
-		rj.material = mat;
-		m_renderJobs.push_back(rj);
 	}
 
 	void DeferredPainter::Render(FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix)
@@ -63,21 +57,114 @@ namespace GFX
 		bc.projMatrix = projMatrix;
 		
 		m_uniformBufferManager->SetBasicCameraUBO(bc);
-		
-		for (unsigned int i = 0; i < m_renderJobs.size(); i++)
+
+		std::vector<RenderJobManager::RenderJob> renderJobs = m_renderJobManager->GetJobs();
+
+		unsigned int currentShader = UINT_MAX;
+		unsigned int currentMaterial = UINT_MAX;
+		unsigned int currentMesh = UINT_MAX;
+
+		unsigned int objType = UINT_MAX;
+		unsigned int viewport = UINT_MAX;
+		unsigned int layer = UINT_MAX;
+		unsigned int translucency = UINT_MAX;
+		unsigned int meshID = UINT_MAX;
+		unsigned int material = UINT_MAX;
+		unsigned int depth = UINT_MAX;
+
+		Material mat;
+		Mesh mesh;
+		GFXBitmask bitmask;
+
+		for (unsigned int i = 0; i < renderJobs.size(); i++)
 		{
-			Texture::BindTexture(m_renderJobs.at(i).material->diffuse, m_diffuseUniform, 0, GL_TEXTURE_2D);
-			Texture::BindTexture(m_renderJobs.at(i).material->normal, m_normalUniform, 1, GL_TEXTURE_2D);
-			Texture::BindTexture(m_renderJobs.at(i).material->specular, m_specularUniform, 2, GL_TEXTURE_2D);
-			Texture::BindTexture(m_renderJobs.at(i).material->glow, m_glowUniform, 3, GL_TEXTURE_2D);
+			bitmask = renderJobs[i].bitmask;
 
-			m_shaderManager->SetUniform(1, *m_renderJobs.at(i).modelMatrix, m_modelMatrixUniform);
+			objType = GetBitmaskValue(bitmask, BT_OBJECT_TYPE);
 
-			glBindVertexArray(m_renderJobs.at(i).VAO);
-			glDrawArrays(GL_TRIANGLES, 0, m_renderJobs.at(i).IBOSize);
+			viewport = GetBitmaskValue(bitmask, BT_VIEWPORT_ID);
+			layer = GetBitmaskValue(bitmask, BT_LAYER);
+			translucency = GetBitmaskValue(bitmask, BT_TRANSLUCENCY_TYPE);
+			meshID = GetBitmaskValue(bitmask, BT_MESH_ID);
+			material = GetBitmaskValue(bitmask, BT_MATERIAL_ID);
+			depth = GetBitmaskValue(bitmask, BT_DEPTH);
+			
+			if (material != currentMaterial)
+			{
+				mat = m_materialManager->GetMaterial(material);
+
+				currentMaterial = material;
+				
+				//compare shader
+				if (mat.shaderProgramID != currentShader)
+				{
+					glUseProgram(mat.shaderProgramID);
+					currentShader = mat.shaderProgramID;
+				}
+				
+				//set textures
+				assert(mat.textures.size() == 4);
+				m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[0]).textureHandle, m_uniformTexture0, 0, GL_TEXTURE_2D);
+				m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[1]).textureHandle, m_uniformTexture1, 1, GL_TEXTURE_2D);
+				m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[2]).textureHandle, m_uniformTexture2, 2, GL_TEXTURE_2D);
+				m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[3]).textureHandle, m_uniformTexture3, 3, GL_TEXTURE_2D);
+
+
+			}
+
+			if (meshID != currentMesh)
+			{
+				mesh = m_meshManager->GetMesh(meshID);
+				currentMesh = meshID;
+
+				glBindVertexArray(mesh.VAO);
+				//set mesh
+			}
+
+			glDrawElements(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0);
 		}
 
-		m_renderJobs.clear();
+		//struct mesh
+		//id
+		//vao
+		//index count
+
+		//struct material
+		//shader program id
+		//texture array
+		//texture count
+
+		//graphics needs to hold a list of this shit
+
+		//Get all renderjobs
+
+		//for each renderjob
+		//decode material id
+		//decode mesh id == struct mesh id
+		//check against current shader
+		//Check against current mesh
+		//if different, fetch new mesh (WHERE?)
+		//VAO
+		//index count
+		//check against current material
+		//if different, fetch new material (WHERE?)
+		//Set uniforms
+		//do rendering
+		
+		//for (unsigned int i = 0; i < m_renderJobs.size(); i++)
+		//{
+		//	Texture::BindTexture(m_renderJobs.at(i).material->diffuse, m_diffuseUniform, 0, GL_TEXTURE_2D);
+		//	Texture::BindTexture(m_renderJobs.at(i).material->normal, m_normalUniform, 1, GL_TEXTURE_2D);
+		//	Texture::BindTexture(m_renderJobs.at(i).material->specular, m_specularUniform, 2, GL_TEXTURE_2D);
+		//	Texture::BindTexture(m_renderJobs.at(i).material->glow, m_glowUniform, 3, GL_TEXTURE_2D);
+		//
+		//	m_shaderManager->SetUniform(1, *m_renderJobs.at(i).modelMatrix, m_modelMatrixUniform);
+		//
+		//	glBindVertexArray(m_renderJobs.at(i).VAO);
+		//	glDrawArrays(GL_TRIANGLES, 0, m_renderJobs.at(i).IBOSize);
+		//}
+		//
+		//m_renderJobs.clear();
 		//glBindVertexArray(m_dummyVAO);
 		//glDrawArrays(GL_TRIANGLES, 0, 8127);
 

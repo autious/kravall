@@ -14,9 +14,12 @@
 
 #include "TextRenderer/TextManager.hpp"
 #include "DebugRenderer/DebugManager.hpp"
+#include "RenderJobManager.hpp"
+#include "../Buffers/MeshManager.hpp"
+#include "../Textures/TextureManager.hpp"
+#include "../Material/MaterialManager.hpp"
 
 #include <iostream>
-#include <gfx/Material.hpp>
 
 namespace GFX
 {
@@ -89,7 +92,20 @@ namespace GFX
 
 		void Delete();
 
-		void AddRenderJob(const GLuint& ibo, const GLuint& vao, const int& iboSize, const int& shaderID, Material* m, glm::mat4* matrix);
+		void AddRenderJob(GFXBitmask bitmask, void* value);
+
+		void DeleteMesh(unsigned long long id);
+		void LoadStaticMesh(unsigned int& meshID, const int& sizeVerts, const int& sizeIndices, StaticVertex* verts, int* indices);
+
+		void LoadTexture(unsigned int& id, unsigned char* data, int width, int height);
+		void DeleteTexture(unsigned long long int id);
+		
+		void CreateMaterial(unsigned long long int& id);
+		void DeleteMaterial(const unsigned long long int& id);
+		void AddTextureToMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID);
+		void RemoveTextureFromMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID);
+
+		void SetShaderToMaterial(const unsigned long long int& materialID, const unsigned int& shaderID);
 
 	private:
 		RenderCore();
@@ -124,7 +140,11 @@ namespace GFX
 
 		UniformBufferManager*	m_uniformBufferManager;
 		ShaderManager*			m_shaderManager;
-		
+		RenderJobManager*		m_renderJobManager;
+		MeshManager*			m_meshManager;
+		TextureManager*			m_textureManager;
+		MaterialManager*		m_materialManager;
+
 
 		DeferredPainter* m_deferredPainter;
 		TextPainter* m_textPainter;

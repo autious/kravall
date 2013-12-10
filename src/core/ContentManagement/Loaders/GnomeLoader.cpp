@@ -236,7 +236,7 @@ namespace Core
 
             m_modelData.push_back(modelData);            
 
-            GFX::Content::LoadStaticMesh(modelData->IBO, modelData->VAO, mesh.numberOfVertices, mesh.numberOfVertices, vertices, indices);
+            //GFX::Content::LoadStaticMesh(modelData->IBO, modelData->VAO, mesh.numberOfVertices, mesh.numberOfVertices, vertices, indices);
             
             delete[] mesh.vertices;
             delete[] mesh.materials;
@@ -265,7 +265,7 @@ namespace Core
                 break;
             }
         }
-        GFX::Content::DeleteStaticMesh(modelData->IBO, modelData->VAO);        
+        //GFX::Content::DeleteStaticMesh(modelData->IBO, modelData->VAO);        
         delete modelData;
     }
 

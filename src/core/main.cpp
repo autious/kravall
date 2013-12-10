@@ -13,7 +13,6 @@
 #include "WindowHandling/InitializeGLFW.hpp"
 
 #include <gfx/GFXInterface.hpp>
-#include <gfx/Material.hpp>
 #include <utility/Colors.hpp>
 #include "Camera/Camera.hpp"
 #include <ComponentFramework/SystemHandlerTemplate.hpp>
@@ -179,39 +178,37 @@ void run( GLFWwindow * window )
    std::cout << "ASDF" << std::endl;
    
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));
-    GFX::Material* m = new GFX::Material();
-	m->diffuse = GFX::Content::LoadTexture2DFromFile("assets/GDM.png");
 
-	for (int i = -100; i < 100; i++)
-	{
-		for (int j = -10; j < 10; j++)
-		{
-			Entity e2 = Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent>
-				(Core::GraphicsComponent(), Core::WorldPositionComponent(), Core::RotationComponent(), Core::ScaleComponent());
-	
-			Core::GraphicsComponent* gc = WGETC<Core::GraphicsComponent>(e2);
-	
-			gc->ibo = IBO;
-			gc->iboSize = vSize;
-			gc->vao = VAO;
-			gc->material = m;
-			gc->shader = 0;
-	
-			Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(e2);
-			wpc->position[0] = i * 10;
-			wpc->position[1] = j * 10;
-	
-			Core::ScaleComponent* sc = WGETC<Core::ScaleComponent>(e2);
-			sc->scale = .1f;
-	
-			Core::RotationComponent* rc = WGETC<Core::RotationComponent>(e2);
-		
-			//rc->rotation[0] = sin(3.14f / 2.0f);
-			//rc->rotation[1] = sin(3.14f / 2.0f);
-			rc->rotation[2] = sin(3.14f);
-			rc->rotation[3] = cos(3.14f / 2.0f);
-		}
-	}
+	//for (int i = -100; i < 100; i++)
+	//{
+	//	for (int j = -10; j < 10; j++)
+	//	{
+	//		Entity e2 = Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent>
+	//			(Core::GraphicsComponent(), Core::WorldPositionComponent(), Core::RotationComponent(), Core::ScaleComponent());
+	//
+	//		Core::GraphicsComponent* gc = WGETC<Core::GraphicsComponent>(e2);
+	//
+	//		gc->ibo = IBO;
+	//		gc->iboSize = vSize;
+	//		gc->vao = VAO;
+	//		gc->material = m;
+	//		gc->shader = 0;
+	//
+	//		Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(e2);
+	//		wpc->position[0] = i * 10;
+	//		wpc->position[1] = j * 10;
+	//
+	//		Core::ScaleComponent* sc = WGETC<Core::ScaleComponent>(e2);
+	//		sc->scale = .1f;
+	//
+	//		Core::RotationComponent* rc = WGETC<Core::RotationComponent>(e2);
+	//	
+	//		//rc->rotation[0] = sin(3.14f / 2.0f);
+	//		//rc->rotation[1] = sin(3.14f / 2.0f);
+	//		rc->rotation[2] = sin(3.14f);
+	//		rc->rotation[3] = cos(3.14f / 2.0f);
+	//	}
+	//}
 
 
 	std::cout << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " ";
