@@ -28,9 +28,6 @@ namespace Core
 		*/
 		void SetInputLine(const std::string& inputLine);
 
-		
-		inline const std::string& GetInputLine() { return m_inputLine; };
-
 		/*!
 		Executes the current line and adds the command to console and history.
 		*/
@@ -74,7 +71,19 @@ namespace Core
 	private:
 
 		friend DebugConsole& Console();
+
+		void HandleInput();
+
+		void MoveCursorLeft();
+		void MoveCursorRight();
+		void JumpCursorLeft();
+		void JumpCursorRight();
 		
+		void DeleteWord();
+		void DeleteLetter();
+
+		void BackspaceWord();
+		void BackspaceLetter();
 
 		DebugConsole();
 		~DebugConsole();
@@ -88,6 +97,9 @@ namespace Core
 		int m_historyIndex;
 
 		int m_offset;
+		int m_cursorOffset;
+
+		const std::string m_delChars = " +-*/\"\'.,!?(){}[]";
 
 		const int m_numRows = 25;
 

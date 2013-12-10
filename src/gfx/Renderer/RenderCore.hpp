@@ -114,6 +114,7 @@ namespace GFX
 
 		GLuint m_FBO;
 
+		FBOTexture* m_depthBuffer;
 		FBOTexture* m_normalDepth;
 		FBOTexture* m_diffuse;
 		FBOTexture* m_specular;

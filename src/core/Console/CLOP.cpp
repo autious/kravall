@@ -1,4 +1,4 @@
-#include "clop.hpp"
+#include "CLOP.hpp"
 /* Command line options.
 * Usage:
 * Each command has to be implemented in a c++ function with the following layout:
@@ -152,8 +152,8 @@ namespace clop
 	{
 		if (cmd.compare("exit") == 0)
 		{
-			char c = cmd[4];
-			int i = 0;
+			//char c = cmd[4];
+			//int i = 0;
 		}
 		if( callback_functions.find( cmd ) == callback_functions.end() ) // The command does not exist
 		{
@@ -174,6 +174,8 @@ namespace clop
 		{
 			return call( args[0], args );
 		}
+
+        return false;
 	}
 
 	/* Returns a single instance of clop */

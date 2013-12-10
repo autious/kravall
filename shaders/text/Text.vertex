@@ -1,10 +1,14 @@
 #version 440
 
-layout ( location = 0 ) in vec4 pos_uv;
-out vec2 uv;
+layout ( location = 0 ) in vec4 pos_dim;
+layout ( location = 1 ) in vec4 uv;
+
+out vec2 v_dim;
+out vec4 v_uv;
 
 void main()
 {
-	gl_Position = vec4(pos_uv.xy, 0, 1);
-	uv = pos_uv.zw;
+	gl_Position = vec4(pos_dim.xy, 0, 1);
+	v_dim = pos_dim.zw;
+	v_uv = uv;
 }

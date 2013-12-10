@@ -40,7 +40,7 @@ namespace GFX
 		\param specular Rendertarget for specular
 		\param glowMatID Rendertarget for glow and materialID
 		*/
-		void Render(FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix);
+		void Render(FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix);
 		
 		void AddRenderJob(const GLuint& ibo, const GLuint& vao, const int& size, const unsigned int& shader, glm::mat4* mMatrix, Material* mat);
 
@@ -61,12 +61,14 @@ namespace GFX
 		\param specular Rendertarget for specular
 		\param glowMatID Rendertarget for glow and materialID
 		*/
-		void BindGBuffer(FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID);
+		void BindGBuffer(FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID);
 
 		GLuint m_diffuseUniform;
 		GLuint m_normalUniform;
 		GLuint m_specularUniform;
 		GLuint m_glowUniform;
+
+		GLuint m_modelMatrixUniform;
 
 		std::vector<RenderJob> m_renderJobs;
 

@@ -13,14 +13,15 @@ namespace Core
 			ScaleComponent* sc			= WGETC<ScaleComponent>(*it);
 
 			//Build the matrices needed for model matrix
-			glm::mat4 rotationMatrix = glm::toMat4(RotationComponent::GetQuat(rc->rotation));
+			glm::quat rot = RotationComponent::GetQuat(rc->rotation);
+			glm::mat4 rotationMatrix = glm::toMat4(rot);
 			glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), WorldPositionComponent::GetVec3(wpc->position));
 			glm::mat4 scaleMatrix = glm::scale(sc->scale, sc->scale, sc->scale);
 
-			//Build modelMatrix using linear allocator (FIX THIS)
+			//Build modelMatrix using linear allocator (FIX THIS) höhöh
 			glm::mat4* modelMatrix = new glm::mat4(translationMatrix * rotationMatrix * scaleMatrix);
 
-			//GFX::Draw(gc->ibo, gc->vao, gc->iboSize, gc->shader, gc->material, modelMatrix);
+			GFX::Draw(gc->ibo, gc->vao, gc->iboSize, gc->shader, gc->material, modelMatrix);
 
 			//GFX::Draw(gc->ibo, gc->vao, gc->iboSize)
 

@@ -150,6 +150,7 @@ namespace Core
 				gnome->materials[i] = material;
 			}
            
+			std::cout << "Parsed material" << std::endl;
 
             file >> line;
             file >> line >> materialId; //todo: make dynamic solution for mutiple materials
@@ -174,68 +175,70 @@ namespace Core
                 mesh.vertices[i] = vertex;
             }
 
+			std::cout << "Parsed verts" << std::endl;
+
             //Bones
-            file >> line;
-
-            for (int k = 0; k < header.numberOfBones; ++k)
-            {
-                file >> bone.Name;
-                for (int i = 0; i < 4; i++)
-                {
-                    for (int j = 0; j < 4; j++)
-                    {
-                        file >> bone.offsetMatrix[i][j];
-                    }
-                }
-                gnome->bones[k] = bone;
-            }
-            
-            file >> line;
-            for (int i = 0; i < header.numberOfBones; ++i)
-            {
-                file >> line;
-                file >> gnome->bones[i].parentID;
-                gnome->bones[i].id = i;
-            }
-
-            //Animations
-            file >> line;
-            file >> line;
-
-            for (int i = 0; i < header.numberOfAnimations; ++i)
-            {
-                file >> line;
-                file >> animation.name;
-                file >> line;
-
-                for (int j = 0; j < header.numberOfBones; ++j)
-                {
-                    int noKeys;
-                    file >> line >> line >> noKeys;
-                    file >> line;
-                    
-                    std::vector<Keyframe> keys; //TODO: unvectorize //c:\users\alice\downloads\flag.gnome
-                    for (int k = 0; k < noKeys; k++)
-                    {
-                        Keyframe keyframe;
-                        file >> line;
-                        file >> keyframe.time;
-                        file >> line;
-                        file >> keyframe.position[0] >> keyframe.position[1] >> keyframe.position[2];
-                        file >> line;
-                        file >> keyframe.scale[0]	 >> keyframe.scale[1]	 >> keyframe.scale[2]; 
-                        file >> line;
-                        file >> keyframe.rotation[0] >> keyframe.rotation[1] >> keyframe.rotation[2] >> keyframe.rotation[3];
-
-
-                        keys.push_back(keyframe);
-                    }
-                    file >> line;
-
-                    gnome->animations[i].keyframes.push_back(keys);
-                    gnome->animations[i].namedKeyframes[gnome->bones[j].Name] = keys;
-                }
-            }
+            // file >> line;
+		    //
+            // for (int k = 0; k < header.numberOfBones; ++k)
+            // {
+            //     file >> bone.Name;
+            //     for (int i = 0; i < 4; i++)
+            //     {
+            //         for (int j = 0; j < 4; j++)
+            //         {
+            //             file >> bone.offsetMatrix[i][j];
+            //         }
+            //     }
+            //     bones[k] = bone;
+            // }
+            // 
+            // file >> line;
+            // for (int i = 0; i < header.numberOfBones; ++i)
+            // {
+            //     file >> line;
+            //     file >> bones[i].parentID;
+            //     bones[i].id = i;
+            // }
+		    //
+            // //Animations
+            // file >> line;
+            // file >> line;
+		    //
+            // for (int i = 0; i < header.numberOfAnimations; ++i)
+            // {
+            //     file >> line;
+            //     file >> animation.name;
+            //     file >> line;
+		    //
+            //     for (int j = 0; j < header.numberOfBones; ++j)
+            //     {
+            //         int noKeys;
+            //         file >> line >> line >> noKeys;
+            //         file >> line;
+            //         
+            //         std::vector<Keyframe> keys; //TODO: unvectorize //c:\users\alice\downloads\flag.gnome
+            //         for (int k = 0; k < noKeys; k++)
+            //         {
+            //             Keyframe keyframe;
+            //             file >> line;
+            //             file >> keyframe.time;
+            //             file >> line;
+            //             file >> keyframe.position[0] >> keyframe.position[1] >> keyframe.position[2];
+            //             file >> line;
+            //             file >> keyframe.scale[0]	 >> keyframe.scale[1]	 >> keyframe.scale[2]; 
+            //             file >> line;
+            //             file >> keyframe.rotation[0] >> keyframe.rotation[1] >> keyframe.rotation[2] >> keyframe.rotation[3];
+		    //
+		    //
+            //             keys.push_back(keyframe);
+            //         }
+            //         file >> line;
+		    //
+            //         animations[i].keyframes.push_back(keys);
+            //         animations[i].namedKeyframes[bones[j].Name] = keys;
+            //     }
+            // }
 
             //Apply data to GFX buffers
             gnome->indices = new int[gnome->numberOfVertices];           
@@ -272,6 +275,7 @@ namespace Core
             }
             delete[] mesh.vertices;
 
+            std::cout << "parsed data" << std::endl;
             file.close();
             return gnome;
         }

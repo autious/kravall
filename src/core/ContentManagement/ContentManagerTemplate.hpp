@@ -30,7 +30,6 @@ namespace Core
         ContentManagerTemplate()
         {
             m_loaders = {{(new Loaders())...}};
-            m_asyncMutex = new std::mutex();
         }
         
         ~ContentManagerTemplate()
@@ -39,68 +38,56 @@ namespace Core
             {
                 delete m_loaders[i];
             }
-            delete m_asyncMutex;
         }
 
         template<typename Loader>
         void Load( const char* asset, std::function<void(Core::BaseAssetLoader*, Core::AssetHandle assetHandle)> finisher, const bool async = false )
         {
             static_assert(Core::Match<Loader, Loaders...>::exists, LOADER_ERROR_MESSAGE);           
-            static const int loaderId = Core::Index<Loader, std::tuple<Loaders...>>::value;            
+            static const unsigned int loaderId = Core::Index<Loader, std::tuple<Loaders...>>::value;            
             unsigned int assetHash = MurmurHash2(asset, static_cast<int>(std::strlen(asset)), loaderId); 
             Core::AssetHandle handle = nullptr;
 
-            Core::AssetStatus status = GetAssetStatus<Loader>(assetHash, handle);
+            Core::AssetStatus status = GetAssetStatus(loaderId, assetHash, handle);
 
             if(status == Core::AssetStatus::CACHED)
             {                
                 //Loading cached asset synchronous
-                LOG_INFO << "Loading cached asset: " << asset 
-                    << " now has: " << IncreaseReference<Loader>(assetHash) << " references" << std::endl;
+                LOG_INFO << "Loading cached asset: " << asset << " now has: " <<
+                    IncreaseReference(loaderId, assetHash) << " references" << std::endl;
                 finisher(m_loaders[loaderId], handle);
             }
             else if(status == Core::AssetStatus::UNCACHED)
             {
                 if(async)
                 {
-                    LOG_INFO << "Borked" << std::endl;
-                    
-                    assert(false);
-
                     //Loading uncached asset asynchronous.
-                    std::promise<AssetHandle>* loadPromise = new std::promise<AssetHandle>();
-                    std::future<AssetHandle>* loadFuture;
-                    std::atomic_bool* loadDone = new std::atomic_bool;
-                    std::mutex* asyncMutex = m_asyncMutex;
-                    loadDone->store(false);
+                    LOG_INFO << "Loading uncached asset: " << asset << " asynchronous." << std::endl; 
+                    std::shared_ptr<std::mutex> asyncMutex = std::make_shared<std::mutex>();
+                    std::shared_ptr<Core::AssetHandle> asyncHandle = std::make_shared<Core::AssetHandle>();
 
-                    m_loadingList.push_back(std::make_tuple(loaderId, assetHash, loadPromise, loadDone));
-                   
-                    std::cout << "asdqwe21" << std::endl;
+                    asyncMutex->lock();
+                    m_asyncList.push_back(std::make_tuple(loaderId, assetHash, asyncMutex, asyncHandle, finisher));
 
-                    loadFuture = GetLoadingAssetFuture<Loader>(assetHash);
-                    std::thread([asset, loadPromise, loadDone, asyncMutex, this](unsigned int loaderId)                           
+                    std::thread([asset, asyncMutex, asyncHandle, this](unsigned int loaderId)                           
                             {
-                                std::this_thread::sleep_for(std::chrono::seconds(5));
-                                AssetHandle handle = this->m_loaders[loaderId]->LoadAsync(asset);
-                                std::lock_guard<std::mutex> lock_guard(*m_asyncMutex);
-                                loadPromise->set_value(handle);
-                                loadDone->store(true);
-                                std::cout << "asdas" << std::endl;
+                                (*asyncHandle) = this->m_loaders[loaderId]->LoadAsync(asset);
+                                asyncMutex->unlock();
                             }, loaderId).detach();
 
-                    m_asyncList.push_back(std::make_tuple(loaderId, loadFuture, finisher));
-                    AddReference<Loader>(assetHash, nullptr, Core::AssetStatus::LOADING);
+                    AddReference<Loader>(assetHash, *asyncHandle, Core::AssetStatus::LOADING);
                 }
                 else
                 {
                     //Loading uncached asset synchronous.
+                    LOG_INFO << "Loading uncached asset: " << asset << " synchronous." << std::endl;    
+
                     handle = m_loaders[loaderId]->Load(asset);                                
                     
                     if(handle == nullptr)
                     {                        
-                        LOG_FATAL << "Asset: " << asset << " not found" << std::endl;
-                        assert(false);
+                        LOG_FATAL << "Asset with name: " << asset << " was not found" << std::endl;
+                        assert(handle != nullptr);
                     }
 
                     AddReference<Loader>(assetHash, handle, Core::AssetStatus::CACHED);
@@ -109,7 +96,64 @@ namespace Core
             }
             else
             {
-                //Loading an asset that is currently being loaded.
+                if(async)
+                {
+                    //Loading an asset that is currently being loaded asynchoronous.
+                    bool asyncAssetFound = false;
+                    for(Core::AsyncVector::iterator it = m_asyncList.begin(); it != m_asyncList.end(); ++it)
+                    {
+                        if(std::get<0>(*it) == Core::Index<Loader, std::tuple<Loaders...>>::value && 
+                                std::get<1>(*it) == assetHash)
+                        {
+                            m_asyncList.push_back(std::make_tuple(std::get<0>(*it), std::get<1>(*it), std::get<2>(*it), nullptr, finisher));
+                            asyncAssetFound = true;
+                            LOG_INFO << "Loading currently loading asset: " << asset << " asynchronous, now has: "
+                                << IncreaseReference(loaderId, assetHash) << " references" << std::endl;
+                            break;
+                        }
+                    }
+
+                    if(asyncAssetFound == false)
+                    {
+                        LOG_FATAL << "Asset with name: " << asset << " was not found in asynchronous loading assets" << std::endl;
+                        assert(asyncAssetFound);
+                    }
+                }
+                else
+                {
+                    //Loading an asset that is currently beign loaded synchronous.
+                    bool asyncAssetFound = false;
+                    for(Core::AsyncVector::size_type i = 0; i < m_asyncList.size(); ++i)
+                    {
+                        if(std::get<0>(m_asyncList[i]) == loaderId && std::get<1>(m_asyncList[i]) == assetHash)
+                        {
+                            std::get<2>(m_asyncList[i])->lock();
+                            asyncAssetFound = true;
+                            Core::AssetHandle handle = (*std::get<3>(m_asyncList[i]));
+
+                            m_loaders[std::get<0>(m_asyncList[i])]->FinishLoadAsync(handle);
+                            SetAssetHandle(std::get<0>(m_asyncList[i]), std::get<1>(m_asyncList[i]), handle);
+
+                            m_finisherList.push_back(std::make_tuple(m_loaders[std::get<0>(m_asyncList[i])], handle, std::get<4>(m_asyncList[i])));
+                            SetAssetStatus(std::get<0>(m_asyncList[i]), std::get<1>(m_asyncList[i]), Core::AssetStatus::CACHED);
+
+                            m_asyncList.erase(m_asyncList.begin()+i);
+                            i=-1;
+                            std::get<2>(m_asyncList[i])->unlock();                 
+
+                            finisher(m_loaders[loaderId], handle);
+                            IncreaseReference(loaderId, assetHash);
+                            LOG_INFO << "Loading currently loading asset: " << asset << " synchronous, now has: "
+                                << IncreaseReference(loaderId, assetHash) << " references" << std::endl;
+                        }
+                    }
+
+                    if(asyncAssetFound == false)
+                    {
+                        LOG_FATAL << "Asset with name: " << asset << " was not found in asynchronous loading assets" << std::endl;
+                        assert(asyncAssetFound);
+                    }
+                }
             }
         }
 
@@ -122,7 +166,7 @@ namespace Core
             
             Core::AssetHandle handle;
 
-            Core::AssetStatus status = GetAssetStatus<Loader>(assetHash, handle);
+            Core::AssetStatus status = GetAssetStatus(loaderId, assetHash, handle);
 
             if(status == Core::AssetStatus::CACHED)
             {
@@ -155,7 +199,7 @@ namespace Core
             }
             else
             {
-                LOG_FATAL << "Trying to Free unexsisting asset: " << asset << std::endl;
+                LOG_FATAL << "Trying to Free unexisting asset: " << asset << std::endl;
                 assert(false);
             }
         }
@@ -167,33 +211,31 @@ namespace Core
         */
         void CallFinishers()
         {
-            std::lock_guard<std::mutex> lock_guard(*m_asyncMutex);
-            for(Core::AsyncVector::iterator it = m_asyncList.begin(); it != m_asyncList.end(); ++it)
+            for(Core::AsyncVector::size_type i = 0; i < m_asyncList.size(); ++i)
             {
-                std::cout << "Future valid: " << std::boolalpha << std::get<1>(*it)->valid() << std::endl;
-
-                if(std::get<1>(*it)->wait_for(std::chrono::seconds(0)) == std::future_status::ready)
+                if(std::get<2>(m_asyncList[i])->try_lock())
                 {
-                    Core::AssetHandle handle = std::get<1>(*it)->get();
-                    m_loaders[std::get<0>(*it)]->FinishLoadAsync(handle);
-                    m_finisherList.push_back(std::make_tuple(m_loaders[std::get<0>(*it)], handle, std::get<2>(*it)));
-                    m_asyncList.erase(it);
-                    it = m_asyncList.begin();
+                    unsigned int loaderId = std::get<0>(m_asyncList[i]);
+                    unsigned int assetHash = std::get<1>(m_asyncList[i]);
+                    Core::AssetHandle handle;
+
+                    if(GetAssetStatus(loaderId, assetHash, handle) == Core::AssetStatus::LOADING)
+                    {
+                        handle = (*std::get<3>(m_asyncList[i]));
+                        m_loaders[loaderId]->FinishLoadAsync(handle);
+                        SetAssetHandle(loaderId, assetHash, handle);
+                    }
+                    else
+                    {
+                        handle = GetAssetHandle(loaderId, assetHash);
+                    }
+                    m_finisherList.push_back(std::make_tuple(m_loaders[loaderId], handle, std::get<4>(m_asyncList[i])));
+                    std::get<2>(m_asyncList[i])->unlock();                  
+                    SetAssetStatus(loaderId, assetHash, Core::AssetStatus::CACHED);
+                    m_asyncList.erase(m_asyncList.begin()+i);
+                    i=-1;
                 }
             }
-
-            //Clean asynchronous loads            
-            for(Core::LoadingVector::iterator it = m_loadingList.begin(); it != m_loadingList.end(); ++it)
-            {
-                if(std::get<3>(*it)->load())
-                {
-                    SetAssetStatus(std::get<0>(*it), std::get<1>(*it), Core::AssetStatus::CACHED);
-                    delete std::get<2>(*it);
-                    delete std::get<3>(*it);
-                    m_loadingList.erase(it);
-                    it = m_loadingList.begin();
-                }
-            }            
 
             for(Core::FinisherVector::iterator it = m_finisherList.begin(); it != m_finisherList.end(); ++it)
             {
@@ -203,13 +245,11 @@ namespace Core
         }
 
     private:
-        template<typename Loader>
-        AssetStatus GetAssetStatus( const unsigned int assetHash, AssetHandle& handle )
+        AssetStatus GetAssetStatus(const unsigned int loaderId, const unsigned int assetHash, AssetHandle& handle )
         {
             for(Core::AssetVector::iterator it = m_assetList.begin(); it != m_assetList.end(); ++it)
             {
-                if( std::get<1>(*it) == Core::Index<Loader, std::tuple<Loaders...>>::value 
-                    && std::get<2>(*it) == assetHash)
+                if( std::get<1>(*it) == loaderId && std::get<2>(*it) == assetHash)
                 {
                     handle = std::get<3>(*it);
                     return std::get<4>(*it);
@@ -229,19 +269,18 @@ namespace Core
             }
         }
 
-        template<typename Loader>
-        unsigned int IncreaseReference( const unsigned int assetHash )
+        unsigned int IncreaseReference( const unsigned int loaderId, const unsigned int assetHash )
         {
             for(Core::AssetVector::iterator it = m_assetList.begin(); it != m_assetList.cend(); ++it)
             {
-                if( std::get<1>(*it) == Core::Index<Loader, std::tuple<Loaders...>>::value 
-                    && std::get<2>(*it) == assetHash)
+                if( std::get<1>(*it) == loaderId && std::get<2>(*it) == assetHash)
                 {
                    return std::get<0>(*it) = std::get<0>(*it) + 1;
                 }
             }           
             LOG_FATAL << "Trying to increase reference of unexisting asset with hash: " << assetHash << std::endl;
             assert(false);
+            return -1;
         }
 
         template<typename Loader>
@@ -258,6 +297,7 @@ namespace Core
 
             LOG_FATAL << "Trying to get reference count of unexisting asset with hash: " << assetHash << std::endl;
             assert(false);
+            return -1;
         }
 
 
@@ -275,6 +315,7 @@ namespace Core
             
             LOG_FATAL << "Trying to decrease reference of unexisting asset with hash: " << assetHash << std::endl;
             assert(false);
+            return -1;
         }
 
         template<typename Loader>
@@ -302,19 +343,47 @@ namespace Core
         }
 
         template<typename Loader>
-        std::future<AssetHandle>* GetLoadingAssetFuture(unsigned int assetHash)
+        std::shared_ptr<std::mutex> GetAsyncMutex(unsigned int assetHash)
         {
-            for(Core::LoadingVector::iterator it = m_loadingList.begin(); it != m_loadingList.end(); ++it)
+            for(Core::AsyncVector::iterator it = m_asyncList.begin(); it != m_asyncList.end(); ++it)
             {
                 if( std::get<0>(*it) == Core::Index<Loader, std::tuple<Loaders...>>::value 
                     && std::get<1>(*it) == assetHash)
                 {
-                    return new std::future<Core::AssetHandle>(std::get<2>(*it)->get_future());
+                    return std::get<2>(*it);
                 }
             }
 
-            LOG_FATAL << "Trying to get future of non-loading asset with hash: " << assetHash << std::endl;
+            LOG_FATAL << "Trying to retrieve lock of non-loading asset with hash: " << assetHash << std::endl;
             assert(false);
+            return nullptr;
+        }
+
+        Core::AssetHandle GetAssetHandle(const unsigned int loaderId, const unsigned int assetHash) const
+        {
+            for(Core::AssetVector::const_iterator it = m_assetList.cbegin(); it != m_assetList.cend(); ++it)
+            {
+                if( std::get<1>(*it) == loaderId && std::get<2>(*it) == assetHash)
+                {
+                    return std::get<3>(*it); 
+                }
+            }
+
+            LOG_FATAL << "Trying to retrieve handle of unexisting asset with hash: " << assetHash << std::endl;
+            assert(false);
+            return nullptr;
+        }
+
+        void SetAssetHandle(const unsigned int loaderId, const unsigned int assetHash, Core::AssetHandle handle)
+        {
+            for(Core::AssetVector::iterator it = m_assetList.begin(); it != m_assetList.end(); ++it)
+            {
+                if( std::get<1>(*it) == loaderId && std::get<2>(*it) == assetHash)
+                {
+                    std::get<3>(*it) = handle; 
+                    break;
+                }
+            }
         }
 
         static unsigned int MurmurHash2 ( const void* key, int len, unsigned int seed )
@@ -370,13 +439,10 @@ namespace Core
 
         static const int LOADER_COUNT = sizeof...(Loaders);
         std::array<Core::BaseAssetLoader*, LOADER_COUNT> m_loaders;
-        std::mutex* m_asyncMutex;
 
         Core::AssetVector m_assetList;
-        Core::LoadingVector m_loadingList;
         Core::AsyncVector m_asyncList;
         Core::FinisherVector m_finisherList;
-
     };
 }
 

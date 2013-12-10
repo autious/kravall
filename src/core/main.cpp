@@ -24,10 +24,10 @@
 #include "GLFWInput.hpp"
 #include <World.hpp>
 
-#include "console/console.hpp"
+#include "Console/Console.hpp"
 #include "BGnomeImporter.hpp"
 
-#include "console/clop.hpp"
+#include "Console/CLOP.hpp"
 #include <sstream>
 
 #include <iomanip>
@@ -74,10 +74,6 @@ int initScreenWidth;
 
 GLFWwindow* init( int argc, char** argv )
 {
-
-	std::string cppString = "hej";
-	const char * string2  = "hej";
-
 	GLFWwindow* window;
 
     LogSystem::RegisterLogHandler( LogSystem::debugHandler,     new ClopHandler( clopLoggerCallback, LogSystem::LogType::logType_debug ) );
@@ -121,13 +117,13 @@ void TestRendering()
 	GFX::Debug::DrawRectangle(glm::vec2(0, 0), glm::vec2(200, 20), true, Colors::Aquamarine);
 	GFX::Debug::DrawRectangle(glm::vec2(100, 20), glm::vec2(100, 40), false, Colors::Chocolate);
 
-	GFX::RenderText(glm::vec2(0, 100), 12.0f, Colors::Black, "The Quick Brown Fox Jumps Over The Lazy Dog");
-	GFX::RenderText(glm::vec2(10, 120), 11.0f, Colors::Blue, "The Quick Brown Fox Jumps Over The Lazy Dog");
-	GFX::RenderText(glm::vec2(20, 140), 10.0f, Colors::Green, "The Quick Brown Fox Jumps Over The Lazy Dog");
-	GFX::RenderText(glm::vec2(30, 160), 9.0f, Colors::CornflowerBlue, "The Quick Brown Fox Jumps Over The Lazy Dog");
-	GFX::RenderText(glm::vec2(40, 180), 12.0f, Colors::White, "The Quick Brown Fox Jumps Over The Lazy Dog????");
+	GFX::RenderText(glm::vec2(0, 100), 1.0f, Colors::Black, "The Quick Brown Fox Jumps Over The Lazy Dog");
+	GFX::RenderText(glm::vec2(10, 120), 1.0f, Colors::Blue, "The Quick Brown Fox Jumps Over The Lazy Dog");
+	GFX::RenderText(glm::vec2(20, 140), 1.0f, Colors::Green, "The Quick Brown Fox Jumps Over The Lazy Dog");
+	GFX::RenderText(glm::vec2(30, 160), 1.0f, Colors::CornflowerBlue, "The Quick Brown Fox Jumps Over The Lazy Dog");
+	GFX::RenderText(glm::vec2(40, 180), 1.0f, Colors::White, "The Quick Brown Fox Jumps Over The Lazy Dog????");
 
-	GFX::RenderText(glm::vec2(0, 200), 12.0f, Colors::Gold, "ABCDEFGHIJKLMNOPQRSTUVWXYZASIUHDOIASHUDIOASHDA1234567890*'^&%#!?");
+	GFX::RenderText(glm::vec2(0, 200), 1.0f, Colors::Gold, "ABCDEFGHIJKLMNOPQRSTUVWXYZASIUHDOIASHUDIOASHDA1234567890*'^&%#!?");
 }
 
 void SystemTimeRender()
@@ -136,7 +132,7 @@ void SystemTimeRender()
     {
         std::vector<std::pair<const char *,std::chrono::microseconds>> times = Core::world.m_systemHandler.GetFrameTime();
 
-        for( int i = 0; i < times.size(); i++ )
+        for( int i = 0; i < (int)times.size(); i++ )
         {
             std::stringstream ss;
             
@@ -151,43 +147,28 @@ void SystemTimeRender()
 
 void run( GLFWwindow * window )
 {
-
-
     LOG_INFO << "Starting program" << std::endl;
 
 	Core::Camera* gCamera;
-	gCamera = new Core::Camera(45.0f, 1.0f, 2000.0f);
+	gCamera = new Core::Camera(45.0f, 1.0f, 1000.0f);
 	gCamera->CalculateProjectionMatrix(initScreenWidth, initScreenHeight);
-	gCamera->SetPosition(glm::vec3(0.0f, 0.0f, -500.0f));
+	gCamera->SetPosition(glm::vec3(0.0f, 0.0f, -700.0f));
 
 	GFX::SetProjectionMatrix(gCamera->GetProjectionMatrix());
 
 	Core::GetInput().Initialize(window);
 
+    
     Entity ent1 = Core::world.m_entityHandler.CreateEntity<Core::ExampleComponent1,Core::ExampleComponent2>( Core::ExampleComponent1::D1(),
                                                                                    Core::ExampleComponent2::D2() );
     Core::ContentManager CM;
-
-    bool draw = false;
 
 	GLuint IBO;
 	GLuint VAO;
     GLint vSize;
     GLint iSize;
 
-    CM.Load<Core::GnomeLoader>("assets/flag.GNOME", [&VAO, &IBO, &vSize, &iSize, &draw](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
-            {
-                Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
-                const Core::ModelData* data = gnomeLoader->getData(handle);
-                VAO = data->VAO;
-                IBO = data->IBO;
-                vSize = data->vSize;
-                iSize = data->iSize;
-                draw = true;
-            });
-
-    /*
-    CM.Load<Core::GnomeLoader>("assets/flag.GNOME", [&VAO, &IBO, &vSize, &iSize](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+    CM.Load<Core::GnomeLoader>("assets/tomte.gnome", [&VAO, &IBO, &vSize, &iSize](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
             {
                 Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
                 const Core::ModelData* data = gnomeLoader->getData(handle);
@@ -196,141 +177,115 @@ void run( GLFWwindow * window )
                 vSize = data->vSize;
                 iSize = data->iSize;
             });
-
-    CM.Free<Core::GnomeLoader>("assets/flag.GNOME");
-    CM.Free<Core::GnomeLoader>("assets/flag.GNOME");
-
-    CM.Load<Core::GnomeLoader>("assets/flag.GNOME", [&VAO, &IBO, &vSize, &iSize](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
-            {
-                Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
-                const Core::ModelData* data = gnomeLoader->getData(handle);
-                VAO = data->VAO;
-                IBO = data->IBO;
-                vSize = data->vSize;
-                iSize = data->iSize;
-            });
-    */
+    std::cout << "ASDF" << std::endl;
+   
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));
-	bool fs = false;
-
-	//BGnomeImporter* BGI = new BGnomeImporter();
-    //Entity ent1 = Core::world.m_entityHandler.CreateEntity<Core::ExampleComponent1,Core::ExampleComponent2>( Core::ExampleComponent1::D1(),
-    //                                                                               Core::ExampleComponent2::D2() );
-	//
-	//Entity e2 = Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent>
-	//	(Core::GraphicsComponent(), Core::WorldPositionComponent(), Core::RotationComponent(), Core::ScaleComponent());
-	//
-	//GFX::StaticVertex* vs = nullptr;
-	//GLuint IBO;
-	//GLuint VAO;
-	//int vSize;
-	//int iSize;
-	//BGI->Go("assets/flag.GNOME", vs, vSize);
-	//
-	//int* indices = new int[vSize];
-	//iSize = vSize;
-	//for (int i = 0; i < vSize; i++)
-	//{
-	//	indices[i] = i;
-	//}
-	//GFX::Content::LoadStaticMesh(IBO, VAO, vSize, iSize, vs, indices);
-	//
-	//std::cout << IBO << std::endl;
-	//std::cout << VAO << std::endl;
-    //
-	//
     GFX::Material* m = new GFX::Material();
 	m->diffuse = GFX::Content::LoadTexture2DFromFile("assets/GDM.png");
+    /*
+	for (int i = -100; i < 100; i++)
+	{
+		for (int j = -10; j < 10; j++)
+		{
+			Entity e2 = Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent>
+				(Core::GraphicsComponent(), Core::WorldPositionComponent(), Core::RotationComponent(), Core::ScaleComponent());
+	
+			Core::GraphicsComponent* gc = WGETC<Core::GraphicsComponent>(e2);
+	
+			gc->ibo = IBO;
+			gc->iboSize = vSize;
+			gc->vao = VAO;
+			gc->material = m;
+			gc->shader = 0;
+	
+			Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(e2);
+			wpc->position[0] = i * 10;
+			wpc->position[1] = j * 10;
+	
+			Core::ScaleComponent* sc = WGETC<Core::ScaleComponent>(e2);
+			sc->scale = .1f;
+	
+			Core::RotationComponent* rc = WGETC<Core::RotationComponent>(e2);
+		
+			//rc->rotation[0] = sin(3.14f / 2.0f);
+			//rc->rotation[1] = sin(3.14f / 2.0f);
+			rc->rotation[2] = sin(3.14f);
+			rc->rotation[3] = cos(3.14f / 2.0f);
+		}
+	}
+    */
 
 	std::cout << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " ";
 
-	std::string inputline = "";
 	//inputline.resize(1);
 
+    CM.Load<Core::GnomeLoader>("assets/flag.GNOME", [&m]
+            (Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+            {
+                LOG_DEBUG << "Loading async" << std::endl;
+                Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
+                const Core::ModelData* data = gnomeLoader->getData(handle);
+
+			    Entity e2 = Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent>
+				(Core::GraphicsComponent(), Core::WorldPositionComponent(), Core::RotationComponent(), Core::ScaleComponent());
+	
+			    Core::GraphicsComponent* gc = WGETC<Core::GraphicsComponent>(e2);
+	
+		    	gc->ibo = data->IBO;
+		    	gc->iboSize = data->vSize;
+		    	gc->vao = data->VAO;
+		    	gc->material = m;
+		    	gc->shader = 0;
+	
+		    	Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(e2);
+		    	wpc->position[0] = 0.0f;
+		    	wpc->position[1] = 0.0f;
+	
+		    	Core::ScaleComponent* sc = WGETC<Core::ScaleComponent>(e2);
+		    	sc->scale = 0.5f;
+	
+		    	Core::RotationComponent* rc = WGETC<Core::RotationComponent>(e2);
+		    
+		    	rc->rotation[2] = 0.0f;
+		    	rc->rotation[3] = 0.0f;
+            }, true);
+    
+    CM.Load<Core::GnomeLoader>("assets/flag.GNOME", [&m]
+            (Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+            {
+                Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
+                const Core::ModelData* data = gnomeLoader->getData(handle);
+
+			    Entity e2 = Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent>
+				(Core::GraphicsComponent(), Core::WorldPositionComponent(), Core::RotationComponent(), Core::ScaleComponent());
+	
+			    Core::GraphicsComponent* gc = WGETC<Core::GraphicsComponent>(e2);
+	
+		    	gc->ibo = data->IBO;
+		    	gc->iboSize = data->vSize;
+		    	gc->vao = data->VAO;
+		    	gc->material = m;
+		    	gc->shader = 0;
+	
+		    	Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(e2);
+		    	wpc->position[0] = 50.0f;
+		    	wpc->position[1] = 0.0f;               
+	
+		    	Core::ScaleComponent* sc = WGETC<Core::ScaleComponent>(e2);
+		    	sc->scale = 0.5f;
+	
+		    	Core::RotationComponent* rc = WGETC<Core::RotationComponent>(e2);
+		    
+		    	rc->rotation[2] = 0.0f;
+		    	rc->rotation[3] = 0.0f;
+            }, true);
+
+    CM.Free<Core::GnomeLoader>("assets/flag.GNOME");
 	while (!glfwWindowShouldClose(window))
 	{
 		Core::GetInput().UpdateInput();
 		
-		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_ESCAPE))
-			Core::Console().ClearInput();
-		
-		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_TAB))
-		{
-			Core::Console().Toggle();
-			Core::GetInput().SetCharCallback(Core::Console().IsVisible());
-		}
-		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_UP))
-		{
-			Core::Console().LastHistory();
-			inputline = Core::Console().GetInputLine();
-		}
-		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_DOWN))
-		{
-			Core::Console().NextHistory();
-			inputline = Core::Console().GetInputLine();
-		}
-		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_PAGE_UP) || Core::GetInput().GetScrollY() > 0)
-			Core::Console().Scroll(1);
-		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_PAGE_DOWN) || Core::GetInput().GetScrollY() < 0)
-			Core::Console().Scroll(-1);
-
-		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_ENTER))
-		{
-			Core::Console().SetInputLine(inputline);
-			Core::Console().Add();
-			inputline.clear();
-		}
-		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_BACKSPACE))
-		{
-			if (inputline.size() > 1)
-				inputline.erase(inputline.end() - 1);
-			else
-			{
-				inputline.clear();
-				//inputline.resize(1);
-			}
-
-			Core::Console().SetInputLine(inputline);
-		}
-
-		char c = Core::GetInput().GetChar();
-
-		if (c != 0)
-		{
-			//inputline[inputline.size() - 1] = c;
-			//inputline.resize(inputline.size() + 1);
-			inputline.insert(inputline.end(), 1, c);
-			Core::Console().SetInputLine(inputline);
-		}
-
 		Core::Console().Update();
-
-		//if (input->IsKeyPressedOnce(GLFW_KEY_ENTER))
-		//{
-		//	glfwDestroyWindow(window);
-		//	GFX::DeleteGFX();
-		//
-		//	GLFWmonitor* pMonitor = glfwGetPrimaryMonitor();
-		//
-		//	const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-		//
-		//	int windowWidth = mode->width;
-		//	int windowHeight = mode->height;
-		//
-		//
-		//	if (!fs)
-		//	{
-		//		Core::InitializeGLFW(&window, initScreenWidth, initScreenHeight, Core::WindowMode::WMODE_FULLSCREEN_BORDERLESS);
-		//		GFX::Init(windowWidth, windowHeight);
-		//	}
-		//	else
-		//	{
-		//		Core::InitializeGLFW(&window, initScreenWidth, initScreenHeight, Core::WindowMode::WMODE_WINDOWED_BORDERLESS);
-		//		GFX::Init(initScreenWidth, initScreenHeight );
-		//	}
-		//
-		//	fs = !fs;
-		//}
 
         CM.CallFinishers();
 
@@ -338,20 +293,14 @@ void run( GLFWwindow * window )
 		gCamera->LookAt(glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		GFX::SetViewMatrix(gCamera->GetViewMatrix());
 
-		//TestRendering();
-        if(draw == true)
-        {
-		    GFX::Draw(IBO, VAO, vSize, m);
-        }
+		TestRendering();
 
-		GFX::Render();
-
+	    GFX::Render();
         Core::world.m_systemHandler.Update( 0.1f );
         SystemTimeRender();
 		Core::GetInput().ResetInput();
 		glfwSwapBuffers(window);
 		glfwPollEvents();
-
     }
 
     glfwDestroyWindow( window );

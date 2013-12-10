@@ -27,23 +27,25 @@ void main()
 	float topY = HelperY(posIN.y - sizeIN.y / 2.0f);
 	float bottomY = HelperY(posIN.y + sizeIN.y / 2.0f);
 	
+	gl_Position = vec4( leftX, topY, 0, 1 );
+	//uv = vec2( 0.0, 1.0 );
+	uv = vec2( 0.0, uvXIN );
+	EmitVertex();
+
 	gl_Position = vec4( rightX, topY, 0, 1 );
 	//uv = vec2( uvXIN, 1.0 );
 	uv = vec2( 1.0f, uvXIN );
 	EmitVertex();
 	
-	gl_Position = vec4( leftX, topY, 0, 1 );
-	//uv = vec2( 0.0, 1.0 );
-	uv = vec2( 0.0, uvXIN );
+	gl_Position = vec4(leftX, bottomY, 0, 1 );
+	uv = vec2( 0.0, 0.0 );
 	EmitVertex();
+
 	
 	gl_Position = vec4( rightX, bottomY, 0, 1 );
 	uv = vec2( 1.0f, 0.0 );
 	EmitVertex();
 	
-	gl_Position = vec4(leftX, bottomY, 0, 1 );
-	uv = vec2( 0.0, 0.0 );
-	EmitVertex();
 
 	EndPrimitive();
 }

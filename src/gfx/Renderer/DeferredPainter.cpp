@@ -31,6 +31,8 @@ namespace GFX
 		m_specularUniform = m_shaderManager->GetUniformLocation("StaticMesh", "specularMap");
 		m_glowUniform = m_shaderManager->GetUniformLocation("StaticMesh", "glowMap");
 
+		m_modelMatrixUniform = m_shaderManager->GetUniformLocation("StaticMesh", "modelMatrix");
+
 		m_uniformBufferManager->CreateBasicCameraUBO(m_shaderManager->GetShaderProgramID("StaticMesh"));
 	}
 
@@ -46,13 +48,14 @@ namespace GFX
 		m_renderJobs.push_back(rj);
 	}
 
-	void DeferredPainter::Render(FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix)
+	void DeferredPainter::Render(FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix)
 	{
 		BasePainter::Render();
 
+		BindGBuffer(depthBuffer, normalDepth, diffuse, specular, glowMatID);
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
-		BindGBuffer(normalDepth, diffuse, specular, glowMatID);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		m_shaderManager->UseProgram("StaticMesh");
 		
 		BasicCamera bc;
@@ -68,6 +71,8 @@ namespace GFX
 			Texture::BindTexture(m_renderJobs.at(i).material->specular, m_specularUniform, 2, GL_TEXTURE_2D);
 			Texture::BindTexture(m_renderJobs.at(i).material->glow, m_glowUniform, 3, GL_TEXTURE_2D);
 
+			m_shaderManager->SetUniform(1, *m_renderJobs.at(i).modelMatrix, m_modelMatrixUniform);
+
 			glBindVertexArray(m_renderJobs.at(i).VAO);
 			glDrawArrays(GL_TRIANGLES, 0, m_renderJobs.at(i).IBOSize);
 		}
@@ -82,17 +87,19 @@ namespace GFX
 	}
 
 
-	void DeferredPainter::BindGBuffer(FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID)
+	void DeferredPainter::BindGBuffer(FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID)
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, normalDepth->GetTextureHandle(),	0);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, diffuse->GetTextureHandle(),		0);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, specular->GetTextureHandle(),		0);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, glowMatID->GetTextureHandle(),		0);
+
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthBuffer->GetTextureHandle(), 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, normalDepth->GetTextureHandle(), 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, diffuse->GetTextureHandle(), 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, specular->GetTextureHandle(), 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, glowMatID->GetTextureHandle(), 0);
 
 		// define outputs
-		GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
-		glDrawBuffers(4, drawBuffers);
+		GLenum drawBuffers[] = { GL_NONE, GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
+		glDrawBuffers(5, drawBuffers);
 	}
 }

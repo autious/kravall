@@ -38,7 +38,8 @@ namespace
         
         {
             Core::StackHeap stackAllocator(alloc);            
-            TestPOD* testPod = stackAllocator.NewPOD<TestPOD>();
+            //TestPOD* testPod = 
+            stackAllocator.NewPOD<TestPOD>();
         }
 
         //Asserts the stack was cleared on out of scope
