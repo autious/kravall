@@ -119,6 +119,20 @@ namespace GFX
 
 		alphaUniform = m_shaderManager->GetUniformLocation("TQ", "alphaIN");
 		textureUniform = m_shaderManager->GetUniformLocation("TQ", "textureIN");
+
+
+		stuffs = new glm::vec4[100];
+		//for(int i = 0; i < 100; i++)
+		//{
+		//	stuffs[i] = glm::vec4((rand() % 1000) / 1000.0f, (rand() % 1000) / 1000.0f, (rand() % 1000) / 1000.0f, 1.0f);
+		//}
+
+		glGenBuffers(1, &stuffsBuffer);
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, stuffsBuffer);
+		glBufferData(GL_SHADER_STORAGE_BUFFER, 100 * sizeof(glm::vec4), NULL, GL_DYNAMIC_COPY);
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, stuffsBuffer);
+
+
 	}
 
 
@@ -127,16 +141,25 @@ namespace GFX
 		m_shaderManager->UseProgram("ComputeTest");
 		m_shaderManager->SetUniform(1.0f, m_shaderManager->GetUniformLocation("ComputeTest", "roll"));
 
-		//TextureManager::BindTexture(diffuse->GetTextureHandle(), m_shaderManager->GetUniformLocation("ComputeTest", "normal"), 0, GL_TEXTURE_2D);
 
+
+		//TextureManager::BindTexture(diffuse->GetTextureHandle(), m_shaderManager->GetUniformLocation("ComputeTest", "normal"), 0, GL_TEXTURE_2D);
 		glBindImageTexture(0, textureHandle, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
 		glBindImageTexture(1, normalDepth->GetTextureHandle(), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
 		glBindImageTexture(2, diffuse->GetTextureHandle(), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
 		glBindImageTexture(3, specular->GetTextureHandle(), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
 		glBindImageTexture(4, glowMatID->GetTextureHandle(), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
 
-		glDispatchCompute(1280 / 16, 720 / 16, 1);
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, stuffsBuffer);
+		glm::vec4* p = (glm::vec4*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, 100 * sizeof(glm::vec4), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+		for (int i = 0; i < 100; i++)
+		{
+			p[i] = glm::vec4((rand() % 1000) / 1000.0f, (rand() % 1000) / 1000.0f, (rand() % 1000) / 1000.0f, 1.0f);
+		}
+		glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
+		glDispatchCompute(1280 / 16, 720 / 16, 1);
+		glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
 		m_shaderManager->UseProgram("TQ");
 

@@ -50,6 +50,8 @@ namespace GFX
 		GLint alphaUniform;
 		GLint textureUniform;
 		GLuint textureHandle;
+		GLuint stuffsBuffer;
+		glm::vec4* stuffs;
 
 	};
 }
