@@ -1,18 +1,18 @@
 #ifndef SRC_GFX_RENDERER_DEFERRED_PAINTER_HPP
 #define SRC_GFX_RENDERER_DEFERRED_PAINTER_HPP
 
-#include "BasePainter.hpp"
+#include "../BasePainter.hpp"
 #include <Shaders/ShaderManager.hpp>
 
-#include "RenderJobManager.hpp"
+#include "../RenderJobManager.hpp"
 
 #include "FBOTexture.hpp"
-#include "../Buffers/UniformBufferManager.hpp"
+#include "../../Buffers/UniformBufferManager.hpp"
 #include <GL/glew.h>
 #include <vector>
-#include "../Textures/TextureManager.hpp"
-#include "../Buffers/MeshManager.hpp"
-#include "../Material/MaterialManager.hpp"
+#include "../../Textures/TextureManager.hpp"
+#include "../../Buffers/MeshManager.hpp"
+#include "../../Material/MaterialManager.hpp"
 
 namespace GFX
 {

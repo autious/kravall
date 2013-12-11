@@ -32,6 +32,7 @@ namespace GFX
 		delete(m_materialManager);
 
 		delete(m_deferredPainter);
+		delete(m_lightPainter);
 		delete(m_textPainter);
 		delete(m_debugPainter);
 		delete(m_consolePainter);
@@ -60,6 +61,8 @@ namespace GFX
 		m_deferredPainter = new DeferredPainter(m_shaderManager, m_uniformBufferManager, 
 			m_renderJobManager, m_meshManager, m_textureManager, m_materialManager);
 
+		m_lightPainter = new LightPainter(m_shaderManager, m_uniformBufferManager, m_renderJobManager);
+
 		m_debugPainter = new DebugPainter(m_shaderManager, m_uniformBufferManager);
 		m_textPainter = new TextPainter(m_shaderManager, m_uniformBufferManager);
 		m_consolePainter = new ConsolePainter(m_shaderManager, m_uniformBufferManager);
@@ -76,6 +79,7 @@ namespace GFX
 
 
 		m_deferredPainter->Initialize(m_FBO, m_dummyVAO);
+		m_lightPainter->Initialize(m_FBO, m_dummyVAO);
 		m_debugPainter->Initialize(m_FBO, m_dummyVAO);
 		m_textPainter->Initialize(m_FBO, m_dummyVAO);
 		m_consolePainter->Initialize(m_FBO, m_dummyVAO);
@@ -165,6 +169,8 @@ namespace GFX
 		m_renderJobManager->Sort();
 
 		m_deferredPainter->Render(m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
+
+		m_lightPainter->Render(m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
 		
 		m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, 1);
 

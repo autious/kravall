@@ -5,7 +5,7 @@
 #include <Shaders/ShaderManager.hpp>
 #include <Buffers/UniformBufferManager.hpp>
 #include "../../Textures/TextureManager.hpp"
-#include "../FBOTexture.hpp"
+#include "../DeferredRenderer/FBOTexture.hpp"
 
 namespace GFX
 {

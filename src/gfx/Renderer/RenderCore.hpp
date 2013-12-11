@@ -4,8 +4,10 @@
 #include <Shaders/ShaderManager.hpp>
 #include <Buffers/UniformBufferManager.hpp>
 
-#include "FBOTexture.hpp"
-#include "DeferredPainter.hpp"
+#include "DeferredRenderer/FBOTexture.hpp"
+#include "DeferredRenderer/DeferredPainter.hpp"
+#include "DeferredRenderer/LightPainter.hpp"
+
 #include "Console/ConsolePainter.hpp"
 #include "DebugRenderer/DebugPainter.hpp"
 #include "TextRenderer/TextPainter.hpp"
@@ -147,6 +149,7 @@ namespace GFX
 
 
 		DeferredPainter* m_deferredPainter;
+		LightPainter* m_lightPainter;
 		TextPainter* m_textPainter;
 		DebugPainter* m_debugPainter;
 		ConsolePainter* m_consolePainter;

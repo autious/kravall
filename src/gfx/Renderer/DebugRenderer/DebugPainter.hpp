@@ -4,7 +4,7 @@
 #include "../BasePainter.hpp"
 #include <Shaders/ShaderManager.hpp>
 
-#include "../FBOTexture.hpp"
+#include "../DeferredRenderer/FBOTexture.hpp"
 #include "../../Buffers/UniformBufferManager.hpp"
 #include <GL/glew.h>
 
