@@ -59,7 +59,6 @@ void clopLoggerCallback( LogSystem::LogType m_type, const char * message )
         Core::Console().PrintLine(std::string( message ), Colors::Yellow);
         break;
     }
-
 }
 
 // Just an example of a clop function
