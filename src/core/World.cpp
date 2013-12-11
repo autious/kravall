@@ -3,4 +3,11 @@
 namespace Core
 {
     World world;
+
+	World::~World()
+	{
+		delete[] m_worldMemory;
+	}
 }
+
+

@@ -24,7 +24,9 @@ namespace Core
 			scaleMatrix = glm::scale(sc->scale, sc->scale, sc->scale);
 
 			//Build modelMatrix using linear allocator (FIX THIS) höhöh
-			glm::mat4* modelMatrix = new glm::mat4(translationMatrix * rotationMatrix * scaleMatrix);
+			glm::mat4* modelMatrix = Core::world.m_linearHeap.NewObject<glm::mat4>(translationMatrix * rotationMatrix * scaleMatrix);
+			//glm::mat4* modelMatrix = new glm::mat4(translationMatrix * rotationMatrix * scaleMatrix);
+			//delete modelMatrix;
 			//
 			GFX::Draw(gc->bitmask, (void*)modelMatrix);
 

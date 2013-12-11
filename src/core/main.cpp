@@ -148,6 +148,10 @@ void run( GLFWwindow * window )
 {
     LOG_INFO << "Starting program" << std::endl;
 
+	Core::world.m_worldMemory = new unsigned char[WORLD_MEMORY_SIZE];
+	Core::world.m_linearAllocator = Core::LinearAllocator(Core::world.m_worldMemory, WORLD_MEMORY_SIZE);
+	Core::world.m_linearHeap = Core::LinearHeap(Core::world.m_linearAllocator);
+
 	Core::Camera* gCamera;
 	gCamera = new Core::Camera(45.0f, 1.0f, 1000.0f);
 	gCamera->CalculateProjectionMatrix(initScreenWidth, initScreenHeight);
@@ -219,12 +223,18 @@ void run( GLFWwindow * window )
 
 		TestRendering();
 
-	    GFX::Render();
+
+	    //TODO: Timing hook
+		GFX::Render();
+
         Core::world.m_systemHandler.Update( 0.1f );
         SystemTimeRender();
 		Core::GetInput().ResetInput();
 		glfwSwapBuffers(window);
 		glfwPollEvents();
+
+		//TODO: Timing hook
+		Core::world.m_linearHeap.Rewind();
     }
 
     glfwDestroyWindow( window );
