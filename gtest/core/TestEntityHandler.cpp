@@ -104,7 +104,60 @@ namespace Core
 
         EXPECT_EQ(0,instance.GetEntityCount());
         EXPECT_EQ(0,instance.GetComponentCount());
+    }
 
+    TEST( EntityHandlerTest, AddAndRemoveComponentsDynamic )
+    {
+        SystemHandler system;
+        EntityHandler entity( &system );
+
+        Entity ent1 = entity.CreateEntity();
+        Entity ent2 = entity.CreateEntity();
+
+        entity.AddComponentsAspect( ent1, 1ULL << 1 | 1ULL << 2 );
+        entity.AddComponentsAspect( ent2, 1ULL << 0 | 1ULL << 2 );
+
+        ASSERT_EQ( (Aspect)(entity.GenerateAspect<Component2,Component3>()), entity.GetEntityAspect( ent1 ) );
+        ASSERT_EQ( (Aspect)(1ULL << 0 | 1ULL << 2), entity.GetEntityAspect( ent2 ) );
+
+        entity.RemoveComponentsAspect( ent1, 1ULL << 1 );
+        entity.RemoveComponentsAspect( ent2, 1ULL << 2 );
+
+        ASSERT_EQ( (Aspect)(entity.GenerateAspect<Component3>()), entity.GetEntityAspect( ent1 ) );
+        ASSERT_EQ( (Aspect)(1ULL << 0), entity.GetEntityAspect( ent2 ) );
+
+        entity.RemoveComponentsAspect( ent1, 1ULL << 2 );
+        entity.RemoveComponentsAspect( ent2, 1ULL << 0 );
+
+        ASSERT_EQ( (Aspect)(0ULL), entity.GetEntityAspect( ent1 ) );
+        ASSERT_EQ( (Aspect)(0ULL), entity.GetEntityAspect( ent2 ) );
+    }
+
+    TEST( EntityHandlerTest, AddAndRemoveComponentsTemplate )
+    {
+        SystemHandler system;
+        EntityHandler entity( &system );
+
+        Entity ent1 = entity.CreateEntity();
+        Entity ent2 = entity.CreateEntity();
+
+        entity.AddComponents<Component2,Component3>( ent1, Component2(), Component3() );
+        entity.AddComponents<Component1,Component3>( ent2, Component1(), Component3() );
+
+        ASSERT_EQ( (Aspect)(entity.GenerateAspect<Component2,Component3>()), entity.GetEntityAspect( ent1 ) );
+        ASSERT_EQ( (Aspect)(1ULL << 0 | 1ULL << 2), entity.GetEntityAspect( ent2 ) );
+
+        entity.RemoveComponents<Component2>( ent1 );
+        entity.RemoveComponents<Component3>( ent2 );
+
+        ASSERT_EQ( (Aspect)(entity.GenerateAspect<Component3>()), entity.GetEntityAspect( ent1 ) );
+        ASSERT_EQ( (Aspect)(1ULL << 0), entity.GetEntityAspect( ent2 ) );
+
+        entity.RemoveComponents<Component3>( ent1 );
+        entity.RemoveComponents<Component1>( ent2 );
+
+        ASSERT_EQ( (Aspect)(0ULL), entity.GetEntityAspect( ent1 ) );
+        ASSERT_EQ( (Aspect)(0ULL), entity.GetEntityAspect( ent2 ) );
     }
 }
 #endif

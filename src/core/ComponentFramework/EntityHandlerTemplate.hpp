@@ -50,10 +50,80 @@ namespace Core
         {
             Entity ent = m_entities.Alloc();        
 
-            AddComponent<EntityComponents...>( ent, c... );
+            AddComponentT<EntityComponents...>( ent, c... );
 
             m_systemHandler->CallChangedEntity( ent, 0ULL, GenerateAspect<EntityComponents...>() );
             return ent;
+        }
+
+        Entity CreateEntity()
+        {
+            Entity ent = m_entities.Alloc();        
+
+            return ent;
+        }
+
+        /*!
+            Template component adding function, will trigger
+            aspect updates to inform systems that the entity has changed.
+        */
+        template<typename... EntityComponents>
+        void AddComponents( Entity ent, EntityComponents... comps  )
+        {
+            Aspect oldAsp = GetEntityAspect( ent );
+
+            AddComponentT<EntityComponents...>( ent, comps... );
+
+            m_systemHandler->CallChangedEntity( ent, oldAsp, GetEntityAspect( ent ) );
+        }
+
+        /*!
+            Template component adding function using runtime
+            ids, primarily to be used from scripting utilities
+
+            Triggers change call to systems. Doesn't set any default
+            value to new components, so they might reuse data that was previously releasesed.
+        */
+        void AddComponentsAspect( Entity ent, Aspect asp )
+        {
+            Aspect oldAsp = GetEntityAspect( ent );
+
+            for( int i = 0; i < COMPONENT_COUNT; i++ )
+            {
+                if( ((asp >> i) & 1ULL) > 0 )
+                {
+                    AddComponent( ent, i );
+                }
+            }
+
+            m_systemHandler->CallChangedEntity( ent, oldAsp, GetEntityAspect( ent ) );
+        }
+
+        /*!
+            Removes listed components from entity
+        */
+        template<typename... EntityComponents>
+        void RemoveComponents( Entity ent )
+        {
+            RemoveComponentsAspect( ent, GenerateAspect<EntityComponents...>() );
+        }  
+
+        /*!
+            Removes listed components from entity
+        */
+        void RemoveComponentsAspect( Entity ent, Aspect asp )
+        {
+            Aspect oldAsp = GetEntityAspect( ent );
+
+            for( int i = 0; i < COMPONENT_COUNT; i++ )
+            {
+                if( ((asp >> i) & 1ULL) > 0 )
+                {
+                    RemoveComponent( ent, i );
+                }
+            }
+
+            m_systemHandler->CallChangedEntity( ent, oldAsp, GetEntityAspect( ent ) );
         }
 
         /*!
@@ -147,36 +217,55 @@ namespace Core
             return asp |= (1ULL << id[i] | (i < size-1 ? GenerateAspect(id,asp,i+1,size) : 0ULL )); 
         }
 
+        /*!
+            Internal component adding function, DOES NOT trigger aspect updates
+            in systems
+        */
         template<typename Component, typename... RComponents>
-        void AddComponent( Entity ent, Component comp, RComponents... r  )
+        void AddComponentT( Entity ent, Component comp, RComponents... r  )
         {
-            int componentType = GetComponentTypeId<Component>();
-            //Check so that this component doesn't overwrite an existing one.
-            assert( m_entities.GetComponentId(ent, componentType ) < 0 );
+            const size_t componentType = GetComponentTypeId<Component>();
 
-            int compId  = m_components[componentType]->Alloc();
+            int compId = AddComponent( ent, componentType );
 
             m_components[componentType]->Set( compId, &comp );
             
-            m_entities.SetComponentId( ent, compId, componentType );
-
-            AddComponent<RComponents...>(ent, r...);
+            AddComponentT<RComponents...>(ent, r...);
         }
 
+        /*!
+            Internal component adding function, DOES NOT trigger aspect updates
+            in systems
+        */
         template<typename Component>
-        void AddComponent( Entity ent, Component comp )
+        void AddComponentT( Entity ent, Component comp )
         {
-            int componentType = GetComponentTypeId<Component>();
-            //Check so that this component doesn't overwrite an existing one.
-            assert( m_entities.GetComponentId(ent, componentType ) < 0 );
+            const size_t componentType = GetComponentTypeId<Component>();
 
-            int compId  = m_components[componentType]->Alloc();
-
+            int compId = AddComponent( ent, componentType );
+            
             m_components[componentType]->Set( compId, &comp );
-
-            m_entities.SetComponentId( ent, compId, componentType );
         }
 
+        /*!
+            Adds a component to entity, doesn't set the data to any value.
+            Might reuse existing data, does not trigger aspect updates to any systems
+        */
+        int AddComponent( Entity ent, int componentType )
+        {
+            //Check so that this component doesn't overwrite an existing one.
+            int componentId = m_entities.GetComponentId(ent, componentType );
+            if( componentId >= 0 )
+            {
+                m_components[componentType]->Release( componentId );
+            }
+
+            int compId = m_components[componentType]->Alloc();
+
+            m_entities.SetComponentId( ent, compId, componentType );
+
+            return compId;
+        }
 
         void ClearComponents( Entity id )
         {
@@ -192,6 +281,7 @@ namespace Core
             if( componentId >= 0 )
             {
                 m_components[componentType]->Release( componentId );
+                m_entities.SetComponentId( ent, -1, componentType );
             }
         }
     };
