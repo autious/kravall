@@ -233,8 +233,12 @@ namespace Core
 
             Core::ModelData* modelData = new Core::ModelData;
             modelData->iSize = modelData->vSize = mesh.numberOfVertices;
+			unsigned int meshID;
+          
+			GFX::Content::LoadStaticMesh(meshID, modelData->vSize, modelData->iSize, vertices, indices);
 
-            m_modelData.push_back(modelData);            
+			modelData->IBO = meshID;
+			m_modelData.push_back(modelData);
 
             //GFX::Content::LoadStaticMesh(modelData->IBO, modelData->VAO, mesh.numberOfVertices, mesh.numberOfVertices, vertices, indices);
             

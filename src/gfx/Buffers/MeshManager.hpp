@@ -42,7 +42,7 @@ namespace GFX
 		inline const unsigned int FindMesh(unsigned long long id)
 		{
 			for (unsigned int i = 0; i < m_meshes.size(); i++)
-				if (m_meshes[i].id = static_cast<unsigned int>(id))
+				if (m_meshes[i].id == static_cast<unsigned int>(id))
 					return i;
 
 			return UINT_MAX;

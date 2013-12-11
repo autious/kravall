@@ -38,7 +38,7 @@ namespace GFX
 		inline const unsigned int FindMaterial(unsigned long long id)
 		{
 			for (unsigned int i = 0; i < m_materials.size(); i++)
-				if (m_materials[i].id = static_cast<unsigned int>(id))
+				if (m_materials[i].id == static_cast<unsigned int>(id))
 					return i;
 
 			return UINT_MAX;

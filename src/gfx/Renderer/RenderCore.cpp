@@ -162,6 +162,8 @@ namespace GFX
 			return;
 		}
 
+		m_renderJobManager->Sort();
+
 		m_deferredPainter->Render(m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
 		
 		m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, 1);
@@ -174,6 +176,8 @@ namespace GFX
 		
 		// Render text
 		m_textPainter->Render();
+
+		m_renderJobManager->Clear();
 	}
 
 	void RenderCore::InitializeGBuffer()

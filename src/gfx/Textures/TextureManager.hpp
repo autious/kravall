@@ -65,7 +65,7 @@ namespace GFX
 		inline const unsigned int FindTexture(unsigned long long id)
 		{
 			for (unsigned int i = 0; i < m_textures.size(); i++)
-				if (m_textures[i].id = static_cast<unsigned int>(id))
+				if (m_textures[i].id == static_cast<unsigned int>(id))
 					return i;
 
 			return UINT_MAX;

@@ -37,6 +37,8 @@
 
 #include <Lua/LuaState.hpp>
 
+#include <gfx/BitmaskDefinitions.hpp>
+
 void clopLoggerCallback( LogSystem::LogType m_type, const char * message )
 {
     switch( m_type )
@@ -150,7 +152,7 @@ void run( GLFWwindow * window )
 	Core::Camera* gCamera;
 	gCamera = new Core::Camera(45.0f, 1.0f, 1000.0f);
 	gCamera->CalculateProjectionMatrix(initScreenWidth, initScreenHeight);
-	gCamera->SetPosition(glm::vec3(0.0f, 0.0f, -700.0f));
+	gCamera->SetPosition(glm::vec3(0.0f, 0.0f, -50.0f));
 
 	GFX::SetProjectionMatrix(gCamera->GetProjectionMatrix());
 
@@ -166,7 +168,7 @@ void run( GLFWwindow * window )
     GLint vSize;
     GLint iSize;
 
-   CM.Load<Core::GnomeLoader>("assets/cube.gnome", [&VAO, &IBO, &vSize, &iSize](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+   CM.Load<Core::GnomeLoader>("assets/tomte.gnome", [&VAO, &IBO, &vSize, &iSize](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
            {
                Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
                const Core::ModelData* data = gnomeLoader->getData(handle);
@@ -179,36 +181,33 @@ void run( GLFWwindow * window )
    
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));
 
-	//for (int i = -100; i < 100; i++)
-	//{
-	//	for (int j = -10; j < 10; j++)
-	//	{
-	//		Entity e2 = Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent>
-	//			(Core::GraphicsComponent(), Core::WorldPositionComponent(), Core::RotationComponent(), Core::ScaleComponent());
-	//
-	//		Core::GraphicsComponent* gc = WGETC<Core::GraphicsComponent>(e2);
-	//
-	//		gc->ibo = IBO;
-	//		gc->iboSize = vSize;
-	//		gc->vao = VAO;
-	//		gc->material = m;
-	//		gc->shader = 0;
-	//
-	//		Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(e2);
-	//		wpc->position[0] = i * 10;
-	//		wpc->position[1] = j * 10;
-	//
-	//		Core::ScaleComponent* sc = WGETC<Core::ScaleComponent>(e2);
-	//		sc->scale = .1f;
-	//
-	//		Core::RotationComponent* rc = WGETC<Core::RotationComponent>(e2);
-	//	
-	//		//rc->rotation[0] = sin(3.14f / 2.0f);
-	//		//rc->rotation[1] = sin(3.14f / 2.0f);
-	//		rc->rotation[2] = sin(3.14f);
-	//		rc->rotation[3] = cos(3.14f / 2.0f);
-	//	}
-	//}
+	for (int i = -100; i < 100; i++)
+	{
+		for (int j = -10; j < 10; j++)
+		{
+			Entity e2 = Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent>
+				(Core::GraphicsComponent(), Core::WorldPositionComponent(), Core::RotationComponent(), Core::ScaleComponent());
+	
+			Core::GraphicsComponent* gc = WGETC<Core::GraphicsComponent>(e2);
+			
+			GFX::SetBitmaskValue(gc->bitmask, GFX::BT_MESH_ID, IBO);
+			
+	
+			Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(e2);
+			wpc->position[0] = i * 10;
+			wpc->position[1] = j * 10;
+	
+			Core::ScaleComponent* sc = WGETC<Core::ScaleComponent>(e2);
+			sc->scale = .1f;
+	
+			Core::RotationComponent* rc = WGETC<Core::RotationComponent>(e2);
+		
+			//rc->rotation[0] = sin(3.14f / 2.0f);
+			//rc->rotation[1] = sin(3.14f / 2.0f);
+			rc->rotation[2] = sin(3.14f);
+			rc->rotation[3] = cos(3.14f / 2.0f);
+		}
+	}
 
 
 	std::cout << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " ";

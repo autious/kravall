@@ -134,7 +134,7 @@ namespace GFX
 		*/
 		DLL_API void DeleteTexture(unsigned int id);
 
-		DLL_API void LoadStaticMesh(GLuint& IBO, GLuint& VAO, int& sizeVerts, int& sizeIndices, GFX::StaticVertex* verts, int* indices);
+		DLL_API void LoadStaticMesh(unsigned int& meshID, int& sizeVerts, int& sizeIndices, GFX::StaticVertex* verts, int* indices);
 
 		DLL_API void DeleteStaticMesh(const GLuint& IBO, const GLuint& VAO);
 
