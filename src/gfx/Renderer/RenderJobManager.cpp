@@ -15,6 +15,7 @@ namespace GFX
 
 	RenderJobManager::RenderJobManager()
 	{
+		m_renderJobs.reserve(10000);
 	}
 
 	RenderJobManager::~RenderJobManager()

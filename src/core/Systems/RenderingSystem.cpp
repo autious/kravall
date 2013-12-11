@@ -25,7 +25,7 @@ namespace Core
 
 			//Build modelMatrix using linear allocator (FIX THIS) höhöh
 			glm::mat4* modelMatrix = new glm::mat4(translationMatrix * rotationMatrix * scaleMatrix);
-
+			//
 			GFX::Draw(gc->bitmask, (void*)modelMatrix);
 
 			//Get components

@@ -34,16 +34,27 @@ namespace GFX
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, 1280, 720, 0, GL_RGBA, GL_FLOAT, NULL);
 		glBindImageTexture(0, textureHandle, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+
 	}
 
 	
 	void LightPainter::Render(FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix)
 	{
-		m_shaderManager->UseProgram("ComputeTest");
-		m_shaderManager->SetUniform(1.0f, m_shaderManager->GetUniformLocation("ComputeTest", "roll"));
+		ClearFBO();
 
-		TextureManager::BindTexture(normalDepth->GetTextureHandle(), m_shaderManager->GetUniformLocation("ComputeTest", "normal"), 0, GL_TEXTURE_2D);
+		m_shaderManager->UseProgram("ComputeTest");
+
+		glBindImageTexture(0, textureHandle, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+		glBindImageTexture(1, normalDepth->GetTextureHandle(), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
+
+		//TextureManager::BindTexture(textureHandle, m_shaderManager->GetUniformLocation("ComputeTest", "outTexture"), 0, GL_TEXTURE_2D);
+		//TextureManager::BindTexture(normalDepth->GetTextureHandle(), m_shaderManager->GetUniformLocation("ComputeTest", "normal"), 1, GL_TEXTURE_2D);
 
 		glDispatchCompute(1280 / 16, 720 / 16, 1);
+
+		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+
+		glBindImageTexture(0, 0, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+		glBindImageTexture(1, 0, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
 	}
 }
