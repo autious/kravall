@@ -162,21 +162,13 @@ void run( GLFWwindow * window )
                                                                                    Core::ExampleComponent2::D2() );
     Core::ContentManager CM;
 
-	GLuint IBO;
-	GLuint VAO;
-    GLint vSize;
-    GLint iSize;
-
-   CM.Load<Core::GnomeLoader>("assets/tomte.gnome", [&VAO, &IBO, &vSize, &iSize](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
-           {
-               Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
-               const Core::ModelData* data = gnomeLoader->getData(handle);
-               VAO = data->VAO;
-               IBO = data->IBO;
-               vSize = data->vSize;
-               iSize = data->iSize;
-           });
-   std::cout << "ASDF" << std::endl;
+	unsigned int meshID; 
+    CM.Load<Core::GnomeLoader>("assets/tomte.gnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+            {
+                Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
+                const Core::ModelData* data = gnomeLoader->getData(handle);
+				meshID = data->meshID;
+            });
    
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));
 
@@ -189,7 +181,7 @@ void run( GLFWwindow * window )
 	
 			Core::GraphicsComponent* gc = WGETC<Core::GraphicsComponent>(e2);
 			
-			GFX::SetBitmaskValue(gc->bitmask, GFX::BT_MESH_ID, IBO);
+			GFX::SetBitmaskValue(gc->bitmask, GFX::BT_MESH_ID, meshID);
 			
 	
 			Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(e2);
@@ -207,7 +199,7 @@ void run( GLFWwindow * window )
 			rc->rotation[3] = cos(3.14f / 2.0f);
 		}
 	}
-
+    
 
 	std::cout << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " ";
 
@@ -226,15 +218,13 @@ void run( GLFWwindow * window )
 		GFX::SetViewMatrix(gCamera->GetViewMatrix());
 
 		TestRendering();
-		
-		GFX::Render();
 
+	    GFX::Render();
         Core::world.m_systemHandler.Update( 0.1f );
         SystemTimeRender();
 		Core::GetInput().ResetInput();
 		glfwSwapBuffers(window);
 		glfwPollEvents();
-
     }
 
     glfwDestroyWindow( window );

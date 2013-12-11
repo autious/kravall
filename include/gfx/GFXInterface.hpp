@@ -136,7 +136,7 @@ namespace GFX
 
 		DLL_API void LoadStaticMesh(unsigned int& meshID, int& sizeVerts, int& sizeIndices, GFX::StaticVertex* verts, int* indices);
 
-		DLL_API void DeleteStaticMesh(const GLuint& IBO, const GLuint& VAO);
+		DLL_API void DeleteStaticMesh(unsigned int& meshID);
 
 		/*!
 		Creates an empty material

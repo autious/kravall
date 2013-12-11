@@ -189,9 +189,9 @@ namespace GFX
 			Renderer().LoadStaticMesh(meshID, sizeVerts, sizeIndices, verts, indices);
 		}
 
-		void DeleteStaticMesh(unsigned long long int id)
+		void DeleteStaticMesh(unsigned int& meshID)
 		{
-			Renderer().DeleteMesh(id);
+			Renderer().DeleteMesh(meshID);
 		}
 
 		void CreateMaterial(unsigned long long int& out_id)
