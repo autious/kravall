@@ -249,38 +249,8 @@ void run( GLFWwindow * window )
 		    	rc->rotation[2] = 0.0f;
 		    	rc->rotation[3] = 0.0f;
             }, true);
-    
-    CM.Load<Core::GnomeLoader>("assets/flag.GNOME", [&m]
-            (Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
-            {
-                Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
-                const Core::ModelData* data = gnomeLoader->getData(handle);
 
-			    Entity e2 = Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent>
-				(Core::GraphicsComponent(), Core::WorldPositionComponent(), Core::RotationComponent(), Core::ScaleComponent());
-	
-			    Core::GraphicsComponent* gc = WGETC<Core::GraphicsComponent>(e2);
-	
-		    	gc->ibo = data->IBO;
-		    	gc->iboSize = data->vSize;
-		    	gc->vao = data->VAO;
-		    	gc->material = m;
-		    	gc->shader = 0;
-	
-		    	Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(e2);
-		    	wpc->position[0] = 50.0f;
-		    	wpc->position[1] = 0.0f;               
-	
-		    	Core::ScaleComponent* sc = WGETC<Core::ScaleComponent>(e2);
-		    	sc->scale = 0.5f;
-	
-		    	Core::RotationComponent* rc = WGETC<Core::RotationComponent>(e2);
-		    
-		    	rc->rotation[2] = 0.0f;
-		    	rc->rotation[3] = 0.0f;
-            }, true);
 
-    CM.Free<Core::GnomeLoader>("assets/flag.GNOME");
 	while (!glfwWindowShouldClose(window))
 	{
 		Core::GetInput().UpdateInput();

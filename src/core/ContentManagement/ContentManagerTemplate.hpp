@@ -161,23 +161,23 @@ namespace Core
         void Free(const char* asset)
         {            
             static_assert(Core::Match<Loader, Loaders...>::exists, "Loader is not in loader list, add it to the ContentManager");           
-            static const int loaderId = Core::Index<Loader, std::tuple<Loaders...>>::value;
+            static const unsigned int loaderId = Core::Index<Loader, std::tuple<Loaders...>>::value;
             unsigned int assetHash = MurmurHash2(asset, static_cast<int>(std::strlen(asset)), loaderId); 
             
             Core::AssetHandle handle;
 
             Core::AssetStatus status = GetAssetStatus(loaderId, assetHash, handle);
 
-            if(status == Core::AssetStatus::CACHED)
+            int refsRemaining = DecreaseReference<Loader>(assetHash);
+            LOG_INFO << "Reducing reference of asset: " << asset
+                << " now has: " << refsRemaining << " references" << std::endl;
+            if( refsRemaining == 0)
             {
-                int refsRemaining = DecreaseReference<Loader>(assetHash);
-                LOG_INFO << "Reducing reference of cached asset: " << asset
-                    << " now has: " << refsRemaining << " references" << std::endl;
-                if( refsRemaining == 0)
+                if(status == Core::AssetStatus::CACHED)
                 {
                     LOG_INFO << "Adding destroying finisher for asset: " << asset 
                         << " with hash: " << assetHash << std::endl;
-                    
+                        
                     m_finisherList.push_back(std::make_tuple(m_loaders[Core::Index<Loader, std::tuple<Loaders...>>::value]
                                 , handle, [assetHash, this](Core::BaseAssetLoader* assetLoader, AssetHandle handle)
                         {
@@ -185,6 +185,7 @@ namespace Core
                             {
                                 LOG_INFO << "Destroying asset with hash: " << assetHash << std::endl;
                                 assetLoader->Destroy(handle); 
+                                this->RemoveReference<Loader>(assetHash);
                             }
                             else
                             {
@@ -192,15 +193,50 @@ namespace Core
                             }
                         }));
                 }
-            }
-            else if(status == Core::AssetStatus::LOADING)
-            {
-                LOG_FATAL << "O'boy trouble ahead!, Trying to free an async loading asset" << std::endl;
-            }
-            else
-            {
-                LOG_FATAL << "Trying to Free unexisting asset: " << asset << std::endl;
-                assert(false);
+                else if(status == Core::AssetStatus::LOADING)
+                {
+                    Core::AssetHandle handle = nullptr;
+                    LOG_INFO << "Destroying loading asset: " << asset << std::endl;
+
+                    for(Core::AsyncVector::size_type i = 0; i < m_asyncList.size(); ++i)
+                    {    
+                        if(loaderId == std::get<0>(m_asyncList[i]) && assetHash == std::get<1>(m_asyncList[i]))
+                        {
+                            std::get<2>(m_asyncList[i])->lock();
+
+                            if(GetAssetStatus(loaderId, assetHash, handle) == Core::AssetStatus::LOADING)
+                            {
+                                handle = (*std::get<3>(m_asyncList[i]));
+                                m_loaders[loaderId]->FinishLoadAsync(handle);
+                                SetAssetHandle(loaderId, assetHash, handle);
+                            }
+                            else
+                            {
+                                handle = GetAssetHandle(loaderId, assetHash);
+                            }
+
+                            m_finisherList.push_back(std::make_tuple(m_loaders[loaderId], handle, std::get<4>(m_asyncList[i])));
+                            std::get<2>(m_asyncList[i])->unlock();                  
+                            SetAssetStatus(loaderId, assetHash, Core::AssetStatus::CACHED);
+                            m_asyncList.erase(m_asyncList.begin()+i);
+                            i=-1;
+                        }
+                    }
+
+                    for(Core::FinisherVector::iterator it = m_finisherList.begin(); it != m_finisherList.end(); ++it)
+                    {
+                        std::get<2>(*it)(std::get<0>(*it), std::get<1>(*it));
+                    }
+                    m_finisherList.clear();
+                    
+                    m_loaders[loaderId]->Destroy(handle);
+                    RemoveReference<Loader>(assetHash);
+                }
+                else
+                {
+                   LOG_FATAL << "Tryign to free unexisting asset: " << asset << std::endl; 
+                   assert(false);
+                }
             }
         }
         
