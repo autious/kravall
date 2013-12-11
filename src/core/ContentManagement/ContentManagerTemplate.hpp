@@ -47,7 +47,7 @@ namespace Core
         }
 
         /*!
-            Loads an asset with the template parameter loader. When the asset is loaded the supplied lambda function will be called with the asset handleand loader. Set async to true to enable asynchronous asset loading. 
+            Loads an asset with the template parameter loader. When the asset is loaded the supplied lambda function will be called with the asset handleand loader. Set async to true to enable asynchronous asset loading. Synchronous loading guarantees that the asset will be loaded before returning.
             \param asset The asset name as a null terminated cstring.
             \param finisher Function to be called when the asset is done loading. Asset data can be applied to state in the function.
             \param async Flag for asynchronous loading. Set to true to enable asynchronous loading. Defaults to false. 
@@ -169,6 +169,10 @@ namespace Core
             }
         }
 
+        /*!
+            Reduces the internal counter of the asset with template parameter loader. When the internal counter reaches zero the asset is destroyed.
+            \param asset The asset name as a null terminated cstring.
+          */
         template<typename Loader>
         void Free(const char* asset)
         {            
