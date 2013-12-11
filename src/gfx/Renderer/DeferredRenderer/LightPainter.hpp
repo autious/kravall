@@ -46,6 +46,9 @@ namespace GFX
 
 	private:
 		RenderJobManager* m_renderJobManager;
+
+		GLint alphaUniform;
+		GLint textureUniform;
 		GLuint textureHandle;
 
 	};

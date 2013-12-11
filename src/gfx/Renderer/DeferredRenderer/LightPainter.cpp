@@ -34,6 +34,11 @@ namespace GFX
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, 1280, 720, 0, GL_RGBA, GL_FLOAT, NULL);
 		glBindImageTexture(0, textureHandle, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+
+
+		
+		alphaUniform = m_shaderManager->GetUniformLocation("TQ", "alphaIN");
+		textureUniform = m_shaderManager->GetUniformLocation("TQ", "textureIN");
 	}
 
 	
@@ -45,5 +50,26 @@ namespace GFX
 		TextureManager::BindTexture(normalDepth->GetTextureHandle(), m_shaderManager->GetUniformLocation("ComputeTest", "normal"), 0, GL_TEXTURE_2D);
 
 		glDispatchCompute(1280 / 16, 720 / 16, 1);
+
+
+		m_shaderManager->UseProgram("TQ");
+
+		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_BLEND);
+
+		m_shaderManager->SetUniform(1.0f, alphaUniform);
+
+		TextureManager::BindTexture(textureHandle, textureUniform, 0, GL_TEXTURE_2D);
+
+		glBindVertexArray(m_dummyVAO);
+		glDrawArrays(GL_POINTS, 0, 1);
+
+		m_shaderManager->ResetProgram();
+
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+
+		BasePainter::ClearFBO();
+
 	}
 }

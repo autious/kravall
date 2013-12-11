@@ -15,7 +15,7 @@ void main()
 	vec2 storePos = vec2(gl_GlobalInvocationID.xy);
 
 	vec4 normalColor = texture2D(normal, vec2(storePos.x / 1280.0f, storePos.y / 720.0f));
-	imageStore(outTexture, ivec2(gl_GlobalInvocationID.xy), vec4(storePos.x, storePos.y, 0.0, 1.0f));
+	imageStore(outTexture, ivec2(gl_GlobalInvocationID.xy),normalColor);
 
 
 
