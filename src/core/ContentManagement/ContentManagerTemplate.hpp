@@ -27,11 +27,17 @@ namespace Core
     class ContentManagerTemplate
     {
     public:
+        /*!
+            Constructor for ContentManagerTemplate.
+          */
         ContentManagerTemplate()
         {
             m_loaders = {{(new Loaders())...}};
         }
         
+        /*!
+            Destructor for ContentManagerTemplate.            
+          */           
         ~ContentManagerTemplate()
         {
             for(int i=0; i < LOADER_COUNT; ++i)
@@ -40,6 +46,12 @@ namespace Core
             }
         }
 
+        /*!
+            Loads an asset with the template parameter loader. When the asset is loaded the supplied lambda function will be called with the asset handleand loader. Set async to true to enable asynchronous asset loading. 
+            \param asset The asset name as a null terminated cstring.
+            \param finisher Function to be called when the asset is done loading. Asset data can be applied to state in the function.
+            \param async Flag for asynchronous loading. Set to true to enable asynchronous loading. Defaults to false. 
+          */
         template<typename Loader>
         void Load( const char* asset, std::function<void(Core::BaseAssetLoader*, Core::AssetHandle assetHandle)> finisher, const bool async = false )
         {
