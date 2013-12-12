@@ -22,6 +22,18 @@
 #include "../Material/MaterialManager.hpp"
 
 #include <iostream>
+#include <array>
+
+#include "../Utility/Timer.hpp"
+
+#define GFX_CHECKTIME(x, y)\
+{\
+	Timer().Start(); \
+	x; \
+	Timer().Stop(); \
+	std::chrono::microseconds ms = Timer().GetDelta(); \
+	m_subsystemTimes.push_back(std::pair<const char*, std::chrono::microseconds>(y, ms)); \
+}
 
 namespace GFX
 {
@@ -109,6 +121,7 @@ namespace GFX
 
 		void SetShaderToMaterial(const unsigned long long int& materialID, const unsigned int& shaderID);
 
+		inline void ShowStatistics(bool enabled){ m_showStatistics = enabled; }
 	private:
 		RenderCore();
 		~RenderCore();
@@ -126,6 +139,7 @@ namespace GFX
 		Resize all textures bound to the GBuffer
 		*/
 		void ResizeGBuffer();
+
 
 		int m_windowWidth;
 		int m_windowHeight;
@@ -155,6 +169,13 @@ namespace GFX
 		ConsolePainter* m_consolePainter;
 		SplashPainter* m_splashPainter;
 		FBOPainter* m_fboPainter;
+		
+		void SubSystemTimeRender();
+        std::vector<std::pair<const char*, std::chrono::microseconds>> m_subsystemTimes;
+		unsigned long long m_lastUpdateTime;
+		unsigned long long m_curTime;
+		bool m_showStatistics;
+
 		glm::mat4 m_viewMatrix;
 		glm::mat4 m_projMatrix;
 

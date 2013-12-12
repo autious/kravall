@@ -1,4 +1,7 @@
 #include "RenderCore.hpp"
+#include <sstream>
+#include <iomanip>
+#include <utility/Colors.hpp>
 
 namespace GFX
 {
@@ -11,6 +14,9 @@ namespace GFX
 
 	RenderCore::RenderCore()
 	{
+		m_lastUpdateTime = 0;
+		m_curTime = 0;
+		m_showStatistics = false;
 	}
 
 	RenderCore::~RenderCore()
@@ -157,7 +163,6 @@ namespace GFX
 
 	void RenderCore::Render()
 	{
-
 		if (m_playSplash)
 		{
 			m_splashPainter->Render(m_windowWidth, m_windowHeight);
@@ -166,27 +171,78 @@ namespace GFX
 			return;
 		}
 
-		m_renderJobManager->Sort();
+		// Render last frame statistics
+		bool updateStats = false;
 
-		m_deferredPainter->Render(m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
-		
-		m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, 1);
+		if (m_showStatistics)
+		{
+			SubSystemTimeRender();
+			m_curTime = Timer().GetTotal() + 1024;
+			if (m_curTime - m_lastUpdateTime > 200)
+			{
+				m_lastUpdateTime = m_curTime;
+				m_subsystemTimes.clear();
+				updateStats = true;
+			}
+		}
+		if (updateStats && m_showStatistics)
+		{
+			glFinish();
 
-		m_lightPainter->Render(m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
-
-		// Render debug
-		m_debugPainter->Render(m_viewMatrix, m_projMatrix);
-		
-		// Render console
-		m_consolePainter->Render();
-		
-		// Render text
-		m_textPainter->Render();
-		
+			GFX_CHECKTIME(m_renderJobManager->Sort(), "Sorting");
+			GFX_CHECKTIME(m_deferredPainter->Render(m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix), "Geometry");
+			//GFX_CHECKTIME(m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, 1), "FBO");
+			GFX_CHECKTIME(m_lightPainter->Render(m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix), "Lighting");
+			GFX_CHECKTIME(m_debugPainter->Render(m_viewMatrix, m_projMatrix), "Debug");
+			GFX_CHECKTIME(m_consolePainter->Render(), "Console");
+			GFX_CHECKTIME(m_textPainter->Render(), "Text");
+		}
+		else
+		{
+			m_renderJobManager->Sort();
+			m_deferredPainter->Render(m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
+			//m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, 1);
+			m_lightPainter->Render(m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
+			m_debugPainter->Render(m_viewMatrix, m_projMatrix);
+			m_consolePainter->Render();
+			m_textPainter->Render();
+		}
 
 		m_renderJobManager->Clear();
+
 	}
 
+	void RenderCore::SubSystemTimeRender()
+	{
+		if( m_showStatistics )
+		{
+
+			for( int i = 0; i < (int)m_subsystemTimes.size(); i++ )
+			{
+				std::stringstream ss;
+            
+				ss << m_subsystemTimes[i].first << ": " << std::fixed << std::setw( 7 ) << std::setprecision(4) << std::setfill( '0' ) << m_subsystemTimes[i].second.count() / 1000.0f << "ms";
+				glm::vec2 position = glm::vec2(m_windowWidth-200+5, m_windowHeight + 12 - 20 * m_subsystemTimes.size() + 20 * i);
+
+				Text t(position.x, position.y, 1.0f, 1.0f, Colors::White, ss.str().c_str(), m_windowWidth, m_windowHeight);
+				GetTextManager().AddText(t);
+			}
+
+			glm::vec2 position = glm::vec2(m_windowWidth-200, m_windowHeight - 5 - 20 * m_subsystemTimes.size());
+			glm::vec2 dimensions = glm::vec2(200, 20 * m_subsystemTimes.size());
+
+			DebugRect r;
+			r.color = glm::vec4( 0.5f,0.5f,0.5f,0.5f);
+			r.position = glm::vec3(
+				position.x / float(Renderer().GetWindowWidth() / 2) - 1.0f,
+				1.0f - position.y / float(Renderer().GetWindowHeight() / 2), 0.0f);
+			r.dimensions = glm::vec3(
+				dimensions.x / float(Renderer().GetWindowWidth())*2,
+				dimensions.y / float(Renderer().GetWindowHeight())*2, 0.0f);
+			DebugDrawing().AddRect(r, true);
+
+		}
+	}
 	void RenderCore::InitializeGBuffer()
 	{
 		//Generate the FBO

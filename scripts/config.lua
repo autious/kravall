@@ -26,3 +26,5 @@ function help()
     print( "showSys()" )
     print( "printAlexStatus()" )
 end
+
+--showSys()

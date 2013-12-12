@@ -260,6 +260,13 @@ namespace GFX
 		\param color Color of the circle
 		*/
 		DLL_API void DrawCircle(GFXVec2 position, float radius, unsigned int lineWidth, GFXColor color);
+
+		/*!
+		Enables or disables display of gfx system info
+		\param enabled If true, toggles graphics system info to show on the screen, false disables it
+		*/
+		DLL_API void DisplaySystemInfo(bool enabled);
+
 	} // namespace Debug
 
 	namespace Settings
