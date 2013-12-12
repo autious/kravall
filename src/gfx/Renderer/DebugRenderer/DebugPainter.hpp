@@ -58,6 +58,10 @@ namespace GFX
 		GLuint m_rectDimUniform;
 		GLuint m_rectColorUniform;
 
+		GLuint m_boxPosUniform;
+		GLuint m_boxDimUniform;
+		GLuint m_boxColorUniform;
+
 		GLuint m_circlePosUniform;
 		GLuint m_circleDimUniform;
 		GLuint m_circleColorUniform;

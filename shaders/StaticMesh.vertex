@@ -1,12 +1,12 @@
-#version 440
+#version 430
 
-uniform PerFrameBlock
+layout (shared) uniform PerFrameBlock
 {
 	mat4 gProj;
 	mat4 gView;
 };
 
-uniform PerObjectBlock
+layout (std140) uniform PerObjectBlock
 {
 	mat4 modelMatrix;
 };

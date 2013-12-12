@@ -48,7 +48,7 @@ namespace GFX
 	{
 		unsigned int index = FindTexture(id);
 
-		if (index != UINT_MAX)
+		if (index != std::numeric_limits<unsigned int>::max())
 		{
 			glDeleteTextures(1, &m_textures[index].textureHandle);
 			m_textures.erase(m_textures.begin() + index);
@@ -64,7 +64,7 @@ namespace GFX
 	////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////
 	/////////////HURR DURR
-
+    //////////////////////I FEAR NOT DRAGONS////////////////
 	GLuint TextureManager::LoadFromMemory(
 		unsigned char* data, const GLenum& target,
 		const GLenum& internalFormat, const GLenum& format,
