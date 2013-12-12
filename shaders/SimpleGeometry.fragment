@@ -1,6 +1,7 @@
 #version 440
 
 in vec4 posFS;
+in vec4 posW;
 in vec4 normalFS;
 in vec4 tangentFS;
 in vec4 binormalFS;
@@ -20,9 +21,9 @@ layout ( location = 4 ) out vec4 glowMatIDRT;
 
 void main()
 {
-	normalDepthRT = vec4(normalFS.xyz, 1.0f);
+	normalDepthRT = vec4(normalize(normalFS.xyz), posFS.z / posFS.w);
 	diffuseRT = texture2D(diffuseMap, uvFS);
-	specularRT = vec4(1, 0, 0, 1);
+	specularRT = posW;
 	glowMatIDRT = vec4(1, 0, 1, 1);
 	//color = vec4(normalFS.xyz, 1.0f);
 	//color = vec4(tangentFS.xyz, 1.0f);

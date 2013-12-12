@@ -11,6 +11,7 @@
 #include "../../Buffers/UniformBufferManager.hpp"
 #include <GL/glew.h>
 #include <vector>
+#include <gfx/Lights.hpp>
 
 namespace GFX
 {
@@ -48,10 +49,14 @@ namespace GFX
 		RenderJobManager* m_renderJobManager;
 
 		GLint alphaUniform;
+		GLint matrixUniform;
 		GLint textureUniform;
 		GLuint textureHandle;
-		GLuint stuffsBuffer;
-		glm::vec4* stuffs;
+
+		GLuint m_pointLightBuffer;
+
+		const unsigned int m_maximumLights = 4096;
+		PointLight* m_pointLights;
 
 	};
 }

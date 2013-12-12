@@ -45,7 +45,8 @@ namespace GFX
             LOG_ERROR << "Got GL error:" << err << std::endl;
             err = 0;
         }
-		glClearColor(100.0f / 255.0f, 149.0f / 255.0f, 237.0f / 255.0f, 1.0f);
+		//glClearColor(100.0f / 255.0f, 149.0f / 255.0f, 237.0f / 255.0f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
 		// assign callback functions
 		glDebugMessageCallbackARB(glErrorCallback, NULL);
