@@ -2,6 +2,7 @@
 #define SRC_GFX_MATERIAL_MATERIAL_MANAGER_HPP
 
 #include <vector>
+#include <limits>
 #include "MaterialData.hpp"
 #include <GL/glew.h>
 namespace GFX
@@ -23,7 +24,7 @@ namespace GFX
 		{ 
 			int index = FindMaterial(materialID);
 
-			if (index != UINT_MAX)
+			if (index != std::numeric_limits<unsigned int>::max())
 				return m_materials[index]; 
 
 			Material m;
@@ -41,7 +42,7 @@ namespace GFX
 				if (m_materials[i].id == static_cast<unsigned int>(id))
 					return i;
 
-			return UINT_MAX;
+			return std::numeric_limits<unsigned int>::max();
 		}
 	};
 }
