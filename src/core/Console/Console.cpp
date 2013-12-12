@@ -1,5 +1,5 @@
-#include "console.hpp"
-#include "clop.hpp"
+#include "Console.hpp"
+#include "CLOP.hpp"
 #include <gfx/GFXInterface.hpp>
 #include <utility/Colors.hpp>
 #include <sstream>
@@ -627,7 +627,7 @@ namespace Core
 					Color color = m_console[lineIndex].color;
 				
 
-					int wrapLength = (GFX::GetScreenWidth()-x-20) / m_wrapCharWidth;
+					int wrapLength = int((GFX::GetScreenWidth()-x-20) / m_wrapCharWidth);
 					int nrWraps = line.length() / wrapLength;
 					totalWraps += nrWraps;
 

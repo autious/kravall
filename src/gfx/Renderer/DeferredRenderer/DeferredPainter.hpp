@@ -1,15 +1,19 @@
 #ifndef SRC_GFX_RENDERER_DEFERRED_PAINTER_HPP
 #define SRC_GFX_RENDERER_DEFERRED_PAINTER_HPP
 
-#include "BasePainter.hpp"
+#include "../BasePainter.hpp"
 #include <Shaders/ShaderManager.hpp>
 
+#include "../RenderJobManager.hpp"
+
 #include "FBOTexture.hpp"
-#include "../Buffers/UniformBufferManager.hpp"
+#include "../../Buffers/UniformBufferManager.hpp"
 #include <GL/glew.h>
 #include <vector>
-#include <gfx/Material.hpp>
-#include "../Textures/Texture.hpp"
+#include "../../Textures/TextureManager.hpp"
+#include "../../Buffers/MeshManager.hpp"
+#include "../../Material/MaterialManager.hpp"
+
 namespace GFX
 {
 	class DeferredPainter : public BasePainter
@@ -21,7 +25,8 @@ namespace GFX
 		\param shaderManager Pointer to ShaderManager present in RenderCore
 		\param bufferManager Pointer to BufferManager present in RenderCore
 		*/
-		DeferredPainter(ShaderManager* shaderManager, UniformBufferManager* uniformBufferManager);
+		DeferredPainter(ShaderManager* shaderManager, UniformBufferManager* uniformBufferManager, RenderJobManager* renderJobManager, 
+			MeshManager* meshManager, TextureManager* textureManager, MaterialManager* materialManager);
 
 		~DeferredPainter();
 
@@ -41,19 +46,9 @@ namespace GFX
 		\param glowMatID Rendertarget for glow and materialID
 		*/
 		void Render(FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix);
-		
-		void AddRenderJob(const GLuint& ibo, const GLuint& vao, const int& size, const unsigned int& shader, glm::mat4* mMatrix, Material* mat);
 
 	private:
-		struct RenderJob
-		{
-			GLuint VAO;
-			GLuint IBO;
-			GLuint IBOSize;
-			unsigned int shaderID;
-			glm::mat4* modelMatrix;
-			Material* material;
-		};
+		
 		/*!
 		Binds all the rendertargets to the FBO and GPU
 		\param normalDepth Rendertarget for normals and depth
@@ -63,16 +58,17 @@ namespace GFX
 		*/
 		void BindGBuffer(FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID);
 
-		GLuint m_diffuseUniform;
-		GLuint m_normalUniform;
-		GLuint m_specularUniform;
-		GLuint m_glowUniform;
+		GLuint m_uniformTexture0;
+		GLuint m_uniformTexture1;
+		GLuint m_uniformTexture2;
+		GLuint m_uniformTexture3;
 
 		GLuint m_modelMatrixUniform;
 
-		std::vector<RenderJob> m_renderJobs;
-
-	
+		RenderJobManager* m_renderJobManager;
+		MeshManager* m_meshManager;
+		MaterialManager* m_materialManager;
+		TextureManager* m_textureManager;
 	};
 }
 

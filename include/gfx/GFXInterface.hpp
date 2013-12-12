@@ -27,7 +27,7 @@ typedef GFXVec4 GFXColor;
 #include <vector>
 #include <iostream>
 #include <gfx/Vertex.hpp>
-#include <gfx/Material.hpp>
+#include <gfx/BitmaskDefinitions.hpp>
 
 namespace GFX
 {
@@ -69,11 +69,7 @@ namespace GFX
 	\param bitmask The bitmask containing the type of draw call to be queued.
 	\param data A pointer to the data used for rendering
 	*/
-	DLL_API void Draw(unsigned int bitmask, void* data);
-
-	DLL_API void Draw(const int& ibo, const int& vao, const int& size, Material* material);
-
-	DLL_API void Draw(const unsigned int& ibo, const unsigned int& vao, const unsigned int& iboSize, const unsigned int& shader, Material* mat, glm::mat4* matrix);
+	DLL_API void Draw(GFXBitmask bitmask, void* data);
 
 	/*!
 	Issues a draw  text command to the graphics engine.
@@ -124,24 +120,57 @@ namespace GFX
 	{
 		/*!
 		Loads a 2D RGBA texture onto the GPU
+		\param out_id Reference to the id created for the texture
+		\param data Texture data
 		\param width Width of the texture
 		\param height Height of the texture
-		\param data Texture data
 		\return Handle of the texture
 		*/
-		DLL_API unsigned int LoadTexture2DFromMemory(int width, int height, unsigned char* data);
-
-		DLL_API unsigned int LoadTexture2DFromFile(const char* filepath);
+		DLL_API void LoadTexture2DFromMemory(unsigned int& out_id, unsigned char* data, int width, int height);
 
 		/*!
 		Deletes a texture from the GPU
 		\param textureHandle The handle of the texture to be deleted
 		*/
-		DLL_API void DeleteTexture(unsigned int textureHandle);
+		DLL_API void DeleteTexture(unsigned int id);
 
-		DLL_API void LoadStaticMesh(GLuint& IBO, GLuint& VAO, int& sizeVerts, int& sizeIndices, GFX::StaticVertex* verts, int* indices);
+		DLL_API void LoadStaticMesh(unsigned int& meshID, int& sizeVerts, int& sizeIndices, GFX::StaticVertex* verts, int* indices);
 
-		DLL_API void DeleteStaticMesh(const GLuint& IBO, const GLuint& VAO);
+		DLL_API void DeleteStaticMesh(unsigned int& meshID);
+
+		/*!
+		Creates an empty material
+		\param out_id Reference to set material id
+		*/
+		DLL_API void CreateMaterial(unsigned long long int& out_id);
+		
+		/*!
+		Deletes a material
+		\param id The id of the material to remove
+		*/
+		DLL_API void DeleteMaterial(const unsigned long long int& id);
+		
+		/*!
+		Adds a texture to a material
+		\param materialID Id to material to attach texture to
+		\param textureID Id of texture to attach
+		*/
+		DLL_API void AddTextureToMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID);
+		
+		/*!
+		Adds a texture to a material
+		\param materialID Id to material where the texture is attached
+		\param textureID Id of texture to detach
+		*/
+		DLL_API void RemoveTextureFromMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID);
+		
+		/*!
+		Sets a shader for a material
+		\param materialID Id to material to attach shader to
+		\param textureID Id of shader to attach
+		*/
+		DLL_API void AttachShaderToMaterial(const unsigned long long int& materialID, const unsigned int& shaderID);
+
 
 	}
 

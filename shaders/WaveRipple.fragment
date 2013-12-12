@@ -1,16 +1,10 @@
-#version 440
+#version 430
 
 out vec4 color;
 
 in vec2 uv;
 
 uniform vec4 inputColor;
-
-layout (std140) uniform PerFrameBlock
-{
-	mat4 view;
-	mat4 projection;
-};
 
 layout (std140) uniform ExampleBlock
 {

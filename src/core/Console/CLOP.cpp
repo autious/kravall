@@ -1,4 +1,4 @@
-#include "clop.hpp"
+#include "CLOP.hpp"
 /* Command line options.
 * Usage:
 * Each command has to be implemented in a c++ function with the following layout:
