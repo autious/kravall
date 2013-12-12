@@ -8,14 +8,13 @@
 Core::ComponentGetters Core::WorldPositionComponentBinding::GetGetters()
 {
     ComponentGetters getters; 
-/*
-    getters["position"] = [](Core::Entity entity, lua_State * L, int tableindex )
+    getters["position"] = []( Core::Entity entity, lua_State * L )
     {
-        
+        lua_newtable( L );  
+        assert( false ); //Not implemented yet.
         return 1;
     };
 
-*/
     return getters;
 }
 

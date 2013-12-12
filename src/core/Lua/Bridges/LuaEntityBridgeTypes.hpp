@@ -12,9 +12,8 @@
 
 namespace Core
 {
-
     /* Entity id, lua_State value is in and table return values index */
-    typedef std::function<int(Entity,lua_State*,int)> ComponentGet;
+    typedef std::function<int(Entity,lua_State*)> ComponentGet;
     /* Entity id, lua_State value is in and value index */
     typedef std::function<void(Entity,lua_State*,int)> ComponentSet;
     
