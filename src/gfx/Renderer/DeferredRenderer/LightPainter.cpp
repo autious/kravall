@@ -113,5 +113,7 @@ namespace GFX
 
 		BasePainter::ClearFBO();
 
+		TextureManager::UnbindTexture();
+
 	}
 }

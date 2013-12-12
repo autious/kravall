@@ -172,7 +172,7 @@ namespace GFX
 		
 		m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, 1);
 
-		//m_lightPainter->Render(m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
+		m_lightPainter->Render(m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
 
 		// Render debug
 		m_debugPainter->Render(m_viewMatrix, m_projMatrix);

@@ -72,7 +72,6 @@ void main()
 		// ambient
 		color += vec4(0.1f, 0.1f, 0.1f, 0.0f)*diffuseColor;
 		//color = vec4(normalColor.xyz, 1.0f);
-
         imageStore(outTexture, pixel, color);
 
 }
