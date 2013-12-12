@@ -10,13 +10,13 @@ namespace Core
         SystemHandler system;
         EntityHandler instance(&system); 
         
-        ASSERT_EQ( 0, instance.GetComponentTypeId<Component1>() );
-        ASSERT_EQ( 1, instance.GetComponentTypeId<Component2>() );
-        ASSERT_EQ( 2, instance.GetComponentTypeId<Component3>() );
+        ASSERT_EQ( 0, instance.GetComponentType<Component1>() );
+        ASSERT_EQ( 1, instance.GetComponentType<Component2>() );
+        ASSERT_EQ( 2, instance.GetComponentType<Component3>() );
 
 
         //This should always generate a static assert error.
-        //instance.GetComponentTypeId<NotComponent1>();
+        //instance.GetComponentType<NotComponent1>();
     }
 
     TEST( EntityHandlerTest, UnorderedAspectGeneration )

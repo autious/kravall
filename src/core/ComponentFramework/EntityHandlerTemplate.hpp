@@ -151,7 +151,7 @@ namespace Core
             Calculated in compile-time making this function basically "free"
         */
         template<typename Component>
-        static size_t GetComponentTypeId( )
+        static ComponentType GetComponentType( )
         {
             #ifndef __GNUG__ //Sadly the gnucompiler hasn't implemented this yet =(
             static_assert( std::is_trivially_copyable<Component>::value, "Components must be Pure Data Objects" );
@@ -171,7 +171,7 @@ namespace Core
         {
             static_assert( Match<Component,Components...>::exists, SA_COMPONENT_USE );
 
-            static const int componentType = GetComponentTypeId<Component>();
+            static const int componentType = GetComponentType<Component>();
 
             int componentId = m_entities.GetComponentId( entity, componentType );
             
@@ -190,7 +190,7 @@ namespace Core
         template<typename... AspectComponents>
         static Aspect GenerateAspect( )
         {
-            static const size_t ids[] = { GetComponentTypeId<AspectComponents>()... };
+            static const size_t ids[] = { GetComponentType<AspectComponents>()... };
             return GenerateAspect( ids, Aspect(), 0, sizeof...(AspectComponents) ); 
         }
 
@@ -224,7 +224,7 @@ namespace Core
         template<typename Component, typename... RComponents>
         void AddComponentT( Entity ent, Component comp, RComponents... r  )
         {
-            const size_t componentType = GetComponentTypeId<Component>();
+            const size_t componentType = GetComponentType<Component>();
 
             int compId = AddComponent( ent, componentType );
 
@@ -240,7 +240,7 @@ namespace Core
         template<typename Component>
         void AddComponentT( Entity ent, Component comp )
         {
-            const size_t componentType = GetComponentTypeId<Component>();
+            const size_t componentType = GetComponentType<Component>();
 
             int compId = AddComponent( ent, componentType );
             

@@ -3,9 +3,9 @@
 
 #include <ComponentFramework/EntityHandlerTemplate.hpp>
 #include <ComponentFramework/SystemHandlerTemplate.hpp>
+
 #include <Components/ExampleComponent1.hpp>
 #include <Components/ExampleComponent2.hpp>
-
 #include <Components/WorldPositionComponent.hpp>
 #include <Components/RotationComponent.hpp>
 #include <Components/ScaleComponent.hpp>
