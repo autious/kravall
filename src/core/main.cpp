@@ -125,6 +125,21 @@ void TestRendering()
 	GFX::RenderText(glm::vec2(0, 200), 1.0f, Colors::Gold, "ABCDEFGHIJKLMNOPQRSTUVWXYZASIUHDOIASHUDIOASHDA1234567890*'^&%#!?");
 }
 
+void CreateRioter(std::vector<Entity>* rioterList, int meshID)
+{
+	int index = rioterList->size(); // Size before add will be the index of the added entity.
+
+	rioterList->push_back(Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, 
+		Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent>
+		(Core::GraphicsComponent(), 
+		 Core::WorldPositionComponent(0.0, -7.0f, 0.0f), 
+		 Core::RotationComponent(0.0f, 1.0f, 0.0f, 0.0f), 
+		 Core::ScaleComponent()));
+
+	Core::GraphicsComponent* gc = WGETC <Core::GraphicsComponent>(rioterList->at(index));
+	GFX::SetBitmaskValue(gc->bitmask, GFX::BT_MESH_ID, meshID);
+}
+
 void SystemTimeRender()
 {
     if( Core::world.m_config.GetBool( "showSystems", false ) )
@@ -159,15 +174,16 @@ void run( GLFWwindow * window )
 
 	GFX::SetProjectionMatrix(gCamera->GetProjectionMatrix());
 
+	std::vector<Entity> rioters;
+
 	Core::GetInput().Initialize(window);
 
-    
     Entity ent1 = Core::world.m_entityHandler.CreateEntity<Core::ExampleComponent1,Core::ExampleComponent2>( Core::ExampleComponent1::D1(),
                                                                                    Core::ExampleComponent2::D2() );
     Core::ContentManager CM;
 
 	unsigned int meshID; 
-    CM.Load<Core::GnomeLoader>("assets/tomte.gnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+    CM.Load<Core::GnomeLoader>("assets/cube.gnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
             {
                 Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
                 const Core::ModelData* data = gnomeLoader->getData(handle);
@@ -176,7 +192,7 @@ void run( GLFWwindow * window )
    
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));
 
-	for (int i = -100; i < 100; i++)
+	/*for (int i = -100; i < 100; i++)
 	{
 		for (int j = -10; j < 10; j++)
 		{
@@ -202,8 +218,9 @@ void run( GLFWwindow * window )
 			rc->rotation[2] = sin(3.14f);
 			rc->rotation[3] = cos(3.14f / 2.0f);
 		}
-	}
-    
+	}*/
+
+	CreateRioter(&rioters, meshID);
 
 	std::cout << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " ";
 
@@ -221,7 +238,7 @@ void run( GLFWwindow * window )
 		gCamera->LookAt(glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		GFX::SetViewMatrix(gCamera->GetViewMatrix());
 
-		TestRendering();
+		//TestRendering();
 
 
 	    //TODO: Timing hook
