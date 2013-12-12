@@ -155,7 +155,7 @@ void run( GLFWwindow * window )
 	Core::Camera* gCamera;
 	gCamera = new Core::Camera(45.0f, 1.0f, 1000.0f);
 	gCamera->CalculateProjectionMatrix(initScreenWidth, initScreenHeight);
-	gCamera->SetPosition(glm::vec3(0.0f, 0.0f, -50.0f));
+	gCamera->SetPosition(glm::vec3(0.0f, 0.0f, -20.0f));
 
 	GFX::SetProjectionMatrix(gCamera->GetProjectionMatrix());
 

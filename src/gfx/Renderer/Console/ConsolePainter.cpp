@@ -38,10 +38,6 @@ namespace GFX
 		m_rectPosUniform = m_shaderManager->GetUniformLocation("ConsoleRect", "pointPosition");
 		m_rectDimUniform = m_shaderManager->GetUniformLocation("ConsoleRect", "pointPosition2");
 		m_rectColorUniform = m_shaderManager->GetUniformLocation("ConsoleRect", "inColor");
-
-		m_uniformBufferManager->CreateBasicCameraUBO(m_shaderManager->GetShaderProgramID("ConsoleRect"));
-
-
 	}
 
 	void ConsolePainter::Render()
