@@ -14,6 +14,7 @@
 #include "Components/UnitTypeComponent.hpp"
 #include "Components/AttributeRioterComponent.hpp"
 #include "Components/AttributePoliceComponent.hpp"
+#include "Components/BoundingVolumeComponent.hpp"
 
 namespace Core
 {
@@ -22,7 +23,7 @@ namespace Core
     typedef SystemHandlerTemplate<ExampleSystem, RenderingSystem> SystemHandler;
     typedef EntityHandlerTemplate<SystemHandler,ExampleComponent1,ExampleComponent2, WorldPositionComponent, 
 		RotationComponent, ScaleComponent, GraphicsComponent, MovementComponent, UnitTypeComponent, 
-		AttributeRioterComponent, AttributePoliceComponent> EntityHandler;
+		AttributeRioterComponent, AttributePoliceComponent, BoundingVolumeComponent> EntityHandler;
 }
 
 /**********All systems after this line************/

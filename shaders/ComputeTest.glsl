@@ -63,7 +63,7 @@ void main()
 
 		//point lights
 		//#pragma optionNV(unroll all)
-		for(int i = 0; i < 40; i++)
+		for(int i = 0; i < 1; i++)
 		{
 			//if( i >= 1)
 				color += CalculateLighting(pointLights[i], wPos.xyz, 2*normalColor.xyz-1.0f, specular, glow);

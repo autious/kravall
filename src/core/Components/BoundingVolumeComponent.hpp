@@ -1,5 +1,5 @@
-#ifndef ATTRIBUTE_RIOTER_COMPONENT_HPP
-#define ATTRIBUTE_RIOTER_COMPONENT_HPP
+#ifndef BOUNDING_VOLUME_COMPONENT_HPP
+#define BOUNDING_VOLUME_COMPONENT_HPP
 
 namespace Core
 {
@@ -25,6 +25,68 @@ namespace Core
 	};
 
 
+	/*!
+		Data container for Sphere type bounding volumes.
+	*/
+	struct BoundingSphere
+	{
+		/*! 
+			Radius of the spehere. 
+		*/
+		float m_radius;
+		
+		/*! 
+			Vector members to the middle of the object in object space. 
+		*/
+		float m_offsetX;
+		float m_offsetY;
+		float m_offsetZ;
+
+		/*! 
+			Do nothing constructor.
+		*/
+		BoundingSphere()
+		{
+		}
+			
+		/*!
+			\param radius Radius of the sphere.
+			\param offsetX X offset of the sphere from the object.
+			\param offsetY Y offset of the sphere from the object.
+			\param offsetZ Z offset of the sphere from the object.
+		*/
+		BoundingSphere( float radius, float offsetX, float offsetY, float offsetZ )
+			: m_radius( radius ), m_offsetX( offsetX ), m_offsetY( offsetY ), m_offsetZ( offsetZ )
+		{
+		}
+			
+	};
+
+	/*!
+		Data container for AABB type volumes.
+	*/
+	struct AABB
+	{
+		/*!
+			Vector to the middle of the object in object space. 
+		*/
+		float offset[3];
+
+		/*!
+			X, Y and Z axis aligned half widths of the AABB. 
+		*/
+		float halfWidths[3]; 
+
+		/*! 
+			Do nothing constructor.
+		*/
+		AABB()
+		{
+		}
+
+	};
+
+#define MAX_SIZE_OF_BOUNDING_STRUCTS 6 * 4
 
 
 	/*!
@@ -33,80 +95,13 @@ namespace Core
 	struct BoundingVolumeComponent
 	{
 		/*!
-			Data container for Sphere type bounding volumes.
-		*/
-		struct BoundingSphere
-		{
-			/*! 
-				Radius of the spehere. 
-			*/
-			float m_radius;
-		
-			/*! 
-				Vector to the middle of the object in object space. 
-			*/
-			//float m_offset[3]; 
-
-			/*! 
-				Do nothing constructor.
-			*/
-			/*
-			BoundingSphere()
-			{
-			}
-			*/
-			/*!
-				\param radius Radius of the sphere.
-				\param offsetX X offset of the sphere from the object.
-				\param offsetY Y offset of the sphere from the object.
-				\param offsetZ Z offset of the sphere from the object.
-			*/
-			/*
-			BoundingSphere( float radius, float offsetX, float offsetY, float offsetZ )
-			{
-				/*
-				m_radius = radius;
-				m_offset[0] = offsetX;
-				m_offset[2] = offsetY;
-				m_offset[1] = offsetZ;
-				
-			}
-			*/
-		};
-	
-
-
-		/*!
-			Data container for AABB type volumes.
-		*/
-		struct AABB
-		{
-			/*!
-				Vector to the middle of the object in object space. 
-			*/
-			float offset[3];
-
-			/*!
-				X, Y and Z axis aligned half widths of the AABB. 
-			*/
-			float halfWidths[3]; 
-		};
-
-
-
-		/*!
-			Hint for how to interpret the m_data union.
+			Hint for how to interpret the m_data member.
 		*/
 		BoundingVolumeType m_type;
 
-		/*!
-			Data container used to store information about all different types of bounding volumes. Should be accessed according to the BoundingVolumeType member.
-		*/
-		union
-		{
-			Core::BoundingVolumeComponent::BoundingSphere sphere;
-			Core::BoundingVolumeComponent::AABB aabb;
-		} m_data;
+		// TO DO : add comment here
+		char m_data[ MAX_SIZE_OF_BOUNDING_STRUCTS ];
+
 
 		/*!
 			Default constructor, will set type to NoVolume.
@@ -120,20 +115,20 @@ namespace Core
 			Constructor initializing the component to a SphereBoundingType.
 			\param sphere Sphere container with respective data.
 		*/
-		BoundingVolumeComponent( Core::BoundingVolumeComponent::BoundingSphere sphere )
+		BoundingVolumeComponent( Core::BoundingSphere sphere )
 		{
 			m_type = Core::BoundingVolumeType::SphereBoundingType;
-			//m_data.sphere = sphere;
+			std::memcpy( &m_data, &sphere,  MAX_SIZE_OF_BOUNDING_STRUCTS );
 		}
 
 		/*!
 			Constructor initializing the component to a AABBBoundingType.
 			\param aabb AABB container with respective data.
 		*/
-		BoundingVolumeComponent( Core::BoundingVolumeComponent::AABB aabb )
+		BoundingVolumeComponent( Core::AABB aabb )
 		{
 			m_type = Core::BoundingVolumeType::AABBBoundingType;
-			//m_data.aabb = aabb;
+			std::memcpy( &m_data, &aabb,  MAX_SIZE_OF_BOUNDING_STRUCTS );
 		}
 
 
