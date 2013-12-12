@@ -16,7 +16,7 @@ namespace GFX
 		Material material;
 		material.id = static_cast<unsigned int>(m_idCounter);
 		m_idCounter++;
-		material.shaderProgramID = UINT_MAX;
+		material.shaderProgramID = std::numeric_limits<unsigned int>::max();
 		m_materials.push_back(material);
 		id = material.id;
 	}
@@ -24,7 +24,7 @@ namespace GFX
 	void MaterialManager::DeleteMaterial(const unsigned long long int& id)
 	{
 		unsigned int index = FindMaterial(id);
-		if (index != UINT_MAX)
+		if (index != std::numeric_limits<unsigned int>::max())
 		{
 			m_materials.erase(m_materials.begin() + index);
 		}
@@ -33,7 +33,7 @@ namespace GFX
 	void MaterialManager::AddTexture(const unsigned long long int& materialID, const unsigned long long int& textureID)
 	{
 		unsigned int index = FindMaterial(materialID);
-		if (index != UINT_MAX)
+		if (index != std::numeric_limits<unsigned int>::max())
 		{
 			m_materials[index].textures.push_back(textureID);
 		}
@@ -42,7 +42,7 @@ namespace GFX
 	void MaterialManager::RemoveTexture(const unsigned long long int& materialID, const unsigned long long int& textureID)
 	{
 		unsigned int index = FindMaterial(materialID);
-		if (index != UINT_MAX)
+		if (index != std::numeric_limits<unsigned int>::max())
 		{
 			for (unsigned int i = 0; i < m_materials[index].textures.size(); i++)
 			{
@@ -57,7 +57,7 @@ namespace GFX
 	void MaterialManager::SetShader(const unsigned long long int& materialID, const unsigned int& shaderID)
 	{
 		unsigned int index = FindMaterial(materialID);
-		if (index != UINT_MAX)
+		if (index != std::numeric_limits<unsigned int>::max())
 		{
 			m_materials[index].shaderProgramID = shaderID;
 		}

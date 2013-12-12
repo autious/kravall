@@ -48,23 +48,21 @@ namespace GFX
 		p.position = glm::vec3(0.0f, 0.0f, 0.0f);
 		p.color = glm::vec3((rand() % 1000) / 1000.0f, (rand() % 1000) / 1000.0f, (rand() % 1000) / 1000.0f);
 		p.intensity = 1.0f;
-		p.radius = 50.0f;
-		p.hasShadow = false;
+		p.radius = 20.0f;
 		m_pointLights[0] = p;
 
 		for(int i = 1; i < m_maximumLights; i++)
 		{
-			p.position = glm::vec3(10.0f, 10.0f, 0.0f);// glm::vec3(50.0 * (rand() % 1000) / 1000.0f, 50.0 * (rand() % 1000) / 1000.0f, 0.0f);
+			p.position = glm::vec3(-50 + 100.0 * (rand() % 1000) / 1000.0f, -50 + 100.0 * (rand() % 1000) / 1000.0f, 0.0f);
 			p.color = glm::vec3((rand() % 1000) / 1000.0f, (rand() % 1000) / 1000.0f, (rand() % 1000) / 1000.0f);
 			p.intensity = 1.0f;
-			p.radius = 50.0f;
-			p.hasShadow = false;
+			p.radius = 20.0f;
 			m_pointLights[i] = p;
 		}
 
 		glGenBuffers(1, &m_pointLightBuffer);
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_pointLightBuffer);
-		glBufferData(GL_SHADER_STORAGE_BUFFER, m_maximumLights * sizeof(PointLight), m_pointLights, GL_DYNAMIC_COPY);
+		glBufferData(GL_SHADER_STORAGE_BUFFER, m_maximumLights * sizeof(float) * 8, m_pointLights, GL_DYNAMIC_COPY);
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, m_pointLightBuffer);
 
 
@@ -114,6 +112,8 @@ namespace GFX
 		glEnable(GL_BLEND);
 
 		BasePainter::ClearFBO();
+
+		TextureManager::UnbindTexture();
 
 	}
 }

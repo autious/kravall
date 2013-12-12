@@ -17,6 +17,8 @@ solution "RiotGame"
         location_path = location_path .. "/projects"
     end
     
+	defines { "_CRT_SECURE_NO_WARNINGS" }
+	
     configuration { "Debug or DebugTest or PureDebugTest" }
         defines { "DEBUG" }
         flags { "Symbols" }

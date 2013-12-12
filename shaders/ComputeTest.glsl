@@ -6,7 +6,6 @@ struct PointLight
 	float radius;
 	vec3 color;
 	float intensity;
-	bool hasShadow;
 };
 
 layout (binding = 0, rgba32f) uniform writeonly image2D outTexture;
@@ -36,8 +35,8 @@ vec4 CalculateLighting( PointLight p, vec3 wPos, vec3 wNormal, vec4 wSpec, vec4 
 {
 	vec3 direction = p.position - wPos;
 
-	//if(length(direction) > p.radius)
-	//	return vec4(0.0f, 0.0f, 0.0f, 0.0f);
+	if(length(direction) > p.radius)
+		return vec4(0.0f, 0.0f, 0.0f, 0.0f);
 
 	float attenuation = 1.0f - length(direction) / (p.radius);
 	direction = normalize(direction);
@@ -64,14 +63,15 @@ void main()
 
 		//point lights
 		//#pragma optionNV(unroll all)
-		for(int i = 0; i < 2; i++)
+		for(int i = 0; i < 40; i++)
 		{
-			color += CalculateLighting(pointLights[i], wPos.xyz, normalColor.xyz, specular, glow);
+			//if( i >= 1)
+				color += CalculateLighting(pointLights[i], wPos.xyz, 2*normalColor.xyz-1.0f, specular, glow);
 		}
 
 		// ambient
 		color += vec4(0.1f, 0.1f, 0.1f, 0.0f)*diffuseColor;
-
+		//color = vec4(normalColor.xyz, 1.0f);
         imageStore(outTexture, pixel, color);
 
 }

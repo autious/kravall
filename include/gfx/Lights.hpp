@@ -12,7 +12,6 @@ namespace GFX
 		float radius;
 		glm::vec3 color;
 		float intensity;
-		bool hasShadow;
 	};
 
 	// Spotlight

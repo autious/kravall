@@ -4,6 +4,7 @@
 #define STBI_HEADER_FILE_ONLY
 #include <GL/glew.h>
 #include <vector>
+#include <limits>
 
 #include "stb_image.cpp"
 #include "TextureData.hpp"
@@ -47,12 +48,12 @@ namespace GFX
 		{ 
 			int index = FindTexture(textureID);
 
-			if (index != UINT_MAX)
+			if (index != std::numeric_limits<unsigned int>::max())
 				return m_textures[index]; 
 
 			TextureData t;
-			t.id = UINT_MAX;
-			t.textureHandle = UINT_MAX;
+			t.id = std::numeric_limits<unsigned int>::max();
+			t.textureHandle = std::numeric_limits<unsigned int>::max();
 
 			return t;
 		}
@@ -68,7 +69,7 @@ namespace GFX
 				if (m_textures[i].id == static_cast<unsigned int>(id))
 					return i;
 
-			return UINT_MAX;
+			return std::numeric_limits<unsigned int>::max();
 		}
 	};
 }
