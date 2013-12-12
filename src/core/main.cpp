@@ -153,9 +153,9 @@ void run( GLFWwindow * window )
 	Core::world.m_linearHeap = Core::LinearHeap(Core::world.m_linearAllocator);
 
 	Core::Camera* gCamera;
-	gCamera = new Core::Camera(45.0f, 1.0f, 1000.0f);
+	gCamera = new Core::Camera(45.0f, 1.0f, 100.0f);
 	gCamera->CalculateProjectionMatrix(initScreenWidth, initScreenHeight);
-	gCamera->SetPosition(glm::vec3(0.0f, 0.0f, -50.0f));
+	gCamera->SetPosition(glm::vec3(0.0f, 0.0f, 100.0f));
 
 	GFX::SetProjectionMatrix(gCamera->GetProjectionMatrix());
 
@@ -218,10 +218,10 @@ void run( GLFWwindow * window )
         CM.CallFinishers();
 
 		//gCamera->CalculateViewMatrix();
-		gCamera->LookAt(glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		gCamera->LookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		GFX::SetViewMatrix(gCamera->GetViewMatrix());
 
-		TestRendering();
+		//TestRendering();
 
 
 	    //TODO: Timing hook
