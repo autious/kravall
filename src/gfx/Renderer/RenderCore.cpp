@@ -187,7 +187,7 @@ namespace GFX
 		}
 		if (updateStats && m_showStatistics)
 		{
-			glFinish();
+			GFX_CHECKTIME(glFinish(), "glFinish");
 
 			GFX_CHECKTIME(m_renderJobManager->Sort(), "Sorting");
 			GFX_CHECKTIME(m_deferredPainter->Render(m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix), "Geometry");
