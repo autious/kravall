@@ -52,7 +52,7 @@ void Core::PVector::Release( int id )
 void* Core::PVector::Get( int id )
 {
 
-    assert( id >= 0 && id < (int)m_count );
+    assert( id >= 0 && id < (int)m_size );
     return &(((unsigned char*)m_data)[id*m_typesize]);
 }
 
