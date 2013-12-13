@@ -1,5 +1,17 @@
 print( "Starting" )
 
+
+local function callback( meshid )
+    print( meshid )
+end
+
+core.contentmanager.load( core.loaders.GnomeLoader, "assets/tomte.gnome", callback, false )
+core.contentmanager.load( core.loaders.GnomeLoader, "assets/tomte.gnome", callback, false )
+core.contentmanager.load( core.loaders.GnomeLoader, "assets/tomte.gnome", callback, false )
+core.contentmanager.free( core.loaders.GnomeLoader, "assets/tomte.gnome" )
+core.contentmanager.free( core.loaders.GnomeLoader, "assets/tomte.gnome" )
+core.contentmanager.free( core.loaders.GnomeLoader, "assets/tomte.gnome" )
+
 value = {}
 
 for k = 1, 20 do 
