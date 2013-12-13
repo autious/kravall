@@ -17,6 +17,7 @@ namespace GFX
 		m_lastUpdateTime = 0;
 		m_curTime = 0;
 		m_showStatistics = false;
+		m_showFBO = false;
 	}
 
 	RenderCore::~RenderCore()
@@ -191,8 +192,12 @@ namespace GFX
 
 			GFX_CHECKTIME(m_renderJobManager->Sort(), "Sorting");
 			GFX_CHECKTIME(m_deferredPainter->Render(m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix), "Geometry");
-			//GFX_CHECKTIME(m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, 1), "FBO");
 			GFX_CHECKTIME(m_lightPainter->Render(m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix), "Lighting");
+
+			//Render frame buffers
+			if (m_showFBO)
+				GFX_CHECKTIME(m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, 0), "FBO");
+
 			GFX_CHECKTIME(m_debugPainter->Render(m_viewMatrix, m_projMatrix), "Debug");
 			GFX_CHECKTIME(m_consolePainter->Render(), "Console");
 			GFX_CHECKTIME(m_textPainter->Render(), "Text");
@@ -201,8 +206,12 @@ namespace GFX
 		{
 			m_renderJobManager->Sort();
 			m_deferredPainter->Render(m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
-			//m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, 1);
 			m_lightPainter->Render(m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
+			
+			//Render frame buffers
+			if (m_showFBO)
+				m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, 0);
+
 			m_debugPainter->Render(m_viewMatrix, m_projMatrix);
 			m_consolePainter->Render();
 			m_textPainter->Render();

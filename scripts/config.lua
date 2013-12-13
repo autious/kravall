@@ -6,7 +6,8 @@ vsync = 0,
 windowResizable = true,
 initScreenWidth = 1280,
 initScreenHeight = 720,
-showSystems = false
+showSystems = false,
+showFramebuffers = false
 }
 
 function printAlexStatus()
@@ -21,10 +22,17 @@ function showSys()
     end
 end
 
+function showFBO()
+    if core.config.showFramebuffers then
+        core.config.showFramebuffers = false
+    else
+        core.config.showFramebuffers = true
+    end
+end
+
 function help()
     print( "The following functions exist:" )
     print( "showSys()" )
+    print( "showFBO()" )
     print( "printAlexStatus()" )
 end
-
---showSys()

@@ -21,6 +21,11 @@ namespace Core
 	{
 		clop::Command("lua showSys()");
 	}
+	
+	void ClopShowFBO(clop::ArgList args)
+	{
+		clop::Command("lua showFBO()");
+	}
 
 	void ClopLipsum(clop::ArgList args)
 	{
@@ -56,8 +61,8 @@ namespace Core
 		// Register lua
 		clop::Register("lua", ClopLuaCommand);
 		
-		clop::Register("showSys", ClopShowSys);
 		clop::Register("sysinfo", ClopShowSys);
+		clop::Register("fbo", ClopShowFBO);
 		
 		Line line = {"Welcome to the console, have a nice day.", Colors::Gold};
 		m_console.push_back(line);

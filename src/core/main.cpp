@@ -231,6 +231,7 @@ void run( GLFWwindow * window )
 
         Core::world.m_systemHandler.Update( 0.1f );
         SystemTimeRender();
+		GFX::Debug::DisplayFBO(Core::world.m_config.GetBool( "showFramebuffers", false ));
 		Core::GetInput().ResetInput();
 		glfwSwapBuffers(window);
 		glfwPollEvents();
