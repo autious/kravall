@@ -20,7 +20,9 @@ namespace Core
 {
     class ExampleSystem;
 	class RenderingSystem;
-    typedef SystemHandlerTemplate<ExampleSystem, RenderingSystem> SystemHandler;
+	class PickingSystem;
+	class AIDebugSystem;
+    typedef SystemHandlerTemplate<ExampleSystem, RenderingSystem, PickingSystem, AIDebugSystem> SystemHandler;
     typedef EntityHandlerTemplate<SystemHandler,ExampleComponent1,ExampleComponent2, WorldPositionComponent, 
 		RotationComponent, ScaleComponent, GraphicsComponent, MovementComponent, UnitTypeComponent, 
 		AttributeRioterComponent, AttributePoliceComponent, BoundingVolumeComponent> EntityHandler;
@@ -29,4 +31,6 @@ namespace Core
 /**********All systems after this line************/
 #include <Systems/ExampleSystem.hpp>
 #include <Systems/RenderingSystem.hpp>
+#include <Systems/PickingSystem.hpp>
+#include <Systems/AIDebugSystem.hpp>
 #endif

@@ -12,10 +12,15 @@ namespace Core
     public:
         virtual void Update( float delta ) override;
 
-        PickingSystem() : BaseSystem( EntityHandler::GenerateAspect<ExampleComponent1,ExampleComponent2>(), 0ULL )
+        PickingSystem() : BaseSystem( EntityHandler::GenerateAspect< WorldPositionComponent, BoundingVolumeComponent >(), 0ULL )
         {}
 
         virtual const char* GetHumanName() { return "ExampleSystem"; }
+
+
+
+
+
     };
 }
 
