@@ -1,8 +1,16 @@
-#include "ExampleSystem.hpp"
+#include "PickingSystem.hpp"
 #include "World.hpp"
 
-void Core::ExampleSystem::Update( float delta )
+
+
+
+void Core::PickingSystem::Update( float delta )
 {
+
+	
+
+
+	/*
     for( std::vector<Entity>::iterator it = m_entities.begin();
             it != m_entities.end();
             it++ )
@@ -12,4 +20,5 @@ void Core::ExampleSystem::Update( float delta )
 
         ec1->v += ec2->v * delta;
     }
+	*/
 }

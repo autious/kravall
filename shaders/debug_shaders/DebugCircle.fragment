@@ -1,11 +1,5 @@
-#version 440 core
+#version 430
 // Fragment Shader for debug drawing
-
-uniform PerFrameBlock
-{
-	mat4 gView;
-	mat4 gProjection;
-};
 
 uniform vec3 pointPosition;
 uniform vec3 pointPosition2;

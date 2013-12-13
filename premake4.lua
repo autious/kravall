@@ -17,6 +17,8 @@ solution "RiotGame"
         location_path = location_path .. "/projects"
     end
     
+	defines { "_CRT_SECURE_NO_WARNINGS" }
+	
     configuration { "Debug or DebugTest or PureDebugTest" }
         defines { "DEBUG" }
         flags { "Symbols" }
@@ -51,7 +53,7 @@ solution "RiotGame"
 
     project "core"
         targetname "RiotGame" 
-        debugdir "" -- fungerade inte för utskrift av textfiler, lämnar detta så det syns utifall något faller iom. det / John
+        debugdir ""
         location ( location_path )
         language "C++"
         kind "ConsoleApp"
@@ -86,7 +88,7 @@ solution "RiotGame"
         location ( location_path )
         language "C++"
         kind "SharedLib"
-        files { "gtest/gfx/**.cpp", "src/gfx/**.hpp", "src/gfx/**.h", "src/gfx/**.cpp", "include/gfx/**.hpp" ,"include/utility/**.hpp", "shaders/**.vertex", "shaders/**.geometry", "shaders/**.fragment", "shaders/**.compute" }
+        files { "gtest/gfx/**.cpp", "src/gfx/**.hpp", "src/gfx/**.h", "src/gfx/**.cpp", "include/gfx/**.hpp" ,"include/utility/**.hpp", "shaders/**.vertex", "shaders/**.geometry", "shaders/**.fragment", "shaders/**.compute", "shaders/**.glsl" }
 
 		includedirs { "src/gfx", "include/gfx", "include/utility", "shaders", "include", "deps" }       
         

@@ -4,7 +4,7 @@
 #include "../BasePainter.hpp"
 #include <Shaders/ShaderManager.hpp>
 #include <Buffers/UniformBufferManager.hpp>
-#include "../../Textures/Texture.hpp"
+#include "../../Textures/TextureManager.hpp"
 
 namespace GFX
 {

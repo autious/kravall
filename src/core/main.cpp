@@ -13,11 +13,11 @@
 #include "WindowHandling/InitializeGLFW.hpp"
 
 #include <gfx/GFXInterface.hpp>
-#include <gfx/Material.hpp>
 #include <utility/Colors.hpp>
 #include "Camera/Camera.hpp"
 #include <ComponentFramework/SystemHandlerTemplate.hpp>
 #include <ComponentFramework/EntityHandlerTemplate.hpp>
+#include <ComponentFramework/SystemTypes.hpp>
 
 #include <utility/Colors.hpp>
 
@@ -37,6 +37,8 @@
 #include <logger/internal/ClopHandler.hpp>
 
 #include <Lua/LuaState.hpp>
+
+#include <gfx/BitmaskDefinitions.hpp>
 
 void clopLoggerCallback( LogSystem::LogType m_type, const char * message )
 {
@@ -70,7 +72,6 @@ void ClopCloseWindow(clop::ArgList args)
 
 int initScreenHeight;
 int initScreenWidth;
-
 GLFWwindow* init( int argc, char** argv )
 {
 	GLFWwindow* window;
@@ -96,6 +97,8 @@ GLFWwindow* init( int argc, char** argv )
 	Core::InitializeGLFW(&window, initScreenWidth, initScreenHeight, Core::WindowMode::WMODE_WINDOWED);
 
 	clop::Register("exit", ClopCloseWindow);
+
+	Core::world.InitWorld();
 
 	if (GFX::Init(initScreenWidth,initScreenHeight) == GFX_FAIL)
 		return nullptr;
@@ -125,8 +128,30 @@ void TestRendering()
 	GFX::RenderText(glm::vec2(0, 200), 1.0f, Colors::Gold, "ABCDEFGHIJKLMNOPQRSTUVWXYZASIUHDOIASHUDIOASHDA1234567890*'^&%#!?");
 }
 
+void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, float posX, float posY, float posZ)
+{
+	int index = rioterList->size(); // Size before add will be the index of the added entity.
+	double pi = 3.141529;
+	double angle = 0.0; // pi * 0.25;
+
+	rioterList->push_back(Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, 
+		Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent, Core::UnitTypeComponent,
+		Core::MovementComponent, Core::AttributeRioterComponent>
+		(Core::GraphicsComponent(), 
+		 Core::WorldPositionComponent(posX, posY, posZ),
+		 Core::RotationComponent(),
+		 Core::ScaleComponent(0.5f),
+		 Core::UnitTypeComponent(),
+		 Core::MovementComponent(0.0f, 0.0f, 1.0f, 2.0f, 6.0f),
+		 Core::AttributeRioterComponent()));
+
+	Core::GraphicsComponent* gc = WGETC <Core::GraphicsComponent>(rioterList->at(index));
+	GFX::SetBitmaskValue(gc->bitmask, GFX::BT_MESH_ID, meshID);
+}
+
 void SystemTimeRender()
 {
+	GFX::Debug::DisplaySystemInfo(Core::world.m_config.GetBool( "showSystems", false ));
     if( Core::world.m_config.GetBool( "showSystems", false ) )
     {
         std::vector<std::pair<const char *,std::chrono::microseconds>> times = Core::world.m_systemHandler.GetFrameTime();
@@ -144,62 +169,54 @@ void SystemTimeRender()
     }
 }
 
+
 void run( GLFWwindow * window )
 {
     LOG_INFO << "Starting program" << std::endl;
 
-	Core::Camera* gCamera;
-	gCamera = new Core::Camera(45.0f, 1.0f, 1000.0f);
-	gCamera->CalculateProjectionMatrix(initScreenWidth, initScreenHeight);
-	gCamera->SetPosition(glm::vec3(0.0f, 0.0f, -700.0f));
+	// init game camera...
+	Core::gameCamera = Core::world.m_constantHeap.NewObject<Core::Camera>(
+		Core::world.m_config.GetDouble( "initCameraFieldOfView", 45.0f ), 
+		Core::world.m_config.GetDouble( "initCameraNearClipDistance", 1.0f ), 
+		Core::world.m_config.GetDouble( "initCameraFarClipDistance", 1000.0f ) );
+	Core::gameCamera->CalculateProjectionMatrix(initScreenWidth, initScreenHeight);
+	Core::gameCamera->SetPosition(glm::vec3(0.0f, 0.0f, 200.0f));
+	
 
-	GFX::SetProjectionMatrix(gCamera->GetProjectionMatrix());
+	GFX::SetProjectionMatrix(Core::gameCamera->GetProjectionMatrix());
+
+	std::vector<Core::Entity> rioters;
 
 	Core::GetInput().Initialize(window);
 
-    
-    Entity ent1 = Core::world.m_entityHandler.CreateEntity<Core::ExampleComponent1,Core::ExampleComponent2>( Core::ExampleComponent1::D1(),
-                                                                                   Core::ExampleComponent2::D2() );
     Core::ContentManager CM;
 
-	GLuint IBO;
-	GLuint VAO;
-    GLint vSize;
-    GLint iSize;
-
-    CM.Load<Core::GnomeLoader>("assets/tomte.gnome", [&VAO, &IBO, &vSize, &iSize](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+	unsigned int meshID; 
+    CM.Load<Core::GnomeLoader>("assets/cube.gnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
             {
                 Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
                 const Core::ModelData* data = gnomeLoader->getData(handle);
-                VAO = data->VAO;
-                IBO = data->IBO;
-                vSize = data->vSize;
-                iSize = data->iSize;
+				meshID = data->meshID;
             });
-    std::cout << "ASDF" << std::endl;
    
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));
-    GFX::Material* m = new GFX::Material();
-	m->diffuse = GFX::Content::LoadTexture2DFromFile("assets/GDM.png");
-    /*
+
+
 	for (int i = -100; i < 100; i++)
 	{
 		for (int j = -10; j < 10; j++)
 		{
-			Entity e2 = Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent>
+			Core::Entity e2 = Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent>
 				(Core::GraphicsComponent(), Core::WorldPositionComponent(), Core::RotationComponent(), Core::ScaleComponent());
 	
 			Core::GraphicsComponent* gc = WGETC<Core::GraphicsComponent>(e2);
-	
-			gc->ibo = IBO;
-			gc->iboSize = vSize;
-			gc->vao = VAO;
-			gc->material = m;
-			gc->shader = 0;
+			
+			GFX::SetBitmaskValue(gc->bitmask, GFX::BT_MESH_ID, meshID);
+			
 	
 			Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(e2);
-			wpc->position[0] = i * 10;
-			wpc->position[1] = j * 10;
+			wpc->position[0] = (float)(i * 10);
+			wpc->position[1] = (float)(j * 10);
 	
 			Core::ScaleComponent* sc = WGETC<Core::ScaleComponent>(e2);
 			sc->scale = .1f;
@@ -212,43 +229,14 @@ void run( GLFWwindow * window )
 			rc->rotation[3] = cos(3.14f / 2.0f);
 		}
 	}
-    */
-
+	/*
+	CreateRioter(&rioters, meshID, -6.0f, -3.0f, 0.0f);
+	CreateRioter(&rioters, meshID, 0.0f, -3.0f, 0.0f);
+	CreateRioter(&rioters, meshID, 6.0f, -3.0f, 0.0f);
+	*/
 	std::cout << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " ";
 
 	//inputline.resize(1);
-
-    CM.Load<Core::GnomeLoader>("assets/flag.GNOME", [&m]
-            (Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
-            {
-                LOG_DEBUG << "Loading async" << std::endl;
-                Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
-                const Core::ModelData* data = gnomeLoader->getData(handle);
-
-			    Entity e2 = Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent>
-				(Core::GraphicsComponent(), Core::WorldPositionComponent(), Core::RotationComponent(), Core::ScaleComponent());
-	
-			    Core::GraphicsComponent* gc = WGETC<Core::GraphicsComponent>(e2);
-	
-		    	gc->ibo = data->IBO;
-		    	gc->iboSize = data->vSize;
-		    	gc->vao = data->VAO;
-		    	gc->material = m;
-		    	gc->shader = 0;
-	
-		    	Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(e2);
-		    	wpc->position[0] = 0.0f;
-		    	wpc->position[1] = 0.0f;
-	
-		    	Core::ScaleComponent* sc = WGETC<Core::ScaleComponent>(e2);
-		    	sc->scale = 0.5f;
-	
-		    	Core::RotationComponent* rc = WGETC<Core::RotationComponent>(e2);
-		    
-		    	rc->rotation[2] = 0.0f;
-		    	rc->rotation[3] = 0.0f;
-            }, true);
-
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -259,18 +247,28 @@ void run( GLFWwindow * window )
         CM.CallFinishers();
 
 		//gCamera->CalculateViewMatrix();
-		gCamera->LookAt(glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		GFX::SetViewMatrix(gCamera->GetViewMatrix());
+		Core::gameCamera->LookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		GFX::SetViewMatrix(Core::gameCamera->GetViewMatrix());
+		Core::gameCamera->CalculateProjectionMatrix(GFX::GetScreenWidth(), GFX::GetScreenHeight());
+		GFX::SetProjectionMatrix(Core::gameCamera->GetProjectionMatrix());
 
-		TestRendering();
+		//TestRendering();
 
-	    GFX::Render();
+	    //TODO: Timing hook
+		GFX::Render();
+
         Core::world.m_systemHandler.Update( 0.1f );
         SystemTimeRender();
+		GFX::Debug::DisplayFBO(Core::world.m_config.GetInt( "showFramebuffers", -1 ));
 		Core::GetInput().ResetInput();
 		glfwSwapBuffers(window);
 		glfwPollEvents();
+
+		//TODO: Timing hook
+		Core::world.m_frameHeap.Rewind();
     }
+
+	Core::world.m_constantHeap.Rewind();
 
     glfwDestroyWindow( window );
 
@@ -290,11 +288,13 @@ int main(int argc, char** argv)
 #endif
 #ifdef RUN_GTEST
     int gtestReturn = RUN_ALL_TESTS();
+    if( gtestReturn != 0 )
+	{
 #ifdef _WIN32 
 	std::cin.get();
 #endif
-    if( gtestReturn != 0 )
         return gtestReturn;
+	}
 #endif
 #ifndef SKIP_RUN
     run( window );

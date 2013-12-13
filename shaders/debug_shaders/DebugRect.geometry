@@ -1,10 +1,4 @@
-#version 440
-
-uniform PerFrameBlock
-{
-	mat4 gView;
-	mat4 gProjection;
-};
+#version 430
 
 uniform vec3 pointPosition;
 uniform vec3 pointPosition2;

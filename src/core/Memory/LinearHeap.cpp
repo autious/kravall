@@ -21,6 +21,7 @@ namespace Core
         {
            f->m_destructorCall(GetFinalizerObject(f)); 
         }
+		m_finalizerChain = nullptr;
         m_allocator.Rewind(m_rewindPoint);
     }
 }

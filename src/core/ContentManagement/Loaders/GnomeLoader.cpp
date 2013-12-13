@@ -27,11 +27,11 @@ namespace Core
     {
         Core::GnomeLoader::Gnome* gnome = static_cast<Core::GnomeLoader::Gnome*>(handle);
         Core::ModelData* modelData = new Core::ModelData;
-        modelData->iSize = modelData->vSize = gnome->numberOfVertices;
+
+		GFX::Content::LoadStaticMesh(modelData->meshID, gnome->numberOfVertices, gnome->numberOfIndices, gnome->vertices, gnome->indices);
 
         m_modelData.push_back(modelData);            
 
-        GFX::Content::LoadStaticMesh(modelData->IBO, modelData->VAO, gnome->numberOfVertices, gnome->numberOfIndices, gnome->vertices, gnome->indices);
         delete[] gnome->materials;
         delete[] gnome->bones;
         delete[] gnome->animations;            
@@ -46,11 +46,9 @@ namespace Core
         Core::ModelData* modelData = new Core::ModelData();
         Core::GnomeLoader::Gnome* gnome = LoadGnomeFromFile(assetName);
 
-        modelData->iSize = modelData->vSize = gnome->numberOfVertices;
+		GFX::Content::LoadStaticMesh(modelData->meshID, gnome->numberOfVertices, gnome->numberOfIndices, gnome->vertices, gnome->indices);
 
-        m_modelData.push_back(modelData);            
-
-        GFX::Content::LoadStaticMesh(modelData->IBO, modelData->VAO, gnome->numberOfVertices, gnome->numberOfVertices, gnome->vertices, gnome->indices);
+		m_modelData.push_back(modelData);
         
         delete[] gnome->materials;
         delete[] gnome->bones;
@@ -73,7 +71,7 @@ namespace Core
                 break;
             }
         }
-        GFX::Content::DeleteStaticMesh(modelData->IBO, modelData->VAO);        
+        GFX::Content::DeleteStaticMesh(modelData->meshID);        
         delete modelData;
     }
 
@@ -282,4 +280,5 @@ namespace Core
         file.close();
         return nullptr;
     }
+
 }
