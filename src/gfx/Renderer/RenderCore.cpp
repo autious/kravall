@@ -196,7 +196,7 @@ namespace GFX
 
 			//Render frame buffers
 			if (m_showFBO)
-				GFX_CHECKTIME(m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, 1), "FBO");
+				GFX_CHECKTIME(m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, 0), "FBO");
 
 			GFX_CHECKTIME(m_debugPainter->Render(m_viewMatrix, m_projMatrix), "Debug");
 			GFX_CHECKTIME(m_consolePainter->Render(), "Console");
@@ -210,7 +210,7 @@ namespace GFX
 			
 			//Render frame buffers
 			if (m_showFBO)
-				m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, 1);
+				m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, 0);
 
 			m_debugPainter->Render(m_viewMatrix, m_projMatrix);
 			m_consolePainter->Render();
