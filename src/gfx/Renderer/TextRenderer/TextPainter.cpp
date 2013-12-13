@@ -43,6 +43,8 @@ namespace GFX
 		m_colorUniform = m_shaderManager->GetUniformLocation("BasicText", "fontColor");
 		m_textureUniform = m_shaderManager->GetUniformLocation("BasicText", "textureAtlas");
 
+        glUniform1i(m_textureUniform, 0);
+
 		glGenBuffers(1, &m_textVBO);
 		glGenVertexArrays(1, &m_textVAO);
 
@@ -113,7 +115,7 @@ namespace GFX
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		glActiveTexture(GL_TEXTURE0);
-		glUniform1i(atlas->textureUniform, 0);
+		//glUniform1i(atlas->textureUniform, 0);
 		glBindTexture(GL_TEXTURE_2D, atlas->texture);
 
 		m_shaderManager->SetUniform(1, color, m_colorUniform);
