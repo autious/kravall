@@ -40,8 +40,6 @@ namespace GFX
 		m_pointColorUniform = m_shaderManager->GetUniformLocation("DebugPoint", "inColor");
 		m_pointSizeUniform = m_shaderManager->GetUniformLocation("DebugPoint", "pointSize");
 
-		m_uniformBufferManager->CreateBasicCameraUBO(m_shaderManager->GetShaderProgramID("DebugPoint"));
-
 		// Create and attach circle debug shaders
 		m_shaderManager->CreateProgram("DebugCircle");
 		m_shaderManager->AttachShader("DebugVS", "DebugCircle");
@@ -53,8 +51,6 @@ namespace GFX
 		m_circleDimUniform = m_shaderManager->GetUniformLocation("DebugCircle", "pointPosition2");
 		m_circleColorUniform = m_shaderManager->GetUniformLocation("DebugCircle", "inColor");
 		m_screenSizeUniform = m_shaderManager->GetUniformLocation("DebugCircle", "screenSizeAndLinewidth");
-
-		m_uniformBufferManager->CreateBasicCameraUBO(m_shaderManager->GetShaderProgramID("DebugCircle"));
 
 		// Create and attach line debug shaders
 		m_shaderManager->CreateProgram("DebugLine");
@@ -80,22 +76,18 @@ namespace GFX
 		m_rectDimUniform = m_shaderManager->GetUniformLocation("DebugRect", "pointPosition2");
 		m_rectColorUniform = m_shaderManager->GetUniformLocation("DebugRect", "inColor");
 
-		m_uniformBufferManager->CreateBasicCameraUBO(m_shaderManager->GetShaderProgramID("DebugRect"));
-
 		// Create and attach box debug shaders
 		m_shaderManager->CreateProgram("DebugBox");
 		m_shaderManager->AttachShader("DebugVS", "DebugBox");
 		m_shaderManager->AttachShader("DebugBoxGS", "DebugBox");
 		m_shaderManager->AttachShader("DebugFS", "DebugBox");
 		m_shaderManager->LinkProgram("DebugBox");
-
-		m_rectPosUniform = m_shaderManager->GetUniformLocation("DebugBox", "pointPosition");
-		m_rectDimUniform = m_shaderManager->GetUniformLocation("DebugBox", "pointPosition2");
-		m_rectColorUniform = m_shaderManager->GetUniformLocation("DebugBox", "inColor");
+		
+		m_boxPosUniform = m_shaderManager->GetUniformLocation("DebugBox", "pointPosition");
+		m_boxDimUniform = m_shaderManager->GetUniformLocation("DebugBox", "pointPosition2");
+		m_boxColorUniform = m_shaderManager->GetUniformLocation("DebugBox", "inColor");
 
 		m_uniformBufferManager->CreateBasicCameraUBO(m_shaderManager->GetShaderProgramID("DebugBox"));
-
-
 	}
 
 	void DebugPainter::Render(glm::mat4 viewMatrix, glm::mat4 projMatrix)
@@ -159,9 +151,9 @@ namespace GFX
 			{
 				DebugBox b = DebugDrawing().GetFilledBoxes()[i];
 
-				m_shaderManager->SetUniform(1, b.color, m_rectColorUniform);
-				m_shaderManager->SetUniform(1, b.position, m_rectPosUniform);
-				m_shaderManager->SetUniform(1, b.dimensions, m_rectDimUniform);
+				m_shaderManager->SetUniform(1, b.color, m_boxColorUniform);
+				m_shaderManager->SetUniform(1, b.position, m_boxPosUniform);
+				m_shaderManager->SetUniform(1, b.dimensions, m_boxDimUniform);
 
 				glDrawArrays(GL_POINTS, 0, 1);
 			}

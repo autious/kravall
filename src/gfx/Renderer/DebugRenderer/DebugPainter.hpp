@@ -4,7 +4,7 @@
 #include "../BasePainter.hpp"
 #include <Shaders/ShaderManager.hpp>
 
-#include "../FBOTexture.hpp"
+#include "../DeferredRenderer/FBOTexture.hpp"
 #include "../../Buffers/UniformBufferManager.hpp"
 #include <GL/glew.h>
 
@@ -57,6 +57,10 @@ namespace GFX
 		GLuint m_rectPosUniform;
 		GLuint m_rectDimUniform;
 		GLuint m_rectColorUniform;
+
+		GLuint m_boxPosUniform;
+		GLuint m_boxDimUniform;
+		GLuint m_boxColorUniform;
 
 		GLuint m_circlePosUniform;
 		GLuint m_circleDimUniform;

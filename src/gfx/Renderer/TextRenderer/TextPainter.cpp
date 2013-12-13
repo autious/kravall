@@ -136,6 +136,8 @@ namespace GFX
 		glDrawArrays(GL_POINTS, 0, coords.size());
 
 		glDisableVertexAttribArray(0);
+		glDisableVertexAttribArray(1);
+		glBindTexture(GL_TEXTURE_2D, 0);
 		m_shaderManager->ResetProgram();
 
 		glEnable(GL_DEPTH_TEST);

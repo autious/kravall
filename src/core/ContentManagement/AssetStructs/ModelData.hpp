@@ -7,10 +7,7 @@ namespace Core
 {
     struct ModelData
     {
-        GLuint IBO;
-        GLuint VAO;
-        GLint vSize;
-        GLint iSize;
+		unsigned int meshID;
     };
 }
 

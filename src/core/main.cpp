@@ -13,7 +13,6 @@
 #include "WindowHandling/InitializeGLFW.hpp"
 
 #include <gfx/GFXInterface.hpp>
-#include <gfx/Material.hpp>
 #include <utility/Colors.hpp>
 #include "Camera/Camera.hpp"
 #include <ComponentFramework/SystemHandlerTemplate.hpp>
@@ -37,6 +36,8 @@
 #include <logger/internal/ClopHandler.hpp>
 
 #include <Lua/LuaState.hpp>
+
+#include <gfx/BitmaskDefinitions.hpp>
 
 void clopLoggerCallback( LogSystem::LogType m_type, const char * message )
 {
@@ -70,7 +71,6 @@ void ClopCloseWindow(clop::ArgList args)
 
 int initScreenHeight;
 int initScreenWidth;
-
 GLFWwindow* init( int argc, char** argv )
 {
 	GLFWwindow* window;
@@ -127,6 +127,7 @@ void TestRendering()
 
 void SystemTimeRender()
 {
+	GFX::Debug::DisplaySystemInfo(Core::world.m_config.GetBool( "showSystems", false ));
     if( Core::world.m_config.GetBool( "showSystems", false ) )
     {
         std::vector<std::pair<const char *,std::chrono::microseconds>> times = Core::world.m_systemHandler.GetFrameTime();
@@ -148,10 +149,14 @@ void run( GLFWwindow * window )
 {
     LOG_INFO << "Starting program" << std::endl;
 
+	Core::world.m_worldMemory = new unsigned char[WORLD_MEMORY_SIZE];
+	Core::world.m_linearAllocator = Core::LinearAllocator(Core::world.m_worldMemory, WORLD_MEMORY_SIZE);
+	Core::world.m_linearHeap = Core::LinearHeap(Core::world.m_linearAllocator);
+
 	Core::Camera* gCamera;
 	gCamera = new Core::Camera(45.0f, 1.0f, 1000.0f);
 	gCamera->CalculateProjectionMatrix(initScreenWidth, initScreenHeight);
-	gCamera->SetPosition(glm::vec3(0.0f, 0.0f, -700.0f));
+	gCamera->SetPosition(glm::vec3(0.0f, 0.0f, 200.0f));
 
 	GFX::SetProjectionMatrix(gCamera->GetProjectionMatrix());
 
@@ -162,27 +167,17 @@ void run( GLFWwindow * window )
                                                                                    Core::ExampleComponent2::D2() );
     Core::ContentManager CM;
 
-	GLuint IBO;
-	GLuint VAO;
-    GLint vSize;
-    GLint iSize;
-
-   CM.Load<Core::GnomeLoader>("assets/tomte.gnome", [&VAO, &IBO, &vSize, &iSize](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
-           {
-               Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
-               const Core::ModelData* data = gnomeLoader->getData(handle);
-               VAO = data->VAO;
-               IBO = data->IBO;
-               vSize = data->vSize;
-               iSize = data->iSize;
-           });
-   std::cout << "ASDF" << std::endl;
+	unsigned int meshID; 
+    CM.Load<Core::GnomeLoader>("assets/tomte.gnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+            {
+                Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
+                const Core::ModelData* data = gnomeLoader->getData(handle);
+				meshID = data->meshID;
+            });
    
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));
-    GFX::Material* m = new GFX::Material();
-	m->diffuse = GFX::Content::LoadTexture2DFromFile("assets/GDM.png");
 
-	for (int i = -100; i < 100; i++)
+	for (int i = -10; i < 10; i++)
 	{
 		for (int j = -10; j < 10; j++)
 		{
@@ -190,16 +185,13 @@ void run( GLFWwindow * window )
 				(Core::GraphicsComponent(), Core::WorldPositionComponent(), Core::RotationComponent(), Core::ScaleComponent());
 	
 			Core::GraphicsComponent* gc = WGETC<Core::GraphicsComponent>(e2);
-	
-			gc->ibo = IBO;
-			gc->iboSize = vSize;
-			gc->vao = VAO;
-			gc->material = m;
-			gc->shader = 0;
+			
+			GFX::SetBitmaskValue(gc->bitmask, GFX::BT_MESH_ID, meshID);
+			
 	
 			Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(e2);
-			wpc->position[0] = i * 10;
-			wpc->position[1] = j * 10;
+			wpc->position[0] = (float)(i * 10);
+			wpc->position[1] = (float)(j * 10);
 	
 			Core::ScaleComponent* sc = WGETC<Core::ScaleComponent>(e2);
 			sc->scale = .1f;
@@ -212,7 +204,6 @@ void run( GLFWwindow * window )
 			rc->rotation[3] = cos(3.14f / 2.0f);
 		}
 	}
-
 
 	std::cout << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " ";
 
@@ -227,19 +218,25 @@ void run( GLFWwindow * window )
         CM.CallFinishers();
 
 		//gCamera->CalculateViewMatrix();
-		gCamera->LookAt(glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		gCamera->LookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		GFX::SetViewMatrix(gCamera->GetViewMatrix());
+		gCamera->CalculateProjectionMatrix(GFX::GetScreenWidth(), GFX::GetScreenHeight());
+		GFX::SetProjectionMatrix(gCamera->GetProjectionMatrix());
 
 		//TestRendering();
-		
+
+	    //TODO: Timing hook
 		GFX::Render();
 
         Core::world.m_systemHandler.Update( 0.1f );
         SystemTimeRender();
+		GFX::Debug::DisplayFBO(Core::world.m_config.GetInt( "showFramebuffers", -1 ));
 		Core::GetInput().ResetInput();
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 
+		//TODO: Timing hook
+		Core::world.m_linearHeap.Rewind();
     }
 
     glfwDestroyWindow( window );
@@ -260,11 +257,13 @@ int main(int argc, char** argv)
 #endif
 #ifdef RUN_GTEST
     int gtestReturn = RUN_ALL_TESTS();
+    if( gtestReturn != 0 )
+	{
 #ifdef _WIN32 
 	std::cin.get();
 #endif
-    if( gtestReturn != 0 )
         return gtestReturn;
+	}
 #endif
 #ifndef SKIP_RUN
     run( window );

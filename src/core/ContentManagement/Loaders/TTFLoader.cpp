@@ -13,17 +13,22 @@ namespace Core
 
     }
 
-    void* TTFLoader::Load(const char* assetName)
+    Core::AssetHandle TTFLoader::Load(const char* assetName)
     {
         return nullptr;
     }
 
-    void* TTFLoader::LoadAsync(const char* assetName, Core::FinisherVector& finisherList, std::mutex& finisherMutex)
+    Core::AssetHandle TTFLoader::LoadAsync(const char* assetName)
     {
         return nullptr;
     }
 
-    void TTFLoader::Destroy(const Core::AssetHandle assetHandle)
+    void TTFLoader::FinishLoadAsync(Core::AssetHandle& handle)
+    {
+
+    }
+
+    void TTFLoader::Destroy(const Core::AssetHandle handle)
     {
 
     }

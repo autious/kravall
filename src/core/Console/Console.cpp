@@ -21,6 +21,24 @@ namespace Core
 	{
 		clop::Command("lua showSys()");
 	}
+	
+	void ClopShowFBO(clop::ArgList args)
+	{
+		if (args.size() == 2)
+		{
+			std::string cmd = "lua showFBO(";
+			cmd += std::string(args[1]);
+			cmd += std::string(")");
+			clop::Command(cmd);
+		}
+		else
+		{
+			std::string errStr = "Usage: ";
+			errStr += std::string(args[0]);
+			errStr += std::string(" n");
+			Console().PrintLine(errStr, Colors::Red);
+		}
+	}
 
 	void ClopLipsum(clop::ArgList args)
 	{
@@ -56,8 +74,8 @@ namespace Core
 		// Register lua
 		clop::Register("lua", ClopLuaCommand);
 		
-		clop::Register("showSys", ClopShowSys);
 		clop::Register("sysinfo", ClopShowSys);
+		clop::Register("fbo", ClopShowFBO);
 		
 		Line line = {"Welcome to the console, have a nice day.", Colors::Gold};
 		m_console.push_back(line);
@@ -627,7 +645,7 @@ namespace Core
 					Color color = m_console[lineIndex].color;
 				
 
-					int wrapLength = (GFX::GetScreenWidth()-x-20) / m_wrapCharWidth;
+					int wrapLength = int((GFX::GetScreenWidth()-x-20) / m_wrapCharWidth);
 					int nrWraps = line.length() / wrapLength;
 					totalWraps += nrWraps;
 
