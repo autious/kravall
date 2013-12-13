@@ -177,7 +177,7 @@ void run( GLFWwindow * window )
    
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));
 
-	for (int i = -100; i < 100; i++)
+	for (int i = -10; i < 10; i++)
 	{
 		for (int j = -10; j < 10; j++)
 		{
@@ -190,8 +190,8 @@ void run( GLFWwindow * window )
 			
 	
 			Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(e2);
-			wpc->position[0] = i * 10;
-			wpc->position[1] = j * 10;
+			wpc->position[0] = (float)(i * 10);
+			wpc->position[1] = (float)(j * 10);
 	
 			Core::ScaleComponent* sc = WGETC<Core::ScaleComponent>(e2);
 			sc->scale = .1f;
@@ -204,7 +204,6 @@ void run( GLFWwindow * window )
 			rc->rotation[3] = cos(3.14f / 2.0f);
 		}
 	}
-    
 
 	std::cout << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " ";
 
@@ -259,11 +258,13 @@ int main(int argc, char** argv)
 #endif
 #ifdef RUN_GTEST
     int gtestReturn = RUN_ALL_TESTS();
+    if( gtestReturn != 0 )
+	{
 #ifdef _WIN32 
 	std::cin.get();
 #endif
-    if( gtestReturn != 0 )
         return gtestReturn;
+	}
 #endif
 #ifndef SKIP_RUN
     run( window );

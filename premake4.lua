@@ -53,7 +53,7 @@ solution "RiotGame"
 
     project "core"
         targetname "RiotGame" 
-        debugdir "" -- fungerade inte för utskrift av textfiler, lämnar detta så det syns utifall något faller iom. det / John
+        debugdir ""
         location ( location_path )
         language "C++"
         kind "ConsoleApp"

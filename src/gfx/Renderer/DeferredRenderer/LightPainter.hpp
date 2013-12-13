@@ -55,7 +55,7 @@ namespace GFX
 
 		GLuint m_pointLightBuffer;
 
-		const unsigned int m_maximumLights = 4096;
+		const unsigned int m_maximumLights = 1024;
 		PointLight* m_pointLights;
 
 	};
