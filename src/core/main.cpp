@@ -125,16 +125,22 @@ void TestRendering()
 	GFX::RenderText(glm::vec2(0, 200), 1.0f, Colors::Gold, "ABCDEFGHIJKLMNOPQRSTUVWXYZASIUHDOIASHUDIOASHDA1234567890*'^&%#!?");
 }
 
-void CreateRioter(std::vector<Entity>* rioterList, int meshID)
+void CreateRioter(std::vector<Entity>* rioterList, int meshID, float posX, float posY, float posZ)
 {
 	int index = rioterList->size(); // Size before add will be the index of the added entity.
+	double pi = 3.141529;
+	double angle = 0.0; // pi * 0.25;
 
 	rioterList->push_back(Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, 
-		Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent>
+		Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent, Core::UnitTypeComponent,
+		Core::MovementComponent, Core::AttributeRioterComponent>
 		(Core::GraphicsComponent(), 
-		 Core::WorldPositionComponent(0.0, -7.0f, 0.0f), 
-		 Core::RotationComponent(0.0f, 1.0f, 0.0f, 0.0f), 
-		 Core::ScaleComponent()));
+		 Core::WorldPositionComponent(posX, posY, posZ),
+		 Core::RotationComponent(),
+		 Core::ScaleComponent(0.5f),
+		 Core::UnitTypeComponent(),
+		 Core::MovementComponent(0.0f, 0.0f, 1.0f, 3.0f, 6.0f),
+		 Core::AttributeRioterComponent()));
 
 	Core::GraphicsComponent* gc = WGETC <Core::GraphicsComponent>(rioterList->at(index));
 	GFX::SetBitmaskValue(gc->bitmask, GFX::BT_MESH_ID, meshID);
@@ -220,7 +226,9 @@ void run( GLFWwindow * window )
 		}
 	}*/
 
-	CreateRioter(&rioters, meshID);
+	CreateRioter(&rioters, meshID, -6.0f, -3.0f, 0.0f);
+	CreateRioter(&rioters, meshID, 0.0f, -3.0f, 0.0f);
+	CreateRioter(&rioters, meshID, 6.0f, -3.0f, 0.0f);
 
 	std::cout << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " ";
 

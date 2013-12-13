@@ -36,6 +36,31 @@ namespace Core
 			return q;
 		}
 
+		static RotationComponent GetComponentRotateX(float angleRad)
+		{
+			return GetComponentRotateAxis(angleRad, 1.0f, 0.0f, 0.0f);
+		}
+
+		static RotationComponent GetComponentRotateY(float angleRad)
+		{
+			return GetComponentRotateAxis(angleRad, 0.0f, 1.0f, 0.0f);
+		}
+
+		static RotationComponent GetComponentRotateZ(float angleRad)
+		{
+			return GetComponentRotateAxis(angleRad, 0.0f, 0.0f, 1.0f);
+		}
+
+		static RotationComponent GetComponentRotateAxis(float angleRad, float axisX, float axisY, float axisZ)
+		{
+			RotationComponent rc;
+			rc.rotation[0] = axisX * std::sin(angleRad * 0.5);
+			rc.rotation[1] = axisY * std::sin(angleRad * 0.5);
+			rc.rotation[2] = axisZ * std::sin(angleRad * 0.5);
+			rc.rotation[3] = std::cos(angleRad * 0.5);
+
+			return rc;
+		}
 	};
 }
 
