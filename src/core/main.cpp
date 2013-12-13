@@ -127,6 +127,7 @@ void TestRendering()
 
 void SystemTimeRender()
 {
+	GFX::Debug::DisplaySystemInfo(Core::world.m_config.GetBool( "showSystems", false ));
     if( Core::world.m_config.GetBool( "showSystems", false ) )
     {
         std::vector<std::pair<const char *,std::chrono::microseconds>> times = Core::world.m_systemHandler.GetFrameTime();
@@ -153,9 +154,9 @@ void run( GLFWwindow * window )
 	Core::world.m_linearHeap = Core::LinearHeap(Core::world.m_linearAllocator);
 
 	Core::Camera* gCamera;
-	gCamera = new Core::Camera(45.0f, 1.0f, 100.0f);
+	gCamera = new Core::Camera(45.0f, 1.0f, 1000.0f);
 	gCamera->CalculateProjectionMatrix(initScreenWidth, initScreenHeight);
-	gCamera->SetPosition(glm::vec3(0.0f, 0.0f, 100.0f));
+	gCamera->SetPosition(glm::vec3(0.0f, 0.0f, 200.0f));
 
 	GFX::SetProjectionMatrix(gCamera->GetProjectionMatrix());
 
@@ -219,6 +220,8 @@ void run( GLFWwindow * window )
 		//gCamera->CalculateViewMatrix();
 		gCamera->LookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		GFX::SetViewMatrix(gCamera->GetViewMatrix());
+		gCamera->CalculateProjectionMatrix(GFX::GetScreenWidth(), GFX::GetScreenHeight());
+		GFX::SetProjectionMatrix(gCamera->GetProjectionMatrix());
 
 		//TestRendering();
 

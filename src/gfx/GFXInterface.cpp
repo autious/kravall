@@ -323,5 +323,8 @@ namespace GFX
 		s.color = color;
 		DebugDrawing().AddSphere(s);
 	}
-
+	void Debug::DisplaySystemInfo(bool enabled)
+	{
+		Renderer().ShowStatistics(enabled);
+	}
 }

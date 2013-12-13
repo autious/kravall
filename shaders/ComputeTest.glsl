@@ -1,4 +1,4 @@
-#version 430
+#version 430 core
 
 struct PointLight
 {
@@ -65,13 +65,13 @@ void main()
 		//#pragma optionNV(unroll all)
 		for(int i = 0; i < 1; i++)
 		{
-			//if( i >= 1)
-				color += CalculateLighting(pointLights[i], wPos.xyz, 2*normalColor.xyz-1.0f, specular, glow);
+			color += CalculateLighting(pointLights[i], wPos.xyz, 2*normalColor.xyz-1.0f, specular, glow) * diffuseColor;
 		}
 
 		// ambient
-		color += vec4(0.1f, 0.1f, 0.1f, 0.0f)*diffuseColor;
-		//color = vec4(normalColor.xyz, 1.0f);
+		color += vec4(0.05f, 0.05f, 0.05f, 0.0f) * diffuseColor;
+		
+
         imageStore(outTexture, pixel, color);
 
 }

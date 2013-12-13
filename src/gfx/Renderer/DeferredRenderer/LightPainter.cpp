@@ -47,28 +47,28 @@ namespace GFX
 
 		p.position = glm::vec3(0.0f, 0.0f, 0.0f);
 		p.color = glm::vec3((rand() % 1000) / 1000.0f, (rand() % 1000) / 1000.0f, (rand() % 1000) / 1000.0f);
-		p.intensity = 1.0f;
-		p.radius = 20.0f;
+		p.intensity = 0.3f;
+		p.radius = 10.0f;
 		m_pointLights[0] = p;
 
 		for(int i = 1; i < m_maximumLights; i++)
 		{
-			p.position = glm::vec3(-50 + 100.0 * (rand() % 1000) / 1000.0f, -50 + 100.0 * (rand() % 1000) / 1000.0f, 0.0f);
+			p.position = glm::vec3(-50 + 100.0 * (rand() % 1000) / 1000.0f, -75 + 150.0 * (rand() % 1000) / 1000.0f, 0.0f);
 			p.color = glm::vec3((rand() % 1000) / 1000.0f, (rand() % 1000) / 1000.0f, (rand() % 1000) / 1000.0f);
-			p.intensity = 1.0f;
-			p.radius = 20.0f;
+			p.intensity = 0.3f;
+			p.radius = 10.0f;
 			m_pointLights[i] = p;
 		}
 
 		glGenBuffers(1, &m_pointLightBuffer);
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_pointLightBuffer);
-		glBufferData(GL_SHADER_STORAGE_BUFFER, m_maximumLights * sizeof(float) * 8, m_pointLights, GL_DYNAMIC_COPY);
+		glBufferData(GL_SHADER_STORAGE_BUFFER, m_maximumLights * sizeof(PointLight), m_pointLights, GL_DYNAMIC_COPY);
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, m_pointLightBuffer);
 
 
 	}
 
-
+	static double llooollll = 0.0;
 	void LightPainter::Render(FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix)
 	{
 		m_shaderManager->UseProgram("ComputeTest");
@@ -83,13 +83,22 @@ namespace GFX
 		glBindImageTexture(3, specular->GetTextureHandle(), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
 		glBindImageTexture(4, glowMatID->GetTextureHandle(), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
 
-		//glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, stuffsBuffer);
-		//glm::vec4* p = (glm::vec4*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, 100 * sizeof(glm::vec4), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
-		//for (int i = 0; i < 100; i++)
-		//{
-		//	p[i] = glm::vec4((rand() % 1000) / 1000.0f, (rand() % 1000) / 1000.0f, (rand() % 1000) / 1000.0f, 1.0f);
-		//}
-		//glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, m_pointLightBuffer);
+		PointLight* pData = (PointLight*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, m_maximumLights * sizeof(PointLight), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+		PointLight p;
+		for (int i = 0; i < m_maximumLights; i++)
+		{
+			m_pointLights[i].position.x = 150.0f * sin(llooollll + (double)i);
+			//m_pointLights[i].position.y = 100 - ((double)i/(double)m_maximumLights) * 200 + 100.0f * cos(llooollll + (double)i);
+			p = m_pointLights[i];
+			//p.position = m_pointLights[i].position;// glm::vec3(-100 + 200.0 * (rand() % 1000) / 1000.0f, -100 + 200.0 * (rand() % 1000) / 1000.0f, 0.0f);
+			//p.color = glm::vec3(1.0f, 0.0f, 0.0f);// glm::vec3((rand() % 1000) / 1000.0f, (rand() % 1000) / 1000.0f, (rand() % 1000) / 1000.0f);
+			//p.intensity = 1.0f;
+			//p.radius = 20.0f;
+			pData[i] = p;
+		}
+		llooollll += 0.01;
+		glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
 		glDispatchCompute(1280 / 16, 720 / 16, 1);
 		glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
