@@ -30,8 +30,8 @@ int Core::PVector::Alloc( )
 
     if( deleted.size() > 0 )
     {
-        id = deleted.back();
-        deleted.pop_back();
+        id = deleted.front();
+        deleted.pop();
     }
     else
     {
@@ -45,12 +45,13 @@ int Core::PVector::Alloc( )
 
 void Core::PVector::Release( int id )
 {
-    deleted.push_back( id );
+    deleted.push( id );
     m_count--;
 }
 
 void* Core::PVector::Get( int id )
 {
+
     assert( id >= 0 && id < (int)m_count );
     return &(((unsigned char*)m_data)[id*m_typesize]);
 }
