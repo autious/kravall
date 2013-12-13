@@ -136,14 +136,16 @@ void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, float posX,
 
 	rioterList->push_back(Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, 
 		Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent, Core::UnitTypeComponent,
-		Core::MovementComponent, Core::AttributeRioterComponent>
+		Core::MovementComponent, Core::AttributeRioterComponent, Core::BoundingVolumeComponent>
 		(Core::GraphicsComponent(), 
 		 Core::WorldPositionComponent(posX, posY, posZ),
 		 Core::RotationComponent(),
 		 Core::ScaleComponent(0.5f),
 		 Core::UnitTypeComponent(),
-		 Core::MovementComponent(0.0f, 0.0f, 1.0f, 2.0f, 6.0f),
-		 Core::AttributeRioterComponent()));
+		 //Core::MovementComponent(0.0f, 0.0f, 1.0f, 2.0f, 6.0f),
+		 Core::MovementComponent(0.0f, 0.0f, 0.0f, 2.0f, 6.0f),
+		 Core::AttributeRioterComponent(),
+		 Core::BoundingVolumeComponent( Core::BoundingSphere( 3.0f, 0.0f, 0.0f, 0.0f ) ) ));
 
 	Core::GraphicsComponent* gc = WGETC <Core::GraphicsComponent>(rioterList->at(index));
 	GFX::SetBitmaskValue(gc->bitmask, GFX::BT_MESH_ID, meshID);
@@ -180,7 +182,7 @@ void run( GLFWwindow * window )
 		Core::world.m_config.GetDouble( "initCameraNearClipDistance", 1.0f ), 
 		Core::world.m_config.GetDouble( "initCameraFarClipDistance", 1000.0f ) );
 	Core::gameCamera->CalculateProjectionMatrix(initScreenWidth, initScreenHeight);
-	Core::gameCamera->SetPosition(glm::vec3(0.0f, 0.0f, 200.0f));
+	Core::gameCamera->SetPosition(glm::vec3(0.0f, 100.0f, 200.0f));
 	
 
 	GFX::SetProjectionMatrix(Core::gameCamera->GetProjectionMatrix());
@@ -201,7 +203,7 @@ void run( GLFWwindow * window )
    
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));
 
-
+	/*
 	for (int i = -100; i < 100; i++)
 	{
 		for (int j = -10; j < 10; j++)
@@ -229,11 +231,13 @@ void run( GLFWwindow * window )
 			rc->rotation[3] = cos(3.14f / 2.0f);
 		}
 	}
-	/*
-	CreateRioter(&rioters, meshID, -6.0f, -3.0f, 0.0f);
-	CreateRioter(&rioters, meshID, 0.0f, -3.0f, 0.0f);
-	CreateRioter(&rioters, meshID, 6.0f, -3.0f, 0.0f);
 	*/
+	//CreateRioter(&rioters, meshID, -6.0f, -3.0f, 0.0f);
+	//CreateRioter(&rioters, meshID, 0.0f, -3.0f, 0.0f);
+	//CreateRioter(&rioters, meshID, 6.0f, -3.0f, 0.0f);
+	for( int i = -100; i < 100; i++ )
+		CreateRioter(&rioters, meshID, i * 6.0f, -3.0f, 0.0f);
+
 	std::cout << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " ";
 
 	//inputline.resize(1);
