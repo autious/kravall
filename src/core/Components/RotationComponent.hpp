@@ -36,21 +36,45 @@ namespace Core
 			return q;
 		}
 
+		/*! 
+			Utility function for creating a RotationComponent with the specified angle of rotation around the x-axis.
+			\param angleRad The angle in radians to rotate.
+			\return A RotationComponent with its members set to the specified rotation.
+		*/
 		static RotationComponent GetComponentRotateX(float angleRad)
 		{
 			return GetComponentRotateAxis(angleRad, 1.0f, 0.0f, 0.0f);
 		}
 
+		/*!
+			Utility function for creating a RotationComponent with the specified angle of rotation around the y-axis.
+			\param angleRad The angle in radians to rotate.
+			\return A RotationComponent with its members set to the specified rotation.
+		*/
 		static RotationComponent GetComponentRotateY(float angleRad)
 		{
 			return GetComponentRotateAxis(angleRad, 0.0f, 1.0f, 0.0f);
 		}
 
+		/*!
+			Utility function for creating a RotationComponent with the specified angle of rotation around the z-axis.
+			\param angleRad The angle in radians to rotate.
+			\return A RotationComponent with its members set to the specified rotation.
+		*/
 		static RotationComponent GetComponentRotateZ(float angleRad)
 		{
 			return GetComponentRotateAxis(angleRad, 0.0f, 0.0f, 1.0f);
 		}
 
+		/*!
+			Utility function for creating a RotationComponent with the specified angle of rotation around an arbitrary
+			axis.
+			\param angleRad The angle in radians to rotate.
+			\param axisX The x-component of the vector specifying the rotation axis.
+			\param axisY The y-component of the vector specifying the rotation axis.
+			\param axisZ The z-component of the vector specifying the rotation axis.
+			\return A RotationComponent with its members set to the specified rotation.
+		*/
 		static RotationComponent GetComponentRotateAxis(float angleRad, float axisX, float axisY, float axisZ)
 		{
 			RotationComponent rc;

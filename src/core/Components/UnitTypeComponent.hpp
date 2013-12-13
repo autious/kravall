@@ -3,20 +3,31 @@
 
 namespace Core
 {
+	/*! Enum specifying what type of unit the object is. There are three types of objects: Rioter, Police and Object. */
 	enum UnitType
 	{
 		Rioter, Police, Object
 	};
 
+	/*! 
+		Component specifying the type of an object. With a type, the object may have a charge to influence the 
+		potential field.
+	*/
 	struct UnitTypeComponent
 	{
-		UnitType Type;
+		/*! The type of the unit represented by the UnitType enum. */
+		UnitType type;
 
-		UnitTypeComponent() : Type(UnitType::Object)
+		/*! Default constructor. The type is defaulted to Object. */
+		UnitTypeComponent() : type(UnitType::Object)
 		{
 		}
 
-		UnitTypeComponent(UnitType typeOfUnit) : Type(typeOfUnit)
+		/*!
+			Constructor setting all members to starting values.
+			\param typeOfUnit The type of the unit. 
+		*/
+		UnitTypeComponent(UnitType typeOfUnit) : type(typeOfUnit)
 		{
 		}
 	};

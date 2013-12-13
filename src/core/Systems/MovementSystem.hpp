@@ -5,15 +5,31 @@
 
 namespace Core
 {
+	/*!
+		System for handling the movement of moving objects. Moving objects are defined by a WorldPositionComponent and
+		a MovementComponent.
+	*/
 	class MovementSystem : public BaseSystem
 	{
 
 	public:
+		/*! 
+			System update function. All logic for the system is placed here.
+			\param delta The delta time for the frame.
+		*/
 		virtual void Update(float delta) override;
 
+		/*! 
+			Default constructor creating a system. The system works on entities containing a WorldPositioncomponent and
+			a MovementComponent.
+		*/
 		MovementSystem() : BaseSystem(EntityHandler::GenerateAspect<WorldPositionComponent, MovementComponent>(), 0ULL)
 		{}
 
+		/*! 
+			The name of the system for printing.
+			\return The system's name.
+		*/
 		virtual const char* GetHumanName() { return "MovementSystem"; }
 	};
 }

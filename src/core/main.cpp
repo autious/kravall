@@ -185,8 +185,6 @@ void run( GLFWwindow * window )
 
 	Core::GetInput().Initialize(window);
 
-    Entity ent1 = Core::world.m_entityHandler.CreateEntity<Core::ExampleComponent1,Core::ExampleComponent2>( Core::ExampleComponent1::D1(),
-                                                                                   Core::ExampleComponent2::D2() );
     Core::ContentManager CM;
 
 	unsigned int meshID; 
