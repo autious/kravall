@@ -43,8 +43,10 @@ namespace GFX
 
 		m_shaderManager->SetUniform(1.0f, m_alphaUniform);
 
-		switch (current)
+		if (current != 0)
 		{
+			switch (current)
+			{
 			case 0:
 				//Draw composite to back buffer
 				break;
@@ -60,32 +62,30 @@ namespace GFX
 			case 4:
 				TextureManager::BindTexture(glowMatID->GetTextureHandle(), m_textureUniform, 0, GL_TEXTURE_2D);
 				break;
+			}
+			glBindVertexArray(m_dummyVAO);
+			glDrawArrays(GL_POINTS, 0, 1);
 		}
-		glBindVertexArray(m_dummyVAO);
-		glDrawArrays(GL_POINTS, 0, 1);
 
-		float x = screenWidth / 4;
-		glm::vec2 vpDim = glm::vec2(288, 162);
-		float offset = (screenWidth - (vpDim.x * 4.0f)) / 4.0f;
-		float halfOffset = offset / 2;
-
+		int x = screenWidth / 4;
+		int y = screenHeight / 4;
 		
-		glViewport(halfOffset, 50, vpDim.x, vpDim.y);
+		glViewport(0, 0, x, y);
 		TextureManager::BindTexture(normalDepth->GetTextureHandle(), m_textureUniform, 0, GL_TEXTURE_2D );
 		glBindVertexArray(m_dummyVAO);
 		glDrawArrays(GL_POINTS, 0, 1);
 
-		glViewport(vpDim.x + offset + halfOffset, 50, vpDim.x, vpDim.y);
+		glViewport(x, 0, x, y);
 		TextureManager::BindTexture(diffuse->GetTextureHandle(), m_textureUniform, 0, GL_TEXTURE_2D);
 		glBindVertexArray(m_dummyVAO);
 		glDrawArrays(GL_POINTS, 0, 1);
 
-		glViewport((vpDim.x + offset) * 2 + halfOffset, 50, vpDim.x, vpDim.y);
+		glViewport(2*x, 0, x, y);
 		TextureManager::BindTexture(specular->GetTextureHandle(), m_textureUniform, 0, GL_TEXTURE_2D);
 		glBindVertexArray(m_dummyVAO);
 		glDrawArrays(GL_POINTS, 0, 1);
 		
-		glViewport((vpDim.x + offset) * 3 + halfOffset, 50, vpDim.x, vpDim.y);
+		glViewport(3*x, 0, x, y);
 		TextureManager::BindTexture(glowMatID->GetTextureHandle(), m_textureUniform, 0, GL_TEXTURE_2D);
 		glBindVertexArray(m_dummyVAO);
 		glDrawArrays(GL_POINTS, 0, 1);
@@ -97,6 +97,7 @@ namespace GFX
 
 		glViewport(0, 0, screenWidth, screenHeight);
 		BasePainter::ClearFBO();
+		TextureManager::UnbindTexture();
 	}
 
 }

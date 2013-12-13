@@ -106,6 +106,8 @@ namespace GFX
 		glBindVertexArray(m_dummyVAO);
 		glDrawArrays(GL_POINTS, 0, 1);
 
+		TextureManager::UnbindTexture();
+
 		if (m_logoAlpha <= 2.0f)
 		{
 			m_shaderManager->SetUniform(0.0f, m_alphaUniform);
@@ -132,6 +134,7 @@ namespace GFX
 		TextureManager::BindTexture(m_logoTextTexture, m_textureUniform, 0, GL_TEXTURE_2D);
 		glBindVertexArray(m_dummyVAO);
 		glDrawArrays(GL_POINTS, 0, 1);
+		TextureManager::UnbindTexture();
 	}
 
 	void SplashPainter::FadeToBlack(const int& screenWidth, const int& screenHeight)

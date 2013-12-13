@@ -148,6 +148,7 @@ void CreateRioter(std::vector<Entity>* rioterList, int meshID, float posX, float
 
 void SystemTimeRender()
 {
+	GFX::Debug::DisplaySystemInfo(Core::world.m_config.GetBool( "showSystems", false ));
     if( Core::world.m_config.GetBool( "showSystems", false ) )
     {
         std::vector<std::pair<const char *,std::chrono::microseconds>> times = Core::world.m_systemHandler.GetFrameTime();
@@ -176,7 +177,7 @@ void run( GLFWwindow * window )
 	Core::Camera* gCamera;
 	gCamera = new Core::Camera(45.0f, 1.0f, 1000.0f);
 	gCamera->CalculateProjectionMatrix(initScreenWidth, initScreenHeight);
-	gCamera->SetPosition(glm::vec3(0.0f, 0.0f, -20.0f));
+	gCamera->SetPosition(glm::vec3(0.0f, 0.0f, 200.0f));
 
 	GFX::SetProjectionMatrix(gCamera->GetProjectionMatrix());
 
@@ -211,8 +212,8 @@ void run( GLFWwindow * window )
 			
 	
 			Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(e2);
-			wpc->position[0] = i * 10;
-			wpc->position[1] = j * 10;
+			wpc->position[0] = (float)(i * 10);
+			wpc->position[1] = (float)(j * 10);
 	
 			Core::ScaleComponent* sc = WGETC<Core::ScaleComponent>(e2);
 			sc->scale = .1f;
@@ -243,8 +244,10 @@ void run( GLFWwindow * window )
         CM.CallFinishers();
 
 		//gCamera->CalculateViewMatrix();
-		gCamera->LookAt(glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		gCamera->LookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		GFX::SetViewMatrix(gCamera->GetViewMatrix());
+		gCamera->CalculateProjectionMatrix(GFX::GetScreenWidth(), GFX::GetScreenHeight());
+		GFX::SetProjectionMatrix(gCamera->GetProjectionMatrix());
 
 		//TestRendering();
 
@@ -254,6 +257,7 @@ void run( GLFWwindow * window )
 
         Core::world.m_systemHandler.Update( 0.1f );
         SystemTimeRender();
+		GFX::Debug::DisplayFBO(Core::world.m_config.GetBool( "showFramebuffers", false ));
 		Core::GetInput().ResetInput();
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -280,11 +284,13 @@ int main(int argc, char** argv)
 #endif
 #ifdef RUN_GTEST
     int gtestReturn = RUN_ALL_TESTS();
+    if( gtestReturn != 0 )
+	{
 #ifdef _WIN32 
 	std::cin.get();
 #endif
-    if( gtestReturn != 0 )
         return gtestReturn;
+	}
 #endif
 #ifndef SKIP_RUN
     run( window );
