@@ -1,8 +1,10 @@
 #include "TTFLoader.hpp"
 
 #include <algorithm>
+#include <string>
 #include <cstring>
 #include <cassert>
+#include <fstream>
 
 #include <logger/Logger.hpp>
 
@@ -18,34 +20,46 @@ namespace Core
 
     TTFLoader::~TTFLoader()
     {
-        
+        for(std::vector<Core::FontData*>::iterator it = m_fontData.begin(); it != m_fontData.end(); ++it)
+        {
+            if(ReduceUserOfFace((*it)->fontFace) == 0)
+            {
+                FT_Done_Face(*((*it)->fontFace));
+            }
+            glDeleteTextures(1, &(*it)->fontAtlas);
+            delete (*it);
+        }
     }
 
     Core::AssetHandle TTFLoader::Load(const char* assetName)
     {
-        char* fontName;
+        std::string fontName;
         unsigned int fontSize;
-        unsigned int fontHash = MurmurHash2(fontName, std::strlen(fontName), fontSize);
+        FontData* fontData = nullptr;
 
-        FT_Face* face;
-        if(!GetFaceCachedStatus(fontHash, face))
+        if(ParseFile(assetName, fontName, fontSize))
         {
-            face = new FT_Face;
-            FT_New_Face(m_library, fontName, 0, &(*face));
-            m_facesCache.push_back(std::make_tuple(fontHash, 0, face));
+            unsigned int fontHash = MurmurHash2(fontName.c_str(), fontName.size(), fontSize);
+
+            FT_Face* face;
+            if(!GetFaceCachedStatus(fontHash, face))
+            {
+                face = new FT_Face;
+                FT_New_Face(m_library, fontName.c_str(), 0, &(*face));
+                m_facesCache.push_back(std::make_tuple(fontHash, 0, face));
+            }
+           
+            AddUserOfFace(face);
+
+            fontData = new FontData;
+            fontData->fontFace = face;
+
+            CreateMeasurements(fontData, fontSize);
+
+            CreateTextureAtlas(fontData);
+
+            m_fontData.push_back(fontData);
         }
-       
-        AddUserOfFace(face);
-
-        FontData* fontData = new FontData;
-        fontData->fontFace = face;
-
-        CreateMeasurements(fontData, fontSize);
-
-        CreateTextureAtlas(fontData);
-
-        m_fontData.push_back(fontData);
-
         return fontData;
     }
 
@@ -227,5 +241,38 @@ namespace Core
         return false;
     }
 
+    bool TTFLoader::ParseFile(const char* assetFileName, std::string& fontName, unsigned int& fontSize)
+    {
+        std::ifstream file(assetFileName, std::ios::in);
 
+        if(file.is_open())
+        {
+            while(!file.eof())
+            {
+                std::string key;
+                std::string value;
+
+                std::getline(file, key, '=');
+                std::remove_if(key.begin(), key.end(), ::isspace);
+                
+                std::transform(key.begin(), key.end(), key.begin(), ::tolower);
+
+                if(key == "key")
+                {
+                    std::getline(file, value, '\n');
+                    std::string::size_type start = value.find_first_of("\"");
+                    std::string::size_type end = value.find_last_of("\"");
+                    fontName = value.substr(start + 1, end - start - 1);
+                }
+                else if(key == "size")
+                {
+                    std::getline(file, value, '\n');
+                    std::remove_if(value.begin(), value.end(), ::isspace);
+                    fontSize = std::stoi(value);
+                }
+            }    
+            return true;
+        }
+        return false;
+    }
 }

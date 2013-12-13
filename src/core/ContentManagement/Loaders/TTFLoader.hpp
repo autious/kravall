@@ -34,6 +34,9 @@ namespace Core
         int AddUserOfFace(const FT_Face* face);
         int ReduceUserOfFace(const FT_Face* face);
         bool GetFaceCachedStatus(const unsigned int faceHash, FT_Face* &face);
+
+        bool ParseFile(const char* assetFileName, std::string& fontName, unsigned int& fontSize);
+
         std::vector<FontData*> m_fontData;
         Core::FaceCacheVector m_facesCache;
         FT_Library m_library;
