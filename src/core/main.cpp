@@ -201,6 +201,10 @@ void run( GLFWwindow * window )
    
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));
 
+    CM.Load<Core::TTFLoader>("assets/Fonts/TestFont.font", [](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+            {
+
+            });
 
 	for (int i = -100; i < 100; i++)
 	{

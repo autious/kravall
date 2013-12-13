@@ -180,8 +180,8 @@ namespace Core
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
         for(int i = 32; i < FontData::NUM_CHARACTERS; ++i)
         {
@@ -248,31 +248,47 @@ namespace Core
 
         if(file.is_open())
         {
+            bool fontFound = false;
+            bool sizeFound = false;
+
             while(!file.eof())
             {
                 std::string key;
                 std::string value;
 
                 std::getline(file, key, '=');
-                std::remove_if(key.begin(), key.end(), ::isspace);
-                
+                key.erase(std::remove_if(key.begin(), key.end(), ::isspace), key.end());
+
                 std::transform(key.begin(), key.end(), key.begin(), ::tolower);
 
-                if(key == "key")
+                if(key == "font")
                 {
                     std::getline(file, value, '\n');
+
                     std::string::size_type start = value.find_first_of("\"");
                     std::string::size_type end = value.find_last_of("\"");
                     fontName = value.substr(start + 1, end - start - 1);
+
+                    fontFound = true;
                 }
                 else if(key == "size")
                 {
                     std::getline(file, value, '\n');
-                    std::remove_if(value.begin(), value.end(), ::isspace);
+                    value.erase(std::remove_if(value.begin(), value.end(), ::isspace), value.end());
                     fontSize = std::stoi(value);
+
+                    sizeFound = true;
+                }
+                else
+                {
+                    if(value.size() > 0)
+                    {
+                        std::getline(file, value, '\n');
+                        LOG_WARNING << "Parsed unknown key: " << key << " in Font file: " << assetFileName << std::endl;
+                    }
                 }
             }    
-            return true;
+            return fontFound && sizeFound;
         }
         return false;
     }
