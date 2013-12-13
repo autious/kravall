@@ -327,4 +327,8 @@ namespace GFX
 	{
 		Renderer().ShowStatistics(enabled);
 	}
+	void Debug::DisplayFBO(bool enabled)
+	{
+		Renderer().ShowFBO(enabled);
+	}
 }

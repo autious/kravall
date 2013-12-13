@@ -122,6 +122,7 @@ namespace GFX
 		void SetShaderToMaterial(const unsigned long long int& materialID, const unsigned int& shaderID);
 
 		inline void ShowStatistics(bool enabled){ m_showStatistics = enabled; }
+		inline void ShowFBO(bool enabled){ m_showFBO = enabled; }
 	private:
 		RenderCore();
 		~RenderCore();
@@ -175,6 +176,8 @@ namespace GFX
 		unsigned long long m_lastUpdateTime;
 		unsigned long long m_curTime;
 		bool m_showStatistics;
+		
+		bool m_showFBO;
 
 		glm::mat4 m_viewMatrix;
 		glm::mat4 m_projMatrix;

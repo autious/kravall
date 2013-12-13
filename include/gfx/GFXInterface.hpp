@@ -266,6 +266,12 @@ namespace GFX
 		\param enabled If true, toggles graphics system info to show on the screen, false disables it
 		*/
 		DLL_API void DisplaySystemInfo(bool enabled);
+		
+		/*!
+		Enables or disables display of frame buffers as miniatures
+		\param enabled If true, toggles frame buffers to show on the screen, false disables it
+		*/
+		DLL_API void DisplayFBO(bool enabled);
 
 	} // namespace Debug
 
