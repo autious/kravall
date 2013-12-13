@@ -29,6 +29,7 @@ namespace Core
             glDeleteTextures(1, &(*it)->fontAtlas);
             delete (*it);
         }
+        FT_Done_FreeType(m_library);
     }
 
     Core::AssetHandle TTFLoader::Load(const char* assetName)
