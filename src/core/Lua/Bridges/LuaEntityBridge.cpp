@@ -15,7 +15,6 @@ static Core::EntityBridge entityBridge;
 
 extern "C" 
 {
-
     static int LuaEntitySet( lua_State * L )
     {
         return entityBridge.Set( L );    
