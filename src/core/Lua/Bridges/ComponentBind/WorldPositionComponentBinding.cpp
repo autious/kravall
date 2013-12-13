@@ -39,7 +39,7 @@ Core::ComponentSetters Core::WorldPositionComponentBinding::GetSetters()
                 }
 
                 lua_pop( L, 1 );
-            }            
+            }
         }
     };
 

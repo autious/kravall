@@ -230,7 +230,7 @@ void run( GLFWwindow * window )
 		gCamera->LookAt(glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		GFX::SetViewMatrix(gCamera->GetViewMatrix());
 
-		TestRendering();
+		//TestRendering();
 		
 		GFX::Render();
 

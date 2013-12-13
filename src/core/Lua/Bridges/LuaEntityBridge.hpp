@@ -237,6 +237,24 @@ namespace Core
             }
         }
 
+        static int EntityToString( lua_State *L )
+        {
+            Entity entity = *(Entity*)luaL_checkudata( L, 1, ENTITY_META_TYPE );
+
+            lua_pushinteger( L, entity );  
+            
+            return 1;
+        }
+
+        static int ComponentTypeToString( lua_State *L )
+        {
+            ComponentType componentType = *(ComponentType*)luaL_checkudata( L, 1, COMPONENT_META_TYPE );
+            
+            lua_pushinteger( L, componentType );
+
+            return 1;
+        }
+
         static std::array<std::pair<const char*, Core::ComponentType>,COMPONENT_HANDLER_COUNT> GetBinderNameTypes( )
         {
             return {{ std::pair<const char*, Core::ComponentType>( ComponentHandlers::GetComponentLuaName(), ComponentHandlers::GetComponentType() )... }};

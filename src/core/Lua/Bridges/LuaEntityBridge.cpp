@@ -36,6 +36,16 @@ extern "C"
     {
         return entityBridge.DestroyEntity( L );    
     }
+
+    static int LuaEntityToString( lua_State * L )
+    {
+        return entityBridge.EntityToString( L );
+    }
+
+    static int LuaComponentTypeToString( lua_State * L )
+    {
+        return entityBridge.ComponentTypeToString( L ); 
+    }
 }
 
 void Core::LuaEntityBridge::OpenLibs( lua_State * L )
@@ -45,13 +55,18 @@ void Core::LuaEntityBridge::OpenLibs( lua_State * L )
     {
         LOG_ERROR << "Metatable entity already exists!" << std::endl;
     }
+        lua_pushstring( L, "__tostring" ); 
+        lua_pushcfunction( L, LuaEntityToString );
+        lua_settable( L , -3 );
     lua_pop( L , 1 ); //Pop the entity meta table. remove if something else ends up removing the entity from the stack.
 
     if( luaL_newmetatable( L, COMPONENT_META_TYPE ) == 0 )
     {
         LOG_ERROR << "Metatable entity already exists!" << std::endl;
     }
-
+        lua_pushstring( L, "__tostring" ); 
+        lua_pushcfunction( L, LuaComponentTypeToString );
+        lua_settable( L , -3 );
     lua_pop( L , 1 ); //Pop the entity meta table. remove if something else ends up removing the entity from the stack.
 
     lua_getglobal( L, "core" );  
