@@ -3,6 +3,7 @@ vimenv
 tags
 output.sock
 .*.swp
+.**.swo
 win32/VS12/Release/*
 win32/VS12/Debug/*
 win32/VS12/VS12.sdf
