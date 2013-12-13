@@ -165,10 +165,9 @@ void run( GLFWwindow * window )
     
     Core::Entity ent1 = Core::world.m_entityHandler.CreateEntity<Core::ExampleComponent1,Core::ExampleComponent2>( Core::ExampleComponent1::D1(),
                                                                                    Core::ExampleComponent2::D2() );
-    Core::ContentManager CM;
 
 	unsigned int meshID; 
-    CM.Load<Core::GnomeLoader>("assets/tomte.gnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+    Core::world.m_contentManager.Load<Core::GnomeLoader>("assets/tomte.gnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
             {
                 Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
                 const Core::ModelData* data = gnomeLoader->getData(handle);
@@ -215,7 +214,7 @@ void run( GLFWwindow * window )
 		
 		Core::Console().Update();
 
-        CM.CallFinishers();
+        Core::world.m_contentManager.CallFinishers();
 
 		//gCamera->CalculateViewMatrix();
 		gCamera->LookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));

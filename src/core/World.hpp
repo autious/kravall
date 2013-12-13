@@ -5,6 +5,7 @@
 #include <Lua/LuaState.hpp>
 #include <Lua/ConfigurationHandler.hpp>
 #include <Memory/LinearHeap.hpp>
+#include <ContentManagement/ContentManager.hpp>
 
 #define WGETC Core::world.m_entityHandler.GetComponentTmpPointer
 #define WORLD_MEMORY_SIZE 500000
@@ -24,6 +25,7 @@ namespace Core
 		Core::LinearAllocator m_linearAllocator;
 		Core::LinearHeap m_linearHeap;
 		unsigned char* m_worldMemory;
+        ContentManager m_contentManager;
     };
 
 
