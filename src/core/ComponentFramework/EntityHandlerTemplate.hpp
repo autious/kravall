@@ -9,6 +9,7 @@
 #include <cstdint>
 #include <cassert>
 #include <array>
+#include <limits>
 
 #define SA_COMPONENT_USE "Component doesn't exist in EntityHandler. Maybe you forgot to add it?"
 
@@ -132,6 +133,8 @@ namespace Core
         */
         bool DestroyEntity( Entity id )
         {
+            assert( std::numeric_limits<Entity>::max() != id );
+
             m_systemHandler->CallChangedEntity( id, GetEntityAspect( id ), 0ULL );
 
             ClearComponents( id );

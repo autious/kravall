@@ -8,6 +8,7 @@
 #include <array>
 #include <vector>
 #include <utility>
+#include <limits>
 
 #include <lua.h>
 #include <lualib.h>
@@ -75,7 +76,7 @@ namespace Core
             lua_pushstring( L, it->first.c_str() ); 
             if( it->second(entity, L) == 1 )
             {
-
+               lua_settable( L, -3 ); 
             }
             else
             {
@@ -189,9 +190,22 @@ namespace Core
             {
                 if( lua_isuserdata( L, i ) )
                 {
-                    if( Core::world.m_entityHandler.DestroyEntity( *(Entity*)luaL_checkudata( L, i, ENTITY_META_TYPE ) ) == false )
+                    Entity entity = *(Entity*)luaL_checkudata( L, i, ENTITY_META_TYPE );
+
+                    if( entity != std::numeric_limits<Entity>::max() )
                     {
-                        return luaL_error( L, "%s: Unable to remove given entity, parameter %d", __FUNCTION__, i );
+                        if( Core::world.m_entityHandler.DestroyEntity( entity ) == false )
+                        {
+                            return luaL_error( L, "%s: Unable to remove given entity, parameter %d", __FUNCTION__, i );
+                        }
+                        else
+                        {
+                            entity = std::numeric_limits<Entity>::max(); //Mark userdata as deleted.
+                        }
+                    }
+                    else
+                    {
+                        LOG_DEBUG << "Ignored destruction call on non-entity value." << std::endl;
                     }
                 }
                 else

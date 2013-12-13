@@ -10,8 +10,17 @@ Core::ComponentGetters Core::WorldPositionComponentBinding::GetGetters()
     ComponentGetters getters; 
     getters["position"] = []( Core::Entity entity, lua_State * L )
     {
+        WorldPositionComponent *wpc = WGETC<WorldPositionComponent>( entity );
+        
         lua_newtable( L );  
-        assert( false ); //Not implemented yet.
+
+        for( int i = 0; i < 3; i++ )
+        {
+            lua_pushinteger( L, i+1 );
+            lua_pushnumber( L, wpc->position[i] );
+            lua_settable( L, -3 );
+        }
+        
         return 1;
     };
 

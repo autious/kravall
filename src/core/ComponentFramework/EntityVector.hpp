@@ -14,7 +14,6 @@
 
 namespace Core
 {
-    
     /*!
         EntityVector, internal datastructure used by the EntityHandler
         to store entities id'n and their component makeup.
