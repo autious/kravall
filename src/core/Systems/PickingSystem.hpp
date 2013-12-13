@@ -15,7 +15,7 @@ namespace Core
         PickingSystem() : BaseSystem( EntityHandler::GenerateAspect< WorldPositionComponent, BoundingVolumeComponent >(), 0ULL )
         {}
 
-        virtual const char* GetHumanName() { return "ExampleSystem"; }
+        virtual const char* GetHumanName() { return "PickingSystem"; }
 
 
 
