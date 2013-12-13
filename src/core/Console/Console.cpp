@@ -24,7 +24,20 @@ namespace Core
 	
 	void ClopShowFBO(clop::ArgList args)
 	{
-		clop::Command("lua showFBO()");
+		if (args.size() == 2)
+		{
+			std::string cmd = "lua showFBO(";
+			cmd += std::string(args[1]);
+			cmd += std::string(")");
+			clop::Command(cmd);
+		}
+		else
+		{
+			std::string errStr = "Usage: ";
+			errStr += std::string(args[0]);
+			errStr += std::string(" n");
+			Console().PrintLine(errStr, Colors::Red);
+		}
 	}
 
 	void ClopLipsum(clop::ArgList args)

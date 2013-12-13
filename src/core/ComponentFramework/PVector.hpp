@@ -3,7 +3,7 @@
 
 #include <cstdint>
 #include <cstdlib>
-#include <vector>
+#include <queue>
 #include <cassert>
 #include <cstring>
 
@@ -21,7 +21,7 @@ namespace Core
         size_t m_count;
         size_t m_growStep;
         size_t m_typesize;
-        std::vector<int> deleted;
+        std::queue<int> deleted;
     public:
 
 

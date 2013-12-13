@@ -9,6 +9,7 @@
 #include <cstdint>
 #include <cassert>
 #include <array>
+#include <limits>
 
 #define SA_COMPONENT_USE "Component doesn't exist in EntityHandler. Maybe you forgot to add it?"
 
@@ -130,12 +131,16 @@ namespace Core
             Release an entity from allocation. Entity idn are reused, so make sure to never reference
             an entity after calling this function as the old id might end up pointing to a new one.
         */
-        void DestroyEntity( Entity id )
+        bool DestroyEntity( Entity id )
         {
+            assert( std::numeric_limits<Entity>::max() != id );
+
             m_systemHandler->CallChangedEntity( id, GetEntityAspect( id ), 0ULL );
 
             ClearComponents( id );
             m_entities.Release( id );
+            
+            return true;
         }
 
         /*!
@@ -151,11 +156,12 @@ namespace Core
             Calculated in compile-time making this function basically "free"
         */
         template<typename Component>
-        static size_t GetComponentTypeId( )
+        static ComponentType GetComponentType( )
         {
             #ifndef __GNUG__ //Sadly the gnucompiler hasn't implemented this yet =(
             static_assert( std::is_trivially_copyable<Component>::value, "Components must be Pure Data Objects" );
             #endif
+            static_assert( COMPONENT_COUNT < 64, "There is currently a limit of 64 components" );
             static_assert( Match<Component,Components...>::exists, SA_COMPONENT_USE );
             return Index<Component,std::tuple<Components...>>::value;
         }
@@ -171,7 +177,7 @@ namespace Core
         {
             static_assert( Match<Component,Components...>::exists, SA_COMPONENT_USE );
 
-            static const int componentType = GetComponentTypeId<Component>();
+            static const int componentType = GetComponentType<Component>();
 
             int componentId = m_entities.GetComponentId( entity, componentType );
             
@@ -190,8 +196,13 @@ namespace Core
         template<typename... AspectComponents>
         static Aspect GenerateAspect( )
         {
-            static const size_t ids[] = { GetComponentTypeId<AspectComponents>()... };
+            static const size_t ids[] = { GetComponentType<AspectComponents>()... };
             return GenerateAspect( ids, Aspect(), 0, sizeof...(AspectComponents) ); 
+        }
+
+        inline static Aspect GenerateAspect( ComponentType componentType )
+        {
+            return 1ULL << componentType;
         }
 
         int GetEntityCount()
@@ -224,7 +235,7 @@ namespace Core
         template<typename Component, typename... RComponents>
         void AddComponentT( Entity ent, Component comp, RComponents... r  )
         {
-            const size_t componentType = GetComponentTypeId<Component>();
+            const size_t componentType = GetComponentType<Component>();
 
             int compId = AddComponent( ent, componentType );
 
@@ -240,7 +251,7 @@ namespace Core
         template<typename Component>
         void AddComponentT( Entity ent, Component comp )
         {
-            const size_t componentType = GetComponentTypeId<Component>();
+            const size_t componentType = GetComponentType<Component>();
 
             int compId = AddComponent( ent, componentType );
             
