@@ -17,6 +17,7 @@
 #include "Camera/Camera.hpp"
 #include <ComponentFramework/SystemHandlerTemplate.hpp>
 #include <ComponentFramework/EntityHandlerTemplate.hpp>
+#include <ComponentFramework/SystemTypes.hpp>
 
 #include <utility/Colors.hpp>
 
@@ -127,7 +128,7 @@ void TestRendering()
 	GFX::RenderText(glm::vec2(0, 200), 1.0f, Colors::Gold, "ABCDEFGHIJKLMNOPQRSTUVWXYZASIUHDOIASHUDIOASHDA1234567890*'^&%#!?");
 }
 
-void CreateRioter(std::vector<Entity>* rioterList, int meshID, float posX, float posY, float posZ)
+void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, float posX, float posY, float posZ)
 {
 	int index = rioterList->size(); // Size before add will be the index of the added entity.
 	double pi = 3.141529;
@@ -141,7 +142,7 @@ void CreateRioter(std::vector<Entity>* rioterList, int meshID, float posX, float
 		 Core::RotationComponent(),
 		 Core::ScaleComponent(0.5f),
 		 Core::UnitTypeComponent(),
-		 Core::MovementComponent(0.0f, 0.0f, 1.0f, 3.0f, 6.0f),
+		 Core::MovementComponent(0.0f, 0.0f, 1.0f, 2.0f, 6.0f),
 		 Core::AttributeRioterComponent()));
 
 	Core::GraphicsComponent* gc = WGETC <Core::GraphicsComponent>(rioterList->at(index));
@@ -184,12 +185,10 @@ void run( GLFWwindow * window )
 
 	GFX::SetProjectionMatrix(Core::gameCamera->GetProjectionMatrix());
 
-	std::vector<Entity> rioters;
+	std::vector<Core::Entity> rioters;
 
 	Core::GetInput().Initialize(window);
 
-    Entity ent1 = Core::world.m_entityHandler.CreateEntity<Core::ExampleComponent1,Core::ExampleComponent2>( Core::ExampleComponent1::D1(),
-                                                                                   Core::ExampleComponent2::D2() );
     Core::ContentManager CM;
 
 	unsigned int meshID; 
@@ -207,7 +206,7 @@ void run( GLFWwindow * window )
 	{
 		for (int j = -10; j < 10; j++)
 		{
-			Entity e2 = Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent>
+			Core::Entity e2 = Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent>
 				(Core::GraphicsComponent(), Core::WorldPositionComponent(), Core::RotationComponent(), Core::ScaleComponent());
 	
 			Core::GraphicsComponent* gc = WGETC<Core::GraphicsComponent>(e2);
@@ -254,7 +253,6 @@ void run( GLFWwindow * window )
 		GFX::SetProjectionMatrix(Core::gameCamera->GetProjectionMatrix());
 
 		//TestRendering();
-
 
 	    //TODO: Timing hook
 		GFX::Render();

@@ -27,15 +27,15 @@ namespace Core
 		if (args.size() == 2)
 		{
 			std::string cmd = "lua showFBO(";
-			cmd += args[1];
-			cmd += ")";
+			cmd += std::string(args[1]);
+			cmd += std::string(")");
 			clop::Command(cmd);
 		}
 		else
 		{
 			std::string errStr = "Usage: ";
-			errStr += args[0];
-			errStr += " n";
+			errStr += std::string(args[0]);
+			errStr += std::string(" n");
 			Console().PrintLine(errStr, Colors::Red);
 		}
 	}
