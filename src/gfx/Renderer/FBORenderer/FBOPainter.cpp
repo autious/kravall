@@ -43,13 +43,10 @@ namespace GFX
 
 		m_shaderManager->SetUniform(1.0f, m_alphaUniform);
 
-		if (current != 0)
+		if (current > 0 && current <= 4)
 		{
 			switch (current)
 			{
-			case 0:
-				//Draw composite to back buffer
-				break;
 			case 1:
 				TextureManager::BindTexture(normalDepth->GetTextureHandle(), m_textureUniform, 0, GL_TEXTURE_2D);
 				break;
@@ -69,9 +66,9 @@ namespace GFX
 
 		int x = screenWidth / 4;
 		int y = screenHeight / 4;
-		
+
 		glViewport(0, 0, x, y);
-		TextureManager::BindTexture(normalDepth->GetTextureHandle(), m_textureUniform, 0, GL_TEXTURE_2D );
+		TextureManager::BindTexture(normalDepth->GetTextureHandle(), m_textureUniform, 0, GL_TEXTURE_2D);
 		glBindVertexArray(m_dummyVAO);
 		glDrawArrays(GL_POINTS, 0, 1);
 
@@ -80,12 +77,12 @@ namespace GFX
 		glBindVertexArray(m_dummyVAO);
 		glDrawArrays(GL_POINTS, 0, 1);
 
-		glViewport(2*x, 0, x, y);
+		glViewport(2 * x, 0, x, y);
 		TextureManager::BindTexture(specular->GetTextureHandle(), m_textureUniform, 0, GL_TEXTURE_2D);
 		glBindVertexArray(m_dummyVAO);
 		glDrawArrays(GL_POINTS, 0, 1);
-		
-		glViewport(3*x, 0, x, y);
+
+		glViewport(3 * x, 0, x, y);
 		TextureManager::BindTexture(glowMatID->GetTextureHandle(), m_textureUniform, 0, GL_TEXTURE_2D);
 		glBindVertexArray(m_dummyVAO);
 		glDrawArrays(GL_POINTS, 0, 1);

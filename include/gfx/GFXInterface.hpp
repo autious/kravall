@@ -269,9 +269,9 @@ namespace GFX
 		
 		/*!
 		Enables or disables display of frame buffers as miniatures
-		\param enabled If true, toggles frame buffers to show on the screen, false disables it
+		\param which Which rendertarget to show -1: disabled, 0: miniatures, 1-4: displays target 1-4 as full screen
 		*/
-		DLL_API void DisplayFBO(bool enabled);
+		DLL_API void DisplayFBO(int which);
 
 	} // namespace Debug
 
