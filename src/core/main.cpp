@@ -97,6 +97,8 @@ GLFWwindow* init( int argc, char** argv )
 
 	clop::Register("exit", ClopCloseWindow);
 
+	Core::world.InitWorld();
+
 	if (GFX::Init(initScreenWidth,initScreenHeight) == GFX_FAIL)
 		return nullptr;
 
@@ -166,20 +168,21 @@ void SystemTimeRender()
     }
 }
 
+
 void run( GLFWwindow * window )
 {
     LOG_INFO << "Starting program" << std::endl;
 
-	Core::world.m_worldMemory = new unsigned char[WORLD_MEMORY_SIZE];
-	Core::world.m_linearAllocator = Core::LinearAllocator(Core::world.m_worldMemory, WORLD_MEMORY_SIZE);
-	Core::world.m_linearHeap = Core::LinearHeap(Core::world.m_linearAllocator);
+	// init game camera...
+	Core::gameCamera = Core::world.m_constantHeap.NewObject<Core::Camera>(
+		Core::world.m_config.GetDouble( "initCameraFieldOfView", 45.0f ), 
+		Core::world.m_config.GetDouble( "initCameraNearClipDistance", 1.0f ), 
+		Core::world.m_config.GetDouble( "initCameraFarClipDistance", 1000.0f ) );
+	Core::gameCamera->CalculateProjectionMatrix(initScreenWidth, initScreenHeight);
+	Core::gameCamera->SetPosition(glm::vec3(0.0f, 0.0f, 200.0f));
+	
 
-	Core::Camera* gCamera;
-	gCamera = new Core::Camera(45.0f, 1.0f, 1000.0f);
-	gCamera->CalculateProjectionMatrix(initScreenWidth, initScreenHeight);
-	gCamera->SetPosition(glm::vec3(0.0f, 0.0f, 200.0f));
-
-	GFX::SetProjectionMatrix(gCamera->GetProjectionMatrix());
+	GFX::SetProjectionMatrix(Core::gameCamera->GetProjectionMatrix());
 
 	std::vector<Entity> rioters;
 
@@ -199,7 +202,8 @@ void run( GLFWwindow * window )
    
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));
 
-	/*for (int i = -100; i < 100; i++)
+
+	for (int i = -100; i < 100; i++)
 	{
 		for (int j = -10; j < 10; j++)
 		{
@@ -225,12 +229,12 @@ void run( GLFWwindow * window )
 			rc->rotation[2] = sin(3.14f);
 			rc->rotation[3] = cos(3.14f / 2.0f);
 		}
-	}*/
-
+	}
+	/*
 	CreateRioter(&rioters, meshID, -6.0f, -3.0f, 0.0f);
 	CreateRioter(&rioters, meshID, 0.0f, -3.0f, 0.0f);
 	CreateRioter(&rioters, meshID, 6.0f, -3.0f, 0.0f);
-
+	*/
 	std::cout << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " ";
 
 	//inputline.resize(1);
@@ -244,10 +248,10 @@ void run( GLFWwindow * window )
         CM.CallFinishers();
 
 		//gCamera->CalculateViewMatrix();
-		gCamera->LookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		GFX::SetViewMatrix(gCamera->GetViewMatrix());
-		gCamera->CalculateProjectionMatrix(GFX::GetScreenWidth(), GFX::GetScreenHeight());
-		GFX::SetProjectionMatrix(gCamera->GetProjectionMatrix());
+		Core::gameCamera->LookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		GFX::SetViewMatrix(Core::gameCamera->GetViewMatrix());
+		Core::gameCamera->CalculateProjectionMatrix(GFX::GetScreenWidth(), GFX::GetScreenHeight());
+		GFX::SetProjectionMatrix(Core::gameCamera->GetProjectionMatrix());
 
 		//TestRendering();
 
@@ -263,8 +267,10 @@ void run( GLFWwindow * window )
 		glfwPollEvents();
 
 		//TODO: Timing hook
-		Core::world.m_linearHeap.Rewind();
+		Core::world.m_frameHeap.Rewind();
     }
+
+	Core::world.m_constantHeap.Rewind();
 
     glfwDestroyWindow( window );
 

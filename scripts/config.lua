@@ -7,7 +7,10 @@ windowResizable = true,
 initScreenWidth = 1280,
 initScreenHeight = 720,
 showSystems = false,
-showFramebuffers = -1
+showFramebuffers = 1,
+initCameraFieldOfView = 45.0,
+initCameraNearClipDistance = 1.0,
+initCameraFarClipDistance = 1000.0
 }
 
 function printAlexStatus()

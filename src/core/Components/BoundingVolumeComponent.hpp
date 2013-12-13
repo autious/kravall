@@ -33,19 +33,28 @@ namespace Core
 		/*! 
 			Radius of the spehere. 
 		*/
-		float m_radius;
+		float radius;
 		
 		/*! 
 			Vector members to the middle of the object in object space. 
 		*/
-		float m_offsetX;
-		float m_offsetY;
-		float m_offsetZ;
+		float offsetX;
+		
+		/*! 
+			Vector members to the middle of the object in object space. 
+		*/
+		float offsetY;
+		
+		/*! 
+			Vector members to the middle of the object in object space. 
+		*/
+		float offsetZ;
 
 		/*! 
 			Do nothing constructor.
 		*/
 		BoundingSphere()
+			: radius( 0.0f ), offsetX( 0.0f ), offsetY( 0.0f ), offsetZ( 0.0f )
 		{
 		}
 			
@@ -56,7 +65,7 @@ namespace Core
 			\param offsetZ Z offset of the sphere from the object.
 		*/
 		BoundingSphere( float radius, float offsetX, float offsetY, float offsetZ )
-			: m_radius( radius ), m_offsetX( offsetX ), m_offsetY( offsetY ), m_offsetZ( offsetZ )
+			: radius( radius ), offsetX( offsetX ), offsetY( offsetY ), offsetZ( offsetZ )
 		{
 		}
 			
