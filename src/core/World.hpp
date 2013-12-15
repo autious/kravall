@@ -5,6 +5,7 @@
 #include <Lua/LuaState.hpp>
 #include <Lua/ConfigurationHandler.hpp>
 #include <Memory/LinearHeap.hpp>
+#include <ContentManagement/ContentManager.hpp>
 
 #define WGETC Core::world.m_entityHandler.GetComponentTmpPointer
 
@@ -32,6 +33,7 @@ namespace Core
 		Core::LinearAllocator m_frameAllocator;
 		Core::LinearHeap m_frameHeap;
 		unsigned char* m_worldMemory;
+        ContentManager m_contentManager;
     };
 
 

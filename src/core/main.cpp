@@ -191,10 +191,8 @@ void run( GLFWwindow * window )
 
 	Core::GetInput().Initialize(window);
 
-    Core::ContentManager CM;
-
-	unsigned int meshID; 
-    CM.Load<Core::GnomeLoader>("assets/cube.gnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+    unsigned int meshID; 
+    Core::world.m_contentManager.Load<Core::GnomeLoader>("assets/cube.gnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
             {
                 Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
                 const Core::ModelData* data = gnomeLoader->getData(handle);
@@ -248,7 +246,7 @@ void run( GLFWwindow * window )
 		
 		Core::Console().Update();
 
-        CM.CallFinishers();
+        Core::world.m_contentManager.CallFinishers();
 
 		//gCamera->CalculateViewMatrix();
 		Core::gameCamera->LookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
