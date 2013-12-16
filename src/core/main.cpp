@@ -200,7 +200,7 @@ void run( GLFWwindow * window )
    
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));
 
-
+/*
 	for (int i = -100; i < 100; i++)
 	{
 		for (int j = -10; j < 10; j++)
@@ -228,6 +228,7 @@ void run( GLFWwindow * window )
 			rc->rotation[3] = cos(3.14f / 2.0f);
 		}
 	}
+   */
 	/*
 	CreateRioter(&rioters, meshID, -6.0f, -3.0f, 0.0f);
 	CreateRioter(&rioters, meshID, 0.0f, -3.0f, 0.0f);
@@ -243,7 +244,6 @@ void run( GLFWwindow * window )
 		
 		Core::Console().Update();
 
-        Core::world.m_contentManager.CallFinishers();
 
 		//gCamera->CalculateViewMatrix();
 		Core::gameCamera->LookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -256,6 +256,8 @@ void run( GLFWwindow * window )
 	    //TODO: Timing hook
         SystemTimeRender();
 		GFX::Render();
+
+        Core::world.m_contentManager.CallFinishers();
 
         //TODO: Actual delta value from time.
         Core::world.m_systemHandler.Update( 0.1f );

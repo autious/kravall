@@ -12,7 +12,6 @@
 
 namespace Core
 {
-
 	void ClopClearConsole(clop::ArgList args)
 	{
 		Console().Clear();
