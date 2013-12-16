@@ -10,23 +10,12 @@ namespace GFX
 
 	TextPainter::~TextPainter()
 	{
-		delete(m_atlas48);
+
 	}
 
 	void TextPainter::Initialize(GLuint FBO, GLuint dummyVAO)
 	{
 		BasePainter::Initialize(FBO, dummyVAO);
-
-		if (FT_Init_FreeType(&m_library))
-		{
-			std::cout << "Could not Initialize freetype library.\n";
-		}
-
-		/* Load a font */
-		if (FT_New_Face(m_library, "assets/Fonts/Terminus.ttf", 0, &m_face))
-		{
-			assert(0 && "Could not	open font file in TextPainter.Initialize()\n");
-		}
 
 		m_shaderManager->CreateProgram("BasicText");
 		m_shaderManager->LoadShader("shaders/text/Text.vertex", "BasicTextVS", GL_VERTEX_SHADER);
@@ -47,33 +36,29 @@ namespace GFX
 
 		glGenBuffers(1, &m_textVBO);
 		glGenVertexArrays(1, &m_textVAO);
-
-		m_atlas48 = new FontTextureAtlas(m_face, 18, m_textureUniform);
-
 	}
 
 	void TextPainter::Render()
 	{
-
 		m_text = GetTextManager().GetText();
 
 		for (unsigned int i = 0; i < m_text.size(); i++)
 		{
 			RenderText(
-				m_text[i].text.c_str(),
-				m_atlas48,
-				m_text[i].posX,
-				m_text[i].posY,
-				m_text[i].sizeX,
-				m_text[i].sizeY,
-				m_text[i].color
+				m_text[i].m_text.c_str(),
+                m_text[i].m_fontData,
+				m_text[i].m_posX,
+				m_text[i].m_posY,
+				m_text[i].m_sizeX,
+				m_text[i].m_sizeY,
+				m_text[i].m_color
 				);
 		}
 
 		GetTextManager().ClearText();
 	}
 
-	void TextPainter::RenderText(const char* text, FontTextureAtlas* atlas, float x, float y, float sx, float sy, glm::vec4 color)
+	void TextPainter::RenderText(const char* text, FontData* fontData, float x, float y, float sx, float sy, glm::vec4 color)
 	{
 		m_shaderManager->UseProgram("BasicText");
 
@@ -87,23 +72,23 @@ namespace GFX
 
 		for (p = (const unsigned char*)text; *p; p++)
 		{
-			float x2 = x + atlas->characters[*p].bitmapLeft * sx;
-			float y2 = -y - atlas->characters[*p].bitmapTop * sy;
-			float w = atlas->characters[*p].bitmapWidth * sx;
-			float h = atlas->characters[*p].bitmapHeight * sy;
+			float x2 = x + fontData->characters[*p].bitMapLeft * sx;
+			float y2 = -y - fontData->characters[*p].bitMapTop * sy;
+			float w = fontData->characters[*p].bitMapWidth * sx;
+			float h = fontData->characters[*p].bitMapHeight * sy;
 
-			x += atlas->characters[*p].advanceX * sx;
-			y += atlas->characters[*p].advanceY * sy;
+			x += fontData->characters[*p].advanceX * sx;
+			y += fontData->characters[*p].advanceY * sy;
 			
 			if (!w || !h)
 				continue;
 
 			tv.pos_dim = glm::vec4( x2, y2, w, h );
 			tv.uv = glm::vec4(
-				atlas->characters[*p].uvOffsetX,
-				atlas->characters[*p].uvOffsetY,
-				atlas->characters[*p].uvOffsetX + atlas->characters[*p].bitmapWidth / static_cast<float>(atlas->width),
-				atlas->characters[*p].uvOffsetY + atlas->characters[*p].bitmapHeight / static_cast<float>(atlas->height)
+				fontData->characters[*p].uvOffSetX,
+				fontData->characters[*p].uvOffSetY,
+				fontData->characters[*p].uvOffSetX + fontData->characters[*p].bitMapWidth / static_cast<float>(fontData->atlasWidth),
+				fontData->characters[*p].uvOffSetY + fontData->characters[*p].bitMapHeight / static_cast<float>(fontData->atlasHeight)
 				);
 			coords.push_back(tv);
 		}
@@ -116,7 +101,7 @@ namespace GFX
 
 		glActiveTexture(GL_TEXTURE0);
 		//glUniform1i(atlas->textureUniform, 0);
-		glBindTexture(GL_TEXTURE_2D, atlas->texture);
+		glBindTexture(GL_TEXTURE_2D, fontData->fontAtlas);
 
 		m_shaderManager->SetUniform(1, color, m_colorUniform);
 

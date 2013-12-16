@@ -40,6 +40,9 @@
 
 #include <gfx/BitmaskDefinitions.hpp>
 
+
+GFX::FontData* fontData;
+
 void clopLoggerCallback( LogSystem::LogType m_type, const char * message )
 {
     switch( m_type )
@@ -103,6 +106,7 @@ GLFWwindow* init( int argc, char** argv )
 	if (GFX::Init(initScreenWidth,initScreenHeight) == GFX_FAIL)
 		return nullptr;
 
+
     return window;
 }
 
@@ -119,13 +123,13 @@ void TestRendering()
 	GFX::Debug::DrawRectangle(glm::vec2(0, 0), glm::vec2(200, 20), true, Colors::Aquamarine);
 	GFX::Debug::DrawRectangle(glm::vec2(100, 20), glm::vec2(100, 40), false, Colors::Chocolate);
 
-	GFX::RenderText(glm::vec2(0, 100), 1.0f, Colors::Black, "The Quick Brown Fox Jumps Over The Lazy Dog");
-	GFX::RenderText(glm::vec2(10, 120), 1.0f, Colors::Blue, "The Quick Brown Fox Jumps Over The Lazy Dog");
-	GFX::RenderText(glm::vec2(20, 140), 1.0f, Colors::Green, "The Quick Brown Fox Jumps Over The Lazy Dog");
-	GFX::RenderText(glm::vec2(30, 160), 1.0f, Colors::CornflowerBlue, "The Quick Brown Fox Jumps Over The Lazy Dog");
-	GFX::RenderText(glm::vec2(40, 180), 1.0f, Colors::White, "The Quick Brown Fox Jumps Over The Lazy Dog????");
+	GFX::RenderText(fontData, glm::vec2(0, 100), 1.0f, Colors::Black, "The Quick Brown Fox Jumps Over The Lazy Dog");
+	GFX::RenderText(fontData, glm::vec2(10, 120), 1.0f, Colors::Blue, "The Quick Brown Fox Jumps Over The Lazy Dog");
+	GFX::RenderText(fontData, glm::vec2(20, 140), 1.0f, Colors::Green, "The Quick Brown Fox Jumps Over The Lazy Dog");
+	GFX::RenderText(fontData, glm::vec2(30, 160), 1.0f, Colors::CornflowerBlue, "The Quick Brown Fox Jumps Over The Lazy Dog");
+	GFX::RenderText(fontData, glm::vec2(40, 180), 1.0f, Colors::White, "The Quick Brown Fox Jumps Over The Lazy Dog????");
 
-	GFX::RenderText(glm::vec2(0, 200), 1.0f, Colors::Gold, "ABCDEFGHIJKLMNOPQRSTUVWXYZASIUHDOIASHUDIOASHDA1234567890*'^&%#!?");
+	GFX::RenderText(fontData, glm::vec2(0, 200), 1.0f, Colors::Gold, "ABCDEFGHIJKLMNOPQRSTUVWXYZASIUHDOIASHUDIOASHDA1234567890*'^&%#!?");
 }
 
 void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, float posX, float posY, float posZ)
@@ -161,7 +165,7 @@ void SystemTimeRender()
             std::stringstream ss;
             
             ss << times[i].first << ": " << std::fixed << std::setw( 7 ) << std::setprecision(4) << std::setfill( '0' ) << times[i].second.count() / 1000.0f << "ms";
-	        GFX::RenderText(glm::vec2(5, GFX::GetScreenHeight()-5-20*times.size()+20*i), 1.0f, Colors::White, ss.str().c_str());
+	        GFX::RenderText(fontData, glm::vec2(5, GFX::GetScreenHeight()-5-20*times.size()+20*i), 1.0f, Colors::White, ss.str().c_str());
         }
 
 	    GFX::Debug::DrawRectangle(glm::vec2(0,GFX::GetScreenHeight()-5-20-17*times.size() ), 
@@ -182,6 +186,7 @@ void run( GLFWwindow * window )
 	Core::gameCamera->CalculateProjectionMatrix(initScreenWidth, initScreenHeight);
 	Core::gameCamera->SetPosition(glm::vec3(0.0f, 0.0f, 200.0f));
 	
+    Core::ContentManager CM;
 
 	GFX::SetProjectionMatrix(Core::gameCamera->GetProjectionMatrix());
 
@@ -189,7 +194,6 @@ void run( GLFWwindow * window )
 
 	Core::GetInput().Initialize(window);
 
-    Core::ContentManager CM;
 
 	unsigned int meshID; 
     CM.Load<Core::GnomeLoader>("assets/cube.gnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
@@ -201,10 +205,14 @@ void run( GLFWwindow * window )
    
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));
 
-    CM.Load<Core::TTFLoader>("assets/Fonts/TestFont.font", [](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
-            {
 
+    CM.Load<Core::TTFLoader>(Core::world.m_config.GetString("consoleFont", "assets/Fonts/ConsoleFont.font").c_str(), [](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+            {
+                fontData = static_cast<GFX::FontData*>(handle);
             });
+
+    Core::Console().Init(fontData);  
+    GFX::Debug::SetStatisticsFont(fontData);
 
 	for (int i = -100; i < 100; i++)
 	{

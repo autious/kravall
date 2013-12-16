@@ -58,12 +58,19 @@ namespace Core
 		Core::world.m_luaState.DoBlock(src.c_str());
 	}
 
+
+    void DebugConsole::Init(GFX::FontData* font)
+    {
+        m_font = font;
+    }
+
 	DebugConsole::DebugConsole()
 	{
 		m_visible = false;
 		m_historyIndex = 0;
 		m_offset = 0;
 		m_cursorOffset = 0;
+        m_font = nullptr;
 
 		clop::Register("clear", ClopClearConsole);
 		clop::Register("clr", ClopClearConsole);
@@ -651,8 +658,8 @@ namespace Core
 
 					if (nrWraps == 0) // Single line
 					{
-						GFX::RenderText(glm::vec2(x+1, 376+1 - (i) * 15), 1.0f,Colors::Black, line.c_str());
-						GFX::RenderText(glm::vec2(x, 376 - (i) * 15), 1.0f,color, line.c_str());
+						GFX::RenderText(m_font, glm::vec2(x+1, 376+1 - (i) * 15), 1.0f,Colors::Black, line.c_str());
+						GFX::RenderText(m_font, glm::vec2(x, 376 - (i) * 15), 1.0f,color, line.c_str());
 					}
 					else // Wrapped lines
 					{
@@ -663,8 +670,8 @@ namespace Core
 							line = std::string(
 								m_console[lineIndex].text.end() - remainder, 
 								m_console[lineIndex].text.end());
-							GFX::RenderText(glm::vec2(x+1, 376+1 - (i) * 15), 1.0f,Colors::Black, line.c_str());
-							GFX::RenderText(glm::vec2(x, 376 - (i)* 15), 1.0f, color, line.c_str());
+							GFX::RenderText(m_font, glm::vec2(x+1, 376+1 - (i) * 15), 1.0f,Colors::Black, line.c_str());
+							GFX::RenderText(m_font, glm::vec2(x, 376 - (i)* 15), 1.0f, color, line.c_str());
 							i++;
 						}
 
@@ -674,8 +681,8 @@ namespace Core
 							line = std::string(
 								m_console[lineIndex].text.end() - remainder - wrapLength * (w+1), 
 								m_console[lineIndex].text.end() - remainder - wrapLength * (w));
-							GFX::RenderText(glm::vec2(x+1, 376+1 - (i) * 15), 1.0f,Colors::Black, line.c_str());
-							GFX::RenderText(glm::vec2(x, 376 - (i) * 15), 1.0f, color, line.c_str());
+							GFX::RenderText(m_font, glm::vec2(x+1, 376+1 - (i) * 15), 1.0f,Colors::Black, line.c_str());
+							GFX::RenderText(m_font, glm::vec2(x, 376 - (i) * 15), 1.0f, color, line.c_str());
 							i++;
 						}
 						i--;
@@ -696,8 +703,8 @@ namespace Core
 				outInputLine.replace(m_cursorOffset, 1, 1, '_');
 
 
-			GFX::RenderText(glm::vec2(11, 398), 1.0f, Colors::Black, (outInputLine).c_str());
-			GFX::RenderText(glm::vec2(10, 397), 1.0f, Colors::Silver, (outInputLine).c_str());
+			GFX::RenderText(m_font, glm::vec2(11, 398), 1.0f, Colors::Black, (outInputLine).c_str());
+			GFX::RenderText(m_font, glm::vec2(10, 397), 1.0f, Colors::Silver, (outInputLine).c_str());
 
 		}
 		else

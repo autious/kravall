@@ -3,9 +3,11 @@
 
 #include <GL/glew.h>
 
-namespace Core
-{
+#include <ft2build.h>
+#include FT_FREETYPE_H
 
+namespace GFX
+{
     struct FontCharacter
     {
         float advanceX;

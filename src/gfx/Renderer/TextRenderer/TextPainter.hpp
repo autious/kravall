@@ -10,7 +10,9 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 
-#include <Buffers/Font.hpp>
+#include <Buffers/Text.hpp>
+#include <FontData.hpp>
+
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
@@ -49,19 +51,13 @@ namespace GFX
 			glm::vec4 pos_dim;
 			glm::vec4 uv;
 		};
-
-		FT_Library m_library;
-		FT_Face m_face;
-
 		GLuint m_textVBO;
 		GLuint m_textVAO;
 		
 		GLuint m_colorUniform;
 		GLuint m_textureUniform;
 
-		FontTextureAtlas* m_atlas48;
-
-		void RenderText(const char* text, FontTextureAtlas* atlas, float x, float y, float sx, float sy, glm::vec4 color);
+		void RenderText(const char* text, GFX::FontData* fontData, float x, float y, float sx, float sy, glm::vec4 color);
 
 		std::vector<Text> m_text;
 	};

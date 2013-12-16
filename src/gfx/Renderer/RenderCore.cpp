@@ -17,6 +17,7 @@ namespace GFX
 		m_lastUpdateTime = 0;
 		m_curTime = 0;
 		m_showStatistics = false;
+        m_font = nullptr;
 		m_showFBO = false;
 	}
 
@@ -223,7 +224,7 @@ namespace GFX
 
 	void RenderCore::SubSystemTimeRender()
 	{
-		if( m_showStatistics )
+		if( m_showStatistics && m_font)
 		{
 
 			for( int i = 0; i < (int)m_subsystemTimes.size(); i++ )
@@ -233,8 +234,8 @@ namespace GFX
 				ss << m_subsystemTimes[i].first << ": " << std::fixed << std::setw( 7 ) << std::setprecision(4) << std::setfill( '0' ) << m_subsystemTimes[i].second.count() / 1000.0f << "ms";
 				glm::vec2 position = glm::vec2(m_windowWidth-200+5, m_windowHeight + 12 - 20 * m_subsystemTimes.size() + 20 * i);
 
-				Text t(position.x, position.y, 1.0f, 1.0f, Colors::White, ss.str().c_str(), m_windowWidth, m_windowHeight);
-				GetTextManager().AddText(t);
+				Text t(position.x, position.y, 1.0f, 1.0f, m_font, Colors::White, ss.str().c_str(), m_windowWidth, m_windowHeight);
+			    GetTextManager().AddText(t);
 			}
 
 			glm::vec2 position = glm::vec2(m_windowWidth-200, m_windowHeight - 5 - 20 * m_subsystemTimes.size());

@@ -128,9 +128,9 @@ namespace GFX
 		Renderer().SetProjMatrix(matrix);
 	}
 
-	void RenderText(GFXVec2 position, float size, GFXVec4 color, const char* text)
+	void RenderText(GFX::FontData* fontData, GFXVec2 position, float size, GFXVec4 color, const char* text)
 	{
-		Text t(position.x, position.y, size, size, color, text, Renderer().GetWindowWidth(), Renderer().GetWindowHeight());
+		Text t(position.x, position.y, size, size, fontData, color, text, Renderer().GetWindowWidth(), Renderer().GetWindowHeight());
 		GetTextManager().AddText(t);
 	}
 	void ShowConsole()
@@ -324,10 +324,17 @@ namespace GFX
 		s.color = color;
 		DebugDrawing().AddSphere(s);
 	}
+
+    void Debug::SetStatisticsFont(GFX::FontData* font)
+    {
+        Renderer().SetStatisticsFont(font);
+    }
+
 	void Debug::DisplaySystemInfo(bool enabled)
 	{
 		Renderer().ShowStatistics(enabled);
 	}
+
 	void Debug::DisplayFBO(int which)
 	{
 		Renderer().ShowFBO(which);

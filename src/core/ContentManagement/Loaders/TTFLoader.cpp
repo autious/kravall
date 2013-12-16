@@ -20,7 +20,7 @@ namespace Core
 
     TTFLoader::~TTFLoader()
     {
-        for(std::vector<Core::FontData*>::iterator it = m_fontData.begin(); it != m_fontData.end(); ++it)
+        for(std::vector<GFX::FontData*>::iterator it = m_fontData.begin(); it != m_fontData.end(); ++it)
         {
             if(ReduceUserOfFace((*it)->fontFace) == 0)
             {
@@ -36,7 +36,7 @@ namespace Core
     {
         std::string fontName;
         unsigned int fontSize;
-        FontData* fontData = nullptr;
+        GFX::FontData* fontData = nullptr;
 
         if(ParseFile(assetName, fontName, fontSize))
         {
@@ -52,7 +52,7 @@ namespace Core
            
             AddUserOfFace(face);
 
-            fontData = new FontData;
+            fontData = new GFX::FontData;
             fontData->fontFace = face;
 
             CreateMeasurements(fontData, fontSize);
@@ -76,11 +76,11 @@ namespace Core
 
     void TTFLoader::Destroy(const Core::AssetHandle handle)
     {
-        Core::FontData* data = static_cast<Core::FontData*>(handle);
+        GFX::FontData* data = static_cast<GFX::FontData*>(handle);
 
-        for(std::vector<FontData*>::iterator it = m_fontData.begin(); it != m_fontData.end(); ++it)
+        for(std::vector<GFX::FontData*>::iterator it = m_fontData.begin(); it != m_fontData.end(); ++it)
         {
-            if((*it) == static_cast<Core::FontData*>(handle))
+            if((*it) == static_cast<GFX::FontData*>(handle))
             {
                 m_fontData.erase(it);
                 break;
@@ -93,10 +93,10 @@ namespace Core
         }
 
         glDeleteTextures(1, &data->fontAtlas);
-        delete static_cast<Core::FontData*>(handle);
+        delete static_cast<GFX::FontData*>(handle);
     }
 
-    void TTFLoader::CreateMeasurements(FontData* &data, const unsigned int fontSize)
+    void TTFLoader::CreateMeasurements(GFX::FontData* &data, const unsigned int fontSize)
     {
         FT_Set_Pixel_Sizes(*data->fontFace, 0, fontSize);
         FT_GlyphSlot glyphSlot = (*data->fontFace)->glyph;
@@ -109,9 +109,9 @@ namespace Core
         data->atlasWidth = 0;
         data->atlasHeight = 0;
 
-        memset(data->characters, 0, FontData::NUM_CHARACTERS * sizeof(FontCharacter));
+        memset(data->characters, 0, GFX::FontData::NUM_CHARACTERS * sizeof(GFX::FontCharacter));
 
-        for(int i = 32; i < FontData::NUM_CHARACTERS; ++i)
+        for(int i = 32; i < GFX::FontData::NUM_CHARACTERS; ++i)
         {
             if(FT_Load_Char(*data->fontFace, i, FT_LOAD_RENDER))
             {
@@ -119,7 +119,7 @@ namespace Core
                 continue;
             }
 
-            if(roww + glyphSlot->bitmap.width + 1 >= FontData::ATLAS_MAX_WIDTH)
+            if(roww + glyphSlot->bitmap.width + 1 >= GFX::FontData::ATLAS_MAX_WIDTH)
             {
                 data->atlasWidth = std::max(static_cast<int>(data->atlasWidth), roww);
                 data->atlasHeight += rowh;
@@ -146,14 +146,14 @@ namespace Core
         roww = 0;
         rowh = 0;
 
-        for(int i = 32; i < FontData::NUM_CHARACTERS; ++i)
+        for(int i = 32; i < GFX::FontData::NUM_CHARACTERS; ++i)
         {
             if(FT_Load_Char(*data->fontFace, i, FT_LOAD_RENDER))
             {
                 continue;
             }
 
-            if(offSetX + glyphSlot->bitmap.width + 1 >= FontData::ATLAS_MAX_WIDTH)
+            if(offSetX + glyphSlot->bitmap.width + 1 >= GFX::FontData::ATLAS_MAX_WIDTH)
             {
                 offSetY += rowh;                 
                 offSetX = 0;
@@ -169,8 +169,12 @@ namespace Core
 
     }
 
-    void TTFLoader::CreateTextureAtlas(FontData* &data)
+    void TTFLoader::CreateTextureAtlas(GFX::FontData* &data)
     {
+        int rowh = 0;
+        int offSetX = 0;
+        int offSetY = 0;
+
         FT_GlyphSlot glyphSlot = (*data->fontFace)->glyph;
 
         glGenTextures(1, &data->fontAtlas);
@@ -183,19 +187,28 @@ namespace Core
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-        for(int i = 32; i < FontData::NUM_CHARACTERS; ++i)
+        for(int i = 32; i < GFX::FontData::NUM_CHARACTERS; ++i)
         {
             if(FT_Load_Char(*data->fontFace, i, FT_LOAD_RENDER))
             {
                 continue;
             }
 
+            if(offSetX + glyphSlot->bitmap.width +1 >= GFX::FontData::ATLAS_MAX_WIDTH)
+            {
+                offSetY += rowh;
+                rowh = 0;
+                offSetX = 0;
+            }
+
             glTexSubImage2D(GL_TEXTURE_2D, 0,
-                    static_cast<int>(data->characters[i].uvOffSetX) * static_cast<int>(data->atlasWidth),
-                    static_cast<int>(data->characters[i].uvOffSetY) * static_cast<int>(data->atlasHeight),
+                    offSetX,
+                    offSetY,
                     glyphSlot->bitmap.width, glyphSlot->bitmap.rows, GL_RED, GL_UNSIGNED_BYTE,
                     glyphSlot->bitmap.buffer);
 
+            rowh = std::max(rowh, glyphSlot->bitmap.rows);
+            offSetX += glyphSlot->bitmap.width + 1;
         }
 
         glBindTexture(GL_TEXTURE_2D, 0);

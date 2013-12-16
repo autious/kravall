@@ -8,7 +8,7 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-#include <ContentManagement/AssetStructs/FontData.hpp>
+#include <gfx/FontData.hpp>
 #include <ContentManagement/MurmurHash.hpp>
 
 
@@ -28,8 +28,8 @@ namespace Core
         void Destroy(const Core::AssetHandle handle) override;
 
     private:
-        void CreateMeasurements(FontData* &face, const unsigned int fontSize);
-        void CreateTextureAtlas(FontData* &data);
+        void CreateMeasurements(GFX::FontData* &face, const unsigned int fontSize);
+        void CreateTextureAtlas(GFX::FontData* &data);
         
         int AddUserOfFace(const FT_Face* face);
         int ReduceUserOfFace(const FT_Face* face);
@@ -37,7 +37,7 @@ namespace Core
 
         bool ParseFile(const char* assetFileName, std::string& fontName, unsigned int& fontSize);
 
-        std::vector<FontData*> m_fontData;
+        std::vector<GFX::FontData*> m_fontData;
         Core::FaceCacheVector m_facesCache;
         FT_Library m_library;
     };
