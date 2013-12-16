@@ -142,8 +142,7 @@ void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, float posX,
 		 Core::RotationComponent(),
 		 Core::ScaleComponent(0.5f),
 		 Core::UnitTypeComponent(),
-		 //Core::MovementComponent(0.0f, 0.0f, 1.0f, 2.0f, 6.0f),
-		 Core::MovementComponent(0.0f, 0.0f, 0.0f, 2.0f, 6.0f),
+		 Core::MovementComponent(0.0f, 0.0f, 1.0f, 2.0f, 6.0f),
 		 Core::AttributeRioterComponent(),
 		 Core::BoundingVolumeComponent( Core::BoundingSphere( 3.0f, 0.0f, 0.0f, 0.0f ) ) ));
 
@@ -201,7 +200,7 @@ void run( GLFWwindow * window )
    
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));
 
-	/*
+	
 	for (int i = -100; i < 100; i++)
 	{
 		for (int j = -10; j < 10; j++)
@@ -229,12 +228,12 @@ void run( GLFWwindow * window )
 			rc->rotation[3] = cos(3.14f / 2.0f);
 		}
 	}
-	*/
+	
 	//CreateRioter(&rioters, meshID, -6.0f, -3.0f, 0.0f);
 	//CreateRioter(&rioters, meshID, 0.0f, -3.0f, 0.0f);
 	//CreateRioter(&rioters, meshID, 6.0f, -3.0f, 0.0f);
-	for( int i = -100; i < 100; i++ )
-		CreateRioter(&rioters, meshID, i * 6.0f, -3.0f, 0.0f);
+	//for( int i = -100; i < 100; i++ )
+		//CreateRioter(&rioters, meshID, i * 6.0f, -3.0f, 0.0f);
 
 	std::cout << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " ";
 
