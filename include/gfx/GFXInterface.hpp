@@ -28,6 +28,7 @@ typedef GFXVec4 GFXColor;
 #include <iostream>
 #include <gfx/Vertex.hpp>
 #include <gfx/BitmaskDefinitions.hpp>
+#include <gfx/FontData.hpp>
 
 namespace GFX
 {
@@ -78,7 +79,7 @@ namespace GFX
 	\param color The color of the text
 	\param text The text to be rendered
 	*/
-	DLL_API void RenderText(GFXVec2 position, float size, GFXVec4 color, const char* text);
+	DLL_API void RenderText(GFX::FontData* fontData, GFXVec2 position, float size, GFXVec4 color, const char* text);
 
 	/*!
 	Shows the console window
@@ -260,6 +261,13 @@ namespace GFX
 		\param color Color of the circle
 		*/
 		DLL_API void DrawCircle(GFXVec2 position, float radius, unsigned int lineWidth, GFXColor color);
+
+
+        /*!
+        Sets the font used for rendering the time statistics.
+        \param font Poitner to GFX::FontData struct used for rendering. 
+        */
+        DLL_API void SetStatisticsFont(GFX::FontData* font);
 
 		/*!
 		Enables or disables display of gfx system info
