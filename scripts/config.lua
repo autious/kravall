@@ -36,3 +36,8 @@ function help()
     print( "showFBO(which)" )
     print( "printAlexStatus()" )
 end
+
+-- Loads a scenario from the scenario folder and returns the assembly.
+function doscenario( name )
+    return dofile( "scripts/scenarios/" .. name .. ".lua" ) 
+end
