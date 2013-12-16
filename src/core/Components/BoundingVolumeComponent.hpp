@@ -24,6 +24,27 @@ namespace Core
 		NoBoundingVolume,
 	};
 
+	/*!
+		Specifies the type of resolution to use when colliding with other objects.
+	*/
+	enum BoundingVolumeCollisionModel
+	{
+		/*!
+			Object will move itself from the collision.
+		*/
+		DynamicResolution,
+
+		/*!
+			Object will not move itself from the collision.
+		*/
+		StaticResolution,
+
+		/*!
+			Object will be ignored in all collision calculations
+		*/
+		NoResolution,
+	};
+
 
 	/*!
 		Data container for Sphere type bounding volumes.
@@ -112,7 +133,15 @@ namespace Core
 		*/
 		BoundingVolumeType type;
 
-		// TO DO : add comment here
+		/*!
+			Hint to collision systems for how to solve collisions.
+		*/
+		BoundingVolumeCollisionModel collisionModel;
+
+
+		/*!
+			byte container for bounding volume data. Eg. Core::BoundingSphere, Core::AABB.
+		*/
 		char data[ MAX_SIZE_OF_BOUNDING_STRUCTS ];
 
 		/*!
@@ -127,9 +156,10 @@ namespace Core
 			Constructor initializing the component to a SphereBoundingType.
 			\param sphere Sphere container with respective data.
 		*/
-		BoundingVolumeComponent( Core::BoundingSphere sphere )
+		BoundingVolumeComponent( BoundingSphere sphere, BoundingVolumeCollisionModel collisionModelOFChoice = BoundingVolumeCollisionModel::NoResolution )
 		{
-			type = Core::BoundingVolumeType::SphereBoundingType;
+			type = BoundingVolumeType::SphereBoundingType;
+			collisionModel = collisionModelOFChoice;
 			std::memcpy( &data, &sphere,  MAX_SIZE_OF_BOUNDING_STRUCTS );
 		}
 
@@ -137,9 +167,10 @@ namespace Core
 			Constructor initializing the component to a AABBBoundingType.
 			\param aabb AABB container with respective data.
 		*/
-		BoundingVolumeComponent( Core::AABB aabb )
+		BoundingVolumeComponent( AABB aabb, BoundingVolumeCollisionModel collisionModelOFChoice = BoundingVolumeCollisionModel::NoResolution )
 		{
 			type = Core::BoundingVolumeType::AABBBoundingType;
+			collisionModel = collisionModelOFChoice;
 			std::memcpy( &data, &aabb,  MAX_SIZE_OF_BOUNDING_STRUCTS );
 		}
 

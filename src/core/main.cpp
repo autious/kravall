@@ -134,6 +134,19 @@ void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, float posX,
 	double pi = 3.141529;
 	double angle = 0.0; // pi * 0.25;
 
+	Core::BoundingVolumeCollisionModel aa = Core::BoundingVolumeCollisionModel::DynamicResolution;
+
+	glm::vec3 direction( 0.0f, 0.0f, 0.0f );
+	if( posX )
+		//direction = glm::normalize( glm::vec3( 0.0f, 0.0f, posY ) );
+		direction = glm::normalize( glm::vec3( posX, 0.0f, 0.0f ) );
+		//direction = glm::normalize( glm::vec3( posX, 0.0f, posY ) );	
+	else 
+	{
+		aa = Core::BoundingVolumeCollisionModel::StaticResolution;
+		posZ += 0.7f;
+	}
+
 	rioterList->push_back(Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, 
 		Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent, Core::UnitTypeComponent,
 		Core::MovementComponent, Core::AttributeRioterComponent, Core::BoundingVolumeComponent>
@@ -142,9 +155,10 @@ void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, float posX,
 		 Core::RotationComponent(),
 		 Core::ScaleComponent(0.5f),
 		 Core::UnitTypeComponent(),
-		 Core::MovementComponent(0.0f, 0.0f, 1.0f, 2.0f, 6.0f),
+		 //Core::MovementComponent(0.0f, 0.0f, 1.0f, 2.0f, 6.0f),
+		 Core::MovementComponent( -direction.x, 0, -direction.z, 1.1f, 5.0f),
 		 Core::AttributeRioterComponent(),
-		 Core::BoundingVolumeComponent( Core::BoundingSphere( 3.0f, 0.0f, 0.0f, 0.0f ) ) ));
+		 Core::BoundingVolumeComponent( Core::BoundingSphere( 3.0f, 0.0f, 0.0f, 0.0f ), aa ) ));
 
 	Core::GraphicsComponent* gc = WGETC <Core::GraphicsComponent>(rioterList->at(index));
 	GFX::SetBitmaskValue(gc->bitmask, GFX::BT_MESH_ID, meshID);
@@ -200,7 +214,7 @@ void run( GLFWwindow * window )
    
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));
 
-	
+	/*
 	for (int i = -100; i < 100; i++)
 	{
 		for (int j = -10; j < 10; j++)
@@ -228,12 +242,30 @@ void run( GLFWwindow * window )
 			rc->rotation[3] = cos(3.14f / 2.0f);
 		}
 	}
-	
+	*/
 	//CreateRioter(&rioters, meshID, -6.0f, -3.0f, 0.0f);
 	//CreateRioter(&rioters, meshID, 0.0f, -3.0f, 0.0f);
 	//CreateRioter(&rioters, meshID, 6.0f, -3.0f, 0.0f);
 	//for( int i = -100; i < 100; i++ )
-		//CreateRioter(&rioters, meshID, i * 6.0f, -3.0f, 0.0f);
+	for( int i = -200; i < 200; i++ )
+		CreateRioter(&rioters, meshID, i * 6.0f, 1.0f, 0.0f);
+
+	//CreateRioter(&rioters, meshID, 16.0f, 0.0f, 0.0f);
+	//CreateRioter(&rioters, meshID, -16.0f, 0.0f, 0.0f);
+	/*
+	rioters.push_back(Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, 
+		Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent, Core::UnitTypeComponent,
+		Core::MovementComponent, Core::AttributeRioterComponent, Core::BoundingVolumeComponent>
+		(Core::GraphicsComponent(), 
+		 Core::WorldPositionComponent(-16.0f, 0.0f, 0.0f),
+		 Core::RotationComponent(),
+		 Core::ScaleComponent(0.5f),
+		 Core::UnitTypeComponent(),
+		 //Core::MovementComponent(0.0f, 0.0f, 1.0f, 2.0f, 6.0f),
+		 Core::MovementComponent( 1.0f, 0.0f, 0.0f, 0.0f, 5.0f),
+		 Core::AttributeRioterComponent(),
+		 Core::BoundingVolumeComponent( Core::BoundingSphere( 3.0f, 0.0f, 0.0f, 0.0f ), Core::BoundingVolumeCollisionModel::StaticResolution ) ));
+	*/
 
 	std::cout << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " ";
 
