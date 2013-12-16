@@ -106,6 +106,12 @@ GLFWwindow* init( int argc, char** argv )
 	if (GFX::Init(initScreenWidth,initScreenHeight) == GFX_FAIL)
 		return nullptr;
 
+    Core::world.m_contentManager.Load<Core::TTFLoader>(Core::world.m_config.GetString("consoleFont", "assets/Fonts/ConsoleFont.font").c_str(), [](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+            {
+                fontData = static_cast<GFX::FontData*>(handle);
+                Core::Console().Init(fontData);  
+                GFX::Debug::SetStatisticsFont(fontData);
+            });
 
     return window;
 }
@@ -206,13 +212,6 @@ void run( GLFWwindow * window )
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));
 
 
-    CM.Load<Core::TTFLoader>(Core::world.m_config.GetString("consoleFont", "assets/Fonts/ConsoleFont.font").c_str(), [](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
-            {
-                fontData = static_cast<GFX::FontData*>(handle);
-            });
-
-    Core::Console().Init(fontData);  
-    GFX::Debug::SetStatisticsFont(fontData);
 
 	
 	for (int i = -100; i < 100; i++)
