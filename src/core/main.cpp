@@ -231,7 +231,7 @@ void run( GLFWwindow * window )
 	}
 
 	// Create lights
-	for (int i = -100; i < 100; i++)
+	for (int i = -50; i < 50; i++)
 	{
 		Core::Entity light = Core::world.m_entityHandler.CreateEntity<Core::LightComponent, Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent>
 				(Core::LightComponent(), Core::WorldPositionComponent(), Core::RotationComponent(), Core::ScaleComponent());

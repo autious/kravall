@@ -1,4 +1,5 @@
 #include "LightPainter.hpp"
+#include <logger/Logger.hpp>
 
 namespace GFX
 {
@@ -93,7 +94,9 @@ namespace GFX
 		//Assemble lights
 		unsigned int i = 0;
 		unsigned int numLights = 0;
+		unsigned int totalNumLights = 0;
 		GFXBitmask bitmask;
+		bool ok = true;
 		for (i = renderIndex; i < renderJobs.size(); i++)
 		{
 			
@@ -125,6 +128,20 @@ namespace GFX
 				m_pointLights[numLights] = *reinterpret_cast<LightData*>(renderJobs[i].value);
 				numLights++;
 			}
+			else
+			{
+				ok = false;
+			}
+			totalNumLights++;
+		}
+		if (!ok)
+		{
+			LOG_GFXSPECIAL << "Too many lights. Light draw calls: " << totalNumLights << " Maximum is: "<< m_maximumLights <<"\n";
+			LogSystem::Mute( LOG_GFXSPECIAL.GetPrefix() );
+		}
+		else
+		{
+			LogSystem::Unmute( LOG_GFXSPECIAL.GetPrefix() );
 		}
 		renderIndex = i;
 
