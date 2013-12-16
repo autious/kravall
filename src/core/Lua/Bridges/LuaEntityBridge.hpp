@@ -225,8 +225,15 @@ namespace Core
             {
                 Entity entity = *((Entity*)luaL_checkudata( L, 1, ENTITY_META_TYPE ));
                 ComponentType componentType = *(ComponentType*)luaL_checkudata( L, 2, COMPONENT_META_TYPE );
-            
-                CallST<ComponentHandlers...>::Set( entity, componentType, L, 3 );                      
+
+                if( Core::world.m_entityHandler.HasComponent( entity, componentType ) )
+                {
+                    CallST<ComponentHandlers...>::Set( entity, componentType, L, 3 );                      
+                }
+                else
+                {
+                    return luaL_error( L, "Unable to set component data, entity doesn't have component type" );
+                }
             }
             else
             {
@@ -243,7 +250,15 @@ namespace Core
                 Entity entity = *((Entity*)luaL_checkudata( L, 1, ENTITY_META_TYPE ));
                 ComponentType componentType = *(ComponentType*)luaL_checkudata( L, 2, COMPONENT_META_TYPE );
 
-                return CallST<ComponentHandlers...>::Get( entity, componentType, L );                      
+                if( Core::world.m_entityHandler.HasComponent( entity, componentType ) )
+                {
+                    return CallST<ComponentHandlers...>::Get( entity, componentType, L );                      
+                }
+                else
+                {
+                    return luaL_error( L, "Unable to get component data, entity doesn't have component type" );
+                }
+
             }
             else
             {

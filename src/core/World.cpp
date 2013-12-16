@@ -32,8 +32,6 @@ namespace Core
 		m_frameHeap = Core::LinearHeap(Core::world.m_frameAllocator);
 
 
-
-
 	}
 
 

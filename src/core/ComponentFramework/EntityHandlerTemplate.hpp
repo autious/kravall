@@ -78,6 +78,11 @@ namespace Core
             m_systemHandler->CallChangedEntity( ent, oldAsp, GetEntityAspect( ent ) );
         }
 
+        bool HasComponent( Entity ent, ComponentType type )
+        {
+            return (GetEntityAspect( ent ) & (1ULL << type)) != 0;
+        }
+
         /*!
             Template component adding function using runtime
             ids, primarily to be used from scripting utilities

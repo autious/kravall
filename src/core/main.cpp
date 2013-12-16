@@ -140,14 +140,15 @@ void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, float posX,
 
 	rioterList->push_back(Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, 
 		Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent, Core::UnitTypeComponent,
-		Core::MovementComponent, Core::AttributeRioterComponent>
+		Core::MovementComponent, Core::AttributeRioterComponent, Core::BoundingVolumeComponent>
 		(Core::GraphicsComponent(), 
 		 Core::WorldPositionComponent(posX, posY, posZ),
 		 Core::RotationComponent(),
 		 Core::ScaleComponent(0.5f),
 		 Core::UnitTypeComponent(),
 		 Core::MovementComponent(0.0f, 0.0f, 1.0f, 2.0f, 6.0f),
-		 Core::AttributeRioterComponent()));
+		 Core::AttributeRioterComponent(),
+		 Core::BoundingVolumeComponent( Core::BoundingSphere( 3.0f, 0.0f, 0.0f, 0.0f ) ) ));
 
 	Core::GraphicsComponent* gc = WGETC <Core::GraphicsComponent>(rioterList->at(index));
 	GFX::SetBitmaskValue(gc->bitmask, GFX::BT_MESH_ID, meshID);
@@ -184,7 +185,7 @@ void run( GLFWwindow * window )
 		Core::world.m_config.GetDouble( "initCameraNearClipDistance", 1.0f ), 
 		Core::world.m_config.GetDouble( "initCameraFarClipDistance", 1000.0f ) );
 	Core::gameCamera->CalculateProjectionMatrix(initScreenWidth, initScreenHeight);
-	Core::gameCamera->SetPosition(glm::vec3(0.0f, 0.0f, 200.0f));
+	Core::gameCamera->SetPosition(glm::vec3(0.0f, 100.0f, 200.0f));
 	
     Core::ContentManager CM;
 
@@ -194,9 +195,8 @@ void run( GLFWwindow * window )
 
 	Core::GetInput().Initialize(window);
 
-
-	unsigned int meshID; 
-    CM.Load<Core::GnomeLoader>("assets/cube.gnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+    unsigned int meshID; 
+    Core::world.m_contentManager.Load<Core::GnomeLoader>("assets/tomte.gnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
             {
                 Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
                 const Core::ModelData* data = gnomeLoader->getData(handle);
@@ -214,6 +214,7 @@ void run( GLFWwindow * window )
     Core::Console().Init(fontData);  
     GFX::Debug::SetStatisticsFont(fontData);
 
+	
 	for (int i = -100; i < 100; i++)
 	{
 		for (int j = -10; j < 10; j++)
@@ -241,11 +242,39 @@ void run( GLFWwindow * window )
 			rc->rotation[3] = cos(3.14f / 2.0f);
 		}
 	}
-	/*
-	CreateRioter(&rioters, meshID, -6.0f, -3.0f, 0.0f);
-	CreateRioter(&rioters, meshID, 0.0f, -3.0f, 0.0f);
-	CreateRioter(&rioters, meshID, 6.0f, -3.0f, 0.0f);
-	*/
+
+	// Create lights
+	for (int i = -100; i < 100; i++)
+	{
+		Core::Entity light = Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent>
+				(Core::GraphicsComponent(), Core::WorldPositionComponent(), Core::RotationComponent(), Core::ScaleComponent());
+	
+			Core::GraphicsComponent* gc = WGETC<Core::GraphicsComponent>(light);
+			
+			GFX::SetBitmaskValue(gc->bitmask, GFX::BT_OBJECT_TYPE, GFX::BTLT_POINT);
+			
+	
+			Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(light);
+			wpc->position[0] = (float)(i * 2);
+			wpc->position[1] = (float)(i);
+	
+			Core::ScaleComponent* sc = WGETC<Core::ScaleComponent>(light);
+			sc->scale = 1.0f;
+	
+			Core::RotationComponent* rc = WGETC<Core::RotationComponent>(light);
+		
+			//rc->rotation[0] = sin(3.14f / 2.0f);
+			//rc->rotation[1] = sin(3.14f / 2.0f);
+			rc->rotation[2] = sin(3.14f);
+			rc->rotation[3] = cos(3.14f / 2.0f);
+	}
+	
+	//CreateRioter(&rioters, meshID, -6.0f, -3.0f, 0.0f);
+	//CreateRioter(&rioters, meshID, 0.0f, -3.0f, 0.0f);
+	//CreateRioter(&rioters, meshID, 6.0f, -3.0f, 0.0f);
+	//for( int i = -100; i < 100; i++ )
+		//CreateRioter(&rioters, meshID, i * 6.0f, -3.0f, 0.0f);
+
 	std::cout << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " ";
 
 	//inputline.resize(1);
@@ -256,7 +285,7 @@ void run( GLFWwindow * window )
 		
 		Core::Console().Update();
 
-        CM.CallFinishers();
+        Core::world.m_contentManager.CallFinishers();
 
 		//gCamera->CalculateViewMatrix();
 		Core::gameCamera->LookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));

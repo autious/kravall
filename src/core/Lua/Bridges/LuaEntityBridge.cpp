@@ -3,10 +3,11 @@
 #include <logger/Logger.hpp>
 
 #include <Lua/Bridges/ComponentBind/WorldPositionComponentBinding.hpp>
+#include <Lua/Bridges/ComponentBind/GraphicsComponentBinding.hpp>
 
 namespace Core
 {
-    typedef LuaEntityBridgeTemplate<WorldPositionComponentBinding> EntityBridge;
+    typedef LuaEntityBridgeTemplate<WorldPositionComponentBinding,GraphicsComponentBinding> EntityBridge;
 }
 
 /*************/
