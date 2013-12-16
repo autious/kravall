@@ -254,8 +254,8 @@ void run( GLFWwindow * window )
 		//TestRendering();
 
 	    //TODO: Timing hook
-		GFX::Render();
         SystemTimeRender();
+		GFX::Render();
 
         //TODO: Actual delta value from time.
         Core::world.m_systemHandler.Update( 0.1f );
