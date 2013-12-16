@@ -191,7 +191,7 @@ void run( GLFWwindow * window )
 	Core::GetInput().Initialize(window);
 
     unsigned int meshID; 
-    Core::world.m_contentManager.Load<Core::GnomeLoader>("assets/cube.gnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+    Core::world.m_contentManager.Load<Core::GnomeLoader>("assets/tomte.gnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
             {
                 Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
                 const Core::ModelData* data = gnomeLoader->getData(handle);
@@ -227,6 +227,32 @@ void run( GLFWwindow * window )
 			rc->rotation[2] = sin(3.14f);
 			rc->rotation[3] = cos(3.14f / 2.0f);
 		}
+	}
+
+	// Create lights
+	for (int i = -100; i < 100; i++)
+	{
+		Core::Entity light = Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent>
+				(Core::GraphicsComponent(), Core::WorldPositionComponent(), Core::RotationComponent(), Core::ScaleComponent());
+	
+			Core::GraphicsComponent* gc = WGETC<Core::GraphicsComponent>(light);
+			
+			GFX::SetBitmaskValue(gc->bitmask, GFX::BT_OBJECT_TYPE, GFX::BTLT_POINT);
+			
+	
+			Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(light);
+			wpc->position[0] = (float)(i * 2);
+			wpc->position[1] = (float)(i);
+	
+			Core::ScaleComponent* sc = WGETC<Core::ScaleComponent>(light);
+			sc->scale = 1.0f;
+	
+			Core::RotationComponent* rc = WGETC<Core::RotationComponent>(light);
+		
+			//rc->rotation[0] = sin(3.14f / 2.0f);
+			//rc->rotation[1] = sin(3.14f / 2.0f);
+			rc->rotation[2] = sin(3.14f);
+			rc->rotation[3] = cos(3.14f / 2.0f);
 	}
 	
 	//CreateRioter(&rioters, meshID, -6.0f, -3.0f, 0.0f);

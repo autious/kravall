@@ -17,6 +17,30 @@ namespace GFX
 {
 	class LightPainter : public BasePainter
 	{
+
+	struct PointLightData
+	{
+		glm::vec3 position;
+		float radius;
+		glm::vec3 color;
+		float intensity;
+	};
+
+	struct SpotLightData
+	{
+		glm::vec3 position;
+		float length;
+		float angle;
+		glm::vec3 color;
+		float intensity;
+	};
+
+	struct DirectionalLightData
+	{
+		glm::vec3 direction;
+		glm::vec3 color;
+		float intensity;
+	};
 	public:
 
 		/*!
@@ -56,7 +80,8 @@ namespace GFX
 		GLuint m_pointLightBuffer;
 
 		const unsigned int m_maximumLights = 1024;
-		PointLight* m_pointLights;
+		PointLightData* m_pointLights;
+
 
 	};
 }

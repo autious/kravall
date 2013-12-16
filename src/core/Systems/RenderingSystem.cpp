@@ -23,15 +23,11 @@ namespace Core
 			translationMatrix = glm::translate(glm::mat4(1.0f), WorldPositionComponent::GetVec3(wpc->position));
 			scaleMatrix = glm::scale(sc->scale, sc->scale, sc->scale);
 
-			//Build modelMatrix using linear allocator (FIX THIS) höhöh
+			//Build modelMatrix using linear allocator (FIX THIS)
 			glm::mat4* modelMatrix = Core::world.m_frameHeap.NewObject<glm::mat4>(translationMatrix * rotationMatrix * scaleMatrix);
 			//glm::mat4* modelMatrix = new glm::mat4(translationMatrix * rotationMatrix * scaleMatrix);
 			//delete modelMatrix;
-			//
 			GFX::Draw(gc->bitmask, (void*)modelMatrix);
-
-			//Get components
-			//Pass to gfx
 		}
 	}
 }
