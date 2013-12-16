@@ -57,7 +57,7 @@ namespace Core
                     }
                     catch( const std::out_of_range& orr )
                     {
-                        LOG_WARNING << Handler::GetComponentLuaName() << ": Ignoring parameter: " << name << std::endl;
+                        LOG_WARNING << __FUNCTION__ << ": " << Handler::GetComponentLuaName() << "Binding" << ": Ignoring parameter: " << name << std::endl;
                     }
                 }
                 /* Pops the value, leaving the key for the next iteration */

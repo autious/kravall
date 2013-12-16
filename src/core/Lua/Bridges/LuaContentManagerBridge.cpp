@@ -65,6 +65,19 @@ void Core::LuaContentManagerBridge::OpenLibs( lua_State * L )
         std::array<std::pair<const char*, Core::ContentLoaderBridgeType>,
             ContentManagerBridge::CONTENT_LOAD_BINDER_COUNT> names
             = Core::ContentManagerBridge::GetBinderNameTypes();
+
+        //Sanity check, check for duplicate loader types or names.
+        //It's an easy mistake to make with all the copy pasting 
+        //going on a daily basis.
+        for( int i = 0; i < ContentManagerBridge::CONTENT_LOAD_BINDER_COUNT-1; i++  )
+        {
+            for( int k = i+1; k < ContentManagerBridge::CONTENT_LOAD_BINDER_COUNT; k++  )
+            {
+                assert( strcmp( names[i].first, names[k].first ) != 0 );
+                assert( names[i].second == names[i].second ); 
+            }
+        }
+
         for( int i = 0; i < ContentManagerBridge::CONTENT_LOAD_BINDER_COUNT; i++ )
         {
             lua_pushstring( L, names[i].first );
