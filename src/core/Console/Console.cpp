@@ -34,7 +34,7 @@ namespace Core
 		else
 		{
 			std::string errStr = "Usage: \'";
-			errStr += args[0];
+			errStr += std::string(args[0]);
 			errStr += " n\' \n\tn: The id of the framebuffer to draw full screen. n=0 enables miniature quads, n=-1 disables drawing fbo.";
 			Console().PrintLine(errStr, Colors::Chocolate);
 		}
