@@ -89,7 +89,16 @@ namespace Core
 
         if(ReduceUserOfFace(data->fontFace) == 0)
         {
-            FT_Done_Face(*data->fontFace);
+            for(Core::FaceCacheVector::iterator it = m_faceCache.begin(); it != m_faceCache.end(); ++it)
+            {   
+                if(std::get<2>(*it) == data->fontFace)
+                {
+                    FT_Done_Face(*data->fontFace);
+                    m_faceCache.erase(it);
+                    break;
+                }
+            }
+
         }
 
         glDeleteTextures(1, &data->fontAtlas);
@@ -223,6 +232,7 @@ namespace Core
                 return std::get<1>(*it) = std::get<1>(*it) + 1;
             }
         }
+
         LOG_FATAL << "Trying to increase user count of an unexisting font face" << std::endl;
         assert(false);
         return 0;
@@ -237,6 +247,7 @@ namespace Core
                 return std::get<1>(*it) = std::get<1>(*it) - 1;
             }
         }
+
         LOG_FATAL << "Trying to reduce user count of an unexisting font face" << std::endl;
         assert(false);
         return 0;
