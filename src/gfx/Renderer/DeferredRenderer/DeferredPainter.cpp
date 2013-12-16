@@ -88,7 +88,7 @@ namespace GFX
 			meshID = GetBitmaskValue(bitmask, BT_MESH_ID);
 			material = GetBitmaskValue(bitmask, BT_MATERIAL_ID);
 			depth = GetBitmaskValue(bitmask, BT_DEPTH);
-			
+
 			if (material != currentMaterial)
 			{
 				mat = m_materialManager->GetMaterial(material);

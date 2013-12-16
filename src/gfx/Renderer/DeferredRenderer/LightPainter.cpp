@@ -42,8 +42,8 @@ namespace GFX
 		textureUniform = m_shaderManager->GetUniformLocation("TQ", "textureIN");
 
 
-		m_pointLights = new PointLight[m_maximumLights];
-		PointLight p;
+		m_pointLights = new PointLightData[m_maximumLights];
+		PointLightData p;
 
 		p.position = glm::vec3(0.0f, 0.0f, 0.0f);
 		p.color = glm::vec3((rand() % 1000) / 1000.0f, (rand() % 1000) / 1000.0f, (rand() % 1000) / 1000.0f);
@@ -62,7 +62,7 @@ namespace GFX
 
 		glGenBuffers(1, &m_pointLightBuffer);
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_pointLightBuffer);
-		glBufferData(GL_SHADER_STORAGE_BUFFER, m_maximumLights * sizeof(PointLight), m_pointLights, GL_DYNAMIC_COPY);
+		glBufferData(GL_SHADER_STORAGE_BUFFER, m_maximumLights * sizeof(PointLightData), m_pointLights, GL_DYNAMIC_COPY);
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, m_pointLightBuffer);
 
 
@@ -84,8 +84,8 @@ namespace GFX
 		glBindImageTexture(4, glowMatID->GetTextureHandle(), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
 
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, m_pointLightBuffer);
-		PointLight* pData = (PointLight*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, m_maximumLights * sizeof(PointLight), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
-		PointLight p;
+		PointLightData* pData = (PointLightData*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, m_maximumLights * sizeof(PointLightData), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+		PointLightData p;
 		for (int i = 0; i < m_maximumLights; i++)
 		{
 			m_pointLights[i].position.x = 150.0f * sin(llooollll + (double)i);

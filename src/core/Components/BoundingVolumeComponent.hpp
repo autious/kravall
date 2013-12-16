@@ -24,6 +24,27 @@ namespace Core
 		NoBoundingVolume,
 	};
 
+	/*!
+		Specifies the type of resolution to use when colliding with other objects.
+	*/
+	enum BoundingVolumeCollisionModel
+	{
+		/*!
+			Object will move itself from the collision.
+		*/
+		DynamicResolution,
+
+		/*!
+			Object will not move itself from the collision.
+		*/
+		StaticResolution,
+
+		/*!
+			Object will be ignored in all collision calculations
+		*/
+		NoResolution,
+	};
+
 
 	/*!
 		Data container for Sphere type bounding volumes.
@@ -38,24 +59,25 @@ namespace Core
 		/*! 
 			Vector members to the middle of the object in object space. 
 		*/
-		float offsetX;
+		float offset[3];
 		
-		/*! 
-			Vector members to the middle of the object in object space. 
+		/*!
+			Static function used to convert the offset[3] to a glm::vec3 pointer.
 		*/
-		float offsetY;
-		
-		/*! 
-			Vector members to the middle of the object in object space. 
-		*/
-		float offsetZ;
+		static glm::vec3* GetVec3( float* offset )
+		{
+			return (glm::vec3*)(offset);
+		}
 
 		/*! 
-			Do nothing constructor.
+			Default constructor initializes all members to zero.
 		*/
 		BoundingSphere()
-			: radius( 0.0f ), offsetX( 0.0f ), offsetY( 0.0f ), offsetZ( 0.0f )
+			: radius( 0.0f )
 		{
+			offset[0] = 0;
+			offset[1] = 0;
+			offset[2] = 0;
 		}
 			
 		/*!
@@ -65,8 +87,11 @@ namespace Core
 			\param offsetZ Z offset of the sphere from the object.
 		*/
 		BoundingSphere( float radius, float offsetX, float offsetY, float offsetZ )
-			: radius( radius ), offsetX( offsetX ), offsetY( offsetY ), offsetZ( offsetZ )
+			: radius( radius )
 		{
+			offset[0] = offsetX;
+			offset[1] = offsetY;
+			offset[2] = offsetZ;
 		}
 			
 	};
@@ -106,38 +131,47 @@ namespace Core
 		/*!
 			Hint for how to interpret the m_data member.
 		*/
-		BoundingVolumeType m_type;
+		BoundingVolumeType type;
 
-		// TO DO : add comment here
-		char m_data[ MAX_SIZE_OF_BOUNDING_STRUCTS ];
+		/*!
+			Hint to collision systems for how to solve collisions.
+		*/
+		BoundingVolumeCollisionModel collisionModel;
 
+
+		/*!
+			byte container for bounding volume data. Eg. Core::BoundingSphere, Core::AABB.
+		*/
+		char data[ MAX_SIZE_OF_BOUNDING_STRUCTS ];
 
 		/*!
 			Default constructor, will set type to NoVolume.
 		*/
 		BoundingVolumeComponent()
 		{
-			m_type = Core::BoundingVolumeType::NoBoundingVolume;
+			type = Core::BoundingVolumeType::NoBoundingVolume;
 		}
 
 		/*!
 			Constructor initializing the component to a SphereBoundingType.
 			\param sphere Sphere container with respective data.
 		*/
-		BoundingVolumeComponent( Core::BoundingSphere sphere )
+		BoundingVolumeComponent( BoundingSphere sphere, BoundingVolumeCollisionModel collisionModelOFChoice = BoundingVolumeCollisionModel::NoResolution )
 		{
-			m_type = Core::BoundingVolumeType::SphereBoundingType;
-			std::memcpy( &m_data, &sphere,  MAX_SIZE_OF_BOUNDING_STRUCTS );
+			type = BoundingVolumeType::SphereBoundingType;
+			collisionModel = collisionModelOFChoice;
+			std::memcpy( &data, &sphere,  MAX_SIZE_OF_BOUNDING_STRUCTS );
 		}
 
 		/*!
 			Constructor initializing the component to a AABBBoundingType.
 			\param aabb AABB container with respective data.
 		*/
-		BoundingVolumeComponent( Core::AABB aabb )
+		BoundingVolumeComponent( AABB aabb, BoundingVolumeCollisionModel collisionModelOFChoice = BoundingVolumeCollisionModel::NoResolution )
 		{
-			m_type = Core::BoundingVolumeType::AABBBoundingType;
-			std::memcpy( &m_data, &aabb,  MAX_SIZE_OF_BOUNDING_STRUCTS );
+			type = Core::BoundingVolumeType::AABBBoundingType;
+			collisionModel = collisionModelOFChoice;
+			std::memcpy( &data, &aabb,  MAX_SIZE_OF_BOUNDING_STRUCTS );
 		}
 
 

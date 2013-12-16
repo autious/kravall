@@ -110,7 +110,8 @@ namespace Core
 			return -1;
 		}
 
-		
+		// remove redundant error from glew init.
+		glGetError(); 
 
 		return 0;
 	}

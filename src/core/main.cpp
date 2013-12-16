@@ -40,6 +40,9 @@
 
 #include <gfx/BitmaskDefinitions.hpp>
 
+
+GFX::FontData* fontData;
+
 void clopLoggerCallback( LogSystem::LogType m_type, const char * message )
 {
     switch( m_type )
@@ -103,6 +106,13 @@ GLFWwindow* init( int argc, char** argv )
 	if (GFX::Init(initScreenWidth,initScreenHeight) == GFX_FAIL)
 		return nullptr;
 
+    Core::world.m_contentManager.Load<Core::TTFLoader>(Core::world.m_config.GetString("consoleFont", "assets/Fonts/ConsoleFont.font").c_str(), [](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+            {
+                fontData = static_cast<GFX::FontData*>(handle);
+                Core::Console().Init(fontData);  
+                GFX::Debug::SetStatisticsFont(fontData);
+            });
+
     return window;
 }
 
@@ -119,13 +129,13 @@ void TestRendering()
 	GFX::Debug::DrawRectangle(glm::vec2(0, 0), glm::vec2(200, 20), true, Colors::Aquamarine);
 	GFX::Debug::DrawRectangle(glm::vec2(100, 20), glm::vec2(100, 40), false, Colors::Chocolate);
 
-	GFX::RenderText(glm::vec2(0, 100), 1.0f, Colors::Black, "The Quick Brown Fox Jumps Over The Lazy Dog");
-	GFX::RenderText(glm::vec2(10, 120), 1.0f, Colors::Blue, "The Quick Brown Fox Jumps Over The Lazy Dog");
-	GFX::RenderText(glm::vec2(20, 140), 1.0f, Colors::Green, "The Quick Brown Fox Jumps Over The Lazy Dog");
-	GFX::RenderText(glm::vec2(30, 160), 1.0f, Colors::CornflowerBlue, "The Quick Brown Fox Jumps Over The Lazy Dog");
-	GFX::RenderText(glm::vec2(40, 180), 1.0f, Colors::White, "The Quick Brown Fox Jumps Over The Lazy Dog????");
+	GFX::RenderText(fontData, glm::vec2(0, 100), 1.0f, Colors::Black, "The Quick Brown Fox Jumps Over The Lazy Dog");
+	GFX::RenderText(fontData, glm::vec2(10, 120), 1.0f, Colors::Blue, "The Quick Brown Fox Jumps Over The Lazy Dog");
+	GFX::RenderText(fontData, glm::vec2(20, 140), 1.0f, Colors::Green, "The Quick Brown Fox Jumps Over The Lazy Dog");
+	GFX::RenderText(fontData, glm::vec2(30, 160), 1.0f, Colors::CornflowerBlue, "The Quick Brown Fox Jumps Over The Lazy Dog");
+	GFX::RenderText(fontData, glm::vec2(40, 180), 1.0f, Colors::White, "The Quick Brown Fox Jumps Over The Lazy Dog????");
 
-	GFX::RenderText(glm::vec2(0, 200), 1.0f, Colors::Gold, "ABCDEFGHIJKLMNOPQRSTUVWXYZASIUHDOIASHUDIOASHDA1234567890*'^&%#!?");
+	GFX::RenderText(fontData, glm::vec2(0, 200), 1.0f, Colors::Gold, "ABCDEFGHIJKLMNOPQRSTUVWXYZASIUHDOIASHUDIOASHDA1234567890*'^&%#!?");
 }
 
 void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, float posX, float posY, float posZ)
@@ -134,16 +144,31 @@ void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, float posX,
 	double pi = 3.141529;
 	double angle = 0.0; // pi * 0.25;
 
+	Core::BoundingVolumeCollisionModel aa = Core::BoundingVolumeCollisionModel::DynamicResolution;
+
+	glm::vec3 direction( 0.0f, 0.0f, 0.0f );
+	if( posX )
+		//direction = glm::normalize( glm::vec3( 0.0f, 0.0f, posY ) );
+		direction = glm::normalize( glm::vec3( posX, 0.0f, 0.0f ) );
+		//direction = glm::normalize( glm::vec3( posX, 0.0f, posY ) );	
+	else 
+	{
+		aa = Core::BoundingVolumeCollisionModel::StaticResolution;
+		posZ += 0.7f;
+	}
+
 	rioterList->push_back(Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, 
 		Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent, Core::UnitTypeComponent,
-		Core::MovementComponent, Core::AttributeRioterComponent>
+		Core::MovementComponent, Core::AttributeRioterComponent, Core::BoundingVolumeComponent>
 		(Core::GraphicsComponent(), 
 		 Core::WorldPositionComponent(posX, posY, posZ),
 		 Core::RotationComponent(),
-		 Core::ScaleComponent(0.5f),
+		 Core::ScaleComponent(0.1f),
 		 Core::UnitTypeComponent(),
-		 Core::MovementComponent(0.0f, 0.0f, 1.0f, 2.0f, 6.0f),
-		 Core::AttributeRioterComponent()));
+		 //Core::MovementComponent(0.0f, 0.0f, 1.0f, 2.0f, 6.0f),
+		 Core::MovementComponent( -direction.x, 0, -direction.z, 21.1f, 5.0f),
+		 Core::AttributeRioterComponent(),
+		 Core::BoundingVolumeComponent( Core::BoundingSphere( 3.0f, 0.0f, 0.0f, 0.0f ), aa ) ));
 
 	Core::GraphicsComponent* gc = WGETC <Core::GraphicsComponent>(rioterList->at(index));
 	GFX::SetBitmaskValue(gc->bitmask, GFX::BT_MESH_ID, meshID);
@@ -162,7 +187,7 @@ void SystemTimeRender()
             std::stringstream ss;
             
             ss << times[i].first << ": " << std::fixed << std::setw( 7 ) << std::setprecision(4) << std::setfill( '0' ) << times[i].second.count() / 1000.0f << "ms";
-	        GFX::RenderText(glm::vec2(5, GFX::GetScreenHeight()-5-20*times.size()+20*i), 1.0f, Colors::White, ss.str().c_str());
+	        GFX::RenderText(fontData, glm::vec2(5, GFX::GetScreenHeight()-5-20*times.size()+20*i), 1.0f, Colors::White, ss.str().c_str());
         }
 
 	    GFX::Debug::DrawRectangle(glm::vec2(0,GFX::GetScreenHeight()-5-20-17*times.size() ), 
@@ -181,8 +206,9 @@ void run( GLFWwindow * window )
 		Core::world.m_config.GetDouble( "initCameraNearClipDistance", 1.0f ), 
 		Core::world.m_config.GetDouble( "initCameraFarClipDistance", 1000.0f ) );
 	Core::gameCamera->CalculateProjectionMatrix(initScreenWidth, initScreenHeight);
-	Core::gameCamera->SetPosition(glm::vec3(0.0f, 0.0f, 200.0f));
+	Core::gameCamera->SetPosition(glm::vec3(0.0f, 100.0f, 200.0f));
 	
+    Core::ContentManager CM;
 
 	GFX::SetProjectionMatrix(Core::gameCamera->GetProjectionMatrix());
 
@@ -191,7 +217,7 @@ void run( GLFWwindow * window )
 	Core::GetInput().Initialize(window);
 
     unsigned int meshID; 
-    Core::world.m_contentManager.Load<Core::GnomeLoader>("assets/cube.gnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+    Core::world.m_contentManager.Load<Core::GnomeLoader>("assets/tomte.gnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
             {
                 Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
                 const Core::ModelData* data = gnomeLoader->getData(handle);
@@ -199,47 +225,73 @@ void run( GLFWwindow * window )
             });
    
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));
-
-/*
+	/*
+	// Create lights
 	for (int i = -100; i < 100; i++)
 	{
-		for (int j = -10; j < 10; j++)
-		{
-			Core::Entity e2 = Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent>
+		Core::Entity light = Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent>
 				(Core::GraphicsComponent(), Core::WorldPositionComponent(), Core::RotationComponent(), Core::ScaleComponent());
 	
-			Core::GraphicsComponent* gc = WGETC<Core::GraphicsComponent>(e2);
+			Core::GraphicsComponent* gc = WGETC<Core::GraphicsComponent>(light);
 			
-			GFX::SetBitmaskValue(gc->bitmask, GFX::BT_MESH_ID, meshID);
+			GFX::SetBitmaskValue(gc->bitmask, GFX::BT_OBJECT_TYPE, GFX::BTLT_POINT);
 			
 	
-			Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(e2);
-			wpc->position[0] = (float)(i * 10);
-			wpc->position[1] = (float)(j * 10);
+			Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(light);
+			wpc->position[0] = (float)(i * 2);
+			wpc->position[1] = (float)(i);
 	
-			Core::ScaleComponent* sc = WGETC<Core::ScaleComponent>(e2);
-			sc->scale = .1f;
+			Core::ScaleComponent* sc = WGETC<Core::ScaleComponent>(light);
+			sc->scale = 1.0f;
 	
-			Core::RotationComponent* rc = WGETC<Core::RotationComponent>(e2);
+			Core::RotationComponent* rc = WGETC<Core::RotationComponent>(light);
 		
 			//rc->rotation[0] = sin(3.14f / 2.0f);
 			//rc->rotation[1] = sin(3.14f / 2.0f);
 			rc->rotation[2] = sin(3.14f);
 			rc->rotation[3] = cos(3.14f / 2.0f);
-		}
 	}
-   */
-	/*
-	CreateRioter(&rioters, meshID, -6.0f, -3.0f, 0.0f);
-	CreateRioter(&rioters, meshID, 0.0f, -3.0f, 0.0f);
-	CreateRioter(&rioters, meshID, 6.0f, -3.0f, 0.0f);
 	*/
+	
+
+	//CreateRioter(&rioters, meshID, -6.0f, -3.0f, 0.0f);
+	//CreateRioter(&rioters, meshID, 0.0f, -3.0f, 0.0f);
+	//CreateRioter(&rioters, meshID, 6.0f, -3.0f, 0.0f);
+	//for( int i = -100; i < 100; i++ )
+	for( int i = -100; i < 100; i++ )
+		CreateRioter(&rioters, meshID, i * 16.0f, 1.0f, 0.0f);
+
+	//CreateRioter(&rioters, meshID, 16.0f, 0.0f, 0.0f);
+	//CreateRioter(&rioters, meshID, -16.0f, 0.0f, 0.0f);
+
+	/*
+	rioters.push_back(Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, 
+		Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent, Core::UnitTypeComponent,
+		Core::MovementComponent, Core::AttributeRioterComponent, Core::BoundingVolumeComponent>
+		(Core::GraphicsComponent(), 
+		 Core::WorldPositionComponent(-16.0f, 0.0f, 0.0f),
+		 Core::RotationComponent(),
+		 Core::ScaleComponent(0.5f),
+		 Core::UnitTypeComponent(),
+		 //Core::MovementComponent(0.0f, 0.0f, 1.0f, 2.0f, 6.0f),
+		 Core::MovementComponent( 1.0f, 0.0f, 0.0f, 0.0f, 5.0f),
+		 Core::AttributeRioterComponent(),
+		 Core::BoundingVolumeComponent( Core::BoundingSphere( 3.0f, 0.0f, 0.0f, 0.0f ), Core::BoundingVolumeCollisionModel::StaticResolution ) ));
+	*/
+
 	std::cout << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " ";
 
 	//inputline.resize(1);
 
+	long long lastFrameTime = Core::Timer().GetTotal();
+	long long thisFrame = Core::Timer().GetTotal();
 	while (!glfwWindowShouldClose(window))
 	{
+		// calc delta time
+		thisFrame = Core::Timer().GetTotal();
+		double delta = (thisFrame - lastFrameTime) / 1000.0;
+		lastFrameTime = thisFrame;
+
 		Core::GetInput().UpdateInput();
 		
 		Core::Console().Update();
@@ -259,8 +311,7 @@ void run( GLFWwindow * window )
 
         Core::world.m_contentManager.CallFinishers();
 
-        //TODO: Actual delta value from time.
-        Core::world.m_systemHandler.Update( 0.1f );
+		Core::world.m_systemHandler.Update( delta );
 
 		GFX::Debug::DisplayFBO(Core::world.m_config.GetInt( "showFramebuffers", -1 ));
 		Core::GetInput().ResetInput();

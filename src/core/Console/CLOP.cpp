@@ -34,6 +34,7 @@ namespace clop
 	void Arg::operator=( CLOPSTR s ){ set( s ); }
 	void Arg::operator=( int i ){ set( i ); }
 	void Arg::operator=( double d ){ set( d ); }
+
 	Arg::operator int() const
 	{
 		int rv = 0;

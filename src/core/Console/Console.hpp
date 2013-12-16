@@ -6,6 +6,7 @@
 #include <fstream>
 
 #include <utility/Colors.hpp>
+#include <gfx/FontData.hpp>
 
 namespace Core
 {
@@ -24,6 +25,13 @@ namespace Core
 			Color color;
 		};
 	public:
+
+        /*!
+        Init function used to setting the console's font
+        \param font A pointer to a GFX::FontData struct loaded by the ContentManager.
+        */
+        void Init(GFX::FontData* font);
+
 		/*!
 		Sets the string at the console input line
 		\param inputLine Value to set the input line
@@ -92,8 +100,9 @@ namespace Core
 
 	private:
 
-
 		bool m_visible;
+
+        GFX::FontData* m_font;
 
 		// Current position in the history list
 		int m_historyIndex;

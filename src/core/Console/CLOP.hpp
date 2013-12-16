@@ -36,7 +36,6 @@ namespace clop
 		operator int() const;
 		operator double() const;
 		operator CLOPSTR() const;
-
 	private:
 		void set( CLOPSTR s );
 		void set( int i );
