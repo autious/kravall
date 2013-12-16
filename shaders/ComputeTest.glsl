@@ -1,11 +1,21 @@
 #version 430 core
 
+//struct PointLight
+//{
+//	vec3 position;
+//	float radius;
+//	vec3 color;
+//	float intensity;
+//};
 struct PointLight
 {
 	vec3 position;
-	float radius;
+	float radius_length;
 	vec3 color;
 	float intensity;
+	vec3 pad;
+	float spot_angle;
+	vec4 orientation;
 };
 
 layout (binding = 0, rgba32f) uniform writeonly image2D outTexture;
@@ -20,6 +30,7 @@ layout (std430, binding = 5) buffer BufferObject
 };
 
 uniform mat4 inv_proj_view_mat;
+uniform uint numActiveLights;
 
 layout (local_size_x = 16, local_size_y = 16) in;
 
@@ -35,10 +46,10 @@ vec4 CalculateLighting( PointLight p, vec3 wPos, vec3 wNormal, vec4 wSpec, vec4 
 {
 	vec3 direction = p.position - wPos;
 
-	if(length(direction) > p.radius)
+	if(length(direction) > p.radius_length)
 		return vec4(0.0f, 0.0f, 0.0f, 0.0f);
 
-	float attenuation = 1.0f - length(direction) / (p.radius);
+	float attenuation = 1.0f - length(direction) / (p.radius_length);
 	direction = normalize(direction);
 	float diffuseFactor = max(0.0f, dot(direction, wNormal)) * attenuation;
 	return vec4(p.color.xyz, 0.0f) * diffuseFactor * p.intensity;
@@ -63,7 +74,7 @@ void main()
 
 		//point lights
 		//#pragma optionNV(unroll all)
-		for(int i = 0; i < 10; i++)
+		for(int i = 0; i < numActiveLights; i++)
 		{
 			color += CalculateLighting(pointLights[i], wPos.xyz, 2*normalColor.xyz-1.0f, specular, glow) * diffuseColor;
 		}
