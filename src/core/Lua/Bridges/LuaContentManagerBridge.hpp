@@ -19,19 +19,34 @@ namespace Core
 {
     typedef unsigned int ContentLoaderBridgeType;
 
+    /*!
+        Simple middle class to LuaContentManagerTemplate,
+        holds the OpenLibs function for LuaState.
+    */
     class LuaContentManagerBridge
     {
         public:
             static void OpenLibs( lua_State * L );   
     };
 
+    /*!
+        ContentManager lua bridge loader gluer.
+        This class ties all the different instances of loader wrappers to 
+        the lua environment. Each created instance has one Load function one Free and a 
+        GetLoaderLuaName that defines the variable under core.loaders that matches the
+        loader.
+    */
     template<typename... ContentLoadBinders>
     class LuaContentManagerBridgeTemplate
     {
     public:
-
         static const int CONTENT_LOAD_BINDER_COUNT = sizeof...(ContentLoadBinders);
     public:
+
+        /*!
+            Lua environment load function, this function will in turn call the specific bindings
+            based on loader index value given
+        */
         static int Load( lua_State * L )
         {
             if( lua_isuserdata( L, 1 ) && lua_isstring( L, 2 ) && lua_isfunction( L, 3 ) && lua_isboolean( L, 4 ) )
@@ -54,6 +69,10 @@ namespace Core
             }
         }
 
+        /*!
+            Lua environment free call, will in turn call the specific loader type free function
+            to free a given asset name 
+        */
         static int Free( lua_State * L )
         {
             if( lua_isuserdata( L, 1 ) && lua_isstring( L, 2 ) )
@@ -72,6 +91,10 @@ namespace Core
             }
         }
 
+        /*! 
+            Lua environment __tostring function for the content loader type variables
+            returns a simple integer value describing the index.
+        */
         static int LoaderToString( lua_State *L )
         {
             ContentLoaderBridgeType clbt 
