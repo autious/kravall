@@ -26,6 +26,10 @@ function showSys()
     end
 end
 
+-- Toggles which fbo to render
+-- Fullscreen lit scene (final mode) : -1
+-- Fullscreen lit scene + miniature render targets: 0
+-- Fullscreen rendertarget n : (1-4)
 function showFBO(which)
     core.config.showFramebuffers = which
 end

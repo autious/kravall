@@ -172,6 +172,7 @@ void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, float posX,
 
 	Core::GraphicsComponent* gc = WGETC <Core::GraphicsComponent>(rioterList->at(index));
 	GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::MESH_ID, meshID);
+	GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::TYPE, GFX::OBJECT_TYPES::OPAQUE_GEOMETRY);
 }
 
 void SystemTimeRender()
@@ -206,7 +207,7 @@ void run( GLFWwindow * window )
 		Core::world.m_config.GetDouble( "initCameraNearClipDistance", 1.0f ), 
 		Core::world.m_config.GetDouble( "initCameraFarClipDistance", 1000.0f ) );
 	Core::gameCamera->CalculateProjectionMatrix(initScreenWidth, initScreenHeight);
-	Core::gameCamera->SetPosition(glm::vec3(0.0f, 0.0f, 200.0f));
+	Core::gameCamera->SetPosition(glm::vec3(0.0f, 100.0f, 200.0f));
 	
     Core::ContentManager CM;
 
