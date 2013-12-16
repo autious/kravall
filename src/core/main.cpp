@@ -151,8 +151,9 @@ void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, float posX,
 
 void SystemTimeRender()
 {
-	GFX::Debug::DisplaySystemInfo(Core::world.m_config.GetBool( "showSystems", false ));
-    if( Core::world.m_config.GetBool( "showSystems", false ) )
+    bool showSystems = Core::world.m_config.GetBool( "showSystems", false ) ;
+	GFX::Debug::DisplaySystemInfo( showSystems );
+    if( showSystems )
     {
         std::vector<std::pair<const char *,std::chrono::microseconds>> times = Core::world.m_systemHandler.GetFrameTime();
 
@@ -254,9 +255,11 @@ void run( GLFWwindow * window )
 
 	    //TODO: Timing hook
 		GFX::Render();
-
-        Core::world.m_systemHandler.Update( 0.1f );
         SystemTimeRender();
+
+        //TODO: Actual delta value from time.
+        Core::world.m_systemHandler.Update( 0.1f );
+
 		GFX::Debug::DisplayFBO(Core::world.m_config.GetInt( "showFramebuffers", -1 ));
 		Core::GetInput().ResetInput();
 		glfwSwapBuffers(window);
