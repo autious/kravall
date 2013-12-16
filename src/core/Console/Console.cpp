@@ -27,8 +27,8 @@ namespace Core
 		if (args.size() == 2)
 		{
 			std::string cmd = "lua showFBO(";
-			cmd += args[1];
-			cmd += ")";
+			cmd += std::string(args[1]);
+			cmd += std::string(")");
 			clop::Command(cmd);
 		}
 		else

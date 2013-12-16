@@ -4,6 +4,8 @@
 namespace Core
 {
 
+	Camera* gameCamera;
+
 	Camera::Camera(const float& fov, const float& nearZ, const float& farZ)
 	{
 		m_fov = fov;

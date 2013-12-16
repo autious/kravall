@@ -7,6 +7,9 @@
 void Core::PickingSystem::Update( float delta )
 {
 
+	
+
+
 	/*
     for( std::vector<Entity>::iterator it = m_entities.begin();
             it != m_entities.end();

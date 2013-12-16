@@ -9,6 +9,7 @@
 #include <lauxlib.h>
 
 #include <Lua/Bridges/LuaLoggerPrint.hpp>
+#include <Lua/Bridges/LuaEntityBridge.hpp>
 
 Core::LuaState::LuaState()
 {
@@ -34,7 +35,11 @@ Core::LuaState::LuaState()
     lua_setfield( m_state, -2, "path" );
     lua_pop(m_state, 1); //Pop the package table
 
+    lua_newtable( m_state );
+    lua_setglobal( m_state, "core" );
+
     LuaLoggerPrint::OpenLibs( m_state );
+    LuaEntityBridge::OpenLibs( m_state );
 }
 
 Core::LuaState::~LuaState()
