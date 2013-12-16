@@ -50,9 +50,6 @@ void Core::CollisionSystem::Update( float delta )
 					// Collision detected!
 					// move myself away from collision. If the other entity is static, move the entire overlap away from the entity,
 					// otherwise move half the distance as to achieve mutual collision resolution
-					float modifier = 0.5f;
-					if( bvcOther->collisionModel == Core::BoundingVolumeCollisionModel::StaticResolution )
-						modifier = 1.0f;
 
 					float delta = ((otherSphere->radius + mySphere->radius) - std::sqrt( sqareDistance ));
 					glm::vec3 collisionNormal = glm::normalize(*myPosition - *otherPosition);
@@ -64,12 +61,12 @@ void Core::CollisionSystem::Update( float delta )
 					case Core::BoundingVolumeCollisionModel::DynamicResolution:
 						
 						// Head of list will always bow for tail of list in perfect frontal collision.
-						*myPosition		+= collisionNormal * ( delta * 0.66666666f);
+						//*myPosition		+= collisionNormal * ( delta * 0.66666666f);
 
 						// Head and tail is equal when in perfect frontal collision. Would theoretically results in 
 						// less flow but potentially better crowd dynamics when in a closed environment. 
-						//*myPosition		+= collisionNormal * ( delta * 0.5f);
-						//*otherPosition	-= collisionNormal * ( delta * 0.5f);
+						*myPosition		+= collisionNormal * ( delta * 0.5f);
+						*otherPosition	-= collisionNormal * ( delta * 0.5f);
 
 						break;
 
@@ -80,9 +77,6 @@ void Core::CollisionSystem::Update( float delta )
 					default:
 						break;
 					}
-
-					int o = 0;
-
 				}
 			}
 		}

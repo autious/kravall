@@ -163,10 +163,10 @@ void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, float posX,
 		(Core::GraphicsComponent(), 
 		 Core::WorldPositionComponent(posX, posY, posZ),
 		 Core::RotationComponent(),
-		 Core::ScaleComponent(0.5f),
+		 Core::ScaleComponent(0.1f),
 		 Core::UnitTypeComponent(),
 		 //Core::MovementComponent(0.0f, 0.0f, 1.0f, 2.0f, 6.0f),
-		 Core::MovementComponent( -direction.x, 0, -direction.z, 1.1f, 5.0f),
+		 Core::MovementComponent( -direction.x, 0, -direction.z, 21.1f, 5.0f),
 		 Core::AttributeRioterComponent(),
 		 Core::BoundingVolumeComponent( Core::BoundingSphere( 3.0f, 0.0f, 0.0f, 0.0f ), aa ) ));
 
@@ -257,8 +257,8 @@ void run( GLFWwindow * window )
 	//CreateRioter(&rioters, meshID, 0.0f, -3.0f, 0.0f);
 	//CreateRioter(&rioters, meshID, 6.0f, -3.0f, 0.0f);
 	//for( int i = -100; i < 100; i++ )
-	for( int i = -200; i < 200; i++ )
-		CreateRioter(&rioters, meshID, i * 6.0f, 1.0f, 0.0f);
+	for( int i = -100; i < 100; i++ )
+		CreateRioter(&rioters, meshID, i * 16.0f, 1.0f, 0.0f);
 
 	//CreateRioter(&rioters, meshID, 16.0f, 0.0f, 0.0f);
 	//CreateRioter(&rioters, meshID, -16.0f, 0.0f, 0.0f);
@@ -281,8 +281,15 @@ void run( GLFWwindow * window )
 
 	//inputline.resize(1);
 
+	long long lastFrameTime = Core::Timer().GetTotal();
+	long long thisFrame = Core::Timer().GetTotal();
 	while (!glfwWindowShouldClose(window))
 	{
+		// calc delta time
+		thisFrame = Core::Timer().GetTotal();
+		double delta = (thisFrame - lastFrameTime) / 1000.0;
+		lastFrameTime = thisFrame;
+
 		Core::GetInput().UpdateInput();
 		
 		Core::Console().Update();
@@ -300,7 +307,8 @@ void run( GLFWwindow * window )
 	    //TODO: Timing hook
 		GFX::Render();
 
-        Core::world.m_systemHandler.Update( 0.1f );
+        //Core::world.m_systemHandler.Update( 0.1f );
+		Core::world.m_systemHandler.Update( delta );
         SystemTimeRender();
 		GFX::Debug::DisplayFBO(Core::world.m_config.GetInt( "showFramebuffers", -1 ));
 		Core::GetInput().ResetInput();
