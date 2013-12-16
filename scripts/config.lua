@@ -10,7 +10,8 @@ showSystems = false,
 showFramebuffers = -1,
 initCameraFieldOfView = 45.0,
 initCameraNearClipDistance = 1.0,
-initCameraFarClipDistance = 1000.0
+initCameraFarClipDistance = 1000.0,
+consoleFont = "assets/Fonts/ConsoleFont.font"
 }
 
 function printAlexStatus()
@@ -34,4 +35,9 @@ function help()
     print( "showSys()" )
     print( "showFBO(which)" )
     print( "printAlexStatus()" )
+end
+
+-- Loads a scenario from the scenario folder and returns the assembly.
+function doscenario( name )
+    return dofile( "scripts/scenarios/" .. name .. ".lua" ) 
 end

@@ -121,6 +121,11 @@ namespace GFX
 
 		void SetShaderToMaterial(const unsigned long long int& materialID, const unsigned int& shaderID);
 
+        /*!
+        Sets the font used for rendering SubSystem statistics.
+        \param font The font used for rendering.
+        */
+        inline void SetStatisticsFont(GFX::FontData* font) { m_font = font; }
 		inline void ShowStatistics(bool enabled){ m_showStatistics = enabled; }
 		inline void ShowFBO(int which){ m_showFBO = which; }
 	private:
@@ -176,6 +181,7 @@ namespace GFX
 		unsigned long long m_lastUpdateTime;
 		unsigned long long m_curTime;
 		bool m_showStatistics;
+        GFX::FontData* m_font;
 		
 		int m_showFBO;
 
