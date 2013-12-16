@@ -224,7 +224,6 @@ void run( GLFWwindow * window )
             });
    
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));
-
 	/*
 	// Create lights
 	for (int i = -100; i < 100; i++)
