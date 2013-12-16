@@ -62,6 +62,7 @@ solution "RiotGame"
 
         if os.is( "linux" ) then
             includedirs { "/usr/include/lua5.1" }
+            includedirs { "/usr/include/freetype2" }
         end
 
         --Idiotic non-matching naming convenstions.
