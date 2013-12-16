@@ -142,5 +142,6 @@ namespace GFX
 
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
+
 	}
 }
