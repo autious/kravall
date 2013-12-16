@@ -71,7 +71,7 @@ solution "RiotGame"
             links { "lua51" }
         end
 
-        links { "glfw3", "gfx", "logger" }
+        links { "glfw3", "gfx", "logger", "freetype" }
         configuration{ "*Test" }
             links { "gtest" }
         configuration{ "windows" }
