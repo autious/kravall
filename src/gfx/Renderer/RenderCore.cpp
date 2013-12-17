@@ -193,19 +193,19 @@ namespace GFX
 			}
 		}
 
-		//* Build GBuffers for all geometry										\
-		//* When a call to light source is next in the render jobs list			|
+		// Build GBuffers for all geometry										\
+		// When a call to light source is next in the render jobs list			|
 		//	- Save index of last geometry/first light in the render jobs list	 > DeferredPainter
 		//	- Break the loop													|
 		//																		/
-		//* For each light with shadow in the render jobs list, starting at     \
+		// For each light with shadow in the render jobs list, starting at     \
 		//	the index obtained from the previous step.                        |
 		//	- Assign and build depth buffer atlas for each light with shadow   > LightBuilder
 		//	- Break when first light without shadow is encountered            |
 		//																	  /
 		//
-		//* Apply lighting for lights with shadow
-		//* Apply lighting for lights without shadow
+		// Apply lighting for lights with shadow
+		// Apply lighting for lights without shadow
 
 		if (updateStats && m_showStatistics)
 		{

@@ -166,7 +166,7 @@ namespace GFX
 		DLL_API void RemoveTextureFromMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID);
 	
         /*!
-        Gets the shader id of the shader specified by the null terminated string. If no shader is found, the shaderId is set to -1.
+        Gets the shader id of the shader specified by the null terminated string.
         \param shaderId Reference to set shader id.
         \param shaderName The identifying string of the shader.
         */
