@@ -25,8 +25,14 @@ namespace Core
 
 
 
-	bool LoadNavigationMesh()
+	bool LoadNavigationMesh( const char* path )
 	{
+
+
+
+
+
+
 
 
 
@@ -35,9 +41,6 @@ namespace Core
 
 		return false;
 	}
-
-
-
 }
 
 

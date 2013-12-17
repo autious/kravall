@@ -4,10 +4,18 @@
 
 #include <Lua/Bridges/ComponentBind/WorldPositionComponentBinding.hpp>
 #include <Lua/Bridges/ComponentBind/GraphicsComponentBinding.hpp>
+#include <Lua/Bridges/ComponentBind/RotationComponentBinding.hpp>
+#include <Lua/Bridges/ComponentBind/ScaleComponentBinding.hpp>
+
+#include <cassert>
 
 namespace Core
 {
-    typedef LuaEntityBridgeTemplate<WorldPositionComponentBinding,GraphicsComponentBinding> EntityBridge;
+    typedef LuaEntityBridgeTemplate
+    <WorldPositionComponentBinding,
+     GraphicsComponentBinding,
+     RotationComponentBinding,
+     ScaleComponentBinding> EntityBridge;
 }
 
 /*************/
@@ -104,6 +112,25 @@ void Core::LuaEntityBridge::OpenLibs( lua_State * L )
         lua_newtable( L ); 
 
         std::array<std::pair<const char*, Core::ComponentType>,EntityBridge::COMPONENT_HANDLER_COUNT> names = entityBridge.GetBinderNameTypes();
+
+        //Sanity check, check for duplicate component types or names.
+        //It's an easy mistake to make with all the copy pasting 
+        //going on a daily basis.
+        for( int i = 0; i < EntityBridge::COMPONENT_HANDLER_COUNT-1; i++  )
+        {
+            for( int k = i+1; k < EntityBridge::COMPONENT_HANDLER_COUNT; k++  )
+            {
+                // If you failed on this assert then
+                // you've gone done fucked up with the names given to component, 
+                // two of them share the same one! 
+                assert( strcmp( names[i].first, names[k].first ) != 0 );
+                // If you failed on this assert then
+                // You've gone done fucked up the id you gave to a componentbinder, 
+                // two of them share the same, which shouldn't be possible. 
+                assert( names[i].second == names[i].second ); 
+            }
+             
+        }
 
         for( int i = 0; i < EntityBridge::COMPONENT_HANDLER_COUNT; i++ )
         {

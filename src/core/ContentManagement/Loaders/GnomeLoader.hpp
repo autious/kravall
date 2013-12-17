@@ -27,86 +27,98 @@ namespace Core
     private:
         std::vector<Core::ModelData*> m_modelData;
 
-        struct Header
-        {
-            int numberOfMaterials;
-            int numberOfVertices;
-            int numberOfAnimations;
-            int numberOfBones;
-            int numberOfTriangles;
-        };
+		struct Header
+		{
+			int numberOfVertices;
+			int numberOfTriangles;
+			int numberOfIndices;
+			int numberOfBones;
+			int numberOfAnimations;
+		};
 
-        struct Bone
-        {
-            int parentID;
-            //std::vector<int> childIDs;
-            std::string Name;
-            int id;
-            float offsetMatrix[4][4];
-        };
+		struct Bone
+		{
+			int parentID;
+			std::string Name;
+			int id;
+			float offsetMatrix[4][4];
+		};
 
-        struct Keyframe
-        {
-            float rotation[4];
-            float position[3];
-            float time;
-            float scale[3];
-        };
+		struct Keyframe
+		{
+			float time;
+			float position[3];
+			float scale[3];
+			float rotation[4];
+		};
 
-        struct Animation
-        {
-            int fps;
-            std::string name;
-            std::vector<std::vector<Keyframe>> keyframes; //per joint
-            std::map<std::string,std::vector<Keyframe>> namedKeyframes;
-        };
+		struct BoneForAnimation
+		{
+			int numKeys;
+			Keyframe* Keyframes;
+		};
 
-        struct Vertex
-        {
-            //Materials
-            int materialId;
+		struct Animation
+		{
+			int fps;
+			int id;
+			BoneForAnimation* boneAnim;
+		};
 
-            //Ordinary stuff
-            float position[3];
-            float normal[3];
-            float uv[2];
 
-            //Normalmapping
-            float tangent[3];
-            float binormal[3];
+		Animation* animations;
 
-            //Animation
-            float boneWeight[4];
-            int boneIndex[4];
-        };
+		struct VertexBoneAnimated
+		{
+			//Ordinary stuff
+			float position[3];
+			float normal[3];
 
-        struct Material
-        {
-            //Identification
-            std::string name;
-            int id;
+			//Normalmapping
+			float tangent[3];
+			float uv[2];
 
-            //Numbers
-            float ambient[3];
-            float diffuse[3];
-            float specularity[3];
-            float specularityPower;
-            float reflectivity;
-            float transparency;
-            bool alphaClip;
+			//Animation
+			float boneWeight[4];
+			int boneIndex[4];
+		};
 
-            //Textures
-            std::string diffuseTexture;
-            std::string normalMap;
-            std::string alphaMap;
-        };
+		struct Vertex
+		{
+			//Ordinary stuff
+			float position[3];
+			float normal[3];
 
-        struct Mesh
-        {
-            int numberOfVertices;
-            Vertex* vertices;
-            Material* materials;
-        };
+			//Normalmapping
+			float tangent[3];
+			float uv[2];
+		};
+
+		struct Mesh
+		{
+			int* indices;
+			Vertex* vertices;
+			VertexBoneAnimated* animatedVertices;
+		};
+
+		struct MorphKey
+		{
+			float keyTime;
+			Vertex* vertices;
+		};
+
+		struct MorphAnimation
+		{
+			int id;
+			int numberOfKeys;
+			MorphKey* keys;
+		};
+
+		//Animation* animations;
+		Bone* bones;
+		Header header;
+		Mesh mesh;
+		MorphAnimation* morphAnimation;
 
         struct Gnome
         {
@@ -116,7 +128,7 @@ namespace Core
             int* indices;
             Core::GnomeLoader::Bone* bones;
             Core::GnomeLoader::Animation* animations;
-            Core::GnomeLoader::Material* materials;
+            //Core::GnomeLoader::Material* materials;
         };
 
         Core::GnomeLoader::Gnome* LoadGnomeFromFile(const char* fileName);

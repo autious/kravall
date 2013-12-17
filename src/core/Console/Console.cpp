@@ -58,6 +58,7 @@ namespace Core
 		Core::world.m_luaState.DoBlock(src.c_str());
 	}
 
+    const char* DebugConsole::HISTORY_FILE_NAME = "console_history_file.dbt";
 
     void DebugConsole::Init(GFX::FontData* font)
     {
@@ -86,6 +87,21 @@ namespace Core
 		
 		Line line = {"Welcome to the console, have a nice day.", Colors::Gold};
 		m_console.push_back(line);
+
+        //Load console history
+        std::fstream hf( HISTORY_FILE_NAME, std::fstream::in );
+
+        if( hf.is_open() )
+        {
+            std::string line;
+            while( getline( hf, line ) )
+            {
+                m_history.push_back( line ); 
+            }
+            hf.close();
+        }
+
+		m_historyIndex = m_history.size();
 	}
 	DebugConsole::~DebugConsole()
 	{
@@ -148,6 +164,22 @@ namespace Core
 			if (add)
 			{
 				m_history.push_back(m_inputLine);
+                if( m_history.size() > HISTORY_LIMIT ) 
+                {
+                    m_history.erase( m_history.begin() );
+                }
+            
+                std::fstream hf( HISTORY_FILE_NAME, std::fstream::out | std::fstream::trunc );
+        
+                for( std::vector<std::string>::iterator it = m_history.begin();
+                        it != m_history.end();
+                        it++ )
+                {
+                    hf << *it << std::endl;
+                }
+
+                hf.close();
+                
 				m_historyIndex = m_history.size();
 			}
 
@@ -607,10 +639,10 @@ namespace Core
 			m_cursorOffset = m_inputLine.length();
 
 		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_PAGE_UP) || Core::GetInput().GetScrollY() > 0)
-			Scroll(1);
+			Scroll(10);
 
 		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_PAGE_DOWN) || Core::GetInput().GetScrollY() < 0)
-			Scroll(-1);
+			Scroll(-10);
 
 		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_ENTER) || Core::GetInput().IsKeyPressedOnce(GLFW_KEY_KP_ENTER))
 			Add();
