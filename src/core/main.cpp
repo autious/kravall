@@ -134,14 +134,14 @@ void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, float posX,
 
 	rioterList->push_back(Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, 
 		Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent, Core::UnitTypeComponent,
-		Core::MovementComponent, Core::AttributeRioterComponent>
+		Core::MovementComponent, Core::AttributeComponent>
 		(Core::GraphicsComponent(), 
 		 Core::WorldPositionComponent(posX, posY, posZ),
 		 Core::RotationComponent(),
 		 Core::ScaleComponent(0.5f),
-		 Core::UnitTypeComponent(),
-		 Core::MovementComponent(0.0f, 0.0f, 1.0f, 2.0f, 6.0f),
-		 Core::AttributeRioterComponent()));
+		 Core::UnitTypeComponent(Core::UnitType::Rioter),
+		 Core::MovementComponent(0.0f, 0.0f, 0.0f, 1.0f, 6.0f),
+		 Core::AttributeComponent()));
 
 	Core::GraphicsComponent* gc = WGETC <Core::GraphicsComponent>(rioterList->at(index));
 	GFX::SetBitmaskValue(gc->bitmask, GFX::BT_MESH_ID, meshID);
@@ -178,7 +178,7 @@ void run( GLFWwindow * window )
 	Core::Camera* gCamera;
 	gCamera = new Core::Camera(45.0f, 1.0f, 1000.0f);
 	gCamera->CalculateProjectionMatrix(initScreenWidth, initScreenHeight);
-	gCamera->SetPosition(glm::vec3(0.0f, 0.0f, 200.0f));
+	gCamera->SetPosition(glm::vec3(0.0f, 60.0f, 100.0f));
 
 	GFX::SetProjectionMatrix(gCamera->GetProjectionMatrix());
 
@@ -226,9 +226,17 @@ void run( GLFWwindow * window )
 		}
 	}*/
 
-	CreateRioter(&rioters, meshID, -6.0f, -3.0f, 0.0f);
+	for (float i = -15.0f; i < 15.0f; ++i)
+	{
+		for (float j = -15.0f; j < 15.0f; ++j)
+		{
+			CreateRioter(&rioters, meshID, i * 10.0f, -3.0f, j * 10.0f);
+		}
+	}
+	
+	/*CreateRioter(&rioters, meshID, -12.0f, -3.0f, 0.0f);
 	CreateRioter(&rioters, meshID, 0.0f, -3.0f, 0.0f);
-	CreateRioter(&rioters, meshID, 6.0f, -3.0f, 0.0f);
+	CreateRioter(&rioters, meshID, 12.0f, -3.0f, 0.0f);*/
 
 	std::cout << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " ";
 

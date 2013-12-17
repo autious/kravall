@@ -7,10 +7,10 @@ namespace Core
 		Enum specifying the stance of a police units. 
 		There are three different stances: Passive, Defensive and Aggressive
 	*/
-	enum PoliceStance
+	/*enum PoliceStance
 	{
 		Passive, Defensive, Aggressive
-	};
+	};*/
 
 	/*!
 		Component holding all the police's attributes: Health, Stamina, Defense, Morale, Mobiliity and Stance.
@@ -30,7 +30,7 @@ namespace Core
 		float morale;
 
 		/*! The police's mobility represented by a float with range [0.0f, 100.0f]. */
-		float mobility; // 0 - 100
+		float mobility;
 
 		/*! The police's stance represented by the PoliceStance enum. */
 		PoliceStance stance;

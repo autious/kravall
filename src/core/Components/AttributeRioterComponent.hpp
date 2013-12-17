@@ -8,10 +8,10 @@ namespace Core
 		A rioter's alignment defines its behaviour and reactions in different situations. There are two alignments: 
 		Anarchist and Pacifist.
 	*/
-	enum RioterAlignment
+	/*enum RioterAlignment
 	{
 		Anarchist, Pacifist
-	};
+	};*/
 
 	/*!
 		Component holding all the rioters's attributes: Alignment, Health, Stamina, Rage, Pressure and Morale.

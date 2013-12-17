@@ -6,7 +6,7 @@ vsync = 0,
 windowResizable = true,
 initScreenWidth = 1280,
 initScreenHeight = 720,
-showSystems = false,
+showSystems = true,
 showFramebuffers = 1
 }
 
