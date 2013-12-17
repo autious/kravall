@@ -90,6 +90,7 @@ namespace GFX
 			DebugLine line;
 			line.color = box.color;
 			line.thickness = 1.0f;
+			line.useDepth = box.useDepth;
 
 			glm::vec3 p = box.position;
 			glm::vec3 d = box.dimensions / 2.0f;
@@ -156,6 +157,7 @@ namespace GFX
 
 		// Create 3 circles in 3d-space
 		DebugLine l;
+		l.useDepth = sphere.useDepth;
 		l.color = sphere.color;
 		l.thickness = 1.0f;
 		// xy-plane

@@ -91,7 +91,7 @@ namespace GFX
 
 
 		std::vector<RenderJobManager::RenderJob> renderJobs = m_renderJobManager->GetJobs();
-		
+
 		unsigned int objType = UINT_MAX;
 		unsigned int viewport = UINT_MAX;
 		unsigned int layer = UINT_MAX;
@@ -108,7 +108,7 @@ namespace GFX
 		bool ok = true;
 		for (i = renderIndex; i < renderJobs.size(); i++)
 		{
-			
+
 			bitmask = renderJobs[i].bitmask;
 
 			objType = GetBitmaskValue(bitmask, BITMASK::TYPE);
@@ -145,12 +145,12 @@ namespace GFX
 		}
 		if (!ok)
 		{
-			LOG_GFXSPECIAL << "Too many lights. Light draw calls: " << totalNumLights << " Maximum is: "<< m_maximumLights <<"\n";
-			LogSystem::Mute( LOG_GFXSPECIAL.GetPrefix() );
+			LOG_GFXSPECIAL << "Too many lights. Light draw calls: " << totalNumLights << " Maximum is: " << m_maximumLights << "\n";
+			LogSystem::Mute(LOG_GFXSPECIAL.GetPrefix());
 		}
 		else
 		{
-			LogSystem::Unmute( LOG_GFXSPECIAL.GetPrefix() );
+			LogSystem::Unmute(LOG_GFXSPECIAL.GetPrefix());
 		}
 		renderIndex = i;
 
@@ -180,6 +180,7 @@ namespace GFX
 
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
+		glDepthMask(GL_FALSE);
 
 		m_shaderManager->SetUniform(1.0f, alphaUniform);
 
@@ -192,6 +193,7 @@ namespace GFX
 
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
+		glDepthMask(GL_TRUE);
 
 		BasePainter::ClearFBO();
 

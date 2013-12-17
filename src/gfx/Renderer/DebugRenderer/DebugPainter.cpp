@@ -90,9 +90,20 @@ namespace GFX
 		m_uniformBufferManager->CreateBasicCameraUBO(m_shaderManager->GetShaderProgramID("DebugBox"));
 	}
 
-	void DebugPainter::Render(glm::mat4 viewMatrix, glm::mat4 projMatrix)
+	void DebugPainter::Render(FBOTexture* depthBuffer, FBOTexture* color, glm::mat4 viewMatrix, glm::mat4 projMatrix)
 	{
 		BasePainter::Render();
+
+		glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
+
+
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthBuffer->GetTextureHandle(), 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color->GetTextureHandle(), 0);
+
+		GLenum drawBuffers[] = { GL_NONE, GL_COLOR_ATTACHMENT0 };
+		glDrawBuffers(2, drawBuffers);
+
+		glClear(GL_COLOR_BUFFER_BIT);
 
 		if (DebugDrawing().ShouldRender())
 		{
@@ -109,7 +120,6 @@ namespace GFX
 
 			glBindVertexArray(m_dummyVAO);
 			glDisable(GL_PROGRAM_POINT_SIZE);
-
 			glEnable(GL_BLEND);
 			err = glGetError();
             
@@ -120,7 +130,7 @@ namespace GFX
 
 			// Draw 3D
 			//Disable depth for debug
-			glDisable(GL_DEPTH_TEST);
+			//glDisable(GL_DEPTH_TEST);
 
 			BasicCamera bc;
 			bc.viewMatrix = viewMatrix;
@@ -140,6 +150,12 @@ namespace GFX
 				m_shaderManager->SetUniform(1, dl.end, m_lineEndUniform);
 
 				glLineWidth(dl.thickness);
+
+				if (dl.useDepth)
+					glEnable(GL_DEPTH_TEST);
+				else
+					glDisable(GL_DEPTH_TEST); 
+
 				glDrawArrays(GL_POINTS, 0, 1);
 			}
 			glLineWidth(1.0f);
@@ -154,12 +170,18 @@ namespace GFX
 				m_shaderManager->SetUniform(1, b.color, m_boxColorUniform);
 				m_shaderManager->SetUniform(1, b.position, m_boxPosUniform);
 				m_shaderManager->SetUniform(1, b.dimensions, m_boxDimUniform);
+				
+				if (b.useDepth)
+					glEnable(GL_DEPTH_TEST);
+				else
+					glDisable(GL_DEPTH_TEST); 
 
 				glDrawArrays(GL_POINTS, 0, 1);
 			}
 			m_shaderManager->ResetProgram();
 
 			// Draw 2D
+			glDisable(GL_DEPTH_TEST); 
 			bc.viewMatrix = glm::mat4x4(1.0f);
 			bc.projMatrix = glm::mat4x4(1.0f);
 			m_uniformBufferManager->SetBasicCameraUBO(bc);
@@ -233,14 +255,31 @@ namespace GFX
 			glLineWidth(1.0f);
 			m_shaderManager->ResetProgram();
 		}
+		BasePainter::ClearFBO();
 
-		glDisable(GL_BLEND);
+		m_shaderManager->UseProgram("TQ");
+
+		glDisable(GL_DEPTH_TEST);
+		//glDisable(GL_BLEND);
+		glDepthMask(GL_FALSE);
+		
+		m_shaderManager->SetUniform(1.0f, m_shaderManager->GetUniformLocation("TQ", "alphaIN"));
+		TextureManager::BindTexture(color->GetTextureHandle(), m_shaderManager->GetUniformLocation("TQ", "textureIN"), 0, GL_TEXTURE_2D);
+
+		glBindVertexArray(m_dummyVAO);
+		glDrawArrays(GL_POINTS, 0, 1);
+
+		m_shaderManager->ResetProgram();
 
 		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+		glDepthMask(GL_TRUE);
 
-		ClearFBO();
+
+		TextureManager::UnbindTexture();
 
 		DebugDrawing().Clear();
+
 	}
 
 

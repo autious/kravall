@@ -243,18 +243,19 @@ namespace GFX
 		DebugDrawing().AddPoint(p);
 	}
 
-	void Debug::DrawLine(GFXVec3 p1, GFXVec3 p2, GFXColor color)
+	void Debug::DrawLine(GFXVec3 p1, GFXVec3 p2, GFXColor color, bool useDepth) // TODO: IMPLEMENT DEPTH
 	{
-		Debug::DrawLine(p1, p2, color, 1.0f);
+		Debug::DrawLine(p1, p2, color, 1.0f, useDepth);
 	}
 
-	void Debug::DrawLine(GFXVec3 p1, GFXVec3 p2, GFXColor color, float thickness)
+	void Debug::DrawLine(GFXVec3 p1, GFXVec3 p2, GFXColor color, float thickness, bool useDepth) // TODO: IMPLEMENT DEPTH
 	{
 		DebugLine l;
 		l.color = color;
 		l.start = p1;
 		l.end = p2;
 		l.thickness = thickness;
+		l.useDepth = useDepth;
 		DebugDrawing().AddLineWorld(l);
 	}
 
@@ -293,12 +294,13 @@ namespace GFX
 		DebugDrawing().AddRect(r, solid);
 	}
 
-	void Debug::DrawBox(GFXVec3 position, GFXVec3 dimensions, bool solid, GFXColor color)
+	void Debug::DrawBox(GFXVec3 position, GFXVec3 dimensions, bool solid, GFXColor color, bool useDepth) // TODO: IMPLEMENT DEPTH
 	{
 		DebugBox b;
 		b.color = color;
 		b.position = position;
 		b.dimensions = dimensions;
+		b.useDepth = useDepth;
 		DebugDrawing().AddBox(b, solid);
 	}
 	void Debug::DrawCircle(GFXVec2 position, float radius, unsigned int lineWidth, GFXColor color)
@@ -316,12 +318,13 @@ namespace GFX
 		DebugDrawing().AddCircle(c);
 	}
 
-	void Debug::DrawSphere(GFXVec3 position, float radius, GFXColor color)
+	void Debug::DrawSphere(GFXVec3 position, float radius, GFXColor color, bool useDepth) // TODO: IMPLEMENT DEPTH
 	{
 		DebugSphere s;
 		s.position = position;
 		s.radius = radius;
 		s.color = color;
+		s.useDepth = useDepth;
 		DebugDrawing().AddSphere(s);
 	}
 
