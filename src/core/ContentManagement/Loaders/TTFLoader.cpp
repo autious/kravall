@@ -89,12 +89,12 @@ namespace Core
 
         if(ReduceUserOfFace(data->fontFace) == 0)
         {
-            for(Core::FaceCacheVector::iterator it = m_faceCache.begin(); it != m_faceCache.end(); ++it)
+            for(Core::FaceCacheVector::iterator it = m_facesCache.begin(); it != m_facesCache.end(); ++it)
             {   
                 if(std::get<2>(*it) == data->fontFace)
                 {
                     FT_Done_Face(*data->fontFace);
-                    m_faceCache.erase(it);
+                    m_facesCache.erase(it);
                     break;
                 }
             }
