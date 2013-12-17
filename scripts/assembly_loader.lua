@@ -50,6 +50,13 @@ function ASM:loadAssembly( asmtable )
         if component.load ~= nil then
             for index,loader_pair in pairs( component.load ) do 
                 count = count + 1
+
+                local async_load = true
+
+                if type( loader_pair[3] ) == "boolean" then
+                    async_load = loader_pair[3]
+                end
+                
                 core.contentmanager.load( loader_pair[1], loader_pair[2], function( value )
                     component.data[index] = value
                     count = count - 1
@@ -59,7 +66,7 @@ function ASM:loadAssembly( asmtable )
                     if( count == 0 and passedload == true ) then
                         apply( asmtable )
                     end
-                end, false)
+                end, async_load)
                 assets[#assets+1] = loader_pair
             end
         end
