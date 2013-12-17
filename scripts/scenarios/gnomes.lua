@@ -1,5 +1,4 @@
 -- Loads 4221 gnomes onto the screen.
-package.loaded.assembly_loader = nil
 local ASML = require "assembly_loader" 
 
 local asm = ASML.loadPack( {} )
@@ -15,7 +14,7 @@ for i = -100, 100 do
             {
                 type = core.componentType.GraphicsComponent,
                 data = { mesh = 0 },
-                load = { mesh = { core.loaders.GnomeLoader, "assets/tomte.gnome" } }
+                load = { mesh = { core.loaders.GnomeLoader, "assets/cube.bgnome" } }
             },
             {
                 type = core.componentType.ScaleComponent,
