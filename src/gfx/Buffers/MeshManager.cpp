@@ -88,6 +88,7 @@ namespace GFX
 		mesh.id = static_cast<unsigned int>(m_idCounter);
 		m_idCounter++;
 		mesh.VAO = VAO;
+		mesh.IBO = IBO;
 		mesh.indexCount = sizeIndices;
 		m_meshes.push_back(mesh);
 
