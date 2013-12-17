@@ -22,9 +22,9 @@ namespace Core
 	class PickingSystem;
 	class AIDebugSystem;
 	class LightSystem;
-	class CollisionSystem;
+	class CollisionSystem2D;
 	
-    typedef SystemHandlerTemplate<RenderingSystem, LightSystem, MovementSystem, PickingSystem, AIDebugSystem, CollisionSystem> SystemHandler;
+    typedef SystemHandlerTemplate<RenderingSystem, LightSystem, MovementSystem, PickingSystem, AIDebugSystem, CollisionSystem2D> SystemHandler;
     typedef EntityHandlerTemplate<SystemHandler, WorldPositionComponent, RotationComponent, ScaleComponent, 
 		GraphicsComponent, LightComponent, MovementComponent, UnitTypeComponent, AttributeRioterComponent, AttributePoliceComponent,
 		BoundingVolumeComponent> EntityHandler;
@@ -36,5 +36,5 @@ namespace Core
 #include <Systems/PickingSystem.hpp>
 #include <Systems/AIDebugSystem.hpp>
 #include <Systems/LightSystem.hpp>
-#include <Systems/CollisionSystem.hpp>
+#include <Systems/CollisionSystem2D.hpp>
 #endif
