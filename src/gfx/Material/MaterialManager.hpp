@@ -22,7 +22,7 @@ namespace GFX
 
 		inline Material GetMaterial(const unsigned long long int& materialID) 
 		{ 
-			int index = FindMaterial(materialID);
+			unsigned int index = FindMaterial(materialID);
 
 			if (index != std::numeric_limits<unsigned int>::max())
 				return m_materials[index]; 
