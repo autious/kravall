@@ -302,7 +302,7 @@ void run( GLFWwindow * window )
 		Core::gameCamera->CalculateProjectionMatrix(GFX::GetScreenWidth(), GFX::GetScreenHeight());
 		GFX::SetProjectionMatrix(Core::gameCamera->GetProjectionMatrix());
 
-		TestRendering();
+		//TestRendering();
 
 	    //TODO: Timing hook
 		GFX::Render();
