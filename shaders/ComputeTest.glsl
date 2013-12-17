@@ -36,11 +36,12 @@ layout (std430, binding = 5) buffer BufferObject
 
 uniform mat4 view;
 uniform mat4 invProj;
+uniform mat4 proj;
 uniform mat4 inv_proj_view_mat;
 uniform uint numActiveLights;
 uniform vec2 framebufferDim;
 
-layout (local_size_x = 16, local_size_y = 16) in;
+layout (local_size_x = WORK_GROUP_SIZE, local_size_y = WORK_GROUP_SIZE) in;
 
 shared uint minDepth = 0xFFFFFFFF;
 shared uint maxDepth = 0;
@@ -127,67 +128,58 @@ void main()
 		float minDepthZ = float(minDepth / float(0xFFFFFFFF));
 		float maxDepthZ = float(maxDepth / float(0xFFFFFFFF));
 
-		vec4 frustumEqn[4];
-		uint pxm = WORK_GROUP_SIZE * gl_WorkGroupID.x;
-		uint pym = WORK_GROUP_SIZE * gl_WorkGroupID.y;
-		uint pxp = WORK_GROUP_SIZE * (gl_WorkGroupID.x + 1);
-		uint pyp = WORK_GROUP_SIZE * (gl_WorkGroupID.y + 1);
-				
-		uint uWindowWidthEvenlyDivisibleByTileRes = WORK_GROUP_SIZE * GetNumTilesX();
-        uint uWindowHeightEvenlyDivisibleByTileRes = WORK_GROUP_SIZE * GetNumTilesY();
-
-		vec4 frustum[4];
-		frustum[0] = ConvertProjToView( vec4( pxm / float(uWindowWidthEvenlyDivisibleByTileRes) * 2.0f - 1.0f, 
-			(uWindowHeightEvenlyDivisibleByTileRes - pym) / float(uWindowHeightEvenlyDivisibleByTileRes) * 2.0f - 1.0f, 1.0f, 1.0f) );
+				//total tiles = tileScale * 2
+		vec2 tileScale = vec2(1280, 720) * (1.0f / float( 2 * WORK_GROUP_SIZE));
+		vec2 tileBias = tileScale - vec2(gl_WorkGroupID.xy);
 		
-        frustum[1] = ConvertProjToView( vec4( pxp / float(uWindowWidthEvenlyDivisibleByTileRes) * 2.0f - 1.0f, 
-			(uWindowHeightEvenlyDivisibleByTileRes - pym) / float(uWindowHeightEvenlyDivisibleByTileRes) * 2.0f - 1.0f, 1.0f, 1.0f) );
+		vec4 c1 = vec4(proj[0][0] * tileScale.x, 0.0f, tileBias.x, 0.0f);
+		vec4 c2 = vec4(0.0f, proj[2][2] * tileScale.y, tileBias.y, 0.0f);
+		vec4 c4 = vec4(0.0f, 0.0f, 1.0f, 0.0f);
 		
-        frustum[2] = ConvertProjToView( vec4( pxp / float(uWindowWidthEvenlyDivisibleByTileRes) * 2.0f - 1.0f, 
-			(uWindowHeightEvenlyDivisibleByTileRes - pyp) / float(uWindowHeightEvenlyDivisibleByTileRes) * 2.0f - 1.0f, 1.0f ,1.0f) );
+		 // Derive frustum planes
+		vec4 frustumPlanes[6];
+		// Sides
+		//right
+		frustumPlanes[0] = c4 - c1;
+		//left
+		frustumPlanes[1] = c4 + c1;
+		//bottom
+		frustumPlanes[2] = c4 - c2;
+		//top
+		frustumPlanes[3] = c4 + c2;
+		// Near/far
+		frustumPlanes[4] = vec4(0.0f, 0.0f,  1.0f, -minDepthZ);
+		frustumPlanes[5] = vec4(0.0f, 0.0f, -1.0f,  maxDepthZ);
 		
-        frustum[3] = ConvertProjToView( vec4( pxm / float(uWindowWidthEvenlyDivisibleByTileRes) * 2.0f - 1.0f, 
-			(uWindowHeightEvenlyDivisibleByTileRes - pyp) / float(uWindowHeightEvenlyDivisibleByTileRes) * 2.0f - 1.0f, 1.0f, 1.0f) );
-
-
-		for (int i = 0; i < 4; i++)
-			frustumEqn[i] = CreatePlaneEquation(frustum[i], frustum[(i+1) & 3]);
-
-		barrier();
-
-		int threadsPerTile = WORK_GROUP_SIZE * WORK_GROUP_SIZE;
-
-		for (uint i = 0; i < numActiveLights; i+= threadsPerTile)
+		for(int i = 0; i < 4; i++)
 		{
-			uint il = gl_LocalInvocationIndex + i;
-
-			if (il < numActiveLights)
-			{
-				PointLight p = pointLights[il];
+			frustumPlanes[i] *= 1.0f / length(frustumPlanes[i].xyz);
+		}
 		
-				vec4 viewPos = view * vec4(p.position, 1.0f);
-				float r = p.radius_length;
+		//DO CULLING HERE
+		for (uint lightIndex = gl_LocalInvocationIndex; lightIndex < numActiveLights; lightIndex += WORK_GROUP_SIZE)
+		{
+			PointLight p = pointLights[lightIndex];
+			
+			if (lightIndex < numActiveLights)
+			{
 
-				if (viewPos.z + minDepthZ < r && viewPos.z - maxDepthZ < r)
+				bool inFrustum = true;
+				for (uint i = 0; i < 6; i++)
 				{
-					
-				//if( ( GetSignedDistanceFromPlane( viewPos, frustumEqn[0] ) < r ) &&
-				//	( GetSignedDistanceFromPlane( viewPos, frustumEqn[1] ) < r ) &&
-				//	( GetSignedDistanceFromPlane( viewPos, frustumEqn[2] ) < r ) &&
-				//	( GetSignedDistanceFromPlane( viewPos, frustumEqn[3] ) < r) )
-
-					{
-						uint id = atomicAdd(pointLightCount, 1);
-						pointLightIndex[id] = il;
-					}
+					float d = dot(frustumPlanes[i], proj * view * vec4(p.position, 1.0f));
+					inFrustum = inFrustum && (d >= -p.radius_length);
 				}
-
+		
+				if (inFrustum)
+				{
+					uint id = atomicAdd(pointLightCount, 1);
+					pointLightIndex[id] = lightIndex;
+				}
 			}
 		}
 
 		barrier();
-
-
 
 		vec4 diffuseColor = imageLoad(diffuse, pixel);
 		vec4 specular = imageLoad(specular, pixel);
@@ -208,10 +200,19 @@ void main()
 		}
 
 		// ambient
-		color += vec4(0.05f, 0.05f, 0.05f, 0.0f) * diffuseColor;
+		//color += vec4(0.05f, 0.05f, 0.05f, 0.0f) * diffuseColor;
 		
+		barrier();
 
-        imageStore(outTexture, pixel, color);
+		if (gl_LocalInvocationID.x == 0 || gl_LocalInvocationID.y == 0 || gl_LocalInvocationID.x == 16 || gl_LocalInvocationID.y == 16)
+			imageStore(outTexture, pixel, vec4(.2f, .2f, .2f, 1.0f));
+		else
+		{
+			imageStore(outTexture, pixel, 100 * color);
+			//imageStore(outTexture, pixel, vec4(maxDepthZ));
+			imageStore(outTexture, pixel, vec4(pointLightCount));
+			//imageStore(outTexture, pixel, vec4(vec2(tilePos.xy), 0.0f, 1.0f));
+		}
 
 }
 
@@ -354,5 +355,71 @@ for (uint lightIndex = gl_LocalInvocationIndex; lightIndex < MAX_LIGHTS; lightIn
 
 			}
 		}
+
+*/
+
+/*
+
+		float minDepthZ = float(minDepth / float(0xFFFFFFFF));
+		float maxDepthZ = float(maxDepth / float(0xFFFFFFFF));
+
+		vec4 frustumEqn[4];
+		uint pxm = WORK_GROUP_SIZE * gl_WorkGroupID.x;
+		uint pym = WORK_GROUP_SIZE * gl_WorkGroupID.y;
+		uint pxp = WORK_GROUP_SIZE * (gl_WorkGroupID.x + 1);
+		uint pyp = WORK_GROUP_SIZE * (gl_WorkGroupID.y + 1);
+				
+		uint uWindowWidthEvenlyDivisibleByTileRes = WORK_GROUP_SIZE * GetNumTilesX();
+        uint uWindowHeightEvenlyDivisibleByTileRes = WORK_GROUP_SIZE * GetNumTilesY();
+
+		vec4 frustum[4];
+		frustum[0] = ConvertProjToView( vec4( pxm / float(uWindowWidthEvenlyDivisibleByTileRes) * 2.0f - 1.0f, 
+			(uWindowHeightEvenlyDivisibleByTileRes - pym) / float(uWindowHeightEvenlyDivisibleByTileRes) * 2.0f - 1.0f, 1.0f, 1.0f) );
+		
+        frustum[1] = ConvertProjToView( vec4( pxp / float(uWindowWidthEvenlyDivisibleByTileRes) * 2.0f - 1.0f, 
+			(uWindowHeightEvenlyDivisibleByTileRes - pym) / float(uWindowHeightEvenlyDivisibleByTileRes) * 2.0f - 1.0f, 1.0f, 1.0f) );
+		
+        frustum[2] = ConvertProjToView( vec4( pxp / float(uWindowWidthEvenlyDivisibleByTileRes) * 2.0f - 1.0f, 
+			(uWindowHeightEvenlyDivisibleByTileRes - pyp) / float(uWindowHeightEvenlyDivisibleByTileRes) * 2.0f - 1.0f, 1.0f ,1.0f) );
+		
+        frustum[3] = ConvertProjToView( vec4( pxm / float(uWindowWidthEvenlyDivisibleByTileRes) * 2.0f - 1.0f, 
+			(uWindowHeightEvenlyDivisibleByTileRes - pyp) / float(uWindowHeightEvenlyDivisibleByTileRes) * 2.0f - 1.0f, 1.0f, 1.0f) );
+
+
+		for (int i = 0; i < 4; i++)
+			frustumEqn[i] = CreatePlaneEquation(frustum[i], frustum[(i+1) & 3]);
+
+		barrier();
+
+		int threadsPerTile = WORK_GROUP_SIZE * WORK_GROUP_SIZE;
+
+		for (uint i = 0; i < numActiveLights; i+= threadsPerTile)
+		{
+			uint il = gl_LocalInvocationIndex + i;
+
+			if (il < numActiveLights)
+			{
+				PointLight p = pointLights[il];
+		
+				vec4 viewPos = view * vec4(p.position, 1.0f);
+				float r = p.radius_length;
+
+				if (viewPos.z + minDepthZ < r && viewPos.z - maxDepthZ < r)
+				{
+					
+				if( ( GetSignedDistanceFromPlane( viewPos, frustumEqn[0] ) < r ) &&
+					( GetSignedDistanceFromPlane( viewPos, frustumEqn[1] ) < r ) &&
+					( GetSignedDistanceFromPlane( viewPos, frustumEqn[2] ) < r ) &&
+					( GetSignedDistanceFromPlane( viewPos, frustumEqn[3] ) < r) )
+
+					{
+						uint id = atomicAdd(pointLightCount, 1);
+						pointLightIndex[id] = il;
+					}
+				}
+
+			}
+		}
+
 
 */
