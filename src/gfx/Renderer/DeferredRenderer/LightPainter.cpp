@@ -51,7 +51,7 @@ namespace GFX
 		p.radius = 10.0f;
 		m_pointLights[0] = p;
 
-		for(int i = 1; i < m_maximumLights; i++)
+		for(unsigned int i = 1; i < m_maximumLights; i++)
 		{
 			p.position = glm::vec3(-50 + 100.0 * (rand() % 1000) / 1000.0f, -75 + 150.0 * (rand() % 1000) / 1000.0f, 0.0f);
 			p.color = glm::vec3((rand() % 1000) / 1000.0f, (rand() % 1000) / 1000.0f, (rand() % 1000) / 1000.0f);
@@ -86,7 +86,7 @@ namespace GFX
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, m_pointLightBuffer);
 		PointLightData* pData = (PointLightData*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, m_maximumLights * sizeof(PointLightData), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
 		PointLightData p;
-		for (int i = 0; i < m_maximumLights; i++)
+		for (unsigned int i = 0; i < m_maximumLights; i++)
 		{
 			m_pointLights[i].position.x = 150.0f * sin(llooollll + (double)i);
 			//m_pointLights[i].position.y = 100 - ((double)i/(double)m_maximumLights) * 200 + 100.0f * cos(llooollll + (double)i);
