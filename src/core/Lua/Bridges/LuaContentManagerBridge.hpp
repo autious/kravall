@@ -67,6 +67,7 @@ namespace Core
                 if( lua_isboolean( L, 4 ) == 0 )
                     return luaL_error( L, "%s: fourth parameter is not boolen", __FUNCTION__ );
             }
+            return 0;
         }
 
         /*!
@@ -89,6 +90,7 @@ namespace Core
                 if(  lua_isstring( L, 2 ) )
                     luaL_error( L, "%s: Second parameter is not string.", __FUNCTION__ );
             }
+            return 0;
         }
 
         /*! 
@@ -136,6 +138,7 @@ namespace Core
                 {
                     return Loader::Load( L );
                 }
+                return 0;
             }
 
             static int Free( ContentLoaderBridgeType loaderType, lua_State* L  )
@@ -144,6 +147,7 @@ namespace Core
                 {
                     return Loader::Free( L );
                 }
+                return 0;
             }
         };
 
