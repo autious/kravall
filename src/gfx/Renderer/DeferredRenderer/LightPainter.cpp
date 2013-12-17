@@ -24,8 +24,14 @@ namespace GFX
 		m_shaderManager->LinkProgram("ComputeTest");
 
 		m_shaderManager->UseProgram("ComputeTest");
-		
-		matrixUniform = m_shaderManager->GetUniformLocation("ComputeTest", "inv_proj_view_mat");
+
+		m_invProjViewUniform = m_shaderManager->GetUniformLocation("ComputeTest", "inv_proj_view_mat");
+		m_invProjUniform = m_shaderManager->GetUniformLocation("ComputeTest", "invProj");
+		m_viewUniform = m_shaderManager->GetUniformLocation("ComputeTest", "view");
+		m_frambufferSizeUniform = m_shaderManager->GetUniformLocation("ComputeTest", "framebufferDim");
+
+
+
 		numActiveLightsUniform = m_shaderManager->GetUniformLocation("ComputeTest", "numActiveLights");
 		
 
@@ -78,7 +84,10 @@ namespace GFX
 		m_shaderManager->UseProgram("ComputeTest");
 
 		glm::mat4 invProjView = glm::inverse(projMatrix * viewMatrix);
-		m_shaderManager->SetUniform(1, invProjView, matrixUniform);
+		m_shaderManager->SetUniform(1280, 720, m_frambufferSizeUniform);
+		m_shaderManager->SetUniform(1, viewMatrix, m_viewUniform);
+		m_shaderManager->SetUniform(1, glm::inverse(projMatrix), m_invProjUniform);
+		m_shaderManager->SetUniform(1, invProjView, m_invProjViewUniform);
 
 
 		std::vector<RenderJobManager::RenderJob> renderJobs = m_renderJobManager->GetJobs();

@@ -49,7 +49,10 @@ namespace GFX
 		RenderJobManager* m_renderJobManager;
 
 		GLint alphaUniform;
-		GLint matrixUniform;
+		GLint m_invProjViewUniform;
+		GLint m_invProjUniform;
+		GLint m_viewUniform;
+		GLint m_frambufferSizeUniform;
 		GLint numActiveLightsUniform;
 		GLint textureUniform;
 		GLuint textureHandle;
@@ -58,8 +61,6 @@ namespace GFX
 
 		const unsigned int m_maximumLights = 1024;
 		LightData* m_pointLights;
-
-
 	};
 }
 
