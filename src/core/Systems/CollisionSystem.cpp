@@ -1,9 +1,6 @@
 #include "CollisionSystem.hpp"
 #include "World.hpp"
 #include <gfx/GFXInterface.hpp>
-#include "Camera/Camera.hpp"
-#include <limits>
-#include <logger/Logger.hpp>
 
 Core::CollisionSystem::CollisionSystem()
 	: BaseSystem( EntityHandler::GenerateAspect< WorldPositionComponent, BoundingVolumeComponent >(), 0ULL )

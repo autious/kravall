@@ -280,5 +280,4 @@ namespace Core
         file.close();
         return nullptr;
     }
-
 }
