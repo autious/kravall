@@ -8,6 +8,7 @@
 #include <Components/RotationComponent.hpp>
 #include <Components/ScaleComponent.hpp>
 #include <Components/GraphicsComponent.hpp>
+#include <Components/LightComponent.hpp>
 #include <Components/MovementComponent.hpp>
 #include <Components/UnitTypeComponent.hpp>
 #include <Components/AttributeComponent.hpp>
@@ -22,11 +23,12 @@ namespace Core
 	class FieldReactionSystem;
 	class PickingSystem;
 	class AIDebugSystem;
+	class LightSystem;
+	class CollisionSystem;
 	
-    typedef SystemHandlerTemplate<RenderingSystem, MovementSystem, FieldReactionSystem, PickingSystem, 
-		AIDebugSystem> SystemHandler;
+    typedef SystemHandlerTemplate<RenderingSystem, LightSystem, MovementSystem, FieldReactionSystem, PickingSystem, AIDebugSystem, CollisionSystem> SystemHandler;
     typedef EntityHandlerTemplate<SystemHandler, WorldPositionComponent, RotationComponent, ScaleComponent, 
-		GraphicsComponent, MovementComponent, UnitTypeComponent, AttributeComponent,
+		GraphicsComponent, LightComponent, MovementComponent, UnitTypeComponent, AttributeComponent,
 		BoundingVolumeComponent> EntityHandler;
 }
 
@@ -36,4 +38,6 @@ namespace Core
 #include <Systems/FieldReactionSystem.hpp>
 #include <Systems/PickingSystem.hpp>
 #include <Systems/AIDebugSystem.hpp>
+#include <Systems/LightSystem.hpp>
+#include <Systems/CollisionSystem.hpp>
 #endif

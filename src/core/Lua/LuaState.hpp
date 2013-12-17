@@ -20,6 +20,7 @@ namespace Core
 
             void Execute( const char *filename ); 
             void DoBlock( const char *block );
+            lua_State *GetState();
     };
 }
 #endif

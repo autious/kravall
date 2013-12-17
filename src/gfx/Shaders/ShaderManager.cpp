@@ -250,7 +250,11 @@ namespace GFX
 	{
 		return glGetUniformBlockIndex(GetShaderProgramID(shaderProgramKey), uniformBlockName.c_str());
 	}
-
+	
+	void ShaderManager::SetUniform(GLuint x, GLuint uniformLocation)
+	{
+		glUniform1ui(uniformLocation, x);
+	}
 	void ShaderManager::SetUniform(GLfloat x, GLuint uniformLocation)
 	{
 		glUniform1f(uniformLocation, x);

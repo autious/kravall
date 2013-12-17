@@ -33,10 +33,10 @@ namespace Core
 		}
 		else
 		{
-			std::string errStr = "Usage: ";
+			std::string errStr = "Usage: \'";
 			errStr += std::string(args[0]);
-			errStr += std::string(" n");
-			Console().PrintLine(errStr, Colors::Red);
+			errStr += " n\' \n\tn: The id of the framebuffer to draw full screen. n=0 enables miniature quads, n=-1 disables drawing fbo.";
+			Console().PrintLine(errStr, Colors::Chocolate);
 		}
 	}
 
@@ -58,12 +58,20 @@ namespace Core
 		Core::world.m_luaState.DoBlock(src.c_str());
 	}
 
+    const char* DebugConsole::HISTORY_FILE_NAME = "console_history_file.dbt";
+
+    void DebugConsole::Init(GFX::FontData* font)
+    {
+        m_font = font;
+    }
+
 	DebugConsole::DebugConsole()
 	{
 		m_visible = false;
 		m_historyIndex = 0;
 		m_offset = 0;
 		m_cursorOffset = 0;
+        m_font = nullptr;
 
 		clop::Register("clear", ClopClearConsole);
 		clop::Register("clr", ClopClearConsole);
@@ -79,6 +87,21 @@ namespace Core
 		
 		Line line = {"Welcome to the console, have a nice day.", Colors::Gold};
 		m_console.push_back(line);
+
+        //Load console history
+        std::fstream hf( HISTORY_FILE_NAME, std::fstream::in );
+
+        if( hf.is_open() )
+        {
+            std::string line;
+            while( getline( hf, line ) )
+            {
+                m_history.push_back( line ); 
+            }
+            hf.close();
+        }
+
+		m_historyIndex = m_history.size();
 	}
 	DebugConsole::~DebugConsole()
 	{
@@ -141,6 +164,22 @@ namespace Core
 			if (add)
 			{
 				m_history.push_back(m_inputLine);
+                if( m_history.size() > HISTORY_LIMIT ) 
+                {
+                    m_history.erase( m_history.begin() );
+                }
+            
+                std::fstream hf( HISTORY_FILE_NAME, std::fstream::out | std::fstream::trunc );
+        
+                for( std::vector<std::string>::iterator it = m_history.begin();
+                        it != m_history.end();
+                        it++ )
+                {
+                    hf << *it << std::endl;
+                }
+
+                hf.close();
+                
 				m_historyIndex = m_history.size();
 			}
 
@@ -600,10 +639,10 @@ namespace Core
 			m_cursorOffset = m_inputLine.length();
 
 		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_PAGE_UP) || Core::GetInput().GetScrollY() > 0)
-			Scroll(1);
+			Scroll(10);
 
 		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_PAGE_DOWN) || Core::GetInput().GetScrollY() < 0)
-			Scroll(-1);
+			Scroll(-10);
 
 		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_ENTER) || Core::GetInput().IsKeyPressedOnce(GLFW_KEY_KP_ENTER))
 			Add();
@@ -651,8 +690,8 @@ namespace Core
 
 					if (nrWraps == 0) // Single line
 					{
-						GFX::RenderText(glm::vec2(x+1, 376+1 - (i) * 15), 1.0f,Colors::Black, line.c_str());
-						GFX::RenderText(glm::vec2(x, 376 - (i) * 15), 1.0f,color, line.c_str());
+						GFX::RenderText(m_font, glm::vec2(x+1, 376+1 - (i) * 15), 1.0f,Colors::Black, line.c_str());
+						GFX::RenderText(m_font, glm::vec2(x, 376 - (i) * 15), 1.0f,color, line.c_str());
 					}
 					else // Wrapped lines
 					{
@@ -663,8 +702,8 @@ namespace Core
 							line = std::string(
 								m_console[lineIndex].text.end() - remainder, 
 								m_console[lineIndex].text.end());
-							GFX::RenderText(glm::vec2(x+1, 376+1 - (i) * 15), 1.0f,Colors::Black, line.c_str());
-							GFX::RenderText(glm::vec2(x, 376 - (i)* 15), 1.0f, color, line.c_str());
+							GFX::RenderText(m_font, glm::vec2(x+1, 376+1 - (i) * 15), 1.0f,Colors::Black, line.c_str());
+							GFX::RenderText(m_font, glm::vec2(x, 376 - (i)* 15), 1.0f, color, line.c_str());
 							i++;
 						}
 
@@ -674,8 +713,8 @@ namespace Core
 							line = std::string(
 								m_console[lineIndex].text.end() - remainder - wrapLength * (w+1), 
 								m_console[lineIndex].text.end() - remainder - wrapLength * (w));
-							GFX::RenderText(glm::vec2(x+1, 376+1 - (i) * 15), 1.0f,Colors::Black, line.c_str());
-							GFX::RenderText(glm::vec2(x, 376 - (i) * 15), 1.0f, color, line.c_str());
+							GFX::RenderText(m_font, glm::vec2(x+1, 376+1 - (i) * 15), 1.0f,Colors::Black, line.c_str());
+							GFX::RenderText(m_font, glm::vec2(x, 376 - (i) * 15), 1.0f, color, line.c_str());
 							i++;
 						}
 						i--;
@@ -696,8 +735,8 @@ namespace Core
 				outInputLine.replace(m_cursorOffset, 1, 1, '_');
 
 
-			GFX::RenderText(glm::vec2(11, 398), 1.0f, Colors::Black, (outInputLine).c_str());
-			GFX::RenderText(glm::vec2(10, 397), 1.0f, Colors::Silver, (outInputLine).c_str());
+			GFX::RenderText(m_font, glm::vec2(11, 398), 1.0f, Colors::Black, (outInputLine).c_str());
+			GFX::RenderText(m_font, glm::vec2(10, 397), 1.0f, Colors::Silver, (outInputLine).c_str());
 
 		}
 		else

@@ -29,6 +29,7 @@ namespace GFX
 
 		/*!
 		Empty virtual function for overriding.
+		\return Returns an index
 		*/
 		virtual void Render();
 

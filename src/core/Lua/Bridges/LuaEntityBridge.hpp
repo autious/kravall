@@ -23,12 +23,19 @@
 
 namespace Core
 {
+    /*!
+        EntityBridge middle class, contains only the openlibs function for LuaState.
+        Functions as a front end for the template class version LuaEntityBridgeTemplate.
+    */
     class LuaEntityBridge
     {
     public:
         static void OpenLibs( lua_State * state );
     };
 
+    /*! 
+        Auxiliary function for LuaEntityBridgeTemplate
+    */
     template<typename Handler>
     void HandlerCallSet( Entity entity, lua_State* L, int tableindex )
     {
@@ -50,7 +57,7 @@ namespace Core
                     }
                     catch( const std::out_of_range& orr )
                     {
-                        LOG_WARNING << Handler::GetComponentLuaName() << ": Ignoring parameter: " << name << std::endl;
+                        LOG_WARNING << __FUNCTION__ << ": " << Handler::GetComponentLuaName() << "Binding" << ": Ignoring parameter: " << name << std::endl;
                     }
                 }
                 /* Pops the value, leaving the key for the next iteration */
@@ -63,6 +70,9 @@ namespace Core
         }   
     }
 
+    /*! 
+        Auxiliary function for LuaEntityBridgeTemplate
+    */
     template<typename Handler>
     int HandlerCallGet( Entity entity, lua_State* L )
     {
@@ -87,9 +97,20 @@ namespace Core
         return 1;
     }
 
+
+    /*! 
+        Auxiliary template struct for LuaEntityBridgeTemplate
+            
+        Enables the Get/Set on variadic template list of multiple component type binders.
+    */
     template<typename... Handlers>
     struct CallST;
 
+    /*! 
+        Auxiliary template struct for LuaEntityBridgeTemplate
+
+        Enables the Get/Set on variadic template list of multiple component type binders.
+    */
     template<typename Handler>
     struct CallST<Handler>
     {
@@ -122,6 +143,11 @@ namespace Core
         }
     };
 
+    /*! 
+        Auxiliary template struct for LuaEntityBridgeTemplate
+
+        Enables the Get/Set on variadic template list of multiple component type binders.
+    */
     template<typename Handler, typename... Handlers>
     struct CallST<Handler,Handlers...>
     {
@@ -142,7 +168,10 @@ namespace Core
         }
     };
 
-
+    /*!
+        Bridge between entity handler and lua, can create, destroy,
+        place component, set component and get component data 
+    */
     template<typename... ComponentHandlers>
     class LuaEntityBridgeTemplate
     {
@@ -151,6 +180,10 @@ namespace Core
     private:
 
     public:
+        /*!
+            Entity creation function, takes a series of component types and creates an entity 
+            with that aspect configuration, component data is undefined
+        */
         static int CreateEntity( lua_State* L )
         {
             int parameterCount = lua_gettop( L );
@@ -182,6 +215,10 @@ namespace Core
             return 1;
         }
 
+        /*!
+            Destroy entity function, takes an entity id and destroys is directly via the entity
+            handler.
+        */
         static int DestroyEntity( lua_State* L )
         {
             int paramCount = lua_gettop(L);
@@ -217,6 +254,10 @@ namespace Core
             return 0;
         }
 
+        /*!
+            Lua component data set function. takes entity id, component type and a table with data
+            and sets it to the given entities component via component binding class object.
+        */
         static int Set( lua_State * L )
         {
             assert( lua_gettop( L ) == 3 );
@@ -225,8 +266,15 @@ namespace Core
             {
                 Entity entity = *((Entity*)luaL_checkudata( L, 1, ENTITY_META_TYPE ));
                 ComponentType componentType = *(ComponentType*)luaL_checkudata( L, 2, COMPONENT_META_TYPE );
-            
-                CallST<ComponentHandlers...>::Set( entity, componentType, L, 3 );                      
+
+                if( Core::world.m_entityHandler.HasComponent( entity, componentType ) )
+                {
+                    CallST<ComponentHandlers...>::Set( entity, componentType, L, 3 );                      
+                }
+                else
+                {
+                    return luaL_error( L, "Unable to set component data, entity doesn't have component type" );
+                }
             }
             else
             {
@@ -236,6 +284,10 @@ namespace Core
             return 0;
         }
 
+        /*!
+            Lua environment get function,  takes entity and component type.
+            Will return table to lua containing all the data for a component.
+        */
         static int Get( lua_State * L )
         {
             if( lua_isuserdata( L, 1 ) && lua_isuserdata( L, 2 ) )
@@ -243,7 +295,15 @@ namespace Core
                 Entity entity = *((Entity*)luaL_checkudata( L, 1, ENTITY_META_TYPE ));
                 ComponentType componentType = *(ComponentType*)luaL_checkudata( L, 2, COMPONENT_META_TYPE );
 
-                return CallST<ComponentHandlers...>::Get( entity, componentType, L );                      
+                if( Core::world.m_entityHandler.HasComponent( entity, componentType ) )
+                {
+                    return CallST<ComponentHandlers...>::Get( entity, componentType, L );                      
+                }
+                else
+                {
+                    return luaL_error( L, "Unable to get component data, entity doesn't have component type" );
+                }
+
             }
             else
             {
@@ -251,6 +311,9 @@ namespace Core
             }
         }
 
+        /*!
+            Returns entity integer value used internally. Exists mostly for debugging purposes
+        */
         static int EntityToString( lua_State *L )
         {
             Entity entity = *(Entity*)luaL_checkudata( L, 1, ENTITY_META_TYPE );
@@ -260,6 +323,10 @@ namespace Core
             return 1;
         }
 
+        /*!
+            Component type __tostring meta function. returns component type id.
+            Debugging function mainly.
+        */
         static int ComponentTypeToString( lua_State *L )
         {
             ComponentType componentType = *(ComponentType*)luaL_checkudata( L, 1, COMPONENT_META_TYPE );

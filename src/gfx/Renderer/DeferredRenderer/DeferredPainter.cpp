@@ -42,7 +42,7 @@ namespace GFX
 		m_uniformBufferManager->CreateBasicCameraUBO(m_shaderManager->GetShaderProgramID("StaticMesh"));
 	}
 
-	void DeferredPainter::Render(FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix)
+	void DeferredPainter::Render(unsigned int& renderIndex, FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix)
 	{
 		BasePainter::Render();
 
@@ -76,19 +76,26 @@ namespace GFX
 		Mesh mesh;
 		GFXBitmask bitmask;
 
-		for (unsigned int i = 0; i < renderJobs.size(); i++)
+		unsigned int i;
+		for (i = renderIndex; i < renderJobs.size(); i++)
 		{
 			bitmask = renderJobs[i].bitmask;
 
-			objType = GetBitmaskValue(bitmask, BT_OBJECT_TYPE);
+			objType = GetBitmaskValue(bitmask, BITMASK::TYPE);
 
-			viewport = GetBitmaskValue(bitmask, BT_VIEWPORT_ID);
-			layer = GetBitmaskValue(bitmask, BT_LAYER);
-			translucency = GetBitmaskValue(bitmask, BT_TRANSLUCENCY_TYPE);
-			meshID = GetBitmaskValue(bitmask, BT_MESH_ID);
-			material = GetBitmaskValue(bitmask, BT_MATERIAL_ID);
-			depth = GetBitmaskValue(bitmask, BT_DEPTH);
-			
+			// Break if no opaque object
+			if (objType != GFX::OBJECT_TYPES::OPAQUE_GEOMETRY)
+			{
+				break;
+			}
+
+			viewport = GetBitmaskValue(bitmask, BITMASK::VIEWPORT_ID);
+			layer = GetBitmaskValue(bitmask, BITMASK::LAYER);
+			translucency = GetBitmaskValue(bitmask, BITMASK::TRANSLUCENCY_TYPE);
+			meshID = GetBitmaskValue(bitmask, BITMASK::MESH_ID);
+			material = GetBitmaskValue(bitmask, BITMASK::MATERIAL_ID);
+			depth = GetBitmaskValue(bitmask, BITMASK::DEPTH);
+
 			if (material != currentMaterial)
 			{
 				mat = m_materialManager->GetMaterial(material);
@@ -173,6 +180,9 @@ namespace GFX
 		m_shaderManager->ResetProgram();
 
 		ClearFBO();
+
+		renderIndex = i;
+
 	}
 
 
