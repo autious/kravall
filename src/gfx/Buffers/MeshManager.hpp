@@ -22,7 +22,7 @@ namespace GFX
 
 		inline Mesh GetMesh(const unsigned long long int& meshID) 
 		{ 
-			int index = FindMesh(meshID);
+			unsigned int index = FindMesh(meshID);
 
 			if (index != UINT_MAX)
 				return m_meshes[index]; 
