@@ -244,7 +244,7 @@ void run( GLFWwindow * window )
 
     unsigned int meshID; 
 
-    Core::world.m_contentManager.Load<Core::GnomeLoader>("assets/cube.gnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+    Core::world.m_contentManager.Load<Core::GnomeLoader>("assets/teapot.bgnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
             {
                 Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
                 const Core::ModelData* data = gnomeLoader->getData(handle);
