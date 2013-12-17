@@ -54,41 +54,53 @@ namespace Core
 
             unsigned int textureHash;
 
-            textureHash = MurmurHash2(diffuseTexture.c_str(), diffuseTexture.size(), diffuseTexture.size());
-            if(!GetTextureCacheStatus(textureHash, texture))
+            if(diffuseTexture.size())
             {
-                texture = new Core::TextureData;
-                BufferTextureData(LoadTextureData(diffuseTexture.c_str(), texture), texture);
-                AddTextureToMaterial(data->materialId, texture->textureId);
+                textureHash = MurmurHash2(diffuseTexture.c_str(), diffuseTexture.size(), diffuseTexture.size());
+                if(!GetTextureCacheStatus(textureHash, texture))
+                {
+                    texture = new Core::TextureData;
+                    BufferTextureData(LoadTextureData(diffuseTexture.c_str(), texture), texture);
+                    AddTextureToMaterial(data->materialId, texture->textureId);
+                }
+                data->diffuseTexture = texture;
             }
-            data->diffuseTexture = texture;
 
-            textureHash = MurmurHash2(specularTexture.c_str(), specularTexture.size(), specularTexture.size());
-            if(!GetTextureCacheStatus(textureHash, texture))
+            if(specularTexture.size())
             {
-                texture = new Core::TextureData;
-                BufferTextureData(LoadTextureData(specularTexture.c_str(), texture), texture);
-                AddTextureToMaterial(data->materialId, texture->textureId);
+                textureHash = MurmurHash2(specularTexture.c_str(), specularTexture.size(), specularTexture.size());
+                if(!GetTextureCacheStatus(textureHash, texture))
+                {
+                    texture = new Core::TextureData;
+                    BufferTextureData(LoadTextureData(specularTexture.c_str(), texture), texture);
+                    AddTextureToMaterial(data->materialId, texture->textureId);
+                }
+                data->specularTexture = texture;
             }
-            data->specularTexture = texture;
 
-            textureHash = MurmurHash2(normalBlendTexture.c_str(), normalBlendTexture.size(), normalBlendTexture.size());
-            if(!GetTextureCacheStatus(textureHash, texture))
+            if(normalBlendTexture.size())
             {
-                texture = new Core::TextureData;
-                BufferTextureData(LoadTextureData(normalBlendTexture.c_str(), texture), texture);
-                AddTextureToMaterial(data->materialId, texture->textureId);
+                textureHash = MurmurHash2(normalBlendTexture.c_str(), normalBlendTexture.size(), normalBlendTexture.size());
+                if(!GetTextureCacheStatus(textureHash, texture))
+                {
+                    texture = new Core::TextureData;
+                    BufferTextureData(LoadTextureData(normalBlendTexture.c_str(), texture), texture);
+                    AddTextureToMaterial(data->materialId, texture->textureId);
+                }
+                data->normalBlendTexture = texture;
             }
-            data->normalBlendTexture = texture;
 
-            textureHash = MurmurHash2(glowTexture.c_str(), glowTexture.size(), glowTexture.size());
-            if(!GetTextureCacheStatus(textureHash, texture))
+            if(glowTexture.size())
             {
-                texture = new Core::TextureData;
-                BufferTextureData(LoadTextureData(glowTexture.c_str(), texture), texture);
-                AddTextureToMaterial(data->materialId, texture->textureId);
+                textureHash = MurmurHash2(glowTexture.c_str(), glowTexture.size(), glowTexture.size());
+                if(!GetTextureCacheStatus(textureHash, texture))
+                {
+                    texture = new Core::TextureData;
+                    BufferTextureData(LoadTextureData(glowTexture.c_str(), texture), texture);
+                    AddTextureToMaterial(data->materialId, texture->textureId);
+                }
+                data->glowTexture = texture;
             }
-            data->glowTexture = texture;
 
             m_materials.push_back(data);
         }
@@ -123,37 +135,49 @@ namespace Core
 
             unsigned int textureHash;
 
-            textureHash = MurmurHash2(diffuseTexture.c_str(), diffuseTexture.size(), diffuseTexture.size());
-            if(!GetTextureCacheStatus(textureHash, texture))
+            if(diffuseTexture.size())
             {
-                texture = new Core::TextureData;
-                data->diffuseData = LoadTextureData(diffuseTexture.c_str(), texture);
+                textureHash = MurmurHash2(diffuseTexture.c_str(), diffuseTexture.size(), diffuseTexture.size());
+                if(!GetTextureCacheStatus(textureHash, texture))
+                {
+                    texture = new Core::TextureData;
+                    data->diffuseData = LoadTextureData(diffuseTexture.c_str(), texture);
+                }
+                data->materialData->diffuseTexture = texture;
             }
-            data->materialData->diffuseTexture = texture;
 
-            textureHash = MurmurHash2(specularTexture.c_str(), specularTexture.size(), specularTexture.size());
-            if(!GetTextureCacheStatus(textureHash, texture))
+            if(specularTexture.size())
             {
-                texture = new Core::TextureData;
-                data->specularData = LoadTextureData(specularTexture.c_str(), texture);
+                textureHash = MurmurHash2(specularTexture.c_str(), specularTexture.size(), specularTexture.size());
+                if(!GetTextureCacheStatus(textureHash, texture))
+                {
+                    texture = new Core::TextureData;
+                    data->specularData = LoadTextureData(specularTexture.c_str(), texture);
+                }
+                data->materialData->specularTexture = texture;
             }
-            data->materialData->specularTexture = texture;
 
-            textureHash = MurmurHash2(normalBlendTexture.c_str(), normalBlendTexture.size(), normalBlendTexture.size());
-            if(!GetTextureCacheStatus(textureHash, texture))
+            if(normalBlendTexture.size())
             {
-                texture = new Core::TextureData;
-                data->normalBlendData = LoadTextureData(normalBlendTexture.c_str(), texture);
+                textureHash = MurmurHash2(normalBlendTexture.c_str(), normalBlendTexture.size(), normalBlendTexture.size());
+                if(!GetTextureCacheStatus(textureHash, texture))
+                {
+                    texture = new Core::TextureData;
+                    data->normalBlendData = LoadTextureData(normalBlendTexture.c_str(), texture);
+                }
+                data->materialData->normalBlendTexture = texture;
             }
-            data->materialData->normalBlendTexture = texture;
 
-            textureHash = MurmurHash2(glowTexture.c_str(), glowTexture.size(), glowTexture.size());
-            if(!GetTextureCacheStatus(textureHash, texture))
+            if(glowTexture.size())
             {
-                texture = new Core::TextureData;
-                data->glowData = LoadTextureData(glowTexture.c_str(), texture);
+                textureHash = MurmurHash2(glowTexture.c_str(), glowTexture.size(), glowTexture.size());
+                if(!GetTextureCacheStatus(textureHash, texture))
+                {
+                    texture = new Core::TextureData;
+                    data->glowData = LoadTextureData(glowTexture.c_str(), texture);
+                }
+                data->materialData->glowTexture = texture;
             }
-            data->materialData->glowTexture = texture;
         }
 
         return data;
@@ -321,22 +345,29 @@ namespace Core
                         LOG_WARNING << "Parsed unknown key: " << key << " in Material file: " << assetFileName << std::endl;
                     }
                 }
-            
-                return shaderFound;
             }
+            return shaderFound;
         }
         return false;
     }
 
     unsigned char* MaterialLoader::LoadTextureData(const char* textureFileName, Core::TextureData* &data)
     {
-        return stbi_load(textureFileName, &data->width, &data->height, &data->bitsPerPixel, 0);
+        unsigned char* texturedata = stbi_load(textureFileName, &data->width, &data->height, &data->bitsPerPixel, 0);
+        if(texturedata == nullptr)
+        {
+            LOG_WARNING << "Failed to load image with name: " << textureFileName << std::endl;
+        }
+        return texturedata;
     }
 
     void MaterialLoader::BufferTextureData(unsigned char* textureData, Core::TextureData* data)
     {
-        GFX::Content::LoadTexture2DFromMemory(data->textureId, textureData, data->width, data->height);
-        stbi_image_free(textureData);
+        if(textureData != nullptr)
+        {
+            GFX::Content::LoadTexture2DFromMemory(data->textureId, textureData, data->width, data->height);
+            stbi_image_free(textureData);
+        }
     }
 
     void MaterialLoader::AddTextureToMaterial(const unsigned long long int materialId, const unsigned int textureId)
