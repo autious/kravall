@@ -52,6 +52,11 @@ namespace Core
             GFX::Content::GetShaderId(shaderId, shaderName.c_str());
             GFX::Content::AttachShaderToMaterial(data->materialId, shaderId);
 
+            if(shaderId == 0)
+            {            
+                LOG_WARNING << "Failed to retrieve shader with name: " << shaderName << std::endl;
+            }
+
             unsigned int textureHash;
 
             if(diffuseTexture.size())
@@ -191,6 +196,11 @@ namespace Core
         unsigned int shaderId;
         GFX::Content::GetShaderId(shaderId, loadingData->shaderName.c_str());
         GFX::Content::AttachShaderToMaterial(loadingData->materialData->materialId, shaderId);
+
+        if(shaderId == 0)
+        {            
+            LOG_WARNING << "Failed to retrieve shader with name: " << loadingData->shaderName << std::endl;
+        }
 
         if(loadingData->materialData->diffuseTexture)
         {
