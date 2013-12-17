@@ -118,8 +118,8 @@ GLFWwindow* init( int argc, char** argv )
 
 void TestRendering()
 {
-	GFX::Debug::DrawBox(glm::vec3(2, 0, 0), glm::vec3(2, 2, 10), false, Colors::Black);
-	GFX::Debug::DrawBox(glm::vec3(2, 0, 0), glm::vec3(2, 2, 10), true, glm::vec4(Colors::Black.x, Colors::Black.y, Colors::Black.z, 0.5f));
+	GFX::Debug::DrawBox(glm::vec3(2, 0, 0), glm::vec3(25, 25, 100), false, Colors::Wheat);
+	GFX::Debug::DrawBox(glm::vec3(2, 0, 0), glm::vec3(25, 25, 100), true, glm::vec4(Colors::Wheat.x, Colors::Wheat.y, Colors::Wheat.z, 0.5f));
 	GFX::Debug::DrawSphere(glm::vec3(2, 0, 0), 2.0f, Colors::Black);
 
 	GFX::Debug::DrawLine(glm::vec2(100, 50), glm::vec2(1200, 600), Colors::CornflowerBlue);
@@ -257,7 +257,7 @@ void run( GLFWwindow * window )
 	//CreateRioter(&rioters, meshID, 0.0f, -3.0f, 0.0f);
 	//CreateRioter(&rioters, meshID, 6.0f, -3.0f, 0.0f);
 	//for( int i = -100; i < 100; i++ )
-	for( int i = -100; i < 100; i++ )
+	for( int i = -500; i < 500; i++ )
 		CreateRioter(&rioters, meshID, i * 16.0f, 1.0f, 0.0f);
 
 	//CreateRioter(&rioters, meshID, 16.0f, 0.0f, 0.0f);
@@ -302,7 +302,7 @@ void run( GLFWwindow * window )
 		Core::gameCamera->CalculateProjectionMatrix(GFX::GetScreenWidth(), GFX::GetScreenHeight());
 		GFX::SetProjectionMatrix(Core::gameCamera->GetProjectionMatrix());
 
-		//TestRendering();
+		TestRendering();
 
 	    //TODO: Timing hook
 		GFX::Render();

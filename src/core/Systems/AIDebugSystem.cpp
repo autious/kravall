@@ -7,7 +7,7 @@
 #include <GLFWInput.hpp>
 #include <Camera/Camera.hpp>
 #include <limits>
-
+#include <GameUtility/NavigationMesh.hpp>
 
 void CheckPickingSystemVsGround()
 {
@@ -83,8 +83,17 @@ void Core::AIDebugSystem::Update( float delta )
 	
 	CheckPickingSystemVsRioters();
 	MarkClickedObject();
-		
+	
 
+	NavigationMesh* ms = GetNavigationMesh();
+
+	ms = (NavigationMesh*)1;
+
+	NavigationMesh* ms2 = GetNavigationMesh();
+
+	int o = 0;
+
+	
 
 
 }
