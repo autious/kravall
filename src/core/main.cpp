@@ -160,16 +160,18 @@ void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, float posX,
 
 	rioterList->push_back(Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, 
 		Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent, Core::UnitTypeComponent,
-		Core::MovementComponent, Core::AttributeComponent/*, Core::BoundingVolumeComponent*/>
+		Core::MovementComponent, Core::AttributeComponent, Core::BoundingVolumeComponent>
 		(Core::GraphicsComponent(), 
 		 Core::WorldPositionComponent(posX, posY, posZ),
 		 Core::RotationComponent(),
-		 Core::ScaleComponent(0.1f),
+		 Core::ScaleComponent(1.0f),
 		 Core::UnitTypeComponent(),
 		 Core::MovementComponent(0.0f, 0.0f, 0.0f, 20.0f, 60.0f),
 		 //Core::MovementComponent( -direction.x, 0, -direction.z, 21.1f, 5.0f),
-		 Core::AttributeComponent()/*,
-		 Core::BoundingVolumeComponent( Core::BoundingSphere( 3.0f, 0.0f, 0.0f, 0.0f ), aa ) */) );
+		 Core::AttributeComponent(),
+		 //Core::BoundingVolumeComponent( Core::BoundingSphere( 3.0f, 0.0f, 0.0f, 0.0f ), aa )
+		 Core::BoundingVolumeComponent(Core::BoundingSphere(1.0f, 0.0f, 0.0f, 0.0f), 
+		 Core::BoundingVolumeCollisionModel::DynamicResolution)));
 
 	Core::GraphicsComponent* gc = WGETC <Core::GraphicsComponent>(rioterList->at(index));
 	GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::MESH_ID, meshID);
@@ -244,7 +246,7 @@ void run( GLFWwindow * window )
 
     unsigned int meshID; 
 
-    Core::world.m_contentManager.Load<Core::GnomeLoader>("assets/teapot.bgnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+    Core::world.m_contentManager.Load<Core::GnomeLoader>("assets/cube.bgnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
             {
                 Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
                 const Core::ModelData* data = gnomeLoader->getData(handle);
