@@ -8,6 +8,7 @@
 #include <cstring>
 #include <cassert>
 #include <fstream>
+#include <limits>
 
 #include <ContentManagement/MurmurHash.hpp>
 
@@ -48,11 +49,11 @@ namespace Core
             Core::TextureData* texture = nullptr;
 
             GFX::Content::CreateMaterial(data->materialId);
-            unsigned int shaderId;
+            unsigned int shaderId = std::numeric_limits<decltype(shaderId)>::max();
             GFX::Content::GetShaderId(shaderId, shaderName.c_str());
             GFX::Content::AttachShaderToMaterial(data->materialId, shaderId);
 
-            if(shaderId == 0)
+            if(shaderId == std::numeric_limits<decltype(shaderId)>::max())
             {            
                 LOG_WARNING << "Failed to retrieve shader with name: " << shaderName << std::endl;
             }
@@ -193,11 +194,11 @@ namespace Core
         Core::MaterialLoader::MaterialLoadingData* loadingData = static_cast<Core::MaterialLoader::MaterialLoadingData*>(handle);
 
         GFX::Content::CreateMaterial(loadingData->materialData->materialId);
-        unsigned int shaderId;
+        unsigned int shaderId = std::numeric_limits<decltype(shaderId)>::max();
         GFX::Content::GetShaderId(shaderId, loadingData->shaderName.c_str());
         GFX::Content::AttachShaderToMaterial(loadingData->materialData->materialId, shaderId);
 
-        if(shaderId == 0)
+        if(shaderId == std::numeric_limits<decltype(shaderId)>::max())
         {            
             LOG_WARNING << "Failed to retrieve shader with name: " << loadingData->shaderName << std::endl;
         }
