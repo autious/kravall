@@ -85,6 +85,7 @@ GLFWwindow* init( int argc, char** argv )
     LogSystem::RegisterLogHandler( LogSystem::warningHandler,   new ClopHandler( clopLoggerCallback, LogSystem::LogType::logType_warning) );
 
     Core::world.m_luaState.Execute( "scripts/config.lua" );
+    Core::world.m_luaState.Execute( "scripts/main.lua" );
 
     for( int i = 0; i < argc-1; i++ )
     {
@@ -175,12 +176,33 @@ void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, float posX,
 	GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::TYPE, GFX::OBJECT_TYPES::OPAQUE_GEOMETRY);
 }
 
+void LuaInfoRender()
+{
+    int screenWidth = GFX::GetScreenWidth(); 
+    int screenHeight = GFX::GetScreenHeight();
+
+    std::stringstream ss;
+
+    ss << "Memory: " << Core::world.m_luaState.GetMemoryUse() << "Kb";
+    GFX::RenderText( fontData, glm::vec2( 510, screenHeight - 40 ), 1.0f, Colors::White, "Lua"  );
+    GFX::RenderText( fontData, glm::vec2( 510, screenHeight - 25 ), 1.0f, Colors::White, ss.str().c_str()  );
+    std::stringstream ss2;
+    ss2 << "Update: " << std::fixed << std::setw( 7 ) << std::setprecision(4) << std::setfill( '0' ) << Core::world.m_luaState.GetUpdateTiming().count() / 1000.0f << "ms";
+    GFX::RenderText( fontData, glm::vec2( 510, screenHeight - 10 ), 1.0f, Colors::White, ss2.str().c_str()  );
+
+    GFX::Debug::DrawRectangle(glm::vec2( 505, screenHeight - 55 ),
+            glm::vec2(175, 50), true, glm::vec4( 0.5f,0.5f,0.5f,0.5f) );
+
+}
+
 void SystemTimeRender()
 {
     bool showSystems = Core::world.m_config.GetBool( "showSystems", false ) ;
 	GFX::Debug::DisplaySystemInfo( showSystems );
     if( showSystems )
     {
+        LuaInfoRender();
+
         std::vector<std::pair<const char *,std::chrono::microseconds>> times = Core::world.m_systemHandler.GetFrameTime();
 
         for( int i = 0; i < (int)times.size(); i++ )
@@ -195,6 +217,7 @@ void SystemTimeRender()
             glm::vec2(500, 20*times.size()), true, glm::vec4( 0.5f,0.5f,0.5f,0.5f) );
     }
 }
+
 
 
 void run( GLFWwindow * window )
@@ -340,8 +363,8 @@ void run( GLFWwindow * window )
 		GFX::Render();
 
         Core::world.m_contentManager.CallFinishers();
-
 		Core::world.m_systemHandler.Update( delta );
+        Core::world.m_luaState.Update( delta );
 
 		GFX::Debug::DisplayFBO(Core::world.m_config.GetInt( "showFramebuffers", -1 ));
 		Core::GetInput().ResetInput();

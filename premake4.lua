@@ -67,7 +67,7 @@ solution "RiotGame"
 
         --Idiotic non-matching naming convenstions.
         if( os.is( "linux" ) ) then
-           links { "lua5.1" } 
+           links { "luajit-5.1" } 
         else
             links { "lua51" }
         end
