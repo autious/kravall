@@ -216,6 +216,11 @@ namespace GFX
 			Renderer().RemoveTextureFromMaterial(materialID, textureID);
 		}
 
+        void GetShaderId(unsigned int& shaderId, const char* shaderName)
+        {
+            Renderer().GetShaderId(shaderId, shaderName);
+        }
+
 		void AttachShaderToMaterial(const unsigned long long int& materialID, const unsigned int& shaderID)
 		{
 			Renderer().SetShaderToMaterial(materialID, shaderID);

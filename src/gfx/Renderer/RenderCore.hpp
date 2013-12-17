@@ -118,7 +118,7 @@ namespace GFX
 		void DeleteMaterial(const unsigned long long int& id);
 		void AddTextureToMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID);
 		void RemoveTextureFromMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID);
-
+        void GetShaderId(unsigned int& shaderId, const char* shaderName);
 		void SetShaderToMaterial(const unsigned long long int& materialID, const unsigned int& shaderID);
 
         /*!

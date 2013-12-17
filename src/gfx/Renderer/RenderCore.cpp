@@ -158,6 +158,11 @@ namespace GFX
 		m_materialManager->RemoveTexture(materialID, textureID);
 	}
 
+    void RenderCore::GetShaderId(unsigned int& shaderId, const char* shaderName)
+    {
+        shaderId = m_shaderManager->GetShaderID(shaderName);
+    }
+
 	void RenderCore::SetShaderToMaterial(const unsigned long long int& materialID, const unsigned int& shaderID)
 	{
 		m_materialManager->SetShader(materialID, shaderID);
