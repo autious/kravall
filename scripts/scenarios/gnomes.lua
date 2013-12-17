@@ -29,4 +29,6 @@ for i = -100, 100 do
     end
 end
 
+collectgarbage()
+
 return asm

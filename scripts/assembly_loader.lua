@@ -81,6 +81,7 @@ function ASM:destroy( )
             core.contentmanager.free( loader_pair[1], loader_pair[2] )
         end
     end
+    self.entities = {}
 end
 
 return M
