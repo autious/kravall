@@ -199,7 +199,7 @@ namespace GFX
 		//	- Break the loop													|
 		//																		/
 		// For each light with shadow in the render jobs list, starting at     \
-		//	the index obtained from the previous step.                        |
+		//  the index obtained from the previous step.                        |
 		//	- Assign and build depth buffer atlas for each light with shadow   > LightBuilder
 		//	- Break when first light without shadow is encountered            |
 		//																	  /
@@ -207,13 +207,16 @@ namespace GFX
 		// Apply lighting for lights with shadow
 		// Apply lighting for lights without shadow
 
+		// renderJobIndex is the index of the current render job
+		unsigned int renderJobIndex = 0;
+
 		if (updateStats && m_showStatistics)
 		{
 			GFX_CHECKTIME(glFinish(), "glFinish");
 
 			GFX_CHECKTIME(m_renderJobManager->Sort(), "Sorting");
-			GFX_CHECKTIME(m_deferredPainter->Render(m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix), "Geometry");
-			GFX_CHECKTIME(m_lightPainter->Render(m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix), "Lighting");
+			GFX_CHECKTIME(m_deferredPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix), "Geometry");
+			GFX_CHECKTIME(m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix), "Lighting");
 
 			//Render FBO
 			if (m_showFBO != -1)
@@ -226,8 +229,8 @@ namespace GFX
 		else
 		{
 			m_renderJobManager->Sort();
-			m_deferredPainter->Render(m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
-			m_lightPainter->Render(m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
+			m_deferredPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
+			m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
 			
 			//Render FBO
 			if (m_showFBO != -1)

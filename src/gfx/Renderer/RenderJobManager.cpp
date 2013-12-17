@@ -8,8 +8,8 @@ namespace GFX
 	{
 		GFX::RenderJobManager::RenderJob arg1 = *reinterpret_cast<const GFX::RenderJobManager::RenderJob*>(a);
 		GFX::RenderJobManager::RenderJob arg2 = *reinterpret_cast<const GFX::RenderJobManager::RenderJob*>(b);
-		if(arg1.bitmask < arg2.bitmask) return -1;
-		if(arg1.bitmask > arg2.bitmask) return 1;
+		if(arg1.bitmask > arg2.bitmask) return -1;
+		if(arg1.bitmask < arg2.bitmask) return 1;
 		return 0;
 	}
 

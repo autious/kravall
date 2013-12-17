@@ -122,10 +122,11 @@ LogSystem::LogData& operator<< ( const LogSystem::LogData& data, const T& obj )
 
 /*! Macros overriding logger::debug etc. to use a temp object. */
 #define LOG_DEBUG	LogSystem::LogData( LogSystem::LogType::logType_debug,		"debug" )
-#define LOG_INFO    LogSystem::LogData( LogSystem::LogType::logType_warning,    "info" )
+#define LOG_INFO    LogSystem::LogData( LogSystem::LogType::logType_debug,    "info" )
 #define LOG_FATAL	LogSystem::LogData( LogSystem::LogType::logType_fatal,		"fatal" )
 #define LOG_ERROR	LogSystem::LogData( LogSystem::LogType::logType_error,		"error" )
 #define LOG_WARNING	LogSystem::LogData( LogSystem::LogType::logType_warning,	"warning" )
+#define LOG_GFXSPECIAL	LogSystem::LogData( LogSystem::LogType::logType_warning,	"GFX" )
 //#define LOG	LogSystem
 
 // add more here at need...

@@ -12,7 +12,7 @@ Core::ComponentGetters Core::GraphicsComponentBinding::GetGetters()
     {
         GraphicsComponent *gc = WGETC<GraphicsComponent>( entity );
         
-        lua_pushnumber( L, GFX::GetBitmaskValue( gc->bitmask, GFX::BT_MESH_ID ) );
+        lua_pushnumber( L, GFX::GetBitmaskValue( gc->bitmask, GFX::BITMASK::MESH_ID ) );
         
         return 1;
     };
@@ -30,7 +30,7 @@ Core::ComponentSetters Core::GraphicsComponentBinding::GetSetters()
 
         if( lua_isnumber( L, valueindex ) )
         {
-            GFX::SetBitmaskValue( gc->bitmask, GFX::BT_MESH_ID, lua_tointeger( L, valueindex ) );
+            GFX::SetBitmaskValue( gc->bitmask, GFX::BITMASK::MESH_ID, lua_tointeger( L, valueindex ) );
         }  
         else
         {

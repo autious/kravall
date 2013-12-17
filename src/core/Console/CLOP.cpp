@@ -197,7 +197,6 @@ namespace clop
 	{
 		return cli().command( cmd );
 	}
-
 }
 #undef CLOPSTR
 #undef CLOPCH

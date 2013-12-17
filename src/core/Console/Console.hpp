@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <fstream>
 
 #include <utility/Colors.hpp>
 #include <gfx/FontData.hpp>
@@ -13,7 +14,8 @@ namespace Core
 	class DebugConsole
 	{
 	public:
-		
+        static const int HISTORY_LIMIT = 100;
+        static const char * HISTORY_FILE_NAME;		
 		/*!
 		Struct used for sending text to the console
 		*/

@@ -5,35 +5,36 @@ namespace GFX
 {
 	typedef unsigned long long int GFXBitmask;
 
-	const GFXBitmask BT_OBJECT_TYPE = 0xC000000000000000ULL;
-	const GFXBitmask BT_VIEWPORT_ID = 0x3800000000000000ULL;
-	const GFXBitmask BT_LAYER = 0x0700000000000000ULL;
-	const GFXBitmask BT_TRANSLUCENCY_TYPE = 0x00C0000000000000ULL;
-	const GFXBitmask BT_LIGHT_TYPE = BT_TRANSLUCENCY_TYPE;
-	const GFXBitmask BT_MESH_ID = 0x003FFF8000000000ULL;
-	const GFXBitmask BT_MATERIAL_ID = 0x0000007FFF000000ULL;
-	const GFXBitmask BT_DEPTH = 0x0000000000FFFFFFULL;
-
-	enum BT_OBJECT_TYPES
+	namespace BITMASK
 	{
-		BTOT_GEOMETRY = 3,
-		BTOT_LIGHT = 2
-		//BTOT_RESERVED1 = 1,
-		//BTOT_RESERVED2 = 0
-	};
-
-	enum BT_LIGHT_TYPES
+		static const GFXBitmask TYPE = 0xC000000000000000ULL;
+		static const GFXBitmask VIEWPORT_ID = 0x3800000000000000ULL;
+		static const GFXBitmask LAYER = 0x0700000000000000ULL;
+		static const GFXBitmask TRANSLUCENCY_TYPE = 0x00C0000000000000ULL;
+		static const GFXBitmask LIGHT_TYPE = TRANSLUCENCY_TYPE;
+		static const GFXBitmask MESH_ID = 0x003FFF8000000000ULL;
+		static const GFXBitmask MATERIAL_ID = 0x0000007FFF000000ULL;
+		static const GFXBitmask DEPTH = 0x0000000000FFFFFFULL;
+	}
+	
+	namespace OBJECT_TYPES
 	{
-		BTLT_POINT_SHADOW = 6,
-		BTLT_SPOT_SHADOW = 5,
-		BTLT_DIR_SHADOW = 4,
+		static const unsigned int OPAQUE_GEOMETRY = 3;
+		static const unsigned int LIGHT = 2;
+		static const unsigned int TRANSPARENT_GEOMETRY = 1;
+		//const unsigned int BTOT_RESERVED2 = 0;
+	}
 
-		BTLT_POINT = 3,
-		BTLT_SPOT = 2,
-		BTLT_DIR = 1,
-
-		BTLT_AMBIENT = 0
-	};
+	namespace LIGHT_TYPES
+	{
+		static const unsigned int POINT_SHADOW = 6;
+		static const unsigned int SPOT_SHADOW = 5;
+		static const unsigned int DIR_SHADOW = 4;
+		static const unsigned int POINT = 3;
+		static const unsigned int SPOT = 2;
+		static const unsigned int DIR = 1;
+		static const unsigned int AMBIENT = 0;
+	}
 
 	static void SetBitmaskValue(GFX::GFXBitmask& bitmask, GFX::GFXBitmask type, unsigned int value)
 	{
@@ -42,38 +43,38 @@ namespace GFX
 		switch (type)
 		{
 			// Type of object to draw: Mesh/pointlight/spotlight/directional light [2b]
-		case GFX::BT_OBJECT_TYPE:
-			bitmask |= (GFX::GFXBitmask(value) << 62) & GFX::BT_OBJECT_TYPE;
+		case GFX::BITMASK::TYPE:
+			bitmask |= (GFX::GFXBitmask(value) << 62) & GFX::BITMASK::TYPE;
 			break;
 
 			// Viewport ID [3b]
-		case GFX::BT_VIEWPORT_ID:
-			bitmask |= (GFX::GFXBitmask(value) << 59) & GFX::BT_VIEWPORT_ID;
+		case GFX::BITMASK::VIEWPORT_ID:
+			bitmask |= (GFX::GFXBitmask(value) << 59) & GFX::BITMASK::VIEWPORT_ID;
 			break;
 
 			// Layer [3b]
-		case GFX::BT_LAYER:
-			bitmask |= (GFX::GFXBitmask(value) << 56) & GFX::BT_LAYER;
+		case GFX::BITMASK::LAYER:
+			bitmask |= (GFX::GFXBitmask(value) << 56) & GFX::BITMASK::LAYER;
 			break;
 
 			// Translucency type: opaque/add/sub/mul [2b]
-		case GFX::BT_TRANSLUCENCY_TYPE:
-			bitmask |= (GFX::GFXBitmask(value) << 54) & GFX::BT_TRANSLUCENCY_TYPE;
+		case GFX::BITMASK::TRANSLUCENCY_TYPE:
+			bitmask |= (GFX::GFXBitmask(value) << 54) & GFX::BITMASK::TRANSLUCENCY_TYPE;
 			break;
 
 			// Mesh ID [15b]
-		case GFX::BT_MESH_ID:
-			bitmask |= (GFX::GFXBitmask(value) << 39) & GFX::BT_MESH_ID;
+		case GFX::BITMASK::MESH_ID:
+			bitmask |= (GFX::GFXBitmask(value) << 39) & GFX::BITMASK::MESH_ID;
 			break;
 
 			// Material ID [15b]
-		case GFX::BT_MATERIAL_ID:
-			bitmask |= (GFX::GFXBitmask(value) << 24) & GFX::BT_MATERIAL_ID;
+		case GFX::BITMASK::MATERIAL_ID:
+			bitmask |= (GFX::GFXBitmask(value) << 24) & GFX::BITMASK::MATERIAL_ID;
 			break;
 
 			// Depth [24b]
-		case GFX::BT_DEPTH:
-			bitmask |= (GFX::GFXBitmask(value) << 0) & GFX::BT_DEPTH;
+		case GFX::BITMASK::DEPTH:
+			bitmask |= (GFX::GFXBitmask(value) << 0) & GFX::BITMASK::DEPTH;
 			break;
 		}
 	}
@@ -83,38 +84,38 @@ namespace GFX
 		switch (type)
 		{
 			// Type of object to draw: Mesh/pointlight/spotlight/directional light [2b]
-		case GFX::BT_OBJECT_TYPE:
-			value = static_cast<unsigned int>((bitmask & GFX::BT_OBJECT_TYPE) >> (64 - 2));
+		case GFX::BITMASK::TYPE:
+			value = static_cast<unsigned int>((bitmask & GFX::BITMASK::TYPE) >> (64 - 2));
 			break;
 
 			// Viewport ID [3b]
-		case GFX::BT_VIEWPORT_ID:
-			value = static_cast<unsigned int>((bitmask & GFX::BT_VIEWPORT_ID) >> (64 - 2 - 3));
+		case GFX::BITMASK::VIEWPORT_ID:
+			value = static_cast<unsigned int>((bitmask & GFX::BITMASK::VIEWPORT_ID) >> (64 - 2 - 3));
 			break;
 
 			// Layer [3b]
-		case GFX::BT_LAYER:
-			value = static_cast<unsigned int>((bitmask & GFX::BT_LAYER) >> (64 - 2 - 3 - 3));
+		case GFX::BITMASK::LAYER:
+			value = static_cast<unsigned int>((bitmask & GFX::BITMASK::LAYER) >> (64 - 2 - 3 - 3));
 			break;
 
 			// Translucency type: opaque/add/sub/mul [2b]
-		case GFX::BT_TRANSLUCENCY_TYPE:
-			value = static_cast<unsigned int>((bitmask & GFX::BT_TRANSLUCENCY_TYPE) >> (64 - 2 - 3 - 3 - 2));
+		case GFX::BITMASK::TRANSLUCENCY_TYPE:
+			value = static_cast<unsigned int>((bitmask & GFX::BITMASK::TRANSLUCENCY_TYPE) >> (64 - 2 - 3 - 3 - 2));
 			break;
 
 			// Mesh ID [15b]
-		case GFX::BT_MESH_ID:
-			value = static_cast<unsigned int>((bitmask & GFX::BT_MESH_ID) >> (64 - 2 - 3 - 3 - 2 - 15));
+		case GFX::BITMASK::MESH_ID:
+			value = static_cast<unsigned int>((bitmask & GFX::BITMASK::MESH_ID) >> (64 - 2 - 3 - 3 - 2 - 15));
 			break;
 
 			// Material ID [15b]
-		case GFX::BT_MATERIAL_ID:
-			value = static_cast<unsigned int>((bitmask & GFX::BT_MATERIAL_ID) >> (64 - 2 - 3 - 3 - 2 - 15 - 15));
+		case GFX::BITMASK::MATERIAL_ID:
+			value = static_cast<unsigned int>((bitmask & GFX::BITMASK::MATERIAL_ID) >> (64 - 2 - 3 - 3 - 2 - 15 - 15));
 			break;
 
 			// Depth [24b]
-		case GFX::BT_DEPTH:
-			value = static_cast<unsigned int>((bitmask & GFX::BT_DEPTH) >> (64 - 2 - 3 - 3 - 2 - 15 - 15 - 24));
+		case GFX::BITMASK::DEPTH:
+			value = static_cast<unsigned int>((bitmask & GFX::BITMASK::DEPTH) >> (64 - 2 - 3 - 3 - 2 - 15 - 15 - 24));
 			break;
 		}
 		return value;
