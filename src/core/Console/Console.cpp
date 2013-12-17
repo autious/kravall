@@ -639,10 +639,10 @@ namespace Core
 			m_cursorOffset = m_inputLine.length();
 
 		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_PAGE_UP) || Core::GetInput().GetScrollY() > 0)
-			Scroll(1);
+			Scroll(10);
 
 		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_PAGE_DOWN) || Core::GetInput().GetScrollY() < 0)
-			Scroll(-1);
+			Scroll(-10);
 
 		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_ENTER) || Core::GetInput().IsKeyPressedOnce(GLFW_KEY_KP_ENTER))
 			Add();

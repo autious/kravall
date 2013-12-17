@@ -31,6 +31,22 @@ void LogSystem::Mute( const char* prefix )
 {
 	logMutex.lock();
 
+	{
+		std::stringstream ss;
+		ss << ignoreList;
+
+		std::string tt;
+		while( ss.rdbuf()->in_avail() != 0 )
+		{
+			ss >> tt;
+			if( std::strcmp( prefix, tt.c_str() ) == 0 )
+			{
+				logMutex.unlock();
+				return;
+			}
+		}
+	}
+
 	std::stringstream ss;
 	ss << prefix << " " << ignoreList;
 
