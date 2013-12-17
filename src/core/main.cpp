@@ -241,7 +241,7 @@ void run( GLFWwindow * window )
 	Core::GetInput().Initialize(window);
 
     unsigned int meshID; 
-    Core::world.m_contentManager.Load<Core::GnomeLoader>("assets/tomte.gnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+    Core::world.m_contentManager.Load<Core::GnomeLoader>("assets/teapot.bgnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
             {
                 Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
                 const Core::ModelData* data = gnomeLoader->getData(handle);
@@ -311,7 +311,7 @@ void run( GLFWwindow * window )
 	//CreateRioter(&rioters, meshID, 0.0f, -3.0f, 0.0f);
 	//CreateRioter(&rioters, meshID, 6.0f, -3.0f, 0.0f);
 	//for( int i = -100; i < 100; i++ )
-	for( int i = -100; i < 100; i++ )
+	for( int i = -5; i < 5; i++ )
 		CreateRioter(&rioters, meshID, i * 16.0f, 1.0f, 0.0f);
 
 	//CreateRioter(&rioters, meshID, 16.0f, 0.0f, 0.0f);
