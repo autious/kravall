@@ -33,6 +33,11 @@ namespace Core
 		*/
 		glm::vec3 GetGroundHit( int mouseX, int mouseY );
 
+		/*!
+			Will return the current intersection of the mouse ray and X-Z plane.
+		*/
+		glm::vec3 GetCurrentGroundHit() { return m_currentGroundHit; }
+
 
 		/*!
 			Will return a ray going from the game camera via cursor to far-plane.
@@ -47,7 +52,7 @@ namespace Core
 	private:
 
 		Entity m_lastSelectedEntity;
-
+		glm::vec3 m_currentGroundHit;
     };
 }
 

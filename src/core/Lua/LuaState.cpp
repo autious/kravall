@@ -12,10 +12,13 @@
 #include <Lua/Bridges/LuaEntityBridge.hpp>
 #include <Lua/Bridges/LuaContentManagerBridge.hpp>
 
+#include <Timer.hpp>
+
 Core::LuaState::LuaState()
 {
     LOG_DEBUG << "Creating lua state" << std::endl;
     m_state = luaL_newstate();
+    m_activeUpdate = false;
 
     luaL_openlibs( m_state ); 
 
@@ -58,6 +61,8 @@ void Core::LuaState::Execute( const char * filename )
         LOG_ERROR << "Unable to load file: " << lua_tostring( m_state, -1 ) << std::endl; 
         lua_pop( m_state, 1 ); 
     }
+
+    VerifyUpdateFunction();
 }
 
 void Core::LuaState::DoBlock( const char * block )
@@ -69,9 +74,79 @@ void Core::LuaState::DoBlock( const char * block )
         LOG_ERROR << "Unable to parse block: " << lua_tostring( m_state, -1 ) << std::endl;
         lua_pop( m_state, 1 );
     }
+
+    VerifyUpdateFunction();
+}
+
+int Core::LuaState::DoBlock( const char * block, int args, int rargs )
+{
+    int error = luaL_loadstring( m_state, block ) || lua_pcall( m_state, args, rargs, 0 );
+
+    if( error )
+    {
+        LOG_ERROR << "Unable to parse block: " << lua_tostring( m_state, -1 ) << std::endl;
+        lua_pop( m_state, 1 );
+        return 0;
+    }
+
+    return rargs;
+}
+
+void Core::LuaState::Update( float delta )
+{ 
+    if( m_activeUpdate )
+    {
+        lua_rawgeti( m_state, LUA_REGISTRYINDEX, m_coreUpdateFunctionReg );
+        lua_pushnumber( m_state, delta );
+        Timer().Start();   
+        int error = lua_pcall( m_state, 1,0,0 );
+        Timer().Stop();
+        m_lastFrameTime = Timer().GetDelta();
+
+        if( error )
+        {
+            LOG_ERROR << "Unable to call update: " << lua_tostring( m_state, -1 ) << std::endl;
+            LOG_ERROR << "Disabling update call until new lua file is loaded..." << std::endl;
+            m_activeUpdate = false;
+            lua_pop( m_state, 1 );
+        }
+    } 
+}
+
+std::chrono::microseconds Core::LuaState::GetUpdateTiming()
+{
+    return m_lastFrameTime;
+}
+
+int Core::LuaState::GetMemoryUse()
+{
+    return lua_gc( m_state, LUA_GCCOUNT, 0 );
 }
 
 lua_State* Core::LuaState::GetState()
 {
     return m_state;
+}
+
+void Core::LuaState::VerifyUpdateFunction()
+{
+    lua_getglobal( m_state, "core" );
+    lua_getfield( m_state, -1, "update" );
+    lua_rawgeti( m_state, LUA_REGISTRYINDEX, m_coreUpdateFunctionReg );
+
+    if( lua_equal( m_state, -1, -2 ) == 0 && lua_isnil( m_state, -2 ) == 0 )
+    {
+        LOG_INFO << "Loaded new core.update function, (re)activating update call." << std::endl;
+        m_activeUpdate = true;
+
+        if( lua_isnil( m_state, -1 ) == 0 )
+        { 
+            luaL_unref( m_state, LUA_REGISTRYINDEX, m_coreUpdateFunctionReg );
+        }
+
+        lua_pushvalue( m_state, -2 );
+        m_coreUpdateFunctionReg = luaL_ref( m_state, LUA_REGISTRYINDEX );
+    }
+
+    lua_pop( m_state, 3 );
 }
