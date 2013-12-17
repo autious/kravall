@@ -94,19 +94,19 @@ namespace GFX
 	{
 		BasePainter::Render();
 
-		glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
-
-
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthBuffer->GetTextureHandle(), 0);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color->GetTextureHandle(), 0);
-
-		GLenum drawBuffers[] = { GL_NONE, GL_COLOR_ATTACHMENT0 };
-		glDrawBuffers(2, drawBuffers);
-
-		glClear(GL_COLOR_BUFFER_BIT);
-
 		if (DebugDrawing().ShouldRender())
 		{
+
+			glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
+
+
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthBuffer->GetTextureHandle(), 0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color->GetTextureHandle(), 0);
+
+			GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0 };
+			glDrawBuffers(1, drawBuffers);
+
+			glClear(GL_COLOR_BUFFER_BIT);
 
 			//DetachTextures();
 			GLenum err = 0;
@@ -185,7 +185,25 @@ namespace GFX
 			bc.viewMatrix = glm::mat4x4(1.0f);
 			bc.projMatrix = glm::mat4x4(1.0f);
 			m_uniformBufferManager->SetBasicCameraUBO(bc);
+			
+			// Draw lines
+			m_shaderManager->UseProgram("DebugLine");
 
+			for (unsigned int i = 0; i < DebugDrawing().GetLines().size(); ++i)
+			{
+				DebugLine dl = DebugDrawing().GetLines()[i];
+
+				m_shaderManager->SetUniform(1, dl.color, m_lineColorUniform);
+				m_shaderManager->SetUniform(1, dl.start, m_lineStartUniform);
+				m_shaderManager->SetUniform(1, dl.end, m_lineEndUniform);
+
+				glLineWidth(dl.thickness);
+				glDrawArrays(GL_POINTS, 0, 1);
+			}
+			glLineWidth(1.0f);
+			m_shaderManager->ResetProgram();
+
+			BasePainter::ClearFBO();
 
 			// Draw filled rectangles
 			m_shaderManager->UseProgram("DebugRect");
@@ -238,43 +256,27 @@ namespace GFX
 			glPointSize(1.0f);
 			m_shaderManager->ResetProgram();
 
-			// Draw lines
-			m_shaderManager->UseProgram("DebugLine");
-
-			for (unsigned int i = 0; i < DebugDrawing().GetLines().size(); ++i)
-			{
-				DebugLine dl = DebugDrawing().GetLines()[i];
-
-				m_shaderManager->SetUniform(1, dl.color, m_lineColorUniform);
-				m_shaderManager->SetUniform(1, dl.start, m_lineStartUniform);
-				m_shaderManager->SetUniform(1, dl.end, m_lineEndUniform);
-
-				glLineWidth(dl.thickness);
-				glDrawArrays(GL_POINTS, 0, 1);
-			}
-			glLineWidth(1.0f);
-			m_shaderManager->ResetProgram();
 		}
-		BasePainter::ClearFBO();
+		
 
 		m_shaderManager->UseProgram("TQ");
-
+		
 		glDisable(GL_DEPTH_TEST);
-		//glDisable(GL_BLEND);
 		glDepthMask(GL_FALSE);
 		
 		m_shaderManager->SetUniform(1.0f, m_shaderManager->GetUniformLocation("TQ", "alphaIN"));
 		TextureManager::BindTexture(color->GetTextureHandle(), m_shaderManager->GetUniformLocation("TQ", "textureIN"), 0, GL_TEXTURE_2D);
-
+		
 		glBindVertexArray(m_dummyVAO);
 		glDrawArrays(GL_POINTS, 0, 1);
-
+		
 		m_shaderManager->ResetProgram();
-
+		
 		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_BLEND);
 		glDepthMask(GL_TRUE);
-
+		glDisable(GL_BLEND);
+		
+		BasePainter::ClearFBO();
 
 		TextureManager::UnbindTexture();
 

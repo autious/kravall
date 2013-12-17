@@ -23,6 +23,7 @@ function ASM:loadAssembly( asmtable )
 
     local componentTypes = {}
     -- Put the entity into the entity handler.
+    
     local function apply( asmtable )
         -- If we have called destroy we block any future incoming loads.
         if ASM.block_loads then
@@ -81,6 +82,7 @@ function ASM:destroy( )
             core.contentmanager.free( loader_pair[1], loader_pair[2] )
         end
     end
+    self.entities = nil
 end
 
 return M

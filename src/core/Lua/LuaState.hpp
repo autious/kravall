@@ -3,6 +3,8 @@
 
 #include <lua.h>
 
+#include <chrono>
+
 namespace Core
 {
     class ConfigurationHandler;
@@ -14,6 +16,12 @@ namespace Core
         private:
             friend class ConfigurationHandler;
             lua_State *m_state;
+            std::chrono::microseconds m_lastFrameTime;
+            int m_coreUpdateFunctionReg;
+            bool m_activeUpdate;
+
+            void VerifyUpdateFunction();
+            
         public:
             LuaState();
             ~LuaState();
@@ -22,7 +30,13 @@ namespace Core
             void DoBlock( const char *block );
             int DoBlock( const char * block, int args, int rargs );
 
+            void Update( float delta );
+
+            std::chrono::microseconds GetUpdateTiming();
+            int GetMemoryUse();
+
             lua_State *GetState();
+
     };
 }
 #endif

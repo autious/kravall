@@ -32,6 +32,8 @@ int Core::GnomeLoaderBridge::Load( lua_State * L )
             //Pop the error.
             lua_pop(L,1 );
         }
+
+        luaL_unref( L, LUA_REGISTRYINDEX, callbackRegIndex );
     }, lua_toboolean( L, 4 ) );
 
     return 0;
