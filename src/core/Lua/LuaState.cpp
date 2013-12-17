@@ -71,6 +71,20 @@ void Core::LuaState::DoBlock( const char * block )
     }
 }
 
+int Core::LuaState::DoBlock( const char * block, int args, int rargs )
+{
+    int error = luaL_loadstring( m_state, block ) || lua_pcall( m_state, args, rargs, 0 );
+
+    if( error )
+    {
+        LOG_ERROR << "Unable to parse block: " << lua_tostring( m_state, -1 ) << std::endl;
+        lua_pop( m_state, 1 );
+        return 0;
+    }
+
+    return rargs;
+}
+
 lua_State* Core::LuaState::GetState()
 {
     return m_state;
