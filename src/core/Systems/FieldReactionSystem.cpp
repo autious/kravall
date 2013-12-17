@@ -2,6 +2,7 @@
 #include "World.hpp"
 #include <logger/Logger.hpp>
 
+const float Core::FieldReactionSystem::FIELD_CELL_SIDE_SIZE = FIELD_SIDE_LENGTH / static_cast<float>(FIELD_SIDE_CELL_COUNT);
 
 Core::FieldReactionSystem::FieldReactionSystem() : BaseSystem(EntityHandler::GenerateAspect<WorldPositionComponent, MovementComponent,
 	UnitTypeComponent, AttributeComponent>(), 0ULL), m_showPF(true)
@@ -10,12 +11,20 @@ Core::FieldReactionSystem::FieldReactionSystem() : BaseSystem(EntityHandler::Gen
 	{
 		for (int j = 0; j < FIELD_SIDE_CELL_COUNT; ++j)
 		{
-			m_field[i][j] = 1.0f;
+			m_field[i][j] = -1.0f + i * 0.1f + j * 0.1f;
 		}
 	}
 }
 
 void Core::FieldReactionSystem::Update(float delta)
+{
+	UpdateAgents();
+
+	if (m_showPF)
+		DrawDebugField();
+}
+
+void Core::FieldReactionSystem::UpdateAgents()
 {
 	/*
 	1.	foreach agent a
@@ -93,4 +102,37 @@ float Core::FieldReactionSystem::GetChargeAt(Entity chargedAgent, glm::vec3 quer
 		return -100 + distance * (repelRadius / 100);
 	else
 		return peakCharge - distance * decline;
+}
+
+void Core::FieldReactionSystem::UpdateDebugField()
+{
+	for (int i = 0; i < FIELD_SIDE_CELL_COUNT; ++i)
+	{
+		for (int j = 0; j < FIELD_SIDE_CELL_COUNT; ++j)
+		{
+			m_field[i][j] = -1.0f + i * 0.1f + j * 0.1f;
+		}
+	}
+}
+
+void Core::FieldReactionSystem::DrawDebugField()
+{
+	float cellHalfSize = FIELD_CELL_SIDE_SIZE * 0.5f;
+	float fieldStart = -FIELD_SIDE_LENGTH * 0.5f - cellHalfSize;
+
+	for (int i = 0; i < FIELD_SIDE_CELL_COUNT; ++i)
+	{
+		for (int j = 0; j < FIELD_SIDE_CELL_COUNT; ++j)
+		{
+			GFXColor colour = GFXColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+			if (m_field[i][j] > 0.0f)
+				colour = GFXColor(0.0f, m_field[i][j], 0.0f, 1.0f);
+			else
+				colour = GFXColor(m_field[i][j], 0.0f, 0.0f, 1.0f);
+
+			GFX::Debug::DrawBox(GFXVec3(fieldStart + FIELD_CELL_SIDE_SIZE * i, -30.0f, fieldStart + FIELD_CELL_SIDE_SIZE * j),
+				GFXVec3(FIELD_CELL_SIDE_SIZE + 0.1f, 0.1f, FIELD_CELL_SIDE_SIZE + 0.1f), false, colour);
+		}
+	}
 }

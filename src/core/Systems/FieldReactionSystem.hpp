@@ -32,14 +32,19 @@ namespace Core
 		virtual const char* GetHumanName() { return "FieldReactionSystem"; }
 
 	private:
-		static const int FIELD_SIDE_LENGTH = 512;
-		static const int FIELD_SIDE_CELL_COUNT = 32;
+		static const int FIELD_SIDE_LENGTH = 32;
+		static const int FIELD_SIDE_CELL_COUNT = 16;
+		static const float FIELD_CELL_SIDE_SIZE;
 
 		float m_field[FIELD_SIDE_CELL_COUNT][FIELD_SIDE_CELL_COUNT];
 		bool m_showPF;
 
+		void UpdateAgents();
 		float GetEffectOnAgent(WorldPositionComponent* agentPos);
 		float GetChargeAt(Entity chargedAgent, glm::vec3 queryPosition);
+
+		void UpdateDebugField();
+		void DrawDebugField();
 	};
 }
 

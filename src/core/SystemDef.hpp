@@ -26,7 +26,8 @@ namespace Core
 	class LightSystem;
 	class CollisionSystem;
 	
-    typedef SystemHandlerTemplate<RenderingSystem, LightSystem, MovementSystem, FieldReactionSystem, PickingSystem, AIDebugSystem, CollisionSystem> SystemHandler;
+    typedef SystemHandlerTemplate<RenderingSystem, LightSystem, MovementSystem, FieldReactionSystem, PickingSystem, 
+		AIDebugSystem, CollisionSystem> SystemHandler;
     typedef EntityHandlerTemplate<SystemHandler, WorldPositionComponent, RotationComponent, ScaleComponent, 
 		GraphicsComponent, LightComponent, MovementComponent, UnitTypeComponent, AttributeComponent,
 		BoundingVolumeComponent> EntityHandler;
