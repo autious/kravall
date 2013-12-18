@@ -205,8 +205,9 @@ namespace GFX
 		\param p1 World space position of the starting point of the line
 		\param p2 World space position of the end point of the line
 		\param color Color of the line
+		\param useDepth If true, the depth buffer is used to occlude if behind an object, else draws on top of existing geometry regardless of depth
 		*/
-		DLL_API void DrawLine(GFXVec3 p1, GFXVec3 p2, GFXColor color);
+		DLL_API void DrawLine(GFXVec3 p1, GFXVec3 p2, GFXColor color, bool useDepth);
 
 		/*!
 		Draws a line on the screen.
@@ -214,8 +215,9 @@ namespace GFX
 		\param p2 The world space position of the end point of the line
 		\param color Color of the line
 		\param thickness Thickness of the line
+		\param useDepth If true, the depth buffer is used to occlude if behind an object, else draws on top of existing geometry regardless of depth
 		*/
-		DLL_API void DrawLine(GFXVec3 p1, GFXVec3 p2, GFXColor color, float thickness);
+		DLL_API void DrawLine(GFXVec3 p1, GFXVec3 p2, GFXColor color, float thickness, bool useDepth);
 
 		/*!
 		Draws a line on the screen.
@@ -249,16 +251,18 @@ namespace GFX
 		\param dimensions Box dimensions
 		\param solid If true, the box will be filled, else only outlines will be shown
 		\param color Color of the rectangle
+		\param useDepth If true, the depth buffer is used to occlude if behind an object, else draws on top of existing geometry regardless of depth
 		*/
-		DLL_API void DrawBox(GFXVec3 position, GFXVec3 dimensions, bool solid, GFXColor color);
+		DLL_API void DrawBox(GFXVec3 position, GFXVec3 dimensions, bool solid, GFXColor color, bool useDepth);
 
 		/*!
-		Draws a sphere on the screen.
+		Draws a representation of a sphere on the screen.
 		\param position World space position for the center of the sphere
 		\param radius Sphere radius
 		\param color Color of the sphere
+		\param useDepth If true, the depth buffer is used to occlude if behind an object, else draws on top of existing geometry regardless of depth
 		*/
-		DLL_API void DrawSphere(GFXVec3 position, float radius, GFXColor color);
+		DLL_API void DrawSphere(GFXVec3 position, float radius, GFXColor color, bool useDepth);
 
 		/*!
 		Draws a screen space circle on the screen.

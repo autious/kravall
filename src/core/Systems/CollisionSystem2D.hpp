@@ -11,15 +11,15 @@ namespace Core
 		Records enteties with WorldPositionComponent and BoundingVolumeComponents.
 		Will not move enteties marked as static in boundingVolumeComponent.
 	*/
-    class CollisionSystem : public BaseSystem
+    class CollisionSystem2D : public BaseSystem
     {
 
     public:
         virtual void Update( float delta ) override;
 
-        CollisionSystem();
+        CollisionSystem2D();
 
-        virtual const char* GetHumanName() { return "CollisionSystem"; }
+        virtual const char* GetHumanName() { return "CollisionSystem2D"; }
     };
 }
 

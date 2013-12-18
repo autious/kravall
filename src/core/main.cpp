@@ -85,6 +85,7 @@ GLFWwindow* init( int argc, char** argv )
     LogSystem::RegisterLogHandler( LogSystem::warningHandler,   new ClopHandler( clopLoggerCallback, LogSystem::LogType::logType_warning) );
 
     Core::world.m_luaState.Execute( "scripts/config.lua" );
+    Core::world.m_luaState.Execute( "scripts/main.lua" );
 
     for( int i = 0; i < argc-1; i++ )
     {
@@ -118,24 +119,33 @@ GLFWwindow* init( int argc, char** argv )
 
 void TestRendering()
 {
-	GFX::Debug::DrawBox(glm::vec3(2, 0, 0), glm::vec3(2, 2, 10), false, Colors::Black);
-	GFX::Debug::DrawBox(glm::vec3(2, 0, 0), glm::vec3(2, 2, 10), true, glm::vec4(Colors::Black.x, Colors::Black.y, Colors::Black.z, 0.5f));
-	GFX::Debug::DrawSphere(glm::vec3(2, 0, 0), 2.0f, Colors::Black);
+	GFX::Debug::DrawBox(glm::vec3(50, -35, 0), glm::vec3(25, 25, 25), false, Colors::YellowGreen, true);
+	GFX::Debug::DrawBox(glm::vec3(50, -35, 0), glm::vec3(25, 25, 25), true, glm::vec4(Colors::YellowGreen.x, Colors::YellowGreen.y, Colors::YellowGreen.z, 0.9f), true);
 
-	GFX::Debug::DrawLine(glm::vec2(100, 50), glm::vec2(1200, 600), Colors::CornflowerBlue);
-	GFX::Debug::DrawPoint(glm::vec2(100, 50), Colors::Green, 10);
-	GFX::Debug::DrawPoint(glm::vec2(1200, 600), Colors::Green, 10);
+	GFX::Debug::DrawBox(glm::vec3(50, 0, 0.0f), glm::vec3(25, 25, 25), false, Colors::HotPink, true);
+	GFX::Debug::DrawBox(glm::vec3(50, 0, 0.0f), glm::vec3(25, 25, 25), true, glm::vec4(Colors::HotPink.x, Colors::HotPink.y, Colors::HotPink.z, 0.9f), true);
 
-	GFX::Debug::DrawRectangle(glm::vec2(0, 0), glm::vec2(200, 20), true, Colors::Aquamarine);
-	GFX::Debug::DrawRectangle(glm::vec2(100, 20), glm::vec2(100, 40), false, Colors::Chocolate);
+	GFX::Debug::DrawBox(glm::vec3(50, -35, -35), glm::vec3(25, 25, 25), false, Colors::HotPink, true);
+	GFX::Debug::DrawBox(glm::vec3(50, -35, -35), glm::vec3(25, 25, 25), true, glm::vec4(Colors::HotPink.x, Colors::HotPink.y, Colors::HotPink.z, 0.9f), true);
 
-	GFX::RenderText(fontData, glm::vec2(0, 100), 1.0f, Colors::Black, "The Quick Brown Fox Jumps Over The Lazy Dog");
-	GFX::RenderText(fontData, glm::vec2(10, 120), 1.0f, Colors::Blue, "The Quick Brown Fox Jumps Over The Lazy Dog");
-	GFX::RenderText(fontData, glm::vec2(20, 140), 1.0f, Colors::Green, "The Quick Brown Fox Jumps Over The Lazy Dog");
-	GFX::RenderText(fontData, glm::vec2(30, 160), 1.0f, Colors::CornflowerBlue, "The Quick Brown Fox Jumps Over The Lazy Dog");
-	GFX::RenderText(fontData, glm::vec2(40, 180), 1.0f, Colors::White, "The Quick Brown Fox Jumps Over The Lazy Dog????");
+	GFX::Debug::DrawSphere(glm::vec3(0, 0, 0.0f), 25.0f, Colors::Green, false);
+	GFX::Debug::DrawSphere(glm::vec3(-50, 0, 0.0f), 25.0f, Colors::White, true);
 
-	GFX::RenderText(fontData, glm::vec2(0, 200), 1.0f, Colors::Gold, "ABCDEFGHIJKLMNOPQRSTUVWXYZASIUHDOIASHUDIOASHDA1234567890*'^&%#!?");
+	GFX::Debug::DrawLine(glm::vec3(-50.0f, -50.0f, -50.0f), glm::vec3(50.0f, 50.0f, 50.0f), Colors::CornflowerBlue, true);
+	GFX::Debug::DrawLine(glm::vec3(50.0f, -50.0f, -50.0f), glm::vec3(-50.0f, 50.0f, 50.0f), Colors::CornflowerBlue, false);
+	//GFX::Debug::DrawPoint(glm::vec2(100, 50), Colors::Green, 10);
+	//GFX::Debug::DrawPoint(glm::vec2(1200, 600), Colors::Green, 10);
+
+	//GFX::Debug::DrawRectangle(glm::vec2(0, 0), glm::vec2(200, 20), true, Colors::Aquamarine);
+	//GFX::Debug::DrawRectangle(glm::vec2(100, 20), glm::vec2(100, 40), false, Colors::Chocolate);
+
+	//GFX::RenderText(fontData, glm::vec2(0, 100), 1.0f, Colors::Black, "The Quick Brown Fox Jumps Over The Lazy Dog");
+	//GFX::RenderText(fontData, glm::vec2(10, 120), 1.0f, Colors::Blue, "The Quick Brown Fox Jumps Over The Lazy Dog");
+	//GFX::RenderText(fontData, glm::vec2(20, 140), 1.0f, Colors::Green, "The Quick Brown Fox Jumps Over The Lazy Dog");
+	//GFX::RenderText(fontData, glm::vec2(30, 160), 1.0f, Colors::CornflowerBlue, "The Quick Brown Fox Jumps Over The Lazy Dog");
+	//GFX::RenderText(fontData, glm::vec2(40, 180), 1.0f, Colors::White, "The Quick Brown Fox Jumps Over The Lazy Dog????");
+	//
+	//GFX::RenderText(fontData, glm::vec2(0, 200), 1.0f, Colors::Gold, "ABCDEFGHIJKLMNOPQRSTUVWXYZASIUHDOIASHUDIOASHDA1234567890*'^&%#!?");
 }
 
 void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, float posX, float posY, float posZ)
@@ -175,12 +185,33 @@ void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, float posX,
 	GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::TYPE, GFX::OBJECT_TYPES::OPAQUE_GEOMETRY);
 }
 
+void LuaInfoRender()
+{
+    int screenWidth = GFX::GetScreenWidth(); 
+    int screenHeight = GFX::GetScreenHeight();
+
+    std::stringstream ss;
+
+    ss << "Memory: " << Core::world.m_luaState.GetMemoryUse() << "Kb";
+    GFX::RenderText( fontData, glm::vec2( 510, screenHeight - 40 ), 1.0f, Colors::White, "Lua"  );
+    GFX::RenderText( fontData, glm::vec2( 510, screenHeight - 25 ), 1.0f, Colors::White, ss.str().c_str()  );
+    std::stringstream ss2;
+    ss2 << "Update: " << std::fixed << std::setw( 7 ) << std::setprecision(4) << std::setfill( '0' ) << Core::world.m_luaState.GetUpdateTiming().count() / 1000.0f << "ms";
+    GFX::RenderText( fontData, glm::vec2( 510, screenHeight - 10 ), 1.0f, Colors::White, ss2.str().c_str()  );
+
+    GFX::Debug::DrawRectangle(glm::vec2( 505, screenHeight - 55 ),
+            glm::vec2(175, 50), true, glm::vec4( 0.5f,0.5f,0.5f,0.5f) );
+
+}
+
 void SystemTimeRender()
 {
     bool showSystems = Core::world.m_config.GetBool( "showSystems", false ) ;
 	GFX::Debug::DisplaySystemInfo( showSystems );
     if( showSystems )
     {
+        LuaInfoRender();
+
         std::vector<std::pair<const char *,std::chrono::microseconds>> times = Core::world.m_systemHandler.GetFrameTime();
 
         for( int i = 0; i < (int)times.size(); i++ )
@@ -195,6 +226,7 @@ void SystemTimeRender()
             glm::vec2(500, 20*times.size()), true, glm::vec4( 0.5f,0.5f,0.5f,0.5f) );
     }
 }
+
 
 
 void run( GLFWwindow * window )
@@ -220,7 +252,7 @@ void run( GLFWwindow * window )
     unsigned int meshID; 
     unsigned int materialID;
 
-    Core::world.m_contentManager.Load<Core::GnomeLoader>("assets/tomte.gnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+    Core::world.m_contentManager.Load<Core::GnomeLoader>("assets/teapot.bgnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
             {
                 Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
                 const Core::ModelData* data = gnomeLoader->getData(handle);
@@ -295,7 +327,7 @@ void run( GLFWwindow * window )
 	//CreateRioter(&rioters, meshID, 0.0f, -3.0f, 0.0f);
 	//CreateRioter(&rioters, meshID, 6.0f, -3.0f, 0.0f);
 	//for( int i = -100; i < 100; i++ )
-	for( int i = -100; i < 100; i++ )
+	for( int i = -5; i < 5; i++ )
 		CreateRioter(&rioters, meshID, i * 16.0f, 1.0f, 0.0f);
 
 	//CreateRioter(&rioters, meshID, 16.0f, 0.0f, 0.0f);
@@ -340,15 +372,15 @@ void run( GLFWwindow * window )
 		Core::gameCamera->CalculateProjectionMatrix(GFX::GetScreenWidth(), GFX::GetScreenHeight());
 		GFX::SetProjectionMatrix(Core::gameCamera->GetProjectionMatrix());
 
-		//TestRendering();
+		TestRendering();
 
 	    //TODO: Timing hook
         SystemTimeRender();
 		GFX::Render();
 
         Core::world.m_contentManager.CallFinishers();
-
 		Core::world.m_systemHandler.Update( delta );
+        Core::world.m_luaState.Update( delta );
 
 		GFX::Debug::DisplayFBO(Core::world.m_config.GetInt( "showFramebuffers", -1 ));
 		Core::GetInput().ResetInput();

@@ -36,7 +36,7 @@ namespace GFX
 		static const unsigned int AMBIENT = 0;
 	}
 
-	static void SetBitmaskValue(GFX::GFXBitmask& bitmask, GFX::GFXBitmask type, unsigned int value)
+	inline static void SetBitmaskValue(GFX::GFXBitmask& bitmask, GFX::GFXBitmask type, unsigned int value)
 	{
 		// Clear bits at mask
 		bitmask &= ~type;
@@ -78,7 +78,8 @@ namespace GFX
 			break;
 		}
 	}
-	static unsigned int GetBitmaskValue(GFX::GFXBitmask& bitmask, GFX::GFXBitmask type)
+
+	inline static unsigned int GetBitmaskValue(GFX::GFXBitmask& bitmask, GFX::GFXBitmask type)
 	{
 		unsigned int value = 0;
 		switch (type)

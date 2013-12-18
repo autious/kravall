@@ -129,8 +129,9 @@ namespace GFX
 			}
 
 			m_shaderManager->SetUniform(1, *(glm::mat4*)renderJobs.at(i).value, m_modelMatrixUniform);
-			glDrawArrays(GL_TRIANGLES, 0, 8127);
-			//glDrawElements(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0);
+			//glDrawArrays(GL_TRIANGLES, 0, 3559);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IBO);
+			glDrawElements(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0);
 		}
 
 		//struct mesh

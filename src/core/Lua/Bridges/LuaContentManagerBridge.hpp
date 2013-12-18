@@ -67,7 +67,7 @@ namespace Core
                 if( lua_isboolean( L, 4 ) == 0 )
                     return luaL_error( L, "%s: fourth parameter is not boolen", __FUNCTION__ );
             }
-            return 0;
+            return luaL_error( L, "%s: Unable to load, program flow should not reach this position.", __FUNCTION__ );
         }
 
         /*!
@@ -85,12 +85,12 @@ namespace Core
             }   
             else
             {
-                if( lua_isuserdata( L, 1 ) )
-                    luaL_error( L, "%s: First parameter is not userdata.", __FUNCTION__ );
-                if(  lua_isstring( L, 2 ) )
-                    luaL_error( L, "%s: Second parameter is not string.", __FUNCTION__ );
+                if( lua_isuserdata( L, 1 ) == 0 )
+                    return luaL_error( L, "%s: First parameter is not userdata.", __FUNCTION__ );
+                if( lua_isstring( L, 2 ) == 0 )
+                    return luaL_error( L, "%s: Second parameter is not string.", __FUNCTION__ );
             }
-            return 0;
+            return luaL_error( L, "%s: Unable to free, program flow should not reach this position.", __FUNCTION__ );
         }
 
         /*! 
@@ -138,7 +138,7 @@ namespace Core
                 {
                     return Loader::Load( L );
                 }
-                return 0;
+                return luaL_error( L, "Unable to load given asset, not loader exist for type" );
             }
 
             static int Free( ContentLoaderBridgeType loaderType, lua_State* L  )
@@ -147,7 +147,7 @@ namespace Core
                 {
                     return Loader::Free( L );
                 }
-                return 0;
+                return luaL_error( L, "Unable to free given asset, no loader exists for type" );
             }
         };
 

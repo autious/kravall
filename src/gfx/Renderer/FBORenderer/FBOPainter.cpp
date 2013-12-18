@@ -45,6 +45,7 @@ namespace GFX
 
 		if (current > 0 && current <= 4)
 		{
+			glDepthMask(GL_FALSE);
 			switch (current)
 			{
 			case 1:
@@ -62,6 +63,7 @@ namespace GFX
 			}
 			glBindVertexArray(m_dummyVAO);
 			glDrawArrays(GL_POINTS, 0, 1);
+			glDepthMask(GL_TRUE);
 		}
 
 		int x = screenWidth / 4;
