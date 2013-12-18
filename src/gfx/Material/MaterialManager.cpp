@@ -1,4 +1,6 @@
 #include "MaterialManager.hpp"
+#include <GFXDefines.hpp>
+
 namespace GFX
 {
 	MaterialManager::MaterialManager()
@@ -30,12 +32,17 @@ namespace GFX
 		}
 	}
 
-	void MaterialManager::AddTexture(const unsigned long long int& materialID, const unsigned long long int& textureID)
+	int MaterialManager::AddTexture(const unsigned long long int& materialID, const unsigned long long int& textureID)
 	{
 		unsigned int index = FindMaterial(materialID);
 		if (index != std::numeric_limits<unsigned int>::max())
 		{
 			m_materials[index].textures.push_back(textureID);
+			return GFX_SUCCESS;
+		}
+		else
+		{
+			return GFX_INVALID_MATERIAL;
 		}
 	}
 
@@ -54,12 +61,17 @@ namespace GFX
 		}
 	}
 
-	void MaterialManager::SetShader(const unsigned long long int& materialID, const unsigned int& shaderID)
+	int MaterialManager::SetShader(const unsigned long long int& materialID, const unsigned int& shaderID)
 	{
 		unsigned int index = FindMaterial(materialID);
 		if (index != std::numeric_limits<unsigned int>::max())
 		{
 			m_materials[index].shaderProgramID = shaderID;
+			return GFX_SUCCESS;
+		}
+		else
+		{
+			return GFX_INVALID_MATERIAL;
 		}
 	}
 }
