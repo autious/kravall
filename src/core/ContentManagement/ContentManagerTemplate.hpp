@@ -30,6 +30,8 @@
 
 namespace Core
 {    
+    typedef unsigned int AssetHash;
+
     template<typename... Loaders>
     class ContentManagerTemplate
     {
@@ -64,7 +66,7 @@ namespace Core
         {
             static_assert(Core::Match<Loader, Loaders...>::exists, LOADER_ERROR_MESSAGE);           
             static const unsigned int loaderId = Core::Index<Loader, std::tuple<Loaders...>>::value;            
-            unsigned int assetHash = MurmurHash2(asset, static_cast<int>(std::strlen(asset)), loaderId); 
+            AssetHash assetHash = MurmurHash2(asset, static_cast<int>(std::strlen(asset)), loaderId); 
             Core::AssetHandle handle = nullptr;
 
             Core::AssetStatus status = GetAssetStatus(loaderId, assetHash, handle);
@@ -176,13 +178,19 @@ namespace Core
             }
         }
 
+        template<typename Loader>
+        AssetHash GetHash( const char * asset )
+        {
+            static const unsigned int loaderId = Core::Index<Loader, std::tuple<Loaders...>>::value;
+            return MurmurHash2(asset, static_cast<int>(std::strlen(asset)), loaderId); 
+        }
 
         /*!
             Reduces the internal counter of the asset with template parameter loader. When the internal counter reaches zero the asset is destroyed.
             \param asset The asset name as a null terminated cstring.
           */
         template<typename Loader>
-        void Free( const unsigned int assetHash )
+        void Free( const AssetHash assetHash )
         {
             static_assert(Core::Match<Loader, Loaders...>::exists, "Loader is not in loader list, add it to the ContentManager");           
             static const unsigned int loaderId = Core::Index<Loader, std::tuple<Loaders...>>::value;
@@ -270,7 +278,7 @@ namespace Core
         void Free(const char* asset)
         {            
             static const unsigned int loaderId = Core::Index<Loader, std::tuple<Loaders...>>::value;
-            unsigned int assetHash = MurmurHash2(asset, static_cast<int>(std::strlen(asset)), loaderId); 
+            AssetHash assetHash = MurmurHash2(asset, static_cast<int>(std::strlen(asset)), loaderId); 
             LOGCM_INFO << "Reducing reference of asset: " << asset << "..." << std::endl;
             Free<Loader>(assetHash);
         }
@@ -287,7 +295,7 @@ namespace Core
                 if(std::get<2>(m_asyncList[i])->try_lock())
                 {
                     unsigned int loaderId = std::get<0>(m_asyncList[i]);
-                    unsigned int assetHash = std::get<1>(m_asyncList[i]);
+                    AssetHash assetHash = std::get<1>(m_asyncList[i]);
                     Core::AssetHandle handle;
 
                     if(GetAssetStatus(loaderId, assetHash, handle) == Core::AssetStatus::LOADING)
@@ -316,7 +324,7 @@ namespace Core
         }
 
     private:
-        AssetStatus GetAssetStatus(const unsigned int loaderId, const unsigned int assetHash, AssetHandle& handle )
+        AssetStatus GetAssetStatus(const unsigned int loaderId, const AssetHash assetHash, AssetHandle& handle )
         {
             for(Core::AssetVector::iterator it = m_assetList.begin(); it != m_assetList.end(); ++it)
             {
@@ -329,7 +337,7 @@ namespace Core
             return Core::AssetStatus::UNCACHED;
         }
         
-        void SetAssetStatus(const unsigned int loaderId, const unsigned int assetHash, Core::AssetStatus assetStatus)
+        void SetAssetStatus(const unsigned int loaderId, const AssetHash assetHash, Core::AssetStatus assetStatus)
         {
             for(Core::AssetVector::iterator it = m_assetList.begin(); it != m_assetList.end(); ++it)
             {
@@ -340,7 +348,7 @@ namespace Core
             }
         }
 
-        unsigned int IncreaseReference( const unsigned int loaderId, const unsigned int assetHash )
+        unsigned int IncreaseReference( const unsigned int loaderId, const AssetHash assetHash )
         {
             for(Core::AssetVector::iterator it = m_assetList.begin(); it != m_assetList.cend(); ++it)
             {
@@ -355,7 +363,7 @@ namespace Core
         }
 
         template<typename Loader>
-        unsigned int GetReferenceCount( const unsigned int assetHash)
+        unsigned int GetReferenceCount( const AssetHash assetHash)
         {
             for(Core::AssetVector::iterator it = m_assetList.begin(); it != m_assetList.cend(); ++it)
             {
@@ -373,7 +381,7 @@ namespace Core
 
 
         template<typename Loader>
-        unsigned int DecreaseReference( const unsigned int assetHash )
+        unsigned int DecreaseReference( const AssetHash assetHash )
         {
             for(Core::AssetVector::iterator it = m_assetList.begin(); it != m_assetList.end(); ++it)
             {
@@ -390,14 +398,14 @@ namespace Core
         }
 
         template<typename Loader>
-        void AddReference( const unsigned int assetHash, AssetHandle handle, Core::AssetStatus assetStatus)
+        void AddReference( const AssetHash assetHash, AssetHandle handle, Core::AssetStatus assetStatus)
         {
             const int id = Core::Index<Loader, std::tuple<Loaders...>>::value;
             m_assetList.push_back(std::make_tuple(1, id, assetHash, handle, assetStatus));            
         }
 
         template<typename Loader>
-        void RemoveReference( const unsigned int assetHash )
+        void RemoveReference( const AssetHash assetHash )
         {
             for(Core::AssetVector::iterator it = m_assetList.begin(); it != m_assetList.end(); ++it)
             {
@@ -414,7 +422,7 @@ namespace Core
         }
 
         template<typename Loader>
-        std::shared_ptr<std::mutex> GetAsyncMutex(unsigned int assetHash)
+        std::shared_ptr<std::mutex> GetAsyncMutex(AssetHash assetHash)
         {
             for(Core::AsyncVector::iterator it = m_asyncList.begin(); it != m_asyncList.end(); ++it)
             {
@@ -430,7 +438,7 @@ namespace Core
             return nullptr;
         }
 
-        Core::AssetHandle GetAssetHandle(const unsigned int loaderId, const unsigned int assetHash) const
+        Core::AssetHandle GetAssetHandle(const unsigned int loaderId, const AssetHash assetHash) const
         {
             for(Core::AssetVector::const_iterator it = m_assetList.cbegin(); it != m_assetList.cend(); ++it)
             {
@@ -445,7 +453,7 @@ namespace Core
             return nullptr;
         }
 
-        void SetAssetHandle(const unsigned int loaderId, const unsigned int assetHash, Core::AssetHandle handle)
+        void SetAssetHandle(const unsigned int loaderId, const AssetHash assetHash, Core::AssetHandle handle)
         {
             for(Core::AssetVector::iterator it = m_assetList.begin(); it != m_assetList.end(); ++it)
             {
