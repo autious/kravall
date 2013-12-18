@@ -3,8 +3,8 @@ local ASML = require "assembly_loader"
 
 local asm = ASML.loadPack( {} )
 
-for i = -100, 100 do
-    for j = -10, 10 do
+for i = -5, 5 do
+    for j = -5, 5 do
         asm:loadAssembly( 
         {
             {
