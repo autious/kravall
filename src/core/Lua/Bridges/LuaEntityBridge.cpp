@@ -95,6 +95,13 @@ void Core::LuaEntityBridge::OpenLibs( lua_State * L )
             lua_getfield( L, coreTableIndex, "entity" ); 
             lua_settable( L, -3 );
 
+            lua_getfield( L, coreTableIndex, "entity" );
+            lua_getfield( L, -1, "destroy" );
+                lua_pushstring( L, "__gc" );
+                lua_pushvalue( L, -2 );
+                lua_settable( L, -5 );
+            lua_pop( L, 2 );
+
         lua_pop( L , 1 ); //Pop the entity meta table. remove if something else ends up removing the entity from the stack.
 
         if( luaL_newmetatable( L, COMPONENT_META_TYPE ) == 0 )
@@ -127,7 +134,7 @@ void Core::LuaEntityBridge::OpenLibs( lua_State * L )
                 // If you failed on this assert then
                 // You've gone done fucked up the id you gave to a componentbinder, 
                 // two of them share the same, which shouldn't be possible. 
-                assert( names[i].second == names[i].second ); 
+                assert( names[i].second != names[k].second ); 
             }
              
         }
