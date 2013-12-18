@@ -116,10 +116,10 @@ namespace GFX
 		
 		void CreateMaterial(unsigned long long int& id);
 		void DeleteMaterial(const unsigned long long int& id);
-		void AddTextureToMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID);
+		int AddTextureToMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID);
 		void RemoveTextureFromMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID);
-
-		void SetShaderToMaterial(const unsigned long long int& materialID, const unsigned int& shaderID);
+        int GetShaderId(unsigned int& shaderId, const char* shaderName);
+		int SetShaderToMaterial(const unsigned long long int& materialID, const unsigned int& shaderID);
 
         /*!
         Sets the font used for rendering SubSystem statistics.

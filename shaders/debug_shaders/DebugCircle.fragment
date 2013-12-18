@@ -6,7 +6,7 @@ uniform vec3 pointPosition2;
 uniform vec4 inColor;
 uniform vec3 screenSizeAndLinewidth;
 
-out vec4 color;
+layout ( location = 1 ) out vec4 color;
 
 void main()
 {

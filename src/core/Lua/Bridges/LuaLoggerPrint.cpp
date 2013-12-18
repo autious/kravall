@@ -60,7 +60,7 @@ extern "C"
             }
             else
             {
-                ss << "[TYPE NOT HANDLED]";
+                ss << "[" << lua_typename(L,i) << " NOT HANDLED]";
             }
         }
 

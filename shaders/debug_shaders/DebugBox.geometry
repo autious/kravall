@@ -15,17 +15,19 @@ layout(triangle_strip, max_vertices = 14) out;
 
 void main()
 {
-	vec4 p = gView * vec4(pointPosition, 1.0f);
-	vec4 r = gView * vec4(pointPosition2 / 2.0f, 0.0f);
+	vec4 p = vec4(pointPosition, 1.0f);
+	vec4 r = vec4(pointPosition2 / 2.0f, 0.0f);
 
-	vec4 p0 = gProjection * vec4( p.x - r.x, p.y - r.y, p.z + r.z, 1 );
-	vec4 p1 = gProjection * vec4( p.x + r.x, p.y - r.y, p.z + r.z, 1 );
-	vec4 p2 = gProjection * vec4( p.x - r.x, p.y + r.y, p.z + r.z, 1 );
-	vec4 p3 = gProjection * vec4( p.x + r.x, p.y + r.y, p.z + r.z, 1 );
-	vec4 p4 = gProjection * vec4( p.x - r.x, p.y - r.y, p.z - r.z, 1 );
-	vec4 p5 = gProjection * vec4( p.x + r.x, p.y - r.y, p.z - r.z, 1 );
-	vec4 p6 = gProjection * vec4( p.x - r.x, p.y + r.y, p.z - r.z, 1 );
-	vec4 p7 = gProjection * vec4( p.x + r.x, p.y + r.y, p.z - r.z, 1 );
+	mat4 viewProj = gProjection * gView;
+
+	vec4 p0 = viewProj * vec4( p.x - r.x, p.y - r.y, p.z + r.z, 1 );
+	vec4 p1 = viewProj * vec4( p.x + r.x, p.y - r.y, p.z + r.z, 1 );
+	vec4 p2 = viewProj * vec4( p.x - r.x, p.y + r.y, p.z + r.z, 1 );
+	vec4 p3 = viewProj * vec4( p.x + r.x, p.y + r.y, p.z + r.z, 1 );
+	vec4 p4 = viewProj * vec4( p.x - r.x, p.y - r.y, p.z - r.z, 1 );
+	vec4 p5 = viewProj * vec4( p.x + r.x, p.y - r.y, p.z - r.z, 1 );
+	vec4 p6 = viewProj * vec4( p.x - r.x, p.y + r.y, p.z - r.z, 1 );
+	vec4 p7 = viewProj * vec4( p.x + r.x, p.y + r.y, p.z - r.z, 1 );
 
 	gl_Position = p0;
 	EmitVertex();

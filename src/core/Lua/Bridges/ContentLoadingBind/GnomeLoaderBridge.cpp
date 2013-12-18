@@ -13,7 +13,7 @@ int Core::GnomeLoaderBridge::Load( lua_State * L )
     //Push the callback to the registry for later callback
     lua_pushvalue( L, 3 );
     int callbackRegIndex = luaL_ref( L, LUA_REGISTRYINDEX );
-        
+
     Core::world.m_contentManager.Load<Core::GnomeLoader>(lua_tostring(L,2), [callbackRegIndex]
     (Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
     {
@@ -32,6 +32,8 @@ int Core::GnomeLoaderBridge::Load( lua_State * L )
             //Pop the error.
             lua_pop(L,1 );
         }
+
+        luaL_unref( L, LUA_REGISTRYINDEX, callbackRegIndex );
     }, lua_toboolean( L, 4 ) );
 
     return 0;

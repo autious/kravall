@@ -33,7 +33,7 @@ namespace GFX
 	{
 		unsigned int index = FindMesh(id);
 
-		if (index != UINT_MAX)
+		if (index != std::numeric_limits<decltype(index)>::max())
 		{
 			glDeleteVertexArrays(1, &m_meshes[index].VAO);
 			m_meshes.erase(m_meshes.begin() + index);

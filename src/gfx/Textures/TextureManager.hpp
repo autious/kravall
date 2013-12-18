@@ -46,7 +46,7 @@ namespace GFX
 
 		inline TextureData GetTexture(const unsigned long long int& textureID) 
 		{ 
-			int index = FindTexture(textureID);
+			unsigned int index = FindTexture(textureID);
 
 			if (index != std::numeric_limits<unsigned int>::max())
 				return m_textures[index]; 

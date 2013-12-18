@@ -38,7 +38,7 @@ namespace GFX
 
 		if (it == m_shaderProgram->end())
 		{
-			return 0;
+			return std::numeric_limits<GLuint>::max();
 		}
 		else
 		{

@@ -119,27 +119,36 @@ GLFWwindow* init( int argc, char** argv )
 
 void TestRendering()
 {
-	GFX::Debug::DrawBox(glm::vec3(2, 0, 0), glm::vec3(2, 2, 10), false, Colors::Black);
-	GFX::Debug::DrawBox(glm::vec3(2, 0, 0), glm::vec3(2, 2, 10), true, glm::vec4(Colors::Black.x, Colors::Black.y, Colors::Black.z, 0.5f));
-	GFX::Debug::DrawSphere(glm::vec3(2, 0, 0), 2.0f, Colors::Black);
+	GFX::Debug::DrawBox(glm::vec3(50, -35, 0), glm::vec3(25, 25, 25), false, Colors::YellowGreen, true);
+	GFX::Debug::DrawBox(glm::vec3(50, -35, 0), glm::vec3(25, 25, 25), true, glm::vec4(Colors::YellowGreen.x, Colors::YellowGreen.y, Colors::YellowGreen.z, 0.9f), true);
 
-	GFX::Debug::DrawLine(glm::vec2(100, 50), glm::vec2(1200, 600), Colors::CornflowerBlue);
-	GFX::Debug::DrawPoint(glm::vec2(100, 50), Colors::Green, 10);
-	GFX::Debug::DrawPoint(glm::vec2(1200, 600), Colors::Green, 10);
+	GFX::Debug::DrawBox(glm::vec3(50, 0, 0.0f), glm::vec3(25, 25, 25), false, Colors::HotPink, true);
+	GFX::Debug::DrawBox(glm::vec3(50, 0, 0.0f), glm::vec3(25, 25, 25), true, glm::vec4(Colors::HotPink.x, Colors::HotPink.y, Colors::HotPink.z, 0.9f), true);
 
-	GFX::Debug::DrawRectangle(glm::vec2(0, 0), glm::vec2(200, 20), true, Colors::Aquamarine);
-	GFX::Debug::DrawRectangle(glm::vec2(100, 20), glm::vec2(100, 40), false, Colors::Chocolate);
+	GFX::Debug::DrawBox(glm::vec3(50, -35, -35), glm::vec3(25, 25, 25), false, Colors::HotPink, true);
+	GFX::Debug::DrawBox(glm::vec3(50, -35, -35), glm::vec3(25, 25, 25), true, glm::vec4(Colors::HotPink.x, Colors::HotPink.y, Colors::HotPink.z, 0.9f), true);
 
-	GFX::RenderText(fontData, glm::vec2(0, 100), 1.0f, Colors::Black, "The Quick Brown Fox Jumps Over The Lazy Dog");
-	GFX::RenderText(fontData, glm::vec2(10, 120), 1.0f, Colors::Blue, "The Quick Brown Fox Jumps Over The Lazy Dog");
-	GFX::RenderText(fontData, glm::vec2(20, 140), 1.0f, Colors::Green, "The Quick Brown Fox Jumps Over The Lazy Dog");
-	GFX::RenderText(fontData, glm::vec2(30, 160), 1.0f, Colors::CornflowerBlue, "The Quick Brown Fox Jumps Over The Lazy Dog");
-	GFX::RenderText(fontData, glm::vec2(40, 180), 1.0f, Colors::White, "The Quick Brown Fox Jumps Over The Lazy Dog????");
+	GFX::Debug::DrawSphere(glm::vec3(0, 0, 0.0f), 25.0f, Colors::Green, false);
+	GFX::Debug::DrawSphere(glm::vec3(-50, 0, 0.0f), 25.0f, Colors::White, true);
 
-	GFX::RenderText(fontData, glm::vec2(0, 200), 1.0f, Colors::Gold, "ABCDEFGHIJKLMNOPQRSTUVWXYZASIUHDOIASHUDIOASHDA1234567890*'^&%#!?");
+	GFX::Debug::DrawLine(glm::vec3(-50.0f, -50.0f, -50.0f), glm::vec3(50.0f, 50.0f, 50.0f), Colors::CornflowerBlue, true);
+	GFX::Debug::DrawLine(glm::vec3(50.0f, -50.0f, -50.0f), glm::vec3(-50.0f, 50.0f, 50.0f), Colors::CornflowerBlue, false);
+	//GFX::Debug::DrawPoint(glm::vec2(100, 50), Colors::Green, 10);
+	//GFX::Debug::DrawPoint(glm::vec2(1200, 600), Colors::Green, 10);
+
+	//GFX::Debug::DrawRectangle(glm::vec2(0, 0), glm::vec2(200, 20), true, Colors::Aquamarine);
+	//GFX::Debug::DrawRectangle(glm::vec2(100, 20), glm::vec2(100, 40), false, Colors::Chocolate);
+
+	//GFX::RenderText(fontData, glm::vec2(0, 100), 1.0f, Colors::Black, "The Quick Brown Fox Jumps Over The Lazy Dog");
+	//GFX::RenderText(fontData, glm::vec2(10, 120), 1.0f, Colors::Blue, "The Quick Brown Fox Jumps Over The Lazy Dog");
+	//GFX::RenderText(fontData, glm::vec2(20, 140), 1.0f, Colors::Green, "The Quick Brown Fox Jumps Over The Lazy Dog");
+	//GFX::RenderText(fontData, glm::vec2(30, 160), 1.0f, Colors::CornflowerBlue, "The Quick Brown Fox Jumps Over The Lazy Dog");
+	//GFX::RenderText(fontData, glm::vec2(40, 180), 1.0f, Colors::White, "The Quick Brown Fox Jumps Over The Lazy Dog????");
+	//
+	//GFX::RenderText(fontData, glm::vec2(0, 200), 1.0f, Colors::Gold, "ABCDEFGHIJKLMNOPQRSTUVWXYZASIUHDOIASHUDIOASHDA1234567890*'^&%#!?");
 }
 
-void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, float posX, float posY, float posZ)
+void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, unsigned int materialID, float posX, float posY, float posZ)
 {
 	int index = rioterList->size(); // Size before add will be the index of the added entity.
 	double pi = 3.141529;
@@ -175,6 +184,7 @@ void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, float posX,
 
 	Core::GraphicsComponent* gc = WGETC <Core::GraphicsComponent>(rioterList->at(index));
 	GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::MESH_ID, meshID);
+    GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::MATERIAL_ID, materialID);
 	GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::TYPE, GFX::OBJECT_TYPES::OPAQUE_GEOMETRY);
 }
 
@@ -245,6 +255,7 @@ void run( GLFWwindow * window )
 	Core::GetInput().Initialize(window);
 
     unsigned int meshID; 
+    unsigned int materialID;
 
     Core::world.m_contentManager.Load<Core::GnomeLoader>("assets/cube.bgnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
             {
@@ -252,6 +263,12 @@ void run( GLFWwindow * window )
                 const Core::ModelData* data = gnomeLoader->getData(handle);
 				meshID = data->meshID;
             });
+
+    Core::world.m_contentManager.Load<Core::MaterialLoader>("assets/material/test-material.material", [&materialID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+            {
+                Core::MaterialData* data = static_cast<Core::MaterialData*>(handle);
+                materialID = data->materialId;
+            }, false);
    
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));	
 	//for (int i = -100; i < 100; i++)
@@ -316,14 +333,14 @@ void run( GLFWwindow * window )
 	//CreateRioter(&rioters, meshID, 0.0f, -3.0f, 0.0f);
 	//CreateRioter(&rioters, meshID, 6.0f, -3.0f, 0.0f);
 
-	/*for( int i = -100; i < 100; i++ )
-		CreateRioter(&rioters, meshID, i * 16.0f, 1.0f, 0.0f);*/
+	/*for( int i = -5; i < 5; i++ )
+		CreateRioter(&rioters, meshID, materialID,  i * 16.0f, 1.0f, 0.0f);*/
 
 	for (float i = -5.0f; i < 5.0f; ++i)
 	{
 		for (float j = -5.0f; j < 5.0f; ++j)
 		{
-			CreateRioter(&rioters, meshID, i * 3.0f, 1.0f, j * 3.0f);
+			CreateRioter(&rioters, meshID, materialID, i * 3.0f, 1.0f, j * 3.0f);
 		}
 	}
 
@@ -350,7 +367,7 @@ void run( GLFWwindow * window )
 		Core::gameCamera->CalculateProjectionMatrix(GFX::GetScreenWidth(), GFX::GetScreenHeight());
 		GFX::SetProjectionMatrix(Core::gameCamera->GetProjectionMatrix());
 
-		//TestRendering();
+		TestRendering();
 
 	    //TODO: Timing hook
         SystemTimeRender();
