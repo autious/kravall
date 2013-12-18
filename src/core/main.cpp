@@ -148,7 +148,7 @@ void TestRendering()
 	//GFX::RenderText(fontData, glm::vec2(0, 200), 1.0f, Colors::Gold, "ABCDEFGHIJKLMNOPQRSTUVWXYZASIUHDOIASHUDIOASHDA1234567890*'^&%#!?");
 }
 
-void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, float posX, float posY, float posZ)
+void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, unsigned int materialID, float posX, float posY, float posZ)
 {
 	int index = rioterList->size(); // Size before add will be the index of the added entity.
 	double pi = 3.141529;
@@ -182,6 +182,7 @@ void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, float posX,
 
 	Core::GraphicsComponent* gc = WGETC <Core::GraphicsComponent>(rioterList->at(index));
 	GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::MESH_ID, meshID);
+    GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::MATERIAL_ID, materialID);
 	GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::TYPE, GFX::OBJECT_TYPES::OPAQUE_GEOMETRY);
 }
 
@@ -258,6 +259,7 @@ void run( GLFWwindow * window )
                 const Core::ModelData* data = gnomeLoader->getData(handle);
 				meshID = data->meshID;
             });
+
     Core::world.m_contentManager.Load<Core::MaterialLoader>("assets/material/test-material.material", [&materialID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
             {
                 Core::MaterialData* data = static_cast<Core::MaterialData*>(handle);
@@ -328,7 +330,7 @@ void run( GLFWwindow * window )
 	//CreateRioter(&rioters, meshID, 6.0f, -3.0f, 0.0f);
 	//for( int i = -100; i < 100; i++ )
 	for( int i = -5; i < 5; i++ )
-		CreateRioter(&rioters, meshID, i * 16.0f, 1.0f, 0.0f);
+		CreateRioter(&rioters, meshID, materialID,  i * 16.0f, 1.0f, 0.0f);
 
 	//CreateRioter(&rioters, meshID, 16.0f, 0.0f, 0.0f);
 	//CreateRioter(&rioters, meshID, -16.0f, 0.0f, 0.0f);
