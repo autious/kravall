@@ -217,7 +217,7 @@ namespace GFX
 			if (m_showFBO != -1)
 				GFX_CHECKTIME(m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, m_showFBO), "FBO");
 
-			GFX_CHECKTIME(m_debugPainter->Render(m_viewMatrix, m_projMatrix), "Debug");
+			GFX_CHECKTIME(m_debugPainter->Render(m_depthBuffer, m_normalDepth, m_viewMatrix, m_projMatrix), "Debug");
 			GFX_CHECKTIME(m_consolePainter->Render(), "Console");
 			GFX_CHECKTIME(m_textPainter->Render(), "Text");
 		}
@@ -231,7 +231,7 @@ namespace GFX
 			if (m_showFBO != -1)
 				m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, m_showFBO);
 
-			m_debugPainter->Render(m_viewMatrix, m_projMatrix);
+			m_debugPainter->Render(m_depthBuffer, m_normalDepth, m_viewMatrix, m_projMatrix);
 			m_consolePainter->Render();
 			m_textPainter->Render();
 		}

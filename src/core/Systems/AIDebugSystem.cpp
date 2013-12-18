@@ -26,7 +26,7 @@ void CheckPickingSystemVsGround()
 		return;
 
 	glm::vec3 hit = ((Core::PickingSystem*)Core::world.m_systemHandler.GetSystem( pickingSystem ))->GetGroundHit( Core::GetInput().GetXPos(), Core::GetInput().GetYPos() );
-	GFX::Debug::DrawSphere( hit, 3.0f, GFXColor( 1.0f, 0.7f, 0.0f, 1.0f ) );
+	GFX::Debug::DrawSphere( hit, 3.0f, GFXColor( 1.0f, 0.7f, 0.0f, 1.0f ), false);
 }
 
 
@@ -72,7 +72,7 @@ void MarkClickedObject()
 		Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(ent);
 		Core::BoundingVolumeComponent* bvc = WGETC<Core::BoundingVolumeComponent>(ent);
 		Core::BoundingSphere* sphere = reinterpret_cast<Core::BoundingSphere*>(bvc->data);
-		GFX::Debug::DrawSphere( wpc->GetVec3(wpc->position) + *sphere->GetVec3( sphere->offset ), sphere->radius, GFXColor( 1.0f, 0.7f, 0.0f, 1.0f ) );
+		GFX::Debug::DrawSphere( wpc->GetVec3(wpc->position) + *sphere->GetVec3( sphere->offset ), sphere->radius, GFXColor( 1.0f, 0.7f, 0.0f, 1.0f ), false );
 	}
 }
 

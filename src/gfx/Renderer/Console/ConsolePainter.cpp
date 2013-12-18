@@ -22,17 +22,17 @@ namespace GFX
 
 
 		// Load shared shaders (vertex and fragment)
-		m_shaderManager->LoadShader("shaders/debug_shaders/Debug.vertex", "DebugVS", GL_VERTEX_SHADER);
-		m_shaderManager->LoadShader("shaders/debug_shaders/Debug.fragment", "DebugFS", GL_FRAGMENT_SHADER);
+		m_shaderManager->LoadShader("shaders/Console/Console_vs.glsl", "ConsoleVS", GL_VERTEX_SHADER);
+		m_shaderManager->LoadShader("shaders/Console/Console_fs.glsl", "ConsoleFS", GL_FRAGMENT_SHADER);
 
 		// Load specific geometry shaders
-		m_shaderManager->LoadShader("shaders/debug_shaders/DebugRect.geometry", "DebugRectGS", GL_GEOMETRY_SHADER);
+		m_shaderManager->LoadShader("shaders/Console/Console_gs.glsl", "ConsoleGS", GL_GEOMETRY_SHADER);
 
 		// Create and attach rect debug shaders
 		m_shaderManager->CreateProgram("ConsoleRect");
-		m_shaderManager->AttachShader("DebugVS", "ConsoleRect");
-		m_shaderManager->AttachShader("DebugRectGS", "ConsoleRect");
-		m_shaderManager->AttachShader("DebugFS", "ConsoleRect");
+		m_shaderManager->AttachShader("ConsoleVS", "ConsoleRect");
+		m_shaderManager->AttachShader("ConsoleGS", "ConsoleRect");
+		m_shaderManager->AttachShader("ConsoleFS", "ConsoleRect");
 		m_shaderManager->LinkProgram("ConsoleRect");
 
 		m_rectPosUniform = m_shaderManager->GetUniformLocation("ConsoleRect", "pointPosition");
@@ -55,7 +55,7 @@ namespace GFX
 			
 			glDisable(GL_DEPTH_TEST);
 			// Draw filled rectangles
-			m_shaderManager->UseProgram("DebugRect");
+			m_shaderManager->UseProgram("ConsoleRect");
 
 			m_shaderManager->SetUniform(1, m_consoleRect.color, m_rectColorUniform);
 			m_shaderManager->SetUniform(1, m_consoleRect.position, m_rectPosUniform);

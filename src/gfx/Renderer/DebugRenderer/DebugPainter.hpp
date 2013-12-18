@@ -33,10 +33,12 @@ namespace GFX
 
 		/*!
 		Main debug rendering loop
+		\param depthBuffer Depth buffer to use for depth
+		\param color Color buffer for result
 		\param viewMatrix View matrix for the shader
 		\param projMatrix Projection matrix for the shader
 		*/
-		void Render(glm::mat4 viewMatrix, glm::mat4 projMatrix);
+		void Render(FBOTexture* depthBuffer, FBOTexture* color, glm::mat4 viewMatrix, glm::mat4 projMatrix);
 
 	private:
 
