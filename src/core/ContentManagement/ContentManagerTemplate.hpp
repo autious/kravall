@@ -170,30 +170,29 @@ namespace Core
             }
         }
 
+
         /*!
             Reduces the internal counter of the asset with template parameter loader. When the internal counter reaches zero the asset is destroyed.
             \param asset The asset name as a null terminated cstring.
           */
         template<typename Loader>
-        void Free(const char* asset)
-        {            
+        void Free( const unsigned int assetHash )
+        {
             static_assert(Core::Match<Loader, Loaders...>::exists, "Loader is not in loader list, add it to the ContentManager");           
             static const unsigned int loaderId = Core::Index<Loader, std::tuple<Loaders...>>::value;
-            unsigned int assetHash = MurmurHash2(asset, static_cast<int>(std::strlen(asset)), loaderId); 
             
             Core::AssetHandle handle;
 
             Core::AssetStatus status = GetAssetStatus(loaderId, assetHash, handle);
 
             int refsRemaining = DecreaseReference<Loader>(assetHash);
-            LOG_INFO << "Reducing reference of asset: " << asset
+            LOG_INFO << assetHash
                 << " now has: " << refsRemaining << " references" << std::endl;
             if( refsRemaining == 0)
             {
                 if(status == Core::AssetStatus::CACHED)
                 {
-                    LOG_INFO << "Adding destroying finisher for asset: " << asset 
-                        << " with hash: " << assetHash << std::endl;
+                    LOG_INFO << "Adding destroying finisher for asset: " << assetHash << std::endl;
                         
                     m_finisherList.push_back(std::make_tuple(m_loaders[Core::Index<Loader, std::tuple<Loaders...>>::value]
                                 , handle, [assetHash, this](Core::BaseAssetLoader* assetLoader, AssetHandle handle)
@@ -213,7 +212,7 @@ namespace Core
                 else if(status == Core::AssetStatus::LOADING)
                 {
                     Core::AssetHandle handle = nullptr;
-                    LOG_INFO << "Destroying loading asset: " << asset << std::endl;
+                    LOG_INFO << "Destroying loading asset: " << assetHash << std::endl;
 
                     for(Core::AsyncVector::size_type i = 0; i < m_asyncList.size(); ++i)
                     {    
@@ -251,10 +250,23 @@ namespace Core
                 }
                 else
                 {
-                   LOG_FATAL << "Tryign to free unexisting asset: " << asset << std::endl; 
+                   LOG_FATAL << "Tryign to free unexisting asset: " << assetHash << std::endl; 
                    assert(false);
                 }
             }
+        }
+
+        /*!
+            Reduces the internal counter of the asset with template parameter loader. When the internal counter reaches zero the asset is destroyed.
+            \param asset The asset name as a null terminated cstring.
+          */
+        template<typename Loader>
+        void Free(const char* asset)
+        {            
+            static const unsigned int loaderId = Core::Index<Loader, std::tuple<Loaders...>>::value;
+            unsigned int assetHash = MurmurHash2(asset, static_cast<int>(std::strlen(asset)), loaderId); 
+            LOG_INFO << "Reducing reference of asset: " << asset << "..." << std::endl;
+            Free<Loader>(assetHash);
         }
         
         /*!
