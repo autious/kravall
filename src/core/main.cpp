@@ -218,12 +218,19 @@ void run( GLFWwindow * window )
 	Core::GetInput().Initialize(window);
 
     unsigned int meshID; 
+    unsigned int materialID;
+
     Core::world.m_contentManager.Load<Core::GnomeLoader>("assets/tomte.gnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
             {
                 Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
                 const Core::ModelData* data = gnomeLoader->getData(handle);
 				meshID = data->meshID;
             });
+    Core::world.m_contentManager.Load<Core::MaterialLoader>("assets/Materials/TestMaterial.material", [&materialID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+            {
+                Core::MaterialData* data = static_cast<Core::MaterialData*>(handle);
+                materialID = data->materialId;
+            }, false);
    
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));	
 	//for (int i = -100; i < 100; i++)
