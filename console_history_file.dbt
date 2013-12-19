@@ -12,3 +12,7 @@ lua dofile("testtest.lua")
 lua dofile( "testtest.lua" )
 lua dofile("scripts/scenarios/testtest.lua")
 exit
+hej = nil
+lua hej = nil
+lua collectgarbage()
+exit
