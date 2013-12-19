@@ -22,4 +22,16 @@ namespace Core
     {
         return m_buttonValues[button];
     }
+
+    void MouseState::SetMousePosition(const int x, const int y)
+    {
+        m_cursorPositionX = x;
+        m_cursorPositionY = y;
+    }
+
+    void MouseState::GetMousePosition(int& x, int& y)
+    {
+        x = m_cursorPositionX;
+        y = m_cursorPositionY;
+    }
 }

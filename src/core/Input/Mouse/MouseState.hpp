@@ -13,10 +13,15 @@ namespace Core
         const bool IsButtonDown(const int button) const;
         const bool IsButtonUp(const int button) const;
 
-    priviate:
+        void SetMousePosition(const int x, const int y);
+        void GetMousePosition(int& x, int& y);
+
+    priviate:        
         static const int NUMBER_OF_BUTTONS = 3;
         bool m_buttonValues[NUMBER_OF_BUTTONS];
 
+        int m_cursorPositionX;
+        int m_cursorPositionY;
     };
 }
 
