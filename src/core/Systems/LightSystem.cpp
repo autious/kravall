@@ -32,10 +32,14 @@ namespace Core
 					GFX::PointLight* p = reinterpret_cast<GFX::PointLight*>(lc->LightData);
 					data->color = p->color;
 					data->intensity = p->intensity;
+<<<<<<< HEAD
 
 					wpc->position[0] = 300.0f * sin(lel + double(i));
+=======
+					wpc->position[0] = 200.0f * sin(lel + double(i));
+>>>>>>> 624dac972efd2b8e88ad96cc75ac36866832fb7e
 
-					data->position = WorldPositionComponent::GetVec3(wpc->position);
+					data->position = WorldPositionComponent::GetVec3(*wpc);
 					data->radius_length = sc->scale;
 
 					//GFX::Debug::DrawSphere(data->position, sc->scale, glm::vec4(data->color, 1.0f), false);
@@ -50,7 +54,7 @@ namespace Core
 					data->color = p->color;
 					data->orientation = glm::vec4(RotationComponent::GetQuat(rc->rotation)[0]);
 					data->intensity = p->intensity;
-					data->position = WorldPositionComponent::GetVec3(wpc->position);
+					data->position = WorldPositionComponent::GetVec3(*wpc);
 					data->radius_length = sc->scale;
 					data->spot_angle = p->angle;
 				}

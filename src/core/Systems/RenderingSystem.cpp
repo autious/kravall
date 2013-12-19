@@ -20,7 +20,7 @@ namespace Core
 			//Build the matrices needed for model matrix
 			rot = RotationComponent::GetQuat(rc->rotation);
 			rotationMatrix = glm::toMat4(rot);
-			translationMatrix = glm::translate(glm::mat4(1.0f), WorldPositionComponent::GetVec3(wpc->position));
+			translationMatrix = glm::translate(glm::mat4(1.0f), WorldPositionComponent::GetVec3(*wpc));
 			scaleMatrix = glm::scale(sc->scale, sc->scale, sc->scale);
 
 			//Build modelMatrix using linear allocator (FIX THIS)

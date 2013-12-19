@@ -33,13 +33,19 @@ namespace Core
 			\param startSpeed The initial speed of the object.
 			\param highestSpeed The maximum speed for the object.
 		*/
-		MovementComponent(float dirX, float dirY, float dirZ, float startSpeed, float highestSpeed) 
+		MovementComponent(const float& dirX, const float& dirY, const float& dirZ, const float& startSpeed,
+			const float& highestSpeed)
 			: speed(startSpeed), maxSpeed(highestSpeed)
 		{
 			direction[0] = dirX;
 			direction[1] = dirY;
 			direction[2] = dirZ;
 		}
+
+        inline static const char* GetName()
+        {
+            return "MovementComponent";
+        }
 	};
 }
 #endif

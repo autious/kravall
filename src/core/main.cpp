@@ -154,7 +154,7 @@ void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, unsigned in
 	double pi = 3.141529;
 	double angle = 0.0; // pi * 0.25;
 
-	Core::BoundingVolumeCollisionModel aa = Core::BoundingVolumeCollisionModel::DynamicResolution;
+	/*Core::BoundingVolumeCollisionModel aa = Core::BoundingVolumeCollisionModel::DynamicResolution;
 
 	glm::vec3 direction( 0.0f, 0.0f, 0.0f );
 	if( posX )
@@ -165,20 +165,22 @@ void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, unsigned in
 	{
 		aa = Core::BoundingVolumeCollisionModel::StaticResolution;
 		posZ += 0.7f;
-	}
+	}*/
 
 	rioterList->push_back(Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, 
 		Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent, Core::UnitTypeComponent,
-		Core::MovementComponent, Core::AttributeRioterComponent, Core::BoundingVolumeComponent>
+		Core::MovementComponent, Core::AttributeComponent, Core::BoundingVolumeComponent>
 		(Core::GraphicsComponent(), 
 		 Core::WorldPositionComponent(posX, posY, posZ),
 		 Core::RotationComponent(),
-		 Core::ScaleComponent(0.1f),
-		 Core::UnitTypeComponent(),
-		 //Core::MovementComponent(0.0f, 0.0f, 1.0f, 2.0f, 6.0f),
-		 Core::MovementComponent( -direction.x, 0, -direction.z, 21.1f, 5.0f),
-		 Core::AttributeRioterComponent(),
-		 Core::BoundingVolumeComponent( Core::BoundingSphere( 3.0f, 0.0f, 0.0f, 0.0f ), aa ) ));
+		 Core::ScaleComponent(1.0f),
+		 Core::UnitTypeComponent(Core::UnitType::Rioter),
+		 Core::MovementComponent(0.0f, 0.0f, 0.0f, 2.0f, 6.0f),
+		 //Core::MovementComponent( -direction.x, 0, -direction.z, 21.1f, 5.0f),
+		 Core::AttributeComponent(),
+		 //Core::BoundingVolumeComponent( Core::BoundingSphere( 3.0f, 0.0f, 0.0f, 0.0f ), aa )
+		 Core::BoundingVolumeComponent(Core::BoundingSphere(1.0f, 0.0f, 0.0f, 0.0f), 
+		 Core::BoundingVolumeCollisionModel::DynamicResolution)));
 
 	Core::GraphicsComponent* gc = WGETC <Core::GraphicsComponent>(rioterList->at(index));
 	GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::MESH_ID, meshID);
@@ -194,15 +196,101 @@ void LuaInfoRender()
     std::stringstream ss;
 
     ss << "Memory: " << Core::world.m_luaState.GetMemoryUse() << "Kb";
-    GFX::RenderText( fontData, glm::vec2( 510, screenHeight - 40 ), 1.0f, Colors::White, "Lua"  );
-    GFX::RenderText( fontData, glm::vec2( 510, screenHeight - 25 ), 1.0f, Colors::White, ss.str().c_str()  );
+    GFX::RenderText( fontData, glm::vec2( 615, screenHeight - 40 ), 1.0f, Colors::White, "Lua"  );
+    GFX::RenderText( fontData, glm::vec2( 615, screenHeight - 25 ), 1.0f, Colors::White, ss.str().c_str()  );
     std::stringstream ss2;
     ss2 << "Update: " << std::fixed << std::setw( 7 ) << std::setprecision(4) << std::setfill( '0' ) << Core::world.m_luaState.GetUpdateTiming().count() / 1000.0f << "ms";
-    GFX::RenderText( fontData, glm::vec2( 510, screenHeight - 10 ), 1.0f, Colors::White, ss2.str().c_str()  );
+    GFX::RenderText( fontData, glm::vec2( 615, screenHeight - 10 ), 1.0f, Colors::White, ss2.str().c_str()  );
 
-    GFX::Debug::DrawRectangle(glm::vec2( 505, screenHeight - 55 ),
+    GFX::Debug::DrawRectangle(glm::vec2( 610, screenHeight - 55 ),
             glm::vec2(175, 50), true, glm::vec4( 0.5f,0.5f,0.5f,0.5f) );
 
+}
+
+void EntityHandlerMemoryRender()
+{
+    Core::EntityHandler::EntityDataUseList edul = Core::world.m_entityHandler.GetDataUse();
+    bool renderAllComponents = Core::world.m_config.GetString( "entityMemoryOutputLevel", "short" ) != "short";
+    bool renderPartial = Core::world.m_config.GetString( "entityMemoryOutputLevel", "short" ) == "partial";
+
+    std::vector<std::string> showComponents = Core::world.m_config.GetVectorString( "entityMemoryOutputComponents" );
+       
+    int totalComponentCount = 0;
+    int totalComponentAllocation = 0;
+    float totalMemoryUse = 0;
+    float totalMemoryAllocation = 0;
+
+    // Render all by default
+    int elementCount = edul.size() + 1;
+
+    if( renderPartial )
+    {
+        //Add Title and Total
+        elementCount = showComponents.size() + 2;
+    }
+
+    if( renderAllComponents == false )
+    {
+        //Only title and entity
+        elementCount = 2; 
+    }
+
+    std::stringstream ss;
+
+
+    int count = 0;
+
+    for( int i = 0; i < edul.size(); i++ )
+    {
+        bool renderCurrent = i == 0 
+            || ((renderAllComponents) 
+            && ( renderPartial == false 
+                || std::find( showComponents.begin(), showComponents.end(), std::get<0>(edul[i] ) ) 
+                    != showComponents.end() ) );
+        ss.str("");
+        ss.clear();
+        ss <<  std::get<0>(edul[i]);
+
+        if( renderCurrent )
+            GFX::RenderText(fontData, glm::vec2(10, GFX::GetScreenHeight()+12-2*20*(elementCount)+20*2*count), 1.0f, Colors::White, ss.str().c_str());
+
+        ss.str("");
+        ss.clear();
+        ss << std::get<1>(edul[i]) << " ";
+        ss << std::get<2>(edul[i]) << " ";
+        float memUse = std::get<3>(edul[i])*0.001f;
+        ss << memUse << "Kb ";
+        float memAlloc = std::get<4>(edul[i])*0.001f;
+        ss << memAlloc << "Kb ";
+
+        if( renderCurrent )
+            GFX::RenderText(fontData, glm::vec2(10, GFX::GetScreenHeight()+12-2*20*(elementCount)+20*count*2+20*1), 1.0f, Colors::White, ss.str().c_str());
+
+        if( i > 0 )
+        {
+            totalComponentCount += std::get<1>(edul[i]);
+            totalComponentAllocation += std::get<2>(edul[i]);
+        }
+    
+        totalMemoryUse += memUse;
+        totalMemoryAllocation += memAlloc;
+
+        if( renderCurrent )
+            count++;
+    }
+
+    ss.str("");
+    ss.clear();
+    ss << totalComponentCount << " ";
+    ss << totalComponentAllocation << " ";
+    ss << totalMemoryUse << "Kb ";
+    ss << totalMemoryAllocation << "Kb ";
+
+    GFX::RenderText(fontData, glm::vec2(10, GFX::GetScreenHeight()+12-2*20*(elementCount)+20*elementCount*2-40), 1.0f, Colors::White, "Total Components" );
+    GFX::RenderText(fontData, glm::vec2(10, GFX::GetScreenHeight()+12-2*20*(elementCount)+20*elementCount*2-20), 1.0f, Colors::White, ss.str().c_str() );
+
+    GFX::Debug::DrawRectangle(glm::vec2(5,GFX::GetScreenHeight()-5-2*20*(elementCount) ), 
+        glm::vec2(295, 2*20*(elementCount)), true, glm::vec4( 0.5f,0.5f,0.5f,0.5f) );
 }
 
 void SystemTimeRender()
@@ -211,6 +299,7 @@ void SystemTimeRender()
 	GFX::Debug::DisplaySystemInfo( showSystems );
     if( showSystems )
     {
+        EntityHandlerMemoryRender();
         LuaInfoRender();
 
         std::vector<std::pair<const char *,std::chrono::microseconds>> times = Core::world.m_systemHandler.GetFrameTime();
@@ -220,15 +309,13 @@ void SystemTimeRender()
             std::stringstream ss;
             
             ss << times[i].first << ": " << std::fixed << std::setw( 7 ) << std::setprecision(4) << std::setfill( '0' ) << times[i].second.count() / 1000.0f << "ms";
-	        GFX::RenderText(fontData, glm::vec2(5, GFX::GetScreenHeight()+12-20*times.size()+20*i), 1.0f, Colors::White, ss.str().c_str());
+	        GFX::RenderText(fontData, glm::vec2(310, GFX::GetScreenHeight()+12-20*times.size()+20*i), 1.0f, Colors::White, ss.str().c_str());
         }
 
-	    GFX::Debug::DrawRectangle(glm::vec2(0,GFX::GetScreenHeight()-5-20*times.size() ), 
-            glm::vec2(500, 20*times.size()), true, glm::vec4( 0.5f,0.5f,0.5f,0.5f) );
+	    GFX::Debug::DrawRectangle(glm::vec2(305,GFX::GetScreenHeight()-5-20*times.size() ), 
+            glm::vec2(300, 20*times.size()), true, glm::vec4( 0.5f,0.5f,0.5f,0.5f) );
     }
 }
-
-
 
 void run( GLFWwindow * window )
 {
@@ -240,10 +327,10 @@ void run( GLFWwindow * window )
 		Core::world.m_config.GetDouble( "initCameraNearClipDistance", 1.0f ), 
 		Core::world.m_config.GetDouble( "initCameraFarClipDistance", 1000.0f ) );
 	Core::gameCamera->CalculateProjectionMatrix(initScreenWidth, initScreenHeight);
-	Core::gameCamera->SetPosition(glm::vec3(0.0f, 100.0f, 450.0f));
+	Core::gameCamera->SetPosition(glm::vec3(0.0f, 30.0f, 30.0f));
 	
     Core::ContentManager CM;
-
+	
 	GFX::SetProjectionMatrix(Core::gameCamera->GetProjectionMatrix());
 
 	std::vector<Core::Entity> rioters;
@@ -253,7 +340,7 @@ void run( GLFWwindow * window )
     unsigned int meshID; 
     unsigned int materialID;
 
-    Core::world.m_contentManager.Load<Core::GnomeLoader>("assets/teapot.bgnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+    Core::world.m_contentManager.Load<Core::GnomeLoader>("assets/cube.bgnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
             {
                 Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
                 const Core::ModelData* data = gnomeLoader->getData(handle);
@@ -322,37 +409,21 @@ void run( GLFWwindow * window )
 			Core::RotationComponent* rc = WGETC<Core::RotationComponent>(light);
 	}
 	
+	CreateRioter(&rioters, meshID, materialID, -6.0f, 0.5f, 0.0f);
+	CreateRioter(&rioters, meshID, materialID, 0.0f, 0.5f, 0.0f);
+	CreateRioter(&rioters, meshID, materialID, 6.0f, 0.5f, 0.0f);
 
-	//CreateRioter(&rioters, meshID, -6.0f, -3.0f, 0.0f);
-	//CreateRioter(&rioters, meshID, 0.0f, -3.0f, 0.0f);
-	//CreateRioter(&rioters, meshID, 6.0f, -3.0f, 0.0f);
-	//for( int i = -100; i < 100; i++ )
-	//for( int i = -100; i < 100; i++ )
-	//	CreateRioter(&rioters, meshID, i * 16.0f, 1.0f, 0.0f);
+	/*for( int i = -5; i < 5; i++ )
+		CreateRioter(&rioters, meshID, materialID,  i * 16.0f, 1.0f, 0.0f);*/
 
-	//for( int i = -5; i < 5; i++ )
-	//	CreateRioter(&rioters, meshID, materialID,  i * 16.0f, 1.0f, 0.0f);
+	/*for (float i = -5.0f; i < 5.0f; ++i)
+	{
+		for (float j = -5.0f; j < 5.0f; ++j)
+		{
+			CreateRioter(&rioters, meshID, materialID, i * 2.0f + 0.5f, 0.5f, j * 2.0f + 0.5f);
+		}
+	}*/
 
-	//for( int i = -200; i < 200; i++ )
-		//CreateRioter(&rioters, meshID, i * 16.0f, 1.0f, 0.0f);
-
-	//CreateRioter(&rioters, meshID, 16.0f, 0.0f, 0.0f);
-	//CreateRioter(&rioters, meshID, -16.0f, 0.0f, 0.0f);
-
-	/*
-	rioters.push_back(Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, 
-		Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent, Core::UnitTypeComponent,
-		Core::MovementComponent, Core::AttributeRioterComponent, Core::BoundingVolumeComponent>
-		(Core::GraphicsComponent(), 
-		 Core::WorldPositionComponent(-16.0f, 0.0f, 0.0f),
-		 Core::RotationComponent(),
-		 Core::ScaleComponent(0.5f),
-		 Core::UnitTypeComponent(),
-		 //Core::MovementComponent(0.0f, 0.0f, 1.0f, 2.0f, 6.0f),
-		 Core::MovementComponent( 1.0f, 0.0f, 0.0f, 0.0f, 5.0f),
-		 Core::AttributeRioterComponent(),
-		 Core::BoundingVolumeComponent( Core::BoundingSphere( 3.0f, 0.0f, 0.0f, 0.0f ), Core::BoundingVolumeCollisionModel::StaticResolution ) ));
-	*/
 
 	std::cout << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " ";
 

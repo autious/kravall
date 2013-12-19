@@ -11,28 +11,32 @@
 #include <Components/LightComponent.hpp>
 #include <Components/MovementComponent.hpp>
 #include <Components/UnitTypeComponent.hpp>
-#include <Components/AttributeRioterComponent.hpp>
-#include <Components/AttributePoliceComponent.hpp>
+#include <Components/AttributeComponent.hpp>
+//#include <Components/AttributeRioterComponent.hpp>
+//#include <Components/AttributePoliceComponent.hpp>
 #include <Components/BoundingVolumeComponent.hpp>
 
 namespace Core
 {
 	class RenderingSystem;
 	class MovementSystem;
+	class FieldReactionSystem;
 	class PickingSystem;
 	class AIDebugSystem;
 	class LightSystem;
 	class CollisionSystem2D;
 	
-    typedef SystemHandlerTemplate<RenderingSystem, LightSystem, MovementSystem, PickingSystem, AIDebugSystem, CollisionSystem2D> SystemHandler;
+    typedef SystemHandlerTemplate<RenderingSystem, LightSystem, MovementSystem, FieldReactionSystem, PickingSystem, 
+		AIDebugSystem, CollisionSystem2D> SystemHandler;
     typedef EntityHandlerTemplate<SystemHandler, WorldPositionComponent, RotationComponent, ScaleComponent, 
-		GraphicsComponent, LightComponent, MovementComponent, UnitTypeComponent, AttributeRioterComponent, AttributePoliceComponent,
+		GraphicsComponent, LightComponent, MovementComponent, UnitTypeComponent, AttributeComponent,
 		BoundingVolumeComponent> EntityHandler;
 }
 
 /**********All systems after this line************/
 #include <Systems/RenderingSystem.hpp>
 #include <Systems/MovementSystem.hpp>
+#include <Systems/FieldReactionSystem.hpp>
 #include <Systems/PickingSystem.hpp>
 #include <Systems/AIDebugSystem.hpp>
 #include <Systems/LightSystem.hpp>

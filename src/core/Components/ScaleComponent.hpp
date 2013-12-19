@@ -12,6 +12,11 @@ namespace Core
 
 		ScaleComponent(float initScale) : scale(initScale)
 		{}
+
+        inline static const char* GetName()
+        {
+            return "ScaleComponent";
+        }
 	};
 }
 

@@ -26,10 +26,18 @@ namespace Core
     private:
         static const int COMPONENT_COUNT = sizeof...(Components);
 
+
         EntityVector<1024,64,Components...> m_entities;
         std::array<PVector*,sizeof...(Components)> m_components = {{new PVector(1024,64,sizeof(Components))...}};
         SystemHandlerT *m_systemHandler;
     public:
+
+        // order: Name, count, alloc count, data used, data allocated
+        typedef std::tuple<std::string,int,int,int,int> NameCountAllocTuple;
+        typedef std::array<NameCountAllocTuple,COMPONENT_COUNT+1> EntityDataUseList;
+
+    public:
+
         EntityHandlerTemplate( SystemHandlerT *systemHandler)
         {
 
@@ -224,6 +232,19 @@ namespace Core
                 all += m_components[i]->GetCount();
             }
             return all;
+        }
+
+        template<typename Component>
+        NameCountAllocTuple GetComponentUsage()
+        {
+            PVector* pvec = m_components[GetComponentType<Component>()];
+
+            return NameCountAllocTuple( Component::GetName(), pvec->GetCount(), pvec->GetAllocation(), pvec->GetMemoryUse(), pvec->GetMemoryAllocation() );
+        }
+
+        EntityDataUseList GetDataUse()
+        {
+            return {{ NameCountAllocTuple( "Entity", m_entities.GetCount(), m_entities.GetAllocation(), m_entities.GetMemoryUse(), m_entities.GetMemoryAllocation() ), GetComponentUsage<Components>()... }};
         }
 
     private:
