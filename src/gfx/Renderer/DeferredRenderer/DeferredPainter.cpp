@@ -1,6 +1,8 @@
 #include "DeferredPainter.hpp"
 #include <gfx/BitmaskDefinitions.hpp>
 
+#include <logger/Logger.hpp>
+
 namespace GFX
 {
 	DeferredPainter::DeferredPainter(ShaderManager* shaderManager, UniformBufferManager* uniformBufferManager, RenderJobManager* renderJobManager,
@@ -60,17 +62,19 @@ namespace GFX
 
 		std::vector<RenderJobManager::RenderJob> renderJobs = m_renderJobManager->GetJobs();
 
-		unsigned int currentShader = UINT_MAX;
-		unsigned int currentMaterial = UINT_MAX;
-		unsigned int currentMesh = UINT_MAX;
+		unsigned int currentShader = std::numeric_limits<decltype(currentShader)>::max();
+		unsigned int currentMaterial = std::numeric_limits<decltype(currentMaterial)>::max();
+		unsigned int currentMesh = std::numeric_limits<decltype(currentMesh)>::max();
 
-		unsigned int objType = UINT_MAX;
-		unsigned int viewport = UINT_MAX;
-		unsigned int layer = UINT_MAX;
-		unsigned int translucency = UINT_MAX;
-		unsigned int meshID = UINT_MAX;
-		unsigned int material = UINT_MAX;
-		unsigned int depth = UINT_MAX;
+		unsigned int objType = std::numeric_limits<decltype(objType)>::max();
+		unsigned int viewport = std::numeric_limits<decltype(viewport)>::max();
+		unsigned int layer = std::numeric_limits<decltype(layer)>::max();
+		unsigned int translucency = std::numeric_limits<decltype(translucency)>::max();
+		unsigned int meshID = std::numeric_limits<decltype(meshID)>::max();
+		unsigned int material = std::numeric_limits<decltype(material)>::max();
+		unsigned int depth = std::numeric_limits<decltype(depth)>::max();
+
+		GLenum error;
 
 		Material mat;
 		Mesh mesh;
@@ -100,23 +104,31 @@ namespace GFX
 			{
 				mat = m_materialManager->GetMaterial(material);
 
+                //It's possible that a material is removed before an entity. Should this be ok, do we need to be
+                // more rigorous from the outside?
+                if( mat.textures.size() != 4 )
+                {
+                    LOG_ERROR << "Trying to render object with invalid material" << std::endl;
+                    continue;
+                }
+                //alt
+				//assert(mat.textures.size() == 4); 
+
 				currentMaterial = material;
 				
 				//compare shader
 				if (mat.shaderProgramID != currentShader)
 				{
-					//glUseProgram(mat.shaderProgramID);
+					glUseProgram(mat.shaderProgramID);
+					error = glGetError();
 					currentShader = mat.shaderProgramID;
 				}
 				
 				//set textures
-				//assert(mat.textures.size() == 4);
-				//m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[0]).textureHandle, m_uniformTexture0, 0, GL_TEXTURE_2D);
-				//m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[1]).textureHandle, m_uniformTexture1, 1, GL_TEXTURE_2D);
-				//m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[2]).textureHandle, m_uniformTexture2, 2, GL_TEXTURE_2D);
-				//m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[3]).textureHandle, m_uniformTexture3, 3, GL_TEXTURE_2D);
-
-
+				m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[0]).textureHandle, m_uniformTexture0, 0, GL_TEXTURE_2D);
+				m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[1]).textureHandle, m_uniformTexture1, 1, GL_TEXTURE_2D);
+				m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[2]).textureHandle, m_uniformTexture2, 2, GL_TEXTURE_2D);
+				m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[3]).textureHandle, m_uniformTexture3, 3, GL_TEXTURE_2D);
 			}
 
 			if (meshID != currentMesh)
@@ -125,12 +137,17 @@ namespace GFX
 				currentMesh = meshID;
 
 				glBindVertexArray(mesh.VAO);
+					error = glGetError();
 				//set mesh
 			}
 
 			m_shaderManager->SetUniform(1, *(glm::mat4*)renderJobs.at(i).value, m_modelMatrixUniform);
-			glDrawArrays(GL_TRIANGLES, 0, 8127);
-			//glDrawElements(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0);
+					error = glGetError();
+			//glDrawArrays(GL_TRIANGLES, 0, 3559);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IBO);
+					error = glGetError();
+			glDrawElements(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0);
+					error = glGetError();
 		}
 
 		//struct mesh

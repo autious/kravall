@@ -15,18 +15,19 @@ namespace GFX
 
 		void CreateMaterial(unsigned long long int& id);
 		void DeleteMaterial(const unsigned long long int& id);
-		void AddTexture(const unsigned long long int& materialID, const unsigned long long int& textureID);
+		int AddTexture(const unsigned long long int& materialID, const unsigned long long int& textureID);
 		void RemoveTexture(const unsigned long long int& materialID, const unsigned long long int& textureID);
 
-		void SetShader(const unsigned long long int& materialID, const unsigned int& shaderID);
+		int SetShader(const unsigned long long int& materialID, const unsigned int& shaderID);
 
 		inline Material GetMaterial(const unsigned long long int& materialID) 
 		{ 
-			int index = FindMaterial(materialID);
+			unsigned int index = FindMaterial(materialID);
 
 			if (index != std::numeric_limits<unsigned int>::max())
 				return m_materials[index]; 
 
+            //TODO: Change to something more specific in the return, so the renderer doesn't have to guess
 			Material m;
 
 			return m;

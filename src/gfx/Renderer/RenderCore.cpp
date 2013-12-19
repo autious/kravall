@@ -2,6 +2,7 @@
 #include <sstream>
 #include <iomanip>
 #include <utility/Colors.hpp>
+#include <GFXDefines.hpp>
 
 namespace GFX
 {
@@ -148,9 +149,9 @@ namespace GFX
 		m_materialManager->DeleteMaterial(id);
 	}
 
-	void RenderCore::AddTextureToMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID)
+	int RenderCore::AddTextureToMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID)//////////////////////
 	{
-		m_materialManager->AddTexture(materialID, textureID);
+		return m_materialManager->AddTexture(materialID, textureID);
 	}
 
 	void RenderCore::RemoveTextureFromMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID)
@@ -158,9 +159,18 @@ namespace GFX
 		m_materialManager->RemoveTexture(materialID, textureID);
 	}
 
-	void RenderCore::SetShaderToMaterial(const unsigned long long int& materialID, const unsigned int& shaderID)
+    int RenderCore::GetShaderId(unsigned int& shaderId, const char* shaderName) ////////////////////////////////////
+    {
+        shaderId = m_shaderManager->GetShaderProgramID(shaderName);
+		if (shaderId != std::numeric_limits<unsigned int>::max())
+			return GFX_SUCCESS;
+		else
+			return GFX_INVALID_SHADER;
+    }
+
+	int RenderCore::SetShaderToMaterial(const unsigned long long int& materialID, const unsigned int& shaderID) /////////////////////////
 	{
-		m_materialManager->SetShader(materialID, shaderID);
+		return m_materialManager->SetShader(materialID, shaderID);
 	}
 
 	void RenderCore::Render()
@@ -188,19 +198,19 @@ namespace GFX
 			}
 		}
 
-		//* Build GBuffers for all geometry										\
-		//* When a call to light source is next in the render jobs list			|
+		// Build GBuffers for all geometry										\
+		// When a call to light source is next in the render jobs list			|
 		//	- Save index of last geometry/first light in the render jobs list	 > DeferredPainter
 		//	- Break the loop													|
 		//																		/
-		//* For each light with shadow in the render jobs list, starting at   \
-		//	the index obtained from the previous step.                        |
+		// For each light with shadow in the render jobs list, starting at     \
+		//  the index obtained from the previous step.                        |
 		//	- Assign and build depth buffer atlas for each light with shadow   > LightBuilder
 		//	- Break when first light without shadow is encountered            |
 		//																	  /
 		//
-		//* Apply lighting for lights with shadow
-		//* Apply lighting for lights without shadow
+		// Apply lighting for lights with shadow
+		// Apply lighting for lights without shadow
 
 		// renderJobIndex is the index of the current render job
 		unsigned int renderJobIndex = 0;
@@ -217,7 +227,7 @@ namespace GFX
 			if (m_showFBO != -1)
 				GFX_CHECKTIME(m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, m_showFBO), "FBO");
 
-			GFX_CHECKTIME(m_debugPainter->Render(m_viewMatrix, m_projMatrix), "Debug");
+			GFX_CHECKTIME(m_debugPainter->Render(m_depthBuffer, m_normalDepth, m_viewMatrix, m_projMatrix), "Debug");
 			GFX_CHECKTIME(m_consolePainter->Render(), "Console");
 			GFX_CHECKTIME(m_textPainter->Render(), "Text");
 		}
@@ -231,7 +241,7 @@ namespace GFX
 			if (m_showFBO != -1)
 				m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, m_showFBO);
 
-			m_debugPainter->Render(m_viewMatrix, m_projMatrix);
+			m_debugPainter->Render(m_depthBuffer, m_normalDepth, m_viewMatrix, m_projMatrix);
 			m_consolePainter->Render();
 			m_textPainter->Render();
 		}

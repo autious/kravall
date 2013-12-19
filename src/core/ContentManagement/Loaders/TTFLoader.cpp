@@ -66,12 +66,40 @@ namespace Core
 
     Core::AssetHandle TTFLoader::LoadAsync(const char* assetName)
     {
-        return nullptr;
+        std::string fontName;
+        unsigned int fontSize;
+        GFX::FontData* fontData = nullptr;
+
+        if(ParseFile(assetName, fontName, fontSize))
+        {
+            unsigned int fontHash = MurmurHash2(fontName.c_str(), fontName.size(), fontSize);
+
+            FT_Face* face;
+            if(!GetFaceCachedStatus(fontHash, face))
+            {
+                face = new FT_Face;
+                FT_New_Face(m_library, fontName.c_str(), 0, &(*face));
+                m_facesCache.push_back(std::make_tuple(fontHash, 0, face));
+            }
+           
+            AddUserOfFace(face);
+
+            fontData = new GFX::FontData;
+            fontData->fontFace = face;
+
+            CreateMeasurements(fontData, fontSize);
+
+            m_fontData.push_back(fontData);
+        }
+
+        return fontData;
     }
 
     void TTFLoader::FinishLoadAsync(Core::AssetHandle& handle)
     {
-        
+        GFX::FontData* fontData = static_cast<GFX::FontData*>(handle);
+
+        CreateTextureAtlas(fontData);
     }
 
     void TTFLoader::Destroy(const Core::AssetHandle handle)
@@ -89,7 +117,16 @@ namespace Core
 
         if(ReduceUserOfFace(data->fontFace) == 0)
         {
-            FT_Done_Face(*data->fontFace);
+            for(Core::FaceCacheVector::iterator it = m_facesCache.begin(); it != m_facesCache.end(); ++it)
+            {   
+                if(std::get<2>(*it) == data->fontFace)
+                {
+                    FT_Done_Face(*data->fontFace);
+                    m_facesCache.erase(it);
+                    break;
+                }
+            }
+
         }
 
         glDeleteTextures(1, &data->fontAtlas);
@@ -223,6 +260,7 @@ namespace Core
                 return std::get<1>(*it) = std::get<1>(*it) + 1;
             }
         }
+
         LOG_FATAL << "Trying to increase user count of an unexisting font face" << std::endl;
         assert(false);
         return 0;
@@ -237,6 +275,7 @@ namespace Core
                 return std::get<1>(*it) = std::get<1>(*it) - 1;
             }
         }
+
         LOG_FATAL << "Trying to reduce user count of an unexisting font face" << std::endl;
         assert(false);
         return 0;

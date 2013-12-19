@@ -14,8 +14,7 @@
 #include <glm/glm.hpp>
 #include <GL/glew.h>
 
-#define GFX_SUCCESS 0
-#define GFX_FAIL 1
+#include <GFXDefines.hpp>
 
 typedef glm::vec2 GFXVec2;
 typedef glm::vec3 GFXVec3;
@@ -155,8 +154,9 @@ namespace GFX
 		Adds a texture to a material
 		\param materialID Id to material to attach texture to
 		\param textureID Id of texture to attach
+		\return Returns #GFX_SUCCESS, #GFX_INVALID_MATERIAL
 		*/
-		DLL_API void AddTextureToMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID);
+		DLL_API int AddTextureToMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID);
 		
 		/*!
 		Adds a texture to a material
@@ -164,13 +164,22 @@ namespace GFX
 		\param textureID Id of texture to detach
 		*/
 		DLL_API void RemoveTextureFromMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID);
-		
+	
+        /*!
+        Gets the shader id of the shader specified by the null terminated string.
+        \param shaderId Reference to set shader id.
+        \param shaderName The identifying string of the shader.
+		\return Returns #GFX_SUCCESS or #GFX_INVALID_SHADER
+        */
+        DLL_API int GetShaderId(unsigned int& shaderId, const char* shaderName);
+
 		/*!
 		Sets a shader for a material
 		\param materialID Id to material to attach shader to
 		\param textureID Id of shader to attach
+		\return Returns #GFX_SUCCESS, #GFX_INVALID_MATERIAL
 		*/
-		DLL_API void AttachShaderToMaterial(const unsigned long long int& materialID, const unsigned int& shaderID);
+		DLL_API int AttachShaderToMaterial(const unsigned long long int& materialID, const unsigned int& shaderID);
 
 
 	}
@@ -198,8 +207,9 @@ namespace GFX
 		\param p1 World space position of the starting point of the line
 		\param p2 World space position of the end point of the line
 		\param color Color of the line
+		\param useDepth If true, the depth buffer is used to occlude if behind an object, else draws on top of existing geometry regardless of depth
 		*/
-		DLL_API void DrawLine(GFXVec3 p1, GFXVec3 p2, GFXColor color);
+		DLL_API void DrawLine(GFXVec3 p1, GFXVec3 p2, GFXColor color, bool useDepth);
 
 		/*!
 		Draws a line on the screen.
@@ -207,8 +217,9 @@ namespace GFX
 		\param p2 The world space position of the end point of the line
 		\param color Color of the line
 		\param thickness Thickness of the line
+		\param useDepth If true, the depth buffer is used to occlude if behind an object, else draws on top of existing geometry regardless of depth
 		*/
-		DLL_API void DrawLine(GFXVec3 p1, GFXVec3 p2, GFXColor color, float thickness);
+		DLL_API void DrawLine(GFXVec3 p1, GFXVec3 p2, GFXColor color, float thickness, bool useDepth);
 
 		/*!
 		Draws a line on the screen.
@@ -242,16 +253,18 @@ namespace GFX
 		\param dimensions Box dimensions
 		\param solid If true, the box will be filled, else only outlines will be shown
 		\param color Color of the rectangle
+		\param useDepth If true, the depth buffer is used to occlude if behind an object, else draws on top of existing geometry regardless of depth
 		*/
-		DLL_API void DrawBox(GFXVec3 position, GFXVec3 dimensions, bool solid, GFXColor color);
+		DLL_API void DrawBox(GFXVec3 position, GFXVec3 dimensions, bool solid, GFXColor color, bool useDepth);
 
 		/*!
-		Draws a sphere on the screen.
+		Draws a representation of a sphere on the screen.
 		\param position World space position for the center of the sphere
 		\param radius Sphere radius
 		\param color Color of the sphere
+		\param useDepth If true, the depth buffer is used to occlude if behind an object, else draws on top of existing geometry regardless of depth
 		*/
-		DLL_API void DrawSphere(GFXVec3 position, float radius, GFXColor color);
+		DLL_API void DrawSphere(GFXVec3 position, float radius, GFXColor color, bool useDepth);
 
 		/*!
 		Draws a screen space circle on the screen.

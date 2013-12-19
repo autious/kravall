@@ -1,17 +1,10 @@
 #version 430 core
 
 #define MAX_LIGHTS 1024
-#define MAX_LIGHTS_PER_TILE 40
+#define MAX_LIGHTS_PER_TILE 100
 
 #define WORK_GROUP_SIZE 16
 
-//struct PointLight
-//{
-//	vec3 position;
-//	float radius;
-//	vec3 color;
-//	float intensity;
-//};
 struct PointLight
 {
 	vec3 position;
@@ -35,7 +28,6 @@ layout (std430, binding = 5) buffer BufferObject
 };
 
 uniform mat4 view;
-uniform mat4 invProj;
 uniform mat4 proj;
 uniform mat4 inv_proj_view_mat;
 uniform uint numActiveLights;
@@ -66,49 +58,8 @@ vec4 CalculateLighting( PointLight p, vec3 wPos, vec3 wNormal, vec4 wSpec, vec4 
 	float attenuation = 1.0f - length(direction) / (p.radius_length);
 	direction = normalize(direction);
 	float diffuseFactor = max(0.0f, dot(direction, wNormal)) * attenuation;
-	return vec4(p.color.xyz, 0.0f) * diffuseFactor * p.intensity;
+	return vec4(p.color.xyz, 1.0f) * diffuseFactor * p.intensity;
 }
-
-vec4 ConvertProjToView( vec4 p )
-{
-    p = invProj * p;
-    p /= p.w;
-    return p;
-}
-
-// calculate the number of tiles in the horizontal direction
-uint GetNumTilesX()
-{
-    return uint(( ( 1280 + WORK_GROUP_SIZE - 1 ) / float(WORK_GROUP_SIZE) ));
-}
-
-// calculate the number of tiles in the vertical direction
-uint GetNumTilesY()
-{
-    return uint(( ( 720 + WORK_GROUP_SIZE - 1 ) / float(WORK_GROUP_SIZE) ));
-}
-
-
-vec4 CreatePlaneEquation( vec4 b, vec4 c )
-{
-    vec4 n;
-
-    // normalize(cross( b.xyz-a.xyz, c.xyz-a.xyz )), except we know "a" is the origin
-     n.xyz = normalize(cross( b.xyz, c.xyz ));
-
-    // -(n dot a), except we know "a" is the origin
-    n.w = 0;
-
-    return n;
-}
-
-float GetSignedDistanceFromPlane( vec4 p, vec4 eqn )
-{
-    // dot( eqn.xyz, p.xyz ) + eqn.w, , except we know eqn.w is zero 
-    // (see CreatePlaneEquation above)
-    return dot( eqn.xyz, p.xyz );
-}
-
 
 void main()
 {
@@ -124,33 +75,50 @@ void main()
 
 		barrier();
 
-
 		float minDepthZ = float(minDepth / float(0xFFFFFFFF));
 		float maxDepthZ = float(maxDepth / float(0xFFFFFFFF));
 
-				//total tiles = tileScale * 2
 		vec2 tileScale = vec2(1280, 720) * (1.0f / float( 2 * WORK_GROUP_SIZE));
+		
+		
 		vec2 tileBias = tileScale - vec2(gl_WorkGroupID.xy);
+		//full screen frustum
+		//vec4 col1 = vec4(proj[0][0], proj[0][1], proj[0][2],proj[0][3]); 
+		//vec4 col2 = vec4(proj[1][0], proj[1][1], proj[1][2],proj[1][3]);
+		//vec4 col4 = vec4(proj[3][0], proj[3][1], proj[3][2],proj[3][3]); 
+
+		vec4 col1 = vec4(-proj[0][0]  * tileScale.x, proj[0][1], tileBias.x, proj[0][3]); 
 		
-		vec4 c1 = vec4(proj[0][0] * tileScale.x, 0.0f, tileBias.x, 0.0f);
-		vec4 c2 = vec4(0.0f, proj[2][2] * tileScale.y, tileBias.y, 0.0f);
-		vec4 c4 = vec4(0.0f, 0.0f, 1.0f, 0.0f);
+		vec4 col2 = vec4(proj[1][0], -proj[1][1] * tileScale.y, tileBias.y, proj[1][3]);
 		
-		 // Derive frustum planes
+		vec4 col4 = vec4(proj[3][0], proj[3][1],  -1.0f, proj[3][3]); 
+
+		
+		//vec4 c1 = vec4(viewProj[0][0] * tileScale.x, 0.0f, tileBias.x, 0.0f);
+		//vec4 c2 = vec4(0.0f, viewProj[2][2] * tileScale.y, tileBias.y, 0.0f);
+		//vec4 c4 = vec4(0.0f, 0.0f, 1.0f, 0.0f);
+		
+
 		vec4 frustumPlanes[6];
-		// Sides
-		//right
-		frustumPlanes[0] = c4 - c1;
-		//left
-		frustumPlanes[1] = c4 + c1;
-		//bottom
-		frustumPlanes[2] = c4 - c2;
-		//top
-		frustumPlanes[3] = c4 + c2;
-		// Near/far
-		frustumPlanes[4] = vec4(0.0f, 0.0f,  1.0f, -minDepthZ);
-		frustumPlanes[5] = vec4(0.0f, 0.0f, -1.0f,  maxDepthZ);
-		
+
+		//Left plane
+		frustumPlanes[0] = col4 + col1;
+
+		//right plane
+		frustumPlanes[1] = col4 - col1;
+
+		//top plane
+		frustumPlanes[2] = col4 - col2;
+
+		//bottom plane
+		frustumPlanes[3] = col4 + col2;
+
+		//near
+		//frustumPlanes[4]
+
+		//far
+		//frustumPlanes[5]
+
 		for(int i = 0; i < 4; i++)
 		{
 			frustumPlanes[i] *= 1.0f / length(frustumPlanes[i].xyz);
@@ -161,14 +129,14 @@ void main()
 		{
 			PointLight p = pointLights[lightIndex];
 			
-			if (lightIndex < numActiveLights)
+			if (pointLightCount < MAX_LIGHTS_PER_TILE)
 			{
 
 				bool inFrustum = true;
-				for (uint i = 0; i < 6; i++)
+				for (uint i = 0; i < 4 && inFrustum; i++)
 				{
-					float d = dot(frustumPlanes[i], proj * view * vec4(p.position, 1.0f));
-					inFrustum = inFrustum && (d >= -p.radius_length);
+					float dd = dot(frustumPlanes[i], view * vec4(p.position, 1.0f));
+					inFrustum = (dd >= -p.radius_length);
 				}
 		
 				if (inFrustum)
@@ -196,7 +164,8 @@ void main()
 		//#pragma optionNV(unroll all)
 		for(int i = 0; i < pointLightCount; i++)
 		{
-			color += CalculateLighting(pointLights[i], wPos.xyz, 2*normalColor.xyz-1.0f, specular, glow) * diffuseColor;
+			color = diffuseColor;
+			//color += CalculateLighting(pointLights[i], wPos.xyz, 2 * normalColor.xyz - 1.0f, specular, glow) * diffuseColor;
 		}
 
 		// ambient
@@ -208,9 +177,9 @@ void main()
 			imageStore(outTexture, pixel, vec4(.2f, .2f, .2f, 1.0f));
 		else
 		{
-			imageStore(outTexture, pixel, 100 * color);
+			imageStore(outTexture, pixel, color + vec4(pointLightCount / 10.0f));
 			//imageStore(outTexture, pixel, vec4(maxDepthZ));
-			imageStore(outTexture, pixel, vec4(pointLightCount));
+			//imageStore(outTexture, pixel, vec4(pointLightCount));
 			//imageStore(outTexture, pixel, vec4(vec2(tilePos.xy), 0.0f, 1.0f));
 		}
 

@@ -227,17 +227,19 @@ namespace Core
             {
                 if( lua_isuserdata( L, i ) )
                 {
-                    Entity entity = *(Entity*)luaL_checkudata( L, i, ENTITY_META_TYPE );
+                    Entity *entity = (Entity*)luaL_checkudata( L, i, ENTITY_META_TYPE );
+                    
+                    LOG_DEBUG << "Destroy call on entity: " <<  *entity << std::endl;
 
-                    if( entity != std::numeric_limits<Entity>::max() )
+                    if( *entity != std::numeric_limits<Entity>::max() )
                     {
-                        if( Core::world.m_entityHandler.DestroyEntity( entity ) == false )
+                        if( Core::world.m_entityHandler.DestroyEntity( *entity ) == false )
                         {
                             return luaL_error( L, "%s: Unable to remove given entity, parameter %d", __FUNCTION__, i );
                         }
                         else
                         {
-                            entity = std::numeric_limits<Entity>::max(); //Mark userdata as deleted.
+                            *entity = std::numeric_limits<Entity>::max(); //Mark userdata as deleted.
                         }
                     }
                     else

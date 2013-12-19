@@ -1,17 +1,14 @@
-#include "CollisionSystem.hpp"
+#include "CollisionSystem2D.hpp"
 #include "World.hpp"
 #include <gfx/GFXInterface.hpp>
-#include "Camera/Camera.hpp"
-#include <limits>
-#include <logger/Logger.hpp>
 
-Core::CollisionSystem::CollisionSystem()
+Core::CollisionSystem2D::CollisionSystem2D()
 	: BaseSystem( EntityHandler::GenerateAspect< WorldPositionComponent, BoundingVolumeComponent >(), 0ULL )
 {
 }
 
 
-void Core::CollisionSystem::Update( float delta )
+void Core::CollisionSystem2D::Update( float delta )
 {
 
 
@@ -27,7 +24,11 @@ void Core::CollisionSystem::Update( float delta )
 
 		// data...
 		Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(*it);
-		glm::vec3* myPosition = reinterpret_cast<glm::vec3*>(wpc->position);
+		
+		// collision in XZ plane only
+		glm::vec3 myPosition = *reinterpret_cast<glm::vec3*>(wpc->position);
+		myPosition.y = 0.0f;
+
 		Core::BoundingSphere* mySphere = reinterpret_cast<Core::BoundingSphere*>( bvc->data );
 
 		for( std::vector<Entity>::iterator other = m_entities.begin(); other != m_entities.end(); other++ )
@@ -39,11 +40,13 @@ void Core::CollisionSystem::Update( float delta )
 					continue;
 
 				Core::WorldPositionComponent* wpcOther = WGETC<Core::WorldPositionComponent>(*other);
-				
-				glm::vec3* otherPosition = reinterpret_cast<glm::vec3*>(wpcOther->position);
+
+				glm::vec3 otherPosition = *reinterpret_cast<glm::vec3*>(wpcOther->position);
+				otherPosition.y = 0.0f;
+
 				Core::BoundingSphere* otherSphere = reinterpret_cast<Core::BoundingSphere*>( bvcOther->data );
 
-				float sqareDistance = glm::dot( *myPosition - *otherPosition, *myPosition - *otherPosition );
+				float sqareDistance = glm::dot( myPosition - otherPosition, myPosition - otherPosition );
 
 				if( sqareDistance < (otherSphere->radius + mySphere->radius) * (otherSphere->radius + mySphere->radius) )
 				{
@@ -52,7 +55,7 @@ void Core::CollisionSystem::Update( float delta )
 					// otherwise move half the distance as to achieve mutual collision resolution
 
 					float delta = ((otherSphere->radius + mySphere->radius) - std::sqrt( sqareDistance ));
-					glm::vec3 collisionNormal = glm::normalize(*myPosition - *otherPosition);
+					glm::vec3 collisionNormal = glm::normalize( myPosition - otherPosition );
 
 					//GFX::Debug::DrawSphere( *myPosition, mySphere->radius, GFXColor( 1, 0, 0, 1 ) );
 
@@ -65,13 +68,13 @@ void Core::CollisionSystem::Update( float delta )
 
 						// Head and tail is equal when in perfect frontal collision. Would theoretically results in 
 						// less flow but potentially better crowd dynamics when in a closed environment. 
-						*myPosition		+= collisionNormal * ( delta * 0.5f);
-						*otherPosition	-= collisionNormal * ( delta * 0.5f);
+						*reinterpret_cast<glm::vec3*>(wpc->position)		+= collisionNormal * ( delta * 0.5f );
+						*reinterpret_cast<glm::vec3*>(wpcOther->position)	-= collisionNormal * ( delta * 0.5f );
 
 						break;
 
 					case Core::BoundingVolumeCollisionModel::StaticResolution:
-						*myPosition += collisionNormal * delta;
+						*reinterpret_cast<glm::vec3*>(wpc->position) += collisionNormal * delta;
 						break;
 
 					default:

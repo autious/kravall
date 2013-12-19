@@ -1,5 +1,6 @@
 #include "LightPainter.hpp"
 #include <logger/Logger.hpp>
+#include <limits>
 
 namespace GFX
 {
@@ -26,7 +27,6 @@ namespace GFX
 		m_shaderManager->UseProgram("ComputeTest");
 
 		m_invProjViewUniform = m_shaderManager->GetUniformLocation("ComputeTest", "inv_proj_view_mat");
-		m_invProjUniform = m_shaderManager->GetUniformLocation("ComputeTest", "invProj");
 		m_viewUniform = m_shaderManager->GetUniformLocation("ComputeTest", "view");
 		m_projUniform = m_shaderManager->GetUniformLocation("ComputeTest", "proj");
 		m_frambufferSizeUniform = m_shaderManager->GetUniformLocation("ComputeTest", "framebufferDim");
@@ -88,19 +88,18 @@ namespace GFX
 		m_shaderManager->SetUniform(1, projMatrix, m_projUniform);
 		m_shaderManager->SetUniform(1280, 720, m_frambufferSizeUniform);
 		m_shaderManager->SetUniform(1, viewMatrix, m_viewUniform);
-		m_shaderManager->SetUniform(1, glm::inverse(projMatrix), m_invProjUniform);
 		m_shaderManager->SetUniform(1, invProjView, m_invProjViewUniform);
 
 
 		std::vector<RenderJobManager::RenderJob> renderJobs = m_renderJobManager->GetJobs();
-		
-		unsigned int objType = UINT_MAX;
-		unsigned int viewport = UINT_MAX;
-		unsigned int layer = UINT_MAX;
-		unsigned int translucency = UINT_MAX;
-		unsigned int meshID = UINT_MAX;
-		unsigned int lightType = UINT_MAX;
-		unsigned int depth = UINT_MAX;
+
+		unsigned int objType = std::numeric_limits<decltype(objType)>::max();
+		unsigned int viewport = std::numeric_limits<decltype(viewport)>::max();
+		unsigned int layer = std::numeric_limits<decltype(layer)>::max();
+		unsigned int translucency = std::numeric_limits<decltype(translucency)>::max();
+		unsigned int meshID = std::numeric_limits<decltype(meshID)>::max();
+		unsigned int lightType = std::numeric_limits<decltype(lightType)>::max();
+		unsigned int depth = std::numeric_limits<decltype(depth)>::max();
 
 		//Assemble lights
 		unsigned int i = 0;
@@ -110,7 +109,7 @@ namespace GFX
 		bool ok = true;
 		for (i = renderIndex; i < renderJobs.size(); i++)
 		{
-			
+
 			bitmask = renderJobs[i].bitmask;
 
 			objType = GetBitmaskValue(bitmask, BITMASK::TYPE);
@@ -147,12 +146,12 @@ namespace GFX
 		}
 		if (!ok)
 		{
-			LOG_GFXSPECIAL << "Too many lights. Light draw calls: " << totalNumLights << " Maximum is: "<< m_maximumLights <<"\n";
-			LogSystem::Mute( LOG_GFXSPECIAL.GetPrefix() );
+			LOG_GFXSPECIAL << "Too many lights. Light draw calls: " << totalNumLights << " Maximum is: " << m_maximumLights << "\n";
+			LogSystem::Mute(LOG_GFXSPECIAL.GetPrefix());
 		}
 		else
 		{
-			LogSystem::Unmute( LOG_GFXSPECIAL.GetPrefix() );
+			LogSystem::Unmute(LOG_GFXSPECIAL.GetPrefix());
 		}
 		renderIndex = i;
 
@@ -165,10 +164,9 @@ namespace GFX
 		glBindImageTexture(3, specular->GetTextureHandle(), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
 		glBindImageTexture(4, glowMatID->GetTextureHandle(), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
 
-		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, m_pointLightBuffer);
 		LightData* pData = (LightData*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, m_maximumLights * sizeof(LightData), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
 		LightData p;
-		for (int i = 0; i < numLights; i++)
+		for (unsigned int i = 0; i < numLights; i++)
 		{
 			pData[i] = m_pointLights[i];
 		}
@@ -182,6 +180,7 @@ namespace GFX
 
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
+		glDepthMask(GL_FALSE);
 
 		m_shaderManager->SetUniform(1.0f, alphaUniform);
 
@@ -194,6 +193,7 @@ namespace GFX
 
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
+		glDepthMask(GL_TRUE);
 
 		BasePainter::ClearFBO();
 

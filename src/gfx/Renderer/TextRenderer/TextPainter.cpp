@@ -65,8 +65,6 @@ namespace GFX
 		const unsigned char* p;
 
 		std::vector<TextVertex> coords;
-
-		int c = 0;
 		
 		TextVertex tv;
 

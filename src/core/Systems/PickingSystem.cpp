@@ -4,16 +4,24 @@
 #include "Camera/Camera.hpp"
 #include <limits>
 #include <logger/Logger.hpp>
+#include <GLFWInput.hpp>
 
 Core::PickingSystem::PickingSystem()
 	: BaseSystem( EntityHandler::GenerateAspect< WorldPositionComponent, BoundingVolumeComponent >(), 0ULL )
 {
 	m_lastSelectedEntity = std::numeric_limits<Entity>::max();
+	m_currentGroundHit = glm::vec3(0.0f);
 }
 
 
 void Core::PickingSystem::Update( float delta )
 {
+	m_currentGroundHit = GetGroundHit( Core::GetInput().GetXPos(), Core::GetInput().GetYPos() );
+
+	if( !Core::GetInput().IsMouseButtonPressed(0) )
+		return;
+	
+	GetHitEntity( Core::GetInput().GetXPos(), Core::GetInput().GetYPos() );
 }
 
 

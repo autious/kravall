@@ -1,0 +1,12 @@
+#version 430
+// Fragment Shader for debug drawing
+
+uniform vec4 inColor;
+
+out vec4 color;
+
+void main()
+{
+    color = inColor;
+	//color = vec4(gWVP[3].xyz, 1.0f);
+}
