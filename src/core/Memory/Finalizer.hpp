@@ -9,6 +9,7 @@ namespace Core
     {
         void (*m_destructorCall)(void* pointer);
         Finalizer* m_finalizerChain;
+		void* m_dataPointer;
     };
 
 

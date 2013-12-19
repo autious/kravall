@@ -1,23 +1,21 @@
 #ifndef SRC_CORE_LUA_BRIDGES_LUACONTENTMANAGERBRIDGE_H
 #define SRC_CORE_LUA_BRIDGES_LUACONTENTMANAGERBRIDGE_H
 
-#include "LuaContentManagerBridge.hpp"
-
 #include <lua.h>
 #include <lualib.h>
 #include <lauxlib.h>
 
 #include <ComponentFramework/ComponentType.hpp>
+#include <ContentManagement/ContentManager.hpp>
+#include <Lua/Bridges/ContentLoading/ContentHandle.hpp>
 
 #include <utility>
 #include <array>
 #include <tuple>
 
-#define CONTENT_LOADER_TYPE_META "content_loader_type_meta"
-
 namespace Core
 {
-    typedef unsigned int ContentLoaderBridgeType;
+
 
     /*!
         Simple middle class to LuaContentManagerTemplate,
@@ -76,19 +74,30 @@ namespace Core
         */
         static int Free( lua_State * L )
         {
-            if( lua_isuserdata( L, 1 ) && lua_isstring( L, 2 ) )
-            {
-                ContentLoaderBridgeType clbt 
-                    = *(ContentLoaderBridgeType*)luaL_checkudata( L, 1, CONTENT_LOADER_TYPE_META );
+            if( lua_gettop( L ) != 1 )
+                return luaL_error( L, "free only takes one parameter" );
 
-                return CallST<ContentLoadBinders...>::Free( clbt, L );
+            if( lua_isuserdata( L, 1 ) )
+            {
+                ContentHandle* contentHandle = (ContentHandle*)luaL_checkudata( L, 1, CONTENT_HANDLE_META );
+
+                if( contentHandle->loaderId != std::numeric_limits<ContentLoaderBridgeType>::max() )
+                {
+                    LOG_DEBUG << "Removing content " << contentHandle->loaderId << " " << contentHandle->assetHash << std::endl;
+                    int ret = CallST<ContentLoadBinders...>::Free( contentHandle->loaderId, contentHandle->assetHash, L );
+                    contentHandle->loaderId = std::numeric_limits<ContentLoaderBridgeType>::max();
+                    return ret;
+                }
+                else
+                {
+                    LOG_DEBUG << "Content " << contentHandle->assetHash << " already removed, skipping additional free" << std::endl;
+                    return 0;
+                }
             }   
             else
             {
                 if( lua_isuserdata( L, 1 ) == 0 )
-                    return luaL_error( L, "%s: First parameter is not userdata.", __FUNCTION__ );
-                if( lua_isstring( L, 2 ) == 0 )
-                    return luaL_error( L, "%s: Second parameter is not string.", __FUNCTION__ );
+                    return luaL_error( L, "%s: First parameter is not userdata nor content handle.", __FUNCTION__ );
             }
             return luaL_error( L, "%s: Unable to free, program flow should not reach this position.", __FUNCTION__ );
         }
@@ -104,6 +113,19 @@ namespace Core
 
             lua_pushinteger( L, clbt );
 
+            return 1;
+        }
+
+        static int ContentHandleToString( lua_State *L )
+        {
+            ContentHandle handle = *(ContentHandle*)luaL_checkudata( L, 1, CONTENT_HANDLE_META );
+
+            std::stringstream ss;
+
+            ss << "[Loader:" << handle.loaderId << ",Hash:" << handle.assetHash << "]";
+
+            lua_pushstring( L, ss.str().c_str() );
+        
             return 1;
         }
 
@@ -141,11 +163,11 @@ namespace Core
                 return luaL_error( L, "Unable to load given asset, not loader exist for type" );
             }
 
-            static int Free( ContentLoaderBridgeType loaderType, lua_State* L  )
+            static int Free( ContentLoaderBridgeType loaderType, AssetHash assetHash, lua_State * L  )
             {
                 if( GetContentLoaderBridgeTypeId<Loader>() == loaderType )
                 {
-                    return Loader::Free( L );
+                    return Loader::Free( assetHash, L );
                 }
                 return luaL_error( L, "Unable to free given asset, no loader exists for type" );
             }
@@ -162,12 +184,12 @@ namespace Core
                     return CallST<Loaders...>::Load( loaderType, L );
             }
 
-            static int Free( ContentLoaderBridgeType loaderType, lua_State *L )
+            static int Free( ContentLoaderBridgeType loaderType, AssetHash assetHash, lua_State * L )
             {
                 if( GetContentLoaderBridgeTypeId<Loader>() == loaderType )
-                    return Loader::Free( L );
+                    return Loader::Free( assetHash, L );
                 else
-                    return CallST<Loaders...>::Free( loaderType, L );
+                    return CallST<Loaders...>::Free( loaderType, assetHash, L );
             }
         };
     };

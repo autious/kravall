@@ -1,6 +1,8 @@
 #include "DeferredPainter.hpp"
 #include <gfx/BitmaskDefinitions.hpp>
 
+#include <logger/Logger.hpp>
+
 namespace GFX
 {
 	DeferredPainter::DeferredPainter(ShaderManager* shaderManager, UniformBufferManager* uniformBufferManager, RenderJobManager* renderJobManager,
@@ -102,6 +104,16 @@ namespace GFX
 			{
 				mat = m_materialManager->GetMaterial(material);
 
+                //It's possible that a material is removed before an entity. Should this be ok, do we need to be
+                // more rigorous from the outside?
+                if( mat.textures.size() != 4 )
+                {
+                    LOG_ERROR << "Trying to render object with invalid material" << std::endl;
+                    continue;
+                }
+                //alt
+				//assert(mat.textures.size() == 4); 
+
 				currentMaterial = material;
 				
 				//compare shader
@@ -113,13 +125,10 @@ namespace GFX
 				}
 				
 				//set textures
-				assert(mat.textures.size() == 4);
 				m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[0]).textureHandle, m_uniformTexture0, 0, GL_TEXTURE_2D);
 				m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[1]).textureHandle, m_uniformTexture1, 1, GL_TEXTURE_2D);
 				m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[2]).textureHandle, m_uniformTexture2, 2, GL_TEXTURE_2D);
 				m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[3]).textureHandle, m_uniformTexture3, 3, GL_TEXTURE_2D);
-
-
 			}
 
 			if (meshID != currentMesh)

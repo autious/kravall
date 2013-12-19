@@ -201,5 +201,4 @@ namespace Core
         m_file.close();
         return nullptr;
     }
-
 }

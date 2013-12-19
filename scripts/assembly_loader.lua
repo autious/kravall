@@ -57,8 +57,7 @@ function ASM:loadAssembly( asmtable )
                     if type( loader_pair[3] ) == "boolean" then
                         async_load = loader_pair[3]
                     end
-                    
-                    core.contentmanager.load( loader_pair[1], loader_pair[2], function( value )
+                    assets[#assets+1] = core.contentmanager.load( loader_pair[1], loader_pair[2], function( value )
                         component.data[index] = value
                         count = count - 1
                         
@@ -68,7 +67,7 @@ function ASM:loadAssembly( asmtable )
                             apply( asmtable )
                         end
                     end, async_load)
-                    assets[#assets+1] = loader_pair
+                     
                 end
             end
         end
@@ -90,8 +89,8 @@ function ASM:destroy( )
     if self.entities ~= nil then
         for entity, assets in pairs( self.entities ) do
             entity:destroy()
-            for k, loader_pair in pairs( assets ) do
-                core.contentmanager.free( loader_pair[1], loader_pair[2] )
+            for k, asset in pairs( assets ) do
+                core.contentmanager.free( asset )
             end
         end
     end
