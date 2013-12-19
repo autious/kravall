@@ -27,6 +27,7 @@ namespace GFX
 			if (index != std::numeric_limits<unsigned int>::max())
 				return m_materials[index]; 
 
+            //TODO: Change to something more specific in the return, so the renderer doesn't have to guess
 			Material m;
 
 			return m;
