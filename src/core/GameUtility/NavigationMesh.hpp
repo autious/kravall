@@ -1,7 +1,7 @@
 #ifndef CORE_CONTENT_MANAGEMENT_ASSET_STRUCTS_NAVIGATION_MESH_HPP
 #define CORE_CONTENT_MANAGEMENT_ASSET_STRUCTS_NAVIGATION_MESH_HPP
 
-
+#include <fstream>
 
 namespace Core
 {
@@ -42,7 +42,12 @@ namespace Core
 		/*!
 			Node list for the loaded tree.
 		*/
-		Node nodes[];
+		Node* nodes;
+
+		/*!
+			current number of nodes reciding under the nodes-pointer.
+		*/
+		int nrNodes;
 	};
 
 	/*!
@@ -50,11 +55,10 @@ namespace Core
 	*/
 	NavigationMesh* GetNavigationMesh();
 
-	/*!
-		Will attempt to load a navigation mesh from file.
-		The mesh will be allocated to the current level allocator.
-	*/
-	bool LoadNavigationMesh( const char* path );
+	
 }
+
+std::fstream& operator>> ( std::fstream& ff, Core::NavigationMesh::Node& node );
+
 
 #endif

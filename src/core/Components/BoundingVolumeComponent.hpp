@@ -138,7 +138,6 @@ namespace Core
 		*/
 		BoundingVolumeCollisionModel collisionModel;
 
-
 		/*!
 			byte container for bounding volume data. Eg. Core::BoundingSphere, Core::AABB.
 		*/

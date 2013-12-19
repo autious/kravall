@@ -8,3 +8,7 @@ fbo 43
 fbo 3
 fbo 31
 fbo 1
+lua dofile("testtest.lua")
+lua dofile( "testtest.lua" )
+lua dofile("scripts/scenarios/testtest.lua")
+exit

@@ -55,7 +55,7 @@ function ASM:loadAssembly( asmtable )
                     local async_load = true
 
                     if type( loader_pair[3] ) == "boolean" then
-                        async_load = loader_pair[3]
+                        async_load = load	er_pair[3]
                     end
                     
                     core.contentmanager.load( loader_pair[1], loader_pair[2], function( value )

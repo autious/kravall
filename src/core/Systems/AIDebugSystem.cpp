@@ -77,6 +77,32 @@ void MarkClickedObject()
 }
 
 
+void TestNavigationMesh()
+{
+	std::string path = "testNaveMesh.txt";
+	std::fstream ff;
+	ff.open( path, std::fstream::out | std::fstream::trunc );
+	if( ff.is_open() )
+		int o = 0;
+
+
+	ff << 1 << " ";
+
+	for( int i = 0; i < 8; i++ )
+	{
+		ff << (float)i << " ";
+	}
+
+	for( int i = 0; i < 4; i++ )
+	{
+		ff << 3 << " ";
+		ff << 5.0f << " ";
+		ff << 0.01f << " ";
+	}
+
+	ff.close();
+}
+
 
 void Core::AIDebugSystem::Update( float delta )
 {
@@ -84,15 +110,7 @@ void Core::AIDebugSystem::Update( float delta )
 	
 	//CheckPickingSystemVsRioters();
 	MarkClickedObject();
-	
 
-	NavigationMesh* ms = GetNavigationMesh();
-
-	ms = (NavigationMesh*)1;
-
-	NavigationMesh* ms2 = GetNavigationMesh();
-
-	int o = 0;
 
 	
 

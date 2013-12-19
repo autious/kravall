@@ -258,6 +258,8 @@ void run( GLFWwindow * window )
             });
    
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));	
+
+
 	//for (int i = -100; i < 100; i++)
 	//{
 	//	for (int j = -10; j < 10; j++)
@@ -287,6 +289,7 @@ void run( GLFWwindow * window )
 	//	}
 	//}
 	// Create lights
+	/*
 	for (int i = -50; i < 50; i++)
 	{
 		Core::Entity light = Core::world.m_entityHandler.CreateEntity<Core::LightComponent, Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent>
@@ -314,14 +317,14 @@ void run( GLFWwindow * window )
 	
 			Core::RotationComponent* rc = WGETC<Core::RotationComponent>(light);
 	}
-	
+	*/
 
 	//CreateRioter(&rioters, meshID, -6.0f, -3.0f, 0.0f);
 	//CreateRioter(&rioters, meshID, 0.0f, -3.0f, 0.0f);
 	//CreateRioter(&rioters, meshID, 6.0f, -3.0f, 0.0f);
 	//for( int i = -100; i < 100; i++ )
-	for( int i = -200; i < 200; i++ )
-		CreateRioter(&rioters, meshID, i * 16.0f, 1.0f, 0.0f);
+	//for( int i = -200; i < 200; i++ )
+		//CreateRioter(&rioters, meshID, i * 16.0f, 1.0f, 0.0f);
 
 	//CreateRioter(&rioters, meshID, 16.0f, 0.0f, 0.0f);
 	//CreateRioter(&rioters, meshID, -16.0f, 0.0f, 0.0f);
@@ -357,7 +360,6 @@ void run( GLFWwindow * window )
 		Core::GetInput().UpdateInput();
 		
 		Core::Console().Update();
-
 
 		//gCamera->CalculateViewMatrix();
 		Core::gameCamera->LookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
