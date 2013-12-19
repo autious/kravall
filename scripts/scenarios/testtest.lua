@@ -3,7 +3,7 @@
 --load = { mesh = { core.loaders.GnomeLoader, "assets/cube.bgnome" } }
 --load = { mesh = { core.loaders.NavigationMeshLoader, "testNaveMesh.txt" } }
 
-core.contentmanager.load( 
+tjo = core.contentmanager.load( 
 		core.loaders.NavigationMeshLoader, "testNaveMesh.txt", function( value ) end, false )
 
 

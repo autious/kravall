@@ -50,8 +50,8 @@ int Core::NavigationMeshBridge::Load( lua_State * L )
 }
 
 int Core::NavigationMeshBridge::Free( Core::AssetHash hash, lua_State * L )
-{
-	Core::world.m_contentManager.Free<Core::GnomeLoader>(lua_tostring(L,2));
+{	
+	Core::world.m_contentManager.Free<Core::NavigationMeshLoader>( hash );
     return 0;
 }
 

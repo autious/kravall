@@ -4,11 +4,11 @@
 #define MAX_LIGHTS_PER_TILE 1024
 #define WORK_GROUP_SIZE 16
 
-//#pragma optionNV(fastmath on) 
-//#pragma optionNV(ifcvt none) 
-//#pragma optionNV(inline all) 
-//#pragma optionNV(strict on) 
-//#pragma optionNV(unroll all)
+#pragma optionNV(fastmath on) 
+#pragma optionNV(ifcvt none) 
+#pragma optionNV(inline all) 
+#pragma optionNV(strict on) 
+#pragma optionNV(unroll all)
 
 struct PointLight
 {
@@ -137,7 +137,7 @@ void main()
 				for (uint i = 3; i >= 0 && inFrustum; i--)
 				{
 					dist = dot(frustumPlanes[i], pos);
-					//inFrustum = -rad <= dist;
+					inFrustum = (-rad <= dist);
 				}
 
 				if (inFrustum)
@@ -160,7 +160,7 @@ void main()
 		vec4 color = vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
 		//point lights
-		for(int i = 0; i < 10; i++)
+		for(int i = 0; i < pointLightCount; i++)
 		{
 			color += CalculateLighting(pointLights[pointLightIndex[i]], wPos.xyz, 2 * normalColor.xyz - 1.0f, specular, glow) * diffuseColor;
 		}
