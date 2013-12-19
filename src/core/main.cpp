@@ -294,7 +294,7 @@ void run( GLFWwindow * window )
 		}
 	}
 	
-	for (int i = 0; i < 1024; i++)
+	for (int i = 0; i < 4096; i++)
 	{
 		Core::Entity light = Core::world.m_entityHandler.CreateEntity<Core::LightComponent, Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent>
 				(Core::LightComponent(), Core::WorldPositionComponent(), Core::RotationComponent(), Core::ScaleComponent());
@@ -304,7 +304,7 @@ void run( GLFWwindow * window )
 			// Create a point light on the constant heap
 			GFX::PointLight* pointLight = Core::world.m_constantHeap.NewObject<GFX::PointLight>();
 			pointLight->color = glm::vec3((rand()&1000)/1000.0f, (rand()&1000)/1000.0f, (rand()&1000)/1000.0f);
-			pointLight->intensity = 0.3f;
+			pointLight->intensity = 1.3f;
 	
 			// Set the the light component to new point light 
 			lc->LightData = (void*)pointLight;
@@ -317,7 +317,7 @@ void run( GLFWwindow * window )
 			wpc->position[1] = (float)(-400.0f + 600.0f * (rand()&1000)/1000.0f);
 			wpc->position[2] = 17.0f;
 			Core::ScaleComponent* sc = WGETC<Core::ScaleComponent>(light);
-			sc->scale = 10.0f +5.0f * (rand() & 1000) / 1000.0f;
+			sc->scale = 5.0f +5.0f * (rand() & 1000) / 1000.0f;
 	
 			Core::RotationComponent* rc = WGETC<Core::RotationComponent>(light);
 	}
