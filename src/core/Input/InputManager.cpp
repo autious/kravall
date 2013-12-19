@@ -6,8 +6,8 @@ namespace Core
 {
     void InputManagerKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
     {
-        Core::KeyboardState kb_State = InputManager::GetKeyboardState():
-        kb_State.SetKeyState(key, action);
+        Core::KeyboardState* kb_State = InputManager::GetKeyboardState():
+        kb_State->SetKeyState(key, action);
 
         KeyEvents[nKeyEvents].key = key;
         KeyEvents[nKeyEvents].action= action;
@@ -23,8 +23,8 @@ namespace Core
 
     void InputManagerMousebuttonCallback(GLFWwindow* window, int button, int action, int mods)
     {
-        Core::MouseState mouseState = InputManager::GetMouseState();
-        mouseState.SetButtonState(button, action);
+        Core::MouseState* mouseState = InputManager::GetMouseState();
+        mouseState->SetButtonState(button, action);
 
         MouseEvents[nMouseEvents].button = button;
         MouseEvents[nMouseEvents].action = action;
@@ -63,11 +63,6 @@ namespace Core
         ScrollEvents = Core::world.m_constantHeap.NewPODArray<Core::ScrollEvent>(NUMBER_OF_SCROLL_EVENTS); 
     }
 
-    InputManager::~InputManager()
-    {
-
-    }
-
     void InputManager::PollEvents()
     {
         nKeyEvents = 0;
@@ -86,6 +81,44 @@ namespace Core
 
     void InputManager::CallListeners()
     {
+        for(std::vector<Core::KeyEventListener*>::iterator it = m_keyEventListeners.begin(); it != m_keyEventListeners.end(); ++it)
+        {
+            for(int i = 0; i < nKeyEvents; ++i)
+            {
+                (*it)->OnKeyEvent(KeyEvents[i]);
+            }   
+        }
 
+        for(std::vector<Core::CharEventListener*>::iterator it = m_charEventListeners.begin(); it != m_charEventListeners.end(); ++it)
+        {
+            for(int i = 0; i < nCharEvents; ++i)
+            {
+                (*it)->OnCharEvent(CharEvents[i]);
+            }   
+        }
+
+        for(std::vector<Core::ButtonEventListener*>::iterator it = m_buttonEventListeners.begin(); it != m_buttonEventListeners.end(); ++it)
+        {
+            for(int i = 0; i < nButtonEvents; ++i)
+            {
+                (*it)->OnButtonEvent(ButtonEvents[i]);
+            }   
+        }
+
+        for(std::vector<Core::PositionEventListener*>::iterator it = m_positionEventListeners.begin(); it != m_positionEventListeners.end(); ++it)
+        {
+            for(int i = 0; i < nPositionEvents; ++i)
+            {
+                (*it)->OnPositionEvent(PositionEvents[i]);
+            }   
+        }
+
+        for(std::vector<Core::ScrollEventListener*>::iterator it = m_scrollEventListeners.begin(); it != m_scrollEventListeners.end(); ++it)
+        {
+            for(int i = 0; i < nScrollEvents; ++i)
+            {
+                (*it)->OnScrollEvent(ScrollEvents[i]);
+            }   
+        }
     }
 }
