@@ -11,7 +11,7 @@
 #include <Lua/Bridges/LuaLoggerPrint.hpp>
 #include <Lua/Bridges/LuaEntityBridge.hpp>
 #include <Lua/Bridges/LuaContentManagerBridge.hpp>
-#include <Lua/Bridgers/LuaInputBridge.hpp>
+#include <Lua/Bridges/LuaInputBridge.hpp>
 
 #include <Timer.hpp>
 

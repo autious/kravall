@@ -1,5 +1,5 @@
 #ifndef CORE_INPUT_MOUSE_MOUSE_HPP
-#ifndef CORE_INPUT_MOUSE_MOUSE_HPP
+#define CORE_INPUT_MOUSE_MOUSE_HPP
 
 
 namespace Core
@@ -16,7 +16,7 @@ namespace Core
         void SetCursorPosition(const int x, const int y);
         void GetCursorPosition(int& x, int& y);
 
-    priviate:        
+    private:        
         static const int NUMBER_OF_BUTTONS = 3;
         bool m_buttonValues[NUMBER_OF_BUTTONS];
 

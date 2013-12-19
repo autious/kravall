@@ -2,6 +2,7 @@
 #define CORE_LUA_INPUT_HANDLER_HPP
 
 #include <Input/Interfaces/KeyEventListener.hpp>
+#include <lua.h>
 
 namespace Core
 {

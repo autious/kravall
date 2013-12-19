@@ -2,6 +2,12 @@
 
 #include <World.hpp>
 
+#include <Input/Interfaces/KeyEventListener.hpp>
+#include <Input/Interfaces/CharEventListener.hpp>
+#include <Input/Interfaces/ButtonEventListener.hpp>
+#include <Input/Interfaces/PositionEventListener.hpp>
+#include <Input/Interfaces/ScrollEventListener.hpp>
+
 namespace Core
 {
     InputManager& GetInputManager()
@@ -12,8 +18,8 @@ namespace Core
 
     void InputManagerKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
     {
-        Core::KeyboardState* kb_State = InputManager::GetKeyboardState():
-        kb_State->SetKeyState(key, action);
+        Core::KeyboardState kb_State = InputManager::GetKeyboardState();
+        kb_State.SetKeyState(key, action);
 
         KeyEvents[nKeyEvents].key = key;
         KeyEvents[nKeyEvents].action= action;
@@ -27,15 +33,15 @@ namespace Core
         nCharEvents++;
     }
 
-    void InputManagerMousebuttonCallback(GLFWwindow* window, int button, int action, int mods)
+    void InputManagerMouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
     {
-        Core::MouseState* mouseState = InputManager::GetMouseState();
-        mouseState->SetButtonState(button, action);
+        Core::MouseState mouseState = InputManager::GetMouseState();
+        mouseState.SetButtonState(button, action);
 
-        MouseEvents[nMouseEvents].button = button;
-        MouseEvents[nMouseEvents].action = action;
-        MouseEvents[nMouseEvents].mods = mods;
-        nMouseEvents++;
+        ButtonEvents[nButtonEvents].button = button;
+        ButtonEvents[nButtonEvents].action = action;
+        ButtonEvents[nButtonEvents].mods = mods;
+        nButtonEvents++;
     }
 
     void InputManagerCursorPositionCallback(GLFWwindow* window, double xpos, double ypos)
@@ -64,7 +70,7 @@ namespace Core
 
         KeyEvents = Core::world.m_constantHeap.NewPODArray<Core::KeyEvent>(NUMBER_OF_KEY_EVENTS); 
         CharEvents = Core::world.m_constantHeap.NewPODArray<Core::CharEvent>(NUMBER_OF_CHAR_EVENTS); 
-        MouseEvents = Core::world.m_constantHeap.NewPODArray<Core::MouseEvent>(NUMBER_OF_MOUSE_EVENTS); 
+        ButtonEvents = Core::world.m_constantHeap.NewPODArray<Core::ButtonEvent>(NUMBER_OF_BUTTON_EVENTS); 
         PositionEvents = Core::world.m_constantHeap.NewPODArray<Core::PositionEvent>(NUMBER_OF_POSITION_EVENTS); 
         ScrollEvents = Core::world.m_constantHeap.NewPODArray<Core::ScrollEvent>(NUMBER_OF_SCROLL_EVENTS); 
     }
@@ -73,16 +79,16 @@ namespace Core
     {
         nKeyEvents = 0;
         nCharEvents = 0;
-        nMouseEvents = 0;
+        nButtonEvents = 0;
         nPositionEvents = 0;
         nScrollEvents = 0;
 
         glfwPollEvents();
 
-        int x = 0;
-        int y = 0; 
-        glfwGetCursorPos(window, x, y);
-        m_mouseState.SetCursorPosition(x, y);
+        double x = 0;
+        double y = 0; 
+        glfwGetCursorPos(m_window, &x, &y);
+        GetMouseState().SetCursorPosition(static_cast<int>(x), static_cast<int>(y));
     }
 
     void InputManager::CallListeners()

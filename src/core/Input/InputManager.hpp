@@ -10,7 +10,7 @@
 
 #include <Input/Events/KeyEvent.hpp>
 #include <Input/Events/CharEvent.hpp>
-#include <Input/Events/MouseEvent.hpp>
+#include <Input/Events/ButtonEvent.hpp>
 #include <Input/Events/PositionEvent.hpp>
 #include <Input/Events/ScrollEvent.hpp>
 
@@ -28,19 +28,19 @@ namespace Core
 {
     namespace 
     {   
-        Core::KeyboardState keyboardState();
-        Core::MouseState mouseState();
+        Core::KeyboardState keyboardState;
+        Core::MouseState mouseState;
     }
 
     Core::KeyEvent* KeyEvents;
     Core::CharEvent* CharEvents;
-    Core::MouseEvent* MouseEvents;
+    Core::ButtonEvent* ButtonEvents;
     Core::PositionEvent* PositionEvents;
     Core::ScrollEvent* ScrollEvents;
 
     int nKeyEvents = 0;
     int nCharEvents = 0;
-    int nMouseEvents = 0;
+    int nButtonEvents = 0;
     int nPositionEvents = 0;
     int nScrollEvents = 0;
 
@@ -103,7 +103,7 @@ namespace Core
     private:
         static const int NUMBER_OF_KEY_EVENTS = 300;
         static const int NUMBER_OF_CHAR_EVENTS = 300;
-        static const int NUMBER_OF_MOUSE_EVENTS = 50;
+        static const int NUMBER_OF_BUTTON_EVENTS = 50;
         static const int NUMBER_OF_POSITION_EVENTS = 300;
         static const int NUMBER_OF_SCROLL_EVENTS = 50;
 
@@ -111,7 +111,7 @@ namespace Core
         
         Core::KeyEvent* m_startKeyEventPtr;
         Core::CharEvent* m_startCharEventPtr;
-        Core::MouseEvent* m_startMouseEventPtr;
+        Core::ButtonEvent* m_startButtonEventPtr;
         Core::PositionEvent* m_startPositionEventPtr;
         Core::ScrollEvent* m_startScrollEventPtr;
 

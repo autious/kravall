@@ -1,6 +1,7 @@
 #include "LuaInputBridge.hpp"
-#include <Input/InputManager.hpp>
 
+#include <Input/InputManager.hpp>
+#include <lauxlib.h>
 
 extern "C"
 {
@@ -10,7 +11,7 @@ extern "C"
         {
             if(lua_isnumber(L, 1))
             {
-                bool result = GetInputManager().GetKeyboardState().IsKeyDown(lua_tonumber(L, 1));
+                bool result = Core::GetInputManager().GetKeyboardState().IsKeyDown(lua_tonumber(L, 1));
                 lua_pushboolean(L, result);
             }
             else
@@ -32,7 +33,7 @@ extern "C"
         {
             if(lua_isnumber(L, 1))
             {
-                bool result = GetInputManager().GetKeyboardState().IsKeyUp(lua_tonumber(L, 1));
+                bool result = Core::GetInputManager().GetKeyboardState().IsKeyUp(lua_tonumber(L, 1));
                 lua_pushboolean(L, result);
             }
             else
@@ -54,7 +55,7 @@ extern "C"
         {
             if(lua_isnumber(L, 1))
             {
-                bool result = GetInputManager().GetMouseState().IsButtonDown(lua_tonumber(L, 1));
+                bool result = Core::GetInputManager().GetMouseState().IsButtonDown(lua_tonumber(L, 1));
                 lua_pushboolean(L, result);
             }
             else
@@ -76,7 +77,7 @@ extern "C"
         {
             if(lua_isnumber(L, 1))
             {
-                bool result = GetInputManager().GetMouseState().IsButtonUp(lua_tonumber(L, 1));
+                bool result = Core::GetInputManager().GetMouseState().IsButtonUp(lua_tonumber(L, 1));
                 lua_pushboolean(L, result);
             }
             else
@@ -96,7 +97,7 @@ extern "C"
 
 namespace Core
 {
-    LuaInputBridge::OpenLibs(lua_State* state)
+    void LuaInputBridge::OpenLibs(lua_State* state)
     {
         lua_getglobal(state, "core");
 
@@ -115,7 +116,7 @@ namespace Core
         lua_pushcfunction(state, LuaIsButtonDown);
         lua_setfield(state, -2, "isbuttondown");
         lua_pushcfunction(state, LuaIsButtonUp);
-        lua_setfield(statem -2, "isbuttonup");
+        lua_setfield(state, -2, "isbuttonup");
         lua_pop(state, 2);
     }
     
