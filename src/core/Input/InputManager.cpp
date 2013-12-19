@@ -4,6 +4,12 @@
 
 namespace Core
 {
+    InputManager& GetInputManager()
+    {
+        static Core::InputManager inputManager;
+        return inputManager;
+    }
+
     void InputManagerKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
     {
         Core::KeyboardState* kb_State = InputManager::GetKeyboardState():
@@ -46,7 +52,7 @@ namespace Core
         nScrollEvents++;
     }
 
-    InputManager::InputManager(GLFWwindow* window)
+    InputManager::Init(GLFWwindow* window)
     {
         m_window = window;
 
@@ -121,4 +127,29 @@ namespace Core
             }   
         }
     }
+    void InputManager::AddKeyEventListener(Core::KeyEventListener* eventListener)
+    {
+        m_keyEventListeners.push_back(eventListener);
+    }
+
+    void InputManager::AddCharEventListener(Core::CharEventListener* eventListener)
+    {
+        m_charEventListeners.push_back(eventListener);
+    }
+
+    void InputManager::AddButtonEventListener(Core::ButtonEventListener* eventListener)
+    {
+        m_buttonEventListeners.push_back(eventListener);
+    }
+
+    void InputManager::AddPositionEventListener(Core::PositionEventListener* eventListener)
+    {
+        m_positionEventListeners.push_back(eventListener);
+    }
+
+    void InputManager::AddScrollEventListener(Core::ScrollEventListener* eventListener)    
+    {
+        m_scrollEventListeners.push_back(eventListener);
+    }
+
 }

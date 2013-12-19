@@ -48,10 +48,10 @@ namespace Core
     {
     public:
         /*!
-          Explicit constructor of InputManager.
+          Initialization function. Call only once per application.
           \param window The GLFWwindow that the input should be captured from.
           */
-        explicit InputManager(GLFWwindow* window);
+        void Init(GLFWwindow* window);
 
         /*!
           Polls events and updates states. More than one call per frame will result in erroneous behaviour.
@@ -62,6 +62,31 @@ namespace Core
           Calls the subscribed listeners with their respective events. Can be called more than once per frame.        
           */
         void CallListeners();
+
+        /*!
+          Adds a KeyEventListener that is called when KeyEvents occur
+          */
+        void AddKeyEventListener(Core::KeyEventListener* eventListener);
+
+        /*!
+          Adds a CharEventListener that is called when CharEvents occur
+          */
+        void AddCharEventListener(Core::CharEventListener* eventListener);
+
+        /*!
+          Adds a ButtonEventListener that is called when ButtonEvents occur
+          */
+        void AddButtonEventListener(Core::ButtonEventListener* eventListener);
+
+        /*!
+          Adds a PositionEventListener that is called when PositionEvents occur
+          */
+        void AddPositionEventListener(Core::PositionEventListener* eventListener);
+
+        /*!
+          Adds a ScrollEventListener that is called when ScrollEvents occur
+          */
+        void AddScrollEventListener(Core::ScrollEventListener* eventListener);
 
         /*!
           Retreives the current Core::KeyboardState. Changes made to the returned state will change the current state.
@@ -96,7 +121,18 @@ namespace Core
         std::vector<Core::PositionEventListener*> m_positionEventListeners;
         std::vector<Core::ScrollEventListener*> m_scrollEventListeners;
     };
+
+    /*!
+      Retrieval function for the static input manager.
+      \returns A reference to the InputManager.
+      */
+    InputManager& GetInputManager();
+
+
 }
+
+
+
 
 
 #endif
