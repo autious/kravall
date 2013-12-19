@@ -24,6 +24,11 @@ namespace Core
 			LightComponent gc;
 			return gc;
 		}
+
+        inline static const char* GetName()
+        {
+            return "LightComponent";
+        }
 	};
 }
 

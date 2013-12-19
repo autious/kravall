@@ -59,6 +59,11 @@ namespace Core
 			morale(startMorale)
 		{
 		}
+
+        inline static const char* GetName()
+        {
+            return "AttributeRioterComponent";
+        }
 	};
 }
 #endif

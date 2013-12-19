@@ -92,6 +92,11 @@ namespace Core
 			wpc.position[1] = y;
 			wpc.position[2] = z;
 		}
+
+        inline static const char* GetName()
+        {
+            return "WorldPositionComponent";
+        }
 	};
 }
 

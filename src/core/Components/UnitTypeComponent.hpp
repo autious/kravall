@@ -30,6 +30,11 @@ namespace Core
 		UnitTypeComponent(const UnitType& typeOfUnit) : type(typeOfUnit)
 		{
 		}
+
+        inline static const char* GetName()
+        {
+            return "UnitTypeComponent";
+        }
 	};
 }
 #endif

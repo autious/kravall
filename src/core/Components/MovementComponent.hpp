@@ -41,6 +41,11 @@ namespace Core
 			direction[1] = dirY;
 			direction[2] = dirZ;
 		}
+
+        inline static const char* GetName()
+        {
+            return "MovementComponent";
+        }
 	};
 }
 #endif

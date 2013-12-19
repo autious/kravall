@@ -62,8 +62,10 @@ void Core::FieldReactionSystem::UpdateAgents()
 					if (i == 0 && j == 0)
 						continue;
 
-					float chargeSum = GetEffectOnAgent(&WorldPositionComponent(wpc->position[0] + i, wpc->position[1],
-						wpc->position[2] + j));
+                    WorldPositionComponent wpct(wpc->position[0] + i, wpc->position[1],
+						wpc->position[2] + j);
+
+					float chargeSum = GetEffectOnAgent( &wpct );
 
 					if (chargeSum > highestSum)
 					{
