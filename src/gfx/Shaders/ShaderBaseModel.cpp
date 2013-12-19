@@ -1,5 +1,7 @@
 #include "ShaderBaseModel.hpp"
 
+#include <limits>
+
 namespace GFX
 {
 	ShaderBaseModel::ShaderBaseModel()
