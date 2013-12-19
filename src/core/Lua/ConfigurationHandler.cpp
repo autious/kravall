@@ -212,6 +212,29 @@ glm::vec4 Core::ConfigurationHandler::GetVec4( const char *name, glm::vec4 fallb
     return val;
 }
 
+std::vector<std::string> Core::ConfigurationHandler::GetVectorString( const char *name )
+{
+    std::vector<std::string> ret;
+    PushConfigTable();
+        lua_getfield( m_luaState->m_state, -1, name );
+            if( lua_istable( m_luaState->m_state, -1 ) )
+            {
+                lua_pushnil( m_luaState->m_state );
+                while( lua_next( m_luaState->m_state, -2 ) != 0 )
+                {
+                    if( lua_isstring( m_luaState->m_state, -1 ) )
+                    {
+                        ret.push_back( std::string( lua_tostring( m_luaState->m_state, -1 ) ) ); 
+                    }
+                    lua_pop( m_luaState->m_state, 1 ); //pop value, leave key
+                } 
+            }
+        lua_pop( m_luaState->m_state, 1 );
+    PopConfigTable();
+
+    return ret;
+}
+
 void Core::ConfigurationHandler::SetString( const char *name, const char *value )
 {
     PushConfigTable();
@@ -270,6 +293,7 @@ void Core::ConfigurationHandler::SetVec4( const char *name, glm::vec4& value )
     lua_setfield( m_luaState->m_state, -2, name );
     PopConfigTable();
 }
+
 
 void Core::ConfigurationHandler::PushVecX( float * val, int count )
 {

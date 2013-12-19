@@ -127,6 +127,22 @@ namespace Core
         }
 
         /*!
+            Returns the memory in active use, in bytes
+        */
+        size_t GetMemoryUse()
+        {
+            return m_count * ONE_ENT_SIZE;
+        }
+        
+        /*!
+            returns the memory preallocated, in bytes
+        */
+        size_t GetMemoryAllocation()
+        {
+            return m_size * ONE_ENT_SIZE;
+        }
+
+        /*!
             Calculates (in runtime) the given entities aspect and returns it
         */
         Aspect GetAspect( Entity id )

@@ -73,6 +73,17 @@ namespace Core
             Returns how many components slots there are allocated in memory.
         */
         size_t GetAllocation();
+
+
+        /*!
+            Returns how much memory is in active use (in bytes)
+        */
+        size_t GetMemoryUse();
+    
+        /*!
+            Returns how much memory is preallocted (in bytes)
+        */
+        size_t GetMemoryAllocation();
     };
 }
 

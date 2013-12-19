@@ -57,6 +57,11 @@ namespace Core
 			mobility(startMobility), stance(PoliceStance::Passive)
 		{
 		}
+
+        inline static const char* GetName()
+        {
+            return "AttributePoliceComponent";
+        }
 	};
 }
 #endif

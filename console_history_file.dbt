@@ -1,3 +1,31 @@
 lua hej = doscenario("gnomes")
 lua hej:destroy()
 lua dofile("scripts/scenarios/testtest.lua")
+lua  doscenario("gnomes")
+lua collectgarbage()
+lua asm = nil
+lua collectgarbage()
+quit
+exit
+exit
+exit
+exit
+lua asm =  doscenario("gnomes")
+lua asm1 =  doscenario("gnomes")
+lua asm3 =  doscenario("gnomes")
+qui
+quit
+exit
+lua core.config.entityMemoryOutputComponents = { "WorldPositionComponent" }
+lua core.config.entityMemoryOutputComponents = { "WorldPositionComponent", "h" }
+lua core.config.entityMemoryOutputComponents = { "WorldPositionComponent", "h", "j" }
+lua core.config.entityMemoryOutputComponents = { "WorldPositionComponent", "h", "GraphicsComponent" }
+lua core.config.entityMemoryOutputComponents = { "WorldPositionComponent", "h", "GraphicsComponent", "AttributePoliceComponent" }
+lua core.config.entityMemoryOutputComponents = { "WorldPositionComponent", "GraphicsComponent", "AttributePoliceComponent" }
+lua core.config.entityMemoryOutputLevel = "short"
+lua core.config.entityMemoryOutputLevel = "full"
+lua core.config.entityMemoryOutputLevel = "partial"
+lua core.config.entityMemoryOutputComponents = { "WorldPositionComponent", "GraphicsComponent" }
+lua core.config.entityMemoryOutputLevel = "short"
+lua core.config.entityMemoryOutputLevel = "full"
+exit

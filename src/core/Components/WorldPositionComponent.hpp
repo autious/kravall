@@ -46,6 +46,11 @@ namespace Core
 			targetPos[1] = y;
 			targetPos[2] = z;
 		}
+
+        inline static const char* GetName()
+        {
+            return "WorldPositionComponent";
+        }
 	};
 }
 

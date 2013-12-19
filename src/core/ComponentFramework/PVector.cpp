@@ -70,3 +70,13 @@ size_t Core::PVector::GetAllocation()
 {
     return m_size;
 }
+
+size_t Core::PVector::GetMemoryUse()
+{
+    return m_count * m_typesize;
+}
+
+size_t Core::PVector::GetMemoryAllocation()
+{
+    return m_size * m_typesize;
+}
