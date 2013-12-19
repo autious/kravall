@@ -2,6 +2,8 @@
 #define SRC_GFX_BUFFERS_MESH_MANAGER_HPP
 
 #include <vector>
+#include <limits>
+#include <type_traits>
 #include <gfx/Vertex.hpp>
 #include "MeshData.hpp"
 #include <GL/glew.h>
@@ -24,13 +26,13 @@ namespace GFX
 		{ 
 			unsigned int index = FindMesh(meshID);
 
-			if (index != UINT_MAX)
+			if (index != std::numeric_limits<decltype(index)>::max())
 				return m_meshes[index]; 
 
 			Mesh m;
-			m.id = UINT_MAX;
+			m.id = std::numeric_limits<decltype(m.id)>::max();
 			m.indexCount = 0;
-			m.VAO = UINT_MAX;
+			m.VAO = std::numeric_limits<decltype(m.VAO)>::max();
 
 			return m;
 		}
@@ -45,7 +47,7 @@ namespace GFX
 				if (m_meshes[i].id == static_cast<unsigned int>(id))
 					return i;
 
-			return UINT_MAX;
+			return std::numeric_limits<std::result_of<decltype(&MeshManager::FindMesh)(MeshManager, unsigned long long)>::type>::max();
 		}
 	};
 }

@@ -14,8 +14,7 @@
 #include <glm/glm.hpp>
 #include <GL/glew.h>
 
-#define GFX_SUCCESS 0
-#define GFX_FAIL 1
+#include <GFXDefines.hpp>
 
 typedef glm::vec2 GFXVec2;
 typedef glm::vec3 GFXVec3;
@@ -155,8 +154,9 @@ namespace GFX
 		Adds a texture to a material
 		\param materialID Id to material to attach texture to
 		\param textureID Id of texture to attach
+		\return Returns #GFX_SUCCESS, #GFX_INVALID_MATERIAL
 		*/
-		DLL_API void AddTextureToMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID);
+		DLL_API int AddTextureToMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID);
 		
 		/*!
 		Adds a texture to a material
@@ -169,15 +169,17 @@ namespace GFX
         Gets the shader id of the shader specified by the null terminated string.
         \param shaderId Reference to set shader id.
         \param shaderName The identifying string of the shader.
+		\return Returns #GFX_SUCCESS or #GFX_INVALID_SHADER
         */
-        DLL_API void GetShaderId(unsigned int& shaderId, const char* shaderName);
+        DLL_API int GetShaderId(unsigned int& shaderId, const char* shaderName);
 
 		/*!
 		Sets a shader for a material
 		\param materialID Id to material to attach shader to
 		\param textureID Id of shader to attach
+		\return Returns #GFX_SUCCESS, #GFX_INVALID_MATERIAL
 		*/
-		DLL_API void AttachShaderToMaterial(const unsigned long long int& materialID, const unsigned int& shaderID);
+		DLL_API int AttachShaderToMaterial(const unsigned long long int& materialID, const unsigned int& shaderID);
 
 
 	}

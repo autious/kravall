@@ -206,9 +206,9 @@ namespace GFX
 			Renderer().DeleteMaterial(id);
 		}
 
-		void AddTextureToMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID)
+		int AddTextureToMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID)
 		{
-			Renderer().AddTextureToMaterial(materialID, textureID);
+			return Renderer().AddTextureToMaterial(materialID, textureID);
 		}
 
 		void RemoveTextureFromMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID)
@@ -216,14 +216,14 @@ namespace GFX
 			Renderer().RemoveTextureFromMaterial(materialID, textureID);
 		}
 
-        void GetShaderId(unsigned int& shaderId, const char* shaderName)
+        int GetShaderId(unsigned int& shaderId, const char* shaderName)
         {
-            Renderer().GetShaderId(shaderId, shaderName);
+			return Renderer().GetShaderId(shaderId, shaderName);
         }
 
-		void AttachShaderToMaterial(const unsigned long long int& materialID, const unsigned int& shaderID)
+		int AttachShaderToMaterial(const unsigned long long int& materialID, const unsigned int& shaderID)
 		{
-			Renderer().SetShaderToMaterial(materialID, shaderID);
+			return Renderer().SetShaderToMaterial(materialID, shaderID);
 		}
 	}
 }
