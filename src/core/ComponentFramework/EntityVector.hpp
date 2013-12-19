@@ -8,14 +8,12 @@
 #include <cstdlib>
 #include <cassert>
 #include <cstring>
-
-#include <vector>
+#include <queue>
 
 #define ONE_ENT_SIZE sizeof( Entity ) * COMPONENT_COUNT
 
 namespace Core
 {
-    
     /*!
         EntityVector, internal datastructure used by the EntityHandler
         to store entities id'n and their component makeup.
@@ -24,7 +22,7 @@ namespace Core
     class EntityVector
     {
     private:
-        std::vector<Entity> m_removed;
+        std::queue<Entity> m_removed;
         int *m_entities;
         size_t m_count;
         size_t m_size;
@@ -60,8 +58,8 @@ namespace Core
 
             if( m_removed.size() > 0 )
             {
-                id = m_removed.back();
-                m_removed.pop_back();
+                id = m_removed.front();
+                m_removed.pop();
             }
             else
             {
@@ -84,7 +82,7 @@ namespace Core
             for( int i = 0; i < COMPONENT_COUNT; i++ )
                 m_entities[COMPONENT_COUNT*id+i] = -1; 
 
-            m_removed.push_back( id );
+            m_removed.push( id );
             m_count--;
         }
 

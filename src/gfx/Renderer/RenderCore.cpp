@@ -1,4 +1,8 @@
 #include "RenderCore.hpp"
+#include <sstream>
+#include <iomanip>
+#include <utility/Colors.hpp>
+#include <GFXDefines.hpp>
 
 namespace GFX
 {
@@ -11,6 +15,11 @@ namespace GFX
 
 	RenderCore::RenderCore()
 	{
+		m_lastUpdateTime = 0;
+		m_curTime = 0;
+		m_showStatistics = false;
+        m_font = nullptr;
+		m_showFBO = false;
 	}
 
 	RenderCore::~RenderCore()
@@ -27,8 +36,12 @@ namespace GFX
 
 		delete(m_uniformBufferManager);
 		delete(m_shaderManager);
+		delete(m_renderJobManager);
+		delete(m_textureManager);
+		delete(m_materialManager);
 
 		delete(m_deferredPainter);
+		delete(m_lightPainter);
 		delete(m_textPainter);
 		delete(m_debugPainter);
 		delete(m_consolePainter);
@@ -49,8 +62,16 @@ namespace GFX
 
 		m_shaderManager = new ShaderManager();
 		m_uniformBufferManager = new UniformBufferManager();
+		m_renderJobManager = new RenderJobManager();
+		m_meshManager = new MeshManager();
+		m_textureManager = new TextureManager();
+		m_materialManager = new MaterialManager();
 
-		m_deferredPainter = new DeferredPainter(m_shaderManager, m_uniformBufferManager);
+		m_deferredPainter = new DeferredPainter(m_shaderManager, m_uniformBufferManager, 
+			m_renderJobManager, m_meshManager, m_textureManager, m_materialManager);
+
+		m_lightPainter = new LightPainter(m_shaderManager, m_uniformBufferManager, m_renderJobManager);
+
 		m_debugPainter = new DebugPainter(m_shaderManager, m_uniformBufferManager);
 		m_textPainter = new TextPainter(m_shaderManager, m_uniformBufferManager);
 		m_consolePainter = new ConsolePainter(m_shaderManager, m_uniformBufferManager);
@@ -67,6 +88,7 @@ namespace GFX
 
 
 		m_deferredPainter->Initialize(m_FBO, m_dummyVAO);
+		m_lightPainter->Initialize(m_FBO, m_dummyVAO);
 		m_debugPainter->Initialize(m_FBO, m_dummyVAO);
 		m_textPainter->Initialize(m_FBO, m_dummyVAO);
 		m_consolePainter->Initialize(m_FBO, m_dummyVAO);
@@ -91,14 +113,68 @@ namespace GFX
 	}
 
 	
-	void RenderCore::AddRenderJob(const GLuint& ibo, const GLuint& vao, const int& iboSize, const int& shaderID, Material* m, glm::mat4* matrix)
+	void RenderCore::AddRenderJob(GFXBitmask bitmask, void* value)
 	{
-		m_deferredPainter->AddRenderJob(ibo, vao, iboSize, shaderID, matrix, m);
+		m_renderJobManager->AddRenderJob(bitmask, value);
+	}
+
+	void RenderCore::DeleteMesh(unsigned long long id)
+	{
+		m_meshManager->DeleteMesh(id);
+	}
+	
+	void RenderCore::LoadStaticMesh(unsigned int& meshID, const int& sizeVerts, const int& sizeIndices, StaticVertex* verts, int* indices)
+	{
+		m_meshManager->LoadStaticMesh(meshID, sizeVerts, sizeIndices, verts, indices);
+	}
+
+	void RenderCore::LoadTexture(unsigned int& id, unsigned char* data, int width, int height)
+	{
+		m_textureManager->LoadTexture(id, data, width, height);
+	}
+
+	void RenderCore::DeleteTexture(unsigned long long int id)
+	{
+		m_textureManager->DeleteTexture(id);
+	}
+
+	
+	void RenderCore::CreateMaterial(unsigned long long int& id)
+	{
+		m_materialManager->CreateMaterial(id);
+	}
+
+	void RenderCore::DeleteMaterial(const unsigned long long int& id)
+	{
+		m_materialManager->DeleteMaterial(id);
+	}
+
+	int RenderCore::AddTextureToMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID)//////////////////////
+	{
+		return m_materialManager->AddTexture(materialID, textureID);
+	}
+
+	void RenderCore::RemoveTextureFromMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID)
+	{
+		m_materialManager->RemoveTexture(materialID, textureID);
+	}
+
+    int RenderCore::GetShaderId(unsigned int& shaderId, const char* shaderName) ////////////////////////////////////
+    {
+        shaderId = m_shaderManager->GetShaderProgramID(shaderName);
+		if (shaderId != std::numeric_limits<unsigned int>::max())
+			return GFX_SUCCESS;
+		else
+			return GFX_INVALID_SHADER;
+    }
+
+	int RenderCore::SetShaderToMaterial(const unsigned long long int& materialID, const unsigned int& shaderID) /////////////////////////
+	{
+		return m_materialManager->SetShader(materialID, shaderID);
 	}
 
 	void RenderCore::Render()
 	{
-
 		if (m_playSplash)
 		{
 			m_splashPainter->Render(m_windowWidth, m_windowHeight);
@@ -107,20 +183,104 @@ namespace GFX
 			return;
 		}
 
-		m_deferredPainter->Render(m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
-		
-		m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, 1);
+		// Render last frame statistics
+		bool updateStats = false;
 
-		// Render debug
-		m_debugPainter->Render(m_viewMatrix, m_projMatrix);
-		
-		// Render console
-		m_consolePainter->Render();
-		
-		// Render text
-		m_textPainter->Render();
+		if (m_showStatistics)
+		{
+			SubSystemTimeRender();
+			m_curTime = Timer().GetTotal() + 1024;
+			if (m_curTime - m_lastUpdateTime > 200)
+			{
+				m_lastUpdateTime = m_curTime;
+				m_subsystemTimes.clear();
+				updateStats = true;
+			}
+		}
+
+		// Build GBuffers for all geometry										\
+		// When a call to light source is next in the render jobs list			|
+		//	- Save index of last geometry/first light in the render jobs list	 > DeferredPainter
+		//	- Break the loop													|
+		//																		/
+		// For each light with shadow in the render jobs list, starting at     \
+		//  the index obtained from the previous step.                        |
+		//	- Assign and build depth buffer atlas for each light with shadow   > LightBuilder
+		//	- Break when first light without shadow is encountered            |
+		//																	  /
+		//
+		// Apply lighting for lights with shadow
+		// Apply lighting for lights without shadow
+
+		// renderJobIndex is the index of the current render job
+		unsigned int renderJobIndex = 0;
+
+		if (updateStats && m_showStatistics)
+		{
+			GFX_CHECKTIME(glFinish(), "glFinish");
+
+			GFX_CHECKTIME(m_renderJobManager->Sort(), "Sorting");
+			GFX_CHECKTIME(m_deferredPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix), "Geometry");
+			//GFX_CHECKTIME(m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix), "Lighting");
+
+			//Render FBO
+			if (m_showFBO != -1)
+				GFX_CHECKTIME(m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, m_showFBO), "FBO");
+
+			GFX_CHECKTIME(m_debugPainter->Render(m_depthBuffer, m_normalDepth, m_viewMatrix, m_projMatrix), "Debug");
+			GFX_CHECKTIME(m_consolePainter->Render(), "Console");
+			GFX_CHECKTIME(m_textPainter->Render(), "Text");
+		}
+		else
+		{
+			m_renderJobManager->Sort();
+			m_deferredPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
+			//m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
+			
+			//Render FBO
+			if (m_showFBO != -1)
+				m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, m_showFBO);
+
+			m_debugPainter->Render(m_depthBuffer, m_normalDepth, m_viewMatrix, m_projMatrix);
+			m_consolePainter->Render();
+			m_textPainter->Render();
+		}
+
+		m_renderJobManager->Clear();
+
 	}
 
+	void RenderCore::SubSystemTimeRender()
+	{
+		if( m_showStatistics && m_font)
+		{
+
+			for( int i = 0; i < (int)m_subsystemTimes.size(); i++ )
+			{
+				std::stringstream ss;
+            
+				ss << m_subsystemTimes[i].first << ": " << std::fixed << std::setw( 7 ) << std::setprecision(4) << std::setfill( '0' ) << m_subsystemTimes[i].second.count() / 1000.0f << "ms";
+				glm::vec2 position = glm::vec2(m_windowWidth-200+5, m_windowHeight + 12 - 20 * m_subsystemTimes.size() + 20 * i);
+
+				Text t(position.x, position.y, 1.0f, 1.0f, m_font, Colors::White, ss.str().c_str(), m_windowWidth, m_windowHeight);
+			    GetTextManager().AddText(t);
+			}
+
+			glm::vec2 position = glm::vec2(m_windowWidth-200, m_windowHeight - 5 - 20 * m_subsystemTimes.size());
+			glm::vec2 dimensions = glm::vec2(200, 20 * m_subsystemTimes.size());
+
+			DebugRect r;
+			r.color = glm::vec4( 0.5f,0.5f,0.5f,0.5f);
+			r.position = glm::vec3(
+				position.x / float(Renderer().GetWindowWidth() / 2) - 1.0f,
+				1.0f - position.y / float(Renderer().GetWindowHeight() / 2), 0.0f);
+			r.dimensions = glm::vec3(
+				dimensions.x / float(Renderer().GetWindowWidth())*2,
+				dimensions.y / float(Renderer().GetWindowHeight())*2, 0.0f);
+			DebugDrawing().AddRect(r, true);
+
+		}
+	}
 	void RenderCore::InitializeGBuffer()
 	{
 		//Generate the FBO

@@ -7,6 +7,8 @@
 #include <ContentManagement/Loaders/BaseAssetLoader.hpp>
 #include <ContentManagement/AssetStructs/ModelData.hpp>
 
+#include <gfx/GFXInterface.hpp>
+
 namespace Core
 {
     class GnomeLoader : public BaseAssetLoader
@@ -15,98 +17,121 @@ namespace Core
         GnomeLoader();
         ~GnomeLoader();
 
-        void* Load(const char* assetName) override;
-        void* LoadAsync(const char* assetName, Core::FinisherVector& finisherList, std::mutex& finisherMutex) override;
+        AssetHandle Load(const char* assetName) override;
+        AssetHandle LoadAsync(const char* assetName) override;
+        void FinishLoadAsync(Core::AssetHandle& handle) override;
         void Destroy(const Core::AssetHandle handle) override;
 
         const Core::ModelData* getData(const Core::AssetHandle handle) const;
 
     private:
-
         std::vector<Core::ModelData*> m_modelData;
 
-        struct Header
+		struct Header
+		{
+			int numberOfVertices;
+			int numberOfTriangles;
+			int numberOfIndices;
+			int numberOfBones;
+			int numberOfAnimations;
+		};
+
+		struct Bone
+		{
+			int parentID;
+			std::string Name;
+			int id;
+			float offsetMatrix[4][4];
+		};
+
+		struct Keyframe
+		{
+			float time;
+			float position[3];
+			float scale[3];
+			float rotation[4];
+		};
+
+		struct BoneForAnimation
+		{
+			int numKeys;
+			Keyframe* Keyframes;
+		};
+
+		struct Animation
+		{
+			int fps;
+			int id;
+			BoneForAnimation* boneAnim;
+		};
+
+
+		Animation* animations;
+
+		struct VertexBoneAnimated
+		{
+			//Ordinary stuff
+			float position[3];
+			float normal[3];
+
+			//Normalmapping
+			float tangent[3];
+			float uv[2];
+
+			//Animation
+			float boneWeight[4];
+			int boneIndex[4];
+		};
+
+		struct Vertex
+		{
+			//Ordinary stuff
+			float position[3];
+			float normal[3];
+
+			//Normalmapping
+			float tangent[3];
+			float uv[2];
+		};
+
+		struct Mesh
+		{
+			int* indices;
+			Vertex* vertices;
+			VertexBoneAnimated* animatedVertices;
+		};
+
+		struct MorphKey
+		{
+			float keyTime;
+			Vertex* vertices;
+		};
+
+		struct MorphAnimation
+		{
+			int id;
+			int numberOfKeys;
+			MorphKey* keys;
+		};
+
+		//Animation* animations;
+		Bone* bones;
+		Header header;
+		Mesh mesh;
+		MorphAnimation* morphAnimation;
+
+        struct Gnome
         {
-            int numberOfMaterials;
             int numberOfVertices;
-            int numberOfAnimations;
-            int numberOfBones;
-            int numberOfTriangles;
+            GFX::StaticVertex* vertices;
+            int numberOfIndices;
+            int* indices;
+            Core::GnomeLoader::Bone* bones;
+            Core::GnomeLoader::Animation* animations;
+            //Core::GnomeLoader::Material* materials;
         };
 
-        struct Bone
-        {
-            int parentID;
-            //std::vector<int> childIDs;
-            std::string Name;
-            int id;
-            float offsetMatrix[4][4];
-        };
-
-
-
-        struct Keyframe
-        {
-            float rotation[4];
-            float position[3];
-            float time;
-            float scale[3];
-        };
-
-        struct Animation
-        {
-            int fps;
-            std::string name;
-            std::vector<std::vector<Keyframe>> keyframes; //per joint
-            std::map<std::string,std::vector<Keyframe>> namedKeyframes;
-        };
-
-        struct Vertex
-        {
-            //Materials
-            int materialId;
-
-            //Ordinary stuff
-            float position[3];
-            float normal[3];
-            float uv[2];
-
-            //Normalmapping
-            float tangent[3];
-            float binormal[3];
-
-            //Animation
-            float boneWeight[4];
-            int boneIndex[4];
-        };
-
-        struct Material
-        {
-            //Identification
-            std::string name;
-            int id;
-
-            //Numbers
-            float ambient[3];
-            float diffuse[3];
-            float specularity[3];
-            float specularityPower;
-            float reflectivity;
-            float transparency;
-            bool alphaClip;
-
-            //Textures
-            std::string diffuseTexture;
-            std::string normalMap;
-            std::string alphaMap;
-        };
-
-        struct Mesh
-        {
-            int numberOfVertices;
-            Vertex* vertices;
-            Material* materials;
-        };
+        Core::GnomeLoader::Gnome* LoadGnomeFromFile(const char* fileName);
     };
 }
 

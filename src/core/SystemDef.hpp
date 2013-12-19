@@ -1,31 +1,44 @@
-#ifndef SRC_CORE_SYSTEMDEF_H
-#define SRC_CORE_SYSTEMDEF_H
+#ifndef SRC_CORE_SYSTEMDEF_HPP
+#define SRC_CORE_SYSTEMDEF_HPP
 
 #include <ComponentFramework/EntityHandlerTemplate.hpp>
 #include <ComponentFramework/SystemHandlerTemplate.hpp>
-#include <Components/ExampleComponent1.hpp>
-#include <Components/ExampleComponent2.hpp>
 
 #include <Components/WorldPositionComponent.hpp>
 #include <Components/RotationComponent.hpp>
 #include <Components/ScaleComponent.hpp>
 #include <Components/GraphicsComponent.hpp>
-#include "Components/MovementComponent.hpp"
-#include "Components/UnitTypeComponent.hpp"
-#include "Components/AttributeRioterComponent.hpp"
-#include "Components/AttributePoliceComponent.hpp"
+#include <Components/LightComponent.hpp>
+#include <Components/MovementComponent.hpp>
+#include <Components/UnitTypeComponent.hpp>
+#include <Components/AttributeComponent.hpp>
+//#include <Components/AttributeRioterComponent.hpp>
+//#include <Components/AttributePoliceComponent.hpp>
+#include <Components/BoundingVolumeComponent.hpp>
 
 namespace Core
 {
-    class ExampleSystem;
 	class RenderingSystem;
-    typedef SystemHandlerTemplate<ExampleSystem, RenderingSystem> SystemHandler;
-    typedef EntityHandlerTemplate<SystemHandler,ExampleComponent1,ExampleComponent2, WorldPositionComponent, 
-		RotationComponent, ScaleComponent, GraphicsComponent, MovementComponent, UnitTypeComponent, 
-		AttributeRioterComponent, AttributePoliceComponent> EntityHandler;
+	class MovementSystem;
+	class FieldReactionSystem;
+	class PickingSystem;
+	class AIDebugSystem;
+	class LightSystem;
+	class CollisionSystem2D;
+	
+    typedef SystemHandlerTemplate<RenderingSystem, LightSystem, MovementSystem, FieldReactionSystem, PickingSystem, 
+		AIDebugSystem, CollisionSystem2D> SystemHandler;
+    typedef EntityHandlerTemplate<SystemHandler, WorldPositionComponent, RotationComponent, ScaleComponent, 
+		GraphicsComponent, LightComponent, MovementComponent, UnitTypeComponent, AttributeComponent,
+		BoundingVolumeComponent> EntityHandler;
 }
 
 /**********All systems after this line************/
-#include <Systems/ExampleSystem.hpp>
 #include <Systems/RenderingSystem.hpp>
+#include <Systems/MovementSystem.hpp>
+#include <Systems/FieldReactionSystem.hpp>
+#include <Systems/PickingSystem.hpp>
+#include <Systems/AIDebugSystem.hpp>
+#include <Systems/LightSystem.hpp>
+#include <Systems/CollisionSystem2D.hpp>
 #endif

@@ -9,6 +9,7 @@
 #include <cstdint>
 #include <cassert>
 #include <array>
+#include <limits>
 
 #define SA_COMPONENT_USE "Component doesn't exist in EntityHandler. Maybe you forgot to add it?"
 
@@ -50,22 +51,101 @@ namespace Core
         {
             Entity ent = m_entities.Alloc();        
 
-            AddComponent<EntityComponents...>( ent, c... );
+            AddComponentT<EntityComponents...>( ent, c... );
 
             m_systemHandler->CallChangedEntity( ent, 0ULL, GenerateAspect<EntityComponents...>() );
             return ent;
+        }
+
+        Entity CreateEntity()
+        {
+            Entity ent = m_entities.Alloc();        
+
+            return ent;
+        }
+
+        /*!
+            Template component adding function, will trigger
+            aspect updates to inform systems that the entity has changed.
+        */
+        template<typename... EntityComponents>
+        void AddComponents( Entity ent, EntityComponents... comps  )
+        {
+            Aspect oldAsp = GetEntityAspect( ent );
+
+            AddComponentT<EntityComponents...>( ent, comps... );
+
+            m_systemHandler->CallChangedEntity( ent, oldAsp, GetEntityAspect( ent ) );
+        }
+
+        bool HasComponent( Entity ent, ComponentType type )
+        {
+            return (GetEntityAspect( ent ) & (1ULL << type)) != 0;
+        }
+
+        /*!
+            Template component adding function using runtime
+            ids, primarily to be used from scripting utilities
+
+            Triggers change call to systems. Doesn't set any default
+            value to new components, so they might reuse data that was previously releasesed.
+        */
+        void AddComponentsAspect( Entity ent, Aspect asp )
+        {
+            Aspect oldAsp = GetEntityAspect( ent );
+
+            for( int i = 0; i < COMPONENT_COUNT; i++ )
+            {
+                if( ((asp >> i) & 1ULL) > 0 )
+                {
+                    AddComponent( ent, i );
+                }
+            }
+
+            m_systemHandler->CallChangedEntity( ent, oldAsp, GetEntityAspect( ent ) );
+        }
+
+        /*!
+            Removes listed components from entity
+        */
+        template<typename... EntityComponents>
+        void RemoveComponents( Entity ent )
+        {
+            RemoveComponentsAspect( ent, GenerateAspect<EntityComponents...>() );
+        }  
+
+        /*!
+            Removes listed components from entity
+        */
+        void RemoveComponentsAspect( Entity ent, Aspect asp )
+        {
+            Aspect oldAsp = GetEntityAspect( ent );
+
+            for( int i = 0; i < COMPONENT_COUNT; i++ )
+            {
+                if( ((asp >> i) & 1ULL) > 0 )
+                {
+                    RemoveComponent( ent, i );
+                }
+            }
+
+            m_systemHandler->CallChangedEntity( ent, oldAsp, GetEntityAspect( ent ) );
         }
 
         /*!
             Release an entity from allocation. Entity idn are reused, so make sure to never reference
             an entity after calling this function as the old id might end up pointing to a new one.
         */
-        void DestroyEntity( Entity id )
+        bool DestroyEntity( Entity id )
         {
+            assert( std::numeric_limits<Entity>::max() != id );
+
             m_systemHandler->CallChangedEntity( id, GetEntityAspect( id ), 0ULL );
 
             ClearComponents( id );
             m_entities.Release( id );
+            
+            return true;
         }
 
         /*!
@@ -81,11 +161,12 @@ namespace Core
             Calculated in compile-time making this function basically "free"
         */
         template<typename Component>
-        static size_t GetComponentTypeId( )
+        static ComponentType GetComponentType( )
         {
             #ifndef __GNUG__ //Sadly the gnucompiler hasn't implemented this yet =(
             static_assert( std::is_trivially_copyable<Component>::value, "Components must be Pure Data Objects" );
             #endif
+            static_assert( COMPONENT_COUNT < 64, "There is currently a limit of 64 components" );
             static_assert( Match<Component,Components...>::exists, SA_COMPONENT_USE );
             return Index<Component,std::tuple<Components...>>::value;
         }
@@ -101,7 +182,7 @@ namespace Core
         {
             static_assert( Match<Component,Components...>::exists, SA_COMPONENT_USE );
 
-            static const int componentType = GetComponentTypeId<Component>();
+            static const int componentType = GetComponentType<Component>();
 
             int componentId = m_entities.GetComponentId( entity, componentType );
             
@@ -120,8 +201,13 @@ namespace Core
         template<typename... AspectComponents>
         static Aspect GenerateAspect( )
         {
-            static const size_t ids[] = { GetComponentTypeId<AspectComponents>()... };
+            static const size_t ids[] = { GetComponentType<AspectComponents>()... };
             return GenerateAspect( ids, Aspect(), 0, sizeof...(AspectComponents) ); 
+        }
+
+        inline static Aspect GenerateAspect( ComponentType componentType )
+        {
+            return 1ULL << componentType;
         }
 
         int GetEntityCount()
@@ -147,36 +233,55 @@ namespace Core
             return asp |= (1ULL << id[i] | (i < size-1 ? GenerateAspect(id,asp,i+1,size) : 0ULL )); 
         }
 
+        /*!
+            Internal component adding function, DOES NOT trigger aspect updates
+            in systems
+        */
         template<typename Component, typename... RComponents>
-        void AddComponent( Entity ent, Component comp, RComponents... r  )
+        void AddComponentT( Entity ent, Component comp, RComponents... r  )
         {
-            int componentType = GetComponentTypeId<Component>();
-            //Check so that this component doesn't overwrite an existing one.
-            assert( m_entities.GetComponentId(ent, componentType ) < 0 );
+            const size_t componentType = GetComponentType<Component>();
 
-            int compId  = m_components[componentType]->Alloc();
+            int compId = AddComponent( ent, componentType );
 
             m_components[componentType]->Set( compId, &comp );
             
-            m_entities.SetComponentId( ent, compId, componentType );
-
-            AddComponent<RComponents...>(ent, r...);
+            AddComponentT<RComponents...>(ent, r...);
         }
 
+        /*!
+            Internal component adding function, DOES NOT trigger aspect updates
+            in systems
+        */
         template<typename Component>
-        void AddComponent( Entity ent, Component comp )
+        void AddComponentT( Entity ent, Component comp )
         {
-            int componentType = GetComponentTypeId<Component>();
-            //Check so that this component doesn't overwrite an existing one.
-            assert( m_entities.GetComponentId(ent, componentType ) < 0 );
+            const size_t componentType = GetComponentType<Component>();
 
-            int compId  = m_components[componentType]->Alloc();
-
+            int compId = AddComponent( ent, componentType );
+            
             m_components[componentType]->Set( compId, &comp );
-
-            m_entities.SetComponentId( ent, compId, componentType );
         }
 
+        /*!
+            Adds a component to entity, doesn't set the data to any value.
+            Might reuse existing data, does not trigger aspect updates to any systems
+        */
+        int AddComponent( Entity ent, int componentType )
+        {
+            //Check so that this component doesn't overwrite an existing one.
+            int componentId = m_entities.GetComponentId(ent, componentType );
+            if( componentId >= 0 )
+            {
+                m_components[componentType]->Release( componentId );
+            }
+
+            int compId = m_components[componentType]->Alloc();
+
+            m_entities.SetComponentId( ent, compId, componentType );
+
+            return compId;
+        }
 
         void ClearComponents( Entity id )
         {
@@ -192,6 +297,7 @@ namespace Core
             if( componentId >= 0 )
             {
                 m_components[componentType]->Release( componentId );
+                m_entities.SetComponentId( ent, -1, componentType );
             }
         }
     };

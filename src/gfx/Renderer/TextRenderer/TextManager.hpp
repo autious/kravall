@@ -1,7 +1,7 @@
 #ifndef SRC_GFX_RENDERER_TEXT_RENDERER_TEXT_MANAGER_HPP
 #define SRC_GFX_RENDERER_TEXT_RENDERER_TEXT_MANAGER_HPP
 
-#include "Buffers/Font.hpp"
+#include "Buffers/Text.hpp"
 #include <vector>
 
 namespace GFX

@@ -4,8 +4,10 @@
 #include <Shaders/ShaderManager.hpp>
 #include <Buffers/UniformBufferManager.hpp>
 
-#include "FBOTexture.hpp"
-#include "DeferredPainter.hpp"
+#include "DeferredRenderer/FBOTexture.hpp"
+#include "DeferredRenderer/DeferredPainter.hpp"
+#include "DeferredRenderer/LightPainter.hpp"
+
 #include "Console/ConsolePainter.hpp"
 #include "DebugRenderer/DebugPainter.hpp"
 #include "TextRenderer/TextPainter.hpp"
@@ -14,9 +16,24 @@
 
 #include "TextRenderer/TextManager.hpp"
 #include "DebugRenderer/DebugManager.hpp"
+#include "RenderJobManager.hpp"
+#include "../Buffers/MeshManager.hpp"
+#include "../Textures/TextureManager.hpp"
+#include "../Material/MaterialManager.hpp"
 
 #include <iostream>
-#include <gfx/Material.hpp>
+#include <array>
+
+#include "../Utility/Timer.hpp"
+
+#define GFX_CHECKTIME(x, y)\
+{\
+	Timer().Start(); \
+	x; \
+	Timer().Stop(); \
+	std::chrono::microseconds ms = Timer().GetDelta(); \
+	m_subsystemTimes.push_back(std::pair<const char*, std::chrono::microseconds>(y, ms)); \
+}
 
 namespace GFX
 {
@@ -89,8 +106,28 @@ namespace GFX
 
 		void Delete();
 
-		void AddRenderJob(const GLuint& ibo, const GLuint& vao, const int& iboSize, const int& shaderID, Material* m, glm::mat4* matrix);
+		void AddRenderJob(GFXBitmask bitmask, void* value);
 
+		void DeleteMesh(unsigned long long id);
+		void LoadStaticMesh(unsigned int& meshID, const int& sizeVerts, const int& sizeIndices, StaticVertex* verts, int* indices);
+
+		void LoadTexture(unsigned int& id, unsigned char* data, int width, int height);
+		void DeleteTexture(unsigned long long int id);
+		
+		void CreateMaterial(unsigned long long int& id);
+		void DeleteMaterial(const unsigned long long int& id);
+		int AddTextureToMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID);
+		void RemoveTextureFromMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID);
+        int GetShaderId(unsigned int& shaderId, const char* shaderName);
+		int SetShaderToMaterial(const unsigned long long int& materialID, const unsigned int& shaderID);
+
+        /*!
+        Sets the font used for rendering SubSystem statistics.
+        \param font The font used for rendering.
+        */
+        inline void SetStatisticsFont(GFX::FontData* font) { m_font = font; }
+		inline void ShowStatistics(bool enabled){ m_showStatistics = enabled; }
+		inline void ShowFBO(int which){ m_showFBO = which; }
 	private:
 		RenderCore();
 		~RenderCore();
@@ -109,6 +146,7 @@ namespace GFX
 		*/
 		void ResizeGBuffer();
 
+
 		int m_windowWidth;
 		int m_windowHeight;
 
@@ -124,14 +162,29 @@ namespace GFX
 
 		UniformBufferManager*	m_uniformBufferManager;
 		ShaderManager*			m_shaderManager;
-		
+		RenderJobManager*		m_renderJobManager;
+		MeshManager*			m_meshManager;
+		TextureManager*			m_textureManager;
+		MaterialManager*		m_materialManager;
+
 
 		DeferredPainter* m_deferredPainter;
+		LightPainter* m_lightPainter;
 		TextPainter* m_textPainter;
 		DebugPainter* m_debugPainter;
 		ConsolePainter* m_consolePainter;
 		SplashPainter* m_splashPainter;
 		FBOPainter* m_fboPainter;
+		
+		void SubSystemTimeRender();
+        std::vector<std::pair<const char*, std::chrono::microseconds>> m_subsystemTimes;
+		unsigned long long m_lastUpdateTime;
+		unsigned long long m_curTime;
+		bool m_showStatistics;
+        GFX::FontData* m_font;
+		
+		int m_showFBO;
+
 		glm::mat4 m_viewMatrix;
 		glm::mat4 m_projMatrix;
 

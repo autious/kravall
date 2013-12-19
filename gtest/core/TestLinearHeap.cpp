@@ -13,13 +13,15 @@ namespace
 
     struct TestObject
     {
-        TestObject(void* ptr = nullptr)
+        TestObject(void* ptr)
         {
+			this->m_ptr = this->m_ptr;
             m_ptr = ptr;
         }
 
         ~TestObject()
         {
+			this->m_ptr = this->m_ptr;
             m_ptr = nullptr;          
         }
 
@@ -61,7 +63,32 @@ namespace
         EXPECT_EQ(test_obj->m_ptr, nullptr);
 
         //Check if we got the first address back after rewind
-        ASSERT_EQ(reinterpret_cast<void*>(test_char + sizeof(Core::Finalizer)), reinterpret_cast<void*>(test_obj));            
+        ASSERT_EQ(reinterpret_cast<void*>(test_char), reinterpret_cast<void*>(test_obj));
     }
+
+	TEST(LinearHeap, ArrayTest)
+    {
+		unsigned char* Memory[MEMORY_SIZE];
+
+        Core::LinearAllocator alloc(Memory, MEMORY_SIZE);
+        Core::LinearHeap linearHeap(alloc);
+
+		int nrObjects = 10;
+		TestObject* list = linearHeap.NewObjectArray<TestObject>( nrObjects, &linearHeap);
+
+		for( int i = 0; i < nrObjects; i++ )
+			EXPECT_NE( list[i].m_ptr, nullptr );
+
+		linearHeap.Rewind();		
+
+		for( int i = 0; i < nrObjects; i++ )
+		{
+			void* pp = list[i].m_ptr;
+
+			EXPECT_EQ( list[i].m_ptr, nullptr );
+		}
+	}
+
+
 }
 #endif

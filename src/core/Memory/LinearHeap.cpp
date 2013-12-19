@@ -19,8 +19,9 @@ namespace Core
     {           
         for(Finalizer* f = m_finalizerChain; f; f = f->m_finalizerChain)
         {
-           f->m_destructorCall(GetFinalizerObject(f)); 
+			f->m_destructorCall( f->m_dataPointer );
         }
+		m_finalizerChain = nullptr;
         m_allocator.Rewind(m_rewindPoint);
     }
 }

@@ -17,240 +17,46 @@ namespace Core
 
     }
 
-    void* GnomeLoader::LoadAsync(const char* assetName, Core::FinisherVector& finisherList, std::mutex& finisherLock)
+    Core::AssetHandle GnomeLoader::LoadAsync(const char* assetName)
     {
-        /*
-        finisherList.push_back(std::make_tuple(this, gnome, [&handle, ](Core::GnomeLoader* loader, Core::AssetHandle lambdaHandle)
-            {
-                Core::GnomeLoader::Gnome* gnome = reinterpret_cast<Core::GnomeLoader::Gnome>(lambdaHandle);
-                Core::ModelData data;
-                
-                GFX::Content::LoadStaticMesh(data.IBO, data.VAO, gnome->mesh.numberOfVertices, gnome->mesh.numberOfVertices, vs, indices);
-                
-                delete[] indices;
-                delete gnome;
-            }));  
-        */
-        return nullptr;
+        Core::GnomeLoader::Gnome* gnome = LoadGnomeFromFile(assetName);       
+        return gnome;        
     }
 
-    void* GnomeLoader::Load(const char* assetName)
+    void GnomeLoader::FinishLoadAsync(Core::AssetHandle& handle)
+    {
+        Core::GnomeLoader::Gnome* gnome = static_cast<Core::GnomeLoader::Gnome*>(handle);
+        Core::ModelData* modelData = new Core::ModelData;
+
+		GFX::Content::LoadStaticMesh(modelData->meshID, gnome->numberOfVertices, gnome->numberOfIndices, gnome->vertices, gnome->indices);
+
+        m_modelData.push_back(modelData);            
+
+        //delete[] gnome->materials;
+        delete[] gnome->bones;
+        delete[] gnome->animations;            
+        delete[] gnome->indices;
+        delete[] gnome->vertices;
+        delete static_cast<Core::GnomeLoader::Gnome*>(handle);
+        handle = reinterpret_cast<AssetHandle>(modelData);
+    }
+
+    Core::AssetHandle GnomeLoader::Load(const char* assetName)
     {        
-        std::fstream file;
+        Core::ModelData* modelData = new Core::ModelData();
+        Core::GnomeLoader::Gnome* gnome = LoadGnomeFromFile(assetName);
 
-        file.open(assetName, std::ios::in);
-        if (file)
-        {
-            int materialId;
-            std::string line;
+		GFX::Content::LoadStaticMesh(modelData->meshID, gnome->numberOfVertices, gnome->numberOfIndices, gnome->vertices, gnome->indices);
 
-            Core::GnomeLoader::Animation animation;
-            Core::GnomeLoader::Bone bone;
-            Core::GnomeLoader::Material material;	
-            Core::GnomeLoader::Vertex vertex;
-            Core::GnomeLoader::Header header;
-
-			file >> line;
-
-			file >> line;
-			file >> header.numberOfMaterials;
-			file >> line;
-			file >> header.numberOfVertices;
-			file >> line;
-			file >> header.numberOfTriangles;
-			file >> line;
-			file >> header.numberOfBones;
-			file >> line;
-			file >> header.numberOfAnimations;
-
-            Core::GnomeLoader::Mesh mesh;
-            Core::GnomeLoader::Bone* bones;
-            Core::GnomeLoader::Animation* animations;
-
-
-			mesh.vertices = new Core::GnomeLoader::Vertex[header.numberOfVertices];
-            mesh.materials = new Core::GnomeLoader::Material[header.numberOfMaterials];
-            mesh.numberOfVertices = header.numberOfVertices;
-            bones = new Core::GnomeLoader::Bone[header.numberOfBones];
-            animations = new Core::GnomeLoader::Animation[header.numberOfBones];
-
-
-			//Material
-			file >> line;
-			for (int i = 0; i < header.numberOfMaterials; ++i)
-			{
-				file >> material.name;
-				file >> line;
-				file >> material.ambient[0] >> material.ambient[1] >> material.ambient[2];
-				file >> line;
-				file >> material.diffuse[0] >> material.diffuse[1] >> material.diffuse[2];
-				file >> line;
-				file >> material.specularity[0] >> material.specularity[1] >> material.specularity[2];
-				file >> line;
-				file >> material.specularityPower;
-				file >> line;
-				file >> material.reflectivity;
-				file >> line;
-				file >> material.transparency;
-				file >> line;
-				file >> material.alphaClip;
-				file >> line;
-				file >> material.diffuseTexture;
-				file >> line;
-				file >> material.normalMap;
-				file >> line;
-				file >> material.alphaMap;
-
-				mesh.materials[i] = material;
-			}
-           
-			std::cout << "Parsed material" << std::endl;
-
-            file >> line;
-            file >> line >> materialId; //todo: make dynamic solution for mutiple materials
-            vertex.materialId = materialId;
-            for (int i = 0; i < header.numberOfVertices; ++i)
-            {
-                file >> line;
-                file >> vertex.position[0]	 >> vertex.position[1]	 >> vertex.position[2];
-                file >> line;
-                file >> vertex.normal[0]	 >> vertex.normal[1]	 >> vertex.normal[2];
-                file >> line;
-                file >> vertex.tangent[0]	 >> vertex.tangent[1]	 >> vertex.tangent[2];
-                file >> line;
-                file >> vertex.binormal[0]	 >> vertex.binormal[1]	 >> vertex.binormal[2];
-                file >> line;
-                file >> vertex.uv[0]		 >> vertex.uv[1];
-                file >> line;
-                file >> vertex.boneWeight[0] >> vertex.boneWeight[1] >> vertex.boneWeight[2] >> vertex.boneWeight[3];
-                file >> line;
-                file >> vertex.boneIndex[0]	 >> vertex.boneIndex[1]	 >> vertex.boneIndex[2]	 >> vertex.boneIndex[3];
-
-                mesh.vertices[i] = vertex;
-            }
-
-			std::cout << "Parsed verts" << std::endl;
-
-            //Bones
-           // file >> line;
-		   //
-           // for (int k = 0; k < header.numberOfBones; ++k)
-           // {
-           //     file >> bone.Name;
-           //     for (int i = 0; i < 4; i++)
-           //     {
-           //         for (int j = 0; j < 4; j++)
-           //         {
-           //             file >> bone.offsetMatrix[i][j];
-           //         }
-           //     }
-           //     bones[k] = bone;
-           // }
-           // 
-           // file >> line;
-           // for (int i = 0; i < header.numberOfBones; ++i)
-           // {
-           //     file >> line;
-           //     file >> bones[i].parentID;
-           //     bones[i].id = i;
-           // }
-		   //
-           // //Animations
-           // file >> line;
-           // file >> line;
-		   //
-           // for (int i = 0; i < header.numberOfAnimations; ++i)
-           // {
-           //     file >> line;
-           //     file >> animation.name;
-           //     file >> line;
-		   //
-           //     for (int j = 0; j < header.numberOfBones; ++j)
-           //     {
-           //         int noKeys;
-           //         file >> line >> line >> noKeys;
-           //         file >> line;
-           //         
-           //         std::vector<Keyframe> keys; //TODO: unvectorize //c:\users\alice\downloads\flag.gnome
-           //         for (int k = 0; k < noKeys; k++)
-           //         {
-           //             Keyframe keyframe;
-           //             file >> line;
-           //             file >> keyframe.time;
-           //             file >> line;
-           //             file >> keyframe.position[0] >> keyframe.position[1] >> keyframe.position[2];
-           //             file >> line;
-           //             file >> keyframe.scale[0]	 >> keyframe.scale[1]	 >> keyframe.scale[2]; 
-           //             file >> line;
-           //             file >> keyframe.rotation[0] >> keyframe.rotation[1] >> keyframe.rotation[2] >> keyframe.rotation[3];
-		   //
-		   //
-           //             keys.push_back(keyframe);
-           //         }
-           //         file >> line;
-		   //
-           //         animations[i].keyframes.push_back(keys);
-           //         animations[i].namedKeyframes[bones[j].Name] = keys;
-           //     }
-           // }
-
-			std::cout << "Parsed animations" << std::endl;
-
-            //Apply data to GFX buffers
-            GLint* indices = new GLint[mesh.numberOfVertices];           
-            GFX::StaticVertex* vertices = new GFX::StaticVertex[header.numberOfVertices];
-
-            for (int i = 0; i < mesh.numberOfVertices; i++)
-            {
-                indices[i] = i;
-            }
-            
-            for (int i = 0; i < mesh.numberOfVertices; i++)
-            {
-                GFX::StaticVertex v;
-                for (int j = 0; j < 3; j++)
-                    vertices[i].position[j] = mesh.vertices[i].position[j];
-                for (int j = 0; j < 3; j++)
-                    vertices[i].normal[j] = mesh.vertices[i].normal[j];
-                for (int j = 0; j < 2; j++)
-                {
-                    //if (j == 1)
-                    //	vertices[i].uv[j] = 1 - mesh.vertices[i].uv[j];
-                    //else
-                        vertices[i].uv[j] = mesh.vertices[i].uv[j];
-                }
-                for (int j = 0; j < 3; j++)
-                    vertices[i].tangent[j] = mesh.vertices[i].tangent[j];
-                for (int j = 0; j < 3; j++)
-                    vertices[i].binormal[j] = mesh.vertices[i].binormal[j];
-
-                vertices[i].position[3] = 1.0f;
-                vertices[i].normal[3] = 0.0f;
-                vertices[i].tangent[3] = 0.0f;
-                vertices[i].tangent[3] = 0.0f;
-            }
-
-
-            Core::ModelData* modelData = new Core::ModelData;
-            modelData->iSize = modelData->vSize = mesh.numberOfVertices;
-
-            m_modelData.push_back(modelData);            
-
-            GFX::Content::LoadStaticMesh(modelData->IBO, modelData->VAO, mesh.numberOfVertices, mesh.numberOfVertices, vertices, indices);
-            
-            delete[] mesh.vertices;
-            delete[] mesh.materials;
-            delete[] bones;
-            delete[] animations;            
-            delete[] indices;
-            delete[] vertices;
-
-			std::cout << "Applied data" << std::endl;
-
-            return modelData;
-        }
-        file.close();
-        return nullptr;
+		m_modelData.push_back(modelData);
+        
+        //delete[] gnome->materials;
+        delete[] gnome->bones;
+        delete[] gnome->animations;            
+        delete[] gnome->indices;
+        delete[] gnome->vertices;
+        delete gnome;
+        return modelData;
     }
 
     void GnomeLoader::Destroy(const Core::AssetHandle handle)
@@ -265,12 +71,134 @@ namespace Core
                 break;
             }
         }
-        GFX::Content::DeleteStaticMesh(modelData->IBO, modelData->VAO);        
+        GFX::Content::DeleteStaticMesh(modelData->meshID);        
         delete modelData;
     }
 
     const ModelData* GnomeLoader::getData(const Core::AssetHandle handle) const
     {
         return static_cast<const Core::ModelData*>(handle);
+    }
+
+    Core::GnomeLoader::Gnome* GnomeLoader::LoadGnomeFromFile(const char* fileName)
+    {
+		std::fstream m_file;
+
+		m_file.open(fileName, std::ios::in | std::ios::binary);
+        if (m_file)
+        {
+            Core::GnomeLoader::Animation animation;
+            Core::GnomeLoader::Bone bone;
+            Core::GnomeLoader::Vertex vertex;
+            Core::GnomeLoader::Header header;
+
+			/* Header */
+			m_file.read((char*)&header, sizeof(Header));
+
+            Core::GnomeLoader::Mesh mesh;
+            Core::GnomeLoader::Gnome* gnome = new Core::GnomeLoader::Gnome;
+
+			mesh.vertices = new Core::GnomeLoader::Vertex[header.numberOfVertices];
+			mesh.indices = new int[header.numberOfIndices];
+            gnome->numberOfVertices = header.numberOfVertices;
+            gnome->bones = new Core::GnomeLoader::Bone[header.numberOfBones];
+            gnome->animations = new Core::GnomeLoader::Animation[header.numberOfBones];
+
+			/* Vertex */
+			if (header.numberOfBones)
+				m_file.read((char*)mesh.animatedVertices, sizeof(VertexBoneAnimated)*header.numberOfVertices);
+			else
+				m_file.read((char*)mesh.vertices, sizeof(Vertex)* header.numberOfVertices);
+
+			std::cout << "Parsed verts" << std::endl;
+
+
+			/* Index */
+			m_file.read((char*)mesh.indices, sizeof(int)* header.numberOfIndices);
+			std::cout << "Parsed indices" << std::endl;
+
+			/* Animations */
+			if (header.numberOfBones)
+			{
+				/* Bones */
+				for (int k = 0; k < header.numberOfBones; k++) //TODO: load name
+				{
+					m_file.read((char*)&bones[k].id, sizeof(int));
+					m_file.read((char*)&bones[k].parentID, sizeof(int));
+					m_file.read((char*)&bones[k].offsetMatrix, sizeof(float)* 4 * 4);
+				}
+				if (header.numberOfAnimations)
+				{
+					/* Skeletal Animation */
+					for (int i = 0; i < header.numberOfAnimations; ++i)
+					{
+						m_file.read((char*)&animations[i].id, sizeof(int));
+						animations[i].boneAnim = new BoneForAnimation[header.numberOfBones];
+						for (int j = 0; j < header.numberOfBones; ++j)
+						{
+							m_file.read((char*)&animations[i].boneAnim[j].numKeys, sizeof(int));
+							animations[i].boneAnim[j].Keyframes = new Keyframe[animations[i].boneAnim[j].numKeys];
+							m_file.read((char*)animations[i].boneAnim[j].Keyframes, sizeof(Keyframe)* animations[i].boneAnim[j].numKeys);
+						}
+					}
+				}
+			}
+			else if (header.numberOfAnimations)
+			{
+				/* Morph Animation */
+				for (int i = 0; i < header.numberOfAnimations; i++)
+				{
+					m_file.read((char*)&morphAnimation[i].id, sizeof(int));
+					m_file.read((char*)&morphAnimation[i].numberOfKeys, sizeof(int));
+					morphAnimation[i].keys = new MorphKey[morphAnimation[i].numberOfKeys];
+
+					for (int j = 0; j < morphAnimation[i].numberOfKeys; j++)
+					{
+						morphAnimation[i].keys[j].vertices = new Vertex[header.numberOfVertices];
+						m_file.read((char*)&morphAnimation[i].keys[j].keyTime, sizeof(int));
+						m_file.read((char*)&morphAnimation[i].keys[j].vertices, sizeof(Vertex)* header.numberOfVertices);
+					}
+				}
+			}
+
+            //Apply data to GFX buffers
+			gnome->numberOfIndices = header.numberOfIndices;
+            gnome->indices = new int[gnome->numberOfIndices];           
+            gnome->vertices = new GFX::StaticVertex[gnome->numberOfVertices];
+			for (int i = 0; i < gnome->numberOfIndices; i++)
+            {
+                gnome->indices[i] = mesh.indices[i];
+				//std::cout << mesh.indices[i] << std::endl;
+            }
+            
+            for (int i = 0; i < gnome->numberOfVertices; i++)
+            {
+                GFX::StaticVertex v;
+                for (int j = 0; j < 3; j++)
+                    gnome->vertices[i].position[j] = mesh.vertices[i].position[j];
+                for (int j = 0; j < 3; j++)
+                    gnome->vertices[i].normal[j] = mesh.vertices[i].normal[j];
+                for (int j = 0; j < 2; j++)
+                {
+                        gnome->vertices[i].uv[j] = mesh.vertices[i].uv[j];
+                }
+                for (int j = 0; j < 3; j++)
+                    gnome->vertices[i].tangent[j] = mesh.vertices[i].tangent[j];
+                for (int j = 0; j < 3; j++)
+                    gnome->vertices[i].binormal[j] = mesh.vertices[i].tangent[j]; //TODO: FIX: This is only while there is no calculation for the binormal
+
+                gnome->vertices[i].position[3] = 1.0f;
+                gnome->vertices[i].normal[3] = 0.0f;
+                gnome->vertices[i].tangent[3] = 0.0f;
+                gnome->vertices[i].tangent[3] = 0.0f;
+            }
+            delete[] mesh.vertices;
+
+            std::cout << "parsed data" << std::endl;
+            m_file.close();
+            return gnome;
+        }
+        m_file.close();
+        return nullptr;
     }
 }

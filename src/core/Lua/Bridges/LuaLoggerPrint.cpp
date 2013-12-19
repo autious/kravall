@@ -33,13 +33,34 @@ extern "C"
             {
                 ss << "table";
             }
+            else if( lua_isuserdata( L, i ) )
+            {
+                if( lua_getmetatable( L, i ) )
+                {
+                    lua_getfield( L, -1, "__tostring" ); 
+
+                    if( lua_isfunction( L, -1 ) )
+                    {
+                        lua_pushvalue( L, i );
+                        lua_call( L, 1, 1 ); //Removes the function and argument from stack
+
+                        if( lua_isstring( L, -1 ) )
+                            ss << lua_tostring( L, -1 );
+
+                        lua_pop( L,1 ); //Pop the return value.
+                    }
+
+                    lua_pop( L,1 ); // Pop the __tostring value
+                    lua_pop( L,1 ); // Pop the meta table value
+                }
+            }
             else if( lua_isnil( L, i ) )
             {
                 ss << "nil"; 
             }
             else
             {
-                ss << "[TYPE NOT HANDLED]";
+                ss << "[" << lua_typename(L,i) << " NOT HANDLED]";
             }
         }
 

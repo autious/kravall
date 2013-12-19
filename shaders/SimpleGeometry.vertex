@@ -15,6 +15,7 @@ layout ( location = 3 ) in vec4 binormalIN;
 layout ( location = 4 ) in vec2 uvIN;
 
 out vec4 posFS;
+out vec4 posW;
 out vec4 normalFS;
 out vec4 tangentFS;
 out vec4 binormalFS;
@@ -23,6 +24,7 @@ out vec2 uvFS;
 void main()
 {
 	//Move position to clip space
+	posW = modelMatrix * positionIN;
 	posFS = gProjection * gView * modelMatrix * positionIN;
 
 	//Transform normal with model matrix

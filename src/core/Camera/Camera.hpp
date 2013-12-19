@@ -106,5 +106,13 @@ namespace Core
 		float m_fov;
 
 	};
+
+	/*!
+		The camera for the game, should not be manipulated by systems, only via lua.
+		Initialized in main.
+	*/
+	extern Camera* gameCamera;
+
+
 }
 #endif

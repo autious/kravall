@@ -53,7 +53,7 @@ solution "RiotGame"
 
     project "core"
         targetname "RiotGame" 
-        debugdir "" -- fungerade inte för utskrift av textfiler, lämnar detta så det syns utifall något faller iom. det / John
+        debugdir ""
         location ( location_path )
         language "C++"
         kind "ConsoleApp"
@@ -62,16 +62,17 @@ solution "RiotGame"
 
         if os.is( "linux" ) then
             includedirs { "/usr/include/lua5.1" }
+            includedirs { "/usr/include/freetype2" }
         end
 
         --Idiotic non-matching naming convenstions.
         if( os.is( "linux" ) ) then
-           links { "lua5.1" } 
+           links { "luajit-5.1" } 
         else
             links { "lua51" }
         end
 
-        links { "glfw3", "gfx", "logger" }
+        links { "glfw3", "gfx", "logger", "freetype" }
         configuration{ "*Test" }
             links { "gtest" }
         configuration{ "windows" }
@@ -88,7 +89,7 @@ solution "RiotGame"
         location ( location_path )
         language "C++"
         kind "SharedLib"
-        files { "gtest/gfx/**.cpp", "src/gfx/**.hpp", "src/gfx/**.h", "src/gfx/**.cpp", "include/gfx/**.hpp" ,"include/utility/**.hpp", "shaders/**.vertex", "shaders/**.geometry", "shaders/**.fragment", "shaders/**.compute" }
+        files { "gtest/gfx/**.cpp", "src/gfx/**.hpp", "src/gfx/**.h", "src/gfx/**.cpp", "include/gfx/**.hpp" ,"include/utility/**.hpp", "shaders/**.vertex", "shaders/**.geometry", "shaders/**.fragment", "shaders/**.compute", "shaders/**.glsl" }
 
 		includedirs { "src/gfx", "include/gfx", "include/utility", "shaders", "include", "deps" }       
         

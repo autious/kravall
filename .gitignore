@@ -1,8 +1,10 @@
+console_history_file.dbt
 RiotGame
 vimenv
 tags
 output.sock
 .*.swp
+.**.swo
 win32/VS12/Release/*
 win32/VS12/Debug/*
 win32/VS12/VS12.sdf
@@ -177,3 +179,6 @@ Makefile
 #assets
 
 #filters
+
+#console historry
+console_history_file.dbt

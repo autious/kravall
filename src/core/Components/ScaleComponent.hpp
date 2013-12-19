@@ -7,10 +7,11 @@ namespace Core
 	{
 		float scale;
 
-		ScaleComponent()
-		{
-			scale = 1.0f;
-		}
+		ScaleComponent() : scale(1.0f)
+		{}
+
+		ScaleComponent(float initScale) : scale(initScale)
+		{}
 	};
 }
 
