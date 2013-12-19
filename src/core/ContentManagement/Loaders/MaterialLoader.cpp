@@ -50,8 +50,17 @@ namespace Core
 
             GFX::Content::CreateMaterial(data->materialId);
             unsigned int shaderId = std::numeric_limits<decltype(shaderId)>::max();
-            GFX::Content::GetShaderId(shaderId, shaderName.c_str());
-            GFX::Content::AttachShaderToMaterial(data->materialId, shaderId);
+
+			if (GFX::Content::GetShaderId(shaderId, shaderName.c_str()) != GFX_SUCCESS)
+			{
+				LOG_WARNING << "Failed to get shader ID from name: " << shaderName << std::endl;
+			}
+
+            if (GFX::Content::AttachShaderToMaterial(data->materialId, shaderId) != GFX_SUCCESS)
+			{
+				LOG_WARNING << "Failed to attach shader to material, material does not exist. Material ID: " << data->materialId << std::endl;
+			}
+
 
             if(shaderId == std::numeric_limits<decltype(shaderId)>::max())
             {            
@@ -383,7 +392,10 @@ namespace Core
 
     void MaterialLoader::AddTextureToMaterial(const unsigned long long int materialId, const unsigned int textureId)
     {
-        GFX::Content::AddTextureToMaterial(materialId, textureId);
+		if (GFX::Content::AddTextureToMaterial(materialId, textureId) != GFX_SUCCESS)
+		{
+			LOG_WARNING << "Failed to add texture to material, material does not exist. Material ID: " << materialId << std::endl;
+		}
     }
 
     int MaterialLoader::AddUserOfTexture(const Core::TextureData* texture)

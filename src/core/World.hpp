@@ -15,7 +15,8 @@ namespace Core
     {
     public:
 		World() : m_systemHandler(), m_entityHandler(&m_systemHandler), m_luaState(), m_config(&m_luaState), 
-			m_constantAllocator(Core::LinearAllocator(nullptr, 0)), m_constantHeap(m_constantAllocator), 
+			m_constantAllocator(Core::LinearAllocator(nullptr, 0)), m_constantHeap(Core::LinearHeap(m_constantAllocator)), 
+			m_levelAllocator(Core::LinearAllocator(nullptr, 0)), m_levelHeap(Core::LinearHeap(m_levelAllocator)),
 			m_frameAllocator(Core::LinearAllocator(nullptr, 0)), m_frameHeap(Core::LinearHeap(m_frameAllocator)) {}
 
 		~World();
@@ -27,11 +28,19 @@ namespace Core
         LuaState m_luaState;
         ConfigurationHandler m_config;
 		
+		// program memory
 		Core::LinearAllocator m_constantAllocator;
 		Core::LinearHeap m_constantHeap;
 
+		// level memory
+		Core::LinearAllocator m_levelAllocator;
+		Core::LinearHeap m_levelHeap;
+		
+		// frame memory...
 		Core::LinearAllocator m_frameAllocator;
 		Core::LinearHeap m_frameHeap;
+
+		
 		unsigned char* m_worldMemory;
         ContentManager m_contentManager;
     };

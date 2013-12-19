@@ -2,6 +2,7 @@
 #include <sstream>
 #include <iomanip>
 #include <utility/Colors.hpp>
+#include <GFXDefines.hpp>
 
 namespace GFX
 {
@@ -148,9 +149,9 @@ namespace GFX
 		m_materialManager->DeleteMaterial(id);
 	}
 
-	void RenderCore::AddTextureToMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID)
+	int RenderCore::AddTextureToMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID)//////////////////////
 	{
-		m_materialManager->AddTexture(materialID, textureID);
+		return m_materialManager->AddTexture(materialID, textureID);
 	}
 
 	void RenderCore::RemoveTextureFromMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID)
@@ -158,14 +159,18 @@ namespace GFX
 		m_materialManager->RemoveTexture(materialID, textureID);
 	}
 
-    void RenderCore::GetShaderId(unsigned int& shaderId, const char* shaderName)
+    int RenderCore::GetShaderId(unsigned int& shaderId, const char* shaderName) ////////////////////////////////////
     {
-        shaderId = m_shaderManager->GetShaderID(shaderName);
+        shaderId = m_shaderManager->GetShaderProgramID(shaderName);
+		if (shaderId != std::numeric_limits<unsigned int>::max())
+			return GFX_SUCCESS;
+		else
+			return GFX_INVALID_SHADER;
     }
 
-	void RenderCore::SetShaderToMaterial(const unsigned long long int& materialID, const unsigned int& shaderID)
+	int RenderCore::SetShaderToMaterial(const unsigned long long int& materialID, const unsigned int& shaderID) /////////////////////////
 	{
-		m_materialManager->SetShader(materialID, shaderID);
+		return m_materialManager->SetShader(materialID, shaderID);
 	}
 
 	void RenderCore::Render()

@@ -1,0 +1,18 @@
+lua hej = doscenario("gnomes")
+lua hej:destroy()
+fbo 3
+fbo 2
+fbo 1
+fbo 4
+fbo 43
+fbo 3
+fbo 31
+fbo 1
+lua dofile("testtest.lua")
+lua dofile( "testtest.lua" )
+lua dofile("scripts/scenarios/testtest.lua")
+exit
+hej = nil
+lua hej = nil
+lua collectgarbage()
+exit

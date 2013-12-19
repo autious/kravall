@@ -1,5 +1,6 @@
 #include "LightPainter.hpp"
 #include <logger/Logger.hpp>
+#include <limits>
 
 namespace GFX
 {
@@ -92,13 +93,13 @@ namespace GFX
 
 		std::vector<RenderJobManager::RenderJob> renderJobs = m_renderJobManager->GetJobs();
 
-		unsigned int objType = UINT_MAX;
-		unsigned int viewport = UINT_MAX;
-		unsigned int layer = UINT_MAX;
-		unsigned int translucency = UINT_MAX;
-		unsigned int meshID = UINT_MAX;
-		unsigned int lightType = UINT_MAX;
-		unsigned int depth = UINT_MAX;
+		unsigned int objType = std::numeric_limits<decltype(objType)>::max();
+		unsigned int viewport = std::numeric_limits<decltype(viewport)>::max();
+		unsigned int layer = std::numeric_limits<decltype(layer)>::max();
+		unsigned int translucency = std::numeric_limits<decltype(translucency)>::max();
+		unsigned int meshID = std::numeric_limits<decltype(meshID)>::max();
+		unsigned int lightType = std::numeric_limits<decltype(lightType)>::max();
+		unsigned int depth = std::numeric_limits<decltype(depth)>::max();
 
 		//Assemble lights
 		unsigned int i = 0;

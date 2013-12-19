@@ -3,10 +3,11 @@
 #include <World.hpp>
 
 #include <Lua/Bridges/ContentLoadingBind/GnomeLoaderBridge.hpp>
+#include <Lua/Bridges/ContentLoadingBind/NavigationMeshBridge.hpp>
 
 namespace Core
 {
-    typedef LuaContentManagerBridgeTemplate<GnomeLoaderBridge> ContentManagerBridge;
+    typedef LuaContentManagerBridgeTemplate<GnomeLoaderBridge, NavigationMeshBridge> ContentManagerBridge;
 }
 
 extern "C"
@@ -24,6 +25,11 @@ extern "C"
     static int LuaLoaderToString( lua_State *L )
     {
         return Core::ContentManagerBridge::LoaderToString( L );
+    }
+    
+    static int LuaContentHandleToString( lua_State *L )
+    {
+        return Core::ContentManagerBridge::ContentHandleToString( L );
     }
 }
 
@@ -53,9 +59,23 @@ void Core::LuaContentManagerBridge::OpenLibs( lua_State * L )
             lua_pushstring( L, "__tostring" );
             lua_pushcfunction( L, LuaLoaderToString );
             lua_settable( L, -3 );
+        lua_pop( L , 1 ); //Pop the entity meta table. remember to remove if something else ends up removing the entity from the stack.
+
+
+        if( luaL_newmetatable( L, CONTENT_HANDLE_META ) == 0 )
+        {
+            LOG_ERROR << "Metatable entity already exists!" << std::endl;
+        }
+            lua_pushstring( L, "__tostring" );
+            lua_pushcfunction( L, LuaContentHandleToString );
+            lua_settable( L, -3 );
 
             lua_pushstring( L, "__index" );
             lua_getfield( L, coreTableIndex, "contentmanager" );
+            lua_settable( L, -3 );
+
+            lua_pushstring( L, "__gc" );
+            lua_pushcfunction( L, LuaContentManagerFree );
             lua_settable( L, -3 );
         lua_pop( L , 1 ); //Pop the entity meta table. remember to remove if something else ends up removing the entity from the stack.
 
