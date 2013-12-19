@@ -3,10 +3,11 @@
 #include <World.hpp>
 
 #include <Lua/Bridges/ContentLoadingBind/GnomeLoaderBridge.hpp>
+#include <Lua/Bridges/ContentLoadingBind/NavigationMeshBridge.hpp>
 
 namespace Core
 {
-    typedef LuaContentManagerBridgeTemplate<GnomeLoaderBridge> ContentManagerBridge;
+    typedef LuaContentManagerBridgeTemplate<GnomeLoaderBridge, NavigationMeshBridge> ContentManagerBridge;
 }
 
 extern "C"

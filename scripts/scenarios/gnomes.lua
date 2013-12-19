@@ -14,7 +14,7 @@ for i = -10, 10 do
             {
                 type = core.componentType.GraphicsComponent,
                 data = { mesh = 0 },
-                load = { mesh = { core.loaders.GnomeLoader, "assets/teapot.bgnome" } }
+                load = { mesh = { core.loaders.GnomeLoader, "assets/teapot.bgnome", false } }
             },
             {
                 type = core.componentType.ScaleComponent,
