@@ -3,8 +3,8 @@ local ASML = require "assembly_loader"
 
 local asm = ASML.loadPack( {} )
 
-for i = -5, 5 do
-    for j = -5, 5 do
+for i = -10, 10 do
+    for j = -10, 10 do
         asm:loadAssembly( 
         {
             {
@@ -14,7 +14,7 @@ for i = -5, 5 do
             {
                 type = core.componentType.GraphicsComponent,
                 data = { mesh = 0 },
-                load = { mesh = { core.loaders.GnomeLoader, "assets/cube.bgnome" } }
+                load = { mesh = { core.loaders.GnomeLoader, "assets/teapot.bgnome" } }
             },
             {
                 type = core.componentType.ScaleComponent,
