@@ -33,12 +33,12 @@ namespace Core
 					data->color = p->color;
 					data->intensity = p->intensity;
 
-					//wpc->position[0] = 150.0f * sin(lel + double(i));
-					wpc->position[0] += 0.01f;
+					wpc->position[0] = 200.0f * sin(lel + double(i));
+
 					data->position = WorldPositionComponent::GetVec3(wpc->position);
 					data->radius_length = sc->scale;
 
-					GFX::Debug::DrawSphere(data->position, sc->scale, glm::vec4(data->color, 1.0f), false);
+					//GFX::Debug::DrawSphere(data->position, sc->scale, glm::vec4(data->color, 1.0f), false);
 				}
 				break;
 

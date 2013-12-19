@@ -73,7 +73,7 @@ namespace GFX
 		glGenBuffers(1, &m_pointLightBuffer);
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_pointLightBuffer);
 		//glBufferData(GL_SHADER_STORAGE_BUFFER, m_maximumLights * sizeof(LightData), m_pointLights, GL_DYNAMIC_COPY);
-		glBufferData(GL_SHADER_STORAGE_BUFFER, m_maximumLights * sizeof(LightData), NULL, GL_DYNAMIC_COPY);
+		glBufferData(GL_SHADER_STORAGE_BUFFER, m_maximumLights * sizeof(LightData), NULL, GL_STREAM_COPY);
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, m_pointLightBuffer);
 
 
@@ -174,7 +174,7 @@ namespace GFX
 		glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
 		glDispatchCompute(1280 / 16, 720 / 16, 1);
-		glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+		//glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
 		m_shaderManager->UseProgram("TQ");
 

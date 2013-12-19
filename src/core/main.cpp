@@ -240,7 +240,7 @@ void run( GLFWwindow * window )
 		Core::world.m_config.GetDouble( "initCameraNearClipDistance", 1.0f ), 
 		Core::world.m_config.GetDouble( "initCameraFarClipDistance", 1000.0f ) );
 	Core::gameCamera->CalculateProjectionMatrix(initScreenWidth, initScreenHeight);
-	Core::gameCamera->SetPosition(glm::vec3(0.0f, 0.0f, 200.0f));
+	Core::gameCamera->SetPosition(glm::vec3(0.0f, 100.0f, 450.0f));
 	
     Core::ContentManager CM;
 
@@ -294,7 +294,7 @@ void run( GLFWwindow * window )
 		}
 	}
 	
-	for (int i = 2; i < 5; i++)
+	for (int i = 0; i < 1024; i++)
 	{
 		Core::Entity light = Core::world.m_entityHandler.CreateEntity<Core::LightComponent, Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent>
 				(Core::LightComponent(), Core::WorldPositionComponent(), Core::RotationComponent(), Core::ScaleComponent());
@@ -304,7 +304,7 @@ void run( GLFWwindow * window )
 			// Create a point light on the constant heap
 			GFX::PointLight* pointLight = Core::world.m_constantHeap.NewObject<GFX::PointLight>();
 			pointLight->color = glm::vec3((rand()&1000)/1000.0f, (rand()&1000)/1000.0f, (rand()&1000)/1000.0f);
-			pointLight->intensity = 1.3f;
+			pointLight->intensity = 0.3f;
 	
 			// Set the the light component to new point light 
 			lc->LightData = (void*)pointLight;
@@ -313,11 +313,11 @@ void run( GLFWwindow * window )
 			GFX::SetBitmaskValue(lc->bitmask, GFX::BITMASK::LIGHT_TYPE, lc->type);
 	
 			Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(light);
-			//wpc->position[0] = (float)(-150.0f + 300.0f * (rand()&1000)/1000.0f);
-			wpc->position[1] = (float)(-200.0f + 300.0f * (rand()&1000)/1000.0f);
+			wpc->position[0] = (float)(-200.0f + 300.0f * (rand()&1000)/1000.0f);
+			wpc->position[1] = (float)(-400.0f + 600.0f * (rand()&1000)/1000.0f);
 			wpc->position[2] = 17.0f;
 			Core::ScaleComponent* sc = WGETC<Core::ScaleComponent>(light);
-			sc->scale = 20.0f;// +10.0f * (rand() & 1000) / 1000.0f;
+			sc->scale = 10.0f +5.0f * (rand() & 1000) / 1000.0f;
 	
 			Core::RotationComponent* rc = WGETC<Core::RotationComponent>(light);
 	}
