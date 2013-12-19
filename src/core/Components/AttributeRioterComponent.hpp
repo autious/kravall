@@ -53,8 +53,8 @@ namespace Core
 			\param startPressure The initial value for the pressure.
 			\param startMorale The initial value for the morale.
 		*/
-		AttributeRioterComponent(RioterAlignment align, int startHealth, int startStamina, int startRage, 
-			int startPressure, float startMorale) 
+		AttributeRioterComponent(const RioterAlignment& align, const int&  startHealth, const int&  startStamina, 
+			const int&  startRage, const int& startPressure, const float& startMorale)
 			: alignment(align), health(startHealth), stamina(startStamina), rage(startRage), pressure(startPressure), 
 			morale(startMorale)
 		{

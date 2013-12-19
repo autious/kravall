@@ -27,7 +27,7 @@ namespace Core
 	class CollisionSystem2D;
 	
     typedef SystemHandlerTemplate<RenderingSystem, LightSystem, MovementSystem, FieldReactionSystem, PickingSystem, 
-		AIDebugSystem, CollisionSystem> SystemHandler;
+		AIDebugSystem, CollisionSystem2D> SystemHandler;
     typedef EntityHandlerTemplate<SystemHandler, WorldPositionComponent, RotationComponent, ScaleComponent, 
 		GraphicsComponent, LightComponent, MovementComponent, UnitTypeComponent, AttributeComponent,
 		BoundingVolumeComponent> EntityHandler;

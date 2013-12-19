@@ -51,8 +51,8 @@ namespace Core
 			\param startMobility The initial value for the mobility.
 			\param startStance The initial value for the stance.
 		*/
-		AttributePoliceComponent(int startHealth, int startStamina, int startDefense, float startMorale, 
-			float startMobility, float startStance) 
+		AttributePoliceComponent(const int& startHealth, const int&  startStamina, const int&  startDefense, 
+			float startMorale, const float& startMobility, const PoliceStance& startStance)
 			: health(startHealth), stamina(startStamina), defense(startDefense), morale(startMorale), 
 			mobility(startMobility), stance(PoliceStance::Passive)
 		{

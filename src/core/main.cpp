@@ -174,8 +174,8 @@ void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, unsigned in
 		 Core::WorldPositionComponent(posX, posY, posZ),
 		 Core::RotationComponent(),
 		 Core::ScaleComponent(1.0f),
-		 Core::UnitTypeComponent(),
-		 Core::MovementComponent(0.0f, 0.0f, 0.0f, 20.0f, 60.0f),
+		 Core::UnitTypeComponent(Core::UnitType::Rioter),
+		 Core::MovementComponent(0.0f, 0.0f, 0.0f, 2.0f, 6.0f),
 		 //Core::MovementComponent( -direction.x, 0, -direction.z, 21.1f, 5.0f),
 		 Core::AttributeComponent(),
 		 //Core::BoundingVolumeComponent( Core::BoundingSphere( 3.0f, 0.0f, 0.0f, 0.0f ), aa )
@@ -245,8 +245,6 @@ void run( GLFWwindow * window )
 	Core::gameCamera->SetPosition(glm::vec3(0.0f, 30.0f, 30.0f));
 	
     Core::ContentManager CM;
-    
-	//---- end
 	
 	GFX::SetProjectionMatrix(Core::gameCamera->GetProjectionMatrix());
 
@@ -329,20 +327,20 @@ void run( GLFWwindow * window )
 	}
 	
 
-	//CreateRioter(&rioters, meshID, -6.0f, -3.0f, 0.0f);
-	//CreateRioter(&rioters, meshID, 0.0f, -3.0f, 0.0f);
-	//CreateRioter(&rioters, meshID, 6.0f, -3.0f, 0.0f);
+	CreateRioter(&rioters, meshID, materialID, -6.0f, 0.5f, 0.0f);
+	CreateRioter(&rioters, meshID, materialID, 0.0f, 0.5f, 0.0f);
+	CreateRioter(&rioters, meshID, materialID, 6.0f, 0.5f, 0.0f);
 
 	/*for( int i = -5; i < 5; i++ )
 		CreateRioter(&rioters, meshID, materialID,  i * 16.0f, 1.0f, 0.0f);*/
 
-	for (float i = -5.0f; i < 5.0f; ++i)
+	/*for (float i = -5.0f; i < 5.0f; ++i)
 	{
 		for (float j = -5.0f; j < 5.0f; ++j)
 		{
-			CreateRioter(&rioters, meshID, materialID, i * 3.0f, 1.0f, j * 3.0f);
+			CreateRioter(&rioters, meshID, materialID, i * 2.0f + 0.5f, 0.5f, j * 2.0f + 0.5f);
 		}
-	}
+	}*/
 
 
 	std::cout << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " ";
@@ -367,7 +365,7 @@ void run( GLFWwindow * window )
 		Core::gameCamera->CalculateProjectionMatrix(GFX::GetScreenWidth(), GFX::GetScreenHeight());
 		GFX::SetProjectionMatrix(Core::gameCamera->GetProjectionMatrix());
 
-		TestRendering();
+		//TestRendering();
 
 	    //TODO: Timing hook
         SystemTimeRender();

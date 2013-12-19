@@ -27,7 +27,7 @@ namespace Core
 			Constructor setting all members to starting values.
 			\param typeOfUnit The type of the unit. 
 		*/
-		UnitTypeComponent(UnitType typeOfUnit) : type(typeOfUnit)
+		UnitTypeComponent(const UnitType& typeOfUnit) : type(typeOfUnit)
 		{
 		}
 	};

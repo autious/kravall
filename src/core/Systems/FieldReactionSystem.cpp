@@ -11,7 +11,7 @@ Core::FieldReactionSystem::FieldReactionSystem() : BaseSystem(EntityHandler::Gen
 	{
 		for (int j = 0; j < FIELD_SIDE_CELL_COUNT; ++j)
 		{
-			m_field[i][j] = -1.0f + i * 0.1f + j * 0.1f;
+			m_field[i][j] = -1.0f + i * 0.025f + j * 0.025f;
 		}
 	}
 }
@@ -21,7 +21,12 @@ void Core::FieldReactionSystem::Update(float delta)
 	UpdateAgents();
 
 	if (m_showPF)
-		DrawDebugField();
+	{
+		UpdateDebugField(m_entities[1]);
+		//DrawDebugField();
+	}
+
+	DrawDebugField();
 }
 
 void Core::FieldReactionSystem::UpdateAgents()
@@ -80,7 +85,7 @@ float Core::FieldReactionSystem::GetEffectOnAgent(WorldPositionComponent* agentP
 
 	for (std::vector<Entity>::iterator it2 = m_entities.begin(); it2 != m_entities.end(); it2++) // 5.
 	{
-		sum += GetChargeAt(*it2, WorldPositionComponent::GetVec3(agentPos->position)); // 7.
+		sum += GetChargeAt(*it2, WorldPositionComponent::GetVec3(*agentPos)); // 7.
 	}
 
 	return sum;
@@ -88,12 +93,12 @@ float Core::FieldReactionSystem::GetEffectOnAgent(WorldPositionComponent* agentP
 
 float Core::FieldReactionSystem::GetChargeAt(Entity chargedAgent, glm::vec3 queryPosition)
 {
-	float cutoff = 5.0f;
+	float cutoff = 15.0f;
 	float repelRadius = 0.8f;
 	float peakCharge = 1.0f;
 	float decline = peakCharge / (cutoff - repelRadius);
 	WorldPositionComponent* wpc = WGETC<WorldPositionComponent>(chargedAgent);
-	glm::vec3 distVec = (WorldPositionComponent::GetVec3(wpc->position) - queryPosition);
+	glm::vec3 distVec = (WorldPositionComponent::GetVec3(*wpc) - queryPosition);
 	float distance = (distVec.x * distVec.x) + (distVec.z * distVec.z);
 	
 	if (distance <= 0.001f || distance > cutoff)
@@ -104,13 +109,14 @@ float Core::FieldReactionSystem::GetChargeAt(Entity chargedAgent, glm::vec3 quer
 		return peakCharge - distance * decline;
 }
 
-void Core::FieldReactionSystem::UpdateDebugField()
+void Core::FieldReactionSystem::UpdateDebugField(Entity selectedAgent)
 {
 	for (int i = 0; i < FIELD_SIDE_CELL_COUNT; ++i)
 	{
 		for (int j = 0; j < FIELD_SIDE_CELL_COUNT; ++j)
 		{
-			m_field[i][j] = -1.0f + i * 0.1f + j * 0.1f;
+			WorldPositionComponent pos = WorldPositionComponent(GetPositionFromFieldIndex(i, j));
+			m_field[i][j] = GetEffectOnAgent(&pos) * 0.1f;
 		}
 	}
 }
@@ -119,6 +125,7 @@ void Core::FieldReactionSystem::DrawDebugField()
 {
 	float cellHalfSize = FIELD_CELL_SIDE_SIZE * 0.5f;
 	float fieldStart = -FIELD_SIDE_LENGTH * 0.5f - cellHalfSize;
+	float yPos = 0.0f;
 
 	for (int i = 0; i < FIELD_SIDE_CELL_COUNT; ++i)
 	{
@@ -129,10 +136,20 @@ void Core::FieldReactionSystem::DrawDebugField()
 			if (m_field[i][j] > 0.0f)
 				colour = GFXColor(0.0f, m_field[i][j], 0.0f, 1.0f);
 			else
-				colour = GFXColor(m_field[i][j], 0.0f, 0.0f, 1.0f);
+				colour = GFXColor(-m_field[i][j], 0.0f, 0.0f, 1.0f);
 
-			GFX::Debug::DrawBox(GFXVec3(fieldStart + FIELD_CELL_SIDE_SIZE * i, -30.0f, fieldStart + FIELD_CELL_SIDE_SIZE * j),
-				GFXVec3(FIELD_CELL_SIDE_SIZE + 0.1f, 0.1f, FIELD_CELL_SIDE_SIZE + 0.1f), false, colour);
+			GFX::Debug::DrawBox(GetPositionFromFieldIndex(i, j, yPos),
+				GFXVec3(FIELD_CELL_SIDE_SIZE + 0.1f, 0.1f, FIELD_CELL_SIDE_SIZE + 0.1f), true, colour, true);
 		}
 	}
+}
+
+glm::vec3 Core::FieldReactionSystem::GetPositionFromFieldIndex(int xIndex, int zIndex, int yPos)
+{
+	float cellHalfSize = FIELD_CELL_SIDE_SIZE * 0.5f;
+	float fieldStart = -FIELD_SIDE_LENGTH * 0.5f - cellHalfSize;
+
+	return GFXVec3(fieldStart + FIELD_CELL_SIDE_SIZE * xIndex, 
+				   yPos, 
+				   fieldStart + FIELD_CELL_SIDE_SIZE * zIndex);
 }

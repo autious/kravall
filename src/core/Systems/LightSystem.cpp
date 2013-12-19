@@ -29,7 +29,7 @@ namespace Core
 					GFX::PointLight* p = reinterpret_cast<GFX::PointLight*>(lc->LightData);
 					data->color = p->color;
 					data->intensity = p->intensity;
-					data->position = WorldPositionComponent::GetVec3(wpc->position);
+					data->position = WorldPositionComponent::GetVec3(*wpc);
 					data->radius_length = sc->scale;
 				}
 				break;
@@ -42,7 +42,7 @@ namespace Core
 					data->color = p->color;
 					data->orientation = glm::vec4(RotationComponent::GetQuat(rc->rotation)[0]);
 					data->intensity = p->intensity;
-					data->position = WorldPositionComponent::GetVec3(wpc->position);
+					data->position = WorldPositionComponent::GetVec3(*wpc);
 					data->radius_length = sc->scale;
 					data->spot_angle = p->angle;
 				}
