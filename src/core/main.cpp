@@ -37,6 +37,7 @@
 #include <logger/internal/ClopHandler.hpp>
 
 #include <Lua/LuaState.hpp>
+#include <Input/InputManager.hpp>
 
 #include <gfx/BitmaskDefinitions.hpp>
 

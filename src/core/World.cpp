@@ -37,26 +37,7 @@ namespace Core
 		// frame memory
 		m_frameAllocator	= Core::LinearAllocator(Core::world.m_worldMemory + WORLD_FRAME_MEMORY_START_OFFSET, WORLD_FRAME_MEMORY_SIZE);
 		m_frameHeap			= Core::LinearHeap(Core::world.m_frameAllocator);
-
-
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
 
 

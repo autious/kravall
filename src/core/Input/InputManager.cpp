@@ -52,7 +52,7 @@ namespace Core
         nScrollEvents++;
     }
 
-    InputManager::Init(GLFWwindow* window)
+    void InputManager::Init(GLFWwindow* window)
     {
         m_window = window;
 

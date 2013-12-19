@@ -11,6 +11,7 @@
 #include <Lua/Bridges/LuaLoggerPrint.hpp>
 #include <Lua/Bridges/LuaEntityBridge.hpp>
 #include <Lua/Bridges/LuaContentManagerBridge.hpp>
+#include <Lua/Bridgers/LuaInputBridge.hpp>
 
 #include <Timer.hpp>
 
@@ -45,6 +46,7 @@ Core::LuaState::LuaState()
     LuaLoggerPrint::OpenLibs( m_state );
     LuaEntityBridge::OpenLibs( m_state );
     LuaContentManagerBridge::OpenLibs( m_state );
+    LuaInputBridge::OpenLibs( m_state );
 }
 
 Core::LuaState::~LuaState()
