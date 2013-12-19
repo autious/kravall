@@ -95,7 +95,7 @@ namespace Core
 		std::cout << "OpenGL version: " << glfwGetWindowAttrib((*window), GLFW_CONTEXT_VERSION_MAJOR) << "." << glfwGetWindowAttrib((*window), GLFW_CONTEXT_VERSION_MINOR) << std::endl;
 
 		// if 1 then limits system to max 60 fps!
-		glfwSwapInterval( Core::world.m_config.GetInt( "vsync", 0 ));
+		glfwSwapInterval( 0);
 
 		// assign callback functions...
 		glfwSetFramebufferSizeCallback((*window), framebuffer_size_callback);

@@ -27,8 +27,8 @@ namespace GFX
 		m_shaderManager->UseProgram("ComputeTest");
 
 		m_invProjViewUniform = m_shaderManager->GetUniformLocation("ComputeTest", "inv_proj_view_mat");
-		m_invProjUniform = m_shaderManager->GetUniformLocation("ComputeTest", "invProj");
 		m_viewUniform = m_shaderManager->GetUniformLocation("ComputeTest", "view");
+		m_projUniform = m_shaderManager->GetUniformLocation("ComputeTest", "proj");
 		m_frambufferSizeUniform = m_shaderManager->GetUniformLocation("ComputeTest", "framebufferDim");
 
 
@@ -73,7 +73,7 @@ namespace GFX
 		glGenBuffers(1, &m_pointLightBuffer);
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_pointLightBuffer);
 		//glBufferData(GL_SHADER_STORAGE_BUFFER, m_maximumLights * sizeof(LightData), m_pointLights, GL_DYNAMIC_COPY);
-		glBufferData(GL_SHADER_STORAGE_BUFFER, m_maximumLights * sizeof(LightData), NULL, GL_DYNAMIC_COPY);
+		glBufferData(GL_SHADER_STORAGE_BUFFER, m_maximumLights * sizeof(LightData), NULL, GL_STREAM_COPY);
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, m_pointLightBuffer);
 
 
@@ -85,9 +85,9 @@ namespace GFX
 		m_shaderManager->UseProgram("ComputeTest");
 
 		glm::mat4 invProjView = glm::inverse(projMatrix * viewMatrix);
+		m_shaderManager->SetUniform(1, projMatrix, m_projUniform);
 		m_shaderManager->SetUniform(1280, 720, m_frambufferSizeUniform);
 		m_shaderManager->SetUniform(1, viewMatrix, m_viewUniform);
-		m_shaderManager->SetUniform(1, glm::inverse(projMatrix), m_invProjUniform);
 		m_shaderManager->SetUniform(1, invProjView, m_invProjViewUniform);
 
 
@@ -174,7 +174,7 @@ namespace GFX
 		glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
 		glDispatchCompute(1280 / 16, 720 / 16, 1);
-		glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+		//glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
 		m_shaderManager->UseProgram("TQ");
 

@@ -154,7 +154,7 @@ void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, unsigned in
 	double pi = 3.141529;
 	double angle = 0.0; // pi * 0.25;
 
-	Core::BoundingVolumeCollisionModel aa = Core::BoundingVolumeCollisionModel::DynamicResolution;
+	/*Core::BoundingVolumeCollisionModel aa = Core::BoundingVolumeCollisionModel::DynamicResolution;
 
 	glm::vec3 direction( 0.0f, 0.0f, 0.0f );
 	if( posX )
@@ -165,20 +165,22 @@ void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, unsigned in
 	{
 		aa = Core::BoundingVolumeCollisionModel::StaticResolution;
 		posZ += 0.7f;
-	}
+	}*/
 
 	rioterList->push_back(Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, 
 		Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent, Core::UnitTypeComponent,
-		Core::MovementComponent, Core::AttributeRioterComponent, Core::BoundingVolumeComponent>
+		Core::MovementComponent, Core::AttributeComponent, Core::BoundingVolumeComponent>
 		(Core::GraphicsComponent(), 
 		 Core::WorldPositionComponent(posX, posY, posZ),
 		 Core::RotationComponent(),
-		 Core::ScaleComponent(0.1f),
-		 Core::UnitTypeComponent(),
-		 //Core::MovementComponent(0.0f, 0.0f, 1.0f, 2.0f, 6.0f),
-		 Core::MovementComponent( -direction.x, 0, -direction.z, 21.1f, 5.0f),
-		 Core::AttributeRioterComponent(),
-		 Core::BoundingVolumeComponent( Core::BoundingSphere( 3.0f, 0.0f, 0.0f, 0.0f ), aa ) ));
+		 Core::ScaleComponent(1.0f),
+		 Core::UnitTypeComponent(Core::UnitType::Rioter),
+		 Core::MovementComponent(0.0f, 0.0f, 0.0f, 2.0f, 6.0f),
+		 //Core::MovementComponent( -direction.x, 0, -direction.z, 21.1f, 5.0f),
+		 Core::AttributeComponent(),
+		 //Core::BoundingVolumeComponent( Core::BoundingSphere( 3.0f, 0.0f, 0.0f, 0.0f ), aa )
+		 Core::BoundingVolumeComponent(Core::BoundingSphere(1.0f, 0.0f, 0.0f, 0.0f), 
+		 Core::BoundingVolumeCollisionModel::DynamicResolution)));
 
 	Core::GraphicsComponent* gc = WGETC <Core::GraphicsComponent>(rioterList->at(index));
 	GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::MESH_ID, meshID);
@@ -325,10 +327,10 @@ void run( GLFWwindow * window )
 		Core::world.m_config.GetDouble( "initCameraNearClipDistance", 1.0f ), 
 		Core::world.m_config.GetDouble( "initCameraFarClipDistance", 1000.0f ) );
 	Core::gameCamera->CalculateProjectionMatrix(initScreenWidth, initScreenHeight);
-	Core::gameCamera->SetPosition(glm::vec3(0.0f, 100.0f, 200.0f));
+	Core::gameCamera->SetPosition(glm::vec3(0.0f, 30.0f, 30.0f));
 	
     Core::ContentManager CM;
-
+	
 	GFX::SetProjectionMatrix(Core::gameCamera->GetProjectionMatrix());
 
 	std::vector<Core::Entity> rioters;
@@ -338,7 +340,7 @@ void run( GLFWwindow * window )
     unsigned int meshID; 
     unsigned int materialID;
 
-    Core::world.m_contentManager.Load<Core::GnomeLoader>("assets/teapot.bgnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+    Core::world.m_contentManager.Load<Core::GnomeLoader>("assets/cube.bgnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
             {
                 Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
                 const Core::ModelData* data = gnomeLoader->getData(handle);
@@ -354,48 +356,43 @@ void run( GLFWwindow * window )
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));	
 
 
-	//for (int i = -100; i < 100; i++)
-	//{
-	//	for (int j = -10; j < 10; j++)
-	//	{
-	//		Core::Entity e2 = Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent>
-	//			(Core::GraphicsComponent(), Core::WorldPositionComponent(), Core::RotationComponent(), Core::ScaleComponent());
-	//
-	//		Core::GraphicsComponent* gc = WGETC<Core::GraphicsComponent>(e2);
-	//		
-	//		GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::TYPE, GFX::OBJECT_TYPES::OPAQUE_GEOMETRY);
-	//		GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::MESH_ID, meshID);
-	//		
-	//
-	//		Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(e2);
-	//		wpc->position[0] = (float)(i * 10);
-	//		wpc->position[1] = (float)(j * 10);
-	//
-	//		Core::ScaleComponent* sc = WGETC<Core::ScaleComponent>(e2);
-	//		sc->scale = .1f;
-	//
-	//		Core::RotationComponent* rc = WGETC<Core::RotationComponent>(e2);
-	//	
-	//		//rc->rotation[0] = sin(3.14f / 2.0f);
-	//		//rc->rotation[1] = sin(3.14f / 2.0f);
-	//		rc->rotation[2] = sin(3.14f);
-	//		rc->rotation[3] = cos(3.14f / 2.0f);
-	//	}
-	//}
-	// Create lights
-	/*
-	for (int i = -50; i < 50; i++)
+	for (int i = -10; i < 10; i++)
+	{
+		for (int j = -10; j < 10; j++)
+		{
+			Core::Entity e2 = Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent>
+				(Core::GraphicsComponent(), Core::WorldPositionComponent(), Core::RotationComponent(), Core::ScaleComponent());
+	
+			Core::GraphicsComponent* gc = WGETC<Core::GraphicsComponent>(e2);
+			
+			GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::TYPE, GFX::OBJECT_TYPES::OPAQUE_GEOMETRY);
+			GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::MESH_ID, meshID);
+			
+			Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(e2);
+			wpc->position[0] = (float)(i * 20);
+			wpc->position[1] = (float)(j * 20);
+	
+			Core::ScaleComponent* sc = WGETC<Core::ScaleComponent>(e2);
+			sc->scale = .10f;
+	
+			Core::RotationComponent* rc = WGETC<Core::RotationComponent>(e2);
+			rc->rotation[2] = sin(3.14f);
+			rc->rotation[3] = cos(3.14f / 2.0f);
+		}
+	}
+	
+	for (int i = 0; i < 1024; i++)
 	{
 		Core::Entity light = Core::world.m_entityHandler.CreateEntity<Core::LightComponent, Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent>
 				(Core::LightComponent(), Core::WorldPositionComponent(), Core::RotationComponent(), Core::ScaleComponent());
 	
 			Core::LightComponent* lc = WGETC<Core::LightComponent>(light);
-
+	
 			// Create a point light on the constant heap
 			GFX::PointLight* pointLight = Core::world.m_constantHeap.NewObject<GFX::PointLight>();
 			pointLight->color = glm::vec3((rand()&1000)/1000.0f, (rand()&1000)/1000.0f, (rand()&1000)/1000.0f);
 			pointLight->intensity = 0.3f;
-
+	
 			// Set the the light component to new point light 
 			lc->LightData = (void*)pointLight;
 			lc->type = GFX::LIGHT_TYPES::POINT;
@@ -403,42 +400,30 @@ void run( GLFWwindow * window )
 			GFX::SetBitmaskValue(lc->bitmask, GFX::BITMASK::LIGHT_TYPE, lc->type);
 	
 			Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(light);
-			wpc->position[0] = (float)(-100.0f + 200.0f * (rand()&1000)/1000.0f);
-			wpc->position[1] = (float)(-100.0f + 200.0f * (rand()&1000)/1000.0f);
-	
+			wpc->position[0] = (float)(-200.0f + 300.0f * (rand()&1000)/1000.0f);
+			wpc->position[1] = (float)(-400.0f + 600.0f * (rand()&1000)/1000.0f);
+			wpc->position[2] = 17.0f;
 			Core::ScaleComponent* sc = WGETC<Core::ScaleComponent>(light);
-			sc->scale = 10.0f + 10.0f * (rand()&1000)/1000.0f;
+			sc->scale = 10.0f +5.0f * (rand() & 1000) / 1000.0f;
 	
 			Core::RotationComponent* rc = WGETC<Core::RotationComponent>(light);
 	}
-	*/
+	
+	CreateRioter(&rioters, meshID, materialID, -6.0f, 0.5f, 0.0f);
+	CreateRioter(&rioters, meshID, materialID, 0.0f, 0.5f, 0.0f);
+	CreateRioter(&rioters, meshID, materialID, 6.0f, 0.5f, 0.0f);
 
-	//CreateRioter(&rioters, meshID, -6.0f, -3.0f, 0.0f);
-	//CreateRioter(&rioters, meshID, 0.0f, -3.0f, 0.0f);
-	//CreateRioter(&rioters, meshID, 6.0f, -3.0f, 0.0f);
-	//for( int i = -100; i < 100; i++ )
-	for( int i = -5; i < 5; i++ )
-		CreateRioter(&rioters, meshID, materialID,  i * 16.0f, 1.0f, 0.0f);
-	//for( int i = -200; i < 200; i++ )
-		//CreateRioter(&rioters, meshID, i * 16.0f, 1.0f, 0.0f);
+	/*for( int i = -5; i < 5; i++ )
+		CreateRioter(&rioters, meshID, materialID,  i * 16.0f, 1.0f, 0.0f);*/
 
-	//CreateRioter(&rioters, meshID, 16.0f, 0.0f, 0.0f);
-	//CreateRioter(&rioters, meshID, -16.0f, 0.0f, 0.0f);
+	/*for (float i = -5.0f; i < 5.0f; ++i)
+	{
+		for (float j = -5.0f; j < 5.0f; ++j)
+		{
+			CreateRioter(&rioters, meshID, materialID, i * 2.0f + 0.5f, 0.5f, j * 2.0f + 0.5f);
+		}
+	}*/
 
-	/*
-	rioters.push_back(Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, 
-		Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent, Core::UnitTypeComponent,
-		Core::MovementComponent, Core::AttributeRioterComponent, Core::BoundingVolumeComponent>
-		(Core::GraphicsComponent(), 
-		 Core::WorldPositionComponent(-16.0f, 0.0f, 0.0f),
-		 Core::RotationComponent(),
-		 Core::ScaleComponent(0.5f),
-		 Core::UnitTypeComponent(),
-		 //Core::MovementComponent(0.0f, 0.0f, 1.0f, 2.0f, 6.0f),
-		 Core::MovementComponent( 1.0f, 0.0f, 0.0f, 0.0f, 5.0f),
-		 Core::AttributeRioterComponent(),
-		 Core::BoundingVolumeComponent( Core::BoundingSphere( 3.0f, 0.0f, 0.0f, 0.0f ), Core::BoundingVolumeCollisionModel::StaticResolution ) ));
-	*/
 
 	std::cout << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " ";
 
@@ -463,7 +448,7 @@ void run( GLFWwindow * window )
 		Core::gameCamera->CalculateProjectionMatrix(GFX::GetScreenWidth(), GFX::GetScreenHeight());
 		GFX::SetProjectionMatrix(Core::gameCamera->GetProjectionMatrix());
 
-		TestRendering();
+		//TestRendering();
 
 	    //TODO: Timing hook
         SystemTimeRender();
