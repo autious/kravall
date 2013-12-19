@@ -29,3 +29,8 @@ lua core.config.entityMemoryOutputComponents = { "WorldPositionComponent", "Grap
 lua core.config.entityMemoryOutputLevel = "short"
 lua core.config.entityMemoryOutputLevel = "full"
 exit
+lua core.config.entityMemoryOutputComponents = { "WorldPositionComponent" }
+lua core.config.entityMemoryOutputLevel = "short"
+lua core.config.entityMemoryOutputLevel = "full"
+lua core.config.entityMemoryOutputLevel = "partial"
+exit
