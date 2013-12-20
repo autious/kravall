@@ -6,7 +6,7 @@
 
 
 Core::FlowfieldSystem::FlowfieldSystem()
-	: BaseSystem( EntityHandler::GenerateAspect< WorldPositionComponent, BoundingVolumeComponent >(), 0ULL )
+	: BaseSystem( EntityHandler::GenerateAspect< WorldPositionComponent, BoundingVolumeComponent, UnitTypeComponent >(), 0ULL )
 {
 }
 
@@ -49,9 +49,11 @@ void Core::FlowfieldSystem::Update( float delta )
 			// for all entities
 			for( std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); it++ )
 			{	
+				UnitTypeComponent* utc = WGETC<UnitTypeComponent>(*it);
 				Core::BoundingVolumeComponent* bvc = WGETC<Core::BoundingVolumeComponent>(*it);
 				if( bvc->collisionModel != Core::BoundingVolumeCollisionModel::DynamicResolution ||
-					bvc->type != Core::BoundingVolumeType::SphereBoundingType )
+					bvc->type != Core::BoundingVolumeType::SphereBoundingType ||
+					utc->type != Core::UnitType::Rioter )
 					continue;
 
 				Core::BoundingSphere& sphere = *reinterpret_cast<Core::BoundingSphere*>(bvc->data);
