@@ -45,5 +45,18 @@ end
 
 -- Loads a scenario from the scenario folder and returns the assembly.
 function doscenario( name )
-    return dofile( "scripts/scenarios/" .. name .. ".lua" ) 
+    print( "Use 'openscenario()' instead:" )
+    --return dofile( "scripts/scenarios/" .. name .. ".lua" ) 
 end
+
+core.current_scenario = nil
+
+function openscenario( name )
+    if core.current_scenario ~= nil then
+        core.current_scenario:destroy()
+        core.current_scenario = nil
+    end
+
+    core.current_scenario = dofile( "scripts/scenarios/" .. name .. ".lua" )
+end
+    
