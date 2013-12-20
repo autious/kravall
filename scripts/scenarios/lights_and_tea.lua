@@ -59,6 +59,4 @@ for i = 0, 4095 do
     )
 end
 
-collectgarbage() --For niceness, always good to do right after loading a scenario as the
-                 --assembly files are quite large.
 return asm;
