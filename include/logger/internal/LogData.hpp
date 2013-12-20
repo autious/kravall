@@ -99,6 +99,8 @@ namespace LogSystem
 	DLLSETTING void SetNewLogHandler( LogHandler** handlerChannel, LogHandler* newHandler );
 
     DLLSETTING void RegisterLogHandler( LogHandler** handlerChannel, LogHandler* newHandler );
+
+    DLLSETTING void DeregisterLogHandler( LogHandler** handlerChannel, LogHandler* newHandler );
 }
 
 typedef std::basic_ostream<char, std::char_traits<char> > CoutType;

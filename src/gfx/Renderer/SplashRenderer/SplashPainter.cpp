@@ -52,7 +52,7 @@ namespace GFX
 	}
 
 	
-	void SplashPainter::Render(const int& screenWidth, const int& screenHeight)
+	void SplashPainter::Render(const int& screenWidth, const int& screenHeight, const double& delta)
 	{
 		glDisable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
@@ -62,18 +62,18 @@ namespace GFX
 
 		if (m_logoAlpha <= -1.0f)
 		{
-			FadeToWhite(screenWidth, screenHeight);
+			FadeToWhite(screenWidth, screenHeight, delta);
 		}
 
 		if (m_clearColor >= 1.0f)
 		{
-			RenderSplash(screenWidth, screenHeight);
+			RenderSplash(screenWidth, screenHeight, delta);
 		}
 		
 		if (m_logoAlpha >= 3.5f)
 		{
-			FadeToBlack(screenWidth, screenHeight);
-			RenderSplash(screenWidth, screenHeight);
+			FadeToBlack(screenWidth, screenHeight, delta);
+			RenderSplash(screenWidth, screenHeight, delta);
 		}
 
 		m_shaderManager->ResetProgram();
@@ -81,12 +81,12 @@ namespace GFX
 		glDisable(GL_BLEND);
 
 
-		if (m_clearColor <= 0.0f)
+		if (m_clearColor < 0.0f)
 			m_done = true;
 	}
 
 
-	void SplashPainter::RenderSplash(const int& screenWidth, const int& screenHeight)
+	void SplashPainter::RenderSplash(const int& screenWidth, const int& screenHeight, const double& delta)
 	{
 	
 		if (m_logoAlpha >= 3.5f)
@@ -94,7 +94,7 @@ namespace GFX
 			m_shaderManager->SetUniform(m_clearColor, m_alphaUniform);
 		}
 		else
-			m_shaderManager->SetUniform(m_logoAlpha += 0.01f, m_alphaUniform);
+			m_shaderManager->SetUniform(m_logoAlpha += 1.01f * delta, m_alphaUniform);
 
 		m_shaderManager->SetUniform(1, glm::vec2(screenWidth / 2.0f, screenHeight / 2.0f + 100.0f), m_positionUniform);
 		m_shaderManager->SetUniform(1, glm::vec2(180.0f, 110.0f), m_sizeUniform);
@@ -137,15 +137,15 @@ namespace GFX
 		TextureManager::UnbindTexture();
 	}
 
-	void SplashPainter::FadeToBlack(const int& screenWidth, const int& screenHeight)
+	void SplashPainter::FadeToBlack(const int& screenWidth, const int& screenHeight, const double& delta)
 	{
-		m_clearColor -= 0.01f;
+		m_clearColor -= 1.01f * delta;
 		glClearColor(m_clearColor, m_clearColor, m_clearColor, m_clearColor);
 	}
 
-	void SplashPainter::FadeToWhite(const int& screenWidth, const int& screenHeight)
+	void SplashPainter::FadeToWhite(const int& screenWidth, const int& screenHeight, const double& delta)
 	{
-		m_clearColor += 0.01f;
+		m_clearColor += 1.01f * delta;
 		glClearColor(m_clearColor, m_clearColor, m_clearColor, m_clearColor);
 	}
 

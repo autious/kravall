@@ -222,7 +222,7 @@ void main()
 			imageStore(outTexture, pixel, color);
 			
 			//imageStore(outTexture, pixel, vec4(minDepthZ));
-			//imageStore(outTexture, pixel, vec4(pointLightCount / 512.0f));
+			//imageStore(outTexture, pixel, vec4(pointLightCount / 25.0f));
 			//imageStore(outTexture, pixel, vec4(vec2(tilePos.xy), 0.0f, 1.0f));
 		}
 

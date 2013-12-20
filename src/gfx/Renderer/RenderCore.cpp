@@ -173,13 +173,15 @@ namespace GFX
 		return m_materialManager->SetShader(materialID, shaderID);
 	}
 
-	void RenderCore::Render()
+	void RenderCore::Render(const double& delta)
 	{
 		if (m_playSplash)
 		{
-			m_splashPainter->Render(m_windowWidth, m_windowHeight);
+			m_splashPainter->Render(m_windowWidth, m_windowHeight, delta);
 			if (m_splashPainter->IsDone())
 				m_playSplash = false;
+
+			m_renderJobManager->Clear();
 			return;
 		}
 
