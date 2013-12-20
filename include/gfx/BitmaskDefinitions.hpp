@@ -79,7 +79,7 @@ namespace GFX
 		}
 	}
 
-	inline static unsigned int GetBitmaskValue(GFX::GFXBitmask& bitmask, GFX::GFXBitmask type)
+	inline static unsigned int GetBitmaskValue(const GFX::GFXBitmask& bitmask, GFX::GFXBitmask type)
 	{
 		unsigned int value = 0;
 		switch (type)

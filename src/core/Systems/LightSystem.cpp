@@ -22,9 +22,11 @@ namespace Core
 
             // <3 the frame heap.
 			GFX::LightData* data = Core::world.m_frameHeap.NewObject<GFX::LightData>();
+
+            unsigned int lightType = LightComponent::GetLightType( *lc );
 			
 			i++;
-			switch (lc->type)
+			switch (lightType)
 			{
 				// Point light
 				case GFX::LIGHT_TYPES::POINT_SHADOW:
