@@ -34,7 +34,7 @@ namespace GFX
 		\param FBO ID of FBO used for rendertargets
 		\param dummyVAO ID of an empty VAO used for screenspace rendering
 		*/
-		void Initialize(GLuint FBO, GLuint dummyVAO);
+		void Initialize(GLuint FBO, GLuint dummyVAO, int screenWidth, int screenHeight);
 
 		/*!
 		Main deferred rendering loop
@@ -45,6 +45,8 @@ namespace GFX
 		*/
 		void Render(unsigned int& renderIndex, FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix);
 
+		void Resize(int screenWidth, int screenHeight);
+
 	private:
 		RenderJobManager* m_renderJobManager;
 
@@ -52,15 +54,21 @@ namespace GFX
 		GLint m_invProjViewUniform;
 		GLint m_invProjUniform;
 		GLint m_viewUniform;
+		GLint m_projUniform;
+
 		GLint m_frambufferSizeUniform;
 		GLint numActiveLightsUniform;
 		GLint textureUniform;
-		GLuint textureHandle;
+		GLuint m_textureHandle;
 
 		GLuint m_pointLightBuffer;
 
-		const unsigned int m_maximumLights = 1024;
+		const unsigned int MAXIMUM_LIGHTS = 4096;
+		const unsigned int WORK_GROUP_SIZE = 16;
 		LightData* m_pointLights;
+
+		int m_screenWidth;
+		int m_screenHeight;
 	};
 }
 

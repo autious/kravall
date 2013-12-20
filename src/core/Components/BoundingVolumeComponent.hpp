@@ -171,7 +171,13 @@ namespace Core
 			type = Core::BoundingVolumeType::AABBBoundingType;
 			collisionModel = collisionModelOFChoice;
 			std::memcpy( &data, &aabb,  MAX_SIZE_OF_BOUNDING_STRUCTS );
+
 		}
+
+        inline static const char* GetName()
+        {
+            return "BoundingVolumeComponent";
+        }
 
 
 	};

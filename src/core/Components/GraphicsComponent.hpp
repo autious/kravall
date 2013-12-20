@@ -13,6 +13,11 @@ namespace Core
 			GraphicsComponent gc;
 			return gc;
 		}
+
+        inline static const char* GetName()
+        {
+            return "GraphicsComponent";
+        }
 	};
 }
 

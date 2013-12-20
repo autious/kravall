@@ -85,6 +85,11 @@ namespace Core
 
 			return rc;
 		}
+
+        inline static const char* GetName()
+        {
+            return "RotationComponent";
+        }
 	};
 }
 
