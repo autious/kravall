@@ -31,6 +31,51 @@ for i = -10, 9 do
     end
 end
 
+for i = 0, 4095 do
+    asm:loadAssembly( 
+    {
+        {
+            type = core.componentType.LightComponent,
+            data =  { 
+                        color = { math.random(), math.random(), math.random() },
+                        intensity = 1.3,
+                        type = core.gfx.objectTypes.Light,
+                        lighttype = core.gfx.lightTypes.Point
+                    }
+        },
+        {
+            type = core.componentType.WorldPositionComponent,
+            data = { position = { -200.0 + 300.0 * math.random(), -400.0 + 600.0 * math.random(), 17.0 } }
+        },
+        {
+            type = core.componentType.ScaleComponent,
+            data = { scale = 5.0 + 5.0 * math.random() }
+        },
+        {
+            type = core.componentType.RotationComponent,
+            data = { rotation = { 0,0,0,0 } }
+        }
+    } 
+    )
+end
+
+local ent = core.entity.create( core.componentType.LightComponent );
+
+ent:set( core.componentType.LightComponent, { 
+                        color = { math.random(), math.random(), math.random() },
+                        intensity = 1.3,
+                        type = core.gfx.objectTypes.Light,
+                        lighttype = core.gfx.lightTypes.Point
+                    } )
+
+local light = ent:get( core.componentType.LightComponent )
+
+print( light.intensity )
+print( light.color[1] .. " " .. light.color[2] .. " " .. light.color[3]  )
+print( light.type )
+print( light.lighttype )
+
+
 collectgarbage() --For niceness, always good to do right after loading a scenario as the
                  --assembly files are quite large.
 return asm;

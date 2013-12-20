@@ -6,6 +6,7 @@
 #include <Lua/Bridges/ComponentBind/GraphicsComponentBinding.hpp>
 #include <Lua/Bridges/ComponentBind/RotationComponentBinding.hpp>
 #include <Lua/Bridges/ComponentBind/ScaleComponentBinding.hpp>
+#include <Lua/Bridges/ComponentBind/LightComponentBinding.hpp>
 
 #include <cassert>
 
@@ -15,7 +16,8 @@ namespace Core
     <WorldPositionComponentBinding,
      GraphicsComponentBinding,
      RotationComponentBinding,
-     ScaleComponentBinding> EntityBridge;
+     ScaleComponentBinding,
+     LightComponentBinding> EntityBridge;
 }
 
 /*************/

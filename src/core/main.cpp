@@ -370,6 +370,7 @@ void run( GLFWwindow * window )
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));	
 
 
+    /*
 	for (int i = -10; i < 10; i++)
 	{
 		for (int j = -10; j < 10; j++)
@@ -394,7 +395,6 @@ void run( GLFWwindow * window )
 			rc->rotation[3] = cos(3.14f / 2.0f);
 		}
 	}
-	
 	for (int i = 0; i < 4096; i++)
 	{
 		Core::Entity light = Core::world.m_entityHandler.CreateEntity<Core::LightComponent, Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent>
@@ -422,6 +422,7 @@ void run( GLFWwindow * window )
 	
 			Core::RotationComponent* rc = WGETC<Core::RotationComponent>(light);
 	}
+*/	
 	
 	CreateRioter(&rioters, meshID, materialID, -6.0f, 0.5f, 0.0f);
 	CreateRioter(&rioters, meshID, materialID, 0.0f, 0.5f, 0.0f);
