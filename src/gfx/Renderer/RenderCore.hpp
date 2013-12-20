@@ -57,7 +57,7 @@ namespace GFX
 		/*!
 		Main rendering loop, calls all painters
 		*/
-		void Render();
+		void Render(const double& delta);
 
 		/*!
 		Resize function to handle window resizing, resizes GBuffer and viewport.
