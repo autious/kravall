@@ -6,6 +6,7 @@
 
 namespace GFX
 {
+    /*
 	// Point light
 	struct PointLight
 	{
@@ -34,6 +35,7 @@ namespace GFX
 		glm::vec3 color;
 		float intensity;
 	};
+    */
 
 	// Struct used for light data transfer to shader
 	struct LightData

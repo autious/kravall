@@ -1,4 +1,4 @@
-
+#include "main.hpp"
 #ifdef RUN_GTEST 
     #include <gtest/gtest.h>
 #endif
@@ -41,7 +41,15 @@
 #include <gfx/BitmaskDefinitions.hpp>
 
 
+bool killProgram = false;
+
 GFX::FontData* fontData;
+
+//Clop Debug output.
+ClopHandler* clopHandlerDebug;
+ClopHandler* clopHandlerFatal;
+ClopHandler* clopHandlerError;
+ClopHandler* clopHandlerWarning;
 
 void clopLoggerCallback( LogSystem::LogType m_type, const char * message )
 {
@@ -70,7 +78,7 @@ void clopLoggerCallback( LogSystem::LogType m_type, const char * message )
 // And the command is sent to the command line by pressing 'E' (as seen in run()) with Core::Console().SetInputLine("exit");
 void ClopCloseWindow(clop::ArgList args)
 {
-	exit(0);
+	killProgram = true;
 }
 
 int initScreenHeight;
@@ -79,10 +87,6 @@ GLFWwindow* init( int argc, char** argv )
 {
 	GLFWwindow* window;
 
-    LogSystem::RegisterLogHandler( LogSystem::debugHandler,     new ClopHandler( clopLoggerCallback, LogSystem::LogType::logType_debug ) );
-    LogSystem::RegisterLogHandler( LogSystem::fatalHandler,     new ClopHandler( clopLoggerCallback, LogSystem::LogType::logType_fatal ) );
-    LogSystem::RegisterLogHandler( LogSystem::errorHandler,     new ClopHandler( clopLoggerCallback, LogSystem::LogType::logType_error ) );
-    LogSystem::RegisterLogHandler( LogSystem::warningHandler,   new ClopHandler( clopLoggerCallback, LogSystem::LogType::logType_warning) );
 
     Core::world.m_luaState.Execute( "scripts/config.lua" );
     Core::world.m_luaState.Execute( "scripts/main.lua" );
@@ -113,6 +117,16 @@ GLFWwindow* init( int argc, char** argv )
                 Core::Console().Init(fontData);  
                 GFX::Debug::SetStatisticsFont(fontData);
             });
+
+    clopHandlerDebug = new ClopHandler( clopLoggerCallback, LogSystem::LogType::logType_debug );
+    clopHandlerFatal = new ClopHandler( clopLoggerCallback, LogSystem::LogType::logType_fatal );
+    clopHandlerError = new ClopHandler( clopLoggerCallback, LogSystem::LogType::logType_error );
+    clopHandlerWarning  = new ClopHandler( clopLoggerCallback, LogSystem::LogType::logType_warning);
+
+    LogSystem::RegisterLogHandler( LogSystem::debugHandler, clopHandlerDebug );
+    LogSystem::RegisterLogHandler( LogSystem::fatalHandler, clopHandlerFatal );
+    LogSystem::RegisterLogHandler( LogSystem::errorHandler, clopHandlerError );
+    LogSystem::RegisterLogHandler( LogSystem::warningHandler, clopHandlerWarning );
 
     return window;
 }
@@ -419,13 +433,13 @@ void run( GLFWwindow * window )
 	
 			Core::LightComponent* lc = WGETC<Core::LightComponent>(light);
 	
-			// Create a point light on the constant heap
-			GFX::PointLight* pointLight = Core::world.m_constantHeap.NewObject<GFX::PointLight>();
-			pointLight->color = glm::vec3((rand()&1000)/1000.0f, (rand()&1000)/1000.0f, (rand()&1000)/1000.0f);
-			pointLight->intensity = 1.3f;
+			lc->color[0] = (rand()&1000)/1000.0f;
+            lc->color[1] = (rand()&1000)/1000.0f;
+            lc->color[2] = (rand()&1000)/1000.0f;
+
+			lc->intensity = 1.3f;
 	
 			// Set the the light component to new point light 
-			lc->LightData = (void*)pointLight;
 			lc->type = GFX::LIGHT_TYPES::POINT;
 			GFX::SetBitmaskValue(lc->bitmask, GFX::BITMASK::TYPE, GFX::OBJECT_TYPES::LIGHT);
 			GFX::SetBitmaskValue(lc->bitmask, GFX::BITMASK::LIGHT_TYPE, lc->type);
@@ -456,13 +470,13 @@ void run( GLFWwindow * window )
 	}
 
 
-	std::cout << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " ";
+	LOG_INFO << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " " << std::endl;
 
 	//inputline.resize(1);
 
 	long long lastFrameTime = Core::Timer().GetTotal();
 	long long thisFrame = Core::Timer().GetTotal();
-	while (!glfwWindowShouldClose(window))
+	while (!glfwWindowShouldClose(window) && killProgram == false)
 	{
 		// calc delta time
 		thisFrame = Core::Timer().GetTotal();
@@ -501,6 +515,17 @@ void run( GLFWwindow * window )
 		//TODO: Timing hook
 		Core::world.m_frameHeap.Rewind();
     }
+
+    //Deregister clop before the stack starts unwinding!
+    LogSystem::DeregisterLogHandler( LogSystem::debugHandler, clopHandlerDebug );
+    LogSystem::DeregisterLogHandler( LogSystem::fatalHandler, clopHandlerFatal );
+    LogSystem::DeregisterLogHandler( LogSystem::errorHandler, clopHandlerError );
+    LogSystem::DeregisterLogHandler( LogSystem::warningHandler, clopHandlerWarning );
+
+    delete clopHandlerDebug;
+    delete clopHandlerFatal;
+    delete clopHandlerError;
+    delete clopHandlerWarning;
 
 	Core::world.m_constantHeap.Rewind();
 

@@ -1,24 +1,22 @@
--- Loads 4221 gnomes onto the screen.
 local ASML = require "assembly_loader" 
 
 local asm = ASML.loadPack( {} )
 
-for i = -5, 5 do
-    for j = -5, 5 do
+for i = -10, 9 do
+    for j = -10, 9 do
         asm:loadAssembly( 
         {
             {
                 type = core.componentType.WorldPositionComponent,
-                data = { position = { i*10, j*10,10 } }
+                data = { position = { i*20, j*20,0 } }
             },
             {
                 type = core.componentType.GraphicsComponent,
-                data = { mesh = 2000, material = 2000 },
+                data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry },
                 load = { 
                             mesh = { core.loaders.GnomeLoader, "assets/teapot.bgnome" },
                             material = { core.loaders.MaterialLoader, "assets/material/test-material.material" }
                        }
-            
             },
             {
                 type = core.componentType.ScaleComponent,
