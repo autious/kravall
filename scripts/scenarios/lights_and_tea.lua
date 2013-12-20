@@ -59,23 +59,6 @@ for i = 0, 4095 do
     )
 end
 
-local ent = core.entity.create( core.componentType.LightComponent );
-
-ent:set( core.componentType.LightComponent, { 
-                        color = { math.random(), math.random(), math.random() },
-                        intensity = 1.3,
-                        type = core.gfx.objectTypes.Light,
-                        lighttype = core.gfx.lightTypes.Point
-                    } )
-
-local light = ent:get( core.componentType.LightComponent )
-
-print( light.intensity )
-print( light.color[1] .. " " .. light.color[2] .. " " .. light.color[3]  )
-print( light.type )
-print( light.lighttype )
-
-
 collectgarbage() --For niceness, always good to do right after loading a scenario as the
                  --assembly files are quite large.
 return asm;
