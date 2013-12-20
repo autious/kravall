@@ -10,7 +10,7 @@
 TEST( LuaBindingDataRetention, GraphicsComponentBinding )
 {
     const char * lua_set = "test_entity = core.entity.create( core.componentType.GraphicsComponent )\n"
-                           "test_entity:set( core.componentType.GraphicsComponent, { mesh = 10 } )\n";
+                           "test_entity:set( core.componentType.GraphicsComponent, { mesh = 10, material = 9 } )\n";
 
 
     const char * lua_get = "local function elems( table )\n"
@@ -23,17 +23,19 @@ TEST( LuaBindingDataRetention, GraphicsComponentBinding )
                            "local data = test_entity:get( core.componentType.GraphicsComponent )\n"
                            "test_entity:destroy()\n"
                            "test_entity = nil\n"
-                           "return data.mesh, elems( data )\n";
+                           "return data.material, data.mesh, elems( data )\n";
 
     Core::world.m_luaState.DoBlock( lua_set );
 
-    int values = Core::world.m_luaState.DoBlock( lua_get, 0, 2 );
-
+    int values = Core::world.m_luaState.DoBlock( lua_get, 0, 3 );
     ASSERT_LE( 0, values );
+
     int count = lua_tointeger( Core::world.m_luaState.GetState(), -1 );
-    EXPECT_EQ( 1, count ); 
+    EXPECT_EQ( 2, count ); 
     int data = lua_tointeger(Core::world.m_luaState.GetState(), -2 );
     EXPECT_EQ( data, 10 );
+    data = lua_tointeger(Core::world.m_luaState.GetState(), -3 );
+    EXPECT_EQ( data, 9 );
     lua_pop( Core::world.m_luaState.GetState(), values );
 }
 
@@ -143,6 +145,5 @@ TEST( LuaBindingDataRetention, WorldPositionComponentBinding )
 
     lua_pop( Core::world.m_luaState.GetState(), values );
 }
-
 
 #endif
