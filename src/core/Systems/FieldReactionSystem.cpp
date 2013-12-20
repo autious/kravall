@@ -18,7 +18,6 @@ Core::FieldReactionSystem::FieldReactionSystem() : BaseSystem(EntityHandler::Gen
 
 void Core::FieldReactionSystem::Update(float delta)
 {
-	return; // NOCOMMIT
 	UpdateAgents();
 
 	if (m_showPF)

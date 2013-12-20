@@ -46,7 +46,7 @@ Core::Entity Core::PickingSystem::GetHitEntity( int mouseX, int mouseY )
 
 		if( bvc->type == Core::BoundingVolumeType::SphereBoundingType )
 		{
-			glm::vec3 toSphere = wpc->GetVec3(*wpc) + *sphere->GetVec3( sphere->offset ) - rayOrigin;
+			glm::vec3 toSphere = wpc->GetVec3(*wpc) + *reinterpret_cast<glm::vec3*>(sphere->offset) - rayOrigin;
 			float squareLength = glm::dot( toSphere, toSphere );
 			float projectedDistanceToSphere = glm::dot( toSphere, rayDir );
 

@@ -1,5 +1,5 @@
-#ifndef CONSOLEHANDLERHPP
-#define CONSOLEHANDLERHPP
+#ifndef CLOPHANDLERHPP
+#define CLOPHANDLERHPP
 
 #include <logger/internal/LogHandler.hpp>
 

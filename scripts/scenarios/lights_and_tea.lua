@@ -17,7 +17,6 @@ for i = -10, 9 do
                             mesh = { core.loaders.GnomeLoader, "assets/teapot.bgnome" },
                             material = { core.loaders.MaterialLoader, "assets/material/test-material.material" }
                        }
-            
             },
             {
                 type = core.componentType.ScaleComponent,

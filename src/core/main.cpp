@@ -34,7 +34,7 @@
 
 #include <ContentManagement/ContentManager.hpp>
 #include <logger/Logger.hpp>
-#include <logger/internal/ClopHandler.hpp>
+#include <logger/Handlers.hpp>
 
 #include <Lua/LuaState.hpp>
 
@@ -168,8 +168,7 @@ void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, unsigned in
 	double pi = 3.141529;
 	double angle = 0.0; // pi * 0.25;
 
-	// NOCOMMIT
-
+	/*
 	Core::BoundingVolumeCollisionModel aa = Core::BoundingVolumeCollisionModel::DynamicResolution;
 
 	glm::vec3 direction( 0.0f, 0.0f, 0.0f );
@@ -182,7 +181,7 @@ void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, unsigned in
 		aa = Core::BoundingVolumeCollisionModel::StaticResolution;
 		posZ += 0.7f;
 	}
-	
+	*/
 	rioterList->push_back(Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, 
 		Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent, Core::UnitTypeComponent,
 		Core::MovementComponent, Core::AttributeComponent, Core::BoundingVolumeComponent>
@@ -191,8 +190,8 @@ void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, unsigned in
 		 Core::RotationComponent(),
 		 Core::ScaleComponent(0.01f),
 		 Core::UnitTypeComponent(Core::UnitType::Rioter),
-		 //Core::MovementComponent(0.0f, 0.0f, 0.0f, 2.0f, 6.0f),
-		 Core::MovementComponent( -direction.x, 0, -direction.z, 21.1f, 5.0f),
+		 Core::MovementComponent(0.0f, 0.0f, 0.0f, 2.0f, 6.0f),
+		 //Core::MovementComponent( -direction.x, 0, -direction.z, 21.1f, 5.0f),
 		 Core::AttributeComponent(),
 		 //Core::BoundingVolumeComponent( Core::BoundingSphere( 3.0f, 0.0f, 0.0f, 0.0f ), aa )
 		 Core::BoundingVolumeComponent(Core::BoundingSphere(1.0f, 0.0f, 0.0f, 0.0f), 
@@ -371,7 +370,6 @@ void run( GLFWwindow * window )
    
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));	
 
-	/* NOCOMMIT
 	for (int i = -10; i < 10; i++)
 	{
 		for (int j = -10; j < 10; j++)
@@ -424,7 +422,6 @@ void run( GLFWwindow * window )
 	
 			Core::RotationComponent* rc = WGETC<Core::RotationComponent>(light);
 	}
-	*/
 
 	//CreateRioter(&rioters, meshID, -6.0f, -3.0f, 0.0f);
 	//CreateRioter(&rioters, meshID, 0.0f, -3.0f, 0.0f);
@@ -432,7 +429,7 @@ void run( GLFWwindow * window )
 	//for( int i = -100; i < 100; i++ )
 	for( int i = -5; i < 5; i++ )
 		;//CreateRioter(&rioters, meshID, materialID,  i * 16.0f, 1.0f, 0.0f);
-	CreateRioter(&rioters, meshID, materialID,  5.001f, 0.0f, -15.0f);
+	//CreateRioter(&rioters, meshID, materialID,  5.001f, 0.0f, -15.0f);
 	//for( int i = -200; i < 200; i++ )
 		//CreateRioter(&rioters, meshID, i * 16.0f, 1.0f, 0.0f);
 
