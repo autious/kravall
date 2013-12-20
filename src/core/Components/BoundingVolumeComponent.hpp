@@ -1,6 +1,8 @@
 #ifndef BOUNDING_VOLUME_COMPONENT_HPP
 #define BOUNDING_VOLUME_COMPONENT_HPP
 
+#include <cstring>
+
 namespace Core
 {
 	/*!
@@ -60,14 +62,6 @@ namespace Core
 			Vector members to the middle of the object in object space. 
 		*/
 		float offset[3];
-		
-		/*!
-			Static function used to convert the offset[3] to a glm::vec3 pointer.
-		*/
-		static glm::vec3* GetVec3( float* offset )
-		{
-			return (glm::vec3*)(offset);
-		}
 
 		/*! 
 			Default constructor initializes all members to zero.
@@ -79,7 +73,7 @@ namespace Core
 			offset[1] = 0;
 			offset[2] = 0;
 		}
-			
+		
 		/*!
 			\param radius Radius of the sphere.
 			\param offsetX X offset of the sphere from the object.

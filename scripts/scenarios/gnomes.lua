@@ -13,7 +13,7 @@ for i = -5, 5 do
             },
             {
                 type = core.componentType.GraphicsComponent,
-                data = { mesh = 2000, material = 2000 },
+                data = { mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry },
                 load = { 
                             mesh = { core.loaders.GnomeLoader, "assets/teapot.bgnome" },
                             material = { core.loaders.MaterialLoader, "assets/material/test-material.material" }

@@ -34,7 +34,7 @@
 
 #include <ContentManagement/ContentManager.hpp>
 #include <logger/Logger.hpp>
-#include <logger/internal/ClopHandler.hpp>
+#include <logger/Handlers.hpp>
 
 #include <Lua/LuaState.hpp>
 
@@ -105,19 +105,20 @@ void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, unsigned in
 	double pi = 3.141529;
 	double angle = 0.0; // pi * 0.25;
 
-	/*Core::BoundingVolumeCollisionModel aa = Core::BoundingVolumeCollisionModel::DynamicResolution;
+	/*
+	Core::BoundingVolumeCollisionModel aa = Core::BoundingVolumeCollisionModel::DynamicResolution;
 
 	glm::vec3 direction( 0.0f, 0.0f, 0.0f );
 	if( posX )
 		//direction = glm::normalize( glm::vec3( 0.0f, 0.0f, posY ) );
-		direction = glm::normalize( glm::vec3( posX, 0.0f, 0.0f ) );
+		direction = glm::normalize( glm::vec3( posX, 0.0f, posZ ) );
 		//direction = glm::normalize( glm::vec3( posX, 0.0f, posY ) );	
 	else 
 	{
 		aa = Core::BoundingVolumeCollisionModel::StaticResolution;
 		posZ += 0.7f;
-	}*/
-
+	}
+	*/
 	rioterList->push_back(Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, 
 		Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent, Core::UnitTypeComponent,
 		Core::MovementComponent, Core::AttributeComponent, Core::BoundingVolumeComponent>
@@ -222,6 +223,7 @@ void run( GLFWwindow * window )
 			CreateRioter(&rioters, meshID, materialID, i * 2.0f + 0.5f, 0.5f, j * 2.0f + 0.5f);
 		}
 	}
+
 
 	LOG_INFO << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " " << std::endl;
 

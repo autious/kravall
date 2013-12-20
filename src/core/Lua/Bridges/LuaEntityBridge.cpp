@@ -7,6 +7,10 @@
 #include <Lua/Bridges/ComponentBind/RotationComponentBinding.hpp>
 #include <Lua/Bridges/ComponentBind/ScaleComponentBinding.hpp>
 #include <Lua/Bridges/ComponentBind/LightComponentBinding.hpp>
+#include <Lua/Bridges/ComponentBind/MovementComponentBinding.hpp>
+#include <Lua/Bridges/ComponentBind/UnitTypeComponentBinding.hpp>
+#include <Lua/Bridges/ComponentBind/AttributeComponentBinding.hpp>
+#include <Lua/Bridges/ComponentBind/BoundingVolumeComponentBinding.hpp>
 
 #include <cassert>
 
@@ -17,7 +21,11 @@ namespace Core
      GraphicsComponentBinding,
      RotationComponentBinding,
      ScaleComponentBinding,
-     LightComponentBinding> EntityBridge;
+     LightComponentBinding,
+	 MovementComponentBinding,
+	 UnitTypeComponentBinding, 
+	 AttributeComponentBinding, 
+	 BoundingVolumeComponentBinding> EntityBridge;
 }
 
 /*************/
