@@ -196,10 +196,10 @@ void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, unsigned in
 		 Core::BoundingVolumeComponent(Core::BoundingSphere(1.0f, 0.0f, 0.0f, 0.0f), 
 		 Core::BoundingVolumeCollisionModel::DynamicResolution)));
 
-	Core::GraphicsComponent* gc = WGETC <Core::GraphicsComponent>(rioterList->at(index));
-	GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::MESH_ID, meshID);
-    GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::MATERIAL_ID, materialID);
-	GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::TYPE, GFX::OBJECT_TYPES::OPAQUE_GEOMETRY);
+	//Core::GraphicsComponent* gc = WGETC <Core::GraphicsComponent>(rioterList->at(index));
+	//GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::MESH_ID, meshID);
+    //GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::MATERIAL_ID, materialID);
+	//GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::TYPE, GFX::OBJECT_TYPES::OPAQUE_GEOMETRY);
 }
 
 void LuaInfoRender()
@@ -341,7 +341,7 @@ void run( GLFWwindow * window )
 		Core::world.m_config.GetDouble( "initCameraNearClipDistance", 1.0f ), 
 		Core::world.m_config.GetDouble( "initCameraFarClipDistance", 1000.0f ) );
 	Core::gameCamera->CalculateProjectionMatrix(initScreenWidth, initScreenHeight);
-	Core::gameCamera->SetPosition(glm::vec3(0.0f, 30.0f, 30.0f));
+	Core::gameCamera->SetPosition(glm::vec3(0.0f, 100.0f, 500.0f));
 	
     Core::ContentManager CM;
 	
@@ -354,7 +354,7 @@ void run( GLFWwindow * window )
     unsigned int meshID; 
     unsigned int materialID;
 
-    Core::world.m_contentManager.Load<Core::GnomeLoader>("assets/cube.bgnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+    Core::world.m_contentManager.Load<Core::GnomeLoader>("assets/teapot.bgnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
             {
                 Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
                 const Core::ModelData* data = gnomeLoader->getData(handle);
@@ -466,7 +466,7 @@ void run( GLFWwindow * window )
 
 	    //TODO: Timing hook
         SystemTimeRender();
-		GFX::Render();
+		GFX::Render(delta);
 
         Core::world.m_contentManager.CallFinishers();
 		Core::world.m_systemHandler.Update( delta );
