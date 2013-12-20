@@ -33,7 +33,8 @@ namespace Core
 					data->color = p->color;
 					data->intensity = p->intensity;
 
-					wpc->position[0] = 300.0f * sin(lel + double(i));
+					wpc->position[0] = -25.0f * sin(lel + double(i));
+					wpc->position[2] = 250.0f * sin(lel - double(i));
 
 					data->position = WorldPositionComponent::GetVec3(*wpc);
 					data->radius_length = sc->scale;

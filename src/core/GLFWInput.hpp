@@ -21,6 +21,10 @@ namespace Core
 		double m_scrollY;
 		char m_inputChar;
 
+
+		double m_prevPosX;
+		double m_prevPosY;
+
 		std::map<int, int> m_keyPressed;
 
 		bool m_mouseButtonPressed[3];
@@ -60,6 +64,7 @@ namespace Core
 		void ResetInput();
 
 		void SetCharCallback(bool on);
+
 	};
 
 	GLFWInput& GetInput();

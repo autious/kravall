@@ -37,6 +37,9 @@ namespace Core
 
 	void GLFWInput::UpdateInput()
 	{
+		m_prevPosX = m_posX;
+		m_prevPosY = m_posY;
+
 		glfwPollEvents();
 		glfwGetCursorPos(m_window, &m_posX, &m_posY);
 	}
@@ -108,23 +111,13 @@ namespace Core
 
 	int GLFWInput::GetXPosDiff()
 	{
-		double xpos, ypos;
-
-		glfwGetCursorPos(m_window, &xpos, &ypos);
-
-		int diff = xpos - m_posX;
-
+		float diff = m_prevPosX - m_posX;
 		return diff;
 	}
 
 	int GLFWInput::GetYPosDiff()
 	{
-		double xpos, ypos;
-
-		glfwGetCursorPos(m_window, &xpos, &ypos);
-
-		int diff = ypos - m_posY;
-
+		float diff = m_prevPosY - m_posY;
 		return diff;
 	}
 

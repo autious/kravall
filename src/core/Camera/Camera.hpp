@@ -50,6 +50,10 @@ namespace Core
 		*/
 		void CalculateViewMatrix();
 
+		//FRANKENSTEIN CODE BELOW
+		void UpdateView(glm::vec3 directions, glm::vec2 rotations, float dt);
+		glm::quat m_rotation;
+
 		/*!
 		Recalculates the camera projection matrix.
 		\param width Window width
@@ -104,6 +108,9 @@ namespace Core
 		float m_near;
 		float m_far;
 		float m_fov;
+
+
+		
 
 	};
 
