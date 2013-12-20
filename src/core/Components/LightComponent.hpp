@@ -10,13 +10,26 @@ namespace Core
 	{
 		GFX::GFXBitmask bitmask;
 		unsigned int type;
-		void* LightData;
+        
+        float color[3];
+        float intensity;
+        
+        union
+        {
+            struct 
+            {
+                float angle;
+            } spotLight;
+        } lightSpecific;
 
 		LightComponent()
 		{
 			bitmask = 0;
 			type = GFX::LIGHT_TYPES::POINT;
-			LightData = 0;
+			color[0] = 0;
+			color[1] = 0;
+			color[2] = 0;
+            intensity = 0;
 		}
 
 		static LightComponent GC()

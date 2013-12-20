@@ -402,13 +402,13 @@ void run( GLFWwindow * window )
 	
 			Core::LightComponent* lc = WGETC<Core::LightComponent>(light);
 	
-			// Create a point light on the constant heap
-			GFX::PointLight* pointLight = Core::world.m_constantHeap.NewObject<GFX::PointLight>();
-			pointLight->color = glm::vec3((rand()&1000)/1000.0f, (rand()&1000)/1000.0f, (rand()&1000)/1000.0f);
-			pointLight->intensity = 1.3f;
+			lc->color[0] = (rand()&1000)/1000.0f;
+            lc->color[1] = (rand()&1000)/1000.0f;
+            lc->color[2] = (rand()&1000)/1000.0f;
+
+			lc->intensity = 1.3f;
 	
 			// Set the the light component to new point light 
-			lc->LightData = (void*)pointLight;
 			lc->type = GFX::LIGHT_TYPES::POINT;
 			GFX::SetBitmaskValue(lc->bitmask, GFX::BITMASK::TYPE, GFX::OBJECT_TYPES::LIGHT);
 			GFX::SetBitmaskValue(lc->bitmask, GFX::BITMASK::LIGHT_TYPE, lc->type);
@@ -439,7 +439,7 @@ void run( GLFWwindow * window )
 	}*/
 
 
-	std::cout << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " ";
+	LOG_INFO << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " " << std::endl;
 
 	//inputline.resize(1);
 

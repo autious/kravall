@@ -20,6 +20,7 @@ namespace Core
 			LightComponent* lc			= WGETC<LightComponent>(*it);
 			ScaleComponent* sc			= WGETC<ScaleComponent>(*it);
 
+            // <3 the frame heap.
 			GFX::LightData* data = Core::world.m_frameHeap.NewObject<GFX::LightData>();
 			
 			i++;
@@ -29,10 +30,12 @@ namespace Core
 				case GFX::LIGHT_TYPES::POINT_SHADOW:
 				case GFX::LIGHT_TYPES::POINT:
 				{
-					GFX::PointLight* p = reinterpret_cast<GFX::PointLight*>(lc->LightData);
-					data->color = p->color;
-					data->intensity = p->intensity;
+					data->color[0] = lc->color[0];
+					data->color[1] = lc->color[1];
+					data->color[2] = lc->color[2];
+					data->intensity = lc->intensity;
 
+                    //TODO: Clear this debug the fuck out of here. (at some point)
 					wpc->position[0] = 300.0f * sin(lel + double(i));
 
 					data->position = WorldPositionComponent::GetVec3(*wpc);
@@ -46,13 +49,15 @@ namespace Core
 				case GFX::LIGHT_TYPES::SPOT_SHADOW:
 				case GFX::LIGHT_TYPES::SPOT:
 				{
-					GFX::SpotLight* p = reinterpret_cast<GFX::SpotLight*>(lc->LightData);
-					data->color = p->color;
+					data->color[0] = lc->color[0];
+					data->color[1] = lc->color[1];
+					data->color[2] = lc->color[2];
+					data->intensity = lc->intensity;
+					data->spot_angle = lc->lightSpecific.spotLight.angle;
+
 					data->orientation = glm::vec4(RotationComponent::GetQuat(rc->rotation)[0]);
-					data->intensity = p->intensity;
 					data->position = WorldPositionComponent::GetVec3(*wpc);
 					data->radius_length = sc->scale;
-					data->spot_angle = p->angle;
 				}
 				break;
 
@@ -60,19 +65,21 @@ namespace Core
 				case GFX::LIGHT_TYPES::DIR_SHADOW:
 				case GFX::LIGHT_TYPES::DIR:
 				{
-					GFX::DirectionalLight* p = reinterpret_cast<GFX::DirectionalLight*>(lc->LightData);
-					data->color = p->color;
+					data->color[0] = lc->color[0];
+					data->color[1] = lc->color[1];
+					data->color[2] = lc->color[2];
+					data->intensity = lc->intensity;
 					data->orientation = glm::vec4(RotationComponent::GetQuat(rc->rotation)[0]);
-					data->intensity = p->intensity;
 				}
 				break;
 
 				// Ambient light
 				case GFX::LIGHT_TYPES::AMBIENT:
 				{
-					GFX::AmbientLight* p = reinterpret_cast<GFX::AmbientLight*>(lc->LightData);
-					data->color = p->color;
-					data->intensity = p->intensity;
+					data->color[0] = lc->color[0];
+					data->color[1] = lc->color[1];
+					data->color[2] = lc->color[2];
+					data->intensity = lc->intensity;
 				}
 				break;
 			}
