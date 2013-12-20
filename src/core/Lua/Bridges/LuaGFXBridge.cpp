@@ -9,6 +9,7 @@
 #include <logger/Logger.hpp>
 
 #include <sstream>
+#include <cassert>
 
 extern "C"
 {

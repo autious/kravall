@@ -196,10 +196,10 @@ void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, unsigned in
 		 Core::BoundingVolumeComponent(Core::BoundingSphere(1.0f, 0.0f, 0.0f, 0.0f), 
 		 Core::BoundingVolumeCollisionModel::DynamicResolution)));
 
-	//Core::GraphicsComponent* gc = WGETC <Core::GraphicsComponent>(rioterList->at(index));
-	//GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::MESH_ID, meshID);
-    //GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::MATERIAL_ID, materialID);
-	//GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::TYPE, GFX::OBJECT_TYPES::OPAQUE_GEOMETRY);
+	Core::GraphicsComponent* gc = WGETC <Core::GraphicsComponent>(rioterList->at(index));
+	GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::MESH_ID, meshID);
+    GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::MATERIAL_ID, materialID);
+	GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::TYPE, GFX::OBJECT_TYPES::OPAQUE_GEOMETRY);
 }
 
 void LuaInfoRender()
@@ -331,6 +331,37 @@ void SystemTimeRender()
     }
 }
 
+static void ControlCamera(double delta)
+{
+	glm::vec2 rotation = glm::vec2(0.0f);
+	glm::vec3 directions = glm::vec3(0.0f);
+
+	if (Core::GetInput().IsMouseButtonPressed(GLFW_MOUSE_BUTTON_1))
+	{
+
+		float x = -((float)Core::GetInput().GetXPosDiff() / 1280.0f);
+		float y = -((float)Core::GetInput().GetYPosDiff() / 720.0f);
+
+		rotation.x = x * 5;
+		rotation.y = y * 5;
+	}
+
+	if (Core::GetInput().IsKeyPressed(GLFW_KEY_D))
+		directions.y = -1;
+	if (Core::GetInput().IsKeyPressed(GLFW_KEY_A))
+		directions.y = 1;
+	if (Core::GetInput().IsKeyPressed(GLFW_KEY_W))
+		directions.x = 1;
+	if (Core::GetInput().IsKeyPressed(GLFW_KEY_S))
+		directions.x = -1;
+	if (Core::GetInput().IsKeyPressed(GLFW_KEY_E))
+		directions.z = 1;
+	if (Core::GetInput().IsKeyPressed(GLFW_KEY_Q))
+		directions.z = -1;
+
+	Core::gameCamera->UpdateView(directions, rotation, delta);
+}
+
 void run( GLFWwindow * window )
 {
     LOG_INFO << "Starting program" << std::endl;
@@ -341,7 +372,7 @@ void run( GLFWwindow * window )
 		Core::world.m_config.GetDouble( "initCameraNearClipDistance", 1.0f ), 
 		Core::world.m_config.GetDouble( "initCameraFarClipDistance", 1000.0f ) );
 	Core::gameCamera->CalculateProjectionMatrix(initScreenWidth, initScreenHeight);
-	Core::gameCamera->SetPosition(glm::vec3(0.0f, 100.0f, 500.0f));
+	Core::gameCamera->SetPosition(glm::vec3(80.0f, 70.0f, 50.0f));
 	
     Core::ContentManager CM;
 	
@@ -354,7 +385,7 @@ void run( GLFWwindow * window )
     unsigned int meshID; 
     unsigned int materialID;
 
-    Core::world.m_contentManager.Load<Core::GnomeLoader>("assets/teapot.bgnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+    Core::world.m_contentManager.Load<Core::GnomeLoader>("assets/cube.bgnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
             {
                 Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
                 const Core::ModelData* data = gnomeLoader->getData(handle);
@@ -369,7 +400,31 @@ void run( GLFWwindow * window )
    
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));	
 
-
+	//for (int i = -10; i < 10; i++)
+	//{
+	//	for (int j = -10; j < 10; j++)
+	//	{
+	//		Core::Entity e2 = Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent>
+	//			(Core::GraphicsComponent(), Core::WorldPositionComponent(), Core::RotationComponent(), Core::ScaleComponent());
+	//
+	//		Core::GraphicsComponent* gc = WGETC<Core::GraphicsComponent>(e2);
+	//		
+	//		GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::TYPE, GFX::OBJECT_TYPES::OPAQUE_GEOMETRY);
+	//		GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::MESH_ID, meshID);
+	//		
+	//		Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(e2);
+	//		wpc->position[0] = (float)(i * 20);
+	//		wpc->position[1] = (float)(j * 20);
+	//
+	//		Core::ScaleComponent* sc = WGETC<Core::ScaleComponent>(e2);
+	//		sc->scale = .10f;
+	//
+	//		Core::RotationComponent* rc = WGETC<Core::RotationComponent>(e2);
+	//		rc->rotation[2] = sin(3.14f);
+	//		rc->rotation[3] = cos(3.14f / 2.0f);
+	//	}
+	//}
+	//
     /*
 	for (int i = -10; i < 10; i++)
 	{
@@ -414,30 +469,30 @@ void run( GLFWwindow * window )
 			GFX::SetBitmaskValue(lc->bitmask, GFX::BITMASK::LIGHT_TYPE, lc->type);
 	
 			Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(light);
-			wpc->position[0] = (float)(-200.0f + 300.0f * (rand()&1000)/1000.0f);
-			wpc->position[1] = (float)(-400.0f + 600.0f * (rand()&1000)/1000.0f);
-			wpc->position[2] = 17.0f;
+			wpc->position[0] = (float)(-25.0f + 50.0f * (rand()&1000)/1000.0f);
+			//wpc->position[1] = (float)(-400.0f + 600.0f * (rand()&1000)/1000.0f);
+			wpc->position[2] = (float)(-250.0f + 500.0f * (rand() & 1000) / 1000.0f);
 			Core::ScaleComponent* sc = WGETC<Core::ScaleComponent>(light);
-			sc->scale = 5.0f +5.0f * (rand() & 1000) / 1000.0f;
+			sc->scale = 10.0f +5.0f * (rand() & 1000) / 1000.0f;
 	
 			Core::RotationComponent* rc = WGETC<Core::RotationComponent>(light);
 	}
 */	
 	
-	CreateRioter(&rioters, meshID, materialID, -6.0f, 0.5f, 0.0f);
-	CreateRioter(&rioters, meshID, materialID, 0.0f, 0.5f, 0.0f);
-	CreateRioter(&rioters, meshID, materialID, 6.0f, 0.5f, 0.0f);
+	//CreateRioter(&rioters, meshID, materialID, -6.0f, 0.5f, 0.0f);
+	//CreateRioter(&rioters, meshID, materialID, 0.0f, 0.5f, 0.0f);
+	//CreateRioter(&rioters, meshID, materialID, 6.0f, 0.5f, 0.0f);
 
 	/*for( int i = -5; i < 5; i++ )
 		CreateRioter(&rioters, meshID, materialID,  i * 16.0f, 1.0f, 0.0f);*/
 
-	/*for (float i = -5.0f; i < 5.0f; ++i)
+	for (float i = -11.0f; i < 11.0f; ++i)
 	{
-		for (float j = -5.0f; j < 5.0f; ++j)
+		for (float j = -11.0f; j < 11.0f; ++j)
 		{
 			CreateRioter(&rioters, meshID, materialID, i * 2.0f + 0.5f, 0.5f, j * 2.0f + 0.5f);
 		}
-	}*/
+	}
 
 
 	LOG_INFO << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " " << std::endl;
@@ -458,8 +513,12 @@ void run( GLFWwindow * window )
 		Core::Console().Update();
 
 		//gCamera->CalculateViewMatrix();
-		Core::gameCamera->LookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		//Core::gameCamera->LookAt(glm::vec3(9001.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+		ControlCamera(delta);
+
 		GFX::SetViewMatrix(Core::gameCamera->GetViewMatrix());
+
 		Core::gameCamera->CalculateProjectionMatrix(GFX::GetScreenWidth(), GFX::GetScreenHeight());
 		GFX::SetProjectionMatrix(Core::gameCamera->GetProjectionMatrix());
 

@@ -10,7 +10,9 @@
 #pragma optionNV(strict on) 
 #pragma optionNV(unroll all)
 
-struct PointLight
+layout (local_size_x = WORK_GROUP_SIZE, local_size_y = WORK_GROUP_SIZE) in;
+
+struct LightData
 {
 	vec3 position;
 	float radius_length;
@@ -29,31 +31,37 @@ layout (binding = 4, rgba32f) uniform readonly image2D glowMatID;
 
 layout (std430, binding = 5) readonly buffer BufferObject
 {
-    PointLight pointLights[];
+    LightData lights[];
 };
 
 uniform mat4 view;
 uniform mat4 proj;
-uniform mat4 inv_proj_view_mat;
-uniform uint numActiveLights;
+uniform mat4 invProjView;
 uniform vec2 framebufferDim;
 
-layout (local_size_x = WORK_GROUP_SIZE, local_size_y = WORK_GROUP_SIZE) in;
+uniform uint numActiveLights;
+uniform uint numPointLights;
+uniform uint numSpotLights;
+uniform uint numDirLights;
 
 shared uint minDepth = 0xFFFFFFFF;
 shared uint maxDepth = 0;
+
 shared uint pointLightIndex[MAX_LIGHTS];
 shared uint pointLightCount = 0;
+
+shared uint spotLightIndex[MAX_LIGHTS];
+shared uint spotLightCount = 0;
 
 vec3 reconstruct_pos(float z, vec2 uv_f)
 {
     vec4 sPos = vec4(uv_f * 2.0 - 1.0, z, 1.0);
-    sPos = inv_proj_view_mat * sPos;
+    sPos = invProjView * sPos;
      
     return (sPos.xyz / sPos.w);
 }
 
-vec4 CalculateLighting( PointLight p, vec3 wPos, vec3 wNormal, vec4 wSpec, vec4 wGlow)
+vec4 CalculateLighting( LightData p, vec3 wPos, vec3 wNormal, vec4 wSpec, vec4 wGlow)
 {
 	//vec4 outColor = vec4(0.0f);
 	//
@@ -132,7 +140,7 @@ void main()
 			frustumPlanes[i] *= 1.0f / length(frustumPlanes[i].xyz);
 		}
 		
-		PointLight p;
+		LightData p;
 		
 		float dist;
 		uint id;
@@ -149,7 +157,7 @@ void main()
 
 			lightIndex = min(lightIndex, numActiveLights);
 
-			p = pointLights[lightIndex];
+			p = lights[lightIndex];
 			pos = view * vec4(p.position, 1.0f);
 			rad = p.radius_length;
 
@@ -209,7 +217,7 @@ void main()
 		//point lights
 		for(int i = 0; i < pointLightCount; i++)
 		{
-			color += CalculateLighting(pointLights[pointLightIndex[i]], wPos.xyz, 2 * normalColor.xyz - 1.0f, specular, glow) * diffuseColor;
+			color += CalculateLighting(lights[pointLightIndex[i]], wPos.xyz, 2 * normalColor.xyz - 1.0f, specular, glow) * diffuseColor;
 		}
 
 		// ambient
