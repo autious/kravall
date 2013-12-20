@@ -1,3 +1,0 @@
-lua hej = doscenario("gnomes")
-lua hej:destroy()
-lua dofile("scripts/scenarios/testtest.lua")

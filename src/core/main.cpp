@@ -159,7 +159,7 @@ void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, unsigned in
 	glm::vec3 direction( 0.0f, 0.0f, 0.0f );
 	if( posX )
 		//direction = glm::normalize( glm::vec3( 0.0f, 0.0f, posY ) );
-		direction = glm::normalize( glm::vec3( posX, 0.0f, 0.0f ) );
+		direction = glm::normalize( glm::vec3( posX, 0.0f, posZ ) );
 		//direction = glm::normalize( glm::vec3( posX, 0.0f, posY ) );	
 	else 
 	{
@@ -333,7 +333,8 @@ void run( GLFWwindow * window )
 	//CreateRioter(&rioters, meshID, 6.0f, -3.0f, 0.0f);
 	//for( int i = -100; i < 100; i++ )
 	for( int i = -5; i < 5; i++ )
-		CreateRioter(&rioters, meshID, materialID,  i * 16.0f, 1.0f, 0.0f);
+		;//CreateRioter(&rioters, meshID, materialID,  i * 16.0f, 1.0f, 0.0f);
+	CreateRioter(&rioters, meshID, materialID,  5.001f, 0.0f, -15.0f);
 	//for( int i = -200; i < 200; i++ )
 		//CreateRioter(&rioters, meshID, i * 16.0f, 1.0f, 0.0f);
 
@@ -378,7 +379,7 @@ void run( GLFWwindow * window )
 		Core::gameCamera->CalculateProjectionMatrix(GFX::GetScreenWidth(), GFX::GetScreenHeight());
 		GFX::SetProjectionMatrix(Core::gameCamera->GetProjectionMatrix());
 
-		TestRendering();
+		//TestRendering();
 
 	    //TODO: Timing hook
         SystemTimeRender();

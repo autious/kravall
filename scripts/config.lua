@@ -6,12 +6,13 @@ vsync = 0,
 windowResizable = true,
 initScreenWidth = 1280,
 initScreenHeight = 720,
-showSystems = true,
+showSystems = false,
 showFramebuffers = 2,
 initCameraFieldOfView = 45.0,
 initCameraNearClipDistance = 1.0,
 initCameraFarClipDistance = 1000.0,
-consoleFont = "assets/Fonts/ConsoleFont.font"
+consoleFont = "assets/Fonts/ConsoleFont.font",
+defaultNrFlowfields = 20
 }
 
 function printAlexStatus()

@@ -401,7 +401,7 @@ namespace Core
         void AddReference( const AssetHash assetHash, AssetHandle handle, Core::AssetStatus assetStatus)
         {
             const int id = Core::Index<Loader, std::tuple<Loaders...>>::value;
-            m_assetList.push_back(std::make_tuple(1, id, assetHash, handle, assetStatus));            
+            m_assetList.push_back(std::make_tuple(1, id, assetHash, handle, assetStatus));
         }
 
         template<typename Loader>

@@ -72,7 +72,7 @@ namespace Core
 	   /*!
          Allocates a array of new objects, destructor will be called for every index on remvoval of the allocation. 
          */
-       template<typename T, typename... Args> T* NewObjectArray( int size=1, Args... args)
+       template<typename T, typename... Args> T* NewObjectArray( int size, Args... args)
 	   {
 			// allocate memory...
 			char* objects = reinterpret_cast<char*>(m_allocator.Allocate(sizeof(T) * size));
