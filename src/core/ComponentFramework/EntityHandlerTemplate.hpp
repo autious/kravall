@@ -244,7 +244,7 @@ namespace Core
 
         EntityDataUseList GetDataUse()
         {
-            return {{ NameCountAllocTuple( "Entity", m_entities.GetCount(), m_entities.GetAllocation(), m_entities.GetMemoryUse(), m_entities.GetMemoryAllocation() ), GetComponentUsage<Components>()... }};
+            return {{ NameCountAllocTuple( "Entity", m_entities.GetCount(), m_entities.GetAllocation(), m_entities.GetMemoryUse(), m_entities.GetMemoryAllocation() ), (GetComponentUsage<Components>())... }};
         }
 
     private:

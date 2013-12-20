@@ -1,6 +1,6 @@
 #version 430 core
 
-#define MAX_LIGHTS 1024
+#define MAX_LIGHTS 4096
 #define MAX_LIGHTS_PER_TILE 1024
 #define WORK_GROUP_SIZE 16
 
@@ -55,11 +55,25 @@ vec3 reconstruct_pos(float z, vec2 uv_f)
 
 vec4 CalculateLighting( PointLight p, vec3 wPos, vec3 wNormal, vec4 wSpec, vec4 wGlow)
 {
-	vec3 direction = p.position - wPos;
+	//vec4 outColor = vec4(0.0f);
+	//
+	//vec4 ambient = vec4(0.0f);
+	//vec4 diffuse = vec4(0.0f);
+	//vec4 spec = vec4(0.0f);
+	//
+	//vec3 lightVec = p.position - wPos;
+	//float dist = length(lightVec);
+	//
+	//if (d > p.range_attenuation)
+	//	return vec4(0.0f);
+	//
+	//lightVec /= d;
 
+	vec3 direction = p.position - wPos;
+	
 	if(length(direction) > p.radius_length)
 		return vec4(0.0f, 0.0f, 0.0f, 0.0f);
-
+	
 	float attenuation = 1.0f - length(direction) / (p.radius_length);
 	direction = normalize(direction);
 	float diffuseFactor = max(0.0f, dot(direction, wNormal)) * attenuation;
@@ -84,7 +98,7 @@ void main()
 		float minDepthZ = float(minDepth / float(0xFFFFFFFF));
 		float maxDepthZ = float(maxDepth / float(0xFFFFFFFF));
 
-		vec2 tileScale = vec2(1280, 720) * (1.0f / float( 2 * WORK_GROUP_SIZE));
+		vec2 tileScale = framebufferDim * (1.0f / float( 2 * WORK_GROUP_SIZE));
 		vec2 tileBias = tileScale - vec2(gl_WorkGroupID.xy);
 
 		vec4 col1 = vec4(-proj[0][0]  * tileScale.x, proj[0][1], tileBias.x, proj[0][3]); 
@@ -124,22 +138,30 @@ void main()
 		uint id;
 		vec4 pos;
 		float rad;
+		bool inFrustum;
 
-		for (uint lightIndex = gl_LocalInvocationIndex; lightIndex < numActiveLights; lightIndex += WORK_GROUP_SIZE)
+		uint threadCount = WORK_GROUP_SIZE * WORK_GROUP_SIZE;
+		uint passCount = (numActiveLights + threadCount - 1) /threadCount;
+
+		for (uint passIt = 0; passIt < passCount; ++passIt)
 		{
+			uint lightIndex =  passIt * threadCount + gl_LocalInvocationIndex;
+
+			lightIndex = min(lightIndex, numActiveLights);
+
 			p = pointLights[lightIndex];
 			pos = view * vec4(p.position, 1.0f);
 			rad = p.radius_length;
 
 			if (pointLightCount < MAX_LIGHTS_PER_TILE)
 			{
-				bool inFrustum = true;
+				inFrustum = true;
 				for (uint i = 3; i >= 0 && inFrustum; i--)
 				{
 					dist = dot(frustumPlanes[i], pos);
 					inFrustum = (-rad <= dist);
 				}
-
+			
 				if (inFrustum)
 				{
 					id = atomicAdd(pointLightCount, 1);
@@ -148,13 +170,38 @@ void main()
 			}
 		}
 
+
+		//for (uint lightIndex = gl_LocalInvocationIndex; lightIndex < numActiveLights; lightIndex += WORK_GROUP_SIZE)
+		//{
+		//	p = pointLights[lightIndex];
+		//	pos = view * vec4(p.position, 1.0f);
+		//	rad = p.radius_length;
+		//
+		//	if (pointLightCount < MAX_LIGHTS_PER_TILE)
+		//	{
+		//		bool inFrustum = true;
+		//		for (uint i = 3; i >= 0 && inFrustum; i--)
+		//		{
+		//			dist = dot(frustumPlanes[i], pos);
+		//			//inFrustum = ((i % lightIndex) == 0);
+		//			inFrustum = (-rad <= dist);
+		//		}
+		//
+		//		if (inFrustum)
+		//		{
+		//			id = atomicAdd(pointLightCount, 1);
+		//			pointLightIndex[id] = lightIndex;
+		//		}
+		//	}
+		//}
+
 		barrier();
 
 		vec4 diffuseColor = imageLoad(diffuse, pixel);
 		vec4 specular = imageLoad(specular, pixel);
 		vec4 glow = imageLoad(glowMatID, pixel);
 		
-		vec2 uv = vec2(pixel.x / 1280.0f, pixel.y / 720.0f);
+		vec2 uv = vec2(pixel.x / framebufferDim.x, pixel.y / framebufferDim.y);
 		vec4 wPos = vec4(reconstruct_pos(normalColor.w, uv),1.0f);
 		
 		vec4 color = vec4(0.0f, 0.0f, 0.0f, 1.0f);
