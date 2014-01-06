@@ -11,11 +11,11 @@
 #include <Lua/Bridges/LuaLoggerPrint.hpp>
 #include <Lua/Bridges/LuaEntityBridge.hpp>
 #include <Lua/Bridges/LuaContentManagerBridge.hpp>
+#include <Lua/Bridges/LuaInputBridge.hpp>
 #include <Lua/Bridges/LuaGFXBridge.hpp>
 #include <Lua/Bridges/LuaAttributeBridge.hpp>
 #include <Lua/Bridges/LuaBoundingVolumeBridge.hpp>
 #include <Lua/Bridges/LuaUnitTypeBridge.hpp>
-
 
 #include <Timer.hpp>
 
@@ -50,6 +50,7 @@ Core::LuaState::LuaState()
     LuaLoggerPrint::OpenLibs( m_state );
     LuaEntityBridge::OpenLibs( m_state );
     LuaContentManagerBridge::OpenLibs( m_state );
+    LuaInputBridge::OpenLibs( m_state );
     LuaGFXBridge::OpenLibs( m_state );
 	LuaAttributeComponentBridge::OpenLibs( m_state );
 	LuaBoundingVolumeComponentBridge::OpenLibs( m_state );
