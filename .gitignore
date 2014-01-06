@@ -179,6 +179,3 @@ Makefile
 #assets
 
 #filters
-
-#console historry
-console_history_file.dbt

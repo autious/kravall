@@ -31,7 +31,7 @@ Core::ComponentSetters Core::WorldPositionComponentBinding::GetSetters()
 {
     ComponentSetters setters;
 
-    setters["position"] = [](Core::Entity entity, lua_State * L, int valueindex )
+	setters["position"] = [](Core::Entity entity, lua_State * L, int valueindex )
     {
         WorldPositionComponent *wpc = WGETC<WorldPositionComponent>( entity );
 

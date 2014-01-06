@@ -2,18 +2,19 @@ core = core or {}
 
 core.config = {
 showSplash = false,
-vsync = 0,
+vsync = 1,
 windowResizable = true,
 initScreenWidth = 1280,
 initScreenHeight = 720,
-showSystems = true,
+showSystems = false,
 entityMemoryOutputLevel = "partial", -- full, short or partial
 entityMemoryOutputComponents = { "WorldPositionComponent", "GraphicsComponent" },
 showFramebuffers = 1,
 initCameraFieldOfView = 45.0,
 initCameraNearClipDistance = 1.0,
 initCameraFarClipDistance = 1000.0,
-consoleFont = "assets/Fonts/ConsoleFont.font"
+consoleFont = "assets/Fonts/ConsoleFont.font",
+defaultNrFlowfields = 20
 }
 
 function printAlexStatus()
@@ -45,5 +46,34 @@ end
 
 -- Loads a scenario from the scenario folder and returns the assembly.
 function doscenario( name )
-    return dofile( "scripts/scenarios/" .. name .. ".lua" ) 
+    print( "Use 'openscenario()' instead:" )
+    --return dofile( "scripts/scenarios/" .. name .. ".lua" ) 
 end
+
+core.current_scenario = nil
+core.current_scenario_name = "No Scenario Loaded"
+
+function currentscenario()
+    print( core.current_scenario_name )
+end
+
+function openscenario( name )
+    closescenario()
+    core.current_scenario = dofile( "scripts/scenarios/" .. name .. ".lua" )
+    core.current_scenario_name = name
+
+    collectgarbage() --For niceness, always good to do right after loading a scenario as the
+                     --assembly files are quite large.
+end
+
+function closescenario()
+    if core.current_scenario ~= nil then
+        core.current_scenario:destroy()
+        core.current_scenario = nil
+        core.current_scenario_name = "No Scenario Loaded"
+    end
+
+    collectgarbage() --For niceness, always good to do right after loading a scenario as the
+                     --assembly files are quite large.
+end
+    

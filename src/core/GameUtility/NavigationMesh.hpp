@@ -2,6 +2,7 @@
 #define CORE_CONTENT_MANAGEMENT_ASSET_STRUCTS_NAVIGATION_MESH_HPP
 
 #include <fstream>
+#include <glm/glm.hpp>
 
 namespace Core
 {
@@ -40,6 +41,29 @@ namespace Core
 		};
 
 		/*!
+			Struct containing a list of direction vectors with the same size as Core::NavigationMesh::nrNodes.
+		*/
+		struct Flowfield
+		{
+			glm::vec3* list;
+		};
+
+		/*!
+			The list of all the flowfield instances available.
+		*/
+		Flowfield* flowfields;
+		
+		/*!
+			Number of flowfields in use.
+		*/
+		int nrUsedFlowfields;
+
+		/*!
+			Number of flowfields allocated.
+		*/
+		int maxFlowfields;
+
+		/*!
 			Node list for the loaded tree.
 		*/
 		Node* nodes;
@@ -55,6 +79,15 @@ namespace Core
 	*/
 	NavigationMesh* GetNavigationMesh();
 
+	/*!
+		will set the Core::GetNavigationMesh pointer to point to this object.
+	*/
+	void SetNavigationMesh( Core::NavigationMesh* mesh );
+
+	/*!
+		Will allocate said number of flowfiled instances from the level allocator.
+	*/
+	void InitFlowfieldInstances( Core::NavigationMesh* mesh, int nrFlowfieldInstances = 0 );
 	
 }
 

@@ -53,4 +53,25 @@ namespace Core
 		int halfHeight = height / 2;
 		m_projectionMatrix = glm::ortho(-halfWidth, halfWidth, halfHeight, -halfHeight);
 	}
+
+	void Camera::UpdateView(glm::vec3 directions, glm::vec2 rotations, float dt)
+	{
+		glm::quat pitch = glm::quat(glm::vec3(-rotations.y, 0.0f, 0.0f));
+		glm::quat yaw = glm::quat(glm::vec3(0.0f, -rotations.x, 0.0f));
+
+		m_rotation = glm::normalize(yaw * m_rotation * pitch);
+
+		glm::vec3 camera_roll_direction = m_rotation * glm::vec3(0.0f, 0.0f, -1.0f);
+		glm::vec3 camera_pitch_direction = m_rotation * glm::vec3(-1.0f, 0.0f, 0.0f);
+
+		// forward/backward move - all axes could be affected
+		m_position += directions[0] * camera_roll_direction * dt * 50.0f;
+		// left and right strafe - only xz could be affected    
+		m_position += directions[1] * camera_pitch_direction * dt * 50.0f;
+		// up and down flying - only y-axis could be affected
+		m_position.y += directions[2] * dt * 50.0f;
+
+		m_viewMatrix = glm::lookAt(m_position, m_position + camera_roll_direction,
+			glm::cross(camera_roll_direction, camera_pitch_direction));
+	}
 }

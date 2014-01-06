@@ -28,7 +28,7 @@ int Core::GnomeLoaderBridge::Load( lua_State * L )
 
         if( error )
         {
-            LOG_ERROR << __FUNCTION__ << "Unable to callback from GnomeLoader" << lua_tostring( L, -1 ) << std::endl;
+            LOG_ERROR << __FUNCTION__ << "Unable to callback from GnomeLoader:" << lua_tostring( L, -1 ) << std::endl;
 
             //Pop the error.
             lua_pop(L,1 );

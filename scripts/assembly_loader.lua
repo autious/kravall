@@ -1,3 +1,4 @@
+local table_utils = require( "table_utils" )
 local M = {}
 local ASM = {}
 
@@ -49,14 +50,15 @@ function ASM:loadAssembly( asmtable )
             componentTypes[#componentTypes+1] = component.type;
 
             if component.load ~= nil then
+                count = table_utils.count( component.load )
                 for index,loader_pair in pairs( component.load ) do 
-                    count = count + 1
 
                     local async_load = true
 
                     if type( loader_pair[3] ) == "boolean" then
                         async_load = loader_pair[3]
                     end
+
                     assets[#assets+1] = core.contentmanager.load( loader_pair[1], loader_pair[2], function( value )
                         component.data[index] = value
                         count = count - 1
@@ -66,6 +68,7 @@ function ASM:loadAssembly( asmtable )
                         if( count == 0 and passedload == true ) then
                             apply( asmtable )
                         end
+
                     end, async_load)
                      
                 end
@@ -74,11 +77,13 @@ function ASM:loadAssembly( asmtable )
 
         -- If no loaders have been create or all loaders where blocking,
         -- directly apply the entity into game
+
         if count == 0 then 
             apply( asmtable )
         else
             passedload = true
         end
+
     else
         error( "unable to load entity into destroyed assembly" )
     end

@@ -5,6 +5,7 @@ solution "RiotGame"
         flags{ "Unicode", "NoPCH" } 
         libdirs { translateOS[os.get()] .. "/lib" }
         includedirs { translateOS[os.get()] .. "/deps", "deps", "include"}
+		startproject "core"
     
     local location_path = "build"
 
