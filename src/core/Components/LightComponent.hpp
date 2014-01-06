@@ -9,14 +9,25 @@ namespace Core
 	struct LightComponent
 	{
 		GFX::GFXBitmask bitmask;
-		unsigned int type;
-		void* LightData;
+        
+        float color[3];
+        float intensity;
+        
+        union
+        {
+            struct 
+            {
+                float angle;
+            } spotLight;
+        } lightSpecific;
 
 		LightComponent()
 		{
 			bitmask = 0;
-			type = GFX::LIGHT_TYPES::POINT;
-			LightData = 0;
+			color[0] = 0;
+			color[1] = 0;
+			color[2] = 0;
+            intensity = 0;
 		}
 
 		static LightComponent GC()
@@ -24,6 +35,16 @@ namespace Core
 			LightComponent gc;
 			return gc;
 		}
+
+        inline static const unsigned int GetLightType( const LightComponent &lc )
+        {
+            return GFX::GetBitmaskValue( lc.bitmask, GFX::BITMASK::LIGHT_TYPE );
+        }
+
+        inline static const char* GetName()
+        {
+            return "LightComponent";
+        }
 	};
 }
 

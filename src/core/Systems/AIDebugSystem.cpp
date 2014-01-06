@@ -76,7 +76,7 @@ void MarkClickedObject()
 		Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(ent);
 		Core::BoundingVolumeComponent* bvc = WGETC<Core::BoundingVolumeComponent>(ent);
 		Core::BoundingSphere* sphere = reinterpret_cast<Core::BoundingSphere*>(bvc->data);
-		GFX::Debug::DrawSphere( wpc->GetVec3(wpc->position) + *sphere->GetVec3( sphere->offset ), sphere->radius, GFXColor( 1.0f, 0.7f, 0.0f, 1.0f ), false );
+		GFX::Debug::DrawSphere( wpc->GetVec3(*wpc) + *reinterpret_cast<glm::vec3*>( sphere->offset ), sphere->radius, GFXColor( 1.0f, 0.7f, 0.0f, 1.0f ), false );
 	}
 }
 

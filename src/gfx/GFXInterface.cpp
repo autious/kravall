@@ -112,10 +112,10 @@ namespace GFX
 		Renderer().Resize(width, height);
 	}
 
-	void Render()
+	void Render(const double& delta)
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		Renderer().Render();
+		Renderer().Render(delta);
 	}
 
 	void SetViewMatrix(GFXMat4x4 matrix)

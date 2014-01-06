@@ -271,4 +271,16 @@ namespace Core
     {
         return GetKeyboardState().IsKeyDown( id ) && GetPrevKeyboardState().IsKeyUp( id );
     }
+
+    void InputManager::GetPosDiff( int& x, int &y )
+    {
+        int cx,cy;
+        int px,py;
+
+        GetPrevMouseState().GetCursorPosition( px,py );
+        GetMouseState().GetCursorPosition( cx,cy );
+    
+        x = px - cx;
+        y = py - cy;
+    }
 }

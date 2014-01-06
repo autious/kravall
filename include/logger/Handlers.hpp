@@ -8,5 +8,6 @@
 #include "internal/LogHandler.hpp"
 #include "internal/ConsoleHandler.hpp"
 #include "internal/TestHandler.hpp"
+#include "internal/ClopHandler.hpp"
 
 #endif

@@ -25,13 +25,14 @@ namespace Core
 
     void NavigationMeshLoader::FinishLoadAsync(Core::AssetHandle& handle)
     {
+		Core::SetNavigationMesh( reinterpret_cast<Core::NavigationMesh*>(handle) );
 		handle = Core::GetNavigationMesh();
     }
 
     Core::AssetHandle NavigationMeshLoader::Load(const char* assetName)
     {        
-		return LoadNavigationMeshFromFile( assetName );
-
+		Core::SetNavigationMesh( LoadNavigationMeshFromFile( assetName ) );
+		return Core::GetNavigationMesh();
     }
 
     void NavigationMeshLoader::Destroy(const Core::AssetHandle handle)
@@ -39,8 +40,7 @@ namespace Core
 		// memory is allocated on the level stack, no delete is required.
 
 		// set world instance of navemesh to zero. 
-		Core::NavigationMesh* instance = Core::GetNavigationMesh();
-		instance = nullptr;
+		Core::SetNavigationMesh( nullptr );
     }
 
     const ModelData* NavigationMeshLoader::getData(const Core::AssetHandle handle) const
@@ -78,6 +78,9 @@ namespace Core
 		instance->nrNodes = nrNodes;
 
 		ff.close();
+
+		// set the number of flowfield instances using the number specified in the config file.
+		Core::InitFlowfieldInstances( instance );
 
 		return instance;
 	}

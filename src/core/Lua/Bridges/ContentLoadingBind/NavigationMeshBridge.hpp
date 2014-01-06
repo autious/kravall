@@ -10,7 +10,7 @@ namespace Core
     {
         public:
             static int Load( lua_State * L );
-            static int Free( Core::AssetHash hash, lua_State * L ); // does nothing...
+            static int Free( Core::AssetHash hash, lua_State * L ); 
             static const char *GetLoaderLuaName();
     };
 }

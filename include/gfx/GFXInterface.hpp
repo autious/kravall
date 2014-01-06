@@ -43,7 +43,7 @@ namespace GFX
 	Executes all draw calls made to the graphics engine and
 	renders it to the screen.
 	*/
-	DLL_API void Render();
+	DLL_API void Render(const double& delta);
 
 	/*!
 	Resizes the graphics to render on with specified dimensions.
