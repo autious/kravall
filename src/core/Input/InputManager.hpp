@@ -26,23 +26,13 @@ namespace Core
 
 namespace Core
 {
-    namespace 
+    namespace States
     {   
-        Core::KeyboardState keyboardState;
-        Core::MouseState mouseState;
+        extern KeyboardState keyboardState;
+        extern MouseState mouseState;
+        extern KeyboardState prevKeyboardState;
+        extern MouseState prevMouseState;
     }
-
-    Core::KeyEvent* KeyEvents;
-    Core::CharEvent* CharEvents;
-    Core::ButtonEvent* ButtonEvents;
-    Core::PositionEvent* PositionEvents;
-    Core::ScrollEvent* ScrollEvents;
-
-    int nKeyEvents = 0;
-    int nCharEvents = 0;
-    int nButtonEvents = 0;
-    int nPositionEvents = 0;
-    int nScrollEvents = 0;
 
     class InputManager
     {
@@ -67,45 +57,52 @@ namespace Core
           Adds a KeyEventListener that is called when KeyEvents occur
           */
         void AddKeyEventListener(Core::KeyEventListener* eventListener);
+        void RemoveKeyEventListener(Core::KeyEventListener* eventListener);
 
         /*!
           Adds a CharEventListener that is called when CharEvents occur
           */
         void AddCharEventListener(Core::CharEventListener* eventListener);
+        void RemoveCharEventListener(Core::CharEventListener* eventListener);
 
         /*!
           Adds a ButtonEventListener that is called when ButtonEvents occur
           */
         void AddButtonEventListener(Core::ButtonEventListener* eventListener);
+        void RemoveButtonEventListener(Core::ButtonEventListener* eventListener);
 
         /*!
           Adds a PositionEventListener that is called when PositionEvents occur
           */
         void AddPositionEventListener(Core::PositionEventListener* eventListener);
+        void RemovePositionEventListener(Core::PositionEventListener* eventListener);
 
         /*!
           Adds a ScrollEventListener that is called when ScrollEvents occur
           */
         void AddScrollEventListener(Core::ScrollEventListener* eventListener);
+        void RemoveScrollEventListener( Core::ScrollEventListener* eventListener );
+
+
+        bool IsKeyPressedOnce( int id );
 
         /*!
           Retreives the current Core::KeyboardState. Changes made to the returned state will change the current state.
           \returns A reference to the keyboardstate.
           */
-        inline static Core::KeyboardState& GetKeyboardState(){ return keyboardState; }
+        inline static Core::KeyboardState& GetKeyboardState(){ return States::keyboardState; }
+
+        inline static Core::KeyboardState& GetPrevKeyboardState(){ return States::prevKeyboardState; } 
 
         /*!
           Retreives the current Core::MouseState. Changes made to the returned state will change the current state.
           \returns A reference to the mousestate.
           */
-        inline static Core::MouseState& GetMouseState(){ return mouseState; }
+        inline static Core::MouseState& GetMouseState(){ return States::mouseState; }
+
+        inline static Core::MouseState& GetPrevMouseState(){ return States::prevMouseState; }
 
     private:
-        static const int NUMBER_OF_KEY_EVENTS = 300;
-        static const int NUMBER_OF_CHAR_EVENTS = 300;
-        static const int NUMBER_OF_BUTTON_EVENTS = 50;
-        static const int NUMBER_OF_POSITION_EVENTS = 300;
-        static const int NUMBER_OF_SCROLL_EVENTS = 50;
 
         GLFWwindow* m_window;
         
@@ -127,12 +124,6 @@ namespace Core
       \returns A reference to the InputManager.
       */
     InputManager& GetInputManager();
-
-
 }
-
-
-
-
 
 #endif

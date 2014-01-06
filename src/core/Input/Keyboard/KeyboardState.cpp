@@ -1,6 +1,8 @@
 #include "KeyboardState.hpp"
 #include <cstring>
 
+#include <WindowHandling/GLFWInclude.hpp>
+
 namespace Core
 {
     KeyboardState::KeyboardState()
@@ -10,16 +12,17 @@ namespace Core
 
     void KeyboardState::SetKeyState(const int key, const int action)
     {
-        m_keyValues[key] = static_cast<bool>(action);
+        if( action != GLFW_REPEAT )
+            m_keyValues[key] = (action == GLFW_PRESS);
     }
 
     const bool KeyboardState::IsKeyDown(const int key) const
     {
-        return !m_keyValues[key];
+        return m_keyValues[key];
     }
 
-    const bool KeybordState::IsKeyUp(const int key) const
+    const bool KeyboardState::IsKeyUp(const int key) const
     {
-        return m_keyValues[key];
+        return !m_keyValues[key];
     }
 }

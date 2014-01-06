@@ -1,7 +1,6 @@
 #ifndef CORE_INPUT_MOUSE_MOUSE_HPP
 #define CORE_INPUT_MOUSE_MOUSE_HPP
 
-
 namespace Core
 {
     class MouseState

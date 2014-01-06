@@ -4,7 +4,7 @@
 #include "Camera/Camera.hpp"
 #include <limits>
 #include <logger/Logger.hpp>
-#include <GLFWInput.hpp>
+#include <Input/InputManager.hpp>
 
 Core::PickingSystem::PickingSystem()
 	: BaseSystem( EntityHandler::GenerateAspect< WorldPositionComponent, BoundingVolumeComponent >(), 0ULL )
@@ -16,12 +16,14 @@ Core::PickingSystem::PickingSystem()
 
 void Core::PickingSystem::Update( float delta )
 {
-	m_currentGroundHit = GetGroundHit( Core::GetInput().GetXPos(), Core::GetInput().GetYPos() );
+    int x,y;
+    Core::GetInputManager().GetMouseState().GetCursorPosition(x,y);
+	m_currentGroundHit = GetGroundHit( x,y);
 
-	if( !Core::GetInput().IsMouseButtonPressed(0) )
+	if( !Core::GetInputManager().GetMouseState().IsButtonDown(0) )
 		return;
 	
-	GetHitEntity( Core::GetInput().GetXPos(), Core::GetInput().GetYPos() );
+	GetHitEntity( x,y );
 }
 
 

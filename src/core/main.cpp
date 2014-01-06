@@ -21,7 +21,6 @@
 
 #include <utility/Colors.hpp>
 
-#include "GLFWInput.hpp"
 #include <World.hpp>
 
 #include "Console/Console.hpp"
@@ -249,7 +248,8 @@ void run( GLFWwindow * window )
 
 	std::vector<Core::Entity> rioters;
 
-	Core::GetInput().Initialize(window);
+	//Core::GetInput().Initialize(window);
+    Core::GetInputManager().Init( window );
 
     unsigned int meshID; 
     unsigned int materialID;
@@ -369,7 +369,6 @@ void run( GLFWwindow * window )
 		double delta = (thisFrame - lastFrameTime) / 1000.0;
 		lastFrameTime = thisFrame;
 
-		Core::GetInput().UpdateInput();
 		
 		Core::Console().Update();
 
@@ -390,9 +389,10 @@ void run( GLFWwindow * window )
         Core::world.m_luaState.Update( delta );
 
 		GFX::Debug::DisplayFBO(Core::world.m_config.GetInt( "showFramebuffers", -1 ));
-		Core::GetInput().ResetInput();
+		//Core::GetInput().ResetInput();
 		glfwSwapBuffers(window);
-		glfwPollEvents();
+		Core::GetInputManager().PollEvents();
+        Core::GetInputManager().CallListeners();
 
 		//TODO: Timing hook
 		Core::world.m_frameHeap.Rewind();

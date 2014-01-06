@@ -1,5 +1,7 @@
 #include "InputManager.hpp"
 
+#include <algorithm>
+
 #include <World.hpp>
 
 #include <Input/Interfaces/KeyEventListener.hpp>
@@ -8,8 +10,38 @@
 #include <Input/Interfaces/PositionEventListener.hpp>
 #include <Input/Interfaces/ScrollEventListener.hpp>
 
+#include <logger/Logger.hpp>
+
+
 namespace Core
 {
+
+    namespace States
+    {   
+        KeyboardState keyboardState;
+        MouseState mouseState;
+        KeyboardState prevKeyboardState;
+        MouseState prevMouseState;
+    }
+
+    static Core::KeyEvent* KeyEvents;
+    static Core::CharEvent* CharEvents;
+    static Core::ButtonEvent* ButtonEvents;
+    static Core::PositionEvent* PositionEvents;
+    static Core::ScrollEvent* ScrollEvents;
+
+    static int nKeyEvents = 0;
+    static int nCharEvents = 0;
+    static int nButtonEvents = 0;
+    static int nPositionEvents = 0;
+    static int nScrollEvents = 0;
+
+    static const int NUMBER_OF_KEY_EVENTS = 300;
+    static const int NUMBER_OF_CHAR_EVENTS = 300;
+    static const int NUMBER_OF_BUTTON_EVENTS = 50;
+    static const int NUMBER_OF_POSITION_EVENTS = 300;
+    static const int NUMBER_OF_SCROLL_EVENTS = 50;
+
     InputManager& GetInputManager()
     {
         static Core::InputManager inputManager;
@@ -18,44 +50,77 @@ namespace Core
 
     void InputManagerKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
     {
-        Core::KeyboardState kb_State = InputManager::GetKeyboardState();
-        kb_State.SetKeyState(key, action);
+        if( nKeyEvents < NUMBER_OF_KEY_EVENTS && key >= 0 )
+        {
+            InputManager::GetKeyboardState().SetKeyState(key, action);
 
-        KeyEvents[nKeyEvents].key = key;
-        KeyEvents[nKeyEvents].action= action;
-        KeyEvents[nKeyEvents].mods = mods;
-        nKeyEvents++;
+            KeyEvents[nKeyEvents].key = key;
+            KeyEvents[nKeyEvents].action= action;
+            KeyEvents[nKeyEvents].mods = mods;
+            nKeyEvents++;
+        }
+        else
+        {
+            LOG_ERROR << "Unable to queue more key events" << std::endl;
+        }
     }
 
     void InputManagerCharCallback(GLFWwindow* window, unsigned int codepoint)
     {
-        CharEvents[nCharEvents].codepoint = codepoint;
-        nCharEvents++;
+        if( nCharEvents < NUMBER_OF_CHAR_EVENTS )
+        {
+            CharEvents[nCharEvents].codepoint = codepoint;
+            nCharEvents++;
+        }
+        else
+        {
+            LOG_ERROR << "Unable to queue more characters" << std::endl;
+        }
     }
 
     void InputManagerMouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
     {
-        Core::MouseState mouseState = InputManager::GetMouseState();
-        mouseState.SetButtonState(button, action);
+        if( nButtonEvents < NUMBER_OF_BUTTON_EVENTS )
+        {
+            InputManager::GetMouseState().SetButtonState(button, action);
 
-        ButtonEvents[nButtonEvents].button = button;
-        ButtonEvents[nButtonEvents].action = action;
-        ButtonEvents[nButtonEvents].mods = mods;
-        nButtonEvents++;
+            ButtonEvents[nButtonEvents].button = button;
+            ButtonEvents[nButtonEvents].action = action;
+            ButtonEvents[nButtonEvents].mods = mods;
+            nButtonEvents++;
+        }
+        else
+        {
+            LOG_ERROR << "Unable to queue more button events" << std::endl;
+        }
     }
 
     void InputManagerCursorPositionCallback(GLFWwindow* window, double xpos, double ypos)
     {
-        PositionEvents[nPositionEvents].xpos = xpos;
-        PositionEvents[nPositionEvents].ypos = ypos;
-        nPositionEvents++;
+        if( nPositionEvents < NUMBER_OF_POSITION_EVENTS )
+        {
+            PositionEvents[nPositionEvents].xpos = xpos;
+            PositionEvents[nPositionEvents].ypos = ypos;
+            nPositionEvents++;
+        }
+        else
+        {
+            LOG_ERROR << "Unable to queue more cursor position events" << std::endl;
+        }
     }
 
     void InputManagerMouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
     {
-        ScrollEvents[nScrollEvents].xoffset = xoffset;
-        ScrollEvents[nScrollEvents].yoffset = yoffset;
-        nScrollEvents++;
+        if( nScrollEvents < NUMBER_OF_SCROLL_EVENTS )
+        { 
+            ScrollEvents[nScrollEvents].xoffset = xoffset;
+            ScrollEvents[nScrollEvents].yoffset = yoffset;
+            nScrollEvents++;
+        }
+        else
+        {
+            LOG_ERROR << "Unable to queue more scroll events" << std::endl; 
+        }
     }
 
     void InputManager::Init(GLFWwindow* window)
@@ -82,6 +147,9 @@ namespace Core
         nButtonEvents = 0;
         nPositionEvents = 0;
         nScrollEvents = 0;
+        
+        InputManager::GetPrevKeyboardState() = InputManager::GetKeyboardState();
+        InputManager::GetPrevMouseState() = InputManager::GetMouseState();
 
         glfwPollEvents();
 
@@ -133,9 +201,18 @@ namespace Core
             }   
         }
     }
+
     void InputManager::AddKeyEventListener(Core::KeyEventListener* eventListener)
     {
         m_keyEventListeners.push_back(eventListener);
+    }
+
+    void InputManager::RemoveKeyEventListener(Core::KeyEventListener* eventListener)
+    {
+       auto pos = std::find( m_keyEventListeners.begin(), m_keyEventListeners.end(), eventListener );
+
+        if( pos != m_keyEventListeners.end() )
+            m_keyEventListeners.erase( pos );
     }
 
     void InputManager::AddCharEventListener(Core::CharEventListener* eventListener)
@@ -143,9 +220,25 @@ namespace Core
         m_charEventListeners.push_back(eventListener);
     }
 
+    void InputManager::RemoveCharEventListener(Core::CharEventListener* eventListener)
+    {
+        auto pos = std::find( m_charEventListeners.begin(), m_charEventListeners.end(), eventListener );
+    
+        if( pos != m_charEventListeners.end() )
+            m_charEventListeners.erase( pos ); 
+    }
+
     void InputManager::AddButtonEventListener(Core::ButtonEventListener* eventListener)
     {
         m_buttonEventListeners.push_back(eventListener);
+    }
+
+    void InputManager::RemoveButtonEventListener(Core::ButtonEventListener* eventListener)
+    {
+        auto pos = std::find( m_buttonEventListeners.begin(), m_buttonEventListeners.end(), eventListener );
+
+        if( pos != m_buttonEventListeners.end() )
+            m_buttonEventListeners.erase( pos );
     }
 
     void InputManager::AddPositionEventListener(Core::PositionEventListener* eventListener)
@@ -153,9 +246,29 @@ namespace Core
         m_positionEventListeners.push_back(eventListener);
     }
 
+    void InputManager::RemovePositionEventListener(Core::PositionEventListener* eventListener)
+    {
+        auto pos = std::find( m_positionEventListeners.begin(), m_positionEventListeners.end(), eventListener );
+
+        if( pos != m_positionEventListeners.end() )
+            m_positionEventListeners.erase( pos );
+    }
+
     void InputManager::AddScrollEventListener(Core::ScrollEventListener* eventListener)    
     {
         m_scrollEventListeners.push_back(eventListener);
     }
 
+    void InputManager::RemoveScrollEventListener(Core::ScrollEventListener* eventListener)    
+    {
+        auto pos = std::find( m_scrollEventListeners.begin(), m_scrollEventListeners.end(), eventListener );
+
+        if( pos != m_scrollEventListeners.end() )
+            m_scrollEventListeners.erase( pos ); 
+    }
+
+    bool InputManager::IsKeyPressedOnce( const int id )
+    {
+        return GetKeyboardState().IsKeyDown( id ) && GetPrevKeyboardState().IsKeyUp( id );
+    }
 }
