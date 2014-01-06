@@ -47,13 +47,16 @@ void Core::PickingSystem::Update( float delta )
 
 
 
-Core::Entity Core::PickingSystem::GetHitEntity( int mouseX, int mouseY )
+Core::Entity Core::PickingSystem::GetHitEntity(int mouseX, int mouseY, char entityTypeMask)
 {
+	if (entityTypeMask < 0)
+		entityTypeMask = m_entityTypeMask;
 	glm::vec3 rayDir = GetRayFromCamera( mouseX, mouseY );
 	glm::vec3 rayOrigin = Core::gameCamera->GetPosition();
 
 	float closestHit = FLT_MAX;
 	Entity objectHit;
+	Core::UnitType objectHitUnitType = UnitType::Count;
 	bool somethingHit = false;
 
 	for( std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); it++ )
@@ -63,9 +66,8 @@ Core::Entity Core::PickingSystem::GetHitEntity( int mouseX, int mouseY )
 
 		Core::UnitTypeComponent* utc = WGETC<Core::UnitTypeComponent>(*it);
 
-		// SÅ JÄVLA DEBUG TODO: REMOVE
-		char entityBitMask = 1 << utc->type;
-		if ((entityBitMask & m_entityTypeMask) == 0)
+		if ((GetEntityMask(utc->type) & entityTypeMask) == 0 ||
+			GetEntityMask(utc->type) < GetEntityMask(objectHitUnitType))
 			continue;
 		
 		Core::BoundingSphere* sphere = (Core::BoundingSphere*)bvc->data;
@@ -102,6 +104,7 @@ Core::Entity Core::PickingSystem::GetHitEntity( int mouseX, int mouseY )
 			{
 				somethingHit = true;
 				objectHit = *it;
+				objectHitUnitType = utc->type;
 				closestHit = projectedDistanceToSphere - sphereIntersectionDelta;
 			}
 		}
