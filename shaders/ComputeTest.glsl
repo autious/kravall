@@ -23,6 +23,12 @@ struct LightData
 	vec4 orientation;
 };
 
+struct Tile
+{
+	uint x;
+	uint y;
+};
+
 layout (binding = 0, rgba32f) uniform writeonly image2D outTexture;
 layout (binding = 1, rgba32f) uniform readonly image2D normalDepth;
 layout (binding = 2, rgba32f) uniform readonly image2D diffuse;
