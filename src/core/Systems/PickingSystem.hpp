@@ -50,9 +50,18 @@ namespace Core
 		Entity GetLastHitEntity();
 
 	private:
+		enum Priority
+		{
+			Rioter = 0,
+			Police = 1
+		};
 
 		Entity m_lastSelectedEntity;
 		glm::vec3 m_currentGroundHit;
+
+		char m_entityTypeMask;
+
+		char GetEntityMask(UnitType type);
     };
 }
 

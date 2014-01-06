@@ -7,11 +7,9 @@
 #include <GLFWInput.hpp>
 
 Core::PickingSystem::PickingSystem()
-	: BaseSystem( EntityHandler::GenerateAspect< WorldPositionComponent, BoundingVolumeComponent >(), 0ULL )
-{
-	m_lastSelectedEntity = std::numeric_limits<Entity>::max();
-	m_currentGroundHit = glm::vec3(0.0f);
-}
+: BaseSystem(EntityHandler::GenerateAspect< WorldPositionComponent, BoundingVolumeComponent >(), 0ULL), 
+m_lastSelectedEntity(std::numeric_limits<Entity>::max()), m_currentGroundHit(glm::vec3(0.0f)), m_entityTypeMask(1 << Priority::Police)
+{ }
 
 
 void Core::PickingSystem::Update( float delta )
@@ -65,7 +63,9 @@ Core::Entity Core::PickingSystem::GetHitEntity( int mouseX, int mouseY )
 
 		Core::UnitTypeComponent* utc = WGETC<Core::UnitTypeComponent>(*it);
 
-		if (utc->type == Core::UnitType::Rioter)
+		// SÅ JÄVLA DEBUG TODO: REMOVE
+		char entityBitMask = 1 << utc->type;
+		if ((entityBitMask & m_entityTypeMask) == 0)
 			continue;
 		
 		Core::BoundingSphere* sphere = (Core::BoundingSphere*)bvc->data;
@@ -157,4 +157,17 @@ glm::vec3 Core::PickingSystem::GetRayFromCamera( int mouseX, int mouseY )
 Core::Entity Core::PickingSystem::GetLastHitEntity( )
 {
 	return m_lastSelectedEntity;
+}
+
+char Core::PickingSystem::GetEntityMask(UnitType type)
+{
+	switch (type)
+	{
+		case UnitType::Rioter:
+			return 1 << Priority::Rioter;
+		case UnitType::Police:
+			return 1 << Priority::Police;
+		default:
+			return 0;
+	}
 }

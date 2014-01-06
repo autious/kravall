@@ -5,13 +5,13 @@
 #define frsChargeCurve Core::FieldReactionSystem::ChargeCurve
 
 const float Core::FieldReactionSystem::FIELD_CELL_SIDE_SIZE = FIELD_SIDE_LENGTH / static_cast<float>(FIELD_SIDE_CELL_COUNT);
-/*const frsChargeCurve Core::FieldReactionSystem::CURVE[1][2] =
+const frsChargeCurve Core::FieldReactionSystem::CURVE[1][2] =
 {
-	{ frsChargeCurve::ChargeCurve(), frsChargeCurve::ChargeCurve() }
-};*/
+	{ frsChargeCurve::ChargeCurve(1.0f, 15.0f, 0.8f), frsChargeCurve::ChargeCurve(-1.0f, 15.0f, 0.8f) }
+};
 
-const frsChargeCurve Core::FieldReactionSystem::CURVE[2] =
-	{ frsChargeCurve::ChargeCurve(1.0f, 15.0f, 0.8f), frsChargeCurve::ChargeCurve(-1.0f, 15.0f, 0.8f) };
+/*const frsChargeCurve Core::FieldReactionSystem::CURVE[2] =
+	{ frsChargeCurve::ChargeCurve(1.0f, 15.0f, 0.8f), frsChargeCurve::ChargeCurve(-1.0f, 15.0f, 0.8f) };*/
 
 Core::FieldReactionSystem::FieldReactionSystem() : BaseSystem(EntityHandler::GenerateAspect<WorldPositionComponent, MovementComponent,
 	UnitTypeComponent, AttributeComponent>(), 0ULL), m_showPF(true), m_updateCounter(0)
@@ -123,12 +123,12 @@ float Core::FieldReactionSystem::GetAgentsChargeAt(Entity chargedAgent, glm::vec
 	glm::vec3 distVec = (WorldPositionComponent::GetVec3(*wpc) - queryPosition);
 	float distance = (distVec.x * distVec.x) + (distVec.z * distVec.z);
 	
-	if (distance <= 0.001f || distance > CURVE[indexFromType].cutoff) //distance > cutoff)
+	if (distance <= 0.001f || distance > CURVE[0][indexFromType].cutoff) //distance > cutoff)
 		return 0.0f;
-	else if (distance < CURVE[indexFromType].repelRadius) //repelRadius)
-		return -100 + distance * (CURVE[indexFromType].repelRadius / 100); //(repelRadius / 100);
+	else if (distance < CURVE[0][indexFromType].repelRadius) //repelRadius)
+		return -100 + distance * (CURVE[0][indexFromType].repelRadius / 100); //(repelRadius / 100);
 	else
-		return CURVE[indexFromType].charge - distance * CURVE[indexFromType].decline;
+		return CURVE[0][indexFromType].charge - distance * CURVE[0][indexFromType].decline;
 		//return peakCharge - distance * decline;
 }
 
