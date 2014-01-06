@@ -141,7 +141,7 @@ void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, unsigned in
 void CreatePolice(std::vector<Core::Entity>* rioterList, int meshID, unsigned int materialID, float posX, float posY, float posZ)
 {
 	int index = rioterList->size(); // Size before add will be the index of the added entity.
-	double pi = 3.141529;
+	float pi = 3.141529f;
 
 	rioterList->push_back(Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent,
 		Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent, Core::UnitTypeComponent,
@@ -190,7 +190,7 @@ static void ControlCamera(double delta)
 	if (Core::GetInput().IsKeyPressed(GLFW_KEY_Q))
 		directions.z = -1;
 
-	Core::gameCamera->UpdateView(directions, rotation, delta);
+	Core::gameCamera->UpdateView(directions, rotation, static_cast<float>(delta));
 }
 
 void run( GLFWwindow * window )
@@ -278,8 +278,8 @@ void run( GLFWwindow * window )
 		GFX::Render(delta);
 
         Core::world.m_contentManager.CallFinishers();
-		Core::world.m_systemHandler.Update( delta );
-        Core::world.m_luaState.Update( delta );
+		Core::world.m_systemHandler.Update(static_cast<float>(delta));
+		Core::world.m_luaState.Update(static_cast<float>(delta));
 
 		GFX::Debug::DisplayFBO(Core::world.m_config.GetInt( "showFramebuffers", -1 ));
 		Core::GetInput().ResetInput();

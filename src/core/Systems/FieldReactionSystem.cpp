@@ -202,7 +202,7 @@ void Core::FieldReactionSystem::CommitDebugField()
 	}
 }
 
-glm::vec3 Core::FieldReactionSystem::GetPositionFromFieldIndex(int xIndex, int zIndex, int yPos)
+glm::vec3 Core::FieldReactionSystem::GetPositionFromFieldIndex(int xIndex, int zIndex, float yPos)
 {
 	float cellHalfSize = FIELD_CELL_SIDE_SIZE * 0.5f;
 	float fieldStart = -FIELD_SIDE_LENGTH * 0.5f - cellHalfSize;
