@@ -21,7 +21,6 @@
 
 #include <utility/Colors.hpp>
 
-#include "GLFWInput.hpp"
 #include <World.hpp>
 
 #include "Console/Console.hpp"
@@ -37,6 +36,7 @@
 #include <logger/Handlers.hpp>
 
 #include <Lua/LuaState.hpp>
+#include <Input/InputManager.hpp>
 
 #include <gfx/BitmaskDefinitions.hpp>
 
@@ -151,7 +151,7 @@ void CreatePolice(std::vector<Core::Entity>* rioterList, int meshID, unsigned in
 		Core::RotationComponent::GetComponentRotateZ(pi * 0.25f),
 		Core::ScaleComponent(1.0f),
 		Core::UnitTypeComponent(Core::UnitType::Police),
-		Core::MovementComponent(0.0f, 0.0f, 0.0f, 2.0f, 6.0f),
+		Core::MovementComponent(0.0f, 0.0f, 0.0f, 1.0f, 6.0f),
 		Core::AttributeComponent(),
 		Core::BoundingVolumeComponent(Core::BoundingSphere(1.5f, 0.0f, 0.0f, 0.0f),
 		Core::BoundingVolumeCollisionModel::DynamicResolution)));
@@ -167,28 +167,33 @@ static void ControlCamera(double delta)
 	glm::vec2 rotation = glm::vec2(0.0f);
 	glm::vec3 directions = glm::vec3(0.0f);
 
-	if (Core::GetInput().IsMouseButtonPressed(GLFW_MOUSE_BUTTON_1))
+	if (Core::GetInputManager().GetMouseState().IsButtonDown(GLFW_MOUSE_BUTTON_1) )
 	{
+        int dx,dy;
+        Core::GetInputManager().GetPosDiff( dx,dy );
 
-		float x = -((float)Core::GetInput().GetXPosDiff() / 1280.0f);
-		float y = -((float)Core::GetInput().GetYPosDiff() / 720.0f);
+		float x = -((float)dx / 1280.0f);
+		float y = -((float)dy / 720.0f);
 
 		rotation.x = x * 5;
 		rotation.y = y * 5;
 	}
 
-	if (Core::GetInput().IsKeyPressed(GLFW_KEY_D))
-		directions.y = -1;
-	if (Core::GetInput().IsKeyPressed(GLFW_KEY_A))
-		directions.y = 1;
-	if (Core::GetInput().IsKeyPressed(GLFW_KEY_W))
-		directions.x = 1;
-	if (Core::GetInput().IsKeyPressed(GLFW_KEY_S))
-		directions.x = -1;
-	if (Core::GetInput().IsKeyPressed(GLFW_KEY_E))
-		directions.z = 1;
-	if (Core::GetInput().IsKeyPressed(GLFW_KEY_Q))
-		directions.z = -1;
+    if( Core::Console().IsVisible() == false )
+    {
+        if (Core::GetInputManager().GetKeyboardState().IsKeyDown(GLFW_KEY_D))
+            directions.y = -1;
+        if (Core::GetInputManager().GetKeyboardState().IsKeyDown(GLFW_KEY_A))
+            directions.y = 1;
+        if (Core::GetInputManager().GetKeyboardState().IsKeyDown(GLFW_KEY_W))
+            directions.x = 1;
+        if (Core::GetInputManager().GetKeyboardState().IsKeyDown(GLFW_KEY_S))
+            directions.x = -1;
+        if (Core::GetInputManager().GetKeyboardState().IsKeyDown(GLFW_KEY_E))
+            directions.z = 1;
+        if (Core::GetInputManager().GetKeyboardState().IsKeyDown(GLFW_KEY_Q))
+            directions.z = -1;
+    }
 
 	Core::gameCamera->UpdateView(directions, rotation, static_cast<float>(delta));
 }
@@ -214,7 +219,8 @@ void run( GLFWwindow * window )
 
 	std::vector<Core::Entity> rioters;
 
-	Core::GetInput().Initialize(window);
+	//Core::GetInputManager().Initialize(window);
+    Core::GetInputManager().Init( window );
 
     unsigned int meshID; 
     unsigned int materialID;
@@ -257,7 +263,6 @@ void run( GLFWwindow * window )
 		double delta = (thisFrame - lastFrameTime) / 1000.0;
 		lastFrameTime = thisFrame;
 
-		Core::GetInput().UpdateInput();
 		
 		Core::Console().Update();
 
@@ -282,9 +287,9 @@ void run( GLFWwindow * window )
 		Core::world.m_luaState.Update(static_cast<float>(delta));
 
 		GFX::Debug::DisplayFBO(Core::world.m_config.GetInt( "showFramebuffers", -1 ));
-		Core::GetInput().ResetInput();
 		glfwSwapBuffers(window);
-		glfwPollEvents();
+		Core::GetInputManager().PollEvents();
+        Core::GetInputManager().CallListeners();
 
 		//TODO: Timing hook
 		Core::world.m_frameHeap.Rewind();

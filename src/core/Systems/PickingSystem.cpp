@@ -4,7 +4,7 @@
 #include "Camera/Camera.hpp"
 #include <limits>
 #include <logger/Logger.hpp>
-#include <GLFWInput.hpp>
+#include <Input/InputManager.hpp>
 
 Core::PickingSystem::PickingSystem()
 : BaseSystem(EntityHandler::GenerateAspect< WorldPositionComponent, BoundingVolumeComponent >(), 0ULL), 
@@ -14,35 +14,44 @@ m_lastSelectedEntity(std::numeric_limits<Entity>::max()), m_currentGroundHit(glm
 
 void Core::PickingSystem::Update( float delta )
 {
-	m_currentGroundHit = GetGroundHit(static_cast<int>(Core::GetInput().GetXPos()), 
-									  static_cast<int>(Core::GetInput().GetYPos()));
+    int x,y;
+    Core::GetInputManager().GetMouseState().GetCursorPosition(x,y);
+	m_currentGroundHit = GetGroundHit(x,y);
 
-	if( !Core::GetInput().IsMouseButtonPressed(0) )
+	if( !Core::GetInputManager().GetMouseState().IsButtonDown(0) )
 		return;
 	
-	//Entity lastEntity = m_lastSelectedEntity;
-	GetHitEntity(static_cast<int>(Core::GetInput().GetXPos()), static_cast<int>(Core::GetInput().GetYPos()));
+	Entity lastEntity = m_lastSelectedEntity;
+	GetHitEntity( x,y );
 	
-	if (m_lastSelectedEntity == std::numeric_limits<Entity>::max())
+	if (m_lastSelectedEntity == std::numeric_limits<Entity>::max()
+        && lastEntity != std::numeric_limits<Entity>::max() )
 	{
-		glm::vec3 groundHit = GetGroundHit(static_cast<int>(Core::GetInput().GetXPos()),
-										   static_cast<int>(Core::GetInput().GetYPos()));
+		glm::vec3 groundHit = GetGroundHit(x,y);
 
 		LOG_DEBUG << "Ground hit: " << groundHit.x << ", " << groundHit.z << std::endl;
 
-		/*Core::UnitTypeComponent* utc = WGETC<Core::UnitTypeComponent>(lastEntity);
+		Core::UnitTypeComponent* utc = WGETC<Core::UnitTypeComponent>(lastEntity);
 
 		if (utc->type == Core::UnitType::Police)
 		{
 			Core::MovementComponent* mc = WGETC<Core::MovementComponent>(lastEntity);
-			glm::vec3 newDirection = GetGroundHit(Core::GetInput().GetXPos(), Core::GetInput().GetYPos()) -
-				glm::vec3(mc->direction[0], mc->direction[1], mc->direction[2]);
+			Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(lastEntity);
+
+			mc->goal[0] = groundHit.x;
+			mc->goal[1] = groundHit.y;
+			mc->goal[2] = groundHit.z;
+
+			//glm::vec3 newDirection = groundHit - glm::vec3(wpc->position[0], groundHit.y, wpc->position[2]);
+			glm::vec3 newDirection = glm::vec3(groundHit.x - wpc->position[0], 0.0f, groundHit.z - wpc->position[2]);
 			newDirection /= newDirection.length();
+
+			LOG_DEBUG << "New Direction: " << newDirection.x << ", " << newDirection.y << ", " << newDirection.z << std::endl;
 
 			mc->direction[0] = newDirection.x;
 			mc->direction[1] = newDirection.y;
 			mc->direction[2] = newDirection.z;
-		}*/
+		}
 	}
 }
 

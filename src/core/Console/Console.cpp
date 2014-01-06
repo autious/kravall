@@ -6,7 +6,7 @@
 
 #include <Lua/LuaState.hpp>
 #include <World.hpp>
-#include <GLFWInput.hpp>
+#include <Input/InputManager.hpp>
 
 #include <Timer.hpp>
 
@@ -102,11 +102,99 @@ namespace Core
         }
 
 		m_historyIndex = m_history.size();
+
+        Core::GetInputManager().AddScrollEventListener( this );
+        Core::GetInputManager().AddCharEventListener( this );
+        Core::GetInputManager().AddKeyEventListener( this );
 	}
+
 	DebugConsole::~DebugConsole()
 	{
-
+        Core::GetInputManager().RemoveScrollEventListener( this );
+        Core::GetInputManager().RemoveCharEventListener( this );
+        Core::GetInputManager().RemoveKeyEventListener( this );
 	}
+
+    void DebugConsole::OnScrollEvent( const Core::ScrollEvent &e )
+    {
+        if( IsVisible() )
+        {
+            Scroll(e.yoffset*10);
+        }
+    }
+
+    void DebugConsole::OnCharEvent( const Core::CharEvent &e )
+    {
+        if( IsVisible() )
+        {
+            m_inputLine.insert(m_inputLine.begin()+m_cursorOffset, 1, (unsigned char)e.codepoint);
+            m_cursorOffset++;
+        }
+    }
+
+    void DebugConsole::OnKeyEvent( const Core::KeyEvent &e )
+    {
+        if( IsVisible() )
+        {
+            if( e.action != GLFW_RELEASE )
+            {
+                if (e.key == GLFW_KEY_ESCAPE)
+                    ClearInput();
+                
+                if (e.key == GLFW_KEY_UP)
+                    LastHistory();
+
+                if (e.key == GLFW_KEY_DOWN)
+                    NextHistory();
+
+
+                // Word jump functions
+                if ( (e.mods & GLFW_MOD_CONTROL) > 0 )
+                {
+                    if (e.key == GLFW_KEY_LEFT)
+                        JumpCursorLeft();
+
+                    if (e.key == GLFW_KEY_RIGHT)
+                        JumpCursorRight();
+
+                    if (e.key == GLFW_KEY_DELETE)
+                        DeleteWord();
+
+                    if ( e.key == GLFW_KEY_BACKSPACE ) 
+                        BackspaceWord();
+                }
+                else
+                {
+                    if (e.key == GLFW_KEY_LEFT)
+                        MoveCursorLeft();
+
+                    if (e.key == GLFW_KEY_RIGHT)
+                        MoveCursorRight();
+                    
+                    if (e.key == GLFW_KEY_DELETE)
+                        DeleteLetter();
+
+                    if ( e.key == GLFW_KEY_BACKSPACE  ) 
+                        BackspaceLetter();
+                }
+                
+                if (e.key == GLFW_KEY_HOME)
+                    m_cursorOffset = 0;
+
+                if (e.key == GLFW_KEY_END)
+                    m_cursorOffset = m_inputLine.length();
+
+                if (e.key == GLFW_KEY_PAGE_UP)
+                    Scroll(10);
+
+                if (e.key == GLFW_KEY_PAGE_DOWN)
+                    Scroll(-10);
+
+                if (e.key == GLFW_KEY_ENTER || e.key == GLFW_KEY_KP_ENTER )
+                    Add();
+            }
+        }
+    }
 
 	void DebugConsole::SetInputLine(const std::string& inputLine)
 	{
@@ -591,85 +679,18 @@ namespace Core
 		}
 	}
 
-	void DebugConsole::HandleInput()
-	{
-		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_ESCAPE))
-			ClearInput();
-		
-		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_UP))
-			LastHistory();
-
-		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_DOWN))
-			NextHistory();
-
-		// Word jump functions
-		if (Core::GetInput().IsKeyPressed(GLFW_KEY_LEFT_CONTROL) || Core::GetInput().IsKeyPressed(GLFW_KEY_RIGHT_CONTROL))
-		{
-			if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_LEFT))
-				JumpCursorLeft();
-
-			if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_RIGHT))
-				JumpCursorRight();
-
-			if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_BACKSPACE))
-				BackspaceWord();
-
-			if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_DELETE))
-				DeleteWord();
-		}
-		else
-		{
-			if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_LEFT))
-				MoveCursorLeft();
-
-			if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_RIGHT))
-				MoveCursorRight();
-			
-			if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_BACKSPACE))
-				BackspaceLetter();
-
-			if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_DELETE))
-				DeleteLetter();
-		}
-		
-		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_HOME))
-			m_cursorOffset = 0;
-
-		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_END))
-			m_cursorOffset = m_inputLine.length();
-
-		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_PAGE_UP) || Core::GetInput().GetScrollY() > 0)
-			Scroll(10);
-
-		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_PAGE_DOWN) || Core::GetInput().GetScrollY() < 0)
-			Scroll(-10);
-
-		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_ENTER) || Core::GetInput().IsKeyPressedOnce(GLFW_KEY_KP_ENTER))
-			Add();
-
-		char c = Core::GetInput().GetChar();
-		if (c != 0)
-		{
-			m_inputLine.insert(m_inputLine.begin()+m_cursorOffset, 1, c);
-			m_cursorOffset++;
-		}
-	}
-
 	void DebugConsole::Update()
 	{
 		long long t = (Timer().GetTotal()) % 1000;
 		bool showCursor = (t < 500) ? true : false;
 
-		if (Core::GetInput().IsKeyPressedOnce(GLFW_KEY_TAB))
+		if (Core::GetInputManager().IsKeyPressedOnce(GLFW_KEY_TAB))
 		{
 			Toggle();
-			Core::GetInput().SetCharCallback(Core::Console().IsVisible());
 		}
 		const int x = 10;
 		if (m_visible)
 		{
-			HandleInput();
-
 			GFX::ShowConsole();
 
 			// Draw lines
