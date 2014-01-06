@@ -14,13 +14,13 @@ for i = -10, 9 do
                 type = core.componentType.GraphicsComponent,
                 data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry },
                 load = { 
-                            mesh = { core.loaders.GnomeLoader, "assets/teapot.bgnome" },
-                            material = { core.loaders.MaterialLoader, "assets/material/test-material.material" }
+                            mesh = { core.loaders.GnomeLoader, "assets/teapot.bgnome", false },
+                            material = { core.loaders.MaterialLoader, "assets/material/test-material.material", false }
                        }
             },
             {
                 type = core.componentType.ScaleComponent,
-                data = { scale = 0.1 }
+                data = { scale = 25.0 }
             },
             {
                 type = core.componentType.RotationComponent,
