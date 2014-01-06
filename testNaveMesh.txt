@@ -4,7 +4,3 @@
 -1 120 0.00833333333
 -1 120 0.00833333333 
 -1 120 0.00833333333
-
-
-// om linksTo < 0 så kan man kollidera med den
-// om lenght är < 0 så är linjnen ogiltig
