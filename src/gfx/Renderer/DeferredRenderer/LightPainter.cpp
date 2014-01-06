@@ -35,6 +35,8 @@ namespace GFX
 		m_projUniform = m_shaderManager->GetUniformLocation("ComputeTest", "proj");
 		m_frambufferSizeUniform = m_shaderManager->GetUniformLocation("ComputeTest", "framebufferDim");
 
+		m_eyePosUniform = m_shaderManager->GetUniformLocation("ComputeTest", "eyePos");
+
 
 
 		numActiveLightsUniform = m_shaderManager->GetUniformLocation("ComputeTest", "numActiveLights");
@@ -76,6 +78,9 @@ namespace GFX
 	void LightPainter::Render(unsigned int& renderIndex, FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix)
 	{
 		m_shaderManager->UseProgram("ComputeTest");
+
+		glm::vec3 cameraPos = -glm::vec3(viewMatrix[3]) * glm::mat3(viewMatrix);
+		m_shaderManager->SetUniform(1, cameraPos, m_eyePosUniform);
 
 		glm::mat4 invProjView = glm::inverse(projMatrix * viewMatrix);
 		m_shaderManager->SetUniform(1, projMatrix, m_projUniform);

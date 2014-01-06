@@ -31,7 +31,7 @@ for i = -10, 9 do
     end
 end
 
-for i = 0, 4095 do
+for i = 0, 127 do
     asm:loadAssembly( 
     {
         {
@@ -49,7 +49,7 @@ for i = 0, 4095 do
         },
         {
             type = core.componentType.ScaleComponent,
-            data = { scale = 5.0 + 5.0 * math.random() }
+            data = { scale = 15.0 + 5.0 * math.random() }
         },
         {
             type = core.componentType.RotationComponent,

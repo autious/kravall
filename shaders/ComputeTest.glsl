@@ -23,6 +23,14 @@ struct LightData
 	vec4 orientation;
 };
 
+struct SurfaceData
+{
+	vec4 normalDepth;
+	vec4 diffuse;
+	vec4 specular;
+	vec4 glow;
+};
+
 layout (binding = 0, rgba32f) uniform writeonly image2D outTexture;
 layout (binding = 1, rgba32f) uniform readonly image2D normalDepth;
 layout (binding = 2, rgba32f) uniform readonly image2D diffuse;
@@ -34,6 +42,7 @@ layout (std430, binding = 5) readonly buffer BufferObject
     LightData lights[];
 };
 
+uniform vec3 eyePos;
 uniform mat4 view;
 uniform mat4 proj;
 uniform mat4 invProjView;
@@ -61,31 +70,60 @@ vec3 reconstruct_pos(float z, vec2 uv_f)
     return (sPos.xyz / sPos.w);
 }
 
-vec4 CalculateLighting( LightData p, vec3 wPos, vec3 wNormal, vec4 wSpec, vec4 wGlow)
+vec3 BlinnPhong( LightData light, SurfaceData surface, vec3 eyeDirection, vec3 lightDirection )
 {
-	//vec4 outColor = vec4(0.0f);
-	//
-	//vec4 ambient = vec4(0.0f);
-	//vec4 diffuse = vec4(0.0f);
-	//vec4 spec = vec4(0.0f);
-	//
-	//vec3 lightVec = p.position - wPos;
-	//float dist = length(lightVec);
-	//
-	//if (d > p.range_attenuation)
-	//	return vec4(0.0f);
-	//
-	//lightVec /= d;
+	float dist = length( lightDirection );
+	lightDirection = normalize(lightDirection); // Normalize direction vector
+	//dist = dist * dist;
+	//att = 1/dist^2 - 1/radius^2
+	//float att = 1.0f / (dist * dist) - 1.0f / (light.radius_length * light.radius_length);
+	float att = 1.0f / dist - 1.0f / light.radius_length;
+	//float att = 1.0f -  dist / light.radius_length;
+	//float constantAttenuation = 1.0;
+    //float linearAttenuation = 0.12;
+    //float quadraticAttenuation = 0.10;
+	//float att = constantAttenuation / ((1+linearAttenuation*dist)*(1+quadraticAttenuation*dist*dist));
 
-	vec3 direction = p.position - wPos;
+	float intensity = 0.0f;
+
+	// Diffuse
+	vec3 diffuseColor = vec3(0.0f, 0.0f, 0.0f);
+	float df = dot(surface.normalDepth.xyz, lightDirection);
+	intensity = max( 0.0f, df );
+
+	diffuseColor = surface.diffuse.xyz * intensity * light.color * light.intensity * att;
+
+	// Specular
+	vec3 specColor = vec3(0.0f, 0.0f, 0.0f);
+	vec3 H = normalize( lightDirection + eyeDirection );
+	float NdotH = dot( surface.normalDepth.xyz, H );
+	intensity = pow( clamp( NdotH, 0.0f, 1.0f ), 20.0f );
 	
-	if(length(direction) > p.radius_length)
+	// Temp vars, need materials with these channels
+	float lightSpecIntensity = 1.5f;
+	vec3 lightSpecColor = light.color;
+	vec3 surfaceSpecColor = surface.diffuse.xyz;
+
+
+	specColor = surfaceSpecColor * intensity * lightSpecColor * lightSpecIntensity * att;
+
+	return diffuseColor + specColor;
+}
+
+vec4 CalculatePointlight( LightData light, SurfaceData surface, vec3 wPos, vec3 eyePosition)
+{
+	vec3 lightDir = light.position - wPos;
+	
+	if(length(lightDir) > light.radius_length)
 		return vec4(0.0f, 0.0f, 0.0f, 0.0f);
 	
-	float attenuation = 1.0f - length(direction) / (p.radius_length);
-	direction = normalize(direction);
-	float diffuseFactor = max(0.0f, dot(direction, wNormal)) * attenuation;
-	return vec4(p.color.xyz, 1.0f) * diffuseFactor * p.intensity;
+	vec3 eyeDir = eyePosition - wPos;
+	return vec4(BlinnPhong(light, surface, eyeDir, lightDir), 1.0f);
+
+	//float attenuation = 1.0f - length(lightDir) / (p.radius_length);
+	//lightDir = normalize(lightDir);
+	//float diffuseFactor = max(0.0f, dot(lightDir, wNormal)) * attenuation;
+	//return vec4(p.color.xyz, 1.0f) * diffuseFactor * p.intensity;
 }
 
 void main()
@@ -204,24 +242,27 @@ void main()
 		//}
 
 		barrier();
-
-		vec4 diffuseColor = imageLoad(diffuse, pixel);
-		vec4 specular = imageLoad(specular, pixel);
-		vec4 glow = imageLoad(glowMatID, pixel);
+		
+		SurfaceData surface;
+		surface.normalDepth = normalColor;
+		surface.diffuse = imageLoad(diffuse, pixel);
+		surface.specular = imageLoad(specular, pixel);
+		surface.glow = imageLoad(glowMatID, pixel);
 		
 		vec2 uv = vec2(pixel.x / framebufferDim.x, pixel.y / framebufferDim.y);
 		vec4 wPos = vec4(reconstruct_pos(normalColor.w, uv),1.0f);
 		
 		vec4 color = vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
+
 		//point lights
 		for(int i = 0; i < pointLightCount; i++)
 		{
-			color += CalculateLighting(lights[pointLightIndex[i]], wPos.xyz, 2 * normalColor.xyz - 1.0f, specular, glow) * diffuseColor;
+			color += CalculatePointlight(lights[pointLightIndex[i]], surface, wPos.xyz, eyePos);
 		}
 
 		// ambient
-		color += vec4(0.05f, 0.05f, 0.05f, 0.0f) * diffuseColor;
+		color += vec4(0.05f, 0.05f, 0.05f, 0.0f) * surface.diffuse;
 		
 		//if (gl_LocalInvocationID.x == 0 || gl_LocalInvocationID.y == 0)
 		//	imageStore(outTexture, pixel, vec4(.2f, .2f, .2f, 1.0f));

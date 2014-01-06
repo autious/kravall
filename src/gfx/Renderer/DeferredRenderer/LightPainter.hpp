@@ -55,6 +55,7 @@ namespace GFX
 		GLint m_invProjUniform;
 		GLint m_viewUniform;
 		GLint m_projUniform;
+		GLint m_eyePosUniform;
 
 		GLint m_frambufferSizeUniform;
 		GLint numActiveLightsUniform;
