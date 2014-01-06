@@ -92,6 +92,22 @@ namespace Core
             Core::GnomeLoader::Vertex vertex;
             Core::GnomeLoader::Header header;
 
+
+			/* Magic */
+			char m_magicByte[6];
+			m_file.read((char*)m_magicByte, 6);
+
+			if (strcmp(m_magicByte, "GNOME") != 0)
+			{
+				std::cout << "ERROR: " << fileName << " is not a .BGNOME, of a obsolete version of .BGNOME or corrupted." << std::endl;
+				m_file.close();
+				return nullptr;
+			}
+			else
+			{
+				std::cout << "BGNOME file accepted" << std::endl;
+			}
+
 			/* Header */
 			m_file.read((char*)&header, sizeof(Header));
 
@@ -106,7 +122,7 @@ namespace Core
 
 			/* Vertex */
 			if (header.numberOfBones)
-				m_file.read((char*)mesh.animatedVertices, sizeof(VertexBoneAnimated)*header.numberOfVertices);
+				m_file.read((char*)mesh.animatedVertices, sizeof(VertexBoneAnimated)*header.numberOfVertices); //TODO: animatedvertices need to be allocated
 			else
 				m_file.read((char*)mesh.vertices, sizeof(Vertex)* header.numberOfVertices);
 
@@ -179,9 +195,7 @@ namespace Core
                 for (int j = 0; j < 3; j++)
                     gnome->vertices[i].normal[j] = mesh.vertices[i].normal[j];
                 for (int j = 0; j < 2; j++)
-                {
-                        gnome->vertices[i].uv[j] = mesh.vertices[i].uv[j];
-                }
+                    gnome->vertices[i].uv[j] = mesh.vertices[i].uv[j];
                 for (int j = 0; j < 3; j++)
                     gnome->vertices[i].tangent[j] = mesh.vertices[i].tangent[j];
                 for (int j = 0; j < 3; j++)
@@ -192,7 +206,34 @@ namespace Core
                 gnome->vertices[i].tangent[3] = 0.0f;
                 gnome->vertices[i].tangent[3] = 0.0f;
             }
+
+			/* Freeing allocated memory*/
             delete[] mesh.vertices;
+			delete[] mesh.indices;
+
+			if (header.numberOfBones > 0)
+			{
+				for (int i = 0; i < header.numberOfAnimations; ++i)
+				{
+					for (int j = 0; j < header.numberOfBones; ++j)
+						delete[] animations[i].boneAnim[j].Keyframes;
+					delete[] animations[i].boneAnim;
+				}
+				delete[] bones;
+				delete[] animations;
+				delete[] mesh.animatedVertices;
+			}
+			else if (header.numberOfAnimations > 0)
+			{
+				for (int i = 0; i < header.numberOfAnimations; i++)
+				{
+					for (int j = 0; j < morphAnimation[i].numberOfKeys; j++)
+						delete[] morphAnimation[i].keys[j].vertices;
+					delete[] morphAnimation[i].keys;
+				}
+				delete[] morphAnimation;
+			}
+			/* Done! */
 
             std::cout << "parsed data" << std::endl;
             m_file.close();
