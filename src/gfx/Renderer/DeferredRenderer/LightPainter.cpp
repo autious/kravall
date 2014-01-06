@@ -84,7 +84,7 @@ namespace GFX
 
 		glm::mat4 invProjView = glm::inverse(projMatrix * viewMatrix);
 		m_shaderManager->SetUniform(1, projMatrix, m_projUniform);
-		m_shaderManager->SetUniform(m_screenWidth, m_screenHeight, m_frambufferSizeUniform);
+		m_shaderManager->SetUniform(GLfloat(m_screenWidth), GLfloat(m_screenHeight), m_frambufferSizeUniform);
 		m_shaderManager->SetUniform(1, viewMatrix, m_viewUniform);
 		m_shaderManager->SetUniform(1, invProjView, m_invProjViewUniform);
 
@@ -171,7 +171,7 @@ namespace GFX
 
 		glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
-		glDispatchCompute((m_screenWidth + WORK_GROUP_SIZE - 1) / float(WORK_GROUP_SIZE), (m_screenHeight + WORK_GROUP_SIZE - 1) / float(WORK_GROUP_SIZE), 1);
+		glDispatchCompute(GLuint((m_screenWidth + WORK_GROUP_SIZE - 1) / float(WORK_GROUP_SIZE)), GLuint((m_screenHeight + WORK_GROUP_SIZE - 1) / float(WORK_GROUP_SIZE)), 1);
 
 		m_shaderManager->UseProgram("TQ");
 

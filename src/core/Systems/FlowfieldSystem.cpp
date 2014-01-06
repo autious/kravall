@@ -2,7 +2,7 @@
 #include "World.hpp"
 #include <logger/Logger.hpp>
 
-#include <gfx/gfxinterface.hpp>
+#include <gfx/GFXInterface.hpp>
 
 
 Core::FlowfieldSystem::FlowfieldSystem()
