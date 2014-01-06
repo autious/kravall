@@ -14,17 +14,19 @@ m_lastSelectedEntity(std::numeric_limits<Entity>::max()), m_currentGroundHit(glm
 
 void Core::PickingSystem::Update( float delta )
 {
-	m_currentGroundHit = GetGroundHit( Core::GetInput().GetXPos(), Core::GetInput().GetYPos() );
+	m_currentGroundHit = GetGroundHit(static_cast<int>(Core::GetInput().GetXPos()), 
+									  static_cast<int>(Core::GetInput().GetYPos()));
 
 	if( !Core::GetInput().IsMouseButtonPressed(0) )
 		return;
 	
 	//Entity lastEntity = m_lastSelectedEntity;
-	GetHitEntity(Core::GetInput().GetXPos(), Core::GetInput().GetYPos());
+	GetHitEntity(static_cast<int>(Core::GetInput().GetXPos()), static_cast<int>(Core::GetInput().GetYPos()));
 	
 	if (m_lastSelectedEntity == std::numeric_limits<Entity>::max())
 	{
-		glm::vec3 groundHit = GetGroundHit(Core::GetInput().GetXPos(), Core::GetInput().GetYPos());
+		glm::vec3 groundHit = GetGroundHit(static_cast<int>(Core::GetInput().GetXPos()),
+										   static_cast<int>(Core::GetInput().GetYPos()));
 
 		LOG_DEBUG << "Ground hit: " << groundHit.x << ", " << groundHit.z << std::endl;
 

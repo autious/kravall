@@ -73,7 +73,7 @@ namespace Core
 
 		void ToggleDrawingOfPF();
 
-		glm::vec3 GetPositionFromFieldIndex(int xIndex, int zIndex, int yPos = 0.0f);
+		glm::vec3 GetPositionFromFieldIndex(int xIndex, int zIndex, float yPos = 0.0f);
 	};
 }
 
