@@ -23,6 +23,12 @@ struct LightData
 	vec4 orientation;
 };
 
+struct Tile
+{
+	uint x;
+	uint y;
+};
+
 layout (binding = 0, rgba32f) uniform writeonly image2D outTexture;
 layout (binding = 1, rgba32f) uniform readonly image2D normalDepth;
 layout (binding = 2, rgba32f) uniform readonly image2D diffuse;
@@ -63,20 +69,6 @@ vec3 reconstruct_pos(float z, vec2 uv_f)
 
 vec4 CalculateLighting( LightData p, vec3 wPos, vec3 wNormal, vec4 wSpec, vec4 wGlow)
 {
-	//vec4 outColor = vec4(0.0f);
-	//
-	//vec4 ambient = vec4(0.0f);
-	//vec4 diffuse = vec4(0.0f);
-	//vec4 spec = vec4(0.0f);
-	//
-	//vec3 lightVec = p.position - wPos;
-	//float dist = length(lightVec);
-	//
-	//if (d > p.range_attenuation)
-	//	return vec4(0.0f);
-	//
-	//lightVec /= d;
-
 	vec3 direction = p.position - wPos;
 	
 	if(length(direction) > p.radius_length)
@@ -90,6 +82,19 @@ vec4 CalculateLighting( LightData p, vec3 wPos, vec3 wNormal, vec4 wSpec, vec4 w
 
 void main()
 {
+		if (gl_LocalInvocationIndex == 0)
+		{
+			
+			minDepth = 0xFFFFFFFF;
+			maxDepth = 0;
+
+			pointLightCount = 0;
+
+			spotLightCount = 0;
+		}
+
+		barrier();
+
         ivec2 pixel = ivec2(gl_GlobalInvocationID.xy);
 
         vec4 normalColor = imageLoad(normalDepth, pixel);
@@ -149,7 +154,7 @@ void main()
 		bool inFrustum;
 
 		uint threadCount = WORK_GROUP_SIZE * WORK_GROUP_SIZE;
-		uint passCount = (numActiveLights + threadCount - 1) /threadCount;
+		uint passCount = (numActiveLights + threadCount - 1) / threadCount;
 
 		for (uint passIt = 0; passIt < passCount; ++passIt)
 		{
@@ -177,31 +182,6 @@ void main()
 				}
 			}
 		}
-
-
-		//for (uint lightIndex = gl_LocalInvocationIndex; lightIndex < numActiveLights; lightIndex += WORK_GROUP_SIZE)
-		//{
-		//	p = pointLights[lightIndex];
-		//	pos = view * vec4(p.position, 1.0f);
-		//	rad = p.radius_length;
-		//
-		//	if (pointLightCount < MAX_LIGHTS_PER_TILE)
-		//	{
-		//		bool inFrustum = true;
-		//		for (uint i = 3; i >= 0 && inFrustum; i--)
-		//		{
-		//			dist = dot(frustumPlanes[i], pos);
-		//			//inFrustum = ((i % lightIndex) == 0);
-		//			inFrustum = (-rad <= dist);
-		//		}
-		//
-		//		if (inFrustum)
-		//		{
-		//			id = atomicAdd(pointLightCount, 1);
-		//			pointLightIndex[id] = lightIndex;
-		//		}
-		//	}
-		//}
 
 		barrier();
 

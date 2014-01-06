@@ -102,8 +102,6 @@ GLFWwindow* init( int argc, char** argv )
 void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, unsigned int materialID, float posX, float posY, float posZ)
 {
 	int index = rioterList->size(); // Size before add will be the index of the added entity.
-	double pi = 3.141529;
-	double angle = 0.0; // pi * 0.25;
 
 	/*
 	Core::BoundingVolumeCollisionModel aa = Core::BoundingVolumeCollisionModel::DynamicResolution;
@@ -140,6 +138,30 @@ void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, unsigned in
 	GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::TYPE, GFX::OBJECT_TYPES::OPAQUE_GEOMETRY);
 }
 
+void CreatePolice(std::vector<Core::Entity>* rioterList, int meshID, unsigned int materialID, float posX, float posY, float posZ)
+{
+	int index = rioterList->size(); // Size before add will be the index of the added entity.
+	float pi = 3.141529f;
+
+	rioterList->push_back(Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent,
+		Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent, Core::UnitTypeComponent,
+		Core::MovementComponent, Core::AttributeComponent, Core::BoundingVolumeComponent>
+		(Core::GraphicsComponent(),
+		Core::WorldPositionComponent(posX, posY, posZ),
+		Core::RotationComponent::GetComponentRotateZ(pi * 0.25f),
+		Core::ScaleComponent(1.0f),
+		Core::UnitTypeComponent(Core::UnitType::Police),
+		Core::MovementComponent(0.0f, 0.0f, 0.0f, 2.0f, 6.0f),
+		Core::AttributeComponent(),
+		Core::BoundingVolumeComponent(Core::BoundingSphere(1.5f, 0.0f, 0.0f, 0.0f),
+		Core::BoundingVolumeCollisionModel::DynamicResolution)));
+
+	Core::GraphicsComponent* gc = WGETC <Core::GraphicsComponent>(rioterList->at(index));
+	GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::MESH_ID, meshID);
+	GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::MATERIAL_ID, materialID);
+	GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::TYPE, GFX::OBJECT_TYPES::OPAQUE_GEOMETRY);
+}
+
 static void ControlCamera(double delta)
 {
 	glm::vec2 rotation = glm::vec2(0.0f);
@@ -173,7 +195,7 @@ static void ControlCamera(double delta)
             directions.z = -1;
     }
 
-	Core::gameCamera->UpdateView(directions, rotation, delta);
+	Core::gameCamera->UpdateView(directions, rotation, static_cast<float>(delta));
 }
 
 void run( GLFWwindow * window )
@@ -186,7 +208,10 @@ void run( GLFWwindow * window )
 		Core::world.m_config.GetDouble( "initCameraNearClipDistance", 1.0f ), 
 		Core::world.m_config.GetDouble( "initCameraFarClipDistance", 1000.0f ) );
 	Core::gameCamera->CalculateProjectionMatrix(initScreenWidth, initScreenHeight);
-	Core::gameCamera->SetPosition(glm::vec3(80.0f, 70.0f, 50.0f));
+	Core::gameCamera->SetPosition(glm::vec3(0.0f, 30.0f, 30.0f));
+	
+	glm::vec2 rotation = glm::vec2(0.0f, 3.14f * 0.25f);
+	Core::gameCamera->UpdateView(glm::vec3(0.0f), rotation, 0.0f);
 	
     Core::ContentManager CM;
 	
@@ -214,23 +239,15 @@ void run( GLFWwindow * window )
             }, false);
    
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));	
+	
+	CreateRioter(&rioters, meshID, materialID, -3.0f, 0.5f, 0.0f);
+	CreateRioter(&rioters, meshID, materialID, 0.0f, 0.5f, 0.0f);
+	CreateRioter(&rioters, meshID, materialID, 3.0f, 0.5f, 0.0f);
 
-	//CreateRioter(&rioters, meshID, materialID, -6.0f, 0.5f, 0.0f);
-	//CreateRioter(&rioters, meshID, materialID, 0.0f, 0.5f, 0.0f);
-	//CreateRioter(&rioters, meshID, materialID, 6.0f, 0.5f, 0.0f);
-
-	/*for( int i = -5; i < 5; i++ )
-		CreateRioter(&rioters, meshID, materialID,  i * 16.0f, 1.0f, 0.0f);*/
-
-    /*
-	for (float i = -11.0f; i < 11.0f; ++i)
-	{
-		for (float j = -11.0f; j < 11.0f; ++j)
-		{
-			CreateRioter(&rioters, meshID, materialID, i * 2.0f + 0.5f, 0.5f, j * 2.0f + 0.5f);
-		}
-	}
-    */
+	CreatePolice(&rioters, meshID, materialID, 0.0f, 0.5f, -6.0f);
+	CreatePolice(&rioters, meshID, materialID, -6.0f, 0.5f, 0.0f);
+	CreatePolice(&rioters, meshID, materialID, 6.0f, 0.5f, 0.0f);
+	CreatePolice(&rioters, meshID, materialID, 0.0f, 0.5f, 6.0f);
 
 
 	LOG_INFO << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " " << std::endl;
@@ -266,8 +283,8 @@ void run( GLFWwindow * window )
 		GFX::Render(delta);
 
         Core::world.m_contentManager.CallFinishers();
-		Core::world.m_systemHandler.Update( delta );
-        Core::world.m_luaState.Update( delta );
+		Core::world.m_systemHandler.Update(static_cast<float>(delta));
+		Core::world.m_luaState.Update(static_cast<float>(delta));
 
 		GFX::Debug::DisplayFBO(Core::world.m_config.GetInt( "showFramebuffers", -1 ));
 		glfwSwapBuffers(window);
