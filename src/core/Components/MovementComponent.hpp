@@ -1,6 +1,8 @@
 #ifndef SRC_CORE_COMPONENTS_MOVEMENT_COMPONENT_HPP
 #define SRC_CORE_COMPONENTS_MOVEMENT_COMPONENT_HPP
 
+#include <float.h> // For FLT_MAX
+
 namespace Core
 {
 	/*!
@@ -16,6 +18,12 @@ namespace Core
 
 		/* An array specifying the object's direction of movement where index 0 = x, index 1 = y and index 2 = z. */
 		float direction[3];
+
+		/* 
+			An array specifying the object's goal, ceasing movement when the goal is reached. The index 0 corresponds
+			to the x component, 1 to y and 2 to z. An x-value of FLT_MAX disables the goal.
+		*/
+		float goal[3];
 
 		/*! Default constructor. Initialising all members to 0. */
 		MovementComponent() : speed(0.0f), maxSpeed(0.0f)
@@ -40,6 +48,9 @@ namespace Core
 			direction[0] = dirX;
 			direction[1] = dirY;
 			direction[2] = dirZ;
+			goal[0] = FLT_MAX;
+			goal[1] = 0.0f;
+			goal[2] = 0.0f;
 		}
 
         inline static const char* GetName()
