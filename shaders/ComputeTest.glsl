@@ -76,6 +76,19 @@ vec4 CalculateLighting( LightData p, vec3 wPos, vec3 wNormal, vec4 wSpec, vec4 w
 
 void main()
 {
+		if (gl_LocalInvocationIndex == 0)
+		{
+			
+			minDepth = 0xFFFFFFFF;
+			maxDepth = 0;
+
+			pointLightCount = 0;
+
+			spotLightCount = 0;
+		}
+
+		barrier();
+
         ivec2 pixel = ivec2(gl_GlobalInvocationID.xy);
 
         vec4 normalColor = imageLoad(normalDepth, pixel);
