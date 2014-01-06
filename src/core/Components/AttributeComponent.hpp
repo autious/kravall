@@ -35,7 +35,7 @@ namespace Core
 
 		union
 		{
-			struct //PolicePart
+			struct
 			{
 				/*! The police's stance represented by the PoliceStance enum. */
 				PoliceStance stance;
@@ -46,7 +46,7 @@ namespace Core
 				/*! The police's mobility represented by a float with range [0.0f, 100.0f]. */
 				float mobility;
 			} police;
-			struct //RioterPart
+			struct
 			{
 				/*! The rioter's alignment represented by the RioterAlignment enum. */
 				RioterAlignment alignment;

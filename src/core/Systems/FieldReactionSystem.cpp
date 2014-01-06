@@ -2,16 +2,26 @@
 #include "World.hpp"
 #include <logger/Logger.hpp>
 
+#define frsChargeCurve Core::FieldReactionSystem::ChargeCurve
+
 const float Core::FieldReactionSystem::FIELD_CELL_SIDE_SIZE = FIELD_SIDE_LENGTH / static_cast<float>(FIELD_SIDE_CELL_COUNT);
+/*const frsChargeCurve Core::FieldReactionSystem::CURVE[1][2] =
+{
+	{ frsChargeCurve::ChargeCurve(), frsChargeCurve::ChargeCurve() }
+};*/
+
+const frsChargeCurve Core::FieldReactionSystem::CURVE[2] =
+	{ frsChargeCurve::ChargeCurve(1.0f, 15.0f, 0.8f), frsChargeCurve::ChargeCurve(-1.0f, 15.0f, 0.8f) };
 
 Core::FieldReactionSystem::FieldReactionSystem() : BaseSystem(EntityHandler::GenerateAspect<WorldPositionComponent, MovementComponent,
-	UnitTypeComponent, AttributeComponent>(), 0ULL), m_showPF(true)
+	UnitTypeComponent, AttributeComponent>(), 0ULL), m_showPF(true), m_updateCounter(0)
 {
 	for (int i = 0; i < FIELD_SIDE_CELL_COUNT; ++i)
 	{
 		for (int j = 0; j < FIELD_SIDE_CELL_COUNT; ++j)
 		{
 			m_field[i][j] = -1.0f + i * 0.025f + j * 0.025f;
+			m_calculatingField[i][j] = 0.0f;
 		}
 	}
 }
@@ -22,11 +32,11 @@ void Core::FieldReactionSystem::Update(float delta)
 
 	if (m_showPF)
 	{
-		UpdateDebugField(m_entities[1]);
-		//DrawDebugField();
+		UpdateDebugField();
+		DrawDebugField();
 	}
 
-	DrawDebugField();
+	//DrawDebugField();
 }
 
 void Core::FieldReactionSystem::UpdateAgents()
@@ -52,8 +62,8 @@ void Core::FieldReactionSystem::UpdateAgents()
 
 		if (utc->type == UnitType::Rioter) // 2.
 		{
-			glm::vec2 bestIndex;
-			float highestSum = GetEffectOnAgent(wpc);
+			glm::vec2 bestIndex = glm::vec2(0.0f, 0.0f);
+			float highestSum = GetEffectOnAgentAt(it._Ptr, wpc);
 
 			for (int i = -1; i < 2; ++i) // 3.
 			{
@@ -65,7 +75,7 @@ void Core::FieldReactionSystem::UpdateAgents()
                     WorldPositionComponent wpct(wpc->position[0] + i, wpc->position[1],
 						wpc->position[2] + j);
 
-					float chargeSum = GetEffectOnAgent( &wpct );
+					float chargeSum = GetEffectOnAgentAt(it._Ptr, &wpct);
 
 					if (chargeSum > highestSum)
 					{
@@ -81,46 +91,76 @@ void Core::FieldReactionSystem::UpdateAgents()
 	}
 }
 
-float Core::FieldReactionSystem::GetEffectOnAgent(WorldPositionComponent* agentPos)
+float Core::FieldReactionSystem::GetEffectOnAgentAt(Entity* queryAgent, WorldPositionComponent* queryPosition)
 {
 	float sum = 0.0f;
 
 	for (std::vector<Entity>::iterator it2 = m_entities.begin(); it2 != m_entities.end(); it2++) // 5.
 	{
-		sum += GetChargeAt(*it2, WorldPositionComponent::GetVec3(*agentPos)); // 7.
+		if (queryAgent != it2._Ptr) // 6.
+			sum += GetAgentsChargeAt(*it2, WorldPositionComponent::GetVec3(*queryPosition)); // 7.
 	}
 
 	return sum;
 }
 
-float Core::FieldReactionSystem::GetChargeAt(Entity chargedAgent, glm::vec3 queryPosition)
+float Core::FieldReactionSystem::GetAgentsChargeAt(Entity chargedAgent, glm::vec3 queryPosition)
 {
-	float cutoff = 15.0f;
+	Core::UnitTypeComponent* utc = WGETC<UnitTypeComponent>(chargedAgent);
+	int indexFromType = static_cast<int>(utc->type);
+
+	/*float cutoff = 15.0f;
 	float repelRadius = 0.8f;
 	float peakCharge = 1.0f;
-	float decline = peakCharge / (cutoff - repelRadius);
+	float decline = peakCharge / (cutoff - repelRadius);*/
+
+	/*float cutoff = CURVE[indexFromType].cutoff; //15.0f;
+	float repelRadius = CURVE[indexFromType].repelRadius; //0.8f;
+	float peakCharge = CURVE[indexFromType].charge;// 1.0f;
+	float decline = CURVE[indexFromType].decline; //peakCharge / (cutoff - repelRadius); // ~0.07*/
+
 	WorldPositionComponent* wpc = WGETC<WorldPositionComponent>(chargedAgent);
 	glm::vec3 distVec = (WorldPositionComponent::GetVec3(*wpc) - queryPosition);
 	float distance = (distVec.x * distVec.x) + (distVec.z * distVec.z);
 	
-	if (distance <= 0.001f || distance > cutoff)
+	if (distance <= 0.001f || distance > CURVE[indexFromType].cutoff) //distance > cutoff)
 		return 0.0f;
-	else if (distance < repelRadius)
-		return -100 + distance * (repelRadius / 100);
+	else if (distance < CURVE[indexFromType].repelRadius) //repelRadius)
+		return -100 + distance * (CURVE[indexFromType].repelRadius / 100); //(repelRadius / 100);
 	else
-		return peakCharge - distance * decline;
+		return CURVE[indexFromType].charge - distance * CURVE[indexFromType].decline;
+		//return peakCharge - distance * decline;
 }
 
-void Core::FieldReactionSystem::UpdateDebugField(Entity selectedAgent)
+void Core::FieldReactionSystem::UpdateDebugField()
 {
-	for (int i = 0; i < FIELD_SIDE_CELL_COUNT; ++i)
+	int startRow = m_updateCounter * FIELD_UPDATE_ROW_COUNT;
+	int endRow = m_updateCounter == FIELD_UPDATE_FRAME_COUNT - 1 ?
+				 FIELD_SIDE_CELL_COUNT : ((m_updateCounter + 1 ) * FIELD_UPDATE_ROW_COUNT);
+
+	for (int i = startRow; i < endRow; ++i)
+	{
+		for (int j = 0; j < FIELD_SIDE_CELL_COUNT; ++j)
+		{
+			WorldPositionComponent pos = WorldPositionComponent(GetPositionFromFieldIndex(i, j));
+			m_calculatingField[i][j] = GetEffectOnAgentAt(nullptr, &pos) * 0.5f;
+		}
+	}
+
+	if (++m_updateCounter >= FIELD_UPDATE_FRAME_COUNT)
+	{
+		m_updateCounter = 0;
+		CommitDebugField();
+	}
+
+	/*for (int i = 0; i < FIELD_SIDE_CELL_COUNT; ++i)
 	{
 		for (int j = 0; j < FIELD_SIDE_CELL_COUNT; ++j)
 		{
 			WorldPositionComponent pos = WorldPositionComponent(GetPositionFromFieldIndex(i, j));
 			m_field[i][j] = GetEffectOnAgent(&pos) * 0.1f;
 		}
-	}
+	}*/
 }
 
 void Core::FieldReactionSystem::DrawDebugField()
@@ -135,13 +175,29 @@ void Core::FieldReactionSystem::DrawDebugField()
 		{
 			GFXColor colour = GFXColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-			if (m_field[i][j] > 0.0f)
-				colour = GFXColor(0.0f, m_field[i][j], 0.0f, 1.0f);
+			/*if (m_field[i][j] > 0.0f)
+				colour = GFXColor(0.0f, m_field[i][j], 1.0f, 1.0f);
 			else
-				colour = GFXColor(-m_field[i][j], 0.0f, 0.0f, 1.0f);
+				colour = GFXColor(-m_field[i][j], 0.0f, 1.0f, 1.0f);*/
+
+			if (m_field[i][j] > 0.0f)
+				colour = GFXColor(0.0f, 0.3f - m_field[i][j], m_field[i][j], 1.0f);
+			else
+				colour = GFXColor(-m_field[i][j], 0.3f + m_field[i][j], 0.0f, 1.0f);
 
 			GFX::Debug::DrawBox(GetPositionFromFieldIndex(i, j, yPos),
 				GFXVec3(FIELD_CELL_SIDE_SIZE + 0.1f, 0.1f, FIELD_CELL_SIDE_SIZE + 0.1f), true, colour, true);
+		}
+	}
+}
+
+void Core::FieldReactionSystem::CommitDebugField()
+{
+	for (int i = 0; i < FIELD_SIDE_CELL_COUNT; ++i)
+	{
+		for (int j = 0; j < FIELD_SIDE_CELL_COUNT; ++j)
+		{
+			m_field[i][j] = m_calculatingField[i][j];
 		}
 	}
 }

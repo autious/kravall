@@ -21,7 +21,29 @@ void Core::PickingSystem::Update( float delta )
 	if( !Core::GetInput().IsMouseButtonPressed(0) )
 		return;
 	
-	GetHitEntity( Core::GetInput().GetXPos(), Core::GetInput().GetYPos() );
+	//Entity lastEntity = m_lastSelectedEntity;
+	GetHitEntity(Core::GetInput().GetXPos(), Core::GetInput().GetYPos());
+	
+	if (m_lastSelectedEntity == std::numeric_limits<Entity>::max())
+	{
+		glm::vec3 groundHit = GetGroundHit(Core::GetInput().GetXPos(), Core::GetInput().GetYPos());
+
+		LOG_DEBUG << "Ground hit: " << groundHit.x << ", " << groundHit.z << std::endl;
+
+		/*Core::UnitTypeComponent* utc = WGETC<Core::UnitTypeComponent>(lastEntity);
+
+		if (utc->type == Core::UnitType::Police)
+		{
+			Core::MovementComponent* mc = WGETC<Core::MovementComponent>(lastEntity);
+			glm::vec3 newDirection = GetGroundHit(Core::GetInput().GetXPos(), Core::GetInput().GetYPos()) -
+				glm::vec3(mc->direction[0], mc->direction[1], mc->direction[2]);
+			newDirection /= newDirection.length();
+
+			mc->direction[0] = newDirection.x;
+			mc->direction[1] = newDirection.y;
+			mc->direction[2] = newDirection.z;
+		}*/
+	}
 }
 
 
@@ -40,6 +62,11 @@ Core::Entity Core::PickingSystem::GetHitEntity( int mouseX, int mouseY )
 	{
 		Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(*it);
 		Core::BoundingVolumeComponent* bvc = WGETC<Core::BoundingVolumeComponent>(*it);
+
+		Core::UnitTypeComponent* utc = WGETC<Core::UnitTypeComponent>(*it);
+
+		if (utc->type == Core::UnitType::Rioter)
+			continue;
 		
 		Core::BoundingSphere* sphere = (Core::BoundingSphere*)bvc->data;
 		Core::AABB* aabb = (Core::AABB*)bvc->data;
@@ -93,7 +120,7 @@ Core::Entity Core::PickingSystem::GetHitEntity( int mouseX, int mouseY )
 	}
 
 	m_lastSelectedEntity = std::numeric_limits<Entity>::max();
-	return std::numeric_limits<Entity>::max();;
+	return std::numeric_limits<Entity>::max();
 }
 
 

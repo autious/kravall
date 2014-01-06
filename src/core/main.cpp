@@ -151,8 +151,6 @@ void TestRendering()
 void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, unsigned int materialID, float posX, float posY, float posZ)
 {
 	int index = rioterList->size(); // Size before add will be the index of the added entity.
-	double pi = 3.141529;
-	double angle = 0.0; // pi * 0.25;
 
 	/*Core::BoundingVolumeCollisionModel aa = Core::BoundingVolumeCollisionModel::DynamicResolution;
 
@@ -185,6 +183,30 @@ void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, unsigned in
 	Core::GraphicsComponent* gc = WGETC <Core::GraphicsComponent>(rioterList->at(index));
 	GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::MESH_ID, meshID);
     GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::MATERIAL_ID, materialID);
+	GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::TYPE, GFX::OBJECT_TYPES::OPAQUE_GEOMETRY);
+}
+
+void CreatePolice(std::vector<Core::Entity>* rioterList, int meshID, unsigned int materialID, float posX, float posY, float posZ)
+{
+	int index = rioterList->size(); // Size before add will be the index of the added entity.
+	double pi = 3.141529;
+
+	rioterList->push_back(Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent,
+		Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent, Core::UnitTypeComponent,
+		Core::MovementComponent, Core::AttributeComponent, Core::BoundingVolumeComponent>
+		(Core::GraphicsComponent(),
+		Core::WorldPositionComponent(posX, posY, posZ),
+		Core::RotationComponent::GetComponentRotateZ(pi * 0.25f),
+		Core::ScaleComponent(1.0f),
+		Core::UnitTypeComponent(Core::UnitType::Police),
+		Core::MovementComponent(0.0f, 0.0f, 0.0f, 2.0f, 6.0f),
+		Core::AttributeComponent(),
+		Core::BoundingVolumeComponent(Core::BoundingSphere(1.5f, 0.0f, 0.0f, 0.0f),
+		Core::BoundingVolumeCollisionModel::DynamicResolution)));
+
+	Core::GraphicsComponent* gc = WGETC <Core::GraphicsComponent>(rioterList->at(index));
+	GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::MESH_ID, meshID);
+	GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::MATERIAL_ID, materialID);
 	GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::TYPE, GFX::OBJECT_TYPES::OPAQUE_GEOMETRY);
 }
 
@@ -356,7 +378,7 @@ void run( GLFWwindow * window )
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));	
 
 
-	for (int i = -10; i < 10; i++)
+	/*for (int i = -10; i < 10; i++)
 	{
 		for (int j = -10; j < 10; j++)
 		{
@@ -379,7 +401,7 @@ void run( GLFWwindow * window )
 			rc->rotation[2] = sin(3.14f);
 			rc->rotation[3] = cos(3.14f / 2.0f);
 		}
-	}
+	}*/
 	
 	for (int i = 0; i < 4096; i++)
 	{
@@ -409,16 +431,21 @@ void run( GLFWwindow * window )
 			Core::RotationComponent* rc = WGETC<Core::RotationComponent>(light);
 	}
 	
-	CreateRioter(&rioters, meshID, materialID, -6.0f, 0.5f, 0.0f);
+	CreateRioter(&rioters, meshID, materialID, -3.0f, 0.5f, 0.0f);
 	CreateRioter(&rioters, meshID, materialID, 0.0f, 0.5f, 0.0f);
-	CreateRioter(&rioters, meshID, materialID, 6.0f, 0.5f, 0.0f);
+	CreateRioter(&rioters, meshID, materialID, 3.0f, 0.5f, 0.0f);
+
+	CreatePolice(&rioters, meshID, materialID, 0.0f, 0.5f, -6.0f);
+	CreatePolice(&rioters, meshID, materialID, -6.0f, 0.5f, 0.0f);
+	CreatePolice(&rioters, meshID, materialID, 6.0f, 0.5f, 0.0f);
+	CreatePolice(&rioters, meshID, materialID, 0.0f, 0.5f, 6.0f);
 
 	/*for( int i = -5; i < 5; i++ )
-		CreateRioter(&rioters, meshID, materialID,  i * 16.0f, 1.0f, 0.0f);*/
+		CreateRioter(&rioters, meshID, materialID,  i * 3.0f, 1.0f, 0.0f);*/
 
-	/*for (float i = -5.0f; i < 5.0f; ++i)
+	/*for (float i = -11.0f; i < 11.0f; ++i)
 	{
-		for (float j = -5.0f; j < 5.0f; ++j)
+		for (float j = -11.0f; j < 11.0f; ++j)
 		{
 			CreateRioter(&rioters, meshID, materialID, i * 2.0f + 0.5f, 0.5f, j * 2.0f + 0.5f);
 		}
