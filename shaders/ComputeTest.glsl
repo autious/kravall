@@ -63,20 +63,6 @@ vec3 reconstruct_pos(float z, vec2 uv_f)
 
 vec4 CalculateLighting( LightData p, vec3 wPos, vec3 wNormal, vec4 wSpec, vec4 wGlow)
 {
-	//vec4 outColor = vec4(0.0f);
-	//
-	//vec4 ambient = vec4(0.0f);
-	//vec4 diffuse = vec4(0.0f);
-	//vec4 spec = vec4(0.0f);
-	//
-	//vec3 lightVec = p.position - wPos;
-	//float dist = length(lightVec);
-	//
-	//if (d > p.range_attenuation)
-	//	return vec4(0.0f);
-	//
-	//lightVec /= d;
-
 	vec3 direction = p.position - wPos;
 	
 	if(length(direction) > p.radius_length)
@@ -149,7 +135,7 @@ void main()
 		bool inFrustum;
 
 		uint threadCount = WORK_GROUP_SIZE * WORK_GROUP_SIZE;
-		uint passCount = (numActiveLights + threadCount - 1) /threadCount;
+		uint passCount = (numActiveLights + threadCount - 1) / threadCount;
 
 		for (uint passIt = 0; passIt < passCount; ++passIt)
 		{
@@ -177,31 +163,6 @@ void main()
 				}
 			}
 		}
-
-
-		//for (uint lightIndex = gl_LocalInvocationIndex; lightIndex < numActiveLights; lightIndex += WORK_GROUP_SIZE)
-		//{
-		//	p = pointLights[lightIndex];
-		//	pos = view * vec4(p.position, 1.0f);
-		//	rad = p.radius_length;
-		//
-		//	if (pointLightCount < MAX_LIGHTS_PER_TILE)
-		//	{
-		//		bool inFrustum = true;
-		//		for (uint i = 3; i >= 0 && inFrustum; i--)
-		//		{
-		//			dist = dot(frustumPlanes[i], pos);
-		//			//inFrustum = ((i % lightIndex) == 0);
-		//			inFrustum = (-rad <= dist);
-		//		}
-		//
-		//		if (inFrustum)
-		//		{
-		//			id = atomicAdd(pointLightCount, 1);
-		//			pointLightIndex[id] = lightIndex;
-		//		}
-		//	}
-		//}
 
 		barrier();
 
