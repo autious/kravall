@@ -7,11 +7,9 @@
 #include <GLFWInput.hpp>
 
 Core::PickingSystem::PickingSystem()
-	: BaseSystem( EntityHandler::GenerateAspect< WorldPositionComponent, BoundingVolumeComponent >(), 0ULL )
-{
-	m_lastSelectedEntity = std::numeric_limits<Entity>::max();
-	m_currentGroundHit = glm::vec3(0.0f);
-}
+: BaseSystem(EntityHandler::GenerateAspect< WorldPositionComponent, BoundingVolumeComponent >(), 0ULL), 
+m_lastSelectedEntity(std::numeric_limits<Entity>::max()), m_currentGroundHit(glm::vec3(0.0f)), m_entityTypeMask(1 << Priority::Police)
+{ }
 
 
 void Core::PickingSystem::Update( float delta )
@@ -21,25 +19,56 @@ void Core::PickingSystem::Update( float delta )
 	if( !Core::GetInput().IsMouseButtonPressed(0) )
 		return;
 	
-	GetHitEntity( Core::GetInput().GetXPos(), Core::GetInput().GetYPos() );
+	//Entity lastEntity = m_lastSelectedEntity;
+	GetHitEntity(Core::GetInput().GetXPos(), Core::GetInput().GetYPos());
+	
+	if (m_lastSelectedEntity == std::numeric_limits<Entity>::max())
+	{
+		glm::vec3 groundHit = GetGroundHit(Core::GetInput().GetXPos(), Core::GetInput().GetYPos());
+
+		LOG_DEBUG << "Ground hit: " << groundHit.x << ", " << groundHit.z << std::endl;
+
+		/*Core::UnitTypeComponent* utc = WGETC<Core::UnitTypeComponent>(lastEntity);
+
+		if (utc->type == Core::UnitType::Police)
+		{
+			Core::MovementComponent* mc = WGETC<Core::MovementComponent>(lastEntity);
+			glm::vec3 newDirection = GetGroundHit(Core::GetInput().GetXPos(), Core::GetInput().GetYPos()) -
+				glm::vec3(mc->direction[0], mc->direction[1], mc->direction[2]);
+			newDirection /= newDirection.length();
+
+			mc->direction[0] = newDirection.x;
+			mc->direction[1] = newDirection.y;
+			mc->direction[2] = newDirection.z;
+		}*/
+	}
 }
 
 
 
 
-Core::Entity Core::PickingSystem::GetHitEntity( int mouseX, int mouseY )
+Core::Entity Core::PickingSystem::GetHitEntity(int mouseX, int mouseY, char entityTypeMask)
 {
+	if (entityTypeMask < 0)
+		entityTypeMask = m_entityTypeMask;
 	glm::vec3 rayDir = GetRayFromCamera( mouseX, mouseY );
 	glm::vec3 rayOrigin = Core::gameCamera->GetPosition();
 
 	float closestHit = FLT_MAX;
 	Entity objectHit;
+	Core::UnitType objectHitUnitType = UnitType::Count;
 	bool somethingHit = false;
 
 	for( std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); it++ )
 	{
 		Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(*it);
 		Core::BoundingVolumeComponent* bvc = WGETC<Core::BoundingVolumeComponent>(*it);
+
+		Core::UnitTypeComponent* utc = WGETC<Core::UnitTypeComponent>(*it);
+
+		if ((GetEntityMask(utc->type) & entityTypeMask) == 0 ||
+			GetEntityMask(utc->type) < GetEntityMask(objectHitUnitType))
+			continue;
 		
 		Core::BoundingSphere* sphere = (Core::BoundingSphere*)bvc->data;
 		Core::AABB* aabb = (Core::AABB*)bvc->data;
@@ -75,6 +104,7 @@ Core::Entity Core::PickingSystem::GetHitEntity( int mouseX, int mouseY )
 			{
 				somethingHit = true;
 				objectHit = *it;
+				objectHitUnitType = utc->type;
 				closestHit = projectedDistanceToSphere - sphereIntersectionDelta;
 			}
 		}
@@ -93,7 +123,7 @@ Core::Entity Core::PickingSystem::GetHitEntity( int mouseX, int mouseY )
 	}
 
 	m_lastSelectedEntity = std::numeric_limits<Entity>::max();
-	return std::numeric_limits<Entity>::max();;
+	return std::numeric_limits<Entity>::max();
 }
 
 
@@ -130,4 +160,17 @@ glm::vec3 Core::PickingSystem::GetRayFromCamera( int mouseX, int mouseY )
 Core::Entity Core::PickingSystem::GetLastHitEntity( )
 {
 	return m_lastSelectedEntity;
+}
+
+char Core::PickingSystem::GetEntityMask(UnitType type)
+{
+	switch (type)
+	{
+		case UnitType::Rioter:
+			return 1 << Priority::Rioter;
+		case UnitType::Police:
+			return 1 << Priority::Police;
+		default:
+			return 0;
+	}
 }
