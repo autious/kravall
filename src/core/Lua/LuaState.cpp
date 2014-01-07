@@ -17,6 +17,8 @@
 #include <Lua/Bridges/LuaBoundingVolumeBridge.hpp>
 #include <Lua/Bridges/LuaUnitTypeBridge.hpp>
 
+#include <Lua/Datatypes/LuaBitmask.hpp>
+
 #include <Timer.hpp>
 
 Core::LuaState::LuaState()
@@ -47,6 +49,8 @@ Core::LuaState::LuaState()
     lua_newtable( m_state );
     lua_setglobal( m_state, "core" );
 
+    LuaBitmask::OpenLibs( m_state );
+
     LuaLoggerPrint::OpenLibs( m_state );
     LuaEntityBridge::OpenLibs( m_state );
     LuaContentManagerBridge::OpenLibs( m_state );
@@ -59,6 +63,7 @@ Core::LuaState::LuaState()
 
 Core::LuaState::~LuaState()
 {
+    LuaInputBridge::CloseLibs( m_state );
     lua_close( m_state );
 }
 

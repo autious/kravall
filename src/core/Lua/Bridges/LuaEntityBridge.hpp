@@ -14,12 +14,12 @@
 #include <lualib.h>
 #include <lauxlib.h>
 
+#include <Lua/LuaMetatableTypes.hpp>
+
 #include <ComponentFramework/SystemTypes.hpp>
 #include <ComponentFramework/ComponentType.hpp>
 #include <World.hpp>
 
-#define COMPONENT_META_TYPE "metatype_core_component"
-#define ENTITY_META_TYPE "metatype_core_entity"
 
 namespace Core
 {
@@ -207,9 +207,7 @@ namespace Core
 
             Core::world.m_entityHandler.AddComponentsAspect( ent, asp ); 
 
-            Entity * userDataEntity = (Entity*)lua_newuserdata( L, sizeof( Entity ) ); 
-            luaL_getmetatable( L, ENTITY_META_TYPE );
-            lua_setmetatable( L, -2 );
+            Entity * userDataEntity = LuaUNewEntity( L );
 
             *userDataEntity = ent;
             return 1;

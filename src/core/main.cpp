@@ -62,7 +62,6 @@ GLFWwindow* init( int argc, char** argv )
 {
 	GLFWwindow* window;
 
-
     Core::world.m_luaState.Execute( "scripts/config.lua" );
     Core::world.m_luaState.Execute( "scripts/main.lua" );
 

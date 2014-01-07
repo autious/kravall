@@ -55,6 +55,7 @@ namespace Core
             InputManager::GetKeyboardState().SetKeyState(key, action);
 
             KeyEvents[nKeyEvents].key = key;
+            KeyEvents[nKeyEvents].scancode = scancode;
             KeyEvents[nKeyEvents].action= action;
             KeyEvents[nKeyEvents].mods = mods;
             nKeyEvents++;
