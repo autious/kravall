@@ -28,8 +28,6 @@ void Core::PickingSystem::Update( float delta )
 		glm::vec3 groundHit = GetGroundHit(static_cast<int>(Core::GetInput().GetXPos()),
 										   static_cast<int>(Core::GetInput().GetYPos()));
 
-		LOG_DEBUG << "Ground hit: " << groundHit.x << ", " << groundHit.z << std::endl;
-
 		Core::UnitTypeComponent* utc = WGETC<Core::UnitTypeComponent>(lastEntity);
 
 		if (utc->type == Core::UnitType::Police)
@@ -43,15 +41,12 @@ void Core::PickingSystem::Update( float delta )
 
 			//glm::vec3 newDirection = groundHit - glm::vec3(wpc->position[0], groundHit.y, wpc->position[2]);
 			glm::vec3 newDirection = glm::vec3(groundHit.x - wpc->position[0], 0.0f, groundHit.z - wpc->position[2]);
-			newDirection /= newDirection.length();
 
-			LOG_DEBUG << "New Direction: " << newDirection.x << ", " << newDirection.y << ", " << newDirection.z << std::endl;
+			newDirection /= glm::length(newDirection);
 
 			mc->direction[0] = newDirection.x;
 			mc->direction[1] = newDirection.y;
 			mc->direction[2] = newDirection.z;
-
-			
 		}
 	}
 }

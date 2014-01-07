@@ -151,7 +151,7 @@ void CreatePolice(std::vector<Core::Entity>* rioterList, int meshID, unsigned in
 		Core::RotationComponent::GetComponentRotateZ(pi * 0.25f),
 		Core::ScaleComponent(1.0f),
 		Core::UnitTypeComponent(Core::UnitType::Police),
-		Core::MovementComponent(0.0f, 0.0f, 0.0f, 1.0f, 6.0f),
+		Core::MovementComponent(0.0f, 0.0f, 0.0f, 2.0f, 6.0f),
 		Core::AttributeComponent(),
 		Core::BoundingVolumeComponent(Core::BoundingSphere(1.5f, 0.0f, 0.0f, 0.0f),
 		Core::BoundingVolumeCollisionModel::DynamicResolution)));
@@ -234,9 +234,9 @@ void run( GLFWwindow * window )
    
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));	
 	
-	CreateRioter(&rioters, meshID, materialID, -3.0f, 0.5f, 0.0f);
+	CreateRioter(&rioters, meshID, materialID, -3.0f, 0.5f, 1.0f);
 	CreateRioter(&rioters, meshID, materialID, 0.0f, 0.5f, 0.0f);
-	CreateRioter(&rioters, meshID, materialID, 3.0f, 0.5f, 0.0f);
+	CreateRioter(&rioters, meshID, materialID, 3.0f, 0.5f, 1.0f);
 
 	CreatePolice(&rioters, meshID, materialID, 0.0f, 0.5f, -6.0f);
 	CreatePolice(&rioters, meshID, materialID, -6.0f, 0.5f, 0.0f);
