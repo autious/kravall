@@ -56,9 +56,11 @@ uniform mat4 invProjView;
 uniform vec2 framebufferDim;
 
 uniform uint numActiveLights;
+
 uniform uint numPointLights;
 uniform uint numSpotLights;
 uniform uint numDirLights;
+uniform uint numAmbientLights;
 
 shared uint minDepth = 0xFFFFFFFF;
 shared uint maxDepth = 0;
@@ -77,43 +79,34 @@ vec3 reconstruct_pos(float z, vec2 uv_f)
     return (sPos.xyz / sPos.w);
 }
 
-vec3 BlinnPhong( LightData light, SurfaceData surface, vec3 eyeDirection, vec3 lightDirection )
+vec3 BlinnPhong( LightData light, SurfaceData surface, vec3 eyeDirection, vec3 lightDirection, float attenuation )
 {
-	float dist = length( lightDirection );
-	lightDirection = normalize(lightDirection); // Normalize direction vector
-	//dist = dist * dist;
-	//att = 1/dist^2 - 1/radius^2
-	//float att = 1.0f / (dist * dist) - 1.0f / (light.radius_length * light.radius_length);
-	float att = 1.0f / dist - 1.0f / light.radius_length;
-	//float att = 1.0f -  dist / light.radius_length;
-	//float constantAttenuation = 1.0;
-    //float linearAttenuation = 0.12;
-    //float quadraticAttenuation = 0.10;
-	//float att = constantAttenuation / ((1+linearAttenuation*dist)*(1+quadraticAttenuation*dist*dist));
+	lightDirection = normalize(lightDirection);
 
 	float intensity = 0.0f;
 
 	// Diffuse
 	vec3 diffuseColor = vec3(0.0f, 0.0f, 0.0f);
-	float df = dot(surface.normalDepth.xyz, lightDirection);
-	intensity = max( 0.0f, df );
+	float df =  max( 0.0f, dot(surface.normalDepth.xyz, lightDirection));
+	intensity = df;
 
-	diffuseColor = surface.diffuse.xyz * intensity * light.color * light.intensity * att;
+	diffuseColor = surface.diffuse.xyz * intensity * light.color * light.intensity * attenuation;
 
 	// Specular
 	vec3 specColor = vec3(0.0f, 0.0f, 0.0f);
-	vec3 H = normalize( lightDirection + eyeDirection );
-	float NdotH = dot( surface.normalDepth.xyz, H );
-	intensity = pow( clamp( NdotH, 0.0f, 1.0f ), 20.0f );
+	if(df > 0.0f)
+	{
+		vec3 H = normalize( lightDirection + eyeDirection );
+		float NdotH = dot( surface.normalDepth.xyz, H );
+		intensity = pow( clamp( NdotH, 0.0f, 1.0f ), surface.specular.w ) * df;
 	
-	// Temp vars, need materials with these channels
-	float lightSpecIntensity = 1.5f;
-	vec3 lightSpecColor = light.color;
-	vec3 surfaceSpecColor = surface.diffuse.xyz;
+		// Temp vars, need materials with these channels
+		float lightSpecIntensity = 1.5f;
+		vec3 lightSpecColor = light.color;
 
 
-	specColor = surfaceSpecColor * intensity * lightSpecColor * lightSpecIntensity * att;
-
+		specColor = surface.specular.xyz * intensity * lightSpecColor * lightSpecIntensity * attenuation;
+	}
 	return diffuseColor + specColor;
 }
 
@@ -124,13 +117,28 @@ vec4 CalculatePointlight( LightData light, SurfaceData surface, vec3 wPos, vec3 
 	if(length(lightDir) > light.radius_length)
 		return vec4(0.0f, 0.0f, 0.0f, 0.0f);
 	
-	vec3 eyeDir = eyePosition - wPos;
-	return vec4(BlinnPhong(light, surface, eyeDir, lightDir), 1.0f);
+	// Calculate attenuation
+	float dist = length( lightDir );
+	float att = 1.0f -  dist / light.radius_length;
+	//dist = dist * dist;
+	//att = 1/dist^2 - 1/radius^2
+	//float att = 1.0f / (dist * dist) - 1.0f / (light.radius_length * light.radius_length);
+	//float att = 1.0f / dist - 1.0f / light.radius_length;
+	//float constantAttenuation = 1.0;
+    //float linearAttenuation = 0.12;
+    //float quadraticAttenuation = 0.10;
+	//float att = constantAttenuation / ((1+linearAttenuation*dist)*(1+quadraticAttenuation*dist*dist));
 
-	//float attenuation = 1.0f - length(lightDir) / (p.radius_length);
-	//lightDir = normalize(lightDir);
-	//float diffuseFactor = max(0.0f, dot(lightDir, wNormal)) * attenuation;
-	//return vec4(p.color.xyz, 1.0f) * diffuseFactor * p.intensity;
+	vec3 eyeDir = normalize(eyePosition - wPos);
+	return vec4(BlinnPhong(light, surface, eyeDir, lightDir, att), 0.0f);
+}
+
+vec4 CalculateDirlight( LightData light, SurfaceData surface, vec3 wPos, vec3 eyePosition)
+{
+	vec3 lightDir = normalize(-light.orientation.xyz);
+	vec3 eyeDir = normalize(eyePosition - wPos);
+	float df =  max( 0.0f, dot(surface.normalDepth.xyz, lightDir));
+	return vec4(BlinnPhong(light, surface, eyeDir, lightDir, 1.0f), 0.0f);
 }
 
 void main()
@@ -207,13 +215,13 @@ void main()
 		bool inFrustum;
 
 		uint threadCount = WORK_GROUP_SIZE * WORK_GROUP_SIZE;
-		uint passCount = (numActiveLights + threadCount - 1) / threadCount;
+		uint passCount = (numPointLights + threadCount - 1) / threadCount;
 
 		for (uint passIt = 0; passIt < passCount; ++passIt)
 		{
 			uint lightIndex =  passIt * threadCount + gl_LocalInvocationIndex;
 
-			lightIndex = min(lightIndex, numActiveLights);
+			lightIndex = min(lightIndex, numPointLights);
 
 			p = lights[lightIndex];
 			pos = view * vec4(p.position, 1.0f);
@@ -251,13 +259,32 @@ void main()
 
 
 		//point lights
-		for(int i = 0; i < pointLightCount; i++)
+		uint i;
+		for(i = 0; i < pointLightCount; i++)
 		{
 			color += CalculatePointlight(lights[pointLightIndex[i]], surface, wPos.xyz, eyePos);
 		}
-
-		// ambient
-		color += vec4(0.05f, 0.05f, 0.05f, 0.0f) * surface.diffuse;
+		
+		//spot lights
+		for(i = 0; i < spotLightCount; i++)
+		{
+			
+		}
+		uint ofst;
+		//Directional lights
+		ofst = numPointLights + numSpotLights;
+		for(i = ofst; i < numDirLights + ofst; i++)
+		{
+			color += CalculateDirlight(lights[i], surface, wPos.xyz, eyePos);
+		}
+		
+		ofst = numPointLights + numSpotLights + numDirLights;
+		// Ambient lights
+		for(i = ofst; i < numAmbientLights + ofst; i++)
+		{
+			color += vec4(lights[i].color*lights[i].intensity, 0.0f) * surface.diffuse;
+		}
+		
 		
 		//if (gl_LocalInvocationID.x == 0 || gl_LocalInvocationID.y == 0)
 		//	imageStore(outTexture, pixel, vec4(.2f, .2f, .2f, 1.0f));

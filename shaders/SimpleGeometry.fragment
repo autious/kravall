@@ -23,7 +23,7 @@ void main()
 {
 	normalDepthRT = vec4(normalize(normalFS.xyz), posFS.z / posFS.w);
 	diffuseRT = texture2D(diffuseMap, uvFS);
-	specularRT = posW;
+	specularRT = vec4(1.0f, 1.0f, 1.0f, 50.0f);
 	glowMatIDRT = vec4(1, 0, 1, 1);
 	//color = vec4(normalFS.xyz, 1.0f);
 	//color = vec4(tangentFS.xyz, 1.0f);

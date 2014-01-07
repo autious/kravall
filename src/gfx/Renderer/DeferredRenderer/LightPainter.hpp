@@ -62,11 +62,17 @@ namespace GFX
 		GLint textureUniform;
 		GLuint m_textureHandle;
 
+		
+		GLint m_numPointLightsUniform;
+		GLint m_numSpotLightsUniform;
+		GLint m_numDirLightsUniform;
+		GLint m_numAmbientLightsUniform;
+
 		GLuint m_pointLightBuffer;
 
 		const unsigned int MAXIMUM_LIGHTS = 4096;
 		const unsigned int WORK_GROUP_SIZE = 16;
-		LightData* m_pointLights;
+		LightData* m_lights;
 
 		int m_screenWidth;
 		int m_screenHeight;
