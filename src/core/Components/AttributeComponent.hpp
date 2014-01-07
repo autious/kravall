@@ -40,6 +40,9 @@ namespace Core
 				/*! The police's stance represented by the PoliceStance enum. */
 				PoliceStance stance;
 
+				/*! The police's squad id for orders. */
+				int squadID;
+
 				/*! The police's defense represented by an integer with range [0, 100]. */
 				int defense;
 
@@ -50,6 +53,9 @@ namespace Core
 			{
 				/*! The rioter's alignment represented by the RioterAlignment enum. */
 				RioterAlignment alignment;
+
+				/*! The rioter's conceptual group ID. Used for determining which flow field to use.*/
+				int groupID;
 
 				/*! The rioter's rage represented by an integer with range [0, 100]. */
 				int rage;
@@ -79,10 +85,11 @@ namespace Core
 			\param policeMobility The initial mobility for the police unit.
 		*/
 		AttributeComponent(const int& startHealth, const int& startStamina, const float& startMorale,
-			const PoliceStance& policeStance, const int& policeDefense, const float& policeMobility) : 
-			health(startHealth), stamina(startStamina), morale(startMorale)
+			const PoliceStance& policeStance, const int& policeSquad, const int& policeDefense, 
+			const float& policeMobility) : health(startHealth), stamina(startStamina), morale(startMorale)
 		{
 			police.stance = policeStance;
+			police.squadID = policeSquad;
 			police.defense = policeDefense;
 			police.mobility = policeMobility;
 		}
@@ -97,10 +104,11 @@ namespace Core
 			\param rioterPressure The initial pressure for the rioter.
 		*/
 		AttributeComponent(const int& startHealth, const int& startStamina, const float& startMorale,
-			const RioterAlignment& rioterAlignment, const int& rioterRage, const int& rioterPressure) :
-			health(startHealth), stamina(startStamina), morale(startMorale)
+			const RioterAlignment& rioterAlignment, const int& rioterGroupID, const int& rioterRage, 
+			const int& rioterPressure) : health(startHealth), stamina(startStamina), morale(startMorale)
 		{
 			rioter.alignment = rioterAlignment;
+			rioter.groupID = rioterGroupID;
 			rioter.rage = rioterRage;
 			rioter.pressure = rioterPressure;
 		}

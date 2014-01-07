@@ -12,8 +12,6 @@
 #include <Components/MovementComponent.hpp>
 #include <Components/UnitTypeComponent.hpp>
 #include <Components/AttributeComponent.hpp>
-//#include <Components/AttributeRioterComponent.hpp>
-//#include <Components/AttributePoliceComponent.hpp>
 #include <Components/BoundingVolumeComponent.hpp>
 
 namespace Core
