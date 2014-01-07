@@ -26,7 +26,7 @@ namespace Core
 			Will also set the entity as selected and gettable via the GetLastHitEntity() function.
 			If no hit entity max is returned.
 		*/
-		Entity GetHitEntity( int mouseX, int mouseY );
+		Entity GetHitEntity(int mouseX, int mouseY, char entityTypeMask = -1);
 
 		/*!
 			Will check a ray from the game camera via cursor to far-plane vs. the XZ plane.
@@ -50,9 +50,18 @@ namespace Core
 		Entity GetLastHitEntity();
 
 	private:
+		enum Priority
+		{
+			Rioter = 0,
+			Police = 1
+		};
 
 		Entity m_lastSelectedEntity;
 		glm::vec3 m_currentGroundHit;
+
+		char m_entityTypeMask;
+
+		char GetEntityMask(UnitType type);
     };
 }
 

@@ -94,7 +94,7 @@ namespace GFX
 			m_shaderManager->SetUniform(m_clearColor, m_alphaUniform);
 		}
 		else
-			m_shaderManager->SetUniform(m_logoAlpha += 1.01f * delta, m_alphaUniform);
+			m_shaderManager->SetUniform(m_logoAlpha += 1.01f * (float)delta, m_alphaUniform);
 
 		m_shaderManager->SetUniform(1, glm::vec2(screenWidth / 2.0f, screenHeight / 2.0f + 100.0f), m_positionUniform);
 		m_shaderManager->SetUniform(1, glm::vec2(180.0f, 110.0f), m_sizeUniform);
@@ -139,13 +139,13 @@ namespace GFX
 
 	void SplashPainter::FadeToBlack(const int& screenWidth, const int& screenHeight, const double& delta)
 	{
-		m_clearColor -= 1.01f * delta;
+		m_clearColor -= 1.01f * (float)delta;
 		glClearColor(m_clearColor, m_clearColor, m_clearColor, m_clearColor);
 	}
 
 	void SplashPainter::FadeToWhite(const int& screenWidth, const int& screenHeight, const double& delta)
 	{
-		m_clearColor += 1.01f * delta;
+		m_clearColor += 1.01f * (float)delta;
 		glClearColor(m_clearColor, m_clearColor, m_clearColor, m_clearColor);
 	}
 

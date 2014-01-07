@@ -45,7 +45,7 @@ for i = -1, 3 do
 				},
 				{
 					type = core.componentType.ScaleComponent,
-					data = { scale = 0.01 }
+					data = { scale = 1.0 }
 				},
 				{
 					type = core.componentType.RotationComponent,

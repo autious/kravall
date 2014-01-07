@@ -27,7 +27,7 @@ namespace Core
 
 	void Camera::LookAt(glm::vec3 lookAtTarget, glm::vec3 up)
 	{
-		m_forward = glm::normalize(m_position - lookAtTarget);
+		m_forward = glm::normalize(m_position + lookAtTarget);
 		m_up = up;
 		CalculateViewMatrix();
 

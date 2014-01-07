@@ -35,9 +35,16 @@ namespace GFX
 		m_projUniform = m_shaderManager->GetUniformLocation("ComputeTest", "proj");
 		m_frambufferSizeUniform = m_shaderManager->GetUniformLocation("ComputeTest", "framebufferDim");
 
+		m_eyePosUniform = m_shaderManager->GetUniformLocation("ComputeTest", "eyePos");
+
 
 
 		numActiveLightsUniform = m_shaderManager->GetUniformLocation("ComputeTest", "numActiveLights");
+
+		m_numPointLightsUniform = m_shaderManager->GetUniformLocation("ComputeTest", "numPointLights");
+		m_numSpotLightsUniform = m_shaderManager->GetUniformLocation("ComputeTest", "numSpotLights");
+		m_numDirLightsUniform = m_shaderManager->GetUniformLocation("ComputeTest", "numDirLights");
+		m_numAmbientLightsUniform = m_shaderManager->GetUniformLocation("ComputeTest", "numAmbientLights");
 
 		glUniform1i(m_shaderManager->GetUniformLocation("ComputeTest", "destTex"), 0);
 
@@ -47,7 +54,7 @@ namespace GFX
 		Resize(m_screenWidth, m_screenHeight);
 
 
-		m_pointLights = new LightData[MAXIMUM_LIGHTS];
+		m_lights = new LightData[MAXIMUM_LIGHTS];
 
 		glGenBuffers(1, &m_pointLightBuffer);
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_pointLightBuffer);
@@ -77,9 +84,12 @@ namespace GFX
 	{
 		m_shaderManager->UseProgram("ComputeTest");
 
+		glm::vec3 cameraPos = -glm::vec3(viewMatrix[3]) * glm::mat3(viewMatrix);
+		m_shaderManager->SetUniform(1, cameraPos, m_eyePosUniform);
+
 		glm::mat4 invProjView = glm::inverse(projMatrix * viewMatrix);
 		m_shaderManager->SetUniform(1, projMatrix, m_projUniform);
-		m_shaderManager->SetUniform(m_screenWidth, m_screenHeight, m_frambufferSizeUniform);
+		m_shaderManager->SetUniform(GLfloat(m_screenWidth), GLfloat(m_screenHeight), m_frambufferSizeUniform);
 		m_shaderManager->SetUniform(1, viewMatrix, m_viewUniform);
 		m_shaderManager->SetUniform(1, invProjView, m_invProjViewUniform);
 
@@ -96,8 +106,12 @@ namespace GFX
 
 		//Assemble lights
 		unsigned int i = 0;
+
+		unsigned int totalNumLights[GFX::LIGHT_TYPES::COUNT];
+		memset(totalNumLights, 0, sizeof(totalNumLights));
+		
 		unsigned int numLights = 0;
-		unsigned int totalNumLights = 0;
+		unsigned int totalDrawCalls = 0;
 		GFXBitmask bitmask;
 		bool ok = true;
 		for (i = renderIndex; i < renderJobs.size(); i++)
@@ -107,15 +121,15 @@ namespace GFX
 
 			objType = GetBitmaskValue(bitmask, BITMASK::TYPE);
 
-			// Break if no opaque object
+			// Break if not a light object
 			if (objType != GFX::OBJECT_TYPES::LIGHT)
 			{
 				break;
 			}
 
 			lightType = GetBitmaskValue(bitmask, BITMASK::LIGHT_TYPE);
-			// Do point lights only
-			if (lightType != GFX::LIGHT_TYPES::POINT)
+			// Do point and directional lights only
+			if (lightType != GFX::LIGHT_TYPES::POINT && lightType != GFX::LIGHT_TYPES::DIR && lightType != GFX::LIGHT_TYPES::AMBIENT)
 			{
 				break;
 			}
@@ -125,21 +139,27 @@ namespace GFX
 			translucency = GetBitmaskValue(bitmask, BITMASK::TRANSLUCENCY_TYPE);
 			meshID = GetBitmaskValue(bitmask, BITMASK::MESH_ID);
 			depth = GetBitmaskValue(bitmask, BITMASK::DEPTH);
+			
 
 			if (numLights < MAXIMUM_LIGHTS)
 			{
-				m_pointLights[numLights] = *reinterpret_cast<LightData*>(renderJobs[i].value);
+
+
+				m_lights[numLights] = *reinterpret_cast<LightData*>(renderJobs[i].value);
+
+				// Count light types
+				totalNumLights[lightType]++;
 				numLights++;
 			}
 			else
 			{
 				ok = false;
 			}
-			totalNumLights++;
+			totalDrawCalls++;
 		}
 		if (!ok)
 		{
-			LOG_GFXSPECIAL << "Too many lights. Light draw calls: " << totalNumLights << " Maximum is: " << MAXIMUM_LIGHTS << "\n";
+			LOG_GFXSPECIAL << "Too many lights. Light draw calls: " << totalDrawCalls << " Maximum is: " << MAXIMUM_LIGHTS << "\n";
 			LogSystem::Mute(LOG_GFXSPECIAL.GetPrefix());
 		}
 		else
@@ -149,6 +169,11 @@ namespace GFX
 		renderIndex = i;
 
 		m_shaderManager->SetUniform((GLuint)numLights, numActiveLightsUniform);
+
+		m_shaderManager->SetUniform((GLuint)totalNumLights[LIGHT_TYPES::POINT], m_numPointLightsUniform);
+		m_shaderManager->SetUniform((GLuint)totalNumLights[LIGHT_TYPES::SPOT], m_numSpotLightsUniform);
+		m_shaderManager->SetUniform((GLuint)totalNumLights[LIGHT_TYPES::DIR], m_numDirLightsUniform);
+		m_shaderManager->SetUniform((GLuint)totalNumLights[LIGHT_TYPES::AMBIENT], m_numAmbientLightsUniform);
 
 		//TextureManager::BindTexture(diffuse->GetTextureHandle(), m_shaderManager->GetUniformLocation("ComputeTest", "normal"), 0, GL_TEXTURE_2D);
 		glBindImageTexture(0, m_textureHandle, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
@@ -161,12 +186,12 @@ namespace GFX
 		LightData p;
 		for (unsigned int i = 0; i < numLights; i++)
 		{
-			pData[i] = m_pointLights[i];
+			pData[i] = m_lights[i];
 		}
 
 		glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
-		glDispatchCompute((m_screenWidth + WORK_GROUP_SIZE - 1) / float(WORK_GROUP_SIZE), (m_screenHeight + WORK_GROUP_SIZE - 1) / float(WORK_GROUP_SIZE), 1);
+		glDispatchCompute(GLuint((m_screenWidth + WORK_GROUP_SIZE - 1) / float(WORK_GROUP_SIZE)), GLuint((m_screenHeight + WORK_GROUP_SIZE - 1) / float(WORK_GROUP_SIZE)), 1);
 
 		m_shaderManager->UseProgram("TQ");
 

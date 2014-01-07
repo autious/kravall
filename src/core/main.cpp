@@ -21,7 +21,6 @@
 
 #include <utility/Colors.hpp>
 
-#include "GLFWInput.hpp"
 #include <World.hpp>
 
 #include "Console/Console.hpp"
@@ -37,6 +36,7 @@
 #include <logger/Handlers.hpp>
 
 #include <Lua/LuaState.hpp>
+#include <Input/InputManager.hpp>
 
 #include <gfx/BitmaskDefinitions.hpp>
 
@@ -102,23 +102,7 @@ GLFWwindow* init( int argc, char** argv )
 void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, unsigned int materialID, float posX, float posY, float posZ)
 {
 	int index = rioterList->size(); // Size before add will be the index of the added entity.
-	double pi = 3.141529;
-	double angle = 0.0; // pi * 0.25;
 
-	/*
-	Core::BoundingVolumeCollisionModel aa = Core::BoundingVolumeCollisionModel::DynamicResolution;
-
-	glm::vec3 direction( 0.0f, 0.0f, 0.0f );
-	if( posX )
-		//direction = glm::normalize( glm::vec3( 0.0f, 0.0f, posY ) );
-		direction = glm::normalize( glm::vec3( posX, 0.0f, posZ ) );
-		//direction = glm::normalize( glm::vec3( posX, 0.0f, posY ) );	
-	else 
-	{
-		aa = Core::BoundingVolumeCollisionModel::StaticResolution;
-		posZ += 0.7f;
-	}
-	*/
 	rioterList->push_back(Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, 
 		Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent, Core::UnitTypeComponent,
 		Core::MovementComponent, Core::AttributeComponent, Core::BoundingVolumeComponent>
@@ -131,7 +115,7 @@ void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, unsigned in
 		 //Core::MovementComponent( -direction.x, 0, -direction.z, 21.1f, 5.0f),
 		 Core::AttributeComponent(),
 		 //Core::BoundingVolumeComponent( Core::BoundingSphere( 3.0f, 0.0f, 0.0f, 0.0f ), aa )
-		 Core::BoundingVolumeComponent(Core::BoundingSphere(1.0f, 0.0f, 0.0f, 0.0f), 
+		 Core::BoundingVolumeComponent(Core::BoundingSphere(0.5f, 0.0f, 0.0f, 0.0f), 
 		 Core::BoundingVolumeCollisionModel::DynamicResolution)));
 
 	Core::GraphicsComponent* gc = WGETC <Core::GraphicsComponent>(rioterList->at(index));
@@ -140,35 +124,64 @@ void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, unsigned in
 	GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::TYPE, GFX::OBJECT_TYPES::OPAQUE_GEOMETRY);
 }
 
+void CreatePolice(std::vector<Core::Entity>* rioterList, int meshID, unsigned int materialID, float posX, float posY, float posZ)
+{
+	int index = rioterList->size(); // Size before add will be the index of the added entity.
+	float pi = 3.141529f;
+
+	rioterList->push_back(Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent,
+		Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent, Core::UnitTypeComponent,
+		Core::MovementComponent, Core::AttributeComponent, Core::BoundingVolumeComponent>
+		(Core::GraphicsComponent(),
+		Core::WorldPositionComponent(posX, posY, posZ),
+		Core::RotationComponent(),
+		Core::ScaleComponent(1.0f),
+		Core::UnitTypeComponent(Core::UnitType::Police),
+		Core::MovementComponent(0.0f, 0.0f, 0.0f, 2.0f, 6.0f),
+		Core::AttributeComponent(),
+		Core::BoundingVolumeComponent(Core::BoundingSphere(0.5f, 0.0f, 0.0f, 0.0f),
+		Core::BoundingVolumeCollisionModel::DynamicResolution)));
+
+	Core::GraphicsComponent* gc = WGETC <Core::GraphicsComponent>(rioterList->at(index));
+	GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::MESH_ID, meshID);
+	GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::MATERIAL_ID, materialID);
+	GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::TYPE, GFX::OBJECT_TYPES::OPAQUE_GEOMETRY);
+}
+
 static void ControlCamera(double delta)
 {
 	glm::vec2 rotation = glm::vec2(0.0f);
 	glm::vec3 directions = glm::vec3(0.0f);
 
-	if (Core::GetInput().IsMouseButtonPressed(GLFW_MOUSE_BUTTON_1))
+	if (Core::GetInputManager().GetMouseState().IsButtonDown(GLFW_MOUSE_BUTTON_1) )
 	{
+        int dx,dy;
+        Core::GetInputManager().GetPosDiff( dx,dy );
 
-		float x = -((float)Core::GetInput().GetXPosDiff() / 1280.0f);
-		float y = -((float)Core::GetInput().GetYPosDiff() / 720.0f);
+		float x = -((float)dx / 1280.0f);
+		float y = -((float)dy / 720.0f);
 
 		rotation.x = x * 5;
 		rotation.y = y * 5;
 	}
 
-	if (Core::GetInput().IsKeyPressed(GLFW_KEY_D))
-		directions.y = -1;
-	if (Core::GetInput().IsKeyPressed(GLFW_KEY_A))
-		directions.y = 1;
-	if (Core::GetInput().IsKeyPressed(GLFW_KEY_W))
-		directions.x = 1;
-	if (Core::GetInput().IsKeyPressed(GLFW_KEY_S))
-		directions.x = -1;
-	if (Core::GetInput().IsKeyPressed(GLFW_KEY_E))
-		directions.z = 1;
-	if (Core::GetInput().IsKeyPressed(GLFW_KEY_Q))
-		directions.z = -1;
+    if( Core::Console().IsVisible() == false )
+    {
+        if (Core::GetInputManager().GetKeyboardState().IsKeyDown(GLFW_KEY_D))
+            directions.y = -1;
+        if (Core::GetInputManager().GetKeyboardState().IsKeyDown(GLFW_KEY_A))
+            directions.y = 1;
+        if (Core::GetInputManager().GetKeyboardState().IsKeyDown(GLFW_KEY_W))
+            directions.x = 1;
+        if (Core::GetInputManager().GetKeyboardState().IsKeyDown(GLFW_KEY_S))
+            directions.x = -1;
+        if (Core::GetInputManager().GetKeyboardState().IsKeyDown(GLFW_KEY_E))
+            directions.z = 1;
+        if (Core::GetInputManager().GetKeyboardState().IsKeyDown(GLFW_KEY_Q))
+            directions.z = -1;
+    }
 
-	Core::gameCamera->UpdateView(directions, rotation, delta);
+	Core::gameCamera->UpdateView(directions, rotation, static_cast<float>(delta));
 }
 
 void run( GLFWwindow * window )
@@ -181,48 +194,54 @@ void run( GLFWwindow * window )
 		Core::world.m_config.GetDouble( "initCameraNearClipDistance", 1.0f ), 
 		Core::world.m_config.GetDouble( "initCameraFarClipDistance", 1000.0f ) );
 	Core::gameCamera->CalculateProjectionMatrix(initScreenWidth, initScreenHeight);
-	Core::gameCamera->SetPosition(glm::vec3(80.0f, 70.0f, 50.0f));
-    
-	Core::ContentManager CM;
+
+	Core::gameCamera->SetPosition(glm::vec3(70.0f, 70.0f, 70.0f));
+	
+	glm::vec2 rotation = glm::vec2(-0.7f, 3.14f * 0.25f);
+	Core::gameCamera->UpdateView(glm::vec3(0.0f), rotation, 0.0f);
+	
+    Core::ContentManager CM;
 	
 	GFX::SetProjectionMatrix(Core::gameCamera->GetProjectionMatrix());
 
 	std::vector<Core::Entity> rioters;
 
-	Core::GetInput().Initialize(window);
+	//Core::GetInputManager().Initialize(window);
+    Core::GetInputManager().Init( window );
 
     unsigned int meshID; 
-    unsigned int materialID;
+    unsigned int copMaterialID;
+	unsigned int rioterMaterialID;
 
-    Core::world.m_contentManager.Load<Core::GnomeLoader>("assets/cube.bgnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+    Core::world.m_contentManager.Load<Core::GnomeLoader>("assets/model/animated/police/cop/cop-light_00.bgnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
             {
                 Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
                 const Core::ModelData* data = gnomeLoader->getData(handle);
 				meshID = data->meshID;
             });
 
-    Core::world.m_contentManager.Load<Core::MaterialLoader>("assets/material/test-material.material", [&materialID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+	Core::world.m_contentManager.Load<Core::MaterialLoader>("assets/material/cop.material", [&copMaterialID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
             {
                 Core::MaterialData* data = static_cast<Core::MaterialData*>(handle);
-                materialID = data->materialId;
+				copMaterialID = static_cast<unsigned int>(data->materialId);
             }, false);
+
+	Core::world.m_contentManager.Load<Core::MaterialLoader>("assets/material/rioter.material", [&rioterMaterialID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+			{
+				Core::MaterialData* data = static_cast<Core::MaterialData*>(handle);
+				rioterMaterialID = static_cast<unsigned int>(data->materialId);
+			}, false);
    
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));	
-
-	//CreateRioter(&rioters, meshID, materialID, -6.0f, 0.5f, 0.0f);
-	//CreateRioter(&rioters, meshID, materialID, 0.0f, 0.5f, 0.0f);
-	//CreateRioter(&rioters, meshID, materialID, 6.0f, 0.5f, 0.0f);
-
-	/*for( int i = -5; i < 5; i++ )
-		CreateRioter(&rioters, meshID, materialID,  i * 16.0f, 1.0f, 0.0f);*/
 	
-	for (float i = -11.0f; i < 11.0f; ++i)
-	{
-		for (float j = -11.0f; j < 11.0f; ++j)
-		{
-			CreateRioter(&rioters, meshID, materialID, i * 2.0f + 0.5f, 0.5f, j * 2.0f + 0.5f);
-		}
-	}
+	CreateRioter(&rioters, meshID, rioterMaterialID, -3.0f, 0.0f, 1.0f);
+	CreateRioter(&rioters, meshID, rioterMaterialID, 0.0f, 0.0f, 0.0f);
+	CreateRioter(&rioters, meshID, rioterMaterialID, 3.0f, 0.0f, 1.0f);
+
+	CreatePolice(&rioters, meshID, copMaterialID, 0.0f, 0.0f, -6.0f);
+	CreatePolice(&rioters, meshID, copMaterialID, -6.0f, 0.0f, 0.0f);
+	CreatePolice(&rioters, meshID, copMaterialID, 6.0f, 0.0f, 0.0f);
+	CreatePolice(&rioters, meshID, copMaterialID, 0.0f, 0.0f, 6.0f);
 
 	LOG_INFO << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " " << std::endl;
 
@@ -237,7 +256,6 @@ void run( GLFWwindow * window )
 		double delta = (thisFrame - lastFrameTime) / 1000.0;
 		lastFrameTime = thisFrame;
 
-		Core::GetInput().UpdateInput();
 		
 		Core::Console().Update();
 
@@ -258,13 +276,13 @@ void run( GLFWwindow * window )
 		GFX::Render(delta);
 
         Core::world.m_contentManager.CallFinishers();
-		Core::world.m_systemHandler.Update( delta );
-        Core::world.m_luaState.Update( delta );
+		Core::world.m_systemHandler.Update(static_cast<float>(delta));
+		Core::world.m_luaState.Update(static_cast<float>(delta));
 
 		GFX::Debug::DisplayFBO(Core::world.m_config.GetInt( "showFramebuffers", -1 ));
-		Core::GetInput().ResetInput();
 		glfwSwapBuffers(window);
-		glfwPollEvents();
+		Core::GetInputManager().PollEvents();
+        Core::GetInputManager().CallListeners();
 
 		//TODO: Timing hook
 		Core::world.m_frameHeap.Rewind();

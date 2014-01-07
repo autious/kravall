@@ -4,10 +4,10 @@
 #include <gfx/GFXInterface.hpp>
 #include <string>
 #include <logger/Logger.hpp>
-#include <GLFWInput.hpp>
 #include <Camera/Camera.hpp>
 #include <limits>
 #include <GameUtility/NavigationMesh.hpp>
+#include <Input/InputManager.hpp>
 
 void CheckPickingSystemVsGround()
 {
@@ -22,14 +22,15 @@ void CheckPickingSystemVsGround()
 	if( pickingSystem < 0 )
 		return;
 
-	if( !Core::GetInput().IsMouseButtonPressed(0) )
+	if( !Core::GetInputManager().GetMouseState().IsButtonDown(0) )
 		return;
 
-	glm::vec3 hit = ((Core::PickingSystem*)Core::world.m_systemHandler.GetSystem( pickingSystem ))->GetGroundHit( Core::GetInput().GetXPos(), Core::GetInput().GetYPos() );
+    int x,y;
+    Core::GetInputManager().GetMouseState().GetCursorPosition(x,y);
+
+	glm::vec3 hit = ((Core::PickingSystem*)Core::world.m_systemHandler.GetSystem( pickingSystem ))->GetGroundHit( x, y );
 	GFX::Debug::DrawSphere( hit, 3.0f, GFXColor( 1.0f, 0.7f, 0.0f, 1.0f ), false);
 }
-
-
 
 void CheckPickingSystemVsRioters()
 {
@@ -44,11 +45,14 @@ void CheckPickingSystemVsRioters()
 	if( pickingSystem < 0 )
 		return;
 
-	if( !Core::GetInput().IsMouseButtonPressed(0) )
+	if( !Core::GetInputManager().GetMouseState().IsButtonDown(0) )
 		return;
 	
 	Core::Entity ent;
-	if( (ent = ((Core::PickingSystem*)Core::world.m_systemHandler.GetSystem( pickingSystem ))->GetHitEntity( Core::GetInput().GetXPos(), Core::GetInput().GetYPos() )) != std::numeric_limits<Core::Entity>::max() )
+    int x,y;
+    Core::GetInputManager().GetMouseState().GetCursorPosition(x,y);
+
+	if( (ent = ((Core::PickingSystem*)Core::world.m_systemHandler.GetSystem( pickingSystem ))->GetHitEntity( x,y )) != std::numeric_limits<Core::Entity>::max() )
 		return;
 
 }
@@ -120,8 +124,9 @@ void CheckIfPointIsInsideNavMesh()
 	if( pickingSystem < 0 )
 		return;
 
-
-	glm::vec3 temp = ((Core::PickingSystem*)Core::world.m_systemHandler.GetSystem( pickingSystem ))->GetGroundHit( Core::GetInput().GetXPos(), Core::GetInput().GetYPos() );
+	int x, y;
+	Core::GetInputManager().GetMouseState().GetCursorPosition( x, y );
+	glm::vec3 temp = ((Core::PickingSystem*)Core::world.m_systemHandler.GetSystem( pickingSystem ))->GetGroundHit( x, y );
 
 	if( Core::GetNavigationMesh()->CheckPointInsideNode( temp, 0 ) )
 	{
@@ -133,7 +138,7 @@ void CheckIfPointIsInsideNavMesh()
 
 void CheckNavMeshCalculation()
 {
-	if( !Core::GetInput().IsMouseButtonPressed(1) )
+	if( !Core::GetInputManager().GetMouseState().IsButtonDown(1) )
 		return;
 
 	int systemMax = Core::world.m_systemHandler.GetSystemCount();
@@ -147,10 +152,12 @@ void CheckNavMeshCalculation()
 	if( pickingSystem < 0 )
 		return;
 
+	int x, y;
+	Core::GetInputManager().GetMouseState().GetCursorPosition( x, y );
+	glm::vec3 temp = ((Core::PickingSystem*)Core::world.m_systemHandler.GetSystem( pickingSystem ))->GetGroundHit( x, y );
 
-	glm::vec3 temp = ((Core::PickingSystem*)Core::world.m_systemHandler.GetSystem( pickingSystem ))->GetGroundHit( Core::GetInput().GetXPos(), Core::GetInput().GetYPos() );
-
-	Core::GetNavigationMesh()->CalculateFlowfieldForGroup( temp );
+	if( Core::GetNavigationMesh() )
+		Core::GetNavigationMesh()->CalculateFlowfieldForGroup( temp );
 }
 
 
@@ -176,5 +183,3 @@ void Core::AIDebugSystem::Update( float delta )
 
 
 }
-
-

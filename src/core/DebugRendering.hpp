@@ -1,3 +1,6 @@
+
+#include <algorithm>
+
 static void LuaInfoRender()
 {
     int screenWidth = GFX::GetScreenWidth(); 

@@ -6,7 +6,7 @@ namespace Core
 	/*! Enum specifying what type of unit the object is. There are three types of objects: Rioter, Police and Object. */
 	enum UnitType
 	{
-		Rioter, Police, Object
+		Rioter, Police, Object, Count
 	};
 
 	/*! 
