@@ -1,7 +1,7 @@
 #version 430 core
 
-#define MAX_LIGHTS 4096
-#define MAX_LIGHTS_PER_TILE 1024
+#define MAX_LIGHTS 1024
+#define MAX_LIGHTS_PER_TILE 256
 #define WORK_GROUP_SIZE 16
 
 #pragma optionNV(fastmath on) 
@@ -101,7 +101,7 @@ vec3 BlinnPhong( LightData light, SurfaceData surface, vec3 eyeDirection, vec3 l
 		intensity = pow( clamp( NdotH, 0.0f, 1.0f ), surface.specular.w ) * df;
 	
 		// Temp vars, need materials with these channels
-		float lightSpecIntensity = 1.5f;
+		float lightSpecIntensity = 1.0f;
 		vec3 lightSpecColor = light.color;
 
 
