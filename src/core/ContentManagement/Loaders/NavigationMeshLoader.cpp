@@ -53,12 +53,11 @@ namespace Core
 #define check( x, y ) if( x ) { LOG_ERROR << y << std::endl; return nullptr; }
 	NavigationMesh* NavigationMeshLoader::LoadNavigationMeshFromFile( const char* path )
 	{
+		check( Core::GetNavigationMesh(), "NavMesh is already loaded!" );
 
 		std::fstream ff;
 		ff.open( path, std::fstream::in );
 		check( !ff.is_open(), "Navmesh file could not be found! Trying to open: " << path );
-
-		ff.seekg (0, std::ios::beg);
 
 		// read header...
 		int nrNodes = 0;
@@ -80,7 +79,10 @@ namespace Core
 		ff.close();
 
 		// set the number of flowfield instances using the number specified in the config file.
-		Core::InitFlowfieldInstances( instance );
+		instance->InitFlowfieldInstances();
+
+		// calculate the linksTo values
+		instance->CalculateLinks();
 
 		return instance;
 	}

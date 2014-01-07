@@ -182,8 +182,8 @@ void run( GLFWwindow * window )
 		Core::world.m_config.GetDouble( "initCameraFarClipDistance", 1000.0f ) );
 	Core::gameCamera->CalculateProjectionMatrix(initScreenWidth, initScreenHeight);
 	Core::gameCamera->SetPosition(glm::vec3(80.0f, 70.0f, 50.0f));
-	
-    Core::ContentManager CM;
+    
+	Core::ContentManager CM;
 	
 	GFX::SetProjectionMatrix(Core::gameCamera->GetProjectionMatrix());
 
@@ -215,7 +215,7 @@ void run( GLFWwindow * window )
 
 	/*for( int i = -5; i < 5; i++ )
 		CreateRioter(&rioters, meshID, materialID,  i * 16.0f, 1.0f, 0.0f);*/
-
+	
 	for (float i = -11.0f; i < 11.0f; ++i)
 	{
 		for (float j = -11.0f; j < 11.0f; ++j)
@@ -223,7 +223,6 @@ void run( GLFWwindow * window )
 			CreateRioter(&rioters, meshID, materialID, i * 2.0f + 0.5f, 0.5f, j * 2.0f + 0.5f);
 		}
 	}
-
 
 	LOG_INFO << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " " << std::endl;
 

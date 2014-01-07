@@ -53,7 +53,7 @@ function ASM:loadAssembly( asmtable )
                 count = table_utils.count( component.load )
                 for index,loader_pair in pairs( component.load ) do 
 
-                    local async_load = true
+                    local async_load = false
 
                     if type( loader_pair[3] ) == "boolean" then
                         async_load = loader_pair[3]

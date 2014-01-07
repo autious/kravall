@@ -6,11 +6,32 @@
 
 namespace Core
 {
+	struct NavigationMesh;
+
+	/*!
+		Get a pointer to the current instance of the navigaion mesh. Will return nullprt if no mesh is loaded.
+	*/
+	NavigationMesh* GetNavigationMesh();
+
+	/*!
+		will set the Core::GetNavigationMesh pointer to point to this object.
+	*/
+	void SetNavigationMesh( Core::NavigationMesh* mesh );
+
 	/*!
 		Data structure for the navigation mesh. 
 	*/
 	struct NavigationMesh
 	{	
+		NavigationMesh()
+		{
+		}
+
+		~NavigationMesh()
+		{
+			Core::SetNavigationMesh( nullptr );
+		}
+
 		struct Node
 		{
 			/*!
@@ -28,6 +49,11 @@ namespace Core
 					fromed by n and n + 1. Loops around for the last index.
 				*/
 				int linksTo;
+
+				/*!
+					The respective edge of the node the current edge leads to.
+				*/
+				int linksToEdge;
 				/*!
 					The distance from this corner to the n + 1 corner. Loops around for the last index.
 				*/
@@ -35,6 +61,7 @@ namespace Core
 				/*!
 					Inverse of the distance from this corner to the n + 1 corner.
 					Loops around for the last index.
+					Negative if edge is not valid.
 				*/
 				float inverseLength;
 			} corners[4];
@@ -72,23 +99,31 @@ namespace Core
 			current number of nodes reciding under the nodes-pointer.
 		*/
 		int nrNodes;
+
+
+		/*!
+			Will allocate said number of flowfiled instances from the level allocator.
+		*/
+		void InitFlowfieldInstances( int nrFlowfieldInstances = 0 );
+
+		/*!
+			Will calculate the linksToEdge values for the nodes.
+		*/
+		void CalculateLinks();
+
+		// NavigationMesh utility...
+		/*!
+			returns true if point is inside node.
+		*/
+		bool CheckPointInsideNode( glm::vec3 point, int node );
+
+		/*!
+			if point is inside a node the flowfield to get to that node will be calculated.
+		*/
+		bool CalculateFlowfieldForGroup( glm::vec3 point );
 	};
 
-	/*!
-		Get a pointer to the current instance of the navigaion mesh. Will return nullprt if no mesh is loaded.
-	*/
-	NavigationMesh* GetNavigationMesh();
 
-	/*!
-		will set the Core::GetNavigationMesh pointer to point to this object.
-	*/
-	void SetNavigationMesh( Core::NavigationMesh* mesh );
-
-	/*!
-		Will allocate said number of flowfiled instances from the level allocator.
-	*/
-	void InitFlowfieldInstances( Core::NavigationMesh* mesh, int nrFlowfieldInstances = 0 );
-	
 }
 
 std::fstream& operator>> ( std::fstream& ff, Core::NavigationMesh::Node& node );

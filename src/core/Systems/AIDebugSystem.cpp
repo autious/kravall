@@ -104,15 +104,77 @@ void TestNavigationMesh()
 }
 
 
-void Core::AIDebugSystem::Update( float delta )
+void CheckIfPointIsInsideNavMesh()
 {
-	//CheckPickingSystemVsGround();	
-	
-	//CheckPickingSystemVsRioters();
-	MarkClickedObject();
+	if( !Core::GetNavigationMesh() )
+		return;
+
+	int systemMax = Core::world.m_systemHandler.GetSystemCount();
+	int pickingSystem = -1;
+	for( int i = 0; i < systemMax; i++ )
+	{
+		if( std::string(Core::world.m_systemHandler.GetSystem( i )->GetHumanName()).compare( "PickingSystem" ) == 0 )
+			pickingSystem = i;
+	}
+
+	if( pickingSystem < 0 )
+		return;
 
 
-	
+	glm::vec3 temp = ((Core::PickingSystem*)Core::world.m_systemHandler.GetSystem( pickingSystem ))->GetGroundHit( Core::GetInput().GetXPos(), Core::GetInput().GetYPos() );
+
+	if( Core::GetNavigationMesh()->CheckPointInsideNode( temp, 0 ) )
+	{
+		GFX::Debug::DrawSphere( temp, 5.0f, GFXColor( 0.0f, 0.7f, 1.0f, 1.0f ), false );
+	}
 
 
 }
+
+void CheckNavMeshCalculation()
+{
+	if( !Core::GetInput().IsMouseButtonPressed(1) )
+		return;
+
+	int systemMax = Core::world.m_systemHandler.GetSystemCount();
+	int pickingSystem = -1;
+	for( int i = 0; i < systemMax; i++ )
+	{
+		if( std::string(Core::world.m_systemHandler.GetSystem( i )->GetHumanName()).compare( "PickingSystem" ) == 0 )
+			pickingSystem = i;
+	}
+
+	if( pickingSystem < 0 )
+		return;
+
+
+	glm::vec3 temp = ((Core::PickingSystem*)Core::world.m_systemHandler.GetSystem( pickingSystem ))->GetGroundHit( Core::GetInput().GetXPos(), Core::GetInput().GetYPos() );
+
+	Core::GetNavigationMesh()->CalculateFlowfieldForGroup( temp );
+}
+
+
+void Core::AIDebugSystem::Update( float delta )
+{
+	//CheckPickingSystemVsGround();	
+
+	//CheckPickingSystemVsRioters();
+	MarkClickedObject();
+
+	//CheckIfPointIsInsideNavMesh();
+
+	CheckNavMeshCalculation();
+
+
+	if( Core::GetNavigationMesh() )
+	{
+		for( int i = 0; i < Core::GetNavigationMesh()->nrNodes; i++ )
+		{
+			//GFX::Debug::DrawSphere( Core::GetNavigationMesh()->flowfields[0].list[i], 5.0f, GFXColor( 0.0f, 0.7f, 1.0f, 1.0f ), false );
+		}
+	}
+
+
+}
+
+
