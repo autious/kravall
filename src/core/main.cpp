@@ -103,20 +103,6 @@ void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, unsigned in
 {
 	int index = rioterList->size(); // Size before add will be the index of the added entity.
 
-	/*
-	Core::BoundingVolumeCollisionModel aa = Core::BoundingVolumeCollisionModel::DynamicResolution;
-
-	glm::vec3 direction( 0.0f, 0.0f, 0.0f );
-	if( posX )
-		//direction = glm::normalize( glm::vec3( 0.0f, 0.0f, posY ) );
-		direction = glm::normalize( glm::vec3( posX, 0.0f, posZ ) );
-		//direction = glm::normalize( glm::vec3( posX, 0.0f, posY ) );	
-	else 
-	{
-		aa = Core::BoundingVolumeCollisionModel::StaticResolution;
-		posZ += 0.7f;
-	}
-	*/
 	rioterList->push_back(Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, 
 		Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent, Core::UnitTypeComponent,
 		Core::MovementComponent, Core::AttributeComponent, Core::BoundingVolumeComponent>
@@ -129,7 +115,7 @@ void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, unsigned in
 		 //Core::MovementComponent( -direction.x, 0, -direction.z, 21.1f, 5.0f),
 		 Core::AttributeComponent(),
 		 //Core::BoundingVolumeComponent( Core::BoundingSphere( 3.0f, 0.0f, 0.0f, 0.0f ), aa )
-		 Core::BoundingVolumeComponent(Core::BoundingSphere(1.0f, 0.0f, 0.0f, 0.0f), 
+		 Core::BoundingVolumeComponent(Core::BoundingSphere(0.5f, 0.0f, 0.0f, 0.0f), 
 		 Core::BoundingVolumeCollisionModel::DynamicResolution)));
 
 	Core::GraphicsComponent* gc = WGETC <Core::GraphicsComponent>(rioterList->at(index));
@@ -148,12 +134,12 @@ void CreatePolice(std::vector<Core::Entity>* rioterList, int meshID, unsigned in
 		Core::MovementComponent, Core::AttributeComponent, Core::BoundingVolumeComponent>
 		(Core::GraphicsComponent(),
 		Core::WorldPositionComponent(posX, posY, posZ),
-		Core::RotationComponent::GetComponentRotateZ(pi * 0.25f),
+		Core::RotationComponent(),
 		Core::ScaleComponent(1.0f),
 		Core::UnitTypeComponent(Core::UnitType::Police),
-		Core::MovementComponent(0.0f, 0.0f, 0.0f, 1.0f, 6.0f),
+		Core::MovementComponent(0.0f, 0.0f, 0.0f, 2.0f, 6.0f),
 		Core::AttributeComponent(),
-		Core::BoundingVolumeComponent(Core::BoundingSphere(1.5f, 0.0f, 0.0f, 0.0f),
+		Core::BoundingVolumeComponent(Core::BoundingSphere(0.5f, 0.0f, 0.0f, 0.0f),
 		Core::BoundingVolumeCollisionModel::DynamicResolution)));
 
 	Core::GraphicsComponent* gc = WGETC <Core::GraphicsComponent>(rioterList->at(index));
@@ -223,31 +209,38 @@ void run( GLFWwindow * window )
     Core::GetInputManager().Init( window );
 
     unsigned int meshID; 
-    unsigned int materialID;
+    unsigned int copMaterialID;
+	unsigned int rioterMaterialID;
 
-    Core::world.m_contentManager.Load<Core::GnomeLoader>("assets/cube.bgnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+    Core::world.m_contentManager.Load<Core::GnomeLoader>("assets/model/animated/police/cop/cop-light_00.bgnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
             {
                 Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
                 const Core::ModelData* data = gnomeLoader->getData(handle);
 				meshID = data->meshID;
             });
 
-    Core::world.m_contentManager.Load<Core::MaterialLoader>("assets/material/test-material.material", [&materialID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+	Core::world.m_contentManager.Load<Core::MaterialLoader>("assets/material/cop.material", [&copMaterialID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
             {
                 Core::MaterialData* data = static_cast<Core::MaterialData*>(handle);
-                materialID = data->materialId;
+				copMaterialID = data->materialId;
             }, false);
+
+	Core::world.m_contentManager.Load<Core::MaterialLoader>("assets/material/rioter.material", [&rioterMaterialID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+			{
+				Core::MaterialData* data = static_cast<Core::MaterialData*>(handle);
+				rioterMaterialID = data->materialId;
+			}, false);
    
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));	
 	
-	CreateRioter(&rioters, meshID, materialID, -3.0f, 0.5f, 0.0f);
-	CreateRioter(&rioters, meshID, materialID, 0.0f, 0.5f, 0.0f);
-	CreateRioter(&rioters, meshID, materialID, 3.0f, 0.5f, 0.0f);
+	CreateRioter(&rioters, meshID, rioterMaterialID, -3.0f, 0.0f, 1.0f);
+	CreateRioter(&rioters, meshID, rioterMaterialID, 0.0f, 0.0f, 0.0f);
+	CreateRioter(&rioters, meshID, rioterMaterialID, 3.0f, 0.0f, 1.0f);
 
-	CreatePolice(&rioters, meshID, materialID, 0.0f, 0.5f, -6.0f);
-	CreatePolice(&rioters, meshID, materialID, -6.0f, 0.5f, 0.0f);
-	CreatePolice(&rioters, meshID, materialID, 6.0f, 0.5f, 0.0f);
-	CreatePolice(&rioters, meshID, materialID, 0.0f, 0.5f, 6.0f);
+	CreatePolice(&rioters, meshID, copMaterialID, 0.0f, 0.0f, -6.0f);
+	CreatePolice(&rioters, meshID, copMaterialID, -6.0f, 0.0f, 0.0f);
+	CreatePolice(&rioters, meshID, copMaterialID, 6.0f, 0.0f, 0.0f);
+	CreatePolice(&rioters, meshID, copMaterialID, 0.0f, 0.0f, 6.0f);
 
 
 	LOG_INFO << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " " << std::endl;
