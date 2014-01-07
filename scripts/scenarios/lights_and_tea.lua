@@ -14,13 +14,13 @@ for i = -10, 9 do
                 type = core.componentType.GraphicsComponent,
                 data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry },
                 load = { 
-                            mesh = { core.loaders.GnomeLoader, "assets/teapot.bgnome" },
-                            material = { core.loaders.MaterialLoader, "assets/material/test-material.material" }
+                            mesh = { core.loaders.GnomeLoader, "assets/teapot.bgnome", false },
+                            material = { core.loaders.MaterialLoader, "assets/material/test-material.material", false }
                        }
             },
             {
                 type = core.componentType.ScaleComponent,
-                data = { scale = 1.1 }
+                data = { scale = 25.0 }
             },
             {
                 type = core.componentType.RotationComponent,
@@ -31,7 +31,7 @@ for i = -10, 9 do
     end
 end
 
-for i = 0, 4095 do
+for i = 0, 16 do
     asm:loadAssembly( 
     {
         {
@@ -49,7 +49,7 @@ for i = 0, 4095 do
         },
         {
             type = core.componentType.ScaleComponent,
-            data = { scale = 5.0 + 5.0 * math.random() }
+            data = { scale = 25.0 + 5.0 * math.random() }
         },
         {
             type = core.componentType.RotationComponent,
@@ -59,4 +59,132 @@ for i = 0, 4095 do
     )
 end
 
+-- Directional light
+asm:loadAssembly( 
+{
+	{
+		type = core.componentType.LightComponent,
+		data =  { 
+					color = { 0.0, 0.0, 1.0 },
+					intensity = 0.1,
+					type = core.gfx.objectTypes.Light,
+					lighttype = core.gfx.lightTypes.Dir
+				}
+	},
+	{
+		type = core.componentType.WorldPositionComponent,
+		data = { position = { 0, 0, 0 } }
+	},
+	{
+		type = core.componentType.ScaleComponent,
+		data = { scale = 1.0 } 
+	},
+	{
+		type = core.componentType.RotationComponent,
+		data = { rotation = { 1,1,-1,0 } } -- Lights uses rotation component as a direction vector, not a quaternion
+	}
+} 
+)
+asm:loadAssembly( 
+{
+	{
+		type = core.componentType.LightComponent,
+		data =  { 
+					color = { 1.0, 1.0, 0.0 },
+					intensity = 0.1,
+					type = core.gfx.objectTypes.Light,
+					lighttype = core.gfx.lightTypes.Dir
+				}
+	},
+	{
+		type = core.componentType.WorldPositionComponent,
+		data = { position = { 0, 0, 0 } }
+	},
+	{
+		type = core.componentType.ScaleComponent,
+		data = { scale = 1.0 }
+	},
+	{
+		type = core.componentType.RotationComponent,
+		data = { rotation = { -1,1,-1,0 } } -- Lights uses rotation component as a direction vector, not a quaternion
+	}
+} 
+)
+asm:loadAssembly( 
+{
+	{
+		type = core.componentType.LightComponent,
+		data =  { 
+					color = { 0.0, 1.0, 0.0 },
+					intensity = 0.1,
+					type = core.gfx.objectTypes.Light,
+					lighttype = core.gfx.lightTypes.Dir
+				}
+	},
+	{
+		type = core.componentType.WorldPositionComponent,
+		data = { position = { 0, 0, 0 } }
+	},
+	{
+		type = core.componentType.ScaleComponent,
+		data = { scale = 1.0 }
+	},
+	{
+		type = core.componentType.RotationComponent,
+		data = { rotation = { -1,-1,-1,0 } } -- Lights uses rotation component as a direction vector, not a quaternion
+	}
+} 
+)
+asm:loadAssembly( 
+{
+	{
+		type = core.componentType.LightComponent,
+		data =  { 
+					color = { 1.0, 0.0, 0.0 },
+					intensity = 0.1,
+					type = core.gfx.objectTypes.Light,
+					lighttype = core.gfx.lightTypes.Dir
+				}
+	},
+	{
+		type = core.componentType.WorldPositionComponent,
+		data = { position = { 0, 0, 0 } }
+	},
+	{
+		type = core.componentType.ScaleComponent,
+		data = { scale = 1.0 }
+	},
+	{
+		type = core.componentType.RotationComponent,
+		data = { rotation = { 1,-1,-1,0 } } -- Lights uses rotation component as a direction vector, not a quaternion
+	}
+} 
+)
+
+-- Ambient light
+asm:loadAssembly( 
+{
+	{
+		type = core.componentType.LightComponent,
+		data =  { 
+					color = { 1.0, 1.0, 1.0 },
+					intensity = 0.05,
+					type = core.gfx.objectTypes.Light,
+					lighttype = core.gfx.lightTypes.Ambient
+				}
+	},
+	{
+		type = core.componentType.WorldPositionComponent,
+		data = { position = { 0, 0, 0 } }
+	},
+	{
+		type = core.componentType.ScaleComponent,
+		data = { scale = 1.0 }
+	},
+	{
+		type = core.componentType.RotationComponent,
+		data = { rotation = { 0,0,0,0 } }
+	}
+} 
+)
 return asm;

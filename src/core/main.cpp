@@ -194,9 +194,9 @@ void run( GLFWwindow * window )
 		Core::world.m_config.GetDouble( "initCameraNearClipDistance", 1.0f ), 
 		Core::world.m_config.GetDouble( "initCameraFarClipDistance", 1000.0f ) );
 	Core::gameCamera->CalculateProjectionMatrix(initScreenWidth, initScreenHeight);
-	Core::gameCamera->SetPosition(glm::vec3(0.0f, 30.0f, 30.0f));
+	Core::gameCamera->SetPosition(glm::vec3(70.0f, 70.0f, 70.0f));
 	
-	glm::vec2 rotation = glm::vec2(0.0f, 3.14f * 0.25f);
+	glm::vec2 rotation = glm::vec2(-0.7f, 3.14f * 0.25f);
 	Core::gameCamera->UpdateView(glm::vec3(0.0f), rotation, 0.0f);
 	
     Core::ContentManager CM;
@@ -222,13 +222,13 @@ void run( GLFWwindow * window )
 	Core::world.m_contentManager.Load<Core::MaterialLoader>("assets/material/cop.material", [&copMaterialID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
             {
                 Core::MaterialData* data = static_cast<Core::MaterialData*>(handle);
-				copMaterialID = data->materialId;
+				copMaterialID = static_cast<unsigned int>(data->materialId);
             }, false);
 
 	Core::world.m_contentManager.Load<Core::MaterialLoader>("assets/material/rioter.material", [&rioterMaterialID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
 			{ 
 				Core::MaterialData* data = static_cast<Core::MaterialData*>(handle);
-				rioterMaterialID = data->materialId;
+				rioterMaterialID = static_cast<unsigned int>(data->materialId);
 			}, false);
    
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));	
