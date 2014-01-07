@@ -226,21 +226,29 @@ void run( GLFWwindow * window )
             }, false);
 
 	Core::world.m_contentManager.Load<Core::MaterialLoader>("assets/material/rioter.material", [&rioterMaterialID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
-			{
+			{ 
 				Core::MaterialData* data = static_cast<Core::MaterialData*>(handle);
 				rioterMaterialID = data->materialId;
 			}, false);
    
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));	
-	
-	CreateRioter(&rioters, meshID, rioterMaterialID, -3.0f, 0.0f, 1.0f);
-	CreateRioter(&rioters, meshID, rioterMaterialID, 0.0f, 0.0f, 0.0f);
-	CreateRioter(&rioters, meshID, rioterMaterialID, 3.0f, 0.0f, 1.0f);
 
-	CreatePolice(&rioters, meshID, copMaterialID, 0.0f, 0.0f, -6.0f);
-	CreatePolice(&rioters, meshID, copMaterialID, -6.0f, 0.0f, 0.0f);
-	CreatePolice(&rioters, meshID, copMaterialID, 6.0f, 0.0f, 0.0f);
-	CreatePolice(&rioters, meshID, copMaterialID, 0.0f, 0.0f, 6.0f);
+	//for (int i = -10; i < 10; i++)
+	//{
+	//	for (int j = -10; j < 10; j++)
+	//	{
+	//		CreateRioter(&rioters, meshID, rioterMaterialID, i * 2.0f, 0.0f, j * 2.0f);
+	//	}
+	//}
+	
+	//CreateRioter(&rioters, meshID, rioterMaterialID, -3.0f, 0.0f, 1.0f);
+	//CreateRioter(&rioters, meshID, rioterMaterialID, 0.0f, 0.0f, 0.0f);
+	//CreateRioter(&rioters, meshID, rioterMaterialID, 3.0f, 0.0f, 1.0f);
+
+	//CreatePolice(&rioters, meshID, copMaterialID, 50.0f, 0.0f, 0.0f);
+	//CreatePolice(&rioters, meshID, copMaterialID, 50.0f, 0.0f, 10.0f);
+	//CreatePolice(&rioters, meshID, copMaterialID, 50.0f, 0.0f, 20.0f);
+	//CreatePolice(&rioters, meshID, copMaterialID, 50.0f, 0.0f, 30.0f);
 
 
 	LOG_INFO << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " " << std::endl;

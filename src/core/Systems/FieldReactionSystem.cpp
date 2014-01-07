@@ -9,14 +9,14 @@ const float Core::FieldReactionSystem::STAY_LIMIT = 0.1f;
 const float Core::FieldReactionSystem::FIELD_CELL_SIDE_SIZE = FIELD_SIDE_LENGTH / static_cast<float>(FIELD_SIDE_CELL_COUNT);
 const frsChargeCurve Core::FieldReactionSystem::CURVE[1][2] =
 {
-	{ frsChargeCurve::ChargeCurve(1.0f, 15.0f, 1.0f), frsChargeCurve::ChargeCurve(-1.0f, 15.0f, 1.0f) }
+	{ frsChargeCurve::ChargeCurve(1.0f, 15.0f, 1.0f), frsChargeCurve::ChargeCurve(-100.0f, 15.0f, 1.0f) }
 };
 
 /*const frsChargeCurve Core::FieldReactionSystem::CURVE[2] =
 	{ frsChargeCurve::ChargeCurve(1.0f, 15.0f, 0.8f), frsChargeCurve::ChargeCurve(-1.0f, 15.0f, 0.8f) };*/
 
 Core::FieldReactionSystem::FieldReactionSystem() : BaseSystem(EntityHandler::GenerateAspect<WorldPositionComponent, MovementComponent,
-	UnitTypeComponent, AttributeComponent>(), 0ULL), m_showPF(true), m_updateCounter(0)
+	UnitTypeComponent, AttributeComponent>(), 0ULL), m_showPF(false), m_updateCounter(0)
 {
 	for (int i = 0; i < FIELD_SIDE_CELL_COUNT; ++i)
 	{

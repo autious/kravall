@@ -20,7 +20,7 @@ for i = -10, 9 do
             },
             {
                 type = core.componentType.ScaleComponent,
-                data = { scale = 0.1 }
+                data = { scale = 1.1 }
             },
             {
                 type = core.componentType.RotationComponent,
