@@ -222,13 +222,13 @@ void run( GLFWwindow * window )
 	Core::world.m_contentManager.Load<Core::MaterialLoader>("assets/material/cop.material", [&copMaterialID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
             {
                 Core::MaterialData* data = static_cast<Core::MaterialData*>(handle);
-				copMaterialID = data->materialId;
+				copMaterialID = static_cast<unsigned int>(data->materialId);
             }, false);
 
 	Core::world.m_contentManager.Load<Core::MaterialLoader>("assets/material/rioter.material", [&rioterMaterialID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
 			{
 				Core::MaterialData* data = static_cast<Core::MaterialData*>(handle);
-				rioterMaterialID = data->materialId;
+				rioterMaterialID = static_cast<unsigned int>(data->materialId);
 			}, false);
    
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));	
