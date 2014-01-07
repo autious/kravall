@@ -34,6 +34,8 @@ namespace GFX
 		static const unsigned int SPOT = 2;
 		static const unsigned int DIR = 1;
 		static const unsigned int AMBIENT = 0;
+
+		static const unsigned int COUNT = 7;
 	}
 
 	inline static void SetBitmaskValue(GFX::GFXBitmask& bitmask, GFX::GFXBitmask type, unsigned int value)

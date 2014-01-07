@@ -23,6 +23,14 @@ namespace Core
             // <3 the frame heap.
 			GFX::LightData* data = Core::world.m_frameHeap.NewObject<GFX::LightData>();
 
+			data->position = glm::vec3(0.0f);
+			data->radius_length = 0.0f;
+			data->color = glm::vec3(0.0f);
+			data->intensity = 0.0f;
+			data->pad = glm::vec3(0.0f);
+			data->spot_angle = 0.0f;
+			data->orientation = glm::vec4(0.0f);
+
             unsigned int lightType = LightComponent::GetLightType( *lc );
 			
 			i++;
@@ -37,8 +45,8 @@ namespace Core
 					data->color[2] = lc->color[2];
 					data->intensity = lc->intensity;
 
-					//wpc->position[0] = -25.0f * sin(lel + double(i));
-					wpc->position[0] = 250.0f * sin(lel - double(i));
+					wpc->position[0] = 45 * cos(lel + double(i));
+					wpc->position[2] = 45 * sin(double(i%16) * lel*0.1f + double(i));
 
 					data->position = WorldPositionComponent::GetVec3(*wpc);
 					data->radius_length = sc->scale;
@@ -71,7 +79,10 @@ namespace Core
 					data->color[1] = lc->color[1];
 					data->color[2] = lc->color[2];
 					data->intensity = lc->intensity;
-					data->orientation = glm::vec4(RotationComponent::GetQuat(rc->rotation)[0]);
+					data->orientation = glm::vec4(	RotationComponent::GetQuat(rc->rotation).x,
+													RotationComponent::GetQuat(rc->rotation).y,
+													RotationComponent::GetQuat(rc->rotation).z,
+													RotationComponent::GetQuat(rc->rotation).w);
 				}
 				break;
 
