@@ -63,7 +63,8 @@ void Core::FieldReactionSystem::UpdateAgents()
 		if (utc->type == UnitType::Rioter) // 2.
 		{
 			glm::vec2 bestIndex = glm::vec2(0.0f, 0.0f);
-			float highestSum = GetEffectOnAgentAt(it._Ptr, wpc);
+
+			float highestSum = GetEffectOnAgentAt(*it, wpc);
 			float staySum = highestSum;
 
 			for (int i = -1; i < 2; ++i) // 3.
@@ -76,7 +77,7 @@ void Core::FieldReactionSystem::UpdateAgents()
                     WorldPositionComponent wpct(wpc->position[0] + i, wpc->position[1],
 						wpc->position[2] + j);
 
-					float chargeSum = GetEffectOnAgentAt(it._Ptr, &wpct);
+					float chargeSum = GetEffectOnAgentAt(*it, &wpct);
 
 					if (chargeSum > highestSum)
 					{
@@ -101,13 +102,13 @@ void Core::FieldReactionSystem::UpdateAgents()
 	}
 }
 
-float Core::FieldReactionSystem::GetEffectOnAgentAt(Entity* queryAgent, WorldPositionComponent* queryPosition)
+float Core::FieldReactionSystem::GetEffectOnAgentAt(const Entity queryAgent, WorldPositionComponent* queryPosition)
 {
 	float sum = 0.0f;
 
 	for (std::vector<Entity>::iterator it2 = m_entities.begin(); it2 != m_entities.end(); it2++) // 5.
 	{
-		if (queryAgent != it2._Ptr) // 6.
+		if (queryAgent != (*it2)) // 6.
 			sum += GetAgentsChargeAt(*it2, WorldPositionComponent::GetVec3(*queryPosition)); // 7.
 	}
 
@@ -142,7 +143,8 @@ void Core::FieldReactionSystem::UpdateDebugField()
 		for (int j = 0; j < FIELD_SIDE_CELL_COUNT; ++j)
 		{
 			WorldPositionComponent pos = WorldPositionComponent(GetPositionFromFieldIndex(i, j));
-			m_calculatingField[i][j] = GetEffectOnAgentAt(nullptr, &pos) * 0.5f;
+            //std::numeric_limits is never given to any real entity.
+			m_calculatingField[i][j] = GetEffectOnAgentAt( std::numeric_limits<Entity>::max(), &pos) * 0.5f;
 		}
 	}
 

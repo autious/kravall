@@ -65,7 +65,7 @@ namespace Core
 		int m_updateCounter;
 
 		void UpdateAgents();
-		float GetEffectOnAgentAt(Entity* queryAgent, WorldPositionComponent* queryPosition);
+		float GetEffectOnAgentAt(const Entity queryAgent, WorldPositionComponent* queryPosition);
 		float GetAgentsChargeAt(Entity chargedAgent, glm::vec3 queryPosition);
 
 		void UpdateDebugField();

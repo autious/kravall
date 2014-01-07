@@ -7,13 +7,31 @@
 
 #include <utility/Colors.hpp>
 #include <gfx/FontData.hpp>
+#include <Input/Interfaces/ScrollEventListener.hpp>
+#include <Input/Interfaces/CharEventListener.hpp>
+#include <Input/Interfaces/KeyEventListener.hpp>
 
 namespace Core
 {
 
-	class DebugConsole
+	class DebugConsole : public ScrollEventListener, public CharEventListener, public KeyEventListener
 	{
 	public:
+        /*!
+            From CharEventListener
+        */
+        virtual void OnCharEvent( const Core::CharEvent &e );
+
+        /*!
+            From ScrollEventListener
+        */
+        virtual void OnScrollEvent( const Core::ScrollEvent &e );
+
+        /*!
+            From KeyEventListener
+        */
+        virtual void OnKeyEvent( const Core::KeyEvent &e );
+
         static const unsigned int HISTORY_LIMIT = 100;
         static const char * HISTORY_FILE_NAME;		
 		/*!
@@ -81,8 +99,6 @@ namespace Core
 	private:
 
 		friend DebugConsole& Console();
-
-		void HandleInput();
 
 		void MoveCursorLeft();
 		void MoveCursorRight();

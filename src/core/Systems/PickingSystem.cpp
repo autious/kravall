@@ -4,7 +4,7 @@
 #include "Camera/Camera.hpp"
 #include <limits>
 #include <logger/Logger.hpp>
-#include <GLFWInput.hpp>
+#include <Input/InputManager.hpp>
 
 Core::PickingSystem::PickingSystem()
 : BaseSystem(EntityHandler::GenerateAspect< WorldPositionComponent, BoundingVolumeComponent >(), 0ULL), 
@@ -14,19 +14,20 @@ m_lastSelectedEntity(std::numeric_limits<Entity>::max()), m_currentGroundHit(glm
 
 void Core::PickingSystem::Update( float delta )
 {
-	m_currentGroundHit = GetGroundHit(static_cast<int>(Core::GetInput().GetXPos()), 
-									  static_cast<int>(Core::GetInput().GetYPos()));
+    int x,y;
+    Core::GetInputManager().GetMouseState().GetCursorPosition(x,y);
+	m_currentGroundHit = GetGroundHit(x,y);
 
-	if( !Core::GetInput().IsMouseButtonPressed(0) )
+	if( !Core::GetInputManager().GetMouseState().IsButtonDown(0) )
 		return;
 	
 	Entity lastEntity = m_lastSelectedEntity;
-	GetHitEntity(static_cast<int>(Core::GetInput().GetXPos()), static_cast<int>(Core::GetInput().GetYPos()));
+	GetHitEntity( x,y );
 	
-	if (m_lastSelectedEntity == std::numeric_limits<Entity>::max())
+	if (m_lastSelectedEntity == std::numeric_limits<Entity>::max()
+        && lastEntity != std::numeric_limits<Entity>::max() )
 	{
-		glm::vec3 groundHit = GetGroundHit(static_cast<int>(Core::GetInput().GetXPos()),
-										   static_cast<int>(Core::GetInput().GetYPos()));
+		glm::vec3 groundHit = GetGroundHit(x,y);
 
 		Core::UnitTypeComponent* utc = WGETC<Core::UnitTypeComponent>(lastEntity);
 

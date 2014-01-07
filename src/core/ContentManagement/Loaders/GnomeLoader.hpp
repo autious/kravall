@@ -117,7 +117,7 @@ namespace Core
 		//Animation* animations;
 		Bone* bones;
 		Header header;
-		Mesh mesh;
+		//Mesh mesh;
 		MorphAnimation* morphAnimation;
 
         struct Gnome
@@ -132,7 +132,7 @@ namespace Core
         };
 
         Core::GnomeLoader::Gnome* LoadGnomeFromFile(const char* fileName);
-    };
+	};
 }
 
 #endif
