@@ -4,10 +4,12 @@
 
 #define frsChargeCurve Core::FieldReactionSystem::ChargeCurve
 
+const float Core::FieldReactionSystem::STAY_LIMIT = 0.1f;
+
 const float Core::FieldReactionSystem::FIELD_CELL_SIDE_SIZE = FIELD_SIDE_LENGTH / static_cast<float>(FIELD_SIDE_CELL_COUNT);
 const frsChargeCurve Core::FieldReactionSystem::CURVE[1][2] =
 {
-	{ Core::FieldReactionSystem::ChargeCurve(1.0f, 15.0f, 0.8f), Core::FieldReactionSystem::ChargeCurve(-1.0f, 15.0f, 0.8f) }
+	{ frsChargeCurve::ChargeCurve(1.0f, 15.0f, 1.0f), frsChargeCurve::ChargeCurve(-1.0f, 15.0f, 1.0f) }
 };
 
 /*const frsChargeCurve Core::FieldReactionSystem::CURVE[2] =
@@ -35,8 +37,6 @@ void Core::FieldReactionSystem::Update(float delta)
 		UpdateDebugField();
 		DrawDebugField();
 	}
-
-	//DrawDebugField();
 }
 
 void Core::FieldReactionSystem::UpdateAgents()
@@ -63,7 +63,9 @@ void Core::FieldReactionSystem::UpdateAgents()
 		if (utc->type == UnitType::Rioter) // 2.
 		{
 			glm::vec2 bestIndex = glm::vec2(0.0f, 0.0f);
+
 			float highestSum = GetEffectOnAgentAt(*it, wpc);
+			float staySum = highestSum;
 
 			for (int i = -1; i < 2; ++i) // 3.
 			{
@@ -85,8 +87,17 @@ void Core::FieldReactionSystem::UpdateAgents()
 				}
 			}
 
-			mc->direction[0] = bestIndex.x;
-			mc->direction[2] = bestIndex.y;
+			if (highestSum - staySum > STAY_LIMIT)
+			{
+				float invLength = 1.0f / std::sqrt(bestIndex.x * bestIndex.x + bestIndex.y * bestIndex.y);
+				mc->direction[0] = bestIndex.x * invLength;
+				mc->direction[2] = bestIndex.y * invLength;
+			}
+			else
+			{
+				mc->direction[0] = 0.0f;
+				mc->direction[2] = 0.0f;
+			}
 		}
 	}
 }
@@ -109,27 +120,16 @@ float Core::FieldReactionSystem::GetAgentsChargeAt(Entity chargedAgent, glm::vec
 	Core::UnitTypeComponent* utc = WGETC<UnitTypeComponent>(chargedAgent);
 	int indexFromType = static_cast<int>(utc->type);
 
-	/*float cutoff = 15.0f;
-	float repelRadius = 0.8f;
-	float peakCharge = 1.0f;
-	float decline = peakCharge / (cutoff - repelRadius);*/
-
-	/*float cutoff = CURVE[indexFromType].cutoff; //15.0f;
-	float repelRadius = CURVE[indexFromType].repelRadius; //0.8f;
-	float peakCharge = CURVE[indexFromType].charge;// 1.0f;
-	float decline = CURVE[indexFromType].decline; //peakCharge / (cutoff - repelRadius); // ~0.07*/
-
 	WorldPositionComponent* wpc = WGETC<WorldPositionComponent>(chargedAgent);
 	glm::vec3 distVec = (WorldPositionComponent::GetVec3(*wpc) - queryPosition);
-	float distance = (distVec.x * distVec.x) + (distVec.z * distVec.z);
+	float distanceSqr = (distVec.x * distVec.x) + (distVec.z * distVec.z);
 	
-	if (distance <= 0.001f || distance > CURVE[0][indexFromType].cutoff) //distance > cutoff)
+	if (distanceSqr <= 0.001f || distanceSqr > CURVE[0][indexFromType].cutoff)
 		return 0.0f;
-	else if (distance < CURVE[0][indexFromType].repelRadius) //repelRadius)
-		return -100 + distance * (CURVE[0][indexFromType].repelRadius / 100); //(repelRadius / 100);
+	else if (distanceSqr < CURVE[0][indexFromType].repelRadius)
+		return -100 + distanceSqr * (CURVE[0][indexFromType].repelRadius / 100);
 	else
-		return CURVE[0][indexFromType].charge - distance * CURVE[0][indexFromType].decline;
-		//return peakCharge - distance * decline;
+		return CURVE[0][indexFromType].charge - distanceSqr * CURVE[0][indexFromType].decline;
 }
 
 void Core::FieldReactionSystem::UpdateDebugField()
@@ -175,11 +175,6 @@ void Core::FieldReactionSystem::DrawDebugField()
 		for (int j = 0; j < FIELD_SIDE_CELL_COUNT; ++j)
 		{
 			GFXColor colour = GFXColor(1.0f, 1.0f, 1.0f, 1.0f);
-
-			/*if (m_field[i][j] > 0.0f)
-				colour = GFXColor(0.0f, m_field[i][j], 1.0f, 1.0f);
-			else
-				colour = GFXColor(-m_field[i][j], 0.0f, 1.0f, 1.0f);*/
 
 			if (m_field[i][j] > 0.0f)
 				colour = GFXColor(0.0f, 0.3f - m_field[i][j], m_field[i][j], 1.0f);
