@@ -54,7 +54,15 @@ void Core::CollisionSystem2D::Update( float delta )
 					// move myself away from collision. If the other entity is static, move the entire overlap away from the entity,
 					// otherwise move half the distance as to achieve mutual collision resolution
 
+					// if objects are on top of eachother
+					if( sqareDistance == 0 )
+					{
+						*reinterpret_cast<glm::vec3*>(wpc->position) += glm::vec3( 0.01f, 0.0f, 0.0f );
+						myPosition = *reinterpret_cast<glm::vec3*>(wpc->position);
+					}
+
 					float delta = ((otherSphere->radius + mySphere->radius) - std::sqrt( sqareDistance ));
+
 					glm::vec3 collisionNormal = glm::normalize( myPosition - otherPosition );
 
 					switch( bvcOther->collisionModel )
