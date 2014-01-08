@@ -207,7 +207,8 @@ namespace Core
             lua_pushvalue( m_luaState, -1 );
             lua_pushinteger( m_luaState, e.button );
             lua_pushinteger( m_luaState, e.action );
-            lua_pushinteger( m_luaState, e.mods );
+            uint64_t * modMask = LuaUNewBitmask( m_luaState ); 
+            *modMask = e.mods;
 
             int error = lua_pcall(m_luaState, 3, 0, 0);
             if(error)
@@ -281,9 +282,11 @@ namespace Core
         lua_getglobal(L, "core");
             lua_pushstring( L, "input" );
             lua_newtable( L );
-                luau_setconst( L, GLFW_PRESS, Press );
-                luau_setconst( L, GLFW_RELEASE, Release );
-                luau_setconst( L, GLFW_REPEAT, Repeat );
+                lua_newtable( L );
+                    luau_setconst( L, GLFW_PRESS, Press );
+                    luau_setconst( L, GLFW_RELEASE, Release );
+                    luau_setconst( L, GLFW_REPEAT, Repeat );
+                lua_setfield( L, -2, "action" );
 
                 lua_pushstring( L, "keyboard" );
                 lua_newtable(L);
