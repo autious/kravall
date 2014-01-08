@@ -157,7 +157,7 @@ void CheckNavMeshCalculation()
 	glm::vec3 temp = ((Core::PickingSystem*)Core::world.m_systemHandler.GetSystem( pickingSystem ))->GetGroundHit( x, y );
 
 	if( Core::GetNavigationMesh() )
-		Core::GetNavigationMesh()->CalculateFlowfieldForGroup( temp );
+		Core::GetNavigationMesh()->CalculateFlowfieldForGroup( temp, 0 );
 }
 
 

@@ -6,7 +6,8 @@
 
 
 Core::FlowfieldSystem::FlowfieldSystem()
-	: BaseSystem( EntityHandler::GenerateAspect< WorldPositionComponent, BoundingVolumeComponent, UnitTypeComponent >(), 0ULL )
+	: BaseSystem( EntityHandler::GenerateAspect<
+		WorldPositionComponent, BoundingVolumeComponent, UnitTypeComponent, AttributeComponent >(), 0ULL )
 {
 }
 
@@ -110,13 +111,17 @@ void Core::FlowfieldSystem::Update( float delta )
 					}
 				}
 
+				#define FF_VS_PF_FACTOR 1.0f
+
 				if( instance->CheckPointInsideNode( glm::vec3(position), p ) )
 				{
 					Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>(*it);
 					glm::vec3 temp = instance->flowfields[0].list[ p ];
-					if( glm::dot( temp, temp ) > 0.05f )
+					if( glm::dot( temp, temp ) > 0.05f ) // goal node condition...
 					{
-						*reinterpret_cast<glm::vec3*>(mvmc->direction) = glm::normalize( instance->flowfields[0].list[ p ] - position );
+						Core::AttributeComponent* attribc = WGETC<Core::AttributeComponent>(*it);
+
+						*reinterpret_cast<glm::vec3*>(mvmc->direction) = glm::normalize( glm::normalize( instance->flowfields[attribc->rioter.groupID].list[ p ] - position ) * FF_VS_PF_FACTOR + *reinterpret_cast<glm::vec3*>(mvmc->direction) );
 						GFX::Debug::DrawLine( position, position + *reinterpret_cast<glm::vec3*>(mvmc->direction), GFXColor( 1.0f, 0.0f, 0.0f, 1.0f ), false );
 					}
 				}
