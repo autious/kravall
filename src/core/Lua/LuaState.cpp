@@ -16,6 +16,7 @@
 #include <Lua/Bridges/LuaAttributeBridge.hpp>
 #include <Lua/Bridges/LuaBoundingVolumeBridge.hpp>
 #include <Lua/Bridges/LuaUnitTypeBridge.hpp>
+#include <Lua/Bridges/LuaNavMeshBridge.hpp>
 
 #include <Timer.hpp>
 
@@ -55,6 +56,7 @@ Core::LuaState::LuaState()
 	LuaAttributeComponentBridge::OpenLibs( m_state );
 	LuaBoundingVolumeComponentBridge::OpenLibs( m_state );
 	LuaUnitTypeComponentBridge::OpenLibs( m_state );
+	LuaNavMeshBridge::OpenLibs( m_state );
 }
 
 Core::LuaState::~LuaState()

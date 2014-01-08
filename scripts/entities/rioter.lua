@@ -1,6 +1,6 @@
 local t = {}
 
-function t.create(asm, posX, posY, posZ)
+function t.create(asm, posX, posY, posZ, group)
 	asm:loadAssembly( 
 		{
 			{
@@ -34,7 +34,7 @@ function t.create(asm, posX, posY, posZ)
 			{
 				type = core.componentType.AttributeComponent,
 				data = { health = 0, stamina = 0, morale = 0, 
-					   alignment = core.RioterAlignment.Anarchist, rage = 0, pressure = 0 }
+					   alignment = core.RioterAlignment.Anarchist, rage = 0, pressure = 0, groupID = group }
 			},
 			{
 				type = core.componentType.BoundingVolumeComponent,

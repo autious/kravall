@@ -243,10 +243,10 @@ void run( GLFWwindow * window )
 	//CreatePolice(&rioters, meshID, copMaterialID, 0.0f, 0.0f, 6.0f);
 	//CreatePolice(&rioters, meshID, copMaterialID, 0.0f, 0.0f, -6.0f);
 
-	CreatePolice(&rioters, meshID, copMaterialID, 0.0f, 0.0f, 3.0f);
-	CreatePolice(&rioters, meshID, copMaterialID, 0.0f, 0.0f, 4.0f);
-	CreatePolice(&rioters, meshID, copMaterialID, 0.0f, 0.0f, 5.0f);
-	CreatePolice(&rioters, meshID, copMaterialID, 0.0f, 0.0f, 6.0f);
+	//CreatePolice(&rioters, meshID, copMaterialID, 0.0f, 0.0f, 3.0f);
+	//CreatePolice(&rioters, meshID, copMaterialID, 0.0f, 0.0f, 4.0f);
+	//CreatePolice(&rioters, meshID, copMaterialID, 0.0f, 0.0f, 5.0f);
+	//CreatePolice(&rioters, meshID, copMaterialID, 0.0f, 0.0f, 6.0f);
 
 	LOG_INFO << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " " << std::endl;
 
