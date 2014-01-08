@@ -1,5 +1,5 @@
 :map <F2><F2> :!export CGCC_FORCE_COLOR=true; premake4 gmake &> output.sock; make -j8 &> output.sock; unset CGCC_FORCE_COLOR
-:map <F2><F3> :!./RiotGame --conf 'core.config.windowResizable = false; core.config.showSplash = false' &> output.sock
+:map <F2><F3> :!./RiotGame &> output.sock
 :map <F2><F4> :!premake4 clean
 
 :map <F3><F2> :!git status
