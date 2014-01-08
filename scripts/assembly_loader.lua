@@ -90,6 +90,7 @@ function ASM:loadAssembly( asmtable )
 end
 
 function ASM:destroy( )
+    print( "DESTROY" )
     self.block_loads = true
     if self.entities ~= nil then
         for entity, assets in pairs( self.entities ) do

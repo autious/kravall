@@ -65,7 +65,8 @@ function openscenario( name )
 end
 
 function closescenario()
-    if core.current_scenario ~= nil then
+    if core.config.current_scenario ~= nil then
+        print( "DESTROY" )
         core.config.current_scenario:destroy()
         core.config.current_scenario = nil
         core.config.current_scenario_name = "No Scenario Loaded"

@@ -6,6 +6,7 @@ end
 
 function core.input.keyboard.onchar( codepoint, text )
     --print( "onchar " .. codepoint .. " " .. text )
+    
 end
 
 function core.input.mouse.onbutton( button, action, mods )
