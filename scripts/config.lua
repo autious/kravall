@@ -1,5 +1,3 @@
-core = core or {}
-
 core.config = {
 showSplash = false,
 vsync = 1,

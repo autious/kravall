@@ -18,13 +18,23 @@
 #include <Lua/Bridges/LuaUnitTypeBridge.hpp>
 
 #include <Lua/Datatypes/LuaBitmask.hpp>
+#include <Lua/LuaUtility.hpp>
 
 #include <Timer.hpp>
+
+extern "C"
+{
+    static int LuaCoreNewindex( lua_State * L )
+    {
+        return luaL_error( L, "Read only" );
+    }
+}
 
 Core::LuaState::LuaState()
 {
     LOG_DEBUG << "Creating lua state" << std::endl;
     m_state = luaL_newstate();
+    int sanity = lua_gettop( m_state );
     m_activeUpdate = false;
 
     luaL_openlibs( m_state ); 
@@ -47,6 +57,8 @@ Core::LuaState::LuaState()
     lua_pop(m_state, 1); //Pop the package table
 
     lua_newtable( m_state );
+        lua_newtable( m_state );
+        lua_setfield( m_state, -2, "config" );
     lua_setglobal( m_state, "core" );
 
     LuaBitmask::OpenLibs( m_state );
@@ -59,6 +71,13 @@ Core::LuaState::LuaState()
 	LuaAttributeComponentBridge::OpenLibs( m_state );
 	LuaBoundingVolumeComponentBridge::OpenLibs( m_state );
 	LuaUnitTypeComponentBridge::OpenLibs( m_state );
+
+    lua_getglobal( m_state, "core" ); //Let's lock down core now.
+        lua_newtable( m_state );
+        luau_setfunction( m_state, "__newindex", LuaCoreNewindex );
+    lua_setmetatable( m_state, -2 ),
+    lua_pop( m_state, 1 );
+    assert( sanity == lua_gettop(m_state) );
 }
 
 Core::LuaState::~LuaState()
