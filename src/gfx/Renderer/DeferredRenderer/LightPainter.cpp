@@ -129,7 +129,8 @@ namespace GFX
 
 			lightType = GetBitmaskValue(bitmask, BITMASK::LIGHT_TYPE);
 			// Do point and directional lights only
-			if (lightType != GFX::LIGHT_TYPES::POINT && lightType != GFX::LIGHT_TYPES::DIR && lightType != GFX::LIGHT_TYPES::AMBIENT)
+			if (lightType != GFX::LIGHT_TYPES::POINT && lightType != GFX::LIGHT_TYPES::DIR 
+				&& lightType != GFX::LIGHT_TYPES::AMBIENT && lightType != GFX::LIGHT_TYPES::SPOT)
 			{
 				break;
 			}

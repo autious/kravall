@@ -65,9 +65,16 @@ namespace Core
 					data->intensity = lc->intensity;
 					data->spot_angle = lc->lightSpecific.spotLight.angle;
 
-					data->orientation = glm::vec4(RotationComponent::GetQuat(rc->rotation)[0]);
+					data->orientation = glm::vec4(	(1.0f + RotationComponent::GetQuat(rc->rotation).x*cos(10.0f*lel+ double(i)))/2.0f,
+													RotationComponent::GetQuat(rc->rotation).y,
+													(1.0f + RotationComponent::GetQuat(rc->rotation).z*sin(10.0f*lel+ double(i)))/2.0f,
+													RotationComponent::GetQuat(rc->rotation).w);
 					data->position = WorldPositionComponent::GetVec3(*wpc);
 					data->radius_length = sc->scale;
+
+					//GFX::Debug::DrawSphere(data->position, sc->scale, glm::vec4(data->color, 1.0f), false);
+					//glm::vec3 dir = glm::normalize(glm::vec3(data->orientation)) * data->radius_length;
+					//GFX::Debug::DrawLine(data->position, data->position + dir, glm::vec4(data->color, 1.0f), 1.0f, false);
 				}
 				break;
 
@@ -96,7 +103,6 @@ namespace Core
 				}
 				break;
 			}
-
 			// Use linear allocator
 			GFX::Draw(lc->bitmask, (void*)data);
 		}

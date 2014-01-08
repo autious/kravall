@@ -185,14 +185,16 @@ asm:loadAssembly(
 }
 )
 
-for i = 0, 1023 do
+-- Pointlight
+for i = 0, 511 do
     asm:loadAssembly( 
     {
         {
             type = core.componentType.LightComponent,
             data =  { 
                         color = { math.random(), math.random(), math.random() },
-                        intensity = 0.01,
+                        intensity = 1.0,
+						spotlightangle = 3.14/4.0,
                         type = core.gfx.objectTypes.Light,
                         lighttype = core.gfx.lightTypes.Point
                     }
@@ -207,11 +209,91 @@ for i = 0, 1023 do
         },
         {
             type = core.componentType.RotationComponent,
-            data = { rotation = { 0,0,0,0 } }
+            data = { rotation = { math.random(),-1,math.random(),0 } }
         }
     } 
     )
 end
+
+-- Spotlight
+asm:loadAssembly( 
+{
+	{
+		type = core.componentType.LightComponent,
+		data =  { 
+					color = { 0.8, 0.4, 0.2 },
+					intensity = 5.0,
+					spotlightangle = 3.14/4.0,
+					type = core.gfx.objectTypes.Light,
+					lighttype = core.gfx.lightTypes.Spot
+				}
+	},
+	{
+		type = core.componentType.WorldPositionComponent,
+		data = { position = { 20, 15, 20 } }
+	},
+	{
+		type = core.componentType.ScaleComponent,
+		data = { scale = 100.0 }
+	},
+	{
+		type = core.componentType.RotationComponent,
+		data = { rotation = { -1,-1,-1,0 } }
+	}
+} 
+)
+asm:loadAssembly( 
+{
+	{
+		type = core.componentType.LightComponent,
+		data =  { 
+					color = { 0.4, 0.8, 0.2 },
+					intensity = 5.0,
+					spotlightangle = 3.14/4.0,
+					type = core.gfx.objectTypes.Light,
+					lighttype = core.gfx.lightTypes.Spot
+				}
+	},
+	{
+		type = core.componentType.WorldPositionComponent,
+		data = { position = { 0, 30, 0 } }
+	},
+	{
+		type = core.componentType.ScaleComponent,
+		data = { scale = 50.0 }
+	},
+	{
+		type = core.componentType.RotationComponent,
+		data = { rotation = { 1,-1,0,0 } }
+	}
+} 
+)
+asm:loadAssembly( 
+{
+	{
+		type = core.componentType.LightComponent,
+		data =  { 
+					color = { 0.2, 0.7, 0.8 },
+					intensity = 5.0,
+					spotlightangle = 3.14/6.0,
+					type = core.gfx.objectTypes.Light,
+					lighttype = core.gfx.lightTypes.Spot
+				}
+	},
+	{
+		type = core.componentType.WorldPositionComponent,
+		data = { position = { -10, 30, -5 } }
+	},
+	{
+		type = core.componentType.ScaleComponent,
+		data = { scale = 50.0 }
+	},
+	{
+		type = core.componentType.RotationComponent,
+		data = { rotation = { 1,-1,0,0 } }
+	}
+} 
+)
 
 -- Directional light
 asm:loadAssembly( 
@@ -219,8 +301,8 @@ asm:loadAssembly(
 	{
 		type = core.componentType.LightComponent,
 		data =  { 
-					color = { 0.2, 0.6, 0.7 },
-					intensity = 0.5,
+					color = { 1.0, 1.0, 1.0 },
+					intensity = 0.1,
 					type = core.gfx.objectTypes.Light,
 					lighttype = core.gfx.lightTypes.Dir
 				}
@@ -246,7 +328,7 @@ asm:loadAssembly(
 		type = core.componentType.LightComponent,
 		data =  { 
 					color = { 1.0, 1.0, 1.0 },
-					intensity = 0.05,
+					intensity = 0.01,
 					type = core.gfx.objectTypes.Light,
 					lighttype = core.gfx.lightTypes.Ambient
 				}

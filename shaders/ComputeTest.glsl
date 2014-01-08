@@ -101,7 +101,7 @@ vec3 BlinnPhong( LightData light, SurfaceData surface, vec3 eyeDirection, vec3 l
 		intensity = pow( clamp( NdotH, 0.0f, 1.0f ), surface.specular.w ) * df;
 	
 		// Temp vars, need materials with these channels
-		float lightSpecIntensity = 1.0f;
+		float lightSpecIntensity = light.intensity;
 		vec3 lightSpecColor = light.color;
 
 
@@ -119,18 +119,35 @@ vec4 CalculatePointlight( LightData light, SurfaceData surface, vec3 wPos, vec3 
 	
 	// Calculate attenuation
 	float dist = length( lightDir );
-	float att = 1.0f -  dist / light.radius_length;
-	//dist = dist * dist;
-	//att = 1/dist^2 - 1/radius^2
-	//float att = 1.0f / (dist * dist) - 1.0f / (light.radius_length * light.radius_length);
-	//float att = 1.0f / dist - 1.0f / light.radius_length;
-	//float constantAttenuation = 1.0;
-    //float linearAttenuation = 0.12;
-    //float quadraticAttenuation = 0.10;
-	//float att = constantAttenuation / ((1+linearAttenuation*dist)*(1+quadraticAttenuation*dist*dist));
+	float att = 1.0f / dist - 1.0f / light.radius_length;// More attenuations to chose from at the bottom of this file
 
 	vec3 eyeDir = normalize(eyePosition - wPos);
 	return vec4(BlinnPhong(light, surface, eyeDir, lightDir, att), 0.0f);
+}
+
+vec4 CalculateSpotlight( LightData light, SurfaceData surface, vec3 wPos, vec3 eyePosition)
+{
+	vec3 lightDir = light.position - wPos;
+	
+	float cosAngle = dot(normalize(light.orientation.xyz), normalize(-lightDir));
+	float cosOuterAngle = cos(light.spot_angle);
+	float cosInnerAngle = cosOuterAngle+0.03f;
+	float cosDelta = cosInnerAngle - cosOuterAngle;
+
+	float spot = clamp((cosAngle - cosOuterAngle) / cosDelta,0.0f, 1.0f);
+
+	if((cosAngle > cos(light.spot_angle)) && (length(lightDir) <= light.radius_length))
+	{
+		// Calculate attenuation
+		float dist = length( lightDir );
+		float att = spot * (1.0f / dist - 1.0f / light.radius_length);// More attenuations to chose from at the bottom of this file
+
+		vec3 eyeDir = normalize(eyePosition - wPos);
+		return vec4(BlinnPhong(light, surface, eyeDir, lightDir, att), 0.0f);
+	}
+	else
+		return vec4(0.0f, 0.0f, 0.0f, 0.0f);
+	
 }
 
 vec4 CalculateDirlight( LightData light, SurfaceData surface, vec3 wPos, vec3 eyePosition)
@@ -212,21 +229,24 @@ void main()
 		uint id;
 		vec4 pos;
 		float rad;
-		bool inFrustum;
+		bool inFrustum = false;
 
 		uint threadCount = WORK_GROUP_SIZE * WORK_GROUP_SIZE;
-		uint passCount = (numPointLights + threadCount - 1) / threadCount;
-
+		uint passCount;
+		// Cull Point lights
+		passCount = (numPointLights + threadCount - 1) / threadCount;
 		for (uint passIt = 0; passIt < passCount; ++passIt)
 		{
 			uint lightIndex =  passIt * threadCount + gl_LocalInvocationIndex;
-
-			lightIndex = min(lightIndex, numPointLights);
-
+			if(lightIndex >= numPointLights)
+				break;
+		
+			lightIndex = min(lightIndex, numPointLights-1); // Dont want this because of break above?
+		
 			p = lights[lightIndex];
 			pos = view * vec4(p.position, 1.0f);
 			rad = p.radius_length;
-
+		
 			if (pointLightCount < MAX_LIGHTS_PER_TILE)
 			{
 				inFrustum = true;
@@ -240,6 +260,40 @@ void main()
 				{
 					id = atomicAdd(pointLightCount, 1);
 					pointLightIndex[id] = lightIndex;
+				}
+			}
+		}
+
+		inFrustum = false;
+		// Cull Spotlights
+		passCount = (numSpotLights + threadCount - 1) / threadCount;
+		for (uint passIt = 0; passIt < passCount; ++passIt)
+		{
+			uint lightIndex =  passIt * threadCount + gl_LocalInvocationIndex;
+			if(lightIndex >= numSpotLights)
+				break;
+
+			lightIndex += numPointLights;
+		
+			lightIndex = min(lightIndex, numPointLights+numSpotLights-1); // Dont want this because of break above?
+		
+			p = lights[lightIndex];
+			pos = view * vec4(p.position, 1.0f);
+			rad = p.radius_length;
+		
+			if (spotLightCount < MAX_LIGHTS_PER_TILE)
+			{
+				inFrustum = true;
+				for (uint i = 3; i >= 0 && inFrustum; i--)
+				{
+					dist = dot(frustumPlanes[i], pos);
+					inFrustum = (-rad <= dist);
+				}
+			
+				if (inFrustum)
+				{
+					id = atomicAdd(spotLightCount, 1);
+					spotLightIndex[id] = lightIndex;
 				}
 			}
 		}
@@ -268,7 +322,7 @@ void main()
 		//spot lights
 		for(i = 0; i < spotLightCount; i++)
 		{
-			
+			color += CalculateSpotlight(lights[spotLightIndex[i]], surface, wPos.xyz, eyePos);
 		}
 		uint ofst;
 		//Directional lights
@@ -298,3 +352,18 @@ void main()
 		}
 
 }
+
+// Some different attenuations
+
+// invsquare attenuation which will be 0 at light radius
+//att = 1/dist^2 - 1/radius^2
+//float att = 1.0f / (dist * dist) - 1.0f / (light.radius_length * light.radius_length); 
+
+// A more "deferred friendly" attenuation, slower cutoff than invsquare
+//float att = 1.0f / dist - 1.0f / light.radius_length;
+
+// Traditional point light attenuation as used in most forward shaders
+//float constantAttenuation = 1.0;
+//float linearAttenuation = 0.12;
+//float quadraticAttenuation = 0.10;
+//float att = constantAttenuation / ((1+linearAttenuation*dist)*(1+quadraticAttenuation*dist*dist));
