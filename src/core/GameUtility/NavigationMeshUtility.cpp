@@ -54,11 +54,16 @@ namespace Core
 	}
 
 
-#include <logger/Logger.hpp>
-
-	bool NavigationMesh::CalculateFlowfieldForGroup( glm::vec3 point )
+	bool NavigationMesh::CalculateFlowfieldForGroup( glm::vec3 point, int group )
 	{
-		std::memset( flowfields[0].list, 0, nrNodes * sizeof( glm::vec3 ) );
+		if( group >= maxFlowfields )
+		{
+			LOG_FATAL << "Trying to calculate flowfield for group id above max nr groups, in function \"CalculateFlowfieldForGroup\"" << std::endl;
+			assert( false );
+			return false;
+		}
+
+		std::memset( flowfields[group].list, 0, nrNodes * sizeof( glm::vec3 ) );
 
 		// find out what node we want to go to...
 		int node = -1;
@@ -137,9 +142,7 @@ namespace Core
 				}
 			}
 
-			// TO DO : set direction for this node!
-			flowfields[0].list[ prioList[0].node ] = mid;
-			//flowfields[0].list[ prioList[0].node ] = normal;
+			flowfields[group].list[ prioList[0].node ] = mid;
 
 			visited[ prioList[0].node ] = true;
 			prioList.erase( prioList.begin() );
@@ -149,10 +152,5 @@ namespace Core
 
 		return true;
 	}
-
-
-
-
-
 
 }

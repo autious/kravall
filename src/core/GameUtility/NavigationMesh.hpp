@@ -113,14 +113,15 @@ namespace Core
 
 		// NavigationMesh utility...
 		/*!
-			returns true if point is inside node.
+			Returns true if point is inside node.
 		*/
 		bool CheckPointInsideNode( glm::vec3 point, int node );
 
 		/*!
-			if point is inside a node the flowfield to get to that node will be calculated.
+			If point is inside a node the flowfield to get to that node will be calculated for the respective group.
+			Returns false if no field is calculated.
 		*/
-		bool CalculateFlowfieldForGroup( glm::vec3 point );
+		bool CalculateFlowfieldForGroup( glm::vec3 point, int group );
 	};
 
 

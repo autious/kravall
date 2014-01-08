@@ -213,6 +213,22 @@ Core::ComponentSetters Core::AttributeComponentBinding::GetSetters()
         }
     };
 
+	setters["groupID"] = []( Core::Entity entity, lua_State * L, int valueindex )
+    {
+        AttributeComponent *atrbc = WGETC<AttributeComponent>( entity ); 
+        
+        if( lua_isnumber(  L, valueindex ) )
+        {
+            atrbc->rioter.groupID = lua_tonumber( L, valueindex );
+        }
+        else
+        {
+            luaL_error( L, "Unable to set pressure for ent %d, value is not number", entity );
+        }
+    };
+
+	
+
     return setters;
 }
 

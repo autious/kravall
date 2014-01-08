@@ -237,7 +237,7 @@ void run( GLFWwindow * window )
 	CreateRioter(&rioters, meshID, rioterMaterialID, -3.0f, 0.0f, 1.0f);
 	CreateRioter(&rioters, meshID, rioterMaterialID, 0.0f, 0.0f, 0.0f);
 	CreateRioter(&rioters, meshID, rioterMaterialID, 3.0f, 0.0f, 1.0f);
-
+	
 	CreatePolice(&rioters, meshID, copMaterialID, 0.0f, 0.0f, -6.0f);
 	CreatePolice(&rioters, meshID, copMaterialID, -6.0f, 0.0f, 0.0f);
 	CreatePolice(&rioters, meshID, copMaterialID, 6.0f, 0.0f, 0.0f);

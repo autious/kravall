@@ -57,8 +57,6 @@ void Core::CollisionSystem2D::Update( float delta )
 					float delta = ((otherSphere->radius + mySphere->radius) - std::sqrt( sqareDistance ));
 					glm::vec3 collisionNormal = glm::normalize( myPosition - otherPosition );
 
-					//GFX::Debug::DrawSphere( *myPosition, mySphere->radius, GFXColor( 1, 0, 0, 1 ) );
-
 					switch( bvcOther->collisionModel )
 					{
 					case Core::BoundingVolumeCollisionModel::DynamicResolution:

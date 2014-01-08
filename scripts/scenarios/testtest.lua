@@ -33,7 +33,7 @@ for i = -1, 3 do
 			{
 				{
 					type = core.componentType.WorldPositionComponent,
-					data = { position = { p * 5, 0, i * 2 } }
+					data = { position = { p * 5 + 1, 0, i * 2 } }
 				},
 				{
 					type = core.componentType.GraphicsComponent,
@@ -63,7 +63,7 @@ for i = -1, 3 do
 				{
 					type = core.componentType.AttributeComponent,
 					data = { health = 0, stamina = 0, morale = 0, 
-						   alignment = core.RioterAlignment.Anarchist, rage = 0, pressure = 0 }
+						   alignment = core.RioterAlignment.Anarchist, rage = 0, pressure = 0, groupID = 0 }
 				},
 				{
 					type = core.componentType.BoundingVolumeComponent,
