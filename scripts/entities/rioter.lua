@@ -29,7 +29,7 @@ function t.create(asm, posX, posY, posZ, group)
 			},
 			{
 				type = core.componentType.MovementComponent,
-				data = { direction = { 0, 0, 0 }, speed = 2, maxSpeed = 6 }
+				data = { direction = { 0, 0, 0 }, speed = 5, maxSpeed = 10 }
 			},
 			{
 				type = core.componentType.AttributeComponent,

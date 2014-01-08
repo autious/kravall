@@ -201,6 +201,6 @@ void Core::AIDebugSystem::Update( float delta )
 
 	CheckNavMeshCalculation();
 
-	//DrawNavigationMesh();
+	DrawNavigationMesh();
 
 }
