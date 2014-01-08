@@ -154,10 +154,10 @@ void CheckNavMeshCalculation()
 
 	int x, y;
 	Core::GetInputManager().GetMouseState().GetCursorPosition( x, y );
-	glm::vec3 temp = ((Core::PickingSystem*)Core::world.m_systemHandler.GetSystem( pickingSystem ))->GetGroundHit( x, y );
+	glm::vec3 position = ((Core::PickingSystem*)Core::world.m_systemHandler.GetSystem( pickingSystem ))->GetGroundHit( x, y );
 
 	if( Core::GetNavigationMesh() )
-		Core::GetNavigationMesh()->CalculateFlowfieldForGroup( temp, 0 );
+		Core::GetNavigationMesh()->CalculateFlowfieldForGroup( position, 0 );
 }
 
 
