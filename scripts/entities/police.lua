@@ -11,8 +11,8 @@ function t.create(asm, posX, posY, posZ)
 				type = core.componentType.GraphicsComponent,
 				data = { mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry },
 				load = { 
-							mesh = { core.loaders.GnomeLoader, "assets/teapot.bgnome" },
-							material = { core.loaders.MaterialLoader, "assets/material/test-material.material" }
+							mesh = { core.loaders.GnomeLoader, "assets/model/animated/police/cop/cop-light_00.bgnome" },
+							material = { core.loaders.MaterialLoader, "assets/material/cop.material" }
 					   }
 			},
 			{
@@ -25,17 +25,16 @@ function t.create(asm, posX, posY, posZ)
 			},
 			{
 				type = core.componentType.UnitTypeComponent,
-				data = { unitType = core.UnitType.Rioter }
+				data = { unitType = core.UnitType.Police }
 			},
 			{
 				type = core.componentType.MovementComponent,
-				--data = { direction = { -1, 0, -1 }, speed = 5.8, maxSpeed = 50 }
 				data = { direction = { 0, 0, 0 }, speed = 5.8, maxSpeed = 50 }
 			},
 			{
 				type = core.componentType.AttributeComponent,
 				data = { health = 0, stamina = 0, morale = 0, 
-					   alignment = core.RioterAlignment.Anarchist, rage = 0, pressure = 0, groupID = 0 }
+					   stance = core.PoliceStance.Passive, defense = 0, mobility = 0, squadID = 0 }
 			},
 			{
 				type = core.componentType.BoundingVolumeComponent,

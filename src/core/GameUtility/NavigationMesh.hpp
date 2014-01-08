@@ -122,6 +122,11 @@ namespace Core
 			Returns false if no field is calculated.
 		*/
 		bool CalculateFlowfieldForGroup( glm::vec3 point, int group );
+
+		/*!
+			Uses the GFX debug system to draw the outlines of the navigation mesh.
+		*/
+		void DrawDebug();
 	};
 
 
