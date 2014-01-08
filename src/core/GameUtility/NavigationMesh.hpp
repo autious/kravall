@@ -56,12 +56,12 @@ namespace Core
 				int linksToEdge;
 				/*!
 					The distance from this corner to the n + 1 corner. Loops around for the last index.
+					Negative if edge is not valid ( last corner if triangle ).
 				*/
 				float length;
 				/*!
 					Inverse of the distance from this corner to the n + 1 corner.
 					Loops around for the last index.
-					Negative if edge is not valid.
 				*/
 				float inverseLength;
 			} corners[4];
