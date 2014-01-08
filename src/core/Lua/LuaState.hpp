@@ -26,8 +26,8 @@ namespace Core
             LuaState();
             ~LuaState();
 
-            void Execute( const char *filename ); 
-            void DoBlock( const char *block );
+            bool Execute( const char *filename ); 
+            bool DoBlock( const char *block );
             int DoBlock( const char * block, int args, int rargs );
 
             void Update( float delta );

@@ -272,6 +272,12 @@ namespace Core
     {
         return GetKeyboardState().IsKeyDown( id ) && GetPrevKeyboardState().IsKeyUp( id );
     }
+    
+    bool InputManager::IsMouseButtonDownOnce( const int id )
+    {
+        return GetMouseState().IsButtonDown( id )
+            && GetPrevMouseState().IsButtonUp( id );
+    }
 
     void InputManager::GetPosDiff( int& x, int &y )
     {

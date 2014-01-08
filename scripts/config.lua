@@ -48,17 +48,17 @@ function doscenario( name )
     --return dofile( "scripts/scenarios/" .. name .. ".lua" ) 
 end
 
-core.current_scenario = nil
-core.current_scenario_name = "No Scenario Loaded"
+core.config.current_scenario = nil
+core.config.current_scenario_name = "No Scenario Loaded"
 
 function currentscenario()
-    print( core.current_scenario_name )
+    print( core.config.current_scenario_name )
 end
 
 function openscenario( name )
     closescenario()
-    core.current_scenario = dofile( "scripts/scenarios/" .. name .. ".lua" )
-    core.current_scenario_name = name
+    core.config.current_scenario = dofile( "scripts/scenarios/" .. name .. ".lua" )
+    core.config.current_scenario_name = name
 
     collectgarbage() --For niceness, always good to do right after loading a scenario as the
                      --assembly files are quite large.
@@ -66,9 +66,9 @@ end
 
 function closescenario()
     if core.current_scenario ~= nil then
-        core.current_scenario:destroy()
-        core.current_scenario = nil
-        core.current_scenario_name = "No Scenario Loaded"
+        core.config.current_scenario:destroy()
+        core.config.current_scenario = nil
+        core.config.current_scenario_name = "No Scenario Loaded"
     end
 
     collectgarbage() --For niceness, always good to do right after loading a scenario as the

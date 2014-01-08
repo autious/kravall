@@ -17,89 +17,37 @@ extern "C"
 {
     static int LuaIsKeyDown(lua_State* L)
     {
-        if(lua_gettop(L) == 1)
-        {
-            if(lua_isnumber(L, 1))
-            {
-                bool result = Core::GetInputManager().GetKeyboardState().IsKeyDown(lua_tonumber(L, 1));
-                lua_pushboolean(L, result);
-            }
-            else
-            {
-                return luaL_error(L, "The function takes numerical argument");
-            }
-        }
-        else
-        {
-            return luaL_error(L, "The function takes one argument");
-        }
-
+        lua_pushboolean(L, Core::GetInputManager().GetKeyboardState().IsKeyDown(luaL_checkinteger(L, 1)));
         return 1;
     }
 
     static int LuaIsKeyUp(lua_State* L)
     {
-        if(lua_gettop(L) == 1)
-        {
-            if(lua_isnumber(L, 1))
-            {
-                bool result = Core::GetInputManager().GetKeyboardState().IsKeyUp(lua_tonumber(L, 1));
-                lua_pushboolean(L, result);
-            }
-            else
-            {
-                return luaL_error(L, "The function takes numerical argument");
-            }
-        }
-        else
-        {
-            return luaL_error(L, "The function takes one argument");
-        }
+        lua_pushboolean(L, Core::GetInputManager().GetKeyboardState().IsKeyUp(luaL_checkinteger(L, 1)));
+        return 1;
+    }
 
+    static int LuaIsKeyDownOnce( lua_State* L )
+    {
+        lua_pushboolean(L, Core::GetInputManager().IsKeyPressedOnce(luaL_checkinteger(L, 1)));
         return 1;
     }
 
     static int LuaIsButtonDown(lua_State* L)
     {
-        if(lua_gettop(L) == 1)
-        {
-            if(lua_isnumber(L, 1))
-            {
-                bool result = Core::GetInputManager().GetMouseState().IsButtonDown(lua_tonumber(L, 1));
-                lua_pushboolean(L, result);
-            }
-            else
-            {
-                return luaL_error(L, "The function takes numerical argument");
-            }
-        }
-        else
-        {
-            return luaL_error(L, "The function takes one argument");
-        }
-
+        lua_pushboolean(L, Core::GetInputManager().GetMouseState().IsButtonDown(luaL_checkinteger(L, 1)));
         return 1;
     }
 
     static int LuaIsButtonUp(lua_State* L)
     {
-        if(lua_gettop(L) == 1)
-        {
-            if(lua_isnumber(L, 1))
-            {
-                bool result = Core::GetInputManager().GetMouseState().IsButtonUp(lua_tonumber(L, 1));
-                lua_pushboolean(L, result);
-            }
-            else
-            {
-                return luaL_error(L, "The function takes numerical argument");
-            }
-        }
-        else
-        {
-            return luaL_error(L, "The function takes one argument");
-        }
+        lua_pushboolean(L,Core::GetInputManager().GetMouseState().IsButtonUp(luaL_checkinteger(L, 1)));
+        return 1;
+    }
 
+    static int LuaIsButtonDownOnce( lua_State *L )
+    {
+        lua_pushboolean( L, Core::GetInputManager().IsMouseButtonDownOnce(luaL_checkinteger(L, 1)));
         return 1;
     }
 
@@ -120,7 +68,6 @@ extern "C"
                 } 
                 else if( STREQ( index, "onkey" ) )
                 {
-                    LOG_DEBUG << "Regestering new onkey function" << std::endl;
                     luaL_unref( L, LUA_REGISTRYINDEX, Core::LuaInputBridge::regOnKey );
                     lua_pushvalue( L, 3 ); 
                     Core::LuaInputBridge::regOnKey = luaL_ref( L, LUA_REGISTRYINDEX );
@@ -351,6 +298,7 @@ namespace Core
                 lua_newtable(L);
                     lua_pushcfunction(L, LuaIsKeyDown);
                     lua_setfield(L, -2, "iskeydown");
+                    luau_setfunction(L, "iskeydownonce", LuaIsKeyDownOnce );
                     lua_pushcfunction(L, LuaIsKeyUp);
                     lua_setfield(L, -2, "iskeyup");
                    
@@ -376,6 +324,7 @@ namespace Core
                     lua_setfield(L, -2, "isbuttondown");
                     lua_pushcfunction(L, LuaIsButtonUp);
                     lua_setfield(L, -2, "isbuttonup");
+                    luau_setfunction( L, "isbuttondownonce", LuaIsButtonDownOnce );
                     
                     lua_newtable( L );
                         PushMouseConst( L );

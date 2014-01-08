@@ -26,7 +26,12 @@ extern "C"
 {
     static int LuaCoreNewindex( lua_State * L )
     {
-        return luaL_error( L, "Read only" );
+        if( lua_isstring( L, 2 ) && (STREQ( lua_tostring( L, 2 ), "config" ) || STREQ( lua_tostring( L, 2 ), "update" )|| STREQ( lua_tostring( L,2 ), "init" ) ) )
+        {
+            lua_rawset( L, 1 );
+            return 0;
+        }
+        return luaL_error( L, "Read only, %s", lua_tostring(L,2 ) );
     }
 }
 
@@ -35,7 +40,7 @@ Core::LuaState::LuaState()
     LOG_DEBUG << "Creating lua state" << std::endl;
     m_state = luaL_newstate();
     int sanity = lua_gettop( m_state );
-    m_activeUpdate = false;
+    m_activeUpdate = true;
 
     luaL_openlibs( m_state ); 
 
@@ -86,7 +91,7 @@ Core::LuaState::~LuaState()
     lua_close( m_state );
 }
 
-void Core::LuaState::Execute( const char * filename )
+bool Core::LuaState::Execute( const char * filename )
 {
     int error = luaL_dofile( m_state, filename );
 
@@ -97,9 +102,11 @@ void Core::LuaState::Execute( const char * filename )
     }
 
     VerifyUpdateFunction();
+
+    return error == 0;
 }
 
-void Core::LuaState::DoBlock( const char * block )
+bool Core::LuaState::DoBlock( const char * block )
 {
     int error = luaL_loadstring( m_state, block ) || lua_pcall( m_state, 0,0,0 );
 
@@ -110,6 +117,8 @@ void Core::LuaState::DoBlock( const char * block )
     }
 
     VerifyUpdateFunction();
+
+    return error == 0;
 }
 
 int Core::LuaState::DoBlock( const char * block, int args, int rargs )
