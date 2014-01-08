@@ -116,7 +116,7 @@ void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, unsigned in
 		 Core::AttributeComponent(),
 		 //Core::BoundingVolumeComponent( Core::BoundingSphere( 3.0f, 0.0f, 0.0f, 0.0f ), aa )
 		 Core::BoundingVolumeComponent(Core::BoundingSphere(0.5f, 0.0f, 0.0f, 0.0f), 
-		 Core::BoundingVolumeCollisionModel::DynamicResolution)));
+									   Core::BoundingVolumeCollisionModel::DynamicResolution)));
 
 	Core::GraphicsComponent* gc = WGETC <Core::GraphicsComponent>(rioterList->at(index));
 	GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::MESH_ID, meshID);
@@ -234,13 +234,18 @@ void run( GLFWwindow * window )
    
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));	
 	
-	CreateRioter(&rioters, meshID, rioterMaterialID, -3.0f, 0.0f, 1.0f);
-	CreateRioter(&rioters, meshID, rioterMaterialID, 0.0f, 0.0f, 0.0f);
-	CreateRioter(&rioters, meshID, rioterMaterialID, 3.0f, 0.0f, 1.0f);
+	//CreateRioter(&rioters, meshID, rioterMaterialID, -3.0f, 0.0f, 1.0f);
+	//CreateRioter(&rioters, meshID, rioterMaterialID, 0.0f, 0.0f, 0.0f);
+	//CreateRioter(&rioters, meshID, rioterMaterialID, 3.0f, 0.0f, 1.0f);
 
-	CreatePolice(&rioters, meshID, copMaterialID, 0.0f, 0.0f, -6.0f);
-	CreatePolice(&rioters, meshID, copMaterialID, -6.0f, 0.0f, 0.0f);
-	CreatePolice(&rioters, meshID, copMaterialID, 6.0f, 0.0f, 0.0f);
+	//CreatePolice(&rioters, meshID, copMaterialID, -6.0f, 0.0f, 0.0f);
+	//CreatePolice(&rioters, meshID, copMaterialID, 6.0f, 0.0f, 0.0f);
+	//CreatePolice(&rioters, meshID, copMaterialID, 0.0f, 0.0f, 6.0f);
+	//CreatePolice(&rioters, meshID, copMaterialID, 0.0f, 0.0f, -6.0f);
+
+	CreatePolice(&rioters, meshID, copMaterialID, 0.0f, 0.0f, 3.0f);
+	CreatePolice(&rioters, meshID, copMaterialID, 0.0f, 0.0f, 4.0f);
+	CreatePolice(&rioters, meshID, copMaterialID, 0.0f, 0.0f, 5.0f);
 	CreatePolice(&rioters, meshID, copMaterialID, 0.0f, 0.0f, 6.0f);
 
 	LOG_INFO << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " " << std::endl;
