@@ -77,3 +77,22 @@ function closescenario()
                      --assembly files are quite large.
 end
     
+-- Prints all keys and sub-keys for given table, useful if you want to see what core looks like.
+function print_env( table, prefix)
+    if prefix == nil then
+        prefix = ""
+    end
+
+    if table == nil then
+       table = core
+       prefix = "core"
+    end  
+
+    for k,v in  pairs( table ) do
+        print( prefix .. "." .. k )
+            if type( v ) == "table" then
+                print_env( v, prefix .. "." .. k )
+            end
+    end
+
+end
