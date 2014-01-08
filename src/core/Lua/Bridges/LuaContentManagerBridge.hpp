@@ -24,7 +24,7 @@ namespace Core
     class LuaContentManagerBridge
     {
         public:
-            static void OpenLibs( lua_State * L );   
+            LuaContentManagerBridge( lua_State * L );   
     };
 
     /*!

@@ -37,7 +37,7 @@ static void PushRioterObjectType( lua_State * L, const unsigned int value, const
         lua_settable( L, table );
 }
 
-void Core::LuaAttributeComponentBridge::OpenLibs( lua_State * L )
+Core::LuaAttributeComponentBridge::LuaAttributeComponentBridge( lua_State * L )
 {
 	int stackpos = lua_gettop( L );
 

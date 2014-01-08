@@ -75,7 +75,7 @@ extern "C"
     }
 }
 
-void Core::LuaLoggerPrint::OpenLibs( lua_State * state )
+Core::LuaLoggerPrint::LuaLoggerPrint( lua_State * state )
 {
     lua_pushcfunction( state, LuaPrintDebug );
     lua_setglobal( state, "log" );
