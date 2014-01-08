@@ -89,10 +89,14 @@ function print_env( table, prefix)
     end  
 
     for k,v in  pairs( table ) do
-        print( prefix .. "." .. k )
-            if type( v ) == "table" then
+        if type( v ) == "function" then
+            print( prefix .. "." .. k .. "()" )
+        elseif type( v ) == "table" then
+            print( prefix .. "." .. k .. " [table]")
                 print_env( v, prefix .. "." .. k )
-            end
+        else
+            print( prefix .. "." .. k )
+        end
     end
 
 end
