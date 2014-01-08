@@ -154,10 +154,39 @@ void CheckNavMeshCalculation()
 
 	int x, y;
 	Core::GetInputManager().GetMouseState().GetCursorPosition( x, y );
-	glm::vec3 temp = ((Core::PickingSystem*)Core::world.m_systemHandler.GetSystem( pickingSystem ))->GetGroundHit( x, y );
+	glm::vec3 position = ((Core::PickingSystem*)Core::world.m_systemHandler.GetSystem( pickingSystem ))->GetGroundHit( x, y );
 
 	if( Core::GetNavigationMesh() )
-		Core::GetNavigationMesh()->CalculateFlowfieldForGroup( temp, 0 );
+		Core::GetNavigationMesh()->CalculateFlowfieldForGroup( position, 0 );
+}
+
+
+
+void DrawNavigationMesh()
+{
+	if( Core::GetNavigationMesh() )
+	{
+		Core::NavigationMesh* instance = Core::GetNavigationMesh();
+
+		for( int i = 0; i < instance->nrNodes; i++ )
+		{
+			float* points = instance->nodes[i].points;
+
+			for( int p = 0; p < 4; p++ )
+			{
+				if( instance->nodes[i].corners[p].length < 0 )
+					continue;
+
+				int ii = p * 2;
+				int oo = (ii + 2) % 8;	
+
+				glm::vec3 lineStart = glm::vec3( points[ ii ], 0.0f, points[ ii + 1 ] );
+				glm::vec3 lineEnd	= glm::vec3( points[ oo ], 0.0f, points[ oo + 1 ] );
+				GFX::Debug::DrawLine( 
+					lineStart, lineEnd, GFXColor( 0.0f, 1.0f, 1.0f, 1.0f ), true );
+			}
+		}
+	}
 }
 
 
@@ -172,14 +201,6 @@ void Core::AIDebugSystem::Update( float delta )
 
 	CheckNavMeshCalculation();
 
-
-	if( Core::GetNavigationMesh() )
-	{
-		for( int i = 0; i < Core::GetNavigationMesh()->nrNodes; i++ )
-		{
-			//GFX::Debug::DrawSphere( Core::GetNavigationMesh()->flowfields[0].list[i], 5.0f, GFXColor( 0.0f, 0.7f, 1.0f, 1.0f ), false );
-		}
-	}
-
+	//DrawNavigationMesh();
 
 }
