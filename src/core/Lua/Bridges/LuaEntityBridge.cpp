@@ -65,7 +65,7 @@ extern "C"
     }
 }
 
-void Core::LuaEntityBridge::OpenLibs( lua_State * L )
+Core::LuaEntityBridge::LuaEntityBridge( lua_State * L  )
 {
     lua_getglobal( L, "core" );  
 

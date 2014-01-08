@@ -8,7 +8,7 @@ namespace Core
     class LuaBitmask
     {
         public:
-            static void OpenLibs( lua_State * L );
+            LuaBitmask( lua_State * L);
     };
 }
 

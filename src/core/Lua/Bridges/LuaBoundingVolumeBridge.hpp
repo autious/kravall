@@ -11,7 +11,7 @@ namespace Core
     class LuaBoundingVolumeComponentBridge
     {
     public:
-         static void OpenLibs( lua_State * L );
+         LuaBoundingVolumeComponentBridge( lua_State * L );
     };
 }
 

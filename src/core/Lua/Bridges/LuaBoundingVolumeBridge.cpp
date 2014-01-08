@@ -33,7 +33,7 @@ static void PushTypeObjectType( lua_State * L, const unsigned int value, const c
 }
 
 
-void Core::LuaBoundingVolumeComponentBridge::OpenLibs( lua_State * L )
+Core::LuaBoundingVolumeComponentBridge::LuaBoundingVolumeComponentBridge( lua_State * L )
 {
     int stackpos = lua_gettop( L );
 

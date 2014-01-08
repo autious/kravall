@@ -8,6 +8,12 @@
 #include <lualib.h>
 #include <lauxlib.h>
 
+
+#include <Lua/Datatypes/LuaBitmask.hpp>
+#include <Lua/LuaUtility.hpp>
+
+#include <Timer.hpp>
+
 #include <Lua/Bridges/LuaLoggerPrint.hpp>
 #include <Lua/Bridges/LuaEntityBridge.hpp>
 #include <Lua/Bridges/LuaContentManagerBridge.hpp>
@@ -17,10 +23,33 @@
 #include <Lua/Bridges/LuaBoundingVolumeBridge.hpp>
 #include <Lua/Bridges/LuaUnitTypeBridge.hpp>
 
-#include <Lua/Datatypes/LuaBitmask.hpp>
-#include <Lua/LuaUtility.hpp>
-
-#include <Timer.hpp>
+namespace Core
+{
+    struct LuaStateBindings
+    {
+        LuaStateBindings( lua_State *state ):
+        lb(state),
+        llp(state),
+        leb(state),
+        lcmb(state),
+        lib(state),
+        gfxb(state),
+        lacb(state),
+        lbvc(state),
+        lutcb(state)
+        {}
+            
+        LuaBitmask lb;
+        LuaLoggerPrint llp;
+        LuaEntityBridge leb;
+        LuaContentManagerBridge lcmb;
+        LuaInputBridge lib;
+        LuaGFXBridge gfxb;
+        LuaAttributeComponentBridge lacb;
+        LuaBoundingVolumeComponentBridge lbvc;
+        LuaUnitTypeComponentBridge lutcb;
+    };
+}
 
 extern "C"
 {
@@ -34,6 +63,7 @@ extern "C"
         return luaL_error( L, "Read only, %s", lua_tostring(L,2 ) );
     }
 }
+
 
 Core::LuaState::LuaState()
 {
@@ -66,16 +96,8 @@ Core::LuaState::LuaState()
         lua_setfield( m_state, -2, "config" );
     lua_setglobal( m_state, "core" );
 
-    LuaBitmask::OpenLibs( m_state );
-
-    LuaLoggerPrint::OpenLibs( m_state );
-    LuaEntityBridge::OpenLibs( m_state );
-    LuaContentManagerBridge::OpenLibs( m_state );
-    LuaInputBridge::OpenLibs( m_state );
-    LuaGFXBridge::OpenLibs( m_state );
-	LuaAttributeComponentBridge::OpenLibs( m_state );
-	LuaBoundingVolumeComponentBridge::OpenLibs( m_state );
-	LuaUnitTypeComponentBridge::OpenLibs( m_state );
+    //Init sub
+    bindings = new LuaStateBindings( m_state );
 
     lua_getglobal( m_state, "core" ); //Let's lock down core now.
         lua_newtable( m_state );
@@ -87,7 +109,7 @@ Core::LuaState::LuaState()
 
 Core::LuaState::~LuaState()
 {
-    LuaInputBridge::CloseLibs( m_state );
+    delete bindings;
     lua_close( m_state );
 }
 

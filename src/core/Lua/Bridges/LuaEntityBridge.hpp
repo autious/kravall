@@ -20,7 +20,6 @@
 #include <ComponentFramework/ComponentType.hpp>
 #include <World.hpp>
 
-
 namespace Core
 {
     /*!
@@ -30,7 +29,7 @@ namespace Core
     class LuaEntityBridge
     {
     public:
-        static void OpenLibs( lua_State * state );
+        LuaEntityBridge( lua_State *state );
     };
 
     /*! 

@@ -87,7 +87,7 @@ extern "C"
 
 namespace Core
 {
-    void LuaBitmask::OpenLibs( lua_State * L )
+    LuaBitmask::LuaBitmask( lua_State * L )
     {
         int sanity = lua_gettop(L);
         lua_getglobal( L, "core" );

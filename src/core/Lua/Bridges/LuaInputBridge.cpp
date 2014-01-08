@@ -53,6 +53,7 @@ extern "C"
 
     static int LuaKeyboardNewindex( lua_State *L )
     {
+        bool rawset = false;
         if( lua_gettop( L ) == 3 )
         {
             if( lua_isstring( L, 2 ) && ( lua_isfunction( L, 3 ) || lua_isnil( L, 3 ) )  )
@@ -61,26 +62,27 @@ extern "C"
 
                 if( STREQ( index, "onchar" ) )
                 {
-                    luaL_unref( L, LUA_REGISTRYINDEX, Core::LuaInputBridge::regOnChar );
-                    lua_pushvalue( L, 3 ); 
-                    Core::LuaInputBridge::regOnChar = luaL_ref( L, LUA_REGISTRYINDEX );
-                    return 0;
+                    rawset = true;
                 } 
                 else if( STREQ( index, "onkey" ) )
                 {
-                    luaL_unref( L, LUA_REGISTRYINDEX, Core::LuaInputBridge::regOnKey );
-                    lua_pushvalue( L, 3 ); 
-                    Core::LuaInputBridge::regOnKey = luaL_ref( L, LUA_REGISTRYINDEX );
-                    return 0;
+                    rawset = true;
                 }
             }
-            
         }
+
+        if( rawset )
+        {
+            lua_rawset( L, -3 );
+            return 0;
+        }
+
         return luaL_error( L, "%s: Read Only/Invalid index/Invalid Value", __FUNCTION__ );
     }
     
     static int LuaMouseNewindex( lua_State *L )
     {
+        bool rawset = false;
         if( lua_gettop( L ) == 3 )
         {
             if( lua_isstring( L, 2 ) && ( lua_isfunction( L, 3 ) || lua_isnil( L,3 ) )  )
@@ -89,27 +91,24 @@ extern "C"
 
                 if( STREQ( index, "onbutton" ) )
                 {
-                    luaL_unref( L, LUA_REGISTRYINDEX, Core::LuaInputBridge::regOnButton );
-                    lua_pushvalue( L, 3 ); 
-                    Core::LuaInputBridge::regOnButton = luaL_ref( L, LUA_REGISTRYINDEX );
-                    return 0;
+                    rawset = true;
                 } 
                 else if( STREQ( index, "onposition" ) )
                 {
-                    luaL_unref( L, LUA_REGISTRYINDEX, Core::LuaInputBridge::regOnPosition );
-                    lua_pushvalue( L, 3 ); 
-                    Core::LuaInputBridge::regOnPosition = luaL_ref( L, LUA_REGISTRYINDEX );
-                    return 0;
+                    rawset = true;
                 }
                 else if( STREQ( index, "onscroll" ) )
                 {
-                    luaL_unref( L, LUA_REGISTRYINDEX, Core::LuaInputBridge::regOnScroll );
-                    lua_pushvalue( L, 3 ); 
-                    Core::LuaInputBridge::regOnScroll = luaL_ref( L, LUA_REGISTRYINDEX );
-                    return 0;
+                    rawset = true;
                 }
             }
             
+        }
+
+        if( rawset )
+        {
+            lua_rawset( L, -3 );
+            return 0;
         }
         return luaL_error( L, "%s: Read Only/Invalid index/Invalid Value", __FUNCTION__ );
     }
@@ -137,52 +136,26 @@ namespace Core
     {
         
     }
-    
 
     void LuaInputHandler::OnKeyEvent(const Core::KeyEvent &e)
     {
-        if( Core::LuaInputBridge::regOnKey != LUA_NOREF )
+        lua_getglobal( m_luaState, "core" );
+        lua_getfield( m_luaState, -1, "input" );
+        lua_getfield( m_luaState, -1, "keyboard" );
+        lua_getfield( m_luaState, -1, "onkey" );
+        if( !lua_isnil( m_luaState, -1) )
         {
-            lua_rawgeti( m_luaState, LUA_REGISTRYINDEX, Core::LuaInputBridge::regOnKey );
-            if( !lua_isnil( m_luaState, -1) )
-            {
-                if( lua_isfunction(m_luaState, -1) )
-                {
-                    lua_pushvalue( m_luaState, -1 );
-                    lua_pushinteger(m_luaState, e.key);
-                    lua_pushinteger(m_luaState, e.scancode);
-                    lua_pushinteger(m_luaState, e.action);
-                    uint64_t * modMask = LuaUNewBitmask( m_luaState ); 
-
-                    *modMask = e.mods;
-
-                    int error = lua_pcall(m_luaState, 4, 0, 0);
-                    if(error)
-                    {
-                        LOG_ERROR << "Unable to call lua function onkeyevent: " << lua_tostring(m_luaState, -1) << std::endl;
-                        lua_pop(m_luaState, 1);
-                    }
-                }
-                else
-                {
-                    LOG_ERROR << "Unable to call lua function onkey: value is a non-function value." << std::endl;
-                }
-            }
-            lua_pop( m_luaState, 1 );
-        }
-    }
-
-    void LuaInputHandler::OnCharEvent( const Core::CharEvent &e ) 
-    {
-        if( Core::LuaInputBridge::regOnChar != LUA_NOREF && Core::LuaInputBridge::regOnChar != LUA_REFNIL )
-        {
-            lua_rawgeti( m_luaState, LUA_REGISTRYINDEX, Core::LuaInputBridge::regOnChar );
-            if( lua_isfunction( m_luaState, -1 ) )
+            if( lua_isfunction(m_luaState, -1) )
             {
                 lua_pushvalue( m_luaState, -1 );
-                lua_pushinteger( m_luaState, e.codepoint );
+                lua_pushinteger(m_luaState, e.key);
+                lua_pushinteger(m_luaState, e.scancode);
+                lua_pushinteger(m_luaState, e.action);
+                uint64_t * modMask = LuaUNewBitmask( m_luaState ); 
 
-                int error = lua_pcall(m_luaState, 1, 0, 0);
+                *modMask = e.mods;
+
+                int error = lua_pcall(m_luaState, 4, 0, 0);
                 if(error)
                 {
                     LOG_ERROR << "Unable to call lua function onkeyevent: " << lua_tostring(m_luaState, -1) << std::endl;
@@ -191,100 +164,118 @@ namespace Core
             }
             else
             {
-                LOG_ERROR << "Unable to call lua function onchar: value is nonfunctional value." << std::endl;
+                LOG_ERROR << "Unable to call lua function onkey: value is a non-function value." << std::endl;
             }
-            lua_pop( m_luaState, 1);
         }
+        lua_pop( m_luaState, 1 );
+    }
+
+    void LuaInputHandler::OnCharEvent( const Core::CharEvent &e ) 
+    {
+        lua_getglobal( m_luaState, "core" );
+        lua_getfield( m_luaState, -1, "input" );
+        lua_getfield( m_luaState, -1, "keyboard" );
+        lua_getfield( m_luaState, -1, "onchar" );
+        if( lua_isfunction( m_luaState, -1 ) )
+        {
+            lua_pushvalue( m_luaState, -1 );
+            lua_pushinteger( m_luaState, e.codepoint );
+            lua_pushstring( m_luaState, "sorry not implemented" );
+
+            int error = lua_pcall(m_luaState, 2, 0, 0);
+            if(error)
+            {
+                LOG_ERROR << "Unable to call lua function onkeyevent: " << lua_tostring(m_luaState, -1) << std::endl;
+                lua_pop(m_luaState, 1);
+            }
+        }
+        else
+        {
+            LOG_ERROR << "Unable to call lua function onchar: value is nonfunctional value." << std::endl;
+        }
+        lua_pop( m_luaState, 4);
     }
 
     void LuaInputHandler::OnButtonEvent( const Core::ButtonEvent &e ) 
     {
-        if( Core::LuaInputBridge::regOnButton != LUA_NOREF && Core::LuaInputBridge::regOnButton != LUA_REFNIL )
+        lua_getglobal( m_luaState, "core" );
+        lua_getfield( m_luaState, -1, "input" );
+        lua_getfield( m_luaState, -1, "mouse" );
+        lua_getfield( m_luaState, -1, "onbutton" );
+        if( lua_isfunction( m_luaState, -1 ) )
         {
-            lua_rawgeti( m_luaState, LUA_REGISTRYINDEX, Core::LuaInputBridge::regOnButton );
-            if( lua_isfunction( m_luaState, -1 ) )
-            {
-                lua_pushvalue( m_luaState, -1 );
-                lua_pushinteger( m_luaState, e.button );
-                lua_pushinteger( m_luaState, e.action );
-                lua_pushinteger( m_luaState, e.mods );
+            lua_pushvalue( m_luaState, -1 );
+            lua_pushinteger( m_luaState, e.button );
+            lua_pushinteger( m_luaState, e.action );
+            lua_pushinteger( m_luaState, e.mods );
 
-                int error = lua_pcall(m_luaState, 3, 0, 0);
-                if(error)
-                {
-                    LOG_ERROR << "Unable to call lua function onbutton: " << lua_tostring(m_luaState, -1) << std::endl;
-                    lua_pop(m_luaState, 1);
-                }
-            }
-            else
+            int error = lua_pcall(m_luaState, 3, 0, 0);
+            if(error)
             {
-                LOG_ERROR << "Unable to call lua function onbutton: value is nonfunctional value." << std::endl;
+                LOG_ERROR << "Unable to call lua function onbutton: " << lua_tostring(m_luaState, -1) << std::endl;
+                lua_pop(m_luaState, 1);
             }
-            lua_pop( m_luaState, 1);
         }
+        else
+        {
+            LOG_ERROR << "Unable to call lua function onbutton: value is nonfunctional value." << std::endl;
+        }
+        lua_pop( m_luaState, 4);
     }
 
     void LuaInputHandler::OnPositionEvent( const Core::PositionEvent &e ) 
     {
-        if( Core::LuaInputBridge::regOnPosition != LUA_NOREF && Core::LuaInputBridge::regOnPosition != LUA_REFNIL )
+        lua_getglobal( m_luaState, "core" );
+        lua_getfield( m_luaState, -1, "input" );
+        lua_getfield( m_luaState, -1, "mouse" );
+        lua_getfield( m_luaState, -1, "onposition" );
+        if( lua_isfunction( m_luaState, -1 ) )
         {
-            lua_rawgeti( m_luaState, LUA_REGISTRYINDEX, Core::LuaInputBridge::regOnPosition );
-            if( lua_isfunction( m_luaState, -1 ) )
-            {
-                lua_pushvalue( m_luaState, -1 );
-                lua_pushinteger( m_luaState, e.xpos );
-                lua_pushinteger( m_luaState, e.ypos );
+            lua_pushvalue( m_luaState, -1 );
+            lua_pushinteger( m_luaState, e.xpos );
+            lua_pushinteger( m_luaState, e.ypos );
 
-                int error = lua_pcall(m_luaState, 2, 0, 0);
-                if(error)
-                {
-                    LOG_ERROR << "Unable to call lua function onposition: " << lua_tostring(m_luaState, -1) << std::endl;
-                    lua_pop(m_luaState, 1);
-                }
-            }
-            else
+            int error = lua_pcall(m_luaState, 2, 0, 0);
+            if(error)
             {
-                LOG_ERROR << "Unable to call lua function onposition: value is nonfunctional value." << std::endl;
+                LOG_ERROR << "Unable to call lua function onposition: " << lua_tostring(m_luaState, -1) << std::endl;
+                lua_pop(m_luaState, 1);
             }
-            lua_pop( m_luaState, 1);
         }
+        else
+        {
+            LOG_ERROR << "Unable to call lua function onposition: value is nonfunctional value." << std::endl;
+        }
+        lua_pop( m_luaState, 4);
     }
 
     void LuaInputHandler::OnScrollEvent( const Core::ScrollEvent &e ) 
     {
-        if( Core::LuaInputBridge::regOnScroll != LUA_NOREF && Core::LuaInputBridge::regOnScroll != LUA_REFNIL )
+        lua_getglobal( m_luaState, "core" );
+        lua_getfield( m_luaState, -1, "input" );
+        lua_getfield( m_luaState, -1, "mouse" );
+        lua_getfield( m_luaState, -1, "onscroll" );
+        if( lua_isfunction( m_luaState, -1 ) )
         {
-            lua_rawgeti( m_luaState, LUA_REGISTRYINDEX, Core::LuaInputBridge::regOnScroll );
-            if( lua_isfunction( m_luaState, -1 ) )
-            {
-                lua_pushvalue( m_luaState, -1 );
-                lua_pushinteger( m_luaState, e.xoffset );
-                lua_pushinteger( m_luaState, e.yoffset );
+            lua_pushvalue( m_luaState, -1 );
+            lua_pushinteger( m_luaState, e.xoffset );
+            lua_pushinteger( m_luaState, e.yoffset );
 
-                int error = lua_pcall(m_luaState, 2, 0, 0);
-                if(error)
-                {
-                    LOG_ERROR << "Unable to call lua function onscroll: " << lua_tostring(m_luaState, -1) << std::endl;
-                    lua_pop(m_luaState, 1);
-                }
-            }
-            else
+            int error = lua_pcall(m_luaState, 2, 0, 0);
+            if(error)
             {
-                LOG_ERROR << "Unable to call lua function onscroll: value is nonfunctional value." << std::endl;
+                LOG_ERROR << "Unable to call lua function onscroll: " << lua_tostring(m_luaState, -1) << std::endl;
+                lua_pop(m_luaState, 1);
             }
-            lua_pop( m_luaState, 1);
         }
+        else
+        {
+            LOG_ERROR << "Unable to call lua function onscroll: value is nonfunctional value." << std::endl;
+        }
+        lua_pop( m_luaState, 4);
     }
 
-    LuaInputHandler* LuaInputBridge::inputHandler = nullptr;
-
-    int LuaInputBridge::regOnKey        = LUA_NOREF;
-    int LuaInputBridge::regOnChar       = LUA_NOREF;
-    int LuaInputBridge::regOnButton     = LUA_NOREF;
-    int LuaInputBridge::regOnPosition   = LUA_NOREF;
-    int LuaInputBridge::regOnScroll     = LUA_NOREF;
-
-    void LuaInputBridge::OpenLibs(lua_State* L)
+    LuaInputBridge::LuaInputBridge(lua_State* L)
     {
         int sanity = lua_gettop( L );
         lua_getglobal(L, "core");
@@ -313,6 +304,7 @@ namespace Core
                         SetBitmask( L, GLFW_MOD_SUPER,      "Super"  );
                     lua_setfield( L, -2, "mod" );
 
+                    LOG_DEBUG << "LOADING NEWINDEX" << std::endl;
                     lua_newtable( L );
                         luau_setfunction( L, "__newindex", LuaKeyboardNewindex );
                     lua_setmetatable( L, -2 );
@@ -351,14 +343,8 @@ namespace Core
         Core::GetInputManager().AddScrollEventListener( inputHandler );  
     }
 
-    void LuaInputBridge::CloseLibs( lua_State *L )
+    LuaInputBridge::~LuaInputBridge( )
     {
-        regOnKey        = LUA_NOREF;
-        regOnChar       = LUA_NOREF;
-        regOnButton     = LUA_NOREF;
-        regOnPosition   = LUA_NOREF;
-        regOnScroll     = LUA_NOREF;
-
         Core::GetInputManager().RemoveKeyEventListener( inputHandler );  
         Core::GetInputManager().RemoveCharEventListener( inputHandler );  
         Core::GetInputManager().RemoveButtonEventListener( inputHandler );  

@@ -13,6 +13,7 @@
 
 namespace Core
 {
+
     class LuaInputHandler : public Core::KeyEventListener, public Core::CharEventListener, public Core::ButtonEventListener, public Core::PositionEventListener, public Core::ScrollEventListener 
     {
     public:
@@ -32,17 +33,13 @@ namespace Core
     class LuaInputBridge
     {
     public:
-
-        static void OpenLibs( lua_State* state );
-        static void CloseLibs( lua_State* state );
-        static LuaInputHandler* inputHandler;
-
-        static int regOnKey;
-        static int regOnChar;
-        static int regOnButton;
-        static int regOnPosition;
-        static int regOnScroll;
+        LuaInputBridge( lua_State * state );
+        ~LuaInputBridge();
     private:
+
+        LuaInputHandler* inputHandler;
+        lua_State * state;
+        
 
         
     };
