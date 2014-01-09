@@ -69,5 +69,4 @@ void Core::AIDebugSystem::Update( float delta )
 
 	if( Core::GetNavigationMesh() )
 		Core::GetNavigationMesh()->DrawDebug();
-
 }

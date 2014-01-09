@@ -131,7 +131,7 @@ float Core::FieldReactionSystem::GetAgentsChargeAt(Entity chargedAgent, glm::vec
 	int indexFromType = static_cast<int>(utc->type);
 
 	WorldPositionComponent* wpc = WGETC<WorldPositionComponent>(chargedAgent);
-	int groupID = std::numeric_limits<int>::min();
+	int groupID = -1;
 	if (matchGroupID >= 0)
 	{
 		Core::AttributeComponent* ac = WGETC<AttributeComponent>(chargedAgent);
