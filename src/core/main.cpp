@@ -194,9 +194,9 @@ void run( GLFWwindow * window )
 		Core::world.m_config.GetDouble( "initCameraFarClipDistance", 1000.0f ) );
 	Core::gameCamera->CalculateProjectionMatrix(initScreenWidth, initScreenHeight);
 
-	Core::gameCamera->SetPosition(glm::vec3(70.0f, 70.0f, 70.0f));
+	Core::gameCamera->SetPosition(glm::vec3(50.0f, 90.0f, 90.0f));
 	
-	glm::vec2 rotation = glm::vec2(-0.7f, 3.14f * 0.25f);
+	glm::vec2 rotation = glm::vec2(-3.14f * 0.10f, 3.14f * 0.25f);
 	Core::gameCamera->UpdateView(glm::vec3(0.0f), rotation, 0.0f);
 	
     Core::ContentManager CM;
