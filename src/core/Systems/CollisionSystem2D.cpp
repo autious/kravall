@@ -3,7 +3,7 @@
 #include <gfx/GFXInterface.hpp>
 
 Core::CollisionSystem2D::CollisionSystem2D()
-	: BaseSystem( EntityHandler::GenerateAspect< WorldPositionComponent, BoundingVolumeComponent, MovementComponent >(), 0ULL )
+	: BaseSystem( EntityHandler::GenerateAspect< WorldPositionComponent, BoundingVolumeComponent, MovementComponent, UnitTypeComponent >(), 0ULL )
 {
 }
 
@@ -78,17 +78,48 @@ void Core::CollisionSystem2D::Update( float delta )
 					
 					float delta = ((otherSphere->radius + mySphere->radius) - std::sqrt( sqareDistance ));
 
+					Core::UnitTypeComponent* myType = WGETC<Core::UnitTypeComponent>(*it);
+					Core::UnitTypeComponent* otherType = WGETC<Core::UnitTypeComponent>(*other);
+					//int type = 0 << myType->type | 0 << otherType->type;
+
 					switch( bvcOther->collisionModel )
 					{
 					case Core::BoundingVolumeCollisionModel::DynamicResolution:
-
+						
 						// Head of list will always bow for tail of list in perfect frontal collision.
 						//*myPosition		+= collisionNormal * ( delta * 0.66666666f);
+						
+						/*
+						switch( type )
+						{
+						case 2 : // thus, rioter and police
+							break;
 
-						// Head and tail is equal when in perfect frontal collision. Would theoretically results in 
-						// less flow but potentially better crowd dynamics when in a closed environment. 
-						*reinterpret_cast<glm::vec3*>(wpc->position)		+= collisionNormal * ( delta * 0.5f );
-						*reinterpret_cast<glm::vec3*>(wpcOther->position)	-= collisionNormal * ( delta * 0.5f );
+						default:
+							
+							break;
+
+						}
+						*/
+
+						if( myType->type == Core::UnitType::Rioter && otherType->type == Core::UnitType::Police )
+						{
+							*reinterpret_cast<glm::vec3*>(wpc->position)		+= collisionNormal * ( delta * 1.0f );
+							GFX::Debug::DrawSphere( otherPosition, 2.0f, GFXColor( 0.0f, 1.0f, 1.0f, 1.0f ), false );
+						}
+						else if( myType->type == Core::UnitType::Police && otherType->type == Core::UnitType::Rioter )
+						{
+							*reinterpret_cast<glm::vec3*>(wpcOther->position)		-= collisionNormal * ( delta * 1.0f );
+							GFX::Debug::DrawSphere( myPosition, 2.0f, GFXColor( 0.0f, 1.0f, 1.0f, 1.0f ), false );
+						}
+						else 
+						{
+							// Head and tail is equal when in perfect frontal collision. Would theoretically results in 
+							// less flow but potentially better crowd dynamics when in a closed environment. 
+							*reinterpret_cast<glm::vec3*>(wpc->position)		+= collisionNormal * ( delta * 0.5f );
+							*reinterpret_cast<glm::vec3*>(wpcOther->position)	-= collisionNormal * ( delta * 0.5f );
+						}
+
 
 						break;
 
