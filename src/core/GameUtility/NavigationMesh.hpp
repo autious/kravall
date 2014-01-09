@@ -64,6 +64,11 @@ namespace Core
 					Loops around for the last index.
 				*/
 				float inverseLength;
+				/*!
+					Normal for the respective edge.
+				*/
+				float normal[3];
+				
 			} corners[4];
 		};
 
@@ -72,6 +77,7 @@ namespace Core
 		*/
 		struct Flowfield
 		{
+			int* edges;
 			glm::vec3* list;
 		};
 
@@ -122,6 +128,11 @@ namespace Core
 			Returns false if no field is calculated.
 		*/
 		bool CalculateFlowfieldForGroup( glm::vec3 point, int group );
+
+		/*!
+			Uses the GFX debug system to draw the outlines of the navigation mesh.
+		*/
+		void DrawDebug();
 	};
 
 

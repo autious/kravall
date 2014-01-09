@@ -26,7 +26,7 @@ namespace Core
 	class FlowfieldSystem;
 	class NavMeshCollisionSystem;
 	
-    typedef SystemHandlerTemplate<RenderingSystem, LightSystem, MovementSystem, CollisionSystem2D, NavMeshCollisionSystem, 
+    typedef SystemHandlerTemplate<RenderingSystem, LightSystem, MovementSystem, NavMeshCollisionSystem, CollisionSystem2D,
 		FieldReactionSystem, PickingSystem, AIDebugSystem, FlowfieldSystem> SystemHandler;
     typedef EntityHandlerTemplate<SystemHandler, WorldPositionComponent, RotationComponent, ScaleComponent, 
 		GraphicsComponent, LightComponent, MovementComponent, UnitTypeComponent, AttributeComponent,

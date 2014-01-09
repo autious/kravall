@@ -6,6 +6,30 @@
 
 namespace Core
 {
+	void NavigationMesh::DrawDebug()
+	{
+		Core::NavigationMesh* instance = Core::GetNavigationMesh();
+
+		for( int i = 0; i < instance->nrNodes; i++ )
+		{
+			float* points = instance->nodes[i].points;
+
+			for( int p = 0; p < 4; p++ )
+			{
+				if( instance->nodes[i].corners[p].length < 0 )
+					continue;
+
+				int ii = p * 2;
+				int oo = (ii + 2) % 8;	
+
+				glm::vec3 lineStart = glm::vec3( points[ ii ], 0.0f, points[ ii + 1 ] );
+				glm::vec3 lineEnd	= glm::vec3( points[ oo ], 0.0f, points[ oo + 1 ] );
+				GFX::Debug::DrawLine( 
+					lineStart, lineEnd, GFXColor( 0.3f, 1.0f, 1.0f, 1.0f ), true );
+			}
+		}
+	}
+
 
 	bool NavigationMesh::CheckPointInsideNode( glm::vec3 point, int node )
 	{
@@ -23,7 +47,6 @@ namespace Core
 			glm::vec3 lineEnd	= glm::vec3( points[ oo ], 0.0f, points[ oo + 1 ] );
 
 			// calc normal
-			//glm::vec3 cross = glm::normalize( glm::cross( glm::vec3( 0.0f, 1.0f, 0.0f ), (lineEnd - lineStart) ) );
 			glm::vec3 cross = glm::normalize( glm::cross( (lineEnd - lineStart), glm::vec3( 0.0f, 1.0f, 0.0f ) ) );
 
 			// check if behind plane
@@ -143,6 +166,7 @@ namespace Core
 			}
 
 			flowfields[group].list[ prioList[0].node ] = mid;
+			flowfields[group].edges[ prioList[0].node ] = prioList[0].entryEdge;
 
 			visited[ prioList[0].node ] = true;
 			prioList.erase( prioList.begin() );

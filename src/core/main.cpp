@@ -62,14 +62,14 @@ GLFWwindow* init( int argc, char** argv )
 {
 	GLFWwindow* window;
 
-    assert( Core::world.m_luaState.Execute( "scripts/config.lua" ) );
-    assert( Core::world.m_luaState.Execute( "scripts/main.lua" ) );
+    bool worked = Core::world.m_luaState.Execute( "scripts/config.lua" ) && Core::world.m_luaState.Execute( "scripts/main.lua" );
+    assert( worked );
 
     for( int i = 0; i < argc-1; i++ )
     {
         if( strcmp( argv[i], "--conf" ) == 0 )
         {
-            assert( Core::world.m_luaState.DoBlock( argv[i+1] ) );
+            Core::world.m_luaState.DoBlock( argv[i+1] );
         }
     }
 
@@ -194,9 +194,9 @@ void run( GLFWwindow * window )
 		Core::world.m_config.GetDouble( "initCameraFarClipDistance", 1000.0f ) );
 	Core::gameCamera->CalculateProjectionMatrix(initScreenWidth, initScreenHeight);
 
-	Core::gameCamera->SetPosition(glm::vec3(70.0f, 70.0f, 70.0f));
+	Core::gameCamera->SetPosition(glm::vec3(50.0f, 90.0f, 90.0f));
 	
-	glm::vec2 rotation = glm::vec2(-0.7f, 3.14f * 0.25f);
+	glm::vec2 rotation = glm::vec2(-3.14f * 0.10f, 3.14f * 0.25f);
 	Core::gameCamera->UpdateView(glm::vec3(0.0f), rotation, 0.0f);
 	
     Core::ContentManager CM;
@@ -232,20 +232,7 @@ void run( GLFWwindow * window )
 			}, false);
    
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));	
-	
-	//CreateRioter(&rioters, meshID, rioterMaterialID, -3.0f, 0.0f, 1.0f);
-	//CreateRioter(&rioters, meshID, rioterMaterialID, 0.0f, 0.0f, 0.0f);
-	//CreateRioter(&rioters, meshID, rioterMaterialID, 3.0f, 0.0f, 1.0f);
 
-	//CreatePolice(&rioters, meshID, copMaterialID, -6.0f, 0.0f, 0.0f);
-	//CreatePolice(&rioters, meshID, copMaterialID, 6.0f, 0.0f, 0.0f);
-	//CreatePolice(&rioters, meshID, copMaterialID, 0.0f, 0.0f, 6.0f);
-	//CreatePolice(&rioters, meshID, copMaterialID, 0.0f, 0.0f, -6.0f);
-
-	//CreatePolice(&rioters, meshID, copMaterialID, 0.0f, 0.0f, 3.0f);
-	//CreatePolice(&rioters, meshID, copMaterialID, 0.0f, 0.0f, 4.0f);
-	//CreatePolice(&rioters, meshID, copMaterialID, 0.0f, 0.0f, 5.0f);
-	//CreatePolice(&rioters, meshID, copMaterialID, 0.0f, 0.0f, 6.0f);
 
 	LOG_INFO << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " " << std::endl;
 
