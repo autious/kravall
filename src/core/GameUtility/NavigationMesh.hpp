@@ -64,6 +64,11 @@ namespace Core
 					Loops around for the last index.
 				*/
 				float inverseLength;
+				/*!
+					Normal for the respective edge.
+				*/
+				float normal[3];
+				
 			} corners[4];
 		};
 
@@ -72,6 +77,7 @@ namespace Core
 		*/
 		struct Flowfield
 		{
+			int* edges;
 			glm::vec3* list;
 		};
 
