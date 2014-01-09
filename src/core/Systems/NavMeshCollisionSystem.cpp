@@ -65,7 +65,7 @@ void Core::NavMeshCollisionSystem::Update( float delta )
 					if( distanceToLine < sphere.radius && distanceToLine >= 0 )
 						position += cross * (sphere.radius - distanceToLine);
 				}
-				
+
 				// check vs corner
 				for( int i = 0; i < 4; i++ )
 				{
@@ -85,7 +85,6 @@ void Core::NavMeshCollisionSystem::Update( float delta )
 							* (sphere.radius - std::sqrt( sqDistanceToCorner ));
 					}
 				}
-				
 			}
 		}
 		
