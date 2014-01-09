@@ -53,7 +53,11 @@ namespace Core
 #define check( x, y ) if( x ) { LOG_ERROR << y << std::endl; return nullptr; }
 	NavigationMesh* NavigationMeshLoader::LoadNavigationMeshFromFile( const char* path )
 	{
-		check( Core::GetNavigationMesh(), "NavMesh is already loaded!" );
+		if( Core::GetNavigationMesh() )
+		{
+			LOG_ERROR << "NavMesh is already loaded!" << std::endl;
+			return Core::GetNavigationMesh();
+		}
 
 		std::fstream ff;
 		ff.open( path, std::fstream::in );
