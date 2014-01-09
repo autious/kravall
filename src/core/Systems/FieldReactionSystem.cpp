@@ -9,7 +9,7 @@ const float Core::FieldReactionSystem::STAY_LIMIT = 0.1f;
 const float Core::FieldReactionSystem::FIELD_CELL_SIDE_SIZE = FIELD_SIDE_LENGTH / static_cast<float>(FIELD_SIDE_CELL_COUNT);
 const frsChargeCurve Core::FieldReactionSystem::CURVE[1][2] =
 {
-	{{1.0f, 15.0f, 1.0f}, {-100.0f, 15.0f, 1.0f} }
+	{{1.0f, 15.0f, 2.0f}, {-100.0f, 15.0f, 1.0f} }
 };
 
 /*const frsChargeCurve Core::FieldReactionSystem::CURVE[2] =

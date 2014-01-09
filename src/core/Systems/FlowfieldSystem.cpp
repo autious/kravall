@@ -32,7 +32,8 @@ void Core::FlowfieldSystem::Update( float delta )
 				Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(*it);
 				glm::vec3& position = *reinterpret_cast<glm::vec3*>(wpc->position);
 
-				#define FF_VS_PF_FACTOR 1.0f
+				#define FF_VS_PF_FACTOR 0.5f
+				#define FF_NORMAL_INFLUENCE 1.0f
 
 				if( instance->CheckPointInsideNode( glm::vec3(position), p ) )
 				{
@@ -43,7 +44,11 @@ void Core::FlowfieldSystem::Update( float delta )
 
 					if( glm::dot( midOfEdgeLinkingToNextNode, midOfEdgeLinkingToNextNode ) > 0.05f ) // goal node condition...
 					{
-						*reinterpret_cast<glm::vec3*>(mvmc->direction) = glm::normalize( glm::normalize( instance->flowfields[attribc->rioter.groupID].list[ p ] - position ) * FF_VS_PF_FACTOR + *reinterpret_cast<glm::vec3*>(mvmc->direction) );
+						*reinterpret_cast<glm::vec3*>(mvmc->direction) = glm::normalize( 
+							glm::normalize( instance->flowfields[attribc->rioter.groupID].list[ p ] - position ) * FF_VS_PF_FACTOR
+							+ *reinterpret_cast<glm::vec3*>(mvmc->direction) 
+							- *reinterpret_cast<glm::vec3*>( instance->nodes[ p ].corners[ instance->flowfields[attribc->rioter.groupID].edges[p] ].normal ) * FF_NORMAL_INFLUENCE );
+
 						GFX::Debug::DrawLine( position, position + *reinterpret_cast<glm::vec3*>(mvmc->direction), GFXColor( 1.0f, 0.0f, 0.0f, 1.0f ), false );
 					}
 				}

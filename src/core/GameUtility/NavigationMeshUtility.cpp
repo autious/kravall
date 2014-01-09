@@ -166,6 +166,7 @@ namespace Core
 			}
 
 			flowfields[group].list[ prioList[0].node ] = mid;
+			flowfields[group].edges[ prioList[0].node ] = prioList[0].entryEdge;
 
 			visited[ prioList[0].node ] = true;
 			prioList.erase( prioList.begin() );

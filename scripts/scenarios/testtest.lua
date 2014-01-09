@@ -12,14 +12,14 @@ tjo = core.contentmanager.load(
 local rioter = require "entities/teapot"
 local police = require "entities/police"
 					
-for i = -1, 3 do
+for i = -0, 3 do
 	for p = 1, 20 do
-		--rioter.create( asm, -10 + p * 2, 0, 5 + i * 2 )
+		rioter.create( asm, -10 + p * 2, 0, 5 + i * 2 )
 	end
 end
 
-rioter.create( asm, -10, 0, 5, 1, 0 )
-rioter.create( asm, 10, 0, 5, -1, 0 )
+--rioter.create( asm, -10, 0, 5, 1, 0 )
+--rioter.create( asm, 10, 0, 5, -1, 0 )
 
 --for i = 0, 1 do	
 --	for p = 1, 10 do
