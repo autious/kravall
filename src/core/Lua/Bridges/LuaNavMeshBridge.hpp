@@ -8,7 +8,7 @@ namespace Core
 	class LuaNavMeshBridge
 	{
 	public:
-		static void OpenLibs(lua_State * L);
+        LuaNavMeshBridge( lua_State *L );
 	};
 }
 

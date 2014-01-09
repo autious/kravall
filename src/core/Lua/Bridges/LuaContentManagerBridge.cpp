@@ -34,7 +34,7 @@ extern "C"
     }
 }
 
-void Core::LuaContentManagerBridge::OpenLibs( lua_State * L )
+Core::LuaContentManagerBridge::LuaContentManagerBridge( lua_State * L )
 {
     lua_getglobal( L, "core" );  
 

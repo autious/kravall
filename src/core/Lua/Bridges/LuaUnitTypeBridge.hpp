@@ -9,7 +9,7 @@ namespace Core
     class LuaUnitTypeComponentBridge
     {
     public:
-         static void OpenLibs( lua_State * L );
+         LuaUnitTypeComponentBridge( lua_State * L );
     };
 }
 

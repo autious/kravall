@@ -12,7 +12,7 @@ namespace Core
     class LuaGFXBridge
     {
     public:
-         static void OpenLibs( lua_State * L );
+         LuaGFXBridge( lua_State * L );
     };
 }
 
