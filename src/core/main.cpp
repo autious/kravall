@@ -62,15 +62,14 @@ GLFWwindow* init( int argc, char** argv )
 {
 	GLFWwindow* window;
 
-
-    Core::world.m_luaState.Execute( "scripts/config.lua" );
-    Core::world.m_luaState.Execute( "scripts/main.lua" );
+    assert( Core::world.m_luaState.Execute( "scripts/config.lua" ) );
+    assert( Core::world.m_luaState.Execute( "scripts/main.lua" ) );
 
     for( int i = 0; i < argc-1; i++ )
     {
         if( strcmp( argv[i], "--conf" ) == 0 )
         {
-            Core::world.m_luaState.DoBlock( argv[i+1] ); 
+            assert( Core::world.m_luaState.DoBlock( argv[i+1] ) );
         }
     }
 

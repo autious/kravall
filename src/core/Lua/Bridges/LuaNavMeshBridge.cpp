@@ -30,7 +30,7 @@ extern "C"
 	}
 }
 
-void Core::LuaNavMeshBridge::OpenLibs(lua_State * L)
+Core::LuaNavMeshBridge::LuaNavMeshBridge(lua_State * L)
 {
 	int stackSize = lua_gettop(L);
 	lua_getglobal(L, "core");

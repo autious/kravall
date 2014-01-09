@@ -55,6 +55,7 @@ namespace Core
             InputManager::GetKeyboardState().SetKeyState(key, action);
 
             KeyEvents[nKeyEvents].key = key;
+            KeyEvents[nKeyEvents].scancode = scancode;
             KeyEvents[nKeyEvents].action= action;
             KeyEvents[nKeyEvents].mods = mods;
             nKeyEvents++;
@@ -270,6 +271,12 @@ namespace Core
     bool InputManager::IsKeyPressedOnce( const int id )
     {
         return GetKeyboardState().IsKeyDown( id ) && GetPrevKeyboardState().IsKeyUp( id );
+    }
+    
+    bool InputManager::IsMouseButtonDownOnce( const int id )
+    {
+        return GetMouseState().IsButtonDown( id )
+            && GetPrevMouseState().IsButtonUp( id );
     }
 
     void InputManager::GetPosDiff( int& x, int &y )
