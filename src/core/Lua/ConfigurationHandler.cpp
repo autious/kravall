@@ -328,6 +328,13 @@ void Core::ConfigurationHandler::PushConfigTable()
 {
     lua_getglobal( m_luaState->m_state, "core" );
     lua_getfield( m_luaState->m_state, -1, "config" );
+
+    if( !lua_istable( m_luaState->m_state, -1 ) )
+    {
+        LOG_ERROR << "Config table is not table, it's " << lua_typename( m_luaState->m_state, -1 ) << std::endl;
+        lua_pop( m_luaState->m_state, 1 );
+        lua_newtable( m_luaState->m_state );
+    }
 }
 
 void Core::ConfigurationHandler::PopConfigTable()

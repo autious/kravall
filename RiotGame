@@ -1,1 +1,2 @@
-./bin/linux/debugtest/RiotGame
+#!/bin/sh
+./bin/linux/debugtest/RiotGame --conf 'core.config.windowResizable = false; core.config.showSplash = false'
