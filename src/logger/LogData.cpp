@@ -132,7 +132,15 @@ LogSystem::LogData& operator<< ( const LogSystem::LogData& data, StandardEndLine
 	obj( ss );
 	
 	std::string msg = ss.str();
-	std::strcpy( temp.m_message, msg.c_str() );
+
+    if( msg.size() >= MESSAGE_LENGTH )
+    {
+        std::strcpy( temp.m_message, "ERROR STRING TOO LONG!!!!" );
+    }
+    else
+    {
+	    std::strcpy( temp.m_message, msg.c_str() );
+    }
 
 	return temp;
 }

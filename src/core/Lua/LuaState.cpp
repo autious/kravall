@@ -139,8 +139,15 @@ bool Core::LuaState::DoBlock( const char * block )
 
     if( error )
     {
-        LOG_ERROR << "Unable to parse block: " << lua_tostring( m_state, -1 ) << std::endl;
-        lua_pop( m_state, 1 );
+        if( lua_isstring( m_state, -1 ) )
+        {
+            LOG_ERROR << "Unable to parse block: " << lua_tostring( m_state, -1 ) << std::endl;
+            lua_pop( m_state, 1 );
+        }
+        else
+        {
+            LOG_ERROR << "Unable to parse block: " << error << std::endl;
+        }
     }
 
     VerifyUpdateFunction();

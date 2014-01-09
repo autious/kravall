@@ -5,7 +5,7 @@ local asm = ASML.loadPack( {} )
 navMesh = core.contentmanager.load( 
 		core.loaders.NavigationMeshLoader, "prototypeLevel.txt", function( value ) end, false )
 
-local ambient = require "entities/AmbientLight"
+local ambient = require "entities/ambientLight"
 local directional = require "entities/directionalLight"
 local street_light = require "entities/streetLight"
 local street_light_intensity = 2.0
