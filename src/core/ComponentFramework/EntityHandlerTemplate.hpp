@@ -146,7 +146,7 @@ namespace Core
         */
         bool DestroyEntity( Entity id )
         {
-            assert( std::numeric_limits<Entity>::max() != id );
+            //assert( std::numeric_limits<Entity>::max() != id );
 
             m_systemHandler->CallChangedEntity( id, GetEntityAspect( id ), 0ULL );
 

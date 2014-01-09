@@ -3,7 +3,7 @@
 #include <gfx/GFXInterface.hpp>
 
 Core::CollisionSystem2D::CollisionSystem2D()
-	: BaseSystem( EntityHandler::GenerateAspect< WorldPositionComponent, BoundingVolumeComponent >(), 0ULL )
+	: BaseSystem( EntityHandler::GenerateAspect< WorldPositionComponent, BoundingVolumeComponent, MovementComponent >(), 0ULL )
 {
 }
 
@@ -61,14 +61,27 @@ void Core::CollisionSystem2D::Update( float delta )
 						myPosition = *reinterpret_cast<glm::vec3*>(wpc->position);
 					}
 
-					float delta = ((otherSphere->radius + mySphere->radius) - std::sqrt( sqareDistance ));
-
 					glm::vec3 collisionNormal = glm::normalize( myPosition - otherPosition );
+					
+					// check if entity should step aside to get around object...
+					Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>(*it);
+					if( glm::dot( collisionNormal, *reinterpret_cast<glm::vec3*>(mvmc->direction) ) < -0.999 )
+					{							
+							glm::vec3 moveDir = glm::normalize( glm::cross( collisionNormal, glm::vec3( 0.0f, 1.0f, 0.0f ) ));
+							*reinterpret_cast<glm::vec3*>(wpc->position) += moveDir * 0.1f;
+							
+							// update data
+							myPosition = *reinterpret_cast<glm::vec3*>(wpc->position);
+							collisionNormal = glm::normalize( myPosition - otherPosition );
+							sqareDistance = glm::dot( myPosition - otherPosition, myPosition - otherPosition );
+					}
+					
+					float delta = ((otherSphere->radius + mySphere->radius) - std::sqrt( sqareDistance ));
 
 					switch( bvcOther->collisionModel )
 					{
 					case Core::BoundingVolumeCollisionModel::DynamicResolution:
-						
+
 						// Head of list will always bow for tail of list in perfect frontal collision.
 						//*myPosition		+= collisionNormal * ( delta * 0.66666666f);
 
