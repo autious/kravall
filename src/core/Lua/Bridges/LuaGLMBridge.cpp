@@ -440,11 +440,11 @@ extern "C"
     {
         float fov = luau_checkfloat( L, 1);
         float aspect = luau_checkfloat( L, 2);
-        float near = luau_checkfloat( L, 3);
-        float far = luau_checkfloat( L, 4); 
+        float zNear = luau_checkfloat( L, 3);
+        float zFar = luau_checkfloat( L, 4); 
         glm::mat4 * mat4_ret = Core::LuaUNewGLMMat4( L );
 
-        *mat4_ret = glm::perspective( fov, aspect, near, far );
+        *mat4_ret = glm::perspective( fov, aspect, zNear, zFar );
 
         return 1;
     }
@@ -456,12 +456,12 @@ extern "C"
         float fov = luau_checkfloat( L, 1);
         float width = luau_checkfloat( L, 2 );
         float height = luau_checkfloat( L, 3);
-        float near = luau_checkfloat( L, 4);
-        float far = luau_checkfloat( L, 5); 
+        float zNear = luau_checkfloat( L, 4);
+        float zFar = luau_checkfloat( L, 5); 
 
         glm::mat4 * mat4_ret = Core::LuaUNewGLMMat4( L );
 
-        *mat4_ret = glm::perspectiveFov( fov, width, height, near, far );
+        *mat4_ret = glm::perspectiveFov( fov, width, height, zNear, zFar );
 
         return 1;
     }
@@ -490,10 +490,10 @@ extern "C"
 
         if( params > 4 )
         {
-            float near = luau_checkfloat( L, 5 );
-            float far = luau_checkfloat( L, 6 );
+            float zNear = luau_checkfloat( L, 5 );
+            float zFar = luau_checkfloat( L, 6 );
             glm::mat4 * mat4_ret = Core::LuaUNewGLMMat4( L );
-            *mat4_ret = glm::ortho( left, right, bottom, top, near, far );
+            *mat4_ret = glm::ortho( left, right, bottom, top, zNear, zFar );
         }
         else
         {

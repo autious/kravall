@@ -18,9 +18,10 @@ struct LightData
 	float radius_length;
 	vec3 color;
 	float intensity;
-	vec3 pad;
+	vec3 spec_color;
+	float spot_penumbra;
+	vec3 orientation;
 	float spot_angle;
-	vec4 orientation;
 };
 
 
@@ -100,11 +101,9 @@ vec3 BlinnPhong( LightData light, SurfaceData surface, vec3 eyeDirection, vec3 l
 		intensity = pow( clamp( NdotH, 0.0f, 1.0f ), surface.specular.w ) * df;
 	
 		// Temp vars, need materials with these channels
-		float lightSpecIntensity = light.intensity;
-		vec3 lightSpecColor = light.color;
 
 
-		specColor = surface.specular.xyz * intensity * lightSpecColor * lightSpecIntensity * attenuation;
+		specColor = surface.specular.xyz * intensity * light.spec_color * light.intensity * attenuation;
 	}
 	return diffuseColor + specColor;
 }
@@ -130,7 +129,7 @@ vec4 CalculateSpotlight( LightData light, SurfaceData surface, vec3 wPos, vec3 e
 	
 	float cosAngle = dot(normalize(light.orientation.xyz), normalize(-lightDir));
 	float cosOuterAngle = cos(light.spot_angle);
-	float cosInnerAngle = cosOuterAngle+0.03f;
+	float cosInnerAngle = cosOuterAngle+light.spot_penumbra;
 	float cosDelta = cosInnerAngle - cosOuterAngle;
 
 	float spot = clamp((cosAngle - cosOuterAngle) / cosDelta,0.0f, 1.0f);
@@ -187,15 +186,17 @@ void main()
 
 		float d = 0.5*(normalColor.w + 1.0);
 
-		uint depth = uint(d * uint(0xFFFFFFFF));
+		float viewDepth = (normalColor.w/wPos.w+zNear)/zFar;
+
+		uint depth = uint(viewDepth * uint(0xFFFFFFFF));
 
 		atomicMin(minDepth, depth);
 		atomicMax(maxDepth, depth);
 
 		barrier();
 
-		float minDepthZ =  2.0 * (float(minDepth) / float(uint(0xFFFFFFFF))) - 1.0;
-		float maxDepthZ =  2.0 * (float(maxDepth) / float(uint(0xFFFFFFFF))) - 1.0;
+		float minDepthZ =  clipDelta*(float(minDepth) / float(uint(0xFFFFFFFF)));
+		float maxDepthZ =  clipDelta*(float(maxDepth) / float(uint(0xFFFFFFFF)));
 
 		vec2 tileScale = framebufferDim * (1.0f / float( 2 * WORK_GROUP_SIZE));
 		vec2 tileBias = tileScale - vec2(gl_WorkGroupID.xy);
@@ -220,11 +221,11 @@ void main()
 		//bottom plane
 		frustumPlanes[3] = col4 + col2;
 
-		//near
-		frustumPlanes[4] = vec4(0.0f, 0.0f, -1.0f, -minDepthZ/wPos.w);
-
 		//far
-		frustumPlanes[5] = vec4(0.0f, 0.0f, 1.0f, maxDepthZ/wPos.w);
+		frustumPlanes[4] = vec4(0.0f, 0.0f, -1.0f, -minDepthZ);
+
+		//near
+		frustumPlanes[5] = vec4(0.0f, 0.0f, 1.0f, maxDepthZ);
 
 		for(int i = 0; i < 4; i++)
 		{
@@ -258,10 +259,10 @@ void main()
 			if (pointLightCount < MAX_LIGHTS_PER_TILE)
 			{
 				inFrustum = true;
-				for (uint i = 3; i >= 0 && inFrustum; i--)
+				for (uint i = 5; i >= 0 && inFrustum; i--)
 				{
 					dist = dot(frustumPlanes[i], pos);
-					inFrustum = (-dist < rad);
+					inFrustum = (-dist <= rad);
 				}
 			
 				if (inFrustum)
@@ -354,7 +355,7 @@ void main()
 		{
 			//color += min(wPos, 1.0f)*0.15f;
 			//color += vec4(0.0f, (pointLightCount+spotLightCount)/float(max(1,numActiveLights))*0.5, 0.0f, 0.0f);
-			//color = vec4(0.0f, (d/wPos.w), 0.0f, 0.0f);
+			//color = vec4(0.0f, (viewDepth), 0.0f, 0.0f);
 			//color += vec4(float(minDepthZ<(2*d-1.0 + 0.00001f) && minDepthZ>(2*d-1.0 - 0.00001f))*0.5f, 0.0f, 0.0f, 0.0f);
 			imageStore(outTexture, pixel, color);
 			//imageStore(outTexture, pixel, vec4(minDepthZ));
