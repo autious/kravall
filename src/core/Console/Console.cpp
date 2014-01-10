@@ -162,7 +162,7 @@ namespace Core
 	{
 		std::string clipBoard = glfwGetClipboardString(mainWindow);
 		//PrintLine(clipBoard, Colors::Purple);
-		SetInputLine(clipBoard);
+		SetInputLine(m_inputLine+clipBoard);
 	}
 
     void DebugConsole::OnKeyEvent( const Core::KeyEvent &e )

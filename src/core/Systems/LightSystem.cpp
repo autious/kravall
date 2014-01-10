@@ -73,9 +73,9 @@ namespace Core
 					data->spot_penumbra = lc->lightSpecific.spotLight.penumbraAngle;
 					data->spot_angle = lc->lightSpecific.spotLight.angle;
 
-					data->orientation = glm::vec3(	RotationComponent::GetQuat(rc->rotation).x*cos(10.0f*lel+ double(i)),
+					data->orientation = glm::vec3(	RotationComponent::GetQuat(rc->rotation).x,
 													RotationComponent::GetQuat(rc->rotation).y,
-													RotationComponent::GetQuat(rc->rotation).z*sin(10.0f*lel + double(i+3)));
+													RotationComponent::GetQuat(rc->rotation).z );
 					data->position = WorldPositionComponent::GetVec3(*wpc);
 					data->radius_length = sc->scale;
 

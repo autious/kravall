@@ -1,7 +1,7 @@
 #version 430 core
 
 #define MAX_LIGHTS 1024
-#define MAX_LIGHTS_PER_TILE 256
+#define MAX_LIGHTS_PER_TILE 64
 #define WORK_GROUP_SIZE 16
 
 #pragma optionNV(fastmath on) 
@@ -354,7 +354,7 @@ void main()
 		//else
 		{
 			//color += min(wPos, 1.0f)*0.15f;
-			color += vec4(0.0f, (pointLightCount+spotLightCount)/float(max(1,numActiveLights))*0.5, 0.0f, 0.0f);
+			//color += vec4(0.0f, (pointLightCount+spotLightCount)/float(max(1,numActiveLights))*0.5, 0.0f, 0.0f);
 			//color = vec4(0.0f, (viewDepth), 0.0f, 0.0f);
 			//color += vec4(float(minDepthZ<(2*d-1.0 + 0.00001f) && minDepthZ>(2*d-1.0 - 0.00001f))*0.5f, 0.0f, 0.0f, 0.0f);
 			imageStore(outTexture, pixel, color);
