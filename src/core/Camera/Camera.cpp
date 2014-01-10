@@ -27,21 +27,17 @@ namespace Core
 
     glm::vec3 Camera::GetForward() const
     {
-        glm::vec4 f = m_viewMatrix * glm::vec4( 0,0,-1,0 );
-        return glm::vec3( f[0],f[1],f[2] );
+		return glm::vec3( -m_viewMatrix[0][2], -m_viewMatrix[1][2], -m_viewMatrix[2][2] );
     }
     
     glm::vec3 Camera::GetUp() const
     {
-        glm::vec4 f = m_viewMatrix * glm::vec4( 0,1,0,0 );
-        return glm::vec3( f[0],f[1],f[2] );
-
+		return glm::vec3( m_viewMatrix[0][1], m_viewMatrix[1][1], m_viewMatrix[2][1] );
     }
 
     glm::vec3 Camera::GetRight() const
     {
-        glm::vec4 f = m_viewMatrix * glm::vec4( 1,0,0,0 );
-        return glm::vec3( f[0],f[1],f[2] );
+        return glm::vec3( m_viewMatrix[0][0], m_viewMatrix[1][0], m_viewMatrix[2][0] );
     }
 
     glm::vec3 Camera::GetPosition() const 

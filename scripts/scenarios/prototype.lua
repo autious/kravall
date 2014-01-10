@@ -72,6 +72,7 @@ street_light.create(asm, 14, -35, street_light_intensity)
 street_light.create(asm, 28, -35, street_light_intensity)
 
 local rioter = require "entities/rioter"
+local police = require "entities/police"
 local building = require "entities/building"
 		
 local centerPoint = { 49, 0, 5 }		
@@ -89,6 +90,11 @@ for i = -4, 4 do
 	end
 end
 core.nav_mesh.set_group_goal(1, -21, 0, 36)
+
+local navmesh = require "entities/navMesh"
+navmesh.create(asm, 0, -0.1, 0)
+local plane = require "entities/plane"
+plane.create(asm, 0, -1, 0)
 
 local navmesh = require "entities/navMesh"
 navmesh.create(asm, 0, -0.1, 0)
