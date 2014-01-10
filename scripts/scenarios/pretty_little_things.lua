@@ -237,7 +237,7 @@ asm:loadAssembly(
         }
     } 
     )
-	
+	--[[
 for i = 0, 255 do
 	local color = { math.random(), math.random(), math.random() }
     asm:loadAssembly( 
@@ -384,7 +384,7 @@ asm:loadAssembly(
 	}
 } 
 )
-
+--]]
 
 -- Directional light
 asm:loadAssembly( 
