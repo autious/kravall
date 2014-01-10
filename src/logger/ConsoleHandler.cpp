@@ -82,8 +82,9 @@ void ConsoleHandler::Log( const char* message )
          break;
 
      }
+	 std::cout << message;
 #endif
-    std::cout << message;
+   
 #ifdef LOGGER_LINUX_CONSOLE
     std::cout << KNRM;
 #endif
