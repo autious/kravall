@@ -11,6 +11,8 @@
 #include <Timer.hpp>
 #include <logger/Logger.hpp>
 
+#include <WindowHandling/GLFWInclude.hpp>
+
 namespace Core
 {
 	void ClopClearConsole(clop::ArgList args)
@@ -156,6 +158,13 @@ namespace Core
         }
     }
 
+	void DebugConsole::PasteClipboard()
+	{
+		std::string clipBoard = glfwGetClipboardString(mainWindow);
+		//PrintLine(clipBoard, Colors::Purple);
+		SetInputLine(clipBoard);
+	}
+
     void DebugConsole::OnKeyEvent( const Core::KeyEvent &e )
     {
         if( IsVisible() )
@@ -189,6 +198,9 @@ namespace Core
 
 					if ( e.key == GLFW_KEY_C )
 						DisableInteractiveLua();
+
+					if ( e.key == GLFW_KEY_V )
+						PasteClipboard();
                 }
                 else
                 {
@@ -226,6 +238,7 @@ namespace Core
 	void DebugConsole::SetInputLine(const std::string& inputLine)
 	{
 		m_inputLine = inputLine;
+		m_cursorOffset = m_inputLine.length();
 	}
 
 	void DebugConsole::PrintLine(std::string str, Color color)
@@ -264,8 +277,7 @@ namespace Core
 		if (!m_inputLine.empty())
 		{
 			// Add to console
-			Line line = {m_inputLine, Colors::Silver};
-			m_console.push_back(line);
+			PrintLine(m_inputLine, Colors::Silver);
 
 			// Add command to history
 			bool add = true;

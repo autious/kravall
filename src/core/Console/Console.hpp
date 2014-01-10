@@ -101,6 +101,8 @@ namespace Core
 
 		void DisableInteractiveLua();
 
+		void PasteClipboard();
+
 	private:
 
 		friend DebugConsole& Console();
