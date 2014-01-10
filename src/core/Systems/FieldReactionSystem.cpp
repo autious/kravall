@@ -9,7 +9,7 @@ const float Core::FieldReactionSystem::STAY_LIMIT = 0.1f;
 const float Core::FieldReactionSystem::FIELD_CELL_SIDE_SIZE = FIELD_SIDE_LENGTH / static_cast<float>(FIELD_SIDE_CELL_COUNT);
 const frsChargeCurve Core::FieldReactionSystem::CURVE[1][2] =
 {
-	{ frsChargeCurve::ChargeCurve(1.0f, 15.0f, 1.0f), frsChargeCurve::ChargeCurve(-100.0f, 15.0f, 1.0f) }
+	{{1.0f, 15.0f, 2.0f}, {-100.0f, 15.0f, 1.0f} }
 };
 
 /*const frsChargeCurve Core::FieldReactionSystem::CURVE[2] =
@@ -64,7 +64,7 @@ void Core::FieldReactionSystem::UpdateAgents()
 		{
 			glm::vec2 bestIndex = glm::vec2(0.0f, 0.0f);
 
-			float highestSum = GetEffectOnAgentAt(*it, wpc);
+			float highestSum = GetEffectOnAgentAt(*it, wpc, ac->rioter.groupID);
 			float staySum = highestSum;
 
 			for (int i = -1; i < 2; ++i) // 3.
@@ -77,7 +77,7 @@ void Core::FieldReactionSystem::UpdateAgents()
                     WorldPositionComponent wpct(wpc->position[0] + i, wpc->position[1],
 						wpc->position[2] + j);
 
-					float chargeSum = GetEffectOnAgentAt(*it, &wpct);
+					float chargeSum = GetEffectOnAgentAt(*it, &wpct, ac->rioter.groupID);
 
 					if (chargeSum > highestSum)
 					{
@@ -102,34 +102,50 @@ void Core::FieldReactionSystem::UpdateAgents()
 	}
 }
 
-float Core::FieldReactionSystem::GetEffectOnAgentAt(const Entity queryAgent, WorldPositionComponent* queryPosition)
+float Core::FieldReactionSystem::GetEffectOnAgentAt(const Entity queryAgent, WorldPositionComponent* queryPosition, int groupID)
 {
-	float sum = 0.0f;
+	float positiveSum = 0.0f;
+	float negativeSum = 0.0f;
+	float currentSum = 0.0f;
 
 	for (std::vector<Entity>::iterator it2 = m_entities.begin(); it2 != m_entities.end(); it2++) // 5.
 	{
 		if (queryAgent != (*it2)) // 6.
-			sum += GetAgentsChargeAt(*it2, WorldPositionComponent::GetVec3(*queryPosition)); // 7.
+		{
+			currentSum += GetAgentsChargeAt(*it2, WorldPositionComponent::GetVec3(*queryPosition), groupID); // 7.
+
+			if (currentSum >= 0)
+				positiveSum += currentSum;
+			else
+				negativeSum += currentSum;
+		}
 	}
 
-	return sum;
+	return positiveSum + negativeSum;
 }
 
-float Core::FieldReactionSystem::GetAgentsChargeAt(Entity chargedAgent, glm::vec3 queryPosition)
+float Core::FieldReactionSystem::GetAgentsChargeAt(Entity chargedAgent, glm::vec3 queryPosition, int matchGroupID)
 {
 	Core::UnitTypeComponent* utc = WGETC<UnitTypeComponent>(chargedAgent);
 	int indexFromType = static_cast<int>(utc->type);
 
 	WorldPositionComponent* wpc = WGETC<WorldPositionComponent>(chargedAgent);
+	int groupID = -1;
+	if (matchGroupID >= 0)
+	{
+		Core::AttributeComponent* ac = WGETC<AttributeComponent>(chargedAgent);
+		groupID = ac->rioter.groupID;
+	}
+
 	glm::vec3 distVec = (WorldPositionComponent::GetVec3(*wpc) - queryPosition);
 	float distanceSqr = (distVec.x * distVec.x) + (distVec.z * distVec.z);
 	
-	if (distanceSqr <= 0.001f || distanceSqr > CURVE[0][indexFromType].cutoff)
-		return 0.0f;
-	else if (distanceSqr < CURVE[0][indexFromType].repelRadius)
+	if (distanceSqr > 0.001f && distanceSqr < CURVE[0][indexFromType].repelRadius)
 		return -100 + distanceSqr * (CURVE[0][indexFromType].repelRadius / 100);
-	else
+	else if (distanceSqr <= CURVE[0][indexFromType].cutoff && groupID == matchGroupID)
 		return CURVE[0][indexFromType].charge - distanceSqr * CURVE[0][indexFromType].decline;
+	else
+		return 0.0f;
 }
 
 void Core::FieldReactionSystem::UpdateDebugField()

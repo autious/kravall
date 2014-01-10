@@ -62,15 +62,14 @@ GLFWwindow* init( int argc, char** argv )
 {
 	GLFWwindow* window;
 
-
-    Core::world.m_luaState.Execute( "scripts/config.lua" );
-    Core::world.m_luaState.Execute( "scripts/main.lua" );
+    bool worked = Core::world.m_luaState.Execute( "scripts/config.lua" ) && Core::world.m_luaState.Execute( "scripts/main.lua" );
+    assert( worked );
 
     for( int i = 0; i < argc-1; i++ )
     {
         if( strcmp( argv[i], "--conf" ) == 0 )
         {
-            Core::world.m_luaState.DoBlock( argv[i+1] ); 
+            Core::world.m_luaState.DoBlock( argv[i+1] );
         }
     }
 
@@ -116,7 +115,7 @@ void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, unsigned in
 		 Core::AttributeComponent(),
 		 //Core::BoundingVolumeComponent( Core::BoundingSphere( 3.0f, 0.0f, 0.0f, 0.0f ), aa )
 		 Core::BoundingVolumeComponent(Core::BoundingSphere(0.5f, 0.0f, 0.0f, 0.0f), 
-		 Core::BoundingVolumeCollisionModel::DynamicResolution)));
+									   Core::BoundingVolumeCollisionModel::DynamicResolution)));
 
 	Core::GraphicsComponent* gc = WGETC <Core::GraphicsComponent>(rioterList->at(index));
 	GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::MESH_ID, meshID);
@@ -194,9 +193,10 @@ void run( GLFWwindow * window )
 		Core::world.m_config.GetDouble( "initCameraNearClipDistance", 1.0f ), 
 		Core::world.m_config.GetDouble( "initCameraFarClipDistance", 1000.0f ) );
 	Core::gameCamera->CalculateProjectionMatrix(initScreenWidth, initScreenHeight);
-	Core::gameCamera->SetPosition(glm::vec3(70.0f, 70.0f, 70.0f));
+
+	Core::gameCamera->SetPosition(glm::vec3(50.0f, 90.0f, 90.0f));
 	
-	glm::vec2 rotation = glm::vec2(-0.7f, 3.14f * 0.25f);
+	glm::vec2 rotation = glm::vec2(-3.14f * 0.10f, 3.14f * 0.25f);
 	Core::gameCamera->UpdateView(glm::vec3(0.0f), rotation, 0.0f);
 	
     Core::ContentManager CM;
@@ -232,24 +232,6 @@ void run( GLFWwindow * window )
 			}, false);
    
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));	
-
-	//for (int i = -10; i < 10; i++)
-	//{
-	//	for (int j = -10; j < 10; j++)
-	//	{
-	//		CreateRioter(&rioters, meshID, rioterMaterialID, i * 2.0f, 0.0f, j * 2.0f);
-	//	}
-	//}
-	
-	//CreateRioter(&rioters, meshID, rioterMaterialID, -3.0f, 0.0f, 1.0f);
-	//CreateRioter(&rioters, meshID, rioterMaterialID, 0.0f, 0.0f, 0.0f);
-	//CreateRioter(&rioters, meshID, rioterMaterialID, 3.0f, 0.0f, 1.0f);
-
-	//CreatePolice(&rioters, meshID, copMaterialID, 50.0f, 0.0f, 0.0f);
-	//CreatePolice(&rioters, meshID, copMaterialID, 50.0f, 0.0f, 10.0f);
-	//CreatePolice(&rioters, meshID, copMaterialID, 50.0f, 0.0f, 20.0f);
-	//CreatePolice(&rioters, meshID, copMaterialID, 50.0f, 0.0f, 30.0f);
-
 
 	LOG_INFO << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " " << std::endl;
 

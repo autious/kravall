@@ -60,7 +60,7 @@ static void PushLightType( lua_State * L, const unsigned int value, const char *
         lua_settable( L, table );
 }
 
-void Core::LuaGFXBridge::OpenLibs( lua_State * L )
+Core::LuaGFXBridge::LuaGFXBridge( lua_State * L )
 {
     int stackSize = lua_gettop( L );
     lua_getglobal( L, "core" );

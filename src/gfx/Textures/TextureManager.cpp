@@ -14,8 +14,13 @@ namespace GFX
 
 	void TextureManager::LoadTexture(unsigned int& id, unsigned char* data, int width, int height)
 	{
+        /*
 		LoadTexture(id, data, GL_TEXTURE_2D, GL_RGBA, GL_RGBA, GL_LINEAR, GL_LINEAR,
 			GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, width, height);
+        */
+
+		LoadTexture(id, data, GL_TEXTURE_2D, GL_RGBA, GL_RGBA, GL_LINEAR, GL_LINEAR,
+			GL_REPEAT, GL_REPEAT, width, height);
 	}
 		
 	void TextureManager::LoadTexture(unsigned int& id, unsigned char* data, const GLenum& target,

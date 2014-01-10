@@ -1,0 +1,618 @@
+#ifndef SRC_CORE_LUA_BRIDGES_LUAGLMVEC3BRIDGE_H
+#define SRC_CORE_LUA_BRIDGES_LUAGLMVEC3BRIDGE_H
+
+#include "LuaGLMBridge.hpp"
+
+#include <lua.h>
+#include <lauxlib.h>
+#include <lualib.h>
+
+#include <glm/glm.hpp>
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+
+#include <Lua/LuaUtility.hpp>
+#include <Lua/LuaMetatableTypes.hpp>
+
+extern "C"
+{
+
+    static int LuaVec3Newindex( lua_State * L )
+    {
+        return luaL_error( L, "Read only" );
+    }
+
+    static int LuaVec3New( lua_State * L )
+    {
+        glm::vec3 * vec3 = Core::LuaUNewGLMVec3( L );
+
+        if( lua_gettop( L ) > 3 )
+        {
+            (*vec3)[0] = luaL_checknumber( L, 1 );
+            (*vec3)[1] = luaL_checknumber( L, 2 );
+            (*vec3)[2] = luaL_checknumber( L, 3 );
+
+            return 1;
+        }
+        else if( lua_gettop( L ) == 1 )
+        {
+            glm::vec3 * vec3_first = luau_checkglmvec3( L, 1 );
+            
+            *vec3 = *vec3_first;
+
+            return 1;
+        }
+        else if( lua_gettop( L ) == 0 )
+        {
+            return 1;
+        }
+        else
+        {
+            return luaL_error( L, "Invalid number of parameters" );
+        }
+    }
+
+    static int LuaVec3Length( lua_State * L )
+    {
+        glm::vec3 * vec3_first = luau_checkglmvec3( L, 1 );
+        lua_pushnumber( L, glm::length( *vec3_first ) );
+        return 1;
+    }
+
+    static int LuaVec3Cross( lua_State * L )
+    {
+        glm::vec3 * vec3_first = luau_checkglmvec3( L, 1 );
+        glm::vec3 * vec3_second = luau_checkglmvec3( L, 2 );
+        glm::vec3 * vec3 = Core::LuaUNewGLMVec3( L );
+
+        *vec3 = glm::cross( *vec3_first, *vec3_second );
+
+        return 1;
+    }
+
+    static int LuaVec3Dot( lua_State * L )
+    {
+        glm::vec3 * vec3_first = luau_checkglmvec3( L, 1 );
+        glm::vec3 * vec3_second = luau_checkglmvec3( L, 2 );
+
+        lua_pushnumber( L, glm::dot( *vec3_first, *vec3_second ) );
+
+        return 1;
+    }
+
+    static int LuaVec3Subtract( lua_State * L )
+    {
+        glm::vec3 * vec3_first = luau_checkglmvec3( L, 1 );
+        glm::vec3 * vec3_second = luau_checkglmvec3( L, 2 );
+        glm::vec3 * vec3 = Core::LuaUNewGLMVec3( L );
+
+        *vec3 = *vec3_first - *vec3_second; 
+
+        return 1;
+    }
+
+    static int LuaVec3Add( lua_State *L )
+    {
+        glm::vec3 * vec3_first = luau_checkglmvec3( L, 1 );
+        glm::vec3 * vec3_second = luau_checkglmvec3( L, 2 );
+        glm::vec3 * vec3 = Core::LuaUNewGLMVec3( L );
+
+        *vec3 = *vec3_first + *vec3_second; 
+
+        return 1;
+    }
+
+    static int LuaVec3Eq( lua_State * L )
+    {
+        glm::vec3 * vec3_first = luau_checkglmvec3( L, 1 );
+        glm::vec3 * vec3_second = luau_checkglmvec3( L, 2 );
+
+        lua_pushboolean( L, *vec3_first == *vec3_second );
+
+        return 1;
+    }
+
+    static int LuaVec3Normalized( lua_State *L )
+    {
+        glm::vec3 * vec3_first = luau_checkglmvec3( L, 1 );
+        glm::vec3 * vec3 = Core::LuaUNewGLMVec3( L );
+
+        *vec3 = glm::normalize( *vec3_first );
+
+        return 1;
+    }
+
+    static int LuaVec3Reflect( lua_State *L )
+    {
+        glm::vec3 * vec3_first = luau_checkglmvec3( L, 1 );
+        glm::vec3 * vec3_second = luau_checkglmvec3( L, 2 );
+        glm::vec3 * vec3 = Core::LuaUNewGLMVec3( L );
+
+        *vec3 = glm::reflect( *vec3_first, *vec3_second );
+
+        return 1;
+    } 
+
+    static int LuaVec3Get( lua_State * L )
+    {
+        glm::vec3 * vec3_first = luau_checkglmvec3( L, 1 );
+        
+        lua_pushnumber( L, (*vec3_first)[0]);
+        lua_pushnumber( L, (*vec3_first)[1]);
+        lua_pushnumber( L, (*vec3_first)[2]);
+
+        return 3;
+    }
+
+    static int LuaVec4Newindex( lua_State * L )
+    {
+        return luaL_error( L, "Read only" );
+    }
+
+    static int LuaVec4New( lua_State * L )
+    {
+        glm::vec4 * vec4_ret = Core::LuaUNewGLMVec4( L );
+        
+        if( lua_gettop( L ) >= 4 )
+        {
+            (*vec4_ret)[0] = luaL_checknumber( L, 1 ); 
+            (*vec4_ret)[1] = luaL_checknumber( L, 2 ); 
+            (*vec4_ret)[2] = luaL_checknumber( L, 3 ); 
+            (*vec4_ret)[3] = luaL_checknumber( L, 4 ); 
+
+            return 1;
+        }
+        else if( lua_gettop( L ) == 1 )
+        {
+            glm::vec4 * vec4_first = luau_checkglmvec4( L, 1 );
+
+            *vec4_ret = *vec4_first;
+
+            return 1;
+        }
+        else if( lua_gettop( L ) == 0 )
+        {
+            return 1;
+        }
+
+        return luaL_error( L, "Invalid argument count" );
+    }
+
+    static int LuaVec4Add( lua_State * L )
+    {
+        glm::vec4 * vec4_ret = Core::LuaUNewGLMVec4( L );
+        glm::vec4 * vec4_first = luau_checkglmvec4( L, 1 );
+        glm::vec4 * vec4_second = luau_checkglmvec4( L, 2 );
+    
+        *vec4_ret = *vec4_first + *vec4_second; 
+
+        return 1;
+    }
+
+    static int LuaVec4Subtract( lua_State * L )
+    {
+        glm::vec4 * vec4_ret = Core::LuaUNewGLMVec4( L );
+        glm::vec4 * vec4_first = luau_checkglmvec4( L, 1 );
+        glm::vec4 * vec4_second = luau_checkglmvec4( L, 2 );
+    
+        *vec4_ret = *vec4_first - *vec4_second; 
+
+        return 1;
+    }
+
+    static int LuaMat4Newindex( lua_State * L )
+    {
+        return luaL_error( L, "Read only" );
+    }
+
+    static int LuaMat4New( lua_State * L )
+    {
+        glm::mat4 * mat4 = Core::LuaUNewGLMMat4( L );
+
+        if( lua_gettop( L ) == 16 )
+        {
+            for( int i = 0; i < 16; i++ )
+            {
+                (&(*mat4)[0][0])[i] = luaL_checknumber( L, i+1 );
+            }             
+
+            return 1;
+        }
+        else if( lua_gettop( L ) == 1 )
+        {
+            glm::mat4 * mat4_first = luau_checkglmmat4( L, 1 );
+            *mat4 = *mat4_first;
+
+            return 1;
+        }
+        else if( lua_gettop( L ) == 0 )
+        {
+            return 1;
+        }
+        else
+        {
+            return luaL_error( L, "Invalid param count" );
+        }
+    }
+
+    static int LuaMat4Multiply( lua_State *L ) 
+    {
+        if( lua_gettop( L ) == 2 )
+        {
+            lua_getmetatable( L, 2 ); 
+            int second_meta = lua_gettop( L );
+
+            luaL_newmetatable( L, GLMMAT4_META_TYPE ); 
+            int mat4_meta = lua_gettop( L );
+            luaL_newmetatable( L, GLMVEC4_META_TYPE ); 
+            int vec4_meta = lua_gettop( L );
+
+
+            if( lua_equal( L, second_meta, mat4_meta ) )
+            {
+                glm::mat4 * mat4_first = luau_checkglmmat4( L, 1 );
+                glm::mat4 * mat4_second = luau_checkglmmat4( L, 2 );
+
+                glm::mat4 * mat4_ret  = Core::LuaUNewGLMMat4( L );
+
+                *mat4_ret = (*mat4_first) * (*mat4_second);
+    
+                return 1;
+            }
+            else if( lua_equal( L, second_meta, vec4_meta ) )
+            {
+                glm::mat4 * mat4_first = luau_checkglmmat4( L, 1 );
+                glm::vec4 * vec4_second = luau_checkglmvec4( L, 2 );
+
+                glm::vec4 * vec4_ret  = Core::LuaUNewGLMVec4( L );
+
+                *vec4_ret = (*mat4_first) * (*vec4_second);
+
+                return 1;
+            }
+        }
+        else
+        {
+            return luaL_error( L, "Invalid parameter count" );
+        }
+
+        return luaL_error( L, "Invalid parameter" );
+    }
+
+    static int LuaMat4Transpose( lua_State *L )
+    {
+        glm::mat4 * mat4 = Core::LuaUNewGLMMat4( L );
+        glm::mat4 * mat4_first = luau_checkglmmat4( L, 1 );
+
+        *mat4 = glm::transpose( *mat4_first );
+          
+        return 1;
+    }
+
+    static int LuaMat4Inverse( lua_State *L )
+    {
+        glm::mat4 * mat4 = Core::LuaUNewGLMMat4( L );
+        glm::mat4 * mat4_first = luau_checkglmmat4( L, 1 );
+
+        *mat4 = glm::inverse( *mat4_first );
+
+        return 1;
+    }
+
+    static int LuaMat4Add( lua_State * L )
+    {
+        glm::mat4 * mat4 = Core::LuaUNewGLMMat4( L );
+        glm::mat4 * mat4_first = luau_checkglmmat4( L, 1 );
+        glm::mat4 * mat4_second = luau_checkglmmat4( L, 2 );
+
+        *mat4 = *mat4_first + *mat4_second; 
+
+        return 1;
+    }
+
+    static int LuaMat4Subtract( lua_State * L )
+    {
+        glm::mat4 * mat4 = Core::LuaUNewGLMMat4( L );
+        glm::mat4 * mat4_first = luau_checkglmmat4( L, 1 );
+        glm::mat4 * mat4_second = luau_checkglmmat4( L, 2 );
+
+        *mat4 = *mat4_first - *mat4_second; 
+
+        return 1;
+    }
+
+    static int LuaMat4Eq( lua_State * L )
+    {
+        glm::mat4 * mat4_first = luau_checkglmmat4( L, 1 );
+        glm::mat4 * mat4_second = luau_checkglmmat4( L, 2 );
+
+        lua_pushboolean( L, *mat4_first == *mat4_second );
+
+        return 1;
+    }
+
+    static int LuaMat4Get( lua_State * L )
+    {
+        glm::mat4 * mat4_first = luau_checkglmmat4( L, 1 );
+        for( int i = 0; i < 16; i++ )
+        {
+            lua_pushnumber( L, (&(*mat4_first)[0][0])[i] );
+        }
+
+        return 16;
+    }
+
+    static int LuaQuatNewindex( lua_State * L )
+    {
+        return luaL_error( L, "Read only" );
+    }
+
+    static int LuaQuatNew( lua_State * L )
+    {
+        glm::quat * quat_ret = Core::LuaUNewGLMQuat( L );
+
+        if( lua_gettop( L ) >= 4 )
+        {
+            (*quat_ret)[0] = luaL_checknumber( L, 1 );
+            (*quat_ret)[1] = luaL_checknumber( L, 2 );
+            (*quat_ret)[2] = luaL_checknumber( L, 3 );
+            (*quat_ret)[3] = luaL_checknumber( L, 4 );
+
+            return 1;
+        } 
+        else if( lua_gettop( L ) == 1 )
+        {
+            glm::quat *quat_first = luau_checkglmquat( L, 1 ); 
+
+            *quat_ret = *quat_first;
+            return 1;
+        }
+        else
+        {
+            return 1;     
+        }
+    }
+
+    static int LuaQuatAngle( lua_State *L )
+    {
+        glm::quat *quat_first = luau_checkglmquat( L, 1 ); 
+          
+        lua_pushnumber( L, glm::angle( *quat_first ) );
+
+        return 1;
+    }
+
+    static int LuaQuatAngleAxis( lua_State * L )
+    {
+        glm::quat * quat_ret = Core::LuaUNewGLMQuat( L );
+
+        float angle = static_cast<float>(luaL_checknumber( L, 1 ));
+        glm::vec3 *vec3_second = luau_checkglmvec3( L, 2 ); 
+
+        *quat_ret = glm::angleAxis( angle, *vec3_second );
+
+        return 1;
+    }
+
+    static int LuaQuatAxis( lua_State * L )
+    {
+        glm::quat *quat_first = luau_checkglmquat( L, 1 ); 
+        glm::vec3 *vec3_ret = Core::LuaUNewGLMVec3( L );
+
+        *vec3_ret = glm::axis( *quat_first );
+
+        return 1;
+    }
+
+    static int LuaQuatConjugate( lua_State * L )
+    {
+        glm::quat *quat_ret = Core::LuaUNewGLMQuat( L );
+        glm::quat *quat_first = luau_checkglmquat( L, 1 );
+
+        *quat_ret = glm::conjugate( *quat_first );
+
+        return 1;
+    }
+
+    static int LuaQuatDot( lua_State * L )
+    {
+        glm::quat *quat_first = luau_checkglmquat( L, 1 );
+        glm::quat *quat_second = luau_checkglmquat( L, 2 );
+
+        lua_pushnumber( L, glm::dot( *quat_first, *quat_second ) );
+
+        return 1;
+    }
+
+    static int LuaQuatEq( lua_State * L )
+    {
+        glm::quat *quat_first = luau_checkglmquat( L, 1 );
+        glm::quat *quat_second = luau_checkglmquat( L, 2 );
+
+        lua_pushboolean( L, *quat_first == *quat_second );
+
+        return 1;
+    }
+
+    static int LuaQuatInverse( lua_State *L )
+    {
+        glm::quat *quat_first = luau_checkglmquat( L, 1 );
+        glm::quat *quat_ret = Core::LuaUNewGLMQuat( L );
+
+        *quat_ret = glm::inverse( *quat_first );
+
+        return 1;
+    }  
+
+    static int LuaQuatLength( lua_State *L )
+    {
+        glm::quat *quat_first = luau_checkglmquat( L, 1 );
+        
+        lua_pushnumber( L, glm::length( *quat_first ) );
+
+        return 1;
+    } 
+
+    static int LuaQuatLerp( lua_State *L )
+    {
+        glm::quat *quat_first = luau_checkglmquat( L, 1 );
+        glm::quat *quat_second = luau_checkglmquat( L, 2 );
+        float lerpFactor = static_cast<float>(luaL_checknumber( L, 3 ));
+
+        glm::quat *quat_ret = Core::LuaUNewGLMQuat( L );
+        
+        *quat_ret = glm::lerp( *quat_first, *quat_second, lerpFactor );
+
+        return 1;
+    } 
+
+    static int LuaQuatMat4Cast( lua_State * L )
+    {
+        glm::quat *quat_first = luau_checkglmquat( L, 1 );
+        glm::mat4 *mat4_ret = Core::LuaUNewGLMMat4( L );
+
+        *mat4_ret = glm::mat4_cast( *quat_first ); 
+
+        return 1;
+    }
+
+    static int LuaQuatNormalize( lua_State * L) 
+    {
+        glm::quat *quat_first = luau_checkglmquat( L, 1 );
+        glm::quat *quat_ret = Core::LuaUNewGLMQuat( L );
+
+        *quat_ret = glm::normalize( *quat_first );
+
+        return 1;
+    }
+
+    static int LuaQuatRotate( lua_State *L )
+    {
+        glm::quat *quat_first =  luau_checkglmquat( L, 1 );
+        float angle = static_cast<float>(luaL_checknumber( L, 2 ));
+        glm::vec3 *vec_third = luau_checkglmvec3( L, 3 );
+
+        glm::quat *quat_ret = Core::LuaUNewGLMQuat( L );
+
+        *quat_ret = glm::rotate( *quat_first, angle, *vec_third );
+        return 1;
+    }
+
+    static int LuaQuatMix( lua_State *L )
+    {
+        glm::quat *quat_first = luau_checkglmquat( L, 1 );
+        glm::quat *quat_second = luau_checkglmquat( L, 2 );
+        float lerpFactor = static_cast<float>(luaL_checknumber( L, 3 ));
+
+        glm::quat *quat_ret = Core::LuaUNewGLMQuat( L );
+        
+        *quat_ret = glm::mix( *quat_first, *quat_second, lerpFactor );
+
+        return 1;
+    }
+}
+
+namespace Core
+{
+    LuaGLMBridge::LuaGLMBridge( lua_State * L )
+    {
+        lua_getglobal( L, "core" );         
+            lua_newtable( L ); //glm
+                lua_newtable( L ); //vec3
+                int vec3_table = lua_gettop( L );
+                    luau_setfunction( L, "new", LuaVec3New );
+                    luau_setfunction( L, "cross", LuaVec3Cross );
+                    luau_setfunction( L, "dot", LuaVec3Dot );
+                    luau_setfunction( L, "subtract", LuaVec3Subtract );
+                    luau_setfunction( L, "add", LuaVec3Add );
+                    luau_setfunction( L, "eq", LuaVec3Eq );
+                    luau_setfunction( L, "normalize", LuaVec3Normalized );
+                    luau_setfunction( L, "reflect", LuaVec3Reflect );
+                    luau_setfunction( L, "length", LuaVec3Length );
+                    luau_setfunction( L, "get", LuaVec3Get );            
+
+                    luaL_newmetatable( L, GLMVEC3_META_TYPE );
+                        lua_pushvalue( L, vec3_table );
+                        lua_setfield( L, -2, "__index" );
+
+                        luau_setfunction( L, "__newindex", LuaVec3Newindex ); 
+                        luau_setfunction( L, "__add", LuaVec3Add );
+                        luau_setfunction( L, "__sub", LuaVec3Subtract );
+                        luau_setfunction( L, "__eq", LuaVec3Eq );
+                    lua_pop( L, 1 );
+                lua_setfield( L, -2, "vec3" );
+
+                lua_newtable( L );
+                int vec4_table = lua_gettop( L );
+                    luau_setfunction( L, "new", LuaVec4New );
+                    luau_setfunction( L, "subtract", LuaVec4Subtract );
+                    luau_setfunction( L, "add", LuaVec4Add );
+
+                    luaL_newmetatable( L, GLMVEC4_META_TYPE );
+                        lua_pushvalue( L, vec4_table );
+                        lua_setfield( L, -2, "__index" );
+                       
+                        luau_setfunction( L, "__newindex", LuaVec4Newindex ); 
+                        luau_setfunction( L, "__sub", LuaVec4Subtract );
+                        luau_setfunction( L, "__add", LuaVec4Add );
+                    lua_pop( L, 1 );
+                lua_setfield( L, -2, "vec4" );
+
+                lua_newtable( L ); //mat4
+                int mat4_table = lua_gettop( L );
+                    luau_setfunction( L, "new", LuaMat4New );
+                    luau_setfunction( L, "multiply", LuaMat4Multiply );
+                    luau_setfunction( L, "transpose", LuaMat4Transpose );
+                    luau_setfunction( L, "inverse", LuaMat4Inverse );
+                    luau_setfunction( L, "add", LuaMat4Add );
+                    luau_setfunction( L, "subtract", LuaMat4Subtract );
+                    luau_setfunction( L, "eq", LuaMat4Eq );
+                    luau_setfunction( L, "get", LuaMat4Get );
+
+                    luaL_newmetatable( L, GLMMAT4_META_TYPE );
+                        lua_pushvalue( L, mat4_table );
+                        lua_setfield( L, -2, "__index" );
+
+                        luau_setfunction( L, "__newindex", LuaMat4Newindex );
+                        luau_setfunction( L, "__mul", LuaMat4Multiply );
+                        luau_setfunction( L, "__add", LuaMat4Add );
+                        luau_setfunction( L, "__sub", LuaMat4Subtract );
+                        luau_setfunction( L, "__eq", LuaMat4Eq );
+                    lua_pop( L, 1 ); 
+                lua_setfield( L, -2, "mat4" );
+                
+                lua_newtable( L );
+                int quat_table = lua_gettop( L );
+                    
+                    luau_setfunction( L, "new", LuaQuatNew );
+                    luau_setfunction( L, "normalize", LuaQuatNormalize );
+                    luau_setfunction( L, "angle", LuaQuatAngle );
+                    luau_setfunction( L, "angleAxis", LuaQuatAngleAxis );
+                    luau_setfunction( L, "axis", LuaQuatAxis );
+                    luau_setfunction( L, "conjugate", LuaQuatConjugate );
+                    luau_setfunction( L, "dot", LuaQuatDot );
+                    luau_setfunction( L, "eq", LuaQuatEq );
+                    luau_setfunction( L, "inverse", LuaQuatInverse );
+                    luau_setfunction( L, "length", LuaQuatLength );
+                    luau_setfunction( L, "lerp", LuaQuatLerp );
+                    luau_setfunction( L, "mat4Cast", LuaQuatMat4Cast );
+                    luau_setfunction( L, "rotate", LuaQuatRotate );
+                    luau_setfunction( L, "slerp", LuaQuatMix );
+                    luau_setfunction( L, "mix", LuaQuatMix );
+
+                    luaL_newmetatable( L, GLMQUAT_META_TYPE );
+                        lua_pushvalue( L, quat_table );
+                        lua_setfield( L, -2, "__index" );
+
+                        luau_setfunction( L, "__newindex", LuaQuatNewindex );
+                        luau_setfunction( L, "__eq", LuaQuatEq );
+                    lua_pop( L, 1 ); 
+
+                lua_setfield( L, -2, "quat" );
+            lua_setfield( L, -2, "glm" );
+        lua_pop( L, 1 );
+    }
+}
+
+#endif

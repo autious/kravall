@@ -65,13 +65,13 @@ extern "C"
     }
 }
 
-void Core::LuaEntityBridge::OpenLibs( lua_State * L )
+Core::LuaEntityBridge::LuaEntityBridge( lua_State * L  )
 {
     lua_getglobal( L, "core" );  
 
     int coreTableIndex = lua_gettop( L );
 
-    if( lua_isnil( L, -1 ) == false )
+    if( !lua_isnil( L, -1 ) )
     {
         // Bind the set and get functions
         lua_pushstring( L, "entity" );
