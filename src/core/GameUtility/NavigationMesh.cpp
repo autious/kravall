@@ -31,7 +31,7 @@ namespace Core
 	{
 		int nrInstances = nrFlowfieldInstances;
 		if( !nrInstances )
-			nrInstances = Core::world.m_config.GetDouble( "defaultNrFlowfields", 20.0f );
+			nrInstances = Core::world.m_config.GetInt( "defaultNrFlowfields", 20 );
 		
 		// resize list of flowfields...
 		flowfields = Core::world.m_levelHeap.NewObjectArray<Core::NavigationMesh::Flowfield>( nrInstances );
