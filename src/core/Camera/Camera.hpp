@@ -33,6 +33,8 @@ namespace Core
 		*/
 		void LookAt(glm::vec3 lookAtTarget, glm::vec3 up);
 
+        void SetDirection( glm::vec3 forward, glm::vec3 up );
+
 		/*!
 		Gets the camera position.
 		\return Returns a vector containing the world space position of the camera
@@ -43,12 +45,8 @@ namespace Core
 		Sets the camera position.
 		\param position The position to place the camera at
 		*/
-		inline void SetPosition(const glm::vec3& position){ m_position = position; }
+		inline void SetPosition(const glm::vec3& position){ m_position = position; CalculateViewMatrix(); }
 
-		/*!
-		Recalculates the camera view matrix.
-		*/
-		void CalculateViewMatrix();
 
 		//FRANKENSTEIN CODE BELOW
 		void UpdateView(glm::vec3 directions, glm::vec2 rotations, float dt);
@@ -96,6 +94,10 @@ namespace Core
 
 
 	private:
+		/*!
+		Recalculates the camera view matrix.
+		*/
+		void CalculateViewMatrix();
 
 		glm::vec3 m_position;
 
@@ -108,10 +110,6 @@ namespace Core
 		float m_near;
 		float m_far;
 		float m_fov;
-
-
-		
-
 	};
 
 	/*!
@@ -119,7 +117,5 @@ namespace Core
 		Initialized in main.
 	*/
 	extern Camera* gameCamera;
-
-
 }
 #endif

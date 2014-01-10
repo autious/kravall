@@ -23,6 +23,7 @@
 #include <Lua/Bridges/LuaBoundingVolumeBridge.hpp>
 #include <Lua/Bridges/LuaUnitTypeBridge.hpp>
 #include <Lua/Bridges/LuaNavMeshBridge.hpp>
+#include <Lua/Bridges/LuaGLMBridge.hpp>
 
 namespace Core
 {
@@ -38,7 +39,8 @@ namespace Core
         lacb(state),
         lbvc(state),
         lutcb(state),
-        lnmb(state)
+        lnmb(state),
+        lglmb(state)
         {}
             
         LuaBitmask lb;
@@ -51,6 +53,7 @@ namespace Core
         LuaBoundingVolumeComponentBridge lbvc;
         LuaUnitTypeComponentBridge lutcb;
         LuaNavMeshBridge lnmb;
+        LuaGLMBridge lglmb;
     };
 }
 
@@ -136,8 +139,15 @@ bool Core::LuaState::DoBlock( const char * block )
 
     if( error )
     {
-        LOG_ERROR << "Unable to parse block: " << lua_tostring( m_state, -1 ) << std::endl;
-        lua_pop( m_state, 1 );
+        if( lua_isstring( m_state, -1 ) )
+        {
+            LOG_ERROR << "Unable to parse block: " << lua_tostring( m_state, -1 ) << std::endl;
+            lua_pop( m_state, 1 );
+        }
+        else
+        {
+            LOG_ERROR << "Unable to parse block: " << error << std::endl;
+        }
     }
 
     VerifyUpdateFunction();

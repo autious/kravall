@@ -19,6 +19,8 @@
 
 #define LOGGER_LIMIT 4
 
+#define MESSAGE_LENGTH 2048
+
 class LogHandler;
 
 /*! 
@@ -64,7 +66,7 @@ namespace LogSystem
 
 		const char* GetPrefix() { return m_prefix; }
 
-		char m_message[512];
+		char m_message[MESSAGE_LENGTH];
 
 	private:		
 		LogType m_type;

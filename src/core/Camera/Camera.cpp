@@ -3,7 +3,6 @@
 
 namespace Core
 {
-
 	Camera* gameCamera;
 
 	Camera::Camera(const float& fov, const float& nearZ, const float& farZ)
@@ -30,8 +29,14 @@ namespace Core
 		m_forward = glm::normalize(m_position + lookAtTarget);
 		m_up = up;
 		CalculateViewMatrix();
-
 	}
+
+    void Camera::SetDirection( glm::vec3 forward, glm::vec3 up )
+    {
+        m_forward = forward;
+        m_up = up;
+		CalculateViewMatrix();
+    }
 
 	void Camera::CalculateViewMatrix()
 	{
