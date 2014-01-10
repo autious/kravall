@@ -41,7 +41,7 @@ Core::ComponentSetters Core::RotationComponentBinding::GetSetters()
                     
                 if( lua_isnumber( L, -1 ) )
                 {
-                    rc->rotation[i] = lua_tonumber( L, -1 );  
+                    rc->rotation[i] = static_cast<float>(lua_tonumber( L, -1 ));  
                 }
 
                 lua_pop( L, 1 );

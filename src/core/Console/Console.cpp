@@ -681,7 +681,7 @@ namespace Core
 
 	void DebugConsole::Update()
 	{
-		long long t = (Timer().GetTotal()) % 1000;
+		long long t = (m_timer.GetTotal()) % 1000;
 		bool showCursor = (t < 500) ? true : false;
 
 		if (Core::GetInputManager().IsKeyPressedOnce(GLFW_KEY_TAB))

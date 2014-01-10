@@ -21,37 +21,37 @@ ConsoleHandler::~ConsoleHandler()
 }
 
 
-void ConsoleHandler::Log( const char* message )
+void ConsoleHandler::Log(const char* message)
 {
 
-     /*
-    #ifdef _WIN32
+	/*
+   #ifdef _WIN32
 
-     switch( m_type )
-     {
-     case LogSystem::LogType::logType_debug :
-         system( "Color 0A" );
-         break;
+   switch( m_type )
+   {
+   case LogSystem::LogType::logType_debug :
+   system( "Color 0A" );
+   break;
 
-    case LogSystem::LogType::logType_error :
-         system( "Color 04" );
-         break;
+   case LogSystem::LogType::logType_error :
+   system( "Color 04" );
+   break;
 
-    case LogSystem::LogType::logType_fatal :
-         system( "Color 0C" );
-         break;
+   case LogSystem::LogType::logType_fatal :
+   system( "Color 0C" );
+   break;
 
-    case LogSystem::LogType::logType_warning :
-         system( "Color 0E" );
-         break;
+   case LogSystem::LogType::logType_warning :
+   system( "Color 0E" );
+   break;
 
-     }
-     // c fatal
-     // a debug
-     // e warning	 
-     
-    #endif
-     */
+   }
+   // c fatal
+   // a debug
+   // e warning
+
+   #endif
+   */
 
 #ifdef LOGGER_LINUX_CONSOLE
 
@@ -64,26 +64,35 @@ void ConsoleHandler::Log( const char* message )
 #define KCYN  "\x1B[36m"
 #define KWHT  "\x1B[37m"
 
-     switch( m_type )
-     {
-     case LogSystem::LogType::logType_debug :
-         break;
+	switch( m_type )
+	{
+	case LogSystem::LogType::logType_debug :
+		break;
 
-    case LogSystem::LogType::logType_error :
-         std::cout << KRED;
-         break;
+	case LogSystem::LogType::logType_error :
+		std::cout << KRED;
+		break;
 
-    case LogSystem::LogType::logType_fatal :
-         std::cout << KRED;
-         break;
+	case LogSystem::LogType::logType_fatal :
+		std::cout << KRED;
+		break;
 
-    case LogSystem::LogType::logType_warning :
-         std::cout << KYEL;
-         break;
+	case LogSystem::LogType::logType_warning :
+		std::cout << KYEL;
+		break;
+	}
 
-     }
+	std::cout << message;
+#else
+
+	if (LogSystem::LogType::logType_fatal == m_type
+		|| LogSystem::LogType::logType_error == m_type)
+	{
+		std::cout << message;
+	}
 #endif
-    std::cout << message;
+	
+	
 #ifdef LOGGER_LINUX_CONSOLE
     std::cout << KNRM;
 #endif

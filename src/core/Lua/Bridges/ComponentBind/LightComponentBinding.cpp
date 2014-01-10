@@ -109,7 +109,7 @@ Core::ComponentSetters Core::LightComponentBinding::GetSetters()
                     
                 if( lua_isnumber( L, -1 ) )
                 {
-                    lc->color[i] = lua_tonumber( L, -1 );  
+                    lc->color[i] = static_cast<float>(lua_tonumber( L, -1 ));  
                 }
 
                 lua_pop( L, 1 );
@@ -123,7 +123,7 @@ Core::ComponentSetters Core::LightComponentBinding::GetSetters()
             
         if( lua_isnumber( L, valueindex ) )
         {
-            lc->intensity = lua_tonumber( L, valueindex );
+            lc->intensity = static_cast<float>(lua_tonumber( L, valueindex ));
         }  
         else
         {
@@ -137,7 +137,7 @@ Core::ComponentSetters Core::LightComponentBinding::GetSetters()
             
         if( lua_isnumber( L, valueindex ) )
         {
-            lc->lightSpecific.spotLight.angle = lua_tonumber( L, valueindex );
+            lc->lightSpecific.spotLight.angle = static_cast<float>(lua_tonumber( L, valueindex ));
         }  
         else
         {

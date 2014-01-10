@@ -52,6 +52,11 @@ namespace GFX
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		// Clear depth RT
+		float c[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+		glClearBufferfv(GL_COLOR, 1, &glm::vec4(0.0f, 0.0f, 0.0f,std::numeric_limits<float>::max())[0]);
+
 		m_shaderManager->UseProgram("StaticMesh");
 		
 		BasicCamera bc;
@@ -217,5 +222,6 @@ namespace GFX
 		// define outputs
 		GLenum drawBuffers[] = { GL_NONE, GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
 		glDrawBuffers(5, drawBuffers);
+
 	}
 }

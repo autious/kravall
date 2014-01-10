@@ -23,9 +23,9 @@ namespace Core
 		LARGE_INTEGER m_start, m_end;           // ticks
 #endif
 		long long m_totalTime;
-		friend HighresTimer& Timer();
-		HighresTimer();
 	public:
+		HighresTimer();
+
 		/*!
 		Starts measuring time
 		*/
@@ -49,7 +49,6 @@ namespace Core
 		long long GetTotal();
 
 	};
-	HighresTimer& Timer();
 }
 
 #endif

@@ -3,6 +3,7 @@
 
 #include <lua.h>
 
+#include <Timer.hpp>
 #include <chrono>
 
 
@@ -22,6 +23,7 @@ namespace Core
             std::chrono::microseconds m_lastFrameTime;
             int m_coreUpdateFunctionReg;
             bool m_activeUpdate;
+			Core::HighresTimer m_timer;
 
             void VerifyUpdateFunction();
             
