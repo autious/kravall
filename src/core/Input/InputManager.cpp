@@ -290,4 +290,9 @@ namespace Core
         x = px - cx;
         y = py - cy;
     }
+
+    void InputManager::SetCursorPosition( const int x, const int y )
+    {
+        glfwSetCursorPos( m_window, x,y );
+    }
 }

@@ -35,13 +35,14 @@ namespace Core
             bool DoBlock( const char *block );
             int DoBlock( const char * block, int args, int rargs );
 
+            bool Init( );
+            bool Stop( );
             void Update( float delta );
 
             std::chrono::microseconds GetUpdateTiming();
             int GetMemoryUse();
 
             lua_State *GetState();
-
         
             LuaStateBindings *bindings;
 

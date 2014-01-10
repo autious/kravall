@@ -48,6 +48,8 @@ static GFX::FontData* fontData;
 #include <DebugCreators.hpp>
 #include <CLOPLoggerCallback.hpp>
 
+GLFWwindow *mainWindow = nullptr;
+
 // Just an example of a clop function
 // This function gets registred in Init with clop::Register("exit", ClopCloseWindow);
 // And the command is sent to the command line by pressing 'E' (as seen in run()) with Core::Console().SetInputLine("exit");
@@ -147,6 +149,7 @@ void CreatePolice(std::vector<Core::Entity>* rioterList, int meshID, unsigned in
 	GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::TYPE, GFX::OBJECT_TYPES::OPAQUE_GEOMETRY);
 }
 
+/*
 static void ControlCamera(double delta)
 {
 	glm::vec2 rotation = glm::vec2(0.0f);
@@ -182,12 +185,14 @@ static void ControlCamera(double delta)
 
 	Core::gameCamera->UpdateView(directions, rotation, static_cast<float>(delta));
 }
+*/
 
 void run( GLFWwindow * window )
 {
     LOG_INFO << "Starting program" << std::endl;
 
 	// init game camera...
+    /*
 	Core::gameCamera = Core::world.m_constantHeap.NewObject<Core::Camera>(
 		Core::world.m_config.GetDouble( "initCameraFieldOfView", 45.0f ), 
 		Core::world.m_config.GetDouble( "initCameraNearClipDistance", 1.0f ), 
@@ -198,10 +203,11 @@ void run( GLFWwindow * window )
 	
 	glm::vec2 rotation = glm::vec2(-3.14f * 0.10f, 3.14f * 0.25f);
 	Core::gameCamera->UpdateView(glm::vec3(0.0f), rotation, 0.0f);
-	
+    */
+
     Core::ContentManager CM;
 	
-	GFX::SetProjectionMatrix(Core::gameCamera->GetProjectionMatrix());
+	GFX::SetProjectionMatrix(Core::gameCamera.GetProjectionMatrix());
 
 	std::vector<Core::Entity> rioters;
 
@@ -236,6 +242,8 @@ void run( GLFWwindow * window )
 
 	LOG_INFO << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " " << std::endl;
 
+    Core::world.m_luaState.Init();
+
 	//inputline.resize(1);
 	Core::HighresTimer timer;
 	long long lastFrameTime = timer.GetTotal();
@@ -253,12 +261,8 @@ void run( GLFWwindow * window )
 		//gCamera->CalculateViewMatrix();
 		//Core::gameCamera->LookAt(glm::vec3(9001.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
-		ControlCamera(delta);
-
-		GFX::SetViewMatrix(Core::gameCamera->GetViewMatrix());
-
-		Core::gameCamera->CalculateProjectionMatrix(GFX::GetScreenWidth(), GFX::GetScreenHeight());
-		GFX::SetProjectionMatrix(Core::gameCamera->GetProjectionMatrix());
+		GFX::SetViewMatrix(Core::gameCamera.GetViewMatrix());
+		GFX::SetProjectionMatrix(Core::gameCamera.GetProjectionMatrix());
 
 		//TestRendering();
 
@@ -279,6 +283,8 @@ void run( GLFWwindow * window )
 		Core::world.m_frameHeap.Rewind();
     }
 
+    Core::world.m_luaState.Stop();
+
     //Deregister clop before the stack starts unwinding!
     DeregisterCLOPLogger();
 
@@ -296,8 +302,8 @@ int main(int argc, char** argv)
     ::testing::InitGoogleTest(&argc, argv);
 #endif
 #ifndef SKIP_RUN
-	GLFWwindow* window = init( argc, argv );
-	if( window == nullptr )
+	mainWindow = init( argc, argv );
+	if( mainWindow == nullptr )
 		return -1; 
 #endif
 #ifdef RUN_GTEST
@@ -311,7 +317,7 @@ int main(int argc, char** argv)
 	}
 #endif
 #ifndef SKIP_RUN
-    run( window );
+    run( mainWindow );
 #endif
 
 #ifdef RUN_GTEST

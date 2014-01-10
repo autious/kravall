@@ -84,9 +84,12 @@ namespace Core
         void RemoveScrollEventListener( Core::ScrollEventListener* eventListener );
 
 
+        void SetCursorPosition( const int x, const int y );
         bool IsKeyPressedOnce( const int id );
         bool IsMouseButtonDownOnce( const int id );
         void GetPosDiff( int& x, int &y );
+
+        
         /*!
           Retreives the current Core::KeyboardState. Changes made to the returned state will change the current state.
           \returns A reference to the keyboardstate.
@@ -100,6 +103,8 @@ namespace Core
           */
         inline static Core::MouseState& GetMouseState(){ return States::mouseState; }
         inline static Core::MouseState& GetPrevMouseState(){ return States::prevMouseState; }
+
+        
 
     private:
 
