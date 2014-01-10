@@ -25,17 +25,18 @@ extern "C"
 
     static int LuaVec3New( lua_State * L )
     {
+        int params = lua_gettop( L );
         glm::vec3 * vec3 = Core::LuaUNewGLMVec3( L );
 
-        if( lua_gettop( L ) > 3 )
+        if( params > 3 )
         {
-            (*vec3)[0] = static_cast<float>(luaL_checknumber( L, 1 ));
-            (*vec3)[1] = static_cast<float>(luaL_checknumber( L, 2 ));
-            (*vec3)[2] = static_cast<float>(luaL_checknumber( L, 3 ));
+            (*vec3)[0] = luau_checkfloat( L, 1 );
+            (*vec3)[1] = luau_checkfloat( L, 2 );
+            (*vec3)[2] = luau_checkfloat( L, 3 );
 
             return 1;
         }
-        else if( lua_gettop( L ) == 1 )
+        else if( params == 1 )
         {
             glm::vec3 * vec3_first = luau_checkglmvec3( L, 1 );
             
@@ -43,7 +44,7 @@ extern "C"
 
             return 1;
         }
-        else if( lua_gettop( L ) == 0 )
+        else if( params == 0 )
         {
             return 1;
         }
@@ -152,18 +153,19 @@ extern "C"
 
     static int LuaVec4New( lua_State * L )
     {
+        int params = lua_gettop( L );
         glm::vec4 * vec4_ret = Core::LuaUNewGLMVec4( L );
-        
-        if( lua_gettop( L ) >= 4 )
+
+        if( params >= 4 )
         {
-            (*vec4_ret)[0] = static_cast<float>(luaL_checknumber( L, 1 )); 
-            (*vec4_ret)[1] = static_cast<float>(luaL_checknumber( L, 2 )); 
-            (*vec4_ret)[2] = static_cast<float>(luaL_checknumber( L, 3 )); 
-            (*vec4_ret)[3] = static_cast<float>(luaL_checknumber( L, 4 )); 
+            (*vec4_ret)[0] = luau_checkfloat( L, 1 ); 
+            (*vec4_ret)[1] = luau_checkfloat( L, 2 ); 
+            (*vec4_ret)[2] = luau_checkfloat( L, 3 ); 
+            (*vec4_ret)[3] = luau_checkfloat( L, 4 ); 
 
             return 1;
         }
-        else if( lua_gettop( L ) == 1 )
+        else if( params == 1 )
         {
             glm::vec4 * vec4_first = luau_checkglmvec4( L, 1 );
 
@@ -171,7 +173,7 @@ extern "C"
 
             return 1;
         }
-        else if( lua_gettop( L ) == 0 )
+        else if( params == 0 )
         {
             return 1;
         }
@@ -181,9 +183,9 @@ extern "C"
 
     static int LuaVec4Add( lua_State * L )
     {
-        glm::vec4 * vec4_ret = Core::LuaUNewGLMVec4( L );
         glm::vec4 * vec4_first = luau_checkglmvec4( L, 1 );
         glm::vec4 * vec4_second = luau_checkglmvec4( L, 2 );
+        glm::vec4 * vec4_ret = Core::LuaUNewGLMVec4( L );
     
         *vec4_ret = *vec4_first + *vec4_second; 
 
@@ -192,9 +194,9 @@ extern "C"
 
     static int LuaVec4Subtract( lua_State * L )
     {
-        glm::vec4 * vec4_ret = Core::LuaUNewGLMVec4( L );
         glm::vec4 * vec4_first = luau_checkglmvec4( L, 1 );
         glm::vec4 * vec4_second = luau_checkglmvec4( L, 2 );
+        glm::vec4 * vec4_ret = Core::LuaUNewGLMVec4( L );
     
         *vec4_ret = *vec4_first - *vec4_second; 
 
@@ -208,25 +210,26 @@ extern "C"
 
     static int LuaMat4New( lua_State * L )
     {
+        int params = lua_gettop( L );
         glm::mat4 * mat4 = Core::LuaUNewGLMMat4( L );
 
-        if( lua_gettop( L ) == 16 )
+        if( params == 16 )
         {
             for( int i = 0; i < 16; i++ )
             {
-                (&(*mat4)[0][0])[i] = static_cast<float>(luaL_checknumber( L, i+1 ));
+                (&(*mat4)[0][0])[i] = luau_checkfloat( L, i+1 );
             }             
 
             return 1;
         }
-        else if( lua_gettop( L ) == 1 )
+        else if( params == 1 )
         {
             glm::mat4 * mat4_first = luau_checkglmmat4( L, 1 );
             *mat4 = *mat4_first;
 
             return 1;
         }
-        else if( lua_gettop( L ) == 0 )
+        else if( params == 0 )
         {
             return 1;
         }
@@ -282,8 +285,8 @@ extern "C"
 
     static int LuaMat4Transpose( lua_State *L )
     {
-        glm::mat4 * mat4 = Core::LuaUNewGLMMat4( L );
         glm::mat4 * mat4_first = luau_checkglmmat4( L, 1 );
+        glm::mat4 * mat4 = Core::LuaUNewGLMMat4( L );
 
         *mat4 = glm::transpose( *mat4_first );
           
@@ -292,8 +295,8 @@ extern "C"
 
     static int LuaMat4Inverse( lua_State *L )
     {
-        glm::mat4 * mat4 = Core::LuaUNewGLMMat4( L );
         glm::mat4 * mat4_first = luau_checkglmmat4( L, 1 );
+        glm::mat4 * mat4 = Core::LuaUNewGLMMat4( L );
 
         *mat4 = glm::inverse( *mat4_first );
 
@@ -313,9 +316,9 @@ extern "C"
 
     static int LuaMat4Subtract( lua_State * L )
     {
-        glm::mat4 * mat4 = Core::LuaUNewGLMMat4( L );
         glm::mat4 * mat4_first = luau_checkglmmat4( L, 1 );
         glm::mat4 * mat4_second = luau_checkglmmat4( L, 2 );
+        glm::mat4 * mat4 = Core::LuaUNewGLMMat4( L );
 
         *mat4 = *mat4_first - *mat4_second; 
 
@@ -343,6 +346,124 @@ extern "C"
         return 16;
     }
 
+    static int LuaMat4Perspective( lua_State *L )
+    {
+        float fov = luau_checkfloat( L, 1);
+        float aspect = luau_checkfloat( L, 2);
+        float near = luau_checkfloat( L, 3);
+        float far = luau_checkfloat( L, 4); 
+        glm::mat4 * mat4_ret = Core::LuaUNewGLMMat4( L );
+
+        *mat4_ret = glm::perspective( fov, aspect, near, far );
+
+        return 1;
+    }
+
+
+    static int LuaMat4PerspectiveFov( lua_State * L )
+    {
+         
+        float fov = luau_checkfloat( L, 1);
+        float width = luau_checkfloat( L, 2 );
+        float height = luau_checkfloat( L, 3);
+        float near = luau_checkfloat( L, 4);
+        float far = luau_checkfloat( L, 5); 
+
+        glm::mat4 * mat4_ret = Core::LuaUNewGLMMat4( L );
+
+        *mat4_ret = glm::perspectiveFov( fov, width, height, near, far );
+
+        return 1;
+    }
+
+    static int LuaMat4Project( lua_State * L )
+    {
+        glm::vec3 * vec3_first = luau_checkglmvec3( L, 1 );
+        glm::mat4 * mat4_second = luau_checkglmmat4( L, 2 );
+        glm::mat4 * mat4_third = luau_checkglmmat4( L, 3 );
+        glm::vec4 * vec4_fourth = luau_checkglmvec4( L, 4 );
+
+        glm::vec3 * vec3_ret = Core::LuaUNewGLMVec3( L );
+
+        *vec3_ret = glm::project( *vec3_first, *mat4_second, *mat4_third, *vec4_fourth ); 
+
+        return 1;
+    }
+
+    static int LuaMat4Ortho( lua_State * L )
+    {
+        int params = lua_gettop( L );
+        float left = luau_checkfloat( L, 1 );
+        float right = luau_checkfloat( L, 2 );
+        float bottom = luau_checkfloat( L, 3 );
+        float top = luau_checkfloat( L, 4 );
+
+        if( params > 4 )
+        {
+            float near = luau_checkfloat( L, 5 );
+            float far = luau_checkfloat( L, 6 );
+            glm::mat4 * mat4_ret = Core::LuaUNewGLMMat4( L );
+            *mat4_ret = glm::ortho( left, right, bottom, top, near, far );
+        }
+        else
+        {
+            glm::mat4 * mat4_ret = Core::LuaUNewGLMMat4( L );
+            *mat4_ret = glm::ortho( left, right, bottom, top );
+        }
+        return 1;
+    }
+
+    static int LuaMat4Rotate( lua_State * L )
+    {
+        glm::mat4 * mat4_first = luau_checkglmmat4( L, 1 );
+        float angle = luau_checkfloat( L, 2 );
+        glm::vec3 * vec3_third = luau_checkglmvec3( L, 3 );
+
+        glm::mat4 * mat4_ret = Core::LuaUNewGLMMat4( L );
+    
+        *mat4_ret = glm::rotate( *mat4_first, angle, *vec3_third );
+
+        return 1;
+    }
+
+    static int LuaMat4Scale( lua_State * L )
+    {
+        glm::mat4 * mat4_first = luau_checkglmmat4( L, 1 );
+        glm::vec3 * vec3_second = luau_checkglmvec3( L, 2 );
+
+        glm::mat4 * mat4_ret = Core::LuaUNewGLMMat4( L );
+
+        *mat4_ret = glm::scale( *mat4_first, *vec3_second );
+        
+        return 1;  
+    }
+
+    static int LuaMat4Translate( lua_State * L )
+    {
+        glm::mat4 * mat4_first = luau_checkglmmat4( L, 1 );
+        glm::vec3 * vec3_second = luau_checkglmvec3( L, 1 );
+
+        glm::mat4 * mat4_ret = Core::LuaUNewGLMMat4( L );
+
+        *mat4_ret = glm::translate( *mat4_first, *vec3_second );
+        
+        return 1;  
+    }
+
+    static int LuaMat4UnProject( lua_State * L )
+    {
+        glm::vec3 * vec3_first = luau_checkglmvec3( L, 1 );
+        glm::mat4 * mat4_second = luau_checkglmmat4( L, 2 );
+        glm::mat4 * mat4_third = luau_checkglmmat4( L, 3 );
+        glm::vec4 * vec4_fourth = luau_checkglmvec4( L, 4 );
+
+        glm::vec3 * vec3_ret = Core::LuaUNewGLMVec3( L );
+
+        *vec3_ret = glm::unProject( *vec3_first, *mat4_second, *mat4_third, *vec4_fourth ); 
+
+        return 1;
+    }
+
     static int LuaQuatNewindex( lua_State * L )
     {
         return luaL_error( L, "Read only" );
@@ -350,18 +471,19 @@ extern "C"
 
     static int LuaQuatNew( lua_State * L )
     {
+        int params = lua_gettop( L );
         glm::quat * quat_ret = Core::LuaUNewGLMQuat( L );
 
-        if( lua_gettop( L ) >= 4 )
+        if( params >= 4 )
         {
-            (*quat_ret)[0] = static_cast<float>(luaL_checknumber( L, 1 ));
-            (*quat_ret)[1] = static_cast<float>(luaL_checknumber( L, 2 ));
-            (*quat_ret)[2] = static_cast<float>(luaL_checknumber( L, 3 ));
-            (*quat_ret)[3] = static_cast<float>(luaL_checknumber( L, 4 ));
+            (*quat_ret)[0] = luau_checkfloat( L, 1 );
+            (*quat_ret)[1] = luau_checkfloat( L, 2 );
+            (*quat_ret)[2] = luau_checkfloat( L, 3 );
+            (*quat_ret)[3] = luau_checkfloat( L, 4 );
 
             return 1;
         } 
-        else if( lua_gettop( L ) == 1 )
+        else if( params == 1 )
         {
             glm::quat *quat_first = luau_checkglmquat( L, 1 ); 
 
@@ -385,10 +507,10 @@ extern "C"
 
     static int LuaQuatAngleAxis( lua_State * L )
     {
-        glm::quat * quat_ret = Core::LuaUNewGLMQuat( L );
 
-        float angle = static_cast<float>(luaL_checknumber( L, 1 ));
+        float angle = luau_checkfloat( L, 1 );
         glm::vec3 *vec3_second = luau_checkglmvec3( L, 2 ); 
+        glm::quat * quat_ret = Core::LuaUNewGLMQuat( L );
 
         *quat_ret = glm::angleAxis( angle, *vec3_second );
 
@@ -407,8 +529,8 @@ extern "C"
 
     static int LuaQuatConjugate( lua_State * L )
     {
-        glm::quat *quat_ret = Core::LuaUNewGLMQuat( L );
         glm::quat *quat_first = luau_checkglmquat( L, 1 );
+        glm::quat *quat_ret = Core::LuaUNewGLMQuat( L );
 
         *quat_ret = glm::conjugate( *quat_first );
 
@@ -458,7 +580,7 @@ extern "C"
     {
         glm::quat *quat_first = luau_checkglmquat( L, 1 );
         glm::quat *quat_second = luau_checkglmquat( L, 2 );
-        float lerpFactor = static_cast<float>(luaL_checknumber( L, 3 ));
+        float lerpFactor = luau_checkfloat( L, 3 );
 
         glm::quat *quat_ret = Core::LuaUNewGLMQuat( L );
         
@@ -490,7 +612,7 @@ extern "C"
     static int LuaQuatRotate( lua_State *L )
     {
         glm::quat *quat_first =  luau_checkglmquat( L, 1 );
-        float angle = static_cast<float>(luaL_checknumber( L, 2 ));
+        float angle = luau_checkfloat( L, 2 );
         glm::vec3 *vec_third = luau_checkglmvec3( L, 3 );
 
         glm::quat *quat_ret = Core::LuaUNewGLMQuat( L );
@@ -503,7 +625,7 @@ extern "C"
     {
         glm::quat *quat_first = luau_checkglmquat( L, 1 );
         glm::quat *quat_second = luau_checkglmquat( L, 2 );
-        float lerpFactor = static_cast<float>(luaL_checknumber( L, 3 ));
+        float lerpFactor = luau_checkfloat( L, 3 );
 
         glm::quat *quat_ret = Core::LuaUNewGLMQuat( L );
         
@@ -530,7 +652,7 @@ namespace Core
                     luau_setfunction( L, "normalize", LuaVec3Normalized );
                     luau_setfunction( L, "reflect", LuaVec3Reflect );
                     luau_setfunction( L, "length", LuaVec3Length );
-                    luau_setfunction( L, "get", LuaVec3Get );            
+                    luau_setfunction( L, "get", LuaVec3Get );
 
                     luaL_newmetatable( L, GLMVEC3_META_TYPE );
                         lua_pushvalue( L, vec3_table );
@@ -569,6 +691,15 @@ namespace Core
                     luau_setfunction( L, "subtract", LuaMat4Subtract );
                     luau_setfunction( L, "eq", LuaMat4Eq );
                     luau_setfunction( L, "get", LuaMat4Get );
+
+                    luau_setfunction( L, "perspective", LuaMat4Perspective ); 
+                    luau_setfunction( L, "perspectiveFov", LuaMat4PerspectiveFov );
+                    luau_setfunction( L, "project", LuaMat4Project );
+                    luau_setfunction( L, "ortho", LuaMat4Ortho );
+                    luau_setfunction( L, "rotate", LuaMat4Rotate );
+                    luau_setfunction( L, "scale", LuaMat4Scale );
+                    luau_setfunction( L, "translate", LuaMat4Translate );
+                    luau_setfunction( L, "unproject", LuaMat4UnProject );
 
                     luaL_newmetatable( L, GLMMAT4_META_TYPE );
                         lua_pushvalue( L, mat4_table );
