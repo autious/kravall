@@ -189,7 +189,7 @@ namespace Core
                 lua_pop(m_luaState, 1);
             }
         }
-        else
+        else if( !lua_isnil( m_luaState, -1 ) )
         {
             LOG_ERROR << "Unable to call lua function onchar: value is nonfunctional value." << std::endl;
         }
@@ -217,7 +217,7 @@ namespace Core
                 lua_pop(m_luaState, 1);
             }
         }
-        else
+        else if( !lua_isnil( m_luaState, -1 ) )
         {
             LOG_ERROR << "Unable to call lua function onbutton: value is nonfunctional value." << std::endl;
         }
@@ -243,7 +243,7 @@ namespace Core
                 lua_pop(m_luaState, 1);
             }
         }
-        else
+        else if( !lua_isnil( m_luaState, -1 ) )
         {
             LOG_ERROR << "Unable to call lua function onposition: value is nonfunctional value." << std::endl;
         }
@@ -269,7 +269,7 @@ namespace Core
                 lua_pop(m_luaState, 1);
             }
         }
-        else
+        else if( !lua_isnil( m_luaState, -1 ) )
         {
             LOG_ERROR << "Unable to call lua function onscroll: value is nonfunctional value." << std::endl;
         }

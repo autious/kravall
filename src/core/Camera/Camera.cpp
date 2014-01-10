@@ -3,8 +3,54 @@
 
 namespace Core
 {
-	Camera* gameCamera;
+	Camera gameCamera;
 
+    const glm::mat4& Camera::GetProjectionMatrix() const 
+    {
+        return m_projectionMatrix;
+    }
+
+    const glm::mat4& Camera::GetViewMatrix() const
+    {
+        return m_viewMatrix;
+    }
+
+    void Camera::SetViewMatrix( const glm::mat4 & view )
+    {
+        m_viewMatrix = view;
+    }
+
+    void Camera::SetProjectionMatrix( const glm::mat4 & proj )
+    {
+        m_projectionMatrix = proj;
+    }
+
+    glm::vec3 Camera::GetForward() const
+    {
+        glm::vec4 f = m_viewMatrix * glm::vec4( 0,0,-1,0 );
+        return glm::vec3( f[0],f[1],f[2] );
+    }
+    
+    glm::vec3 Camera::GetUp() const
+    {
+        glm::vec4 f = m_viewMatrix * glm::vec4( 0,1,0,0 );
+        return glm::vec3( f[0],f[1],f[2] );
+
+    }
+
+    glm::vec3 Camera::GetRight() const
+    {
+        glm::vec4 f = m_viewMatrix * glm::vec4( 1,0,0,0 );
+        return glm::vec3( f[0],f[1],f[2] );
+    }
+
+    glm::vec3 Camera::GetPosition() const 
+    {
+        glm::vec4 f = m_viewMatrix * glm::vec4( 0,0,0,1);
+        return glm::vec3( f[0],f[1],f[2] );
+    }
+
+    /*
 	Camera::Camera(const float& fov, const float& nearZ, const float& farZ)
 	{
 		m_fov = fov;
@@ -79,4 +125,5 @@ namespace Core
 		m_viewMatrix = glm::lookAt(m_position, m_position + camera_roll_direction,
 			glm::cross(camera_roll_direction, camera_pitch_direction));
 	}
+    */
 }
