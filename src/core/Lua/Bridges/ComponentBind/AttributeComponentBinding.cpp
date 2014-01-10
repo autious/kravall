@@ -63,6 +63,14 @@ Core::ComponentGetters Core::AttributeComponentBinding::GetGetters()
         return 1;
     };
 
+	getters["squadID"] = []( Core::Entity entity, lua_State *L )
+    {
+        AttributeComponent *atrbc = WGETC<AttributeComponent>( entity ); 
+
+        lua_pushnumber( L, atrbc->police.squadID );   
+        return 1;
+    };
+
 	// rioter attributes...
 	getters["alignment"] = []( Core::Entity entity, lua_State *L )
     {
@@ -90,6 +98,14 @@ Core::ComponentGetters Core::AttributeComponentBinding::GetGetters()
         AttributeComponent *atrbc = WGETC<AttributeComponent>( entity ); 
 
         lua_pushnumber( L, atrbc->rioter.pressure );   
+        return 1;
+    };
+
+	getters["groupID"] = []( Core::Entity entity, lua_State *L )
+    {
+        AttributeComponent *atrbc = WGETC<AttributeComponent>( entity ); 
+
+        lua_pushnumber( L, atrbc->rioter.groupID );   
         return 1;
     };
 
@@ -178,6 +194,20 @@ Core::ComponentSetters Core::AttributeComponentBinding::GetSetters()
         }
     };
 
+	setters["squadID"] = []( Core::Entity entity, lua_State * L, int valueindex )
+    {
+        AttributeComponent *atrbc = WGETC<AttributeComponent>( entity ); 
+        
+        if( lua_isnumber(  L, valueindex ) )
+        {
+            atrbc->police.squadID = lua_tonumber( L, valueindex );
+        }
+        else
+        {
+            luaL_error( L, "Unable to set pressure for ent %d, value is not number", entity );
+        }
+    };
+
 	// rioter...
 	setters["alignment"] = []( Core::Entity entity, lua_State * L, int valueindex )
     {
@@ -212,6 +242,22 @@ Core::ComponentSetters Core::AttributeComponentBinding::GetSetters()
             luaL_error( L, "Unable to set pressure for ent %d, value is not number", entity );
         }
     };
+
+	setters["groupID"] = []( Core::Entity entity, lua_State * L, int valueindex )
+    {
+        AttributeComponent *atrbc = WGETC<AttributeComponent>( entity ); 
+        
+        if( lua_isnumber(  L, valueindex ) )
+        {
+            atrbc->rioter.groupID = lua_tonumber( L, valueindex );
+        }
+        else
+        {
+            luaL_error( L, "Unable to set pressure for ent %d, value is not number", entity );
+        }
+    };
+
+	
 
     return setters;
 }

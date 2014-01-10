@@ -9,53 +9,6 @@
 #include <GameUtility/NavigationMesh.hpp>
 #include <Input/InputManager.hpp>
 
-void CheckPickingSystemVsGround()
-{
-	int systemMax = Core::world.m_systemHandler.GetSystemCount();
-	int pickingSystem = -1;
-	for( int i = 0; i < systemMax; i++ )
-	{
-		if( std::string(Core::world.m_systemHandler.GetSystem( i )->GetHumanName()).compare( "PickingSystem" ) == 0 )
-			pickingSystem = i;
-	}
-
-	if( pickingSystem < 0 )
-		return;
-
-	if( !Core::GetInputManager().GetMouseState().IsButtonDown(0) )
-		return;
-
-    int x,y;
-    Core::GetInputManager().GetMouseState().GetCursorPosition(x,y);
-
-	glm::vec3 hit = ((Core::PickingSystem*)Core::world.m_systemHandler.GetSystem( pickingSystem ))->GetGroundHit( x, y );
-	GFX::Debug::DrawSphere( hit, 3.0f, GFXColor( 1.0f, 0.7f, 0.0f, 1.0f ), false);
-}
-
-void CheckPickingSystemVsRioters()
-{
-	int systemMax = Core::world.m_systemHandler.GetSystemCount();
-	int pickingSystem = -1;
-	for( int i = 0; i < systemMax; i++ )
-	{
-		if( std::string(Core::world.m_systemHandler.GetSystem( i )->GetHumanName()).compare( "PickingSystem" ) == 0 )
-			pickingSystem = i;
-	}
-
-	if( pickingSystem < 0 )
-		return;
-
-	if( !Core::GetInputManager().GetMouseState().IsButtonDown(0) )
-		return;
-	
-	Core::Entity ent;
-    int x,y;
-    Core::GetInputManager().GetMouseState().GetCursorPosition(x,y);
-
-	if( (ent = ((Core::PickingSystem*)Core::world.m_systemHandler.GetSystem( pickingSystem ))->GetHitEntity( x,y )) != std::numeric_limits<Core::Entity>::max() )
-		return;
-
-}
 
 void MarkClickedObject()
 {
@@ -81,42 +34,39 @@ void MarkClickedObject()
 }
 
 
-void TestNavigationMesh()
+/* right click to set navMesh goal for group 0 */
+void CheckNavMeshCalculation()
 {
-	std::string path = "testNaveMesh.txt";
-	std::fstream ff;
-	ff.open( path, std::fstream::out | std::fstream::trunc );
-	if( ff.is_open() )
-		int o = 0;
+	if( !Core::GetInputManager().GetMouseState().IsButtonDown(1) )
+		return;
 
-
-	ff << 1 << " ";
-
-	for( int i = 0; i < 8; i++ )
+	int systemMax = Core::world.m_systemHandler.GetSystemCount();
+	int pickingSystem = -1;
+	for( int i = 0; i < systemMax; i++ )
 	{
-		ff << (float)i << " ";
+		if( std::string(Core::world.m_systemHandler.GetSystem( i )->GetHumanName()).compare( "PickingSystem" ) == 0 )
+			pickingSystem = i;
 	}
 
-	for( int i = 0; i < 4; i++ )
-	{
-		ff << 3 << " ";
-		ff << 5.0f << " ";
-		ff << 0.01f << " ";
-	}
+	if( pickingSystem < 0 )
+		return;
 
-	ff.close();
+	int x, y;
+	Core::GetInputManager().GetMouseState().GetCursorPosition( x, y );
+	glm::vec3 position = ((Core::PickingSystem*)Core::world.m_systemHandler.GetSystem( pickingSystem ))->GetGroundHit( x, y );
+
+	if( Core::GetNavigationMesh() )
+		Core::GetNavigationMesh()->CalculateFlowfieldForGroup( position, 0 );
 }
+
 
 
 void Core::AIDebugSystem::Update( float delta )
 {
-	//CheckPickingSystemVsGround();	
-	
-	//CheckPickingSystemVsRioters();
 	MarkClickedObject();
 
+	CheckNavMeshCalculation();
 
-	
-
-
+	if( Core::GetNavigationMesh() )
+		Core::GetNavigationMesh()->DrawDebug();
 }

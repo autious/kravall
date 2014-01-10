@@ -25,7 +25,7 @@ static void PushObjectType( lua_State * L, const unsigned int value, const char 
         lua_settable( L, table );
 }
 
-void Core::LuaUnitTypeComponentBridge::OpenLibs( lua_State * L )
+Core::LuaUnitTypeComponentBridge::LuaUnitTypeComponentBridge( lua_State * L )
 {
 	int stackpos = lua_gettop( L );
 

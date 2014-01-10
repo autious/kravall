@@ -5,8 +5,11 @@
 
 #include <chrono>
 
+
 namespace Core
 {
+
+    struct LuaStateBindings;
     class ConfigurationHandler;
     /*! 
         lua_State wrapper, to make the lua interface slightly more object oriented.
@@ -26,8 +29,8 @@ namespace Core
             LuaState();
             ~LuaState();
 
-            void Execute( const char *filename ); 
-            void DoBlock( const char *block );
+            bool Execute( const char *filename ); 
+            bool DoBlock( const char *block );
             int DoBlock( const char * block, int args, int rargs );
 
             void Update( float delta );
@@ -36,6 +39,9 @@ namespace Core
             int GetMemoryUse();
 
             lua_State *GetState();
+
+        
+            LuaStateBindings *bindings;
 
     };
 }

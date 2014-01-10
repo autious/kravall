@@ -84,7 +84,8 @@ namespace Core
         void RemoveScrollEventListener( Core::ScrollEventListener* eventListener );
 
 
-        bool IsKeyPressedOnce( int id );
+        bool IsKeyPressedOnce( const int id );
+        bool IsMouseButtonDownOnce( const int id );
         void GetPosDiff( int& x, int &y );
         /*!
           Retreives the current Core::KeyboardState. Changes made to the returned state will change the current state.

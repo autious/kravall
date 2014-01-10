@@ -8,6 +8,12 @@
 #include <lualib.h>
 #include <lauxlib.h>
 
+
+#include <Lua/Datatypes/LuaBitmask.hpp>
+#include <Lua/LuaUtility.hpp>
+
+#include <Timer.hpp>
+
 #include <Lua/Bridges/LuaLoggerPrint.hpp>
 #include <Lua/Bridges/LuaEntityBridge.hpp>
 #include <Lua/Bridges/LuaContentManagerBridge.hpp>
@@ -16,14 +22,61 @@
 #include <Lua/Bridges/LuaAttributeBridge.hpp>
 #include <Lua/Bridges/LuaBoundingVolumeBridge.hpp>
 #include <Lua/Bridges/LuaUnitTypeBridge.hpp>
+#include <Lua/Bridges/LuaNavMeshBridge.hpp>
+#include <Lua/Bridges/LuaGLMBridge.hpp>
 
-#include <Timer.hpp>
+namespace Core
+{
+    struct LuaStateBindings
+    {
+        LuaStateBindings( lua_State *state ):
+        lb(state),
+        llp(state),
+        leb(state),
+        lcmb(state),
+        lib(state),
+        gfxb(state),
+        lacb(state),
+        lbvc(state),
+        lutcb(state),
+        lnmb(state),
+        lglmb(state)
+        {}
+            
+        LuaBitmask lb;
+        LuaLoggerPrint llp;
+        LuaEntityBridge leb;
+        LuaContentManagerBridge lcmb;
+        LuaInputBridge lib;
+        LuaGFXBridge gfxb;
+        LuaAttributeComponentBridge lacb;
+        LuaBoundingVolumeComponentBridge lbvc;
+        LuaUnitTypeComponentBridge lutcb;
+        LuaNavMeshBridge lnmb;
+        LuaGLMBridge lglmb;
+    };
+}
+
+extern "C"
+{
+    static int LuaCoreNewindex( lua_State * L )
+    {
+        if( lua_isstring( L, 2 ) && (STREQ( lua_tostring( L, 2 ), "config" ) || STREQ( lua_tostring( L, 2 ), "update" )|| STREQ( lua_tostring( L,2 ), "init" ) ) )
+        {
+            lua_rawset( L, 1 );
+            return 0;
+        }
+        return luaL_error( L, "Read only, %s", lua_tostring(L,2 ) );
+    }
+}
+
 
 Core::LuaState::LuaState()
 {
     LOG_DEBUG << "Creating lua state" << std::endl;
     m_state = luaL_newstate();
-    m_activeUpdate = false;
+    int sanity = lua_gettop( m_state );
+    m_activeUpdate = true;
 
     luaL_openlibs( m_state ); 
 
@@ -45,24 +98,27 @@ Core::LuaState::LuaState()
     lua_pop(m_state, 1); //Pop the package table
 
     lua_newtable( m_state );
+        lua_newtable( m_state );
+        lua_setfield( m_state, -2, "config" );
     lua_setglobal( m_state, "core" );
 
-    LuaLoggerPrint::OpenLibs( m_state );
-    LuaEntityBridge::OpenLibs( m_state );
-    LuaContentManagerBridge::OpenLibs( m_state );
-    LuaInputBridge::OpenLibs( m_state );
-    LuaGFXBridge::OpenLibs( m_state );
-	LuaAttributeComponentBridge::OpenLibs( m_state );
-	LuaBoundingVolumeComponentBridge::OpenLibs( m_state );
-	LuaUnitTypeComponentBridge::OpenLibs( m_state );
+    bindings = new LuaStateBindings( m_state );
+
+    lua_getglobal( m_state, "core" ); //Let's lock down core now.
+        lua_newtable( m_state );
+        luau_setfunction( m_state, "__newindex", LuaCoreNewindex );
+    lua_setmetatable( m_state, -2 ),
+    lua_pop( m_state, 1 );
+    assert( sanity == lua_gettop(m_state) );
 }
 
 Core::LuaState::~LuaState()
 {
+    delete bindings;
     lua_close( m_state );
 }
 
-void Core::LuaState::Execute( const char * filename )
+bool Core::LuaState::Execute( const char * filename )
 {
     int error = luaL_dofile( m_state, filename );
 
@@ -73,19 +129,30 @@ void Core::LuaState::Execute( const char * filename )
     }
 
     VerifyUpdateFunction();
+
+    return error == 0;
 }
 
-void Core::LuaState::DoBlock( const char * block )
+bool Core::LuaState::DoBlock( const char * block )
 {
     int error = luaL_loadstring( m_state, block ) || lua_pcall( m_state, 0,0,0 );
 
     if( error )
     {
-        LOG_ERROR << "Unable to parse block: " << lua_tostring( m_state, -1 ) << std::endl;
-        lua_pop( m_state, 1 );
+        if( lua_isstring( m_state, -1 ) )
+        {
+            LOG_ERROR << "Unable to parse block: " << lua_tostring( m_state, -1 ) << std::endl;
+            lua_pop( m_state, 1 );
+        }
+        else
+        {
+            LOG_ERROR << "Unable to parse block: " << error << std::endl;
+        }
     }
 
     VerifyUpdateFunction();
+
+    return error == 0;
 }
 
 int Core::LuaState::DoBlock( const char * block, int args, int rargs )
