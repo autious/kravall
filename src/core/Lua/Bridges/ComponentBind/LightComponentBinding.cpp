@@ -36,7 +36,7 @@ Core::ComponentGetters Core::LightComponentBinding::GetGetters()
     
         return 1;
     };
-
+	
     getters["color"] = []( Core::Entity entity, lua_State * L )
     {
         LightComponent *lc = WGETC<LightComponent>( entity );
@@ -47,6 +47,22 @@ Core::ComponentGetters Core::LightComponentBinding::GetGetters()
         {
             lua_pushinteger( L, i+1 );
             lua_pushnumber( L, lc->color[i] );
+            lua_settable( L, -3 );
+        }
+        
+        return 1;
+    };
+
+    getters["speccolor"] = []( Core::Entity entity, lua_State * L )
+    {
+        LightComponent *lc = WGETC<LightComponent>( entity );
+        
+        lua_newtable( L );  
+
+        for( int i = 0; i < 3; i++ )
+        {
+            lua_pushinteger( L, i+1 );
+            lua_pushnumber( L, lc->specColor[i] );
             lua_settable( L, -3 );
         }
         
@@ -119,6 +135,27 @@ Core::ComponentSetters Core::LightComponentBinding::GetSetters()
                 if( lua_isnumber( L, -1 ) )
                 {
                     lc->color[i] = static_cast<float>(lua_tonumber( L, -1 ));  
+                }
+
+                lua_pop( L, 1 );
+            }
+        }
+    };
+	
+    setters["speccolor"] = [](Core::Entity entity, lua_State * L, int valueindex )
+    {
+        LightComponent *lc = WGETC<LightComponent>( entity );
+
+        if( lua_istable( L, valueindex ) )
+        {
+            for( int i = 0; i < 3; i++ )
+            {
+                lua_pushinteger( L, i+1 );
+                lua_gettable( L, valueindex );
+                    
+                if( lua_isnumber( L, -1 ) )
+                {
+                    lc->specColor[i] = static_cast<float>(lua_tonumber( L, -1 ));  
                 }
 
                 lua_pop( L, 1 );

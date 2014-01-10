@@ -18,10 +18,10 @@ struct LightData
 	float radius_length;
 	vec3 color;
 	float intensity;
-	vec2 pad;
+	vec3 spec_color;
 	float spot_penumbra;
+	vec3 orientation;
 	float spot_angle;
-	vec4 orientation;
 };
 
 
@@ -101,11 +101,9 @@ vec3 BlinnPhong( LightData light, SurfaceData surface, vec3 eyeDirection, vec3 l
 		intensity = pow( clamp( NdotH, 0.0f, 1.0f ), surface.specular.w ) * df;
 	
 		// Temp vars, need materials with these channels
-		float lightSpecIntensity = light.intensity;
-		vec3 lightSpecColor = light.color;
 
 
-		specColor = surface.specular.xyz * intensity * lightSpecColor * lightSpecIntensity * attenuation;
+		specColor = surface.specular.xyz * intensity * light.spec_color * light.intensity * attenuation;
 	}
 	return diffuseColor + specColor;
 }

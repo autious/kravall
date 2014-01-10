@@ -217,6 +217,7 @@ asm:loadAssembly(
             type = core.componentType.LightComponent,
             data =  { 
                         color = { 1.0, 0.0, 0.0 },
+                        speccolor = { 1.0, 0.0, 0.0 },
                         intensity = 1.0,
                         type = core.gfx.objectTypes.Light,
                         lighttype = core.gfx.lightTypes.Point
@@ -237,12 +238,14 @@ asm:loadAssembly(
     } 
     )
 for i = 0, 255 do
+	local color = { math.random(), math.random(), math.random() }
     asm:loadAssembly( 
     {
         {
             type = core.componentType.LightComponent,
             data =  { 
-                        color = { math.random(), math.random(), math.random() },
+                        color = color,
+                        speccolor = color,
                         intensity = 1.0,
                         type = core.gfx.objectTypes.Light,
                         lighttype = core.gfx.lightTypes.Point
@@ -265,12 +268,14 @@ for i = 0, 255 do
 end
 -- Spotlight
 for i = 0, 255 do
+	local color = { math.random(), math.random(), math.random() }
     asm:loadAssembly( 
     {
         {
             type = core.componentType.LightComponent,
             data =  { 
-                        color = { math.random(), math.random(), math.random() },
+                        color = color,
+                        speccolor = color,
                         intensity = 1.0,
 						spotangle = 3.14/4.0,
 						spotpenumbra = 0.03,
@@ -300,6 +305,7 @@ asm:loadAssembly(
 		type = core.componentType.LightComponent,
 		data =  { 
 					color = { 0.8, 0.4, 0.2 },
+					speccolor = { 0.8, 0.4, 0.2 },
 					intensity = 15.0,
 					spotangle = 3.14/4.0,
 					spotpenumbra = 0.03,
@@ -327,6 +333,7 @@ asm:loadAssembly(
 		type = core.componentType.LightComponent,
 		data =  { 
 					color = { 0.4, 0.8, 0.2 },
+					speccolor = { 0.4, 0.8, 0.2 },
 					intensity = 15.0,
 					spotangle = 3.14/4.0,
 					spotpenumbra = 0.03,
@@ -354,6 +361,7 @@ asm:loadAssembly(
 		type = core.componentType.LightComponent,
 		data =  { 
 					color = { 0.2, 0.7, 0.8 },
+					speccolor = { 0.2, 0.7, 0.8 },
 					intensity = 15.0,
 					spotangle = 3.14/6.0,
 					spotpenumbra = 0.03,
@@ -384,6 +392,7 @@ asm:loadAssembly(
 		type = core.componentType.LightComponent,
 		data =  { 
 					color = { 1.0, 1.0, 1.0 },
+					speccolor = { 1.0, 1.0, 1.0 },
 					intensity = 0.1,
 					type = core.gfx.objectTypes.Light,
 					lighttype = core.gfx.lightTypes.Dir
