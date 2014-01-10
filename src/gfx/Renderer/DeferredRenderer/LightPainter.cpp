@@ -29,7 +29,7 @@ namespace GFX
 		m_shaderManager->LinkProgram("ComputeTest");
 
 		m_shaderManager->UseProgram("ComputeTest");
-
+		
 		m_invProjViewUniform = m_shaderManager->GetUniformLocation("ComputeTest", "invProjView");
 		m_viewUniform = m_shaderManager->GetUniformLocation("ComputeTest", "view");
 		m_projUniform = m_shaderManager->GetUniformLocation("ComputeTest", "proj");

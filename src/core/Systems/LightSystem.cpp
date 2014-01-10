@@ -65,12 +65,15 @@ namespace Core
 					data->intensity = lc->intensity;
 					data->spot_angle = lc->lightSpecific.spotLight.angle;
 
-					data->orientation = glm::vec4(	(1.0f + RotationComponent::GetQuat(rc->rotation).x*cos(10.0f*lel+ double(i)))/2.0f,
+					data->orientation = glm::vec4(	RotationComponent::GetQuat(rc->rotation).x*cos(10.0f*lel+ double(i)),
 													RotationComponent::GetQuat(rc->rotation).y,
-													(1.0f + RotationComponent::GetQuat(rc->rotation).z*sin(10.0f*lel+ double(i)))/2.0f,
+													RotationComponent::GetQuat(rc->rotation).z*sin(10.0f*lel + double(i+3)),
 													RotationComponent::GetQuat(rc->rotation).w);
 					data->position = WorldPositionComponent::GetVec3(*wpc);
 					data->radius_length = sc->scale;
+
+					wpc->position[0] = 45 * cos(lel + double(i));
+					wpc->position[2] = 45 * sin(double(i%16) * lel*0.1f + double(i));
 
 					//GFX::Debug::DrawSphere(data->position, sc->scale, glm::vec4(data->color, 1.0f), false);
 					//glm::vec3 dir = glm::normalize(glm::vec3(data->orientation)) * data->radius_length;

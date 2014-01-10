@@ -71,12 +71,11 @@ shared uint pointLightCount = 0;
 shared uint spotLightIndex[MAX_LIGHTS];
 shared uint spotLightCount = 0;
 
-vec3 reconstruct_pos(float z, vec2 uv_f)
+vec4 reconstruct_pos(float z, vec2 uv_f)
 {
     vec4 sPos = vec4(uv_f * 2.0 - 1.0, z, 1.0);
     sPos = invProjView * sPos;
-     
-    return (sPos.xyz / sPos.w);
+    return vec4((sPos.xyz / sPos.w ), sPos.w);
 }
 
 vec3 BlinnPhong( LightData light, SurfaceData surface, vec3 eyeDirection, vec3 lightDirection, float attenuation )
@@ -173,30 +172,39 @@ void main()
 
 		barrier();
 
+
         ivec2 pixel = ivec2(gl_GlobalInvocationID.xy);
 
         vec4 normalColor = imageLoad(normalDepth, pixel);
 
-		float d = normalColor.w;
+		vec2 uv = vec2(pixel.x / framebufferDim.x, pixel.y / framebufferDim.y);
+		vec4 wPos = reconstruct_pos(normalColor.w , uv);
+		
+		float zNear = proj[3][2] / (proj[2][2] - 1.0);
+		float zFar	= proj[3][2] / (proj[2][2] + 1.0);
 
-		uint depth = uint(d * 0xFFFFFFFF);
+		float clipDelta = zFar - zNear;
+
+		float d = 0.5*(normalColor.w + 1.0);
+
+		uint depth = uint(d * uint(0xFFFFFFFF));
 
 		atomicMin(minDepth, depth);
 		atomicMax(maxDepth, depth);
 
 		barrier();
 
-		float minDepthZ = float(minDepth / float(0xFFFFFFFF));
-		float maxDepthZ = float(maxDepth / float(0xFFFFFFFF));
+		float minDepthZ =  2.0 * (float(minDepth) / float(uint(0xFFFFFFFF))) - 1.0;
+		float maxDepthZ =  2.0 * (float(maxDepth) / float(uint(0xFFFFFFFF))) - 1.0;
 
 		vec2 tileScale = framebufferDim * (1.0f / float( 2 * WORK_GROUP_SIZE));
 		vec2 tileBias = tileScale - vec2(gl_WorkGroupID.xy);
 
-		vec4 col1 = vec4(-proj[0][0]  * tileScale.x, proj[0][1], tileBias.x, proj[0][3]); 
+		vec4 col1 = vec4(-proj[0][0]  * tileScale.x		,0.0							,tileBias.x			,0.0);
 		
-		vec4 col2 = vec4(proj[1][0], -proj[1][1] * tileScale.y, tileBias.y, proj[1][3]);
+		vec4 col2 = vec4(0.0							,-proj[1][1] * tileScale.y		,tileBias.y			,0.0);
 
-		vec4 col4 = vec4(proj[3][0], proj[3][1],  -1.0f, proj[3][3]); 
+		vec4 col4 = vec4(0.0							,0.0							,-1.0f				,0.0);
 
 		vec4 frustumPlanes[6];
 
@@ -213,14 +221,14 @@ void main()
 		frustumPlanes[3] = col4 + col2;
 
 		//near
-		frustumPlanes[4] =vec4(0.0f, 0.0f, -1.0f,  -minDepthZ);
+		frustumPlanes[4] = vec4(0.0f, 0.0f, -1.0f, -minDepthZ/wPos.w);
 
 		//far
-		frustumPlanes[5] = vec4(0.0f, 0.0f, -1.0f,  maxDepthZ);
+		frustumPlanes[5] = vec4(0.0f, 0.0f, 1.0f, maxDepthZ/wPos.w);
 
 		for(int i = 0; i < 4; i++)
 		{
-			frustumPlanes[i] *= 1.0f / length(frustumPlanes[i].xyz);
+			frustumPlanes[i].xyz *= 1.0f / length(frustumPlanes[i].xyz);
 		}
 		
 		LightData p;
@@ -253,7 +261,7 @@ void main()
 				for (uint i = 3; i >= 0 && inFrustum; i--)
 				{
 					dist = dot(frustumPlanes[i], pos);
-					inFrustum = (-rad <= dist);
+					inFrustum = (-dist < rad);
 				}
 			
 				if (inFrustum)
@@ -287,7 +295,7 @@ void main()
 				for (uint i = 3; i >= 0 && inFrustum; i--)
 				{
 					dist = dot(frustumPlanes[i], pos);
-					inFrustum = (-rad <= dist);
+					inFrustum = (dist > -rad);
 				}
 			
 				if (inFrustum)
@@ -306,8 +314,6 @@ void main()
 		surface.specular = imageLoad(specular, pixel);
 		surface.glow = imageLoad(glowMatID, pixel);
 		
-		vec2 uv = vec2(pixel.x / framebufferDim.x, pixel.y / framebufferDim.y);
-		vec4 wPos = vec4(reconstruct_pos(normalColor.w, uv),1.0f);
 		
 		vec4 color = vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -341,11 +347,16 @@ void main()
 		
 		
 		//if (gl_LocalInvocationID.x == 0 || gl_LocalInvocationID.y == 0)
+		//{
 		//	imageStore(outTexture, pixel, vec4(.2f, .2f, .2f, 1.0f));
+		//}
 		//else
 		{
+			//color += min(wPos, 1.0f)*0.15f;
+			//color += vec4(0.0f, (pointLightCount+spotLightCount)/float(max(1,numActiveLights))*0.5, 0.0f, 0.0f);
+			//color = vec4(0.0f, (d/wPos.w), 0.0f, 0.0f);
+			//color += vec4(float(minDepthZ<(2*d-1.0 + 0.00001f) && minDepthZ>(2*d-1.0 - 0.00001f))*0.5f, 0.0f, 0.0f, 0.0f);
 			imageStore(outTexture, pixel, color);
-			
 			//imageStore(outTexture, pixel, vec4(minDepthZ));
 			//imageStore(outTexture, pixel, vec4(pointLightCount / 25.0f));
 			//imageStore(outTexture, pixel, vec4(vec2(tilePos.xy), 0.0f, 1.0f));

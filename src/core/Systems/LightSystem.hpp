@@ -13,7 +13,7 @@ namespace Core
 		LightSystem() :BaseSystem(EntityHandler::GenerateAspect<LightComponent, WorldPositionComponent, RotationComponent, ScaleComponent>(), 0ULL)
 		{}
 
-		virtual const char* GetHumanName(){ return "RenderingSystem"; }
+		virtual const char* GetHumanName(){ return "LightSystem"; }
 	};
 }
 
