@@ -29,7 +29,7 @@ function t.create(asm, posX, posY, posZ)
 			},
 			{
 				type = core.componentType.MovementComponent,
-				data = { direction = { 0, 0, 0 }, speed = 5.8, maxSpeed = 50 }
+				data = { direction = { 0, 0, 0 }, speed = 5.8, maxSpeed = 50, goal = { posX, posY, posZ } }
 			},
 			{
 				type = core.componentType.AttributeComponent,
@@ -38,7 +38,7 @@ function t.create(asm, posX, posY, posZ)
 			},
 			{
 				type = core.componentType.BoundingVolumeComponent,
-				data = { sphereOffset = { 0, 0, 0 }, sphereRadius = 1.5, 
+				data = { sphereOffset = { 0, 0, 0 }, sphereRadius = 0.7, 
 						collisionModel = core.BoundingVolumeCollisionModel.DynamicResolution, 
 						type = core.BoundingVolumeType.SphereBoundingType }
 			}
