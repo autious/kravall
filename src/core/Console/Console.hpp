@@ -96,6 +96,12 @@ namespace Core
 		void PrintLine(std::string str, Color color);
 
 		inline bool IsVisible() { return m_visible; }
+		
+		void EnableInteractiveLua();
+
+		void DisableInteractiveLua();
+
+		void PasteClipboard();
 
 	private:
 
@@ -118,6 +124,7 @@ namespace Core
 	private:
 
 		bool m_visible;
+		bool m_interactiveLua;
 
         GFX::FontData* m_font;
 
@@ -126,6 +133,7 @@ namespace Core
 
 		int m_offset;
 		int m_cursorOffset;
+		int m_lastCursorOffset;
 
 		const std::string m_delChars = " +-*/\"\'.,!?(){}[]";
 

@@ -30,6 +30,16 @@ namespace Core
 	#endif
 	}
 
+	
+	void HighresTimer::Reset()
+	{
+	#ifndef WCLOCK
+		m_totalStart = std::chrono::high_resolution_clock::now();
+	#else
+		QueryPerformanceCounter(&m_totalStart);
+	#endif
+	}
+
 	std::chrono::microseconds HighresTimer::GetDelta()
 	{
 	#ifndef WCLOCK
