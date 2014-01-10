@@ -48,6 +48,8 @@ static GFX::FontData* fontData;
 #include <DebugCreators.hpp>
 #include <CLOPLoggerCallback.hpp>
 
+GLFWwindow *mainWindow = nullptr;
+
 // Just an example of a clop function
 // This function gets registred in Init with clop::Register("exit", ClopCloseWindow);
 // And the command is sent to the command line by pressing 'E' (as seen in run()) with Core::Console().SetInputLine("exit");
@@ -300,8 +302,8 @@ int main(int argc, char** argv)
     ::testing::InitGoogleTest(&argc, argv);
 #endif
 #ifndef SKIP_RUN
-	GLFWwindow* window = init( argc, argv );
-	if( window == nullptr )
+	mainWindow = init( argc, argv );
+	if( mainWindow == nullptr )
 		return -1; 
 #endif
 #ifdef RUN_GTEST
@@ -315,7 +317,7 @@ int main(int argc, char** argv)
 	}
 #endif
 #ifndef SKIP_RUN
-    run( window );
+    run( mainWindow );
 #endif
 
 #ifdef RUN_GTEST

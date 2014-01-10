@@ -16,6 +16,7 @@ namespace Core
 		WMODE_FULLSCREEN,
 		WMODE_FULLSCREEN_BORDERLESS
 	};
+
 	void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	{
 		GFX::Resize(width, height);

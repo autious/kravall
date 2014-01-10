@@ -39,6 +39,25 @@ extern "C"
         return 1;
     }
 
+    static int LuaGetMousePosition( lua_State * L)
+    {
+        int x, y;
+        Core::GetInputManager().GetMouseState().GetCursorPosition(x,y);
+
+        lua_pushinteger( L, x );
+        lua_pushinteger( L, y );
+
+        return 2;
+    }
+
+    static int LuaSetMousePosition( lua_State * L)
+    {
+        int x = luaL_checkinteger(L,1);
+        int y = luaL_checkinteger(L,2);
+        Core::GetInputManager().GetMouseState().SetCursorPosition( x,y );
+        return 0;
+    }
+
     static int LuaIsButtonUp(lua_State* L)
     {
         lua_pushboolean(L,Core::GetInputManager().GetMouseState().IsButtonUp(luaL_checkinteger(L, 1)));
@@ -320,6 +339,8 @@ namespace Core
                     lua_pushcfunction(L, LuaIsButtonUp);
                     lua_setfield(L, -2, "isbuttonup");
                     luau_setfunction( L, "isbuttondownonce", LuaIsButtonDownOnce );
+                    luau_setfunction( L, "getPosition", LuaGetMousePosition );
+                    luau_setfunction( L, "setPosition", LuaSetMousePosition );
                     
                     lua_newtable( L );
                         PushMouseConst( L );

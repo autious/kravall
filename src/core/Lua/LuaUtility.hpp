@@ -10,8 +10,8 @@
 #define luau_push_name(state, name) { lua_pushstring( state, "name" ); lua_pushstring( state, name );  lua_settable( state, -3 ); }
 #define luau_setconst( state, var, name ) { lua_pushstring( state, #name ); lua_pushnumber( state, var ); lua_settable( state, -3 ); }
 #define luau_setconsti( state, var, index ) { lua_pushinteger( state, index ); lua_pushnumber( state, var ); lua_settable( state, -3 ); }
-#define luau_checkfloat( state, id ) (float)luaL_checknumber( state, id );
-#define luau_tofloat( state, id ) (float)lua_tonumber( state, id );
+#define luau_checkfloat( state, id ) (float)luaL_checknumber( state, id )
+#define luau_tofloat( state, id ) (float)lua_tonumber( state, id )
 
 #define STREQ( str1, str2 ) strcmp(str1,str2)==0
 

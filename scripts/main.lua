@@ -1,31 +1,17 @@
---function core.input.keyboard.onkey( key, scancode, action )
---    print( "onkey " .. key .. " " .. scancode ..  " " .. action )
---end
---
---function core.input.keyboard.onchar( codepoint, text )
---    print( "onchar " .. codepoint .. " " .. text )
---end
---
---function core.input.mouse.onbutton( button, action, mods )
---    print( "onbutton " .. button .. " " .. action .. " " .. mods ) 
---end
---
---function core.input.mouse.onscroll( xoffset, yoffset )
---    print( "onscroll " .. xoffset .. yoffset )
---end
---
---function core.input.mouse.onposition( x,y )
---    print( "onposition " .. x .. " " .. y  )
---end
+local Camera = require "camera" 
 
 -- Called on each frame
-function core.update( delta )
+local camera = Camera.new()
 
+function core.update( delta )
+    camera:update( delta )
 end
 
 -- Called when program starts
 function core.init() 
     print( "Program starting in lua" )
+    openscenario( "test" )
+    showSys()
 end
 
 -- Called when program end

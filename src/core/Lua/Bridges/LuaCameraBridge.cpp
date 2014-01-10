@@ -75,7 +75,7 @@ namespace Core
                 luau_setfunction( L, "getView", LuaGetView );
                 luau_setfunction( L, "getProjection", LuaGetProjection );
                 luau_setfunction( L, "setView", LuaSetView );
-                luau_setfunction( L, "getView", LuaGetView );
+                luau_setfunction( L, "setProjection", LuaSetProjection );
                 luau_setfunction( L, "getForward", LuaGetForward );
                 luau_setfunction( L, "getUp", LuaGetUp);
                 luau_setfunction( L, "getRight", LuaGetRight );

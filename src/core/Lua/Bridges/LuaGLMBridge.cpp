@@ -28,7 +28,7 @@ extern "C"
         int params = lua_gettop( L );
         glm::vec3 * vec3 = Core::LuaUNewGLMVec3( L );
 
-        if( params > 3 )
+        if( params >= 3 )
         {
             (*vec3)[0] = luau_checkfloat( L, 1 );
             (*vec3)[1] = luau_checkfloat( L, 2 );
@@ -138,12 +138,38 @@ extern "C"
     static int LuaVec3Get( lua_State * L )
     {
         glm::vec3 * vec3_first = luau_checkglmvec3( L, 1 );
+
+        if( lua_gettop( L ) == 2 )
+        {
+            int index = luaL_checkinteger( L, 2 );
+            if( index > 0 && index <= 3)
+            {
+                lua_pushnumber( L, (*vec3_first)[index-1] );
+                return 1;
+            }
+            else
+            {
+                return luaL_error( L, "Invalid index" );
+            }
+        }
         
         lua_pushnumber( L, (*vec3_first)[0]);
         lua_pushnumber( L, (*vec3_first)[1]);
         lua_pushnumber( L, (*vec3_first)[2]);
 
         return 3;
+    }
+
+    static int LuaVec3Multiply( lua_State *L )
+    {
+        glm::vec3 * vec3_first = luau_checkglmvec3( L, 1 );
+        float second = luau_checkfloat( L, 2 );
+
+        glm::vec3 * vec3_ret = Core::LuaUNewGLMVec3( L );
+
+        *vec3_ret = *vec3_first * second;
+
+        return 1;
     }
 
     static int LuaVec4Newindex( lua_State * L )
@@ -203,6 +229,44 @@ extern "C"
         return 1;
     }
 
+    static int LuaVec4Get( lua_State * L )
+    {
+        glm::vec4 * vec4_first = luau_checkglmvec4( L, 1 );
+
+        if( lua_gettop( L ) == 2 )
+        {
+            int index = luaL_checkinteger( L, 2 );
+            if( index > 0 && index <= 4)
+            {
+                lua_pushnumber( L, (*vec4_first)[index-1] );
+                return 1;
+            }
+            else
+            {
+                return luaL_error( L, "Invalid index" );
+            }
+        }
+        
+        lua_pushnumber( L, (*vec4_first)[0]);
+        lua_pushnumber( L, (*vec4_first)[1]);
+        lua_pushnumber( L, (*vec4_first)[2]);
+        lua_pushnumber( L, (*vec4_first)[3]);
+
+        return 4;
+    }
+   
+    static int LuaVec4Multiply( lua_State *L )
+    {
+        glm::vec4 * vec4_first = luau_checkglmvec4( L, 1 );
+        float second = luau_checkfloat( L, 2 );
+
+        glm::vec4 * vec4_ret = Core::LuaUNewGLMVec4( L );
+
+        *vec4_ret = *vec4_first * second;
+
+        return 1;
+    }
+
     static int LuaMat4Newindex( lua_State * L )
     {
         return luaL_error( L, "Read only" );
@@ -224,10 +288,21 @@ extern "C"
         }
         else if( params == 1 )
         {
-            glm::mat4 * mat4_first = luau_checkglmmat4( L, 1 );
-            *mat4 = *mat4_first;
+            if( lua_isuserdata(L ,1 ) )
+            {
+                glm::mat4 * mat4_first = luau_checkglmmat4( L, 1 );
+                *mat4 = *mat4_first;
 
-            return 1;
+                return 1;
+            }
+            else if( lua_isnumber( L, 1 ) )
+            {
+                *mat4 = glm::mat4( luau_tofloat( L, 1 ) ); 
+
+                return 1;
+            }
+           
+            return luaL_error( L, "Invalid param" );
         }
         else if( params == 0 )
         {
@@ -338,6 +413,21 @@ extern "C"
     static int LuaMat4Get( lua_State * L )
     {
         glm::mat4 * mat4_first = luau_checkglmmat4( L, 1 );
+
+        if( lua_gettop( L ) == 2 )
+        {
+            int index = luaL_checkinteger( L, 2 );
+            if( index > 0 && index <= 16)
+            {
+                lua_pushnumber( L, (&((*mat4_first)[0][0]))[index-1] );
+                return 1;
+            }
+            else
+            {
+                return luaL_error( L, "Invalid index" );
+            }
+        }
+
         for( int i = 0; i < 16; i++ )
         {
             lua_pushnumber( L, (&(*mat4_first)[0][0])[i] );
@@ -441,7 +531,7 @@ extern "C"
     static int LuaMat4Translate( lua_State * L )
     {
         glm::mat4 * mat4_first = luau_checkglmmat4( L, 1 );
-        glm::vec3 * vec3_second = luau_checkglmvec3( L, 1 );
+        glm::vec3 * vec3_second = luau_checkglmvec3( L, 2 );
 
         glm::mat4 * mat4_ret = Core::LuaUNewGLMMat4( L );
 
@@ -653,6 +743,7 @@ namespace Core
                     luau_setfunction( L, "reflect", LuaVec3Reflect );
                     luau_setfunction( L, "length", LuaVec3Length );
                     luau_setfunction( L, "get", LuaVec3Get );
+                    luau_setfunction( L, "multiply", LuaVec3Multiply );
 
                     luaL_newmetatable( L, GLMVEC3_META_TYPE );
                         lua_pushvalue( L, vec3_table );
@@ -662,6 +753,7 @@ namespace Core
                         luau_setfunction( L, "__add", LuaVec3Add );
                         luau_setfunction( L, "__sub", LuaVec3Subtract );
                         luau_setfunction( L, "__eq", LuaVec3Eq );
+                        luau_setfunction( L, "__mul", LuaVec3Multiply );
                     lua_pop( L, 1 );
                 lua_setfield( L, -2, "vec3" );
 
@@ -670,6 +762,8 @@ namespace Core
                     luau_setfunction( L, "new", LuaVec4New );
                     luau_setfunction( L, "subtract", LuaVec4Subtract );
                     luau_setfunction( L, "add", LuaVec4Add );
+                    luau_setfunction( L, "get", LuaVec4Get );
+                    luau_setfunction( L, "multiply", LuaVec4Multiply );
 
                     luaL_newmetatable( L, GLMVEC4_META_TYPE );
                         lua_pushvalue( L, vec4_table );
@@ -678,6 +772,7 @@ namespace Core
                         luau_setfunction( L, "__newindex", LuaVec4Newindex ); 
                         luau_setfunction( L, "__sub", LuaVec4Subtract );
                         luau_setfunction( L, "__add", LuaVec4Add );
+                        luau_setfunction( L, "__mul", LuaVec4Multiply );
                     lua_pop( L, 1 );
                 lua_setfield( L, -2, "vec4" );
 
