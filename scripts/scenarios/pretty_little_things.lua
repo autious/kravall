@@ -272,7 +272,8 @@ for i = 0, 255 do
             data =  { 
                         color = { math.random(), math.random(), math.random() },
                         intensity = 1.0,
-						spotlightangle = 3.14/4.0,
+						spotangle = 3.14/4.0,
+						spotpenumbra = 0.03,
                         type = core.gfx.objectTypes.Light,
                         lighttype = core.gfx.lightTypes.Spot
                     }
@@ -300,7 +301,8 @@ asm:loadAssembly(
 		data =  { 
 					color = { 0.8, 0.4, 0.2 },
 					intensity = 15.0,
-					spotlightangle = 3.14/4.0,
+					spotangle = 3.14/4.0,
+					spotpenumbra = 0.03,
 					type = core.gfx.objectTypes.Light,
 					lighttype = core.gfx.lightTypes.Spot
 				}
@@ -326,7 +328,8 @@ asm:loadAssembly(
 		data =  { 
 					color = { 0.4, 0.8, 0.2 },
 					intensity = 15.0,
-					spotlightangle = 3.14/4.0,
+					spotangle = 3.14/4.0,
+					spotpenumbra = 0.03,
 					type = core.gfx.objectTypes.Light,
 					lighttype = core.gfx.lightTypes.Spot
 				}
@@ -352,7 +355,8 @@ asm:loadAssembly(
 		data =  { 
 					color = { 0.2, 0.7, 0.8 },
 					intensity = 15.0,
-					spotlightangle = 3.14/6.0,
+					spotangle = 3.14/6.0,
+					spotpenumbra = 0.03,
 					type = core.gfx.objectTypes.Light,
 					lighttype = core.gfx.lightTypes.Spot
 				}

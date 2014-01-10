@@ -13,7 +13,8 @@ namespace GFX
 		float radius_length;
 		glm::vec3 color;
 		float intensity;
-		glm::vec3 pad;
+		glm::vec2 pad;
+		float spot_penumbra;
 		float spot_angle;
 		glm::vec4 orientation;
 	};

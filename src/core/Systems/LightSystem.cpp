@@ -27,7 +27,8 @@ namespace Core
 			data->radius_length = 0.0f;
 			data->color = glm::vec3(0.0f);
 			data->intensity = 0.0f;
-			data->pad = glm::vec3(0.0f);
+			data->pad = glm::vec2(0.0f);
+			data->spot_penumbra = 0.0f;
 			data->spot_angle = 0.0f;
 			data->orientation = glm::vec4(0.0f);
 
@@ -63,6 +64,7 @@ namespace Core
 					data->color[1] = lc->color[1];
 					data->color[2] = lc->color[2];
 					data->intensity = lc->intensity;
+					data->spot_penumbra = lc->lightSpecific.spotLight.penumbraAngle;
 					data->spot_angle = lc->lightSpecific.spotLight.angle;
 
 					data->orientation = glm::vec4(	RotationComponent::GetQuat(rc->rotation).x*cos(10.0f*lel+ double(i)),

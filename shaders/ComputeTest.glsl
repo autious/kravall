@@ -18,7 +18,8 @@ struct LightData
 	float radius_length;
 	vec3 color;
 	float intensity;
-	vec3 pad;
+	vec2 pad;
+	float spot_penumbra;
 	float spot_angle;
 	vec4 orientation;
 };
@@ -130,7 +131,7 @@ vec4 CalculateSpotlight( LightData light, SurfaceData surface, vec3 wPos, vec3 e
 	
 	float cosAngle = dot(normalize(light.orientation.xyz), normalize(-lightDir));
 	float cosOuterAngle = cos(light.spot_angle);
-	float cosInnerAngle = cosOuterAngle+0.03f;
+	float cosInnerAngle = cosOuterAngle+light.spot_penumbra;
 	float cosDelta = cosInnerAngle - cosOuterAngle;
 
 	float spot = clamp((cosAngle - cosOuterAngle) / cosDelta,0.0f, 1.0f);

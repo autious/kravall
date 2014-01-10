@@ -62,11 +62,20 @@ Core::ComponentGetters Core::LightComponentBinding::GetGetters()
         return 1;
     };
 
-    getters["spotlightangle"] = []( Core::Entity entity, lua_State * L )
+    getters["spotangle"] = []( Core::Entity entity, lua_State * L )
     {
         LightComponent *lc = WGETC<LightComponent>( entity );
 
         lua_pushnumber( L, lc->lightSpecific.spotLight.angle );
+    
+        return 1;
+    };
+
+    getters["spotpenumbra"] = []( Core::Entity entity, lua_State * L )
+    {
+        LightComponent *lc = WGETC<LightComponent>( entity );
+
+        lua_pushnumber( L, lc->lightSpecific.spotLight.penumbraAngle );
     
         return 1;
     };
@@ -127,11 +136,11 @@ Core::ComponentSetters Core::LightComponentBinding::GetSetters()
         }  
         else
         {
-            luaL_error( L, "Unable to set material, given parameter is not integer value" );
+            luaL_error( L, "Unable to set intensity, given parameter is not number value" );
         }
     };
 
-    setters["spotlightangle"] = [](Core::Entity entity, lua_State * L, int valueindex )
+    setters["spotangle"] = [](Core::Entity entity, lua_State * L, int valueindex )
     {
         LightComponent *lc = WGETC<LightComponent>( entity );
             
@@ -141,7 +150,21 @@ Core::ComponentSetters Core::LightComponentBinding::GetSetters()
         }  
         else
         {
-            luaL_error( L, "Unable to set material, given parameter is not integer value" );
+            luaL_error( L, "Unable to set spotangle, given parameter is not number value" );
+        }
+    };
+
+    setters["spotpenumbra"] = [](Core::Entity entity, lua_State * L, int valueindex )
+    {
+        LightComponent *lc = WGETC<LightComponent>( entity );
+            
+        if( lua_isnumber( L, valueindex ) )
+        {
+            lc->lightSpecific.spotLight.penumbraAngle = static_cast<float>(lua_tonumber( L, valueindex ));
+        }  
+        else
+        {
+            luaL_error( L, "Unable to set spotpenumbra, given parameter is not number value" );
         }
     };
 

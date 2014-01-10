@@ -18,6 +18,7 @@ namespace Core
             struct 
             {
                 float angle;
+                float penumbraAngle;
             } spotLight;
         } lightSpecific;
 
