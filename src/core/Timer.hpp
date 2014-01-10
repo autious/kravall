@@ -37,6 +37,11 @@ namespace Core
 		void Stop();
 
 		/*!
+		Resets the total time to now
+		*/
+		void Reset();
+
+		/*!
 		Gets the delta time
 		\return Returns time passed between calling Start and Stop
 		*/

@@ -9,6 +9,7 @@
 #include <Input/InputManager.hpp>
 
 #include <Timer.hpp>
+#include <logger/Logger.hpp>
 
 namespace Core
 {
@@ -52,10 +53,17 @@ namespace Core
 	void ClopLuaCommand( clop::ArgList args )
 	{
 		std::stringstream ss;
-		for (unsigned int i = 1; i < args.size(); i++)
-			ss << (std::string)args[i];
-		std::string src = ss.str();
-		Core::world.m_luaState.DoBlock(src.c_str());
+		if (args.size() > 1)
+		{
+			for (unsigned int i = 1; i < args.size(); i++)
+				ss << (std::string)args[i];
+			std::string src = ss.str();
+			Core::world.m_luaState.DoBlock(src.c_str());
+		}
+		else
+		{
+			Console().EnableInteractiveLua();
+		}
 	}
 
     const char* DebugConsole::HISTORY_FILE_NAME = "console_history_file.dbt";
@@ -67,10 +75,12 @@ namespace Core
 
 	DebugConsole::DebugConsole()
 	{
+		m_interactiveLua = false;
 		m_visible = false;
 		m_historyIndex = 0;
 		m_offset = 0;
 		m_cursorOffset = 0;
+		m_lastCursorOffset = 0;
         m_font = nullptr;
 
 		clop::Register("clear", ClopClearConsole);
@@ -113,6 +123,20 @@ namespace Core
         Core::GetInputManager().RemoveScrollEventListener( this );
         Core::GetInputManager().RemoveCharEventListener( this );
         Core::GetInputManager().RemoveKeyEventListener( this );
+	}
+
+	void DebugConsole::EnableInteractiveLua()
+	{
+		if (!m_interactiveLua)
+			Console().PrintLine("Interactive lua enabled", Colors::Gold);
+		m_interactiveLua = true;
+	}
+
+	void DebugConsole::DisableInteractiveLua()
+	{
+		if (m_interactiveLua)
+			Console().PrintLine("Interactive lua disabled", Colors::Gold);
+		m_interactiveLua = false;
 	}
 
     void DebugConsole::OnScrollEvent( const Core::ScrollEvent &e )
@@ -159,9 +183,12 @@ namespace Core
 
                     if (e.key == GLFW_KEY_DELETE)
                         DeleteWord();
-
+					
                     if ( e.key == GLFW_KEY_BACKSPACE ) 
                         BackspaceWord();
+
+					if ( e.key == GLFW_KEY_C )
+						DisableInteractiveLua();
                 }
                 else
                 {
@@ -272,13 +299,18 @@ namespace Core
 			}
 
 			// Execute command
-			if (!clop::Command(m_inputLine))
+			if (m_interactiveLua)
+			{
+				clop::Command("lua " + m_inputLine);
+			}
+			else if (!clop::Command(m_inputLine))
 			{
 				std::istringstream ss(m_inputLine);
 				std::string uCmd;
 				ss >> uCmd;
-				Line errLine = {"ERROR: Unknown command \'"+ uCmd +"\'", Colors::Red};
-				m_console.push_back(errLine);
+				LOG_ERROR << "Unknown command \'" + uCmd + "\'";
+				//Line errLine = {"ERROR: Unknown command \'"+ uCmd +"\'", Colors::Red};
+				//m_console.push_back(errLine);
 			}
 
 			// Reset input line
@@ -681,6 +713,9 @@ namespace Core
 
 	void DebugConsole::Update()
 	{
+		if (m_lastCursorOffset != m_cursorOffset)
+			m_timer.Reset();
+		m_lastCursorOffset = m_cursorOffset;
 		long long t = (m_timer.GetTotal()) % 1000;
 		bool showCursor = (t < 500) ? true : false;
 
@@ -751,9 +786,9 @@ namespace Core
 			GFX::Debug::DrawRectangle(glm::vec2(0.0f, dy), glm::vec2(5.0f, sy), true, Colors::DarkGreen);
 
 			// Append cursor to input line
-			std::string outInputLine = m_inputLine;
+			std::string outInputLine = m_interactiveLua ? "> " + m_inputLine : m_inputLine;
 			if (showCursor)
-				outInputLine.replace(m_cursorOffset, 1, 1, '_');
+				outInputLine.replace(m_cursorOffset + (int)m_interactiveLua * 2, 1, 1, '_');
 
 
 			GFX::RenderText(m_font, glm::vec2(11, 398), 1.0f, Colors::Black, (outInputLine).c_str());
