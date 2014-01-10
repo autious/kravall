@@ -114,8 +114,8 @@ namespace Core
     {
         if( nScrollEvents < NUMBER_OF_SCROLL_EVENTS )
         { 
-            ScrollEvents[nScrollEvents].xoffset = xoffset;
-            ScrollEvents[nScrollEvents].yoffset = yoffset;
+            ScrollEvents[nScrollEvents].xoffset = static_cast<int>(xoffset);
+            ScrollEvents[nScrollEvents].yoffset = static_cast<int>(yoffset);
             nScrollEvents++;
         }
         else

@@ -44,7 +44,7 @@ Core::ComponentSetters Core::WorldPositionComponentBinding::GetSetters()
                     
                 if( lua_isnumber( L, -1 ) )
                 {
-                    wpc->position[i] = lua_tonumber( L, -1 );  
+                    wpc->position[i] = static_cast<float>(lua_tonumber( L, -1 ));  
                 }
 
                 lua_pop( L, 1 );

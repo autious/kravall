@@ -29,7 +29,7 @@ Core::ComponentSetters Core::ScaleComponentBinding::GetSetters()
         
         if( lua_isnumber(  L, valueindex ) )
         {
-            sc->scale = lua_tonumber( L, valueindex );
+            sc->scale = static_cast<float>(lua_tonumber( L, valueindex ));
         }
         else
         {

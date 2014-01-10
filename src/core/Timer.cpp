@@ -53,10 +53,4 @@ namespace Core
 		return elapsed;
 	#endif
 	}
-
-	HighresTimer& Timer()
-	{
-		static HighresTimer timer;
-		return timer;
-	}
 }

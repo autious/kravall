@@ -29,9 +29,9 @@ extern "C"
 
         if( lua_gettop( L ) > 3 )
         {
-            (*vec3)[0] = luaL_checknumber( L, 1 );
-            (*vec3)[1] = luaL_checknumber( L, 2 );
-            (*vec3)[2] = luaL_checknumber( L, 3 );
+            (*vec3)[0] = static_cast<float>(luaL_checknumber( L, 1 ));
+            (*vec3)[1] = static_cast<float>(luaL_checknumber( L, 2 ));
+            (*vec3)[2] = static_cast<float>(luaL_checknumber( L, 3 ));
 
             return 1;
         }
@@ -156,10 +156,10 @@ extern "C"
         
         if( lua_gettop( L ) >= 4 )
         {
-            (*vec4_ret)[0] = luaL_checknumber( L, 1 ); 
-            (*vec4_ret)[1] = luaL_checknumber( L, 2 ); 
-            (*vec4_ret)[2] = luaL_checknumber( L, 3 ); 
-            (*vec4_ret)[3] = luaL_checknumber( L, 4 ); 
+            (*vec4_ret)[0] = static_cast<float>(luaL_checknumber( L, 1 )); 
+            (*vec4_ret)[1] = static_cast<float>(luaL_checknumber( L, 2 )); 
+            (*vec4_ret)[2] = static_cast<float>(luaL_checknumber( L, 3 )); 
+            (*vec4_ret)[3] = static_cast<float>(luaL_checknumber( L, 4 )); 
 
             return 1;
         }
@@ -214,7 +214,7 @@ extern "C"
         {
             for( int i = 0; i < 16; i++ )
             {
-                (&(*mat4)[0][0])[i] = luaL_checknumber( L, i+1 );
+                (&(*mat4)[0][0])[i] = static_cast<float>(luaL_checknumber( L, i+1 ));
             }             
 
             return 1;
@@ -354,10 +354,10 @@ extern "C"
 
         if( lua_gettop( L ) >= 4 )
         {
-            (*quat_ret)[0] = luaL_checknumber( L, 1 );
-            (*quat_ret)[1] = luaL_checknumber( L, 2 );
-            (*quat_ret)[2] = luaL_checknumber( L, 3 );
-            (*quat_ret)[3] = luaL_checknumber( L, 4 );
+            (*quat_ret)[0] = static_cast<float>(luaL_checknumber( L, 1 ));
+            (*quat_ret)[1] = static_cast<float>(luaL_checknumber( L, 2 ));
+            (*quat_ret)[2] = static_cast<float>(luaL_checknumber( L, 3 ));
+            (*quat_ret)[3] = static_cast<float>(luaL_checknumber( L, 4 ));
 
             return 1;
         } 

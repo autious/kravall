@@ -72,8 +72,8 @@ namespace Core
 					data->position = WorldPositionComponent::GetVec3(*wpc);
 					data->radius_length = sc->scale;
 
-					wpc->position[0] = 45 * cos(lel + double(i));
-					wpc->position[2] = 45 * sin(double(i%16) * lel*0.1f + double(i));
+					wpc->position[0] = float(45 * cos(lel + double(i)));
+					wpc->position[2] = float(45 * sin(double(i%16) * lel*0.1f + double(i)));
 
 					//GFX::Debug::DrawSphere(data->position, sc->scale, glm::vec4(data->color, 1.0f), false);
 					//glm::vec3 dir = glm::normalize(glm::vec3(data->orientation)) * data->radius_length;

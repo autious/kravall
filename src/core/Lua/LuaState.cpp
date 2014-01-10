@@ -175,10 +175,11 @@ void Core::LuaState::Update( float delta )
     {
         lua_rawgeti( m_state, LUA_REGISTRYINDEX, m_coreUpdateFunctionReg );
         lua_pushnumber( m_state, delta );
-        Timer().Start();   
+		this->
+        m_timer.Start();   
         int error = lua_pcall( m_state, 1,0,0 );
-        Timer().Stop();
-        m_lastFrameTime = Timer().GetDelta();
+        m_timer.Stop();
+        m_lastFrameTime = m_timer.GetDelta();
 
         if( error )
         {

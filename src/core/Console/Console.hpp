@@ -10,6 +10,7 @@
 #include <Input/Interfaces/ScrollEventListener.hpp>
 #include <Input/Interfaces/CharEventListener.hpp>
 #include <Input/Interfaces/KeyEventListener.hpp>
+#include <Timer.hpp>
 
 namespace Core
 {
@@ -137,6 +138,7 @@ namespace Core
 		std::vector<Line> m_console;
 		std::vector<std::string> m_history;
 
+		Core::HighresTimer m_timer;
 	};
 	DebugConsole& Console();
 

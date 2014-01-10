@@ -237,13 +237,13 @@ void run( GLFWwindow * window )
 	LOG_INFO << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " " << std::endl;
 
 	//inputline.resize(1);
-
-	long long lastFrameTime = Core::Timer().GetTotal();
-	long long thisFrame = Core::Timer().GetTotal();
+	Core::HighresTimer timer;
+	long long lastFrameTime = timer.GetTotal();
+	long long thisFrame = timer.GetTotal();
 	while (!glfwWindowShouldClose(window) && killProgram == false)
 	{
 		// calc delta time
-		thisFrame = Core::Timer().GetTotal();
+		thisFrame = timer.GetTotal();
 		double delta = (thisFrame - lastFrameTime) / 1000.0;
 		lastFrameTime = thisFrame;
 

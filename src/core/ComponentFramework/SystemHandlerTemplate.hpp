@@ -53,13 +53,13 @@ namespace Core
         {
             for( int i = 0; i < SYSTEM_COUNT; i++ )
             {
-				Timer().Start();
+				m_timer.Start();
                  
                 m_systems[i]->Update( delta );
 
-				Timer().Stop();
+				m_timer.Stop();
 
-				std::chrono::microseconds diff = Timer().GetDelta();
+				std::chrono::microseconds diff = m_timer.GetDelta();
 
                 m_frameTimes[i] = diff; 
             } 
@@ -100,6 +100,7 @@ namespace Core
     private:
         std::array<BaseSystem*,SYSTEM_COUNT> m_systems;
         std::array<std::chrono::microseconds,SYSTEM_COUNT> m_frameTimes;
+		HighresTimer m_timer;
     };
 }
 #endif

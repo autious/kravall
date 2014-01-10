@@ -61,7 +61,7 @@ Core::ComponentSetters Core::MovementComponentBinding::GetSetters()
                     
                 if( lua_isnumber( L, -1 ) )
                 {
-                    mvc->direction[i] = lua_tonumber( L, -1 );  
+                    mvc->direction[i] = static_cast<float>(lua_tonumber( L, -1 ));  
                 }
 
                 lua_pop( L, 1 );
@@ -75,7 +75,7 @@ Core::ComponentSetters Core::MovementComponentBinding::GetSetters()
         
         if( lua_isnumber(  L, valueindex ) )
         {
-            mvc->speed = lua_tonumber( L, valueindex );
+            mvc->speed = static_cast<float>(lua_tonumber( L, valueindex ));
         }
         else
         {
@@ -89,7 +89,7 @@ Core::ComponentSetters Core::MovementComponentBinding::GetSetters()
         
         if( lua_isnumber(  L, valueindex ) )
         {
-            mvc->maxSpeed = lua_tonumber( L, valueindex );
+            mvc->maxSpeed = static_cast<float>(lua_tonumber( L, valueindex ));
         }
         else
         {
