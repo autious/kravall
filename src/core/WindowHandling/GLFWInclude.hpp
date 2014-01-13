@@ -25,4 +25,7 @@
 #include <GLFW/glfw3native.h>
 #endif
 
+
+extern GLFWwindow* mainWindow;
+
 #endif

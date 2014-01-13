@@ -15,10 +15,6 @@ consoleFont = "assets/Fonts/ConsoleFont.font",
 defaultNrFlowfields = 20
 }
 
-function printAlexStatus()
-    print( "He is still himself.")
-end
-
 function showSys()
     if core.config.showSystems then
         core.config.showSystems = false
@@ -98,4 +94,10 @@ function print_env( table, prefix)
         end
     end
 
+end
+
+function print_loaded()
+    for k,v in pairs( package.loaded ) do
+        print( k )
+    end
 end

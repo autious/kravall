@@ -85,7 +85,7 @@ Core::ComponentSetters Core::BoundingVolumeComponentBinding::GetSetters()
         
         if( lua_isnumber(  L, valueindex ) )
         {
-            reinterpret_cast<Core::BoundingSphere*>(bvc->data)->radius = lua_tonumber( L, valueindex );
+            reinterpret_cast<Core::BoundingSphere*>(bvc->data)->radius = static_cast<float>(lua_tonumber( L, valueindex ));
         }
         else
         {
@@ -106,7 +106,7 @@ Core::ComponentSetters Core::BoundingVolumeComponentBinding::GetSetters()
                     
                 if( lua_isnumber( L, -1 ) )
                 {
-                    reinterpret_cast<Core::BoundingSphere*>(bvc->data)->offset[i] = lua_tonumber( L, -1 );  
+                    reinterpret_cast<Core::BoundingSphere*>(bvc->data)->offset[i] = static_cast<float>(lua_tonumber( L, -1 ));  
                 }
 
                 lua_pop( L, 1 );
