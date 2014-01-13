@@ -21,7 +21,7 @@ local onpositions = {}
 
 function core.input.mouse.onposition( x,y )
     for k,v in pairs( onpositions ) do
-       v( x,y ) 
+       k( x,y ) 
     end 
 end
 
