@@ -91,7 +91,8 @@ void Core::AIDebugSystem::Update( float delta )
 
 	CheckNavMeshCalculation();
 
-	//GetPlanePoint();
+
+
 
 	if( Core::GetNavigationMesh() )
 		Core::GetNavigationMesh()->DrawDebug();

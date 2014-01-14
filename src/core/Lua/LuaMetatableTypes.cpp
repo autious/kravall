@@ -23,6 +23,20 @@ namespace Core
         return data;
     }
 
+	///////////////////////////////////////////////
+
+	glm::vec2* LuaUNewGLMVec2( lua_State * L )
+    {
+        glm::vec2* vec2 = static_cast<glm::vec2*>(lua_newuserdata( L, sizeof( glm::vec2 ) ) );
+        *vec2 = glm::vec2();
+        luaL_getmetatable( L, GLMVEC2_META_TYPE );
+        lua_setmetatable( L, -2 );
+
+        return vec2;
+    }
+
+	//////////////////////////////////////////
+
     glm::vec3* LuaUNewGLMVec3( lua_State * L )
     {
         glm::vec3* vec3 = static_cast<glm::vec3*>(lua_newuserdata( L, sizeof( glm::vec3 ) ) );
