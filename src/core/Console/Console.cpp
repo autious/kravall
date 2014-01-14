@@ -38,7 +38,7 @@ namespace Core
 		{
 			std::string errStr = "Usage: \'";
 			errStr += std::string(args[0]);
-			errStr += " n\' \n\tn: The id of the framebuffer to draw full screen. n=0 enables miniature quads, n=-1 disables drawing fbo.";
+			errStr += " n\' \n\tn:\n\t\t0: Display normal.\n\t\t1: Display miniature render targets over the rendered frame.\n\t\t2-5: Display a fullscreen render target.";
 			Console().PrintLine(errStr, Colors::Chocolate);
 		}
 	}
