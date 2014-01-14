@@ -46,41 +46,44 @@ function C:getView()
 end
 
 function C:update( dt )
-
     local delta = dt * 30
-    if keyboard.iskeydown( key.W ) then
-        self.position = self.position + camera.getForward() * delta
-    end
-    if keyboard.iskeydown( key.S ) then
-        self.position = self.position - camera.getForward() * delta
-    end
-    if keyboard.iskeydown( key.A ) then
-        self.position = self.position - camera.getRight() * delta
-    end
-    if keyboard.iskeydown( key.D ) then
-        self.position = self.position + camera.getRight() * delta
-    end
-    if keyboard.iskeydown( key.Space ) then
-        self.position = self.position + camera.getUp() * delta
-    end
-    if keyboard.iskeydown( key.Left_control ) then
-        self.position = self.position - camera.getUp() * delta
-    end
+
+    if core.console.isVisible() == false then
     
-    local x,y = mouse.getPosition()
+        if keyboard.iskeydown( key.W ) then
+            self.position = self.position + camera.getForward() * delta
+        end
+        if keyboard.iskeydown( key.S ) then
+            self.position = self.position - camera.getForward() * delta
+        end
+        if keyboard.iskeydown( key.A ) then
+            self.position = self.position - camera.getRight() * delta
+        end
+        if keyboard.iskeydown( key.D ) then
+            self.position = self.position + camera.getRight() * delta
+        end
+        if keyboard.iskeydown( key.Space ) then
+            self.position = self.position + camera.getUp() * delta
+        end
+        if keyboard.iskeydown( key.Left_control ) then
+            self.position = self.position - camera.getUp() * delta
+        end
+        
+        local x,y = mouse.getPosition()
 
-    if mouse.isbuttondown( mouse.button.Left ) then
-        self.pitch = self.pitch + (y-self.py) * delta
-        self.yaw = self.yaw + (x-self.px) * delta
+        if mouse.isbuttondown( mouse.button.Left ) then
+            self.pitch = self.pitch + (y-self.py) * delta
+            self.yaw = self.yaw + (x-self.px) * delta
+        end
+
+        self.px = x
+        self.py = y
+
+        local proj = self:getProjection()
+        local view = self:getView()
+        camera.setProjection( proj  )
+        camera.setView( view )
     end
-
-    self.px = x
-    self.py = y
-
-    local proj = self:getProjection()
-    local view = self:getView()
-    camera.setProjection( proj  )
-    camera.setView( view )
 end
 
     
@@ -103,7 +106,5 @@ function C:lookAt( position, target )
     camera.setProjection( proj  )
     camera.setView( view )
 end
-	
-	
-	
+
 return C

@@ -241,6 +241,11 @@ namespace Core
 		m_cursorOffset = m_inputLine.length();
 	}
 
+    std::string DebugConsole::GetInputLine( )
+    {
+        return m_inputLine;
+    }
+
 	void DebugConsole::PrintLine(std::string str, Color color)
 	{
 		// Add lines
