@@ -43,7 +43,7 @@ end
 
 function C:update( dt )
 
-    local delta = dt * 10
+    local delta = dt * 30
     if keyboard.iskeydown( key.W ) then
         self.position = self.position + camera.getForward() * delta
     end
@@ -78,5 +78,28 @@ function C:update( dt )
     camera.setProjection( proj  )
     camera.setView( view )
 end
+
     
+function C:setPosition( pos )
+	self.position = pos	
+end
+
+function C:lookAt( position, target )
+	self.position = position
+	
+	local dir = core.glm.vec3.normalize( core.glm.vec3.subtract( target, position ) )
+	local x, y, z = core.glm.vec3.get(dir)
+	self.yaw = math.atan( x/-y ) * 180 / math.pi
+	self.pitch = math.asin( -y ) * 180 / math.pi
+	
+	self.px, self.py = mouse.getPosition()
+	
+	local proj = self:getProjection()
+    local view = self:getView()
+    camera.setProjection( proj  )
+    camera.setView( view )
+end
+	
+	
+	
 return C
