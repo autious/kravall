@@ -66,23 +66,27 @@ namespace GFX
 		//Position
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(StaticVertex), (void*)0);
+		glVertexAttribDivisor(0, 0);
 
 		//Normal
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(StaticVertex), (void*)(4 * sizeof(float)));
+		glVertexAttribDivisor(1, 0);
 
 		//Tangent
 		glEnableVertexAttribArray(2);
 		glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(StaticVertex), (void*)(8 * sizeof(float)));
-			
+		glVertexAttribDivisor(2, 0);
+
 		//Binormal
 		glEnableVertexAttribArray(3);
 		glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(StaticVertex), (void*)(12 * sizeof(float)));
+		glVertexAttribDivisor(3, 0);
 
 		//UV
 		glEnableVertexAttribArray(4);
 		glVertexAttribPointer(4, 2, GL_FLOAT, GL_FALSE, sizeof(StaticVertex), (void*)(16 * sizeof(float)));
-
+		glVertexAttribDivisor(4, 0);
 
 
 		mesh.id = static_cast<unsigned int>(m_idCounter);
