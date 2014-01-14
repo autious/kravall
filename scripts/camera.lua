@@ -34,11 +34,15 @@ function C:getProjection()
     return mat4.perspective( 60, self.width/self.height, 0.1, 1000 )
 end
 
-function C:getView()
-    local qp = quat.angleAxis( self.pitch, vec3.new(1,0,0) )
-    qp = qp:rotate( self.yaw, vec3.new(0,1,0) )
+local unit_right = vec3.new(1,0,0)
+local unit_up = vec3.new(0,1,0)
+local mat_ident = mat4.new(1)
 
-    return qp:mat4Cast() * mat4.new(1):translate( self.position * (-1))
+function C:getView()
+    local qp = quat.angleAxis( self.pitch, unit_right  )
+    qp = qp:rotate( self.yaw, unit_up )
+
+    return qp:mat4Cast() * mat_ident:translate( self.position * (-1))
 end
 
 function C:update( dt )
