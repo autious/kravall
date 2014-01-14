@@ -127,7 +127,7 @@ namespace GFX
         */
         inline void SetStatisticsFont(GFX::FontData* font) { m_font = font; }
 		inline void ShowStatistics(bool enabled){ m_showStatistics = enabled; }
-		inline void ShowFBO(int which){ m_showFBO = which; }
+		inline void ShowFBO(int which){ m_showFBO = ( which >= 0 && which <= 5 ) ? which : 0; }
 	private:
 		RenderCore();
 		~RenderCore();
