@@ -179,8 +179,13 @@ namespace Core
 					/* Skeletal Animation */
 					for (int i = 0; i < header.numberOfAnimations; ++i)
 					{
-						m_file.read((char*)&gnome->animations[i].id, sizeof(int));
-						gnome->animations[i].boneAnim = new BoneForAnimation[header.numberOfBones];
+						m_file.read((char*)&animations[i].nameSize, sizeof(int));
+						char* tmp = new char[animations[i].nameSize];
+						m_file.read((char*)tmp, animations[i].nameSize);
+						animations[i].name = std::string(tmp);
+						delete [] tmp;
+						animations[i].boneAnim = new BoneForAnimation[header.numberOfBones];
+
 						for (int j = 0; j < header.numberOfBones; ++j)
 						{
 							m_file.read((char*)&gnome->animations[i].boneAnim[j].numKeys, sizeof(int));
