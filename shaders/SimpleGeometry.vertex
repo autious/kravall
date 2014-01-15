@@ -33,23 +33,23 @@ out vec2 uvFS;
 
 void main()
 {
-	posW = gInstances[gl_InstanceID].mm * positionIN;
-	posFS = gProjection * gView * gInstances[gl_InstanceID].mm * positionIN;
-
-	//Transform normal with model matrix
-	normalFS = gInstances[gl_InstanceID].mm * normalIN;
-	tangentFS = gInstances[gl_InstanceID].mm * tangentIN;
-	binormalFS = gInstances[gl_InstanceID].mm * binormalIN;
-
-
-	////Move position to clip space
-	//posW = modelMatrix * positionIN;
-	//posFS = gProjection * gView * modelMatrix * positionIN;
+	//posW = gInstances[gl_InstanceID].mm * positionIN;
+	//posFS = gProjection * gView * gInstances[gl_InstanceID].mm * positionIN;
 	//
 	////Transform normal with model matrix
-	//normalFS = modelMatrix * normalIN;
-	//tangentFS = modelMatrix * tangentIN;
-	//binormalFS = modelMatrix * binormalIN;
+	//normalFS = gInstances[gl_InstanceID].mm * normalIN;
+	//tangentFS = gInstances[gl_InstanceID].mm * tangentIN;
+	//binormalFS = gInstances[gl_InstanceID].mm * binormalIN;
+
+
+	//Move position to clip space
+	posW = modelMatrix * positionIN;
+	posFS = gProjection * gView * modelMatrix * positionIN;
+	
+	//Transform normal with model matrix
+	normalFS = modelMatrix * normalIN;
+	tangentFS = modelMatrix * tangentIN;
+	binormalFS = modelMatrix * binormalIN;
 
 	uvFS = uvIN;
 
