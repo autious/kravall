@@ -24,5 +24,4 @@ void main()
 	diffuseRT = texture2D(diffuseMap, uvFS);
 	specularRT = vec4(tangentFS.xyz, 1.0f);
 	glowMatIDRT = vec4(1, 0, 1, posFS.z);
-    diffuseRT = vec4(1.0f, 0.0f, 0.0f, 1.0f)
 }

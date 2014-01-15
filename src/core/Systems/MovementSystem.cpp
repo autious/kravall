@@ -33,9 +33,10 @@ void Core::MovementSystem::Update(float delta)
 			// Is negative if position is past the goal so stop.
 			if (dot < 0)
 			{
-				mc->direction[0] = 0.0f;
+				//MovementComponent::SetDirection();
+				/*mc->direction[0] = 0.0f;
 				mc->direction[1] = 0.0f;
-				mc->direction[2] = 0.0f;
+				mc->direction[2] = 0.0f;*/
 				mc->goal[0] = FLT_MAX;
 			}
 		}

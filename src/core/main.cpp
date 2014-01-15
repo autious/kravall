@@ -62,6 +62,7 @@ GLFWwindow* init( int argc, char** argv )
 {
 	GLFWwindow* window;
 
+    Core::world.m_luaState.OpenLibs();
     bool worked = Core::world.m_luaState.Execute( "scripts/config.lua" ) && Core::world.m_luaState.Execute( "scripts/main.lua" );
     assert( worked );
 
@@ -288,6 +289,7 @@ void run( GLFWwindow * window )
 
 	Core::world.m_constantHeap.Rewind();
 
+    Core::GLFWWindowCallbackHandler::Free();
     glfwDestroyWindow( window );
 
 	glfwTerminate();

@@ -1,4 +1,5 @@
 local input = require "input" 
+local window = require "window"
 local C = {}
 
 local vec3 = core.glm.vec3
@@ -6,7 +7,6 @@ local mat4 = core.glm.mat4
 local quat = core.glm.quat
 local keyboard = core.input.keyboard
 local mouse = core.input.mouse
-local window = core.window
 local camera = core.camera
 local key = keyboard.key
 
@@ -23,6 +23,16 @@ function C.new( )
 
     self.px,self.py = mouse.getPosition()
 
+    local function windowResizeCallback( width, height )
+        self.width = width
+        self.height = height 
+    end
+    window.registerWindowSizeCallback( windowResizeCallback )
+
+    local function destruct( )
+        window.deregisterWindowSizeCallback( windowResizeCallback )
+    end
+        
     local metatable = { __index = C, __gc = destruct }
     setmetatable( self, metatable )
 

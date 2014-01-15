@@ -50,6 +50,7 @@ namespace GFX
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_instanceBuffer);
 	}
 
+	/*
 	void DeferredPainter::Render(unsigned int& renderIndex, FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix)
 	{
 		BasePainter::Render();
@@ -203,9 +204,9 @@ namespace GFX
 		renderIndex = i;
 
 	}
+	*/
 
-
-	/*
+	
 	void DeferredPainter::Render(unsigned int& renderIndex, FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix)
 	{
 		BasePainter::Render();
@@ -313,15 +314,6 @@ namespace GFX
 				//set mesh
 			}
 
-			StaticMeshInstanceData* pData = (StaticMeshInstanceData*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, 1024 * sizeof(StaticMeshInstanceData), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
-			
-			for (unsigned int j = 0; j < 1024; j++)
-			{
-				pData[j].modelMatrix = *(glm::mat4*)renderJobs.at(i).value;
-			}
-
-			glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
-
 			m_shaderManager->SetUniform(1, *(glm::mat4*)renderJobs.at(i).value, m_modelMatrixUniform);
 					error = glGetError();
 			//glDrawArrays(GL_TRIANGLES, 0, 3559);
@@ -337,7 +329,7 @@ namespace GFX
 
 		renderIndex = i;
 
-	}*/
+	}
 
 
 	void DeferredPainter::BindGBuffer(FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID)
