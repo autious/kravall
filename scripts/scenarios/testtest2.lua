@@ -35,9 +35,6 @@
 local ASML = require "assembly_loader" 
 local asm = ASML.loadPack( {} )
 
-asm:specific_content( core.contentmanager.load( 
-		core.loaders.NavigationMeshLoader, "prototypeLevel.txt", function( value ) end, false ) )
-		--core.loaders.NavigationMeshLoader, "extremeScenario.txt", function( value ) end, false ) )
 
 local rioter = require "entities/rioter"
 local police = require "entities/police"

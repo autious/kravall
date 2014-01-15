@@ -22,6 +22,7 @@ namespace Core
         AssetHandle LoadAsync(const char* assetName) override;
         void FinishLoadAsync(Core::AssetHandle& handle) override;
         void Destroy(const Core::AssetHandle handle) override;
+		bool UseReferenceCounting() override;
 
         const Core::ModelData* getData(const Core::AssetHandle handle) const;
 

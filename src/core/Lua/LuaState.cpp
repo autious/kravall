@@ -26,6 +26,7 @@
 #include <Lua/Bridges/LuaGLMBridge.hpp>
 #include <Lua/Bridges/LuaCameraBridge.hpp>
 #include <Lua/Bridges/LuaWindowBridge.hpp>
+#include <Lua/Bridges/LuaLinerarHeapBridge.hpp>
 
 namespace Core
 {
@@ -44,7 +45,8 @@ namespace Core
         lnmb(L),
         lglmb(L),
         lcb(L),
-        lwb(L)
+        lwb(L),
+		llhb(L)
         {}
             
         LuaBitmask lb;
@@ -60,6 +62,7 @@ namespace Core
         LuaGLMBridge lglmb;
         LuaCameraBridge lcb;
         LuaWindowBridge lwb;
+		LuaLinearHeapBridge llhb;
     };
 }
 

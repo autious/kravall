@@ -2,8 +2,8 @@
 local ASML = require "assembly_loader" 
 local asm = ASML.loadPack( {} )
 
-navMesh = core.contentmanager.load( 
-		core.loaders.NavigationMeshLoader, "prototypeLevel.txt", function( value ) end, false )
+asm:specific_content( core.contentmanager.load( 
+		core.loaders.NavigationMeshLoader, "prototypeLevel.txt", function( value ) end, false ) )
 
 local rioter = require "entities/rioter"
 local building = require "entities/building"

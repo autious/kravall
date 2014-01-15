@@ -240,6 +240,7 @@ void run( GLFWwindow * window )
    
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));	
 
+	clop::Register( "showMesh", Core::ToggleDrawOfNavigationMesh );
 
 	LOG_INFO << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " " << std::endl;
 
@@ -274,6 +275,8 @@ void run( GLFWwindow * window )
         Core::world.m_contentManager.CallFinishers();
 		Core::world.m_systemHandler.Update(static_cast<float>(delta));
 		Core::world.m_luaState.Update(static_cast<float>(delta));
+
+		Core::DrawToggledNavigationMesh();
 
 		GFX::Debug::DisplayFBO(Core::world.m_config.GetInt( "showFramebuffers", -1 ));
 		glfwSwapBuffers(window);
