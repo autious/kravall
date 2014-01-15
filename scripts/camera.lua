@@ -7,7 +7,7 @@ local mat4 = core.glm.mat4
 local quat = core.glm.quat
 local keyboard = core.input.keyboard
 local mouse = core.input.mouse
-local camera = core.camera
+local camera= core.camera.gameCamera
 local key = keyboard.key
 
 function C.new( )
@@ -61,22 +61,22 @@ function C:update( dt )
     if core.console.isVisible() == false then
     
         if keyboard.iskeydown( key.W ) then
-            self.position = self.position + camera.getForward() * delta
+            self.position = self.position + camera:getForward() * delta
         end
         if keyboard.iskeydown( key.S ) then
-            self.position = self.position - camera.getForward() * delta
+            self.position = self.position - camera:getForward() * delta
         end
         if keyboard.iskeydown( key.A ) then
-            self.position = self.position - camera.getRight() * delta
+            self.position = self.position - camera:getRight() * delta
         end
         if keyboard.iskeydown( key.D ) then
-            self.position = self.position + camera.getRight() * delta
+            self.position = self.position + camera:getRight() * delta
         end
         if keyboard.iskeydown( key.Space ) then
-            self.position = self.position + camera.getUp() * delta
+            self.position = self.position + camera:getUp() * delta
         end
         if keyboard.iskeydown( key.Left_control ) then
-            self.position = self.position - camera.getUp() * delta
+            self.position = self.position - camera:getUp() * delta
         end
         
         local x,y = mouse.getPosition()
@@ -91,8 +91,8 @@ function C:update( dt )
 
         local proj = self:getProjection()
         local view = self:getView()
-        camera.setProjection( proj  )
-        camera.setView( view )
+        camera:setProjection( proj  )
+        camera:setView( view )
     end
 end
 
@@ -113,8 +113,8 @@ function C:lookAt( position, target )
 	
 	local proj = self:getProjection()
     local view = self:getView()
-    camera.setProjection( proj  )
-    camera.setView( view )
+    camera:setProjection( proj  )
+    camera:setView( view )
 end
 
 return C
