@@ -175,11 +175,11 @@ namespace GFX
 	{
 		return Renderer().GetWindowWidth();
 	}
+
 	int GetScreenHeight()
 	{
 		return Renderer().GetWindowHeight();
 	}
-
 }
 
 namespace GFX
