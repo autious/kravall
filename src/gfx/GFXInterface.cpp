@@ -192,7 +192,12 @@ namespace GFX
 			Renderer().LoadStaticMesh(meshID, sizeVerts, sizeIndices, verts, indices);
 		}
 
-		void DeleteStaticMesh(unsigned int& meshID)
+		void LoadAnimatedMesh(unsigned int& meshID, int& sizeVerts, int& sizeIndices, GFX::AnimatedVertex* verts, int* indices)
+		{
+			Renderer().LoadAnimatedMesh(meshID, sizeVerts, sizeIndices, verts, indices);
+		}
+
+		void DeleteMesh(unsigned int& meshID)
 		{
 			Renderer().DeleteMesh(meshID);
 		}
