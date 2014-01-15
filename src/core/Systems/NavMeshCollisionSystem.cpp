@@ -7,7 +7,7 @@
 
 Core::NavMeshCollisionSystem::NavMeshCollisionSystem()
 	: BaseSystem( EntityHandler::GenerateAspect<
-		WorldPositionComponent, BoundingVolumeComponent, UnitTypeComponent, AttributeComponent >(), 0ULL )
+		WorldPositionComponent, BoundingVolumeComponent, UnitTypeComponent, AttributeComponent, FlowfieldComponent >(), 0ULL )
 {
 }
 

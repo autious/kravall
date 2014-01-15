@@ -13,6 +13,7 @@
 #include <Components/UnitTypeComponent.hpp>
 #include <Components/AttributeComponent.hpp>
 #include <Components/BoundingVolumeComponent.hpp>
+#include <Components/FlowfieldComponent.hpp>
 
 namespace Core
 {
@@ -30,7 +31,7 @@ namespace Core
 		PickingSystem, AIDebugSystem, FlowfieldSystem, FieldReactionSystem, MovementSystem> SystemHandler;
     typedef EntityHandlerTemplate<SystemHandler, WorldPositionComponent, RotationComponent, ScaleComponent, 
 		GraphicsComponent, LightComponent, MovementComponent, UnitTypeComponent, AttributeComponent,
-		BoundingVolumeComponent> EntityHandler;
+		BoundingVolumeComponent, FlowfieldComponent> EntityHandler;
 }
 
 /**********All systems after this line************/

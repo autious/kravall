@@ -17,7 +17,7 @@ function t.create(asm, posX, posY, posZ, group)
 			},
 			{
 				type = core.componentType.RotationComponent,
-				data = { rotation = { 0,0, 0, 0 } }
+				data = { rotation = { 0, 0, 0, 0 } }
 			},
 			{
 				type = core.componentType.ScaleComponent,
@@ -41,7 +41,12 @@ function t.create(asm, posX, posY, posZ, group)
 				data = { sphereOffset = { 0, 0, 0 }, sphereRadius = 0.7, 
 						collisionModel = core.BoundingVolumeCollisionModel.DynamicResolution, 
 						type = core.BoundingVolumeType.SphereBoundingType }
+			},
+			{
+				type = core.componentType.FlowfieldComponent,
+				data = { node = -1 }
 			}
+			
 		}
 	)
 end
