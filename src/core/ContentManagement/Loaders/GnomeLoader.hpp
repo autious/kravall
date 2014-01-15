@@ -60,9 +60,11 @@ namespace Core
 
 		struct Animation
 		{
-			int fps;
-			int id;
+			//int fps;
+			int nameSize;
+			std::string name;
 			BoneForAnimation* boneAnim;
+			
 		};
 
 
@@ -71,16 +73,18 @@ namespace Core
 		struct VertexBoneAnimated
 		{
 			//Ordinary stuff
-			float position[3];
-			float normal[3];
+			float position[4];
+			float normal[4];
 
 			//Normalmapping
-			float tangent[3];
-			float uv[2];
+			float tangent[4];
 
 			//Animation
-			float boneWeight[4];
 			int boneIndex[4];
+			float boneWeight[4];
+			
+			//uv
+			float uv[2];
 		};
 
 		struct Vertex
