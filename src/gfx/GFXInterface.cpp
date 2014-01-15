@@ -129,6 +129,15 @@ namespace GFX
 		Renderer().SetProjMatrix(matrix);
 	}
 
+	void SetOverlayViewMatrix(GFXMat4x4 matrix)
+	{
+		Renderer().SetOverlayViewMatrix(matrix);
+	}
+
+	void SetOverlayProjectionMatrix(GFXMat4x4 matrix)
+	{
+		Renderer().SetOverlayProjMatrix(matrix);
+	}
 	void RenderText(GFX::FontData* fontData, GFXVec2 position, float size, GFXVec4 color, const char* text)
 	{
 		Text t(position.x, position.y, size, size, fontData, color, text, Renderer().GetWindowWidth(), Renderer().GetWindowHeight());
