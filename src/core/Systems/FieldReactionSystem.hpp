@@ -66,8 +66,13 @@ namespace Core
 		int m_updateCounter;
 
 		void UpdateAgents();
+
 		float GetEffectOnAgentAt(const Entity queryAgent, WorldPositionComponent* queryPosition, int groupID = -1);
-		float GetAgentsChargeAt(Entity chargedAgent, glm::vec3 queryPosition, int matchGroupID = -1);
+		float GetAgentsChargeAt(Entity chargedAgent, float distSqrd);
+
+		//Original methods
+		//float GetEffectOnAgentAt(const Entity queryAgent, WorldPositionComponent* queryPosition, int groupID = -1);
+		//float GetAgentsChargeAt(Entity chargedAgent, glm::vec3 queryPosition, int matchGroupID = -1);
 
 		void UpdateDebugField();
 		void DrawDebugField();
