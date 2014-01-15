@@ -234,13 +234,12 @@ void run( GLFWwindow * window )
             }, false);
 
 	Core::world.m_contentManager.Load<Core::MaterialLoader>("assets/material/rioter.material", [&rioterMaterialID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
-			{
+			{ 
 				Core::MaterialData* data = static_cast<Core::MaterialData*>(handle);
 				rioterMaterialID = static_cast<unsigned int>(data->materialId);
 			}, false);
    
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));	
-
 
 	LOG_INFO << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " " << std::endl;
 
