@@ -21,6 +21,7 @@ namespace GFX
 		void DeleteMesh(unsigned long long id);
 
 		void LoadStaticMesh(unsigned int& meshID, const int& sizeVerts, const int& sizeIndices, StaticVertex* verts, int* indices);
+		void LoadAnimatedMesh(unsigned int& meshID, const int& sizeVerts, const int& sizeIndices, AnimatedVertex* verts, int* indices);
 
 		inline Mesh GetMesh(const unsigned long long int& meshID) 
 		{ 

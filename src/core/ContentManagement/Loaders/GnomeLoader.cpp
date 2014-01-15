@@ -71,7 +71,7 @@ namespace Core
                 break;
             }
         }
-        GFX::Content::DeleteStaticMesh(modelData->meshID);        
+		GFX::Content::DeleteMesh(modelData->meshID);
         delete modelData;
     }
 

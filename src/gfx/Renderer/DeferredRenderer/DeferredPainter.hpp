@@ -70,7 +70,9 @@ namespace GFX
 		MaterialManager* m_materialManager;
 		TextureManager* m_textureManager;
 
-		GLuint buffer;
+		StaticMeshInstanceData* m_staticInstances;
+		const unsigned int MAX_INSTANCES = 1024;
+		GLuint m_instanceBuffer;
 	};
 }
 

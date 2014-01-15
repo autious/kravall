@@ -128,6 +128,11 @@ namespace GFX
 		m_meshManager->LoadStaticMesh(meshID, sizeVerts, sizeIndices, verts, indices);
 	}
 
+	void RenderCore::LoadAnimatedMesh(unsigned int& meshID, int& sizeVerts, int& sizeIndices, AnimatedVertex* verts, int* indices)
+	{
+		m_meshManager->LoadAnimatedMesh(meshID, sizeVerts, sizeIndices, verts, indices);
+	}
+
 	void RenderCore::LoadTexture(unsigned int& id, unsigned char* data, int width, int height)
 	{
 		m_textureManager->LoadTexture(id, data, width, height);
