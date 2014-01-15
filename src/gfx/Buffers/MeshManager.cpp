@@ -42,7 +42,7 @@ namespace GFX
 	}
 
 
-	void MeshManager::LoadAnimatedMesh(unsigned int& meshID, const int& sizeVerts, const int& sizeIndices, AnimatedVertex* verts, int* indices)
+    void MeshManager::LoadMesh(unsigned int& meshID, const int& sizeVerts, const int& sizeIndices, GFX::Vertex* verts, int* indices)
 	{
 		Mesh mesh;
 		GLuint VBO;
@@ -53,7 +53,7 @@ namespace GFX
 		glGenBuffers(1, &VBO);
 
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeVerts * sizeof (AnimatedVertex), verts, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeVerts * sizeof (GFX::Vertex), verts, GL_STATIC_DRAW);
 
 		//Generate IBO
 		glGenBuffers(1, &IBO);
@@ -66,32 +66,32 @@ namespace GFX
 
 		//Position
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(AnimatedVertex), (void*)0);
+		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(GFX::Vertex), (void*)0);
 		glVertexAttribDivisor(0, 0);
 
 		//Normal
 		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(AnimatedVertex), (void*)(4 * sizeof(float)));
+		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(GFX::Vertex), (void*)(4 * sizeof(float)));
 		glVertexAttribDivisor(1, 0);
 
 		//Tangent
 		glEnableVertexAttribArray(2);
-		glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(AnimatedVertex), (void*)(8 * sizeof(float)));
+		glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(GFX::Vertex), (void*)(8 * sizeof(float)));
 		glVertexAttribDivisor(2, 0);
 
 		//bone indices
 		glEnableVertexAttribArray(3);
-		glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(AnimatedVertex), (void*)(12 * sizeof(float)));
+		glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(GFX::Vertex), (void*)(12 * sizeof(float)));
 		glVertexAttribDivisor(3, 0);
 
 		//bone weights
 		glEnableVertexAttribArray(4);
-		glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(AnimatedVertex), (void*)(16 * sizeof(float)));
+		glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(GFX::Vertex), (void*)(16 * sizeof(float)));
 		glVertexAttribDivisor(4, 0);
 
 		//UV
 		glEnableVertexAttribArray(5);
-		glVertexAttribPointer(5, 2, GL_FLOAT, GL_FALSE, sizeof(AnimatedVertex), (void*)(20 * sizeof(float)));
+		glVertexAttribPointer(5, 2, GL_FLOAT, GL_FALSE, sizeof(GFX::Vertex), (void*)(20 * sizeof(float)));
 		glVertexAttribDivisor(5, 0);
 
 
@@ -104,64 +104,5 @@ namespace GFX
 
 		meshID = mesh.id;
 	}
-
-	void MeshManager::LoadStaticMesh(unsigned int& meshID, const int& sizeVerts, const int& sizeIndices, StaticVertex* verts, int* indices)
-	{
-		Mesh mesh;
-		GLuint VBO;
-		GLuint VAO;
-		GLuint IBO;
-
-		//Generate VBO
-		glGenBuffers(1, &VBO);
-
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeVerts * sizeof (StaticVertex), verts, GL_STATIC_DRAW);
-
-		//Generate IBO
-		glGenBuffers(1, &IBO);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeIndices * sizeof(int), indices, GL_STATIC_DRAW);
-
-		//Generate VAO
-		glGenVertexArrays(1, &VAO);
-		glBindVertexArray(VAO);
-
-		//Position
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(StaticVertex), (void*)0);
-		glVertexAttribDivisor(0, 0);
-
-		//Normal
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(StaticVertex), (void*)(4 * sizeof(float)));
-		glVertexAttribDivisor(1, 0);
-
-		//Tangent
-		glEnableVertexAttribArray(2);
-		glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(StaticVertex), (void*)(8 * sizeof(float)));
-		glVertexAttribDivisor(2, 0);
-
-		//Binormal
-		glEnableVertexAttribArray(3);
-		glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(StaticVertex), (void*)(12 * sizeof(float)));
-		glVertexAttribDivisor(3, 0);
-
-		//UV
-		glEnableVertexAttribArray(4);
-		glVertexAttribPointer(4, 2, GL_FLOAT, GL_FALSE, sizeof(StaticVertex), (void*)(16 * sizeof(float)));
-		glVertexAttribDivisor(4, 0);
-
-
-		mesh.id = static_cast<unsigned int>(m_idCounter);
-		m_idCounter++;
-		mesh.VAO = VAO;
-		mesh.IBO = IBO;
-		mesh.indexCount = sizeIndices;
-		m_meshes.push_back(mesh);
-
-		meshID = mesh.id;
-	}
-
 	
 }

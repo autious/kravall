@@ -4,7 +4,6 @@ in vec4 posFS;
 in vec4 posW;
 in vec4 normalFS;
 in vec4 tangentFS;
-in vec4 binormalFS;
 in vec2 uvFS;
 
 uniform sampler2D diffuseMap;

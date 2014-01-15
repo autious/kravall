@@ -368,6 +368,11 @@ namespace Core
             }
             return shaderFound;
         }
+        else
+        {
+            LOG_FATAL << "Could not open material file: " << assetFileName << std::endl;
+            assert(false);
+        }
         return false;
     }
 

@@ -21,18 +21,26 @@ uniform mat4 modelMatrix;
 layout ( location = 0 ) in vec4 positionIN;
 layout ( location = 1 ) in vec4 normalIN;
 layout ( location = 2 ) in vec4 tangentIN;
-layout ( location = 3 ) in vec4 binormalIN;
-layout ( location = 4 ) in vec2 uvIN;
+layout ( location = 3 ) in ivec4 boneIndices;
+layout ( location = 4 ) in vec4 boneWeights;
+layout ( location = 5 ) in vec2 uvIN;
 
 out vec4 posFS;
 out vec4 posW;
 out vec4 normalFS;
 out vec4 tangentFS;
-out vec4 binormalFS;
 out vec2 uvFS;
 
 void main()
 {
+	posW = gInstances[gl_InstanceID].mm * positionIN;
+	posFS = gProjection * gView * gInstances[gl_InstanceID].mm * positionIN;
+
+	//Transform normal with model matrix
+	normalFS = gInstances[gl_InstanceID].mm * normalIN;
+	tangentFS = gInstances[gl_InstanceID].mm * tangentIN;
+
+	////Move position to clip space
 	//posW = gInstances[gl_InstanceID].mm * positionIN;
 	//posFS = gProjection * gView * gInstances[gl_InstanceID].mm * positionIN;
 	//
@@ -49,7 +57,7 @@ void main()
 	//Transform normal with model matrix
 	normalFS = modelMatrix * normalIN;
 	tangentFS = modelMatrix * tangentIN;
-	binormalFS = modelMatrix * binormalIN;
+	//binormalFS = modelMatrix * binormalIN;
 
 	uvFS = uvIN;
 
