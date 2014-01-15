@@ -42,8 +42,10 @@ namespace Core
 
     glm::vec3 Camera::GetPosition() const 
     {
-        glm::vec4 f = m_viewMatrix * glm::vec4( 0,0,0,1);
-        return glm::vec3( f[0],f[1],f[2] );
+        //glm::vec4 f = m_viewMatrix * glm::vec4( 0,0,0,1);
+		glm::mat4 inv = glm::inverse( m_viewMatrix );
+        //return glm::vec3( f[0],f[1],f[2] );
+		return glm::vec3( inv[3][0], inv[3][1], inv[3][2] );
     }
 
     /*

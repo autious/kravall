@@ -128,6 +128,11 @@ namespace GFX
 		m_meshManager->LoadStaticMesh(meshID, sizeVerts, sizeIndices, verts, indices);
 	}
 
+	void RenderCore::LoadAnimatedMesh(unsigned int& meshID, int& sizeVerts, int& sizeIndices, AnimatedVertex* verts, int* indices)
+	{
+		m_meshManager->LoadAnimatedMesh(meshID, sizeVerts, sizeIndices, verts, indices);
+	}
+
 	void RenderCore::LoadTexture(unsigned int& id, unsigned char* data, int width, int height)
 	{
 		m_textureManager->LoadTexture(id, data, width, height);
@@ -223,8 +228,7 @@ namespace GFX
 
 			GFX_CHECKTIME(m_renderJobManager->Sort(), "Sorting");
 			GFX_CHECKTIME(m_deferredPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix), "Geometry");
-
-				GFX_CHECKTIME(m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix), "Lighting");
+			GFX_CHECKTIME(m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix), "Lighting");
 
 			//Render FBO
 			if (m_showFBO != 0)
@@ -238,8 +242,7 @@ namespace GFX
 		{
 			m_renderJobManager->Sort();
 			m_deferredPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
-
-				m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
+			m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
 			
 			//Render FBO
 			if (m_showFBO != 0)

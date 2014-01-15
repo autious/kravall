@@ -14,8 +14,8 @@ for i = -10, 9 do
                 type = core.componentType.GraphicsComponent,
                 data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry },
                 load = { 
-                            mesh = { core.loaders.GnomeLoader, "assets/teapot.bgnome", false },
-                            material = { core.loaders.MaterialLoader, "assets/material/test-material.material", false }
+                            mesh = { core.loaders.GnomeLoader, "assets/teapot.bgnome", true },
+                            material = { core.loaders.MaterialLoader, "assets/material/test-material.material", true }
                        }
             },
             {

@@ -34,49 +34,77 @@ function C:getProjection()
     return mat4.perspective( 60, self.width/self.height, 0.1, 1000 )
 end
 
-function C:getView()
-    local qp = quat.angleAxis( self.pitch, vec3.new(1,0,0) )
-    qp = qp:rotate( self.yaw, vec3.new(0,1,0) )
+local unit_right = vec3.new(1,0,0)
+local unit_up = vec3.new(0,1,0)
+local mat_ident = mat4.new(1)
 
-    return qp:mat4Cast() * mat4.new(1):translate( self.position * (-1))
+function C:getView()
+    local qp = quat.angleAxis( self.pitch, unit_right  )
+    qp = qp:rotate( self.yaw, unit_up )
+
+    return qp:mat4Cast() * mat_ident:translate( self.position * (-1))
 end
 
 function C:update( dt )
+    local delta = dt * 30
 
-    local delta = dt * 10
-    if keyboard.iskeydown( key.W ) then
-        self.position = self.position + camera.getForward() * delta
-    end
-    if keyboard.iskeydown( key.S ) then
-        self.position = self.position - camera.getForward() * delta
-    end
-    if keyboard.iskeydown( key.A ) then
-        self.position = self.position - camera.getRight() * delta
-    end
-    if keyboard.iskeydown( key.D ) then
-        self.position = self.position + camera.getRight() * delta
-    end
-    if keyboard.iskeydown( key.Space ) then
-        self.position = self.position + camera.getUp() * delta
-    end
-    if keyboard.iskeydown( key.Left_control ) then
-        self.position = self.position - camera.getUp() * delta
-    end
+    if core.console.isVisible() == false then
     
-    local x,y = mouse.getPosition()
+        if keyboard.iskeydown( key.W ) then
+            self.position = self.position + camera.getForward() * delta
+        end
+        if keyboard.iskeydown( key.S ) then
+            self.position = self.position - camera.getForward() * delta
+        end
+        if keyboard.iskeydown( key.A ) then
+            self.position = self.position - camera.getRight() * delta
+        end
+        if keyboard.iskeydown( key.D ) then
+            self.position = self.position + camera.getRight() * delta
+        end
+        if keyboard.iskeydown( key.Space ) then
+            self.position = self.position + camera.getUp() * delta
+        end
+        if keyboard.iskeydown( key.Left_control ) then
+            self.position = self.position - camera.getUp() * delta
+        end
+        
+        local x,y = mouse.getPosition()
 
-    if mouse.isbuttondown( mouse.button.Left ) then
-        self.pitch = self.pitch + (y-self.py) * delta
-        self.yaw = self.yaw + (x-self.px) * delta
+        if mouse.isbuttondown( mouse.button.Left ) then
+            self.pitch = self.pitch + (y-self.py) * delta
+            self.yaw = self.yaw + (x-self.px) * delta
+        end
+
+        self.px = x
+        self.py = y
+
+        local proj = self:getProjection()
+        local view = self:getView()
+        camera.setProjection( proj  )
+        camera.setView( view )
     end
+end
 
-    self.px = x
-    self.py = y
+    
+function C:setPosition( pos )
+	self.position = pos	
+end
 
-    local proj = self:getProjection()
+function C:lookAt( position, target )
+	self.position = position
+	
+	local dir = core.glm.vec3.normalize( core.glm.vec3.subtract( target, position ) )
+	local x, y, z = core.glm.vec3.get(dir)
+	self.yaw = math.atan( x/-y ) * 180 / math.pi
+	self.pitch = math.asin( -y ) * 180 / math.pi
+	
+	self.px, self.py = mouse.getPosition()
+	
+	local proj = self:getProjection()
     local view = self:getView()
     camera.setProjection( proj  )
     camera.setView( view )
 end
-    
+
 return C

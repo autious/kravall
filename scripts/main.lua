@@ -1,7 +1,7 @@
 local Camera = require "camera" 
 
 -- Called on each frame
-local camera = Camera.new()
+camera = Camera.new()
 
 function core.update( delta )
     camera:update( delta )

@@ -99,7 +99,7 @@ GLFWwindow* init( int argc, char** argv )
     return window;
 }
 
-
+/*
 void CreateRioter(std::vector<Core::Entity>* rioterList, int meshID, unsigned int materialID, float posX, float posY, float posZ)
 {
 	int index = rioterList->size(); // Size before add will be the index of the added entity.
@@ -148,6 +148,7 @@ void CreatePolice(std::vector<Core::Entity>* rioterList, int meshID, unsigned in
 	GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::MATERIAL_ID, materialID);
 	GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::TYPE, GFX::OBJECT_TYPES::OPAQUE_GEOMETRY);
 }
+*/
 
 /*
 static void ControlCamera(double delta)
@@ -232,13 +233,12 @@ void run( GLFWwindow * window )
             }, false);
 
 	Core::world.m_contentManager.Load<Core::MaterialLoader>("assets/material/rioter.material", [&rioterMaterialID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
-			{
+			{ 
 				Core::MaterialData* data = static_cast<Core::MaterialData*>(handle);
 				rioterMaterialID = static_cast<unsigned int>(data->materialId);
 			}, false);
    
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));	
-
 
 	LOG_INFO << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " " << std::endl;
 
