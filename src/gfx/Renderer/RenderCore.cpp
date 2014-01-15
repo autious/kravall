@@ -97,7 +97,6 @@ namespace GFX
 
 		// Set console width
 		m_consolePainter->SetConsoleHeight(m_windowHeight);
-
 	}
 
 	void RenderCore::Resize(int width, int height)
