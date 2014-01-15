@@ -27,6 +27,7 @@
 #include <Lua/Bridges/LuaCameraBridge.hpp>
 #include <Lua/Bridges/LuaWindowBridge.hpp>
 #include <Lua/Bridges/LuaLinerarHeapBridge.hpp>
+#include <Lua/Bridges/LuaConsoleBridge.hpp>
 
 namespace Core
 {
@@ -44,8 +45,9 @@ namespace Core
         lutcb(L),
         lnmb(L),
         lglmb(L),
-        lcb(L),
+        lcab(L),
         lwb(L),
+        lcob(L),
 		llhb(L)
         {}
             
@@ -60,8 +62,9 @@ namespace Core
         LuaUnitTypeComponentBridge lutcb;
         LuaNavMeshBridge lnmb;
         LuaGLMBridge lglmb;
-        LuaCameraBridge lcb;
+        LuaCameraBridge lcab;
         LuaWindowBridge lwb;
+        LuaConsoleBridge lcob;
 		LuaLinearHeapBridge llhb;
     };
 }
@@ -85,11 +88,14 @@ extern "C"
 
 Core::LuaState::LuaState()
 {
-    LOG_DEBUG << "Creating lua state" << std::endl;
     m_state = luaL_newstate();
-    int sanity = lua_gettop( m_state );
-    m_activeUpdate = true;
+    m_activeUpdate = false;
+}
 
+void Core::LuaState::OpenLibs()
+{
+
+    int sanity = lua_gettop( m_state );
     luaL_openlibs( m_state ); 
 
     //Add extra paths for require commands.
@@ -121,6 +127,7 @@ Core::LuaState::LuaState()
         luau_setfunction( m_state, "__newindex", LuaCoreNewindex );
     lua_setmetatable( m_state, -2 ),
     lua_pop( m_state, 1 );
+
     assert( sanity == lua_gettop(m_state) );
 }
 

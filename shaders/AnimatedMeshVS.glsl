@@ -1,14 +1,7 @@
 #version 430
 
-struct InstanceData
-{
-	mat4 mm;
-};
+#define MAX_INSTANCES 1000
 
-layout (std140, binding = 5) readonly buffer buffah
-{
-    InstanceData gInstances[];
-};
 
 layout (shared) uniform PerFrameBlock
 {
@@ -16,13 +9,26 @@ layout (shared) uniform PerFrameBlock
 	mat4 gProjection;
 };
 
-uniform mat4 modelMatrix;
+layout uniform PerInstanceBlock
+{
+	PerInstanceData gInstances[MAX_INSTANCES];
+};
+
+struct PerInstanceData
+{
+	mat4 modelMatrix;
+	int animFrameID;
+	int animFrameOffset;
+	int pad1;
+	int pad2;
+};
 
 layout ( location = 0 ) in vec4 positionIN;
 layout ( location = 1 ) in vec4 normalIN;
 layout ( location = 2 ) in vec4 tangentIN;
-layout ( location = 3 ) in vec4 binormalIN;
-layout ( location = 4 ) in vec2 uvIN;
+layout ( location = 3) in vec4 boneIndexIN;
+layout ( location = 4) in vec4 boneWeightsIN;
+layout ( location = 5 ) in vec2 uvIN;
 
 out vec4 posFS;
 out vec4 posW;
@@ -31,21 +37,15 @@ out vec4 tangentFS;
 out vec4 binormalFS;
 out vec2 uvFS;
 
+mat4 LoadBoneMatrix(vec3 animationData, float bone)
+{
+}
+
 void main()
 {
-	//posW = gInstances[gl_InstanceID].mm * positionIN;
-	//posFS = gProjection * gView * gInstances[gl_InstanceID].mm * positionIN;
-	//
-	////Transform normal with model matrix
-	//normalFS = gInstances[gl_InstanceID].mm * normalIN;
-	//tangentFS = gInstances[gl_InstanceID].mm * tangentIN;
-	//binormalFS = gInstances[gl_InstanceID].mm * binormalIN;
-
-
-	//Move position to clip space
 	posW = modelMatrix * positionIN;
 	posFS = gProjection * gView * modelMatrix * positionIN;
-	
+
 	//Transform normal with model matrix
 	normalFS = modelMatrix * normalIN;
 	tangentFS = modelMatrix * tangentIN;

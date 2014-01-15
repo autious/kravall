@@ -1,13 +1,13 @@
 core.config = {
 showSplash = false,
-vsync = 1,
+vsync = 0,
 windowResizable = true,
 initScreenWidth = 1280,
 initScreenHeight = 720,
 showSystems = false,
 entityMemoryOutputLevel = "partial", -- full, short or partial
 entityMemoryOutputComponents = { "WorldPositionComponent", "GraphicsComponent" },
-showFramebuffers = 0,
+showFramebuffers = 3,
 initCameraFieldOfView = 45.0,
 initCameraNearClipDistance = 1.0,
 initCameraFarClipDistance = 1000.0,

@@ -97,7 +97,6 @@ namespace GFX
 
 		// Set console width
 		m_consolePainter->SetConsoleHeight(m_windowHeight);
-
 	}
 
 	void RenderCore::Resize(int width, int height)
@@ -126,6 +125,11 @@ namespace GFX
 	void RenderCore::LoadStaticMesh(unsigned int& meshID, const int& sizeVerts, const int& sizeIndices, StaticVertex* verts, int* indices)
 	{
 		m_meshManager->LoadStaticMesh(meshID, sizeVerts, sizeIndices, verts, indices);
+	}
+
+	void RenderCore::LoadAnimatedMesh(unsigned int& meshID, int& sizeVerts, int& sizeIndices, AnimatedVertex* verts, int* indices)
+	{
+		m_meshManager->LoadAnimatedMesh(meshID, sizeVerts, sizeIndices, verts, indices);
 	}
 
 	void RenderCore::LoadTexture(unsigned int& id, unsigned char* data, int width, int height)
@@ -223,7 +227,6 @@ namespace GFX
 
 			GFX_CHECKTIME(m_renderJobManager->Sort(), "Sorting");
 			GFX_CHECKTIME(m_deferredPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix), "Geometry");
-			// NOCOMMIT
 			//GFX_CHECKTIME(m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix), "Lighting");
 
 			//Render FBO
@@ -238,7 +241,6 @@ namespace GFX
 		{
 			m_renderJobManager->Sort();
 			m_deferredPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
-			// NOCOMMIT
 			//m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
 			
 			//Render FBO

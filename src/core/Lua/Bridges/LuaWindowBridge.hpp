@@ -3,12 +3,21 @@
 
 #include <lua.h>
 
+#include <WindowHandling/GLFWWindowCallbackHandler.hpp>
+
 namespace Core
 {
-    class LuaWindowBridge
+    class LuaWindowBridge : public GLFWWindowCallbackInterface
     {
     public:
         LuaWindowBridge( lua_State * L );
+        ~LuaWindowBridge();
+
+        virtual void WindowResize( int width, int height ) override;
+        virtual void FramebufferResize( int width, int height ) override;
+
+    private:
+        lua_State *m_state;
     };
 }
 

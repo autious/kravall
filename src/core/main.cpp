@@ -64,6 +64,7 @@ GLFWwindow* init( int argc, char** argv )
 {
 	GLFWwindow* window;
 
+    Core::world.m_luaState.OpenLibs();
     bool worked = Core::world.m_luaState.Execute( "scripts/config.lua" ) && Core::world.m_luaState.Execute( "scripts/main.lua" );
     assert( worked );
 
@@ -233,7 +234,7 @@ void run( GLFWwindow * window )
             }, false);
 
 	Core::world.m_contentManager.Load<Core::MaterialLoader>("assets/material/rioter.material", [&rioterMaterialID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
-			{
+			{ 
 				Core::MaterialData* data = static_cast<Core::MaterialData*>(handle);
 				rioterMaterialID = static_cast<unsigned int>(data->materialId);
 			}, false);
@@ -294,6 +295,7 @@ void run( GLFWwindow * window )
 
 	Core::world.m_constantHeap.Rewind();
 
+    Core::GLFWWindowCallbackHandler::Free();
     glfwDestroyWindow( window );
 
 	glfwTerminate();
