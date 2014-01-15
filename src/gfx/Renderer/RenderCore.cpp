@@ -47,6 +47,7 @@ namespace GFX
 		delete(m_consolePainter);
 		delete(m_splashPainter);
 		delete(m_fboPainter);
+        delete(m_overlayPainter);
 	}
 
 	void RenderCore::Initialize(int windowWidth, int windowHeight)
@@ -77,6 +78,8 @@ namespace GFX
 		m_consolePainter = new ConsolePainter(m_shaderManager, m_uniformBufferManager);
 		m_splashPainter = new SplashPainter(m_shaderManager, m_uniformBufferManager);
 		m_fboPainter = new FBOPainter(m_shaderManager, m_uniformBufferManager);
+		m_overlayPainter = new OverlayPainter(m_shaderManager, m_uniformBufferManager, 
+			m_renderJobManager, m_meshManager, m_textureManager, m_materialManager);
 		m_playSplash = false;
 
 
@@ -94,6 +97,7 @@ namespace GFX
 		m_consolePainter->Initialize(m_FBO, m_dummyVAO);
 		m_splashPainter->Initialize(m_FBO, m_dummyVAO);
 		m_fboPainter->Initialize(m_FBO, m_dummyVAO);
+        m_overlayPainter->Initialize(m_FBO, m_dummyVAO);
 
 		// Set console width
 		m_consolePainter->SetConsoleHeight(m_windowHeight);
@@ -136,7 +140,6 @@ namespace GFX
 	{
 		m_textureManager->DeleteTexture(id);
 	}
-
 	
 	void RenderCore::CreateMaterial(unsigned long long int& id)
 	{
@@ -230,6 +233,7 @@ namespace GFX
 
 			GFX_CHECKTIME(m_debugPainter->Render(m_depthBuffer, m_normalDepth, m_viewMatrix, m_projMatrix), "Debug");
 			GFX_CHECKTIME(m_consolePainter->Render(), "Console");
+			GFX_CHECKTIME(m_overlayPainter->Render( m_overlayViewMatrix, m_overlayProjMatrix ), "Console");
 			GFX_CHECKTIME(m_textPainter->Render(), "Text");
 		}
 		else
@@ -244,6 +248,7 @@ namespace GFX
 
 			m_debugPainter->Render(m_depthBuffer, m_normalDepth, m_viewMatrix, m_projMatrix);
 			m_consolePainter->Render();
+			m_overlayPainter->Render( m_overlayViewMatrix, m_overlayProjMatrix );
 			m_textPainter->Render();
 		}
 
@@ -352,6 +357,16 @@ namespace GFX
 	{
 		m_projMatrix = proj;
 	}
+
+    void RenderCore::SetOverlayViewMatrix( glm::mat4 view )
+    {
+        m_overlayViewMatrix = view;
+    }
+
+    void RenderCore::SetOverlayProjMatrix( glm::mat4 proj )
+    {
+        m_overlayProjMatrix = proj;
+    }
 
 	bool RenderCore::GetConsoleVisible()
 	{
