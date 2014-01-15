@@ -187,12 +187,12 @@ namespace GFX
 			Renderer().DeleteTexture(id);
 		}
 
-		void LoadStaticMesh(unsigned int& meshID, int& sizeVerts, int& sizeIndices, GFX::StaticVertex* verts, int* indices)
+		void LoadMesh(unsigned int& meshID, int& sizeVerts, int& sizeIndices, GFX::Vertex* verts, int* indices)
 		{
-			Renderer().LoadStaticMesh(meshID, sizeVerts, sizeIndices, verts, indices);
+			Renderer().LoadMesh(meshID, sizeVerts, sizeIndices, verts, indices);
 		}
 
-		void DeleteStaticMesh(unsigned int& meshID)
+		void DeleteMesh(unsigned int& meshID)
 		{
 			Renderer().DeleteMesh(meshID);
 		}

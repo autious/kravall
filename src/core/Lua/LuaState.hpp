@@ -30,7 +30,8 @@ namespace Core
         public:
             LuaState();
             ~LuaState();
-
+            
+            void OpenLibs();
             bool Execute( const char *filename ); 
             bool DoBlock( const char *block );
             int DoBlock( const char * block, int args, int rargs );

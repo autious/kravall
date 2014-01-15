@@ -97,7 +97,6 @@ namespace GFX
 
 		// Set console width
 		m_consolePainter->SetConsoleHeight(m_windowHeight);
-
 	}
 
 	void RenderCore::Resize(int width, int height)
@@ -123,9 +122,9 @@ namespace GFX
 		m_meshManager->DeleteMesh(id);
 	}
 	
-	void RenderCore::LoadStaticMesh(unsigned int& meshID, const int& sizeVerts, const int& sizeIndices, StaticVertex* verts, int* indices)
+	void RenderCore::LoadMesh(unsigned int& meshID, int& sizeVerts, int& sizeIndices, GFX::Vertex* verts, int* indices)
 	{
-		m_meshManager->LoadStaticMesh(meshID, sizeVerts, sizeIndices, verts, indices);
+		m_meshManager->LoadMesh(meshID, sizeVerts, sizeIndices, verts, indices);
 	}
 
 	void RenderCore::LoadTexture(unsigned int& id, unsigned char* data, int width, int height)

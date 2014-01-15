@@ -85,11 +85,14 @@ extern "C"
 
 Core::LuaState::LuaState()
 {
-    LOG_DEBUG << "Creating lua state" << std::endl;
     m_state = luaL_newstate();
-    int sanity = lua_gettop( m_state );
-    m_activeUpdate = true;
+    m_activeUpdate = false;
+}
 
+void Core::LuaState::OpenLibs()
+{
+
+    int sanity = lua_gettop( m_state );
     luaL_openlibs( m_state ); 
 
     //Add extra paths for require commands.
@@ -121,6 +124,7 @@ Core::LuaState::LuaState()
         luau_setfunction( m_state, "__newindex", LuaCoreNewindex );
     lua_setmetatable( m_state, -2 ),
     lua_pop( m_state, 1 );
+
     assert( sanity == lua_gettop(m_state) );
 }
 
