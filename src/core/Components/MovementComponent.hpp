@@ -2,6 +2,8 @@
 #define SRC_CORE_COMPONENTS_MOVEMENT_COMPONENT_HPP
 
 #include <float.h> // For FLT_MAX
+#include <cassert>
+#include <cmath>
 
 namespace Core
 {
@@ -57,6 +59,26 @@ namespace Core
         {
             return "MovementComponent";
         }
+
+		static void SetDirection(float* direction, const float& newX, const float& newY, const float& newZ)
+		{
+			// Make sure vector is normalised.
+			assert((newX == 0.0f && newY == 0.0f && newZ == 0.0f) || ((std::sqrt(newX * newX + newY * newY + newZ * newZ) - 1.0) < 0.01));
+
+			direction[0] = newX;
+			direction[1] = newY;
+			direction[2] = newZ;
+		}
+
+		static void InterpolateToDirection(float* direction, const float& newX, const float& newY, const float& newZ)
+		{
+			/*float factor = 0.2; // factor 1.0 -> new, factor 0.0 -> old
+			float invFactor = 1.0f - factor;
+
+			SetDirection(direction, factor * newX + invFactor * direction[0], factor * newY + invFactor * direction[1], factor * newZ + invFactor * direction[2]);*/
+
+			SetDirection(direction, newX, newY, newZ);
+		}
 	};
 }
 #endif

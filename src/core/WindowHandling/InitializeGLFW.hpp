@@ -6,10 +6,27 @@
 #include "GLFWInclude.hpp"
 #include <gfx/GFXInterface.hpp>
 #include <World.hpp>
+#include <WindowHandling/GLFWWindowCallbackHandler.hpp>
+
 
 namespace Core
 {
-	enum WindowMode
+    class BufferResizeCallback : public GLFWWindowCallbackInterface
+    {
+    public:
+        virtual void WindowResize( int width, int height )
+        {
+            
+        }
+
+        virtual void FramebufferResize( int width, int height )
+        {
+            GFX::Resize(width, height);
+        }
+    } buffResize;
+    
+    
+    enum WindowMode
 	{
 		WMODE_WINDOWED = 0,
 		WMODE_WINDOWED_BORDERLESS,
@@ -17,10 +34,6 @@ namespace Core
 		WMODE_FULLSCREEN_BORDERLESS
 	};
 
-	void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-	{
-		GFX::Resize(width, height);
-	}
 
 	int InitializeGLFW(GLFWwindow** window, int width, int height, enum WindowMode wMode )
 	{
@@ -99,7 +112,8 @@ namespace Core
 		glfwSwapInterval(Core::world.m_config.GetInt("vsync", 1));
 
 		// assign callback functions...
-		glfwSetFramebufferSizeCallback((*window), framebuffer_size_callback);
+        Core::GLFWWindowCallbackHandler::Get().SetWindow( *window );
+        Core::GLFWWindowCallbackHandler::Get().RegisterCallback( &buffResize );
 
 		// init glew
 		glewExperimental = true;

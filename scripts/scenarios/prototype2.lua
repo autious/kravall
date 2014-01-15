@@ -10,10 +10,21 @@ local police = require "entities/police"
 local building = require "entities/building"
 		
 local centerPoint = { 0, 0, 0 }
-local side = math.sqrt( 1000 )
-for i = -side / 2, side / 2 do
-	for p = -side / 2, side / 2 do
-		rioter.create( asm, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], 0 )
+local side = 32 -- math.sqrt( 1000 )
+for i = -side / 2, -1 do
+	for p = -side / 2, -1 do
+		rioter.create( asm, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], 0 )
+	end                         
+	for p = 1, side / 2 do      
+		rioter.create( asm, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], 1 )
+	end                         
+end                             
+for i = 1, side / 2 do          
+	for p = -side / 2, -1 do    
+		rioter.create( asm, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], 2 )
+	end                         
+	for p = 1, side / 2 do      
+		rioter.create( asm, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], 3 )
 	end
 end
 
