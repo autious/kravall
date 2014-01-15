@@ -16,7 +16,7 @@ namespace GFX
 
 	struct StaticMeshData
 	{
-		std::vector<StaticVertex> vertices;
+		std::vector<GFX::Vertex> vertices;
 		std::vector<int> indices;
 	};
 

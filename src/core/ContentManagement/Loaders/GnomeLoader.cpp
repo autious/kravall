@@ -32,7 +32,7 @@ namespace Core
         if(gnome != nullptr)
         {
 
-            GFX::Content::LoadStaticMesh(modelData->meshID, gnome->numberOfVertices, gnome->numberOfIndices, gnome->vertices, gnome->indices);
+            GFX::Content::LoadMesh(modelData->meshID, gnome->numberOfVertices, gnome->numberOfIndices, gnome->vertices, gnome->indices);
 
             m_modelData.push_back(modelData);            
 
@@ -69,7 +69,7 @@ namespace Core
 
         if(gnome != nullptr)
         {
-            GFX::Content::LoadStaticMesh(modelData->meshID, gnome->numberOfVertices, gnome->numberOfIndices, gnome->vertices, gnome->indices);
+            GFX::Content::LoadMesh(modelData->meshID, gnome->numberOfVertices, gnome->numberOfIndices, gnome->vertices, gnome->indices);
 
             m_modelData.push_back(modelData);
             
@@ -111,7 +111,7 @@ namespace Core
                 break;
             }
         }
-		GFX::Content::DeleteMesh(modelData->meshID);
+        GFX::Content::DeleteMesh(modelData->meshID);        
         delete modelData;
     }
 
@@ -151,16 +151,16 @@ namespace Core
             gnome->numberOfBones = header.numberOfBones;
             gnome->numberOfAnimations = header.numberOfAnimations;
 
-			gnome->vertices = new GFX::StaticVertex[header.numberOfVertices];
+			gnome->vertices = new GFX::Vertex[header.numberOfVertices];
 			gnome->indices = new int[header.numberOfIndices];
             gnome->bones = new Core::GnomeLoader::Bone[header.numberOfBones];
             gnome->animations = new Core::GnomeLoader::Animation[header.numberOfAnimations];
 
 			/* Vertex */
-			m_file.read((char*)gnome->vertices, sizeof(Vertex)* header.numberOfVertices);
+			m_file.read((char*)gnome->vertices, sizeof(GFX::Vertex) * header.numberOfVertices);
 
 			/* Index */
-			m_file.read((char*)gnome->indices, sizeof(int)* header.numberOfIndices);
+			m_file.read((char*)gnome->indices, sizeof(int) * header.numberOfIndices);
 
 			/* Animations */
 			if (header.numberOfBones)
@@ -190,18 +190,6 @@ namespace Core
 					}
 				}
 			}
-
-            //Apply data to GFX buffers
-            for (int i = 0; i < gnome->numberOfVertices; i++)
-            {
-                for (int j = 0; j < 3; j++)
-                    gnome->vertices[i].binormal[j] = gnome->vertices[i].tangent[j]; //TODO: FIX: This is only while there is no calculation for the binormal
-
-                gnome->vertices[i].position[3] = 1.0f;
-                gnome->vertices[i].normal[3] = 0.0f;
-                gnome->vertices[i].tangent[3] = 0.0f;
-                gnome->vertices[i].tangent[3] = 0.0f;
-            }
 
 			/* Done! */
             m_file.close();

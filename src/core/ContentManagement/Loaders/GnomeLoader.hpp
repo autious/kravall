@@ -66,25 +66,10 @@ namespace Core
 			BoneForAnimation* boneAnim;
 		};
 
-		struct Vertex
-		{
-			//Ordinary stuff
-			float position[3];
-			float normal[3];
-
-			//Normalmapping
-			float tangent[3];
-			float uv[2];
-
-			//Animation
-			//float boneWeight[4];
-			//int boneIndex[4];
-		};
-
         struct Gnome
         {
             int numberOfVertices;
-            GFX::StaticVertex* vertices;
+            GFX::Vertex* vertices;
             int numberOfIndices;
             int* indices;
             int numberOfBones;

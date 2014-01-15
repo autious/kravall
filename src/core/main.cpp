@@ -24,8 +24,6 @@
 #include <World.hpp>
 
 #include "Console/Console.hpp"
-#include "BGnomeImporter.hpp"
-
 #include "Console/CLOP.hpp"
 #include <sstream>
 
