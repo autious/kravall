@@ -89,14 +89,22 @@ void Core::FieldReactionSystem::UpdateAgents()
 
 			if (highestSum - staySum > STAY_LIMIT)
 			{
-				float invLength = 1.0f / std::sqrt(bestIndex.x * bestIndex.x + bestIndex.y * bestIndex.y);
-				mc->direction[0] = bestIndex.x * invLength;
-				mc->direction[2] = bestIndex.y * invLength;
+				if (bestIndex.x == 0.0f || bestIndex.y == 0.0f)
+					MovementComponent::SetDirection(mc->direction, bestIndex.x, 0.0f, bestIndex.y);
+				else
+				{
+					float invLength = 1.0f / std::sqrt(bestIndex.x * bestIndex.x + bestIndex.y * bestIndex.y);
+
+					MovementComponent::InterpolateToDirection(mc->direction, bestIndex.x * invLength, 0.0f, bestIndex.y * invLength);
+					/*mc->direction[0] = bestIndex.x * invLength;
+					mc->direction[2] = bestIndex.y * invLength;*/
+				}
 			}
 			else
 			{
-				mc->direction[0] = 0.0f;
-				mc->direction[2] = 0.0f;
+				MovementComponent::InterpolateToDirection(mc->direction, 0.0f, 0.0f, 0.0f);
+				/*mc->direction[0] = 0.0f;
+				mc->direction[2] = 0.0f;*/
 			}
 		}
 	}

@@ -51,6 +51,7 @@ namespace Core
 		};
 
 		static const float STAY_LIMIT;
+		//static const float SQR
 
 		static const int FIELD_SIDE_LENGTH = 24;
 		static const int FIELD_SIDE_CELL_COUNT = 60;
