@@ -114,8 +114,8 @@ namespace Core
     {
         if( nScrollEvents < NUMBER_OF_SCROLL_EVENTS )
         { 
-            ScrollEvents[nScrollEvents].xoffset = xoffset;
-            ScrollEvents[nScrollEvents].yoffset = yoffset;
+            ScrollEvents[nScrollEvents].xoffset = static_cast<int>(xoffset);
+            ScrollEvents[nScrollEvents].yoffset = static_cast<int>(yoffset);
             nScrollEvents++;
         }
         else
@@ -289,5 +289,10 @@ namespace Core
     
         x = px - cx;
         y = py - cy;
+    }
+
+    void InputManager::SetCursorPosition( const int x, const int y )
+    {
+        glfwSetCursorPos( m_window, x,y );
     }
 }

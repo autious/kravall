@@ -36,7 +36,7 @@ Core::ComponentGetters Core::LightComponentBinding::GetGetters()
     
         return 1;
     };
-
+	
     getters["color"] = []( Core::Entity entity, lua_State * L )
     {
         LightComponent *lc = WGETC<LightComponent>( entity );
@@ -53,6 +53,22 @@ Core::ComponentGetters Core::LightComponentBinding::GetGetters()
         return 1;
     };
 
+    getters["speccolor"] = []( Core::Entity entity, lua_State * L )
+    {
+        LightComponent *lc = WGETC<LightComponent>( entity );
+        
+        lua_newtable( L );  
+
+        for( int i = 0; i < 3; i++ )
+        {
+            lua_pushinteger( L, i+1 );
+            lua_pushnumber( L, lc->specColor[i] );
+            lua_settable( L, -3 );
+        }
+        
+        return 1;
+    };
+
     getters["intensity"] = []( Core::Entity entity, lua_State * L )
     {
         LightComponent *lc = WGETC<LightComponent>( entity );
@@ -62,11 +78,20 @@ Core::ComponentGetters Core::LightComponentBinding::GetGetters()
         return 1;
     };
 
-    getters["spotlightangle"] = []( Core::Entity entity, lua_State * L )
+    getters["spotangle"] = []( Core::Entity entity, lua_State * L )
     {
         LightComponent *lc = WGETC<LightComponent>( entity );
 
         lua_pushnumber( L, lc->lightSpecific.spotLight.angle );
+    
+        return 1;
+    };
+
+    getters["spotpenumbra"] = []( Core::Entity entity, lua_State * L )
+    {
+        LightComponent *lc = WGETC<LightComponent>( entity );
+
+        lua_pushnumber( L, lc->lightSpecific.spotLight.penumbraAngle );
     
         return 1;
     };
@@ -109,7 +134,28 @@ Core::ComponentSetters Core::LightComponentBinding::GetSetters()
                     
                 if( lua_isnumber( L, -1 ) )
                 {
-                    lc->color[i] = lua_tonumber( L, -1 );  
+                    lc->color[i] = static_cast<float>(lua_tonumber( L, -1 ));  
+                }
+
+                lua_pop( L, 1 );
+            }
+        }
+    };
+	
+    setters["speccolor"] = [](Core::Entity entity, lua_State * L, int valueindex )
+    {
+        LightComponent *lc = WGETC<LightComponent>( entity );
+
+        if( lua_istable( L, valueindex ) )
+        {
+            for( int i = 0; i < 3; i++ )
+            {
+                lua_pushinteger( L, i+1 );
+                lua_gettable( L, valueindex );
+                    
+                if( lua_isnumber( L, -1 ) )
+                {
+                    lc->specColor[i] = static_cast<float>(lua_tonumber( L, -1 ));  
                 }
 
                 lua_pop( L, 1 );
@@ -123,25 +169,39 @@ Core::ComponentSetters Core::LightComponentBinding::GetSetters()
             
         if( lua_isnumber( L, valueindex ) )
         {
-            lc->intensity = lua_tonumber( L, valueindex );
+            lc->intensity = static_cast<float>(lua_tonumber( L, valueindex ));
         }  
         else
         {
-            luaL_error( L, "Unable to set material, given parameter is not integer value" );
+            luaL_error( L, "Unable to set intensity, given parameter is not number value" );
         }
     };
 
-    setters["spotlightangle"] = [](Core::Entity entity, lua_State * L, int valueindex )
+    setters["spotangle"] = [](Core::Entity entity, lua_State * L, int valueindex )
     {
         LightComponent *lc = WGETC<LightComponent>( entity );
             
         if( lua_isnumber( L, valueindex ) )
         {
-            lc->lightSpecific.spotLight.angle = lua_tonumber( L, valueindex );
+            lc->lightSpecific.spotLight.angle = static_cast<float>(lua_tonumber( L, valueindex ));
         }  
         else
         {
-            luaL_error( L, "Unable to set material, given parameter is not integer value" );
+            luaL_error( L, "Unable to set spotangle, given parameter is not number value" );
+        }
+    };
+
+    setters["spotpenumbra"] = [](Core::Entity entity, lua_State * L, int valueindex )
+    {
+        LightComponent *lc = WGETC<LightComponent>( entity );
+            
+        if( lua_isnumber( L, valueindex ) )
+        {
+            lc->lightSpecific.spotLight.penumbraAngle = static_cast<float>(lua_tonumber( L, valueindex ));
+        }  
+        else
+        {
+            luaL_error( L, "Unable to set spotpenumbra, given parameter is not number value" );
         }
     };
 

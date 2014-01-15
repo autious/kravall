@@ -14,7 +14,7 @@ static void CreateLightsAndTea()
     Core::world.m_contentManager.Load<Core::MaterialLoader>("assets/material/test-material.material", [&materialID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
             {
                 Core::MaterialData* data = static_cast<Core::MaterialData*>(handle);
-                materialID = data->materialId;
+                materialID = (unsigned int)data->materialId;
             }, false);
 
 	for (int i = -10; i < 10; i++)

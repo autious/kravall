@@ -10,6 +10,7 @@
 #include <Input/Interfaces/ScrollEventListener.hpp>
 #include <Input/Interfaces/CharEventListener.hpp>
 #include <Input/Interfaces/KeyEventListener.hpp>
+#include <Timer.hpp>
 
 namespace Core
 {
@@ -56,6 +57,8 @@ namespace Core
 		*/
 		void SetInputLine(const std::string& inputLine);
 
+        std::string GetInputLine( );
+
 		/*!
 		Executes the current line and adds the command to console and history.
 		*/
@@ -95,6 +98,13 @@ namespace Core
 		void PrintLine(std::string str, Color color);
 
 		inline bool IsVisible() { return m_visible; }
+        inline void SetVisible( bool value ) { m_visible = value; }
+		
+		void EnableInteractiveLua();
+
+		void DisableInteractiveLua();
+
+		void PasteClipboard();
 
 	private:
 
@@ -117,6 +127,7 @@ namespace Core
 	private:
 
 		bool m_visible;
+		bool m_interactiveLua;
 
         GFX::FontData* m_font;
 
@@ -125,6 +136,7 @@ namespace Core
 
 		int m_offset;
 		int m_cursorOffset;
+		int m_lastCursorOffset;
 
 		const std::string m_delChars = " +-*/\"\'.,!?(){}[]";
 
@@ -137,6 +149,7 @@ namespace Core
 		std::vector<Line> m_console;
 		std::vector<std::string> m_history;
 
+		Core::HighresTimer m_timer;
 	};
 	DebugConsole& Console();
 

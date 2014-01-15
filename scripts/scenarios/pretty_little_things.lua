@@ -19,12 +19,12 @@ asm:loadAssembly(
 	},
 	{
 		type = core.componentType.ScaleComponent,
-		data = { scale = 100.0 }
+		data = { scale = 5.0 }
 	},
 	{
 		type = core.componentType.RotationComponent,
 		--data = { rotation = { 0,0, math.sin( 3.14 ), math.cos(3.14/2.0) } }
-		data = { rotation = { 1*math.sin( -3.14/4 ), 0, 0, math.cos( -3.14/4 ) } }
+		data = { rotation = { 0, 0, 0, 0 } }
 	}
 }
 )
@@ -217,6 +217,7 @@ asm:loadAssembly(
             type = core.componentType.LightComponent,
             data =  { 
                         color = { 1.0, 0.0, 0.0 },
+                        speccolor = { 1.0, 0.0, 0.0 },
                         intensity = 1.0,
                         type = core.gfx.objectTypes.Light,
                         lighttype = core.gfx.lightTypes.Point
@@ -236,45 +237,19 @@ asm:loadAssembly(
         }
     } 
     )
+	
 for i = 0, 255 do
+	local color = { math.random(), math.random(), math.random() }
     asm:loadAssembly( 
     {
         {
             type = core.componentType.LightComponent,
             data =  { 
-                        color = { math.random(), math.random(), math.random() },
+                        color = color,
+                        speccolor = color,
                         intensity = 1.0,
                         type = core.gfx.objectTypes.Light,
                         lighttype = core.gfx.lightTypes.Point
-                    }
-        },
-        {
-            type = core.componentType.WorldPositionComponent,
-            data = { position = { -50.0 + 100.0 * math.random(), 13 + 2.5 * math.random(), -50.0 + 100.0 * math.random() } }
-        },
-        {
-            type = core.componentType.ScaleComponent,
-            data = { scale = 15.0 + 25.0 * math.random() }
-        },
-        {
-            type = core.componentType.RotationComponent,
-            data = { rotation = { math.random(),-1,math.random(),0 } }
-        }
-    } 
-    )
-end
--- Spotlight
-for i = 0, 255 do
-    asm:loadAssembly( 
-    {
-        {
-            type = core.componentType.LightComponent,
-            data =  { 
-                        color = { math.random(), math.random(), math.random() },
-                        intensity = 1.0,
-						spotlightangle = 3.14/4.0,
-                        type = core.gfx.objectTypes.Light,
-                        lighttype = core.gfx.lightTypes.Spot
                     }
         },
         {
@@ -287,7 +262,39 @@ for i = 0, 255 do
         },
         {
             type = core.componentType.RotationComponent,
-            data = { rotation = { math.random(),-1,math.random(),0 } }
+            data = { rotation = { 0.0,0.0,0.0,0 } }
+        }
+    } 
+    )
+end
+-- Spotlight
+for i = 0, 255 do
+	local color = { math.random(), math.random(), math.random() }
+    asm:loadAssembly( 
+    {
+        {
+            type = core.componentType.LightComponent,
+            data =  { 
+                        color = color,
+                        speccolor = color,
+                        intensity = 1.0,
+						spotangle = 3.14/4.0,
+						spotpenumbra = math.random(),
+                        type = core.gfx.objectTypes.Light,
+                        lighttype = core.gfx.lightTypes.Spot
+                    }
+        },
+        {
+            type = core.componentType.WorldPositionComponent,
+            data = { position = { -50.0 + 100.0 * math.random(), 11 + 2.5 * math.random(), -50.0 + 100.0 * math.random() } }
+        },
+        {
+            type = core.componentType.ScaleComponent,
+            data = { scale = 5.0 + 5.0 * math.random() }
+        },
+        {
+            type = core.componentType.RotationComponent,
+            data = { rotation = { math.random(),-math.random() - 0.1,math.random(),0 } }
         }
     } 
     )
@@ -299,8 +306,10 @@ asm:loadAssembly(
 		type = core.componentType.LightComponent,
 		data =  { 
 					color = { 0.8, 0.4, 0.2 },
+					speccolor = { 0.8, 0.4, 0.2 },
 					intensity = 15.0,
-					spotlightangle = 3.14/4.0,
+					spotangle = 3.14/4.0,
+					spotpenumbra = 0.03,
 					type = core.gfx.objectTypes.Light,
 					lighttype = core.gfx.lightTypes.Spot
 				}
@@ -311,7 +320,7 @@ asm:loadAssembly(
 	},
 	{
 		type = core.componentType.ScaleComponent,
-		data = { scale = 50.0 }
+		data = { scale = 150.0 }
 	},
 	{
 		type = core.componentType.RotationComponent,
@@ -325,15 +334,17 @@ asm:loadAssembly(
 		type = core.componentType.LightComponent,
 		data =  { 
 					color = { 0.4, 0.8, 0.2 },
+					speccolor = { 0.4, 0.8, 0.2 },
 					intensity = 15.0,
-					spotlightangle = 3.14/4.0,
+					spotangle = 3.14/7.0,
+					spotpenumbra = 0.03,
 					type = core.gfx.objectTypes.Light,
 					lighttype = core.gfx.lightTypes.Spot
 				}
 	},
 	{
 		type = core.componentType.WorldPositionComponent,
-		data = { position = { 0, 30, 0 } }
+		data = { position = { -20, 15, 20 } }
 	},
 	{
 		type = core.componentType.ScaleComponent,
@@ -341,7 +352,7 @@ asm:loadAssembly(
 	},
 	{
 		type = core.componentType.RotationComponent,
-		data = { rotation = { 1,-1,0,0 } }
+		data = { rotation = { 1,-0.5,-1,0 } }
 	}
 } 
 )
@@ -351,15 +362,17 @@ asm:loadAssembly(
 		type = core.componentType.LightComponent,
 		data =  { 
 					color = { 0.2, 0.7, 0.8 },
+					speccolor = { 0.2, 0.7, 0.8 },
 					intensity = 15.0,
-					spotlightangle = 3.14/6.0,
+					spotangle = 3.14/3.0,
+					spotpenumbra = 0.5,
 					type = core.gfx.objectTypes.Light,
 					lighttype = core.gfx.lightTypes.Spot
 				}
 	},
 	{
 		type = core.componentType.WorldPositionComponent,
-		data = { position = { -10, 30, -5 } }
+		data = { position = { -20, 12, -5 } }
 	},
 	{
 		type = core.componentType.ScaleComponent,
@@ -367,7 +380,7 @@ asm:loadAssembly(
 	},
 	{
 		type = core.componentType.RotationComponent,
-		data = { rotation = { 1,-1,0,0 } }
+		data = { rotation = { 1,0,0,0 } }
 	}
 } 
 )
@@ -380,7 +393,8 @@ asm:loadAssembly(
 		type = core.componentType.LightComponent,
 		data =  { 
 					color = { 1.0, 1.0, 1.0 },
-					intensity = 0.1,
+					speccolor = { 1.0, 1.0, 1.0 },
+					intensity = 0.05,
 					type = core.gfx.objectTypes.Light,
 					lighttype = core.gfx.lightTypes.Dir
 				}

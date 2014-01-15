@@ -27,9 +27,10 @@ namespace Core
 			data->radius_length = 0.0f;
 			data->color = glm::vec3(0.0f);
 			data->intensity = 0.0f;
-			data->pad = glm::vec3(0.0f);
+			data->spec_color = glm::vec3(0.0f);
+			data->spot_penumbra = 0.0f;
 			data->spot_angle = 0.0f;
-			data->orientation = glm::vec4(0.0f);
+			data->orientation = glm::vec3(0.0f);
 
             unsigned int lightType = LightComponent::GetLightType( *lc );
 			
@@ -44,6 +45,9 @@ namespace Core
 					data->color[1] = lc->color[1];
 					data->color[2] = lc->color[2];
 					data->intensity = lc->intensity;
+					data->spec_color[0] = lc->specColor[0];
+					data->spec_color[1] = lc->specColor[1];
+					data->spec_color[2] = lc->specColor[2];
 
 					//wpc->position[0] = 45 * cos(lel + double(i));
 					//wpc->position[2] = 45 * sin(double(i%16) * lel*0.1f + double(i));
@@ -63,17 +67,20 @@ namespace Core
 					data->color[1] = lc->color[1];
 					data->color[2] = lc->color[2];
 					data->intensity = lc->intensity;
+					data->spec_color[0] = lc->specColor[0];
+					data->spec_color[1] = lc->specColor[1];
+					data->spec_color[2] = lc->specColor[2];
+					data->spot_penumbra = lc->lightSpecific.spotLight.penumbraAngle;
 					data->spot_angle = lc->lightSpecific.spotLight.angle;
 
-					data->orientation = glm::vec4(	RotationComponent::GetQuat(rc->rotation).x*cos(10.0f*lel+ double(i)),
+					data->orientation = glm::vec3(	RotationComponent::GetQuat(rc->rotation).x,
 													RotationComponent::GetQuat(rc->rotation).y,
-													RotationComponent::GetQuat(rc->rotation).z*sin(10.0f*lel + double(i+3)),
-													RotationComponent::GetQuat(rc->rotation).w);
+													RotationComponent::GetQuat(rc->rotation).z );
 					data->position = WorldPositionComponent::GetVec3(*wpc);
 					data->radius_length = sc->scale;
 
-					wpc->position[0] = 45 * cos(lel + double(i));
-					wpc->position[2] = 45 * sin(double(i%16) * lel*0.1f + double(i));
+					//wpc->position[0] = float(45 * cos(lel + double(i)));
+					//wpc->position[2] = float(45 * sin(double(i%16) * lel*0.1f + double(i)));
 
 					//GFX::Debug::DrawSphere(data->position, sc->scale, glm::vec4(data->color, 1.0f), false);
 					//glm::vec3 dir = glm::normalize(glm::vec3(data->orientation)) * data->radius_length;
@@ -89,10 +96,12 @@ namespace Core
 					data->color[1] = lc->color[1];
 					data->color[2] = lc->color[2];
 					data->intensity = lc->intensity;
-					data->orientation = glm::vec4(	RotationComponent::GetQuat(rc->rotation).x,
+					data->spec_color[0] = lc->specColor[0];
+					data->spec_color[1] = lc->specColor[1];
+					data->spec_color[2] = lc->specColor[2];
+					data->orientation = glm::vec3(	RotationComponent::GetQuat(rc->rotation).x,
 													RotationComponent::GetQuat(rc->rotation).y,
-													RotationComponent::GetQuat(rc->rotation).z,
-													RotationComponent::GetQuat(rc->rotation).w);
+													RotationComponent::GetQuat(rc->rotation).z);
 				}
 				break;
 

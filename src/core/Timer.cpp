@@ -30,6 +30,16 @@ namespace Core
 	#endif
 	}
 
+	
+	void HighresTimer::Reset()
+	{
+	#ifndef WCLOCK
+		m_totalStart = std::chrono::high_resolution_clock::now();
+	#else
+		QueryPerformanceCounter(&m_totalStart);
+	#endif
+	}
+
 	std::chrono::microseconds HighresTimer::GetDelta()
 	{
 	#ifndef WCLOCK
@@ -52,11 +62,5 @@ namespace Core
 		long long elapsed = 1000 * (now.QuadPart - m_totalStart.QuadPart)/m_frequency.QuadPart;
 		return elapsed;
 	#endif
-	}
-
-	HighresTimer& Timer()
-	{
-		static HighresTimer timer;
-		return timer;
 	}
 }

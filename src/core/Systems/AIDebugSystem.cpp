@@ -60,12 +60,39 @@ void CheckNavMeshCalculation()
 }
 
 
+void GetPlanePoint()
+{
+	if( !Core::GetInputManager().GetMouseState().IsButtonDown(2) )
+		return;
+
+	int systemMax = Core::world.m_systemHandler.GetSystemCount();
+	int pickingSystem = -1;
+	for( int i = 0; i < systemMax; i++ )
+	{
+		if( std::string(Core::world.m_systemHandler.GetSystem( i )->GetHumanName()).compare( "PickingSystem" ) == 0 )
+			pickingSystem = i;
+	}
+
+	if( pickingSystem < 0 )
+		return;
+
+	int x, y;
+	Core::GetInputManager().GetMouseState().GetCursorPosition( x, y );
+	glm::vec3 position = ((Core::PickingSystem*)Core::world.m_systemHandler.GetSystem( pickingSystem ))->GetGroundHit( x, y );
+
+	int o = 0;
+}
+
+
 
 void Core::AIDebugSystem::Update( float delta )
 {
 	MarkClickedObject();
 
 	CheckNavMeshCalculation();
+
+
+
 
 	if( Core::GetNavigationMesh() )
 		Core::GetNavigationMesh()->DrawDebug();

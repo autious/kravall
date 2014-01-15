@@ -123,7 +123,7 @@ Core::ComponentSetters Core::AttributeComponentBinding::GetSetters()
         
         if( lua_isnumber(  L, valueindex ) )
         {
-            atrbc->health = lua_tonumber( L, valueindex );
+            atrbc->health = static_cast<int>(lua_tonumber( L, valueindex ));
         }
         else
         {
@@ -137,7 +137,7 @@ Core::ComponentSetters Core::AttributeComponentBinding::GetSetters()
         
         if( lua_isnumber(  L, valueindex ) )
         {
-            atrbc->stamina = lua_tonumber( L, valueindex );
+            atrbc->stamina = static_cast<int>(lua_tonumber( L, valueindex ));
         }
         else
         {
@@ -151,7 +151,7 @@ Core::ComponentSetters Core::AttributeComponentBinding::GetSetters()
         
         if( lua_isnumber(  L, valueindex ) )
         {
-            atrbc->morale = lua_tonumber( L, valueindex );
+            atrbc->morale = static_cast<float>(lua_tonumber( L, valueindex ));
         }
         else
         {
@@ -172,7 +172,7 @@ Core::ComponentSetters Core::AttributeComponentBinding::GetSetters()
         
         if( lua_isnumber(  L, valueindex ) )
         {
-            atrbc->police.defense = lua_tonumber( L, valueindex );
+            atrbc->police.defense = static_cast<int>(lua_tonumber( L, valueindex ));
         }
         else
         {
@@ -186,7 +186,7 @@ Core::ComponentSetters Core::AttributeComponentBinding::GetSetters()
         
         if( lua_isnumber(  L, valueindex ) )
         {
-            atrbc->police.mobility = lua_tonumber( L, valueindex );
+            atrbc->police.mobility = static_cast<float>(lua_tonumber( L, valueindex ));
         }
         else
         {
@@ -200,7 +200,7 @@ Core::ComponentSetters Core::AttributeComponentBinding::GetSetters()
         
         if( lua_isnumber(  L, valueindex ) )
         {
-            atrbc->police.squadID = lua_tonumber( L, valueindex );
+            atrbc->police.squadID = static_cast<int>(lua_tonumber( L, valueindex ));
         }
         else
         {
@@ -221,7 +221,7 @@ Core::ComponentSetters Core::AttributeComponentBinding::GetSetters()
         
         if( lua_isnumber(  L, valueindex ) )
         {
-            atrbc->rioter.rage = lua_tonumber( L, valueindex );
+            atrbc->rioter.rage = static_cast<int>(lua_tonumber( L, valueindex ));
         }
         else
         {
@@ -235,7 +235,7 @@ Core::ComponentSetters Core::AttributeComponentBinding::GetSetters()
         
         if( lua_isnumber(  L, valueindex ) )
         {
-            atrbc->rioter.pressure = lua_tonumber( L, valueindex );
+            atrbc->rioter.pressure = static_cast<int>(lua_tonumber( L, valueindex ));
         }
         else
         {
@@ -249,7 +249,7 @@ Core::ComponentSetters Core::AttributeComponentBinding::GetSetters()
         
         if( lua_isnumber(  L, valueindex ) )
         {
-            atrbc->rioter.groupID = lua_tonumber( L, valueindex );
+            atrbc->rioter.groupID = static_cast<int>(lua_tonumber( L, valueindex ));
         }
         else
         {

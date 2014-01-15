@@ -24,23 +24,29 @@
 #include <Lua/Bridges/LuaUnitTypeBridge.hpp>
 #include <Lua/Bridges/LuaNavMeshBridge.hpp>
 #include <Lua/Bridges/LuaGLMBridge.hpp>
+#include <Lua/Bridges/LuaCameraBridge.hpp>
+#include <Lua/Bridges/LuaWindowBridge.hpp>
+#include <Lua/Bridges/LuaConsoleBridge.hpp>
 
 namespace Core
 {
     struct LuaStateBindings
     {
-        LuaStateBindings( lua_State *state ):
-        lb(state),
-        llp(state),
-        leb(state),
-        lcmb(state),
-        lib(state),
-        gfxb(state),
-        lacb(state),
-        lbvc(state),
-        lutcb(state),
-        lnmb(state),
-        lglmb(state)
+        LuaStateBindings( lua_State *L ):
+        lb(L),
+        llp(L),
+        leb(L),
+        lcmb(L),
+        lib(L),
+        gfxb(L),
+        lacb(L),
+        lbvc(L),
+        lutcb(L),
+        lnmb(L),
+        lglmb(L),
+        lcab(L),
+        lwb(L),
+        lcob(L)
         {}
             
         LuaBitmask lb;
@@ -54,6 +60,9 @@ namespace Core
         LuaUnitTypeComponentBridge lutcb;
         LuaNavMeshBridge lnmb;
         LuaGLMBridge lglmb;
+        LuaCameraBridge lcab;
+        LuaWindowBridge lwb;
+        LuaConsoleBridge lcob;
     };
 }
 
@@ -61,7 +70,10 @@ extern "C"
 {
     static int LuaCoreNewindex( lua_State * L )
     {
-        if( lua_isstring( L, 2 ) && (STREQ( lua_tostring( L, 2 ), "config" ) || STREQ( lua_tostring( L, 2 ), "update" )|| STREQ( lua_tostring( L,2 ), "init" ) ) )
+        if( lua_isstring( L, 2 ) && (STREQ( lua_tostring( L, 2 ), "config" ) 
+                || STREQ( lua_tostring( L, 2 ), "update" )
+                || STREQ( lua_tostring( L, 2 ), "init" ) 
+                || STREQ( lua_tostring( L, 2 ), "stop" ) ) )
         {
             lua_rawset( L, 1 );
             return 0;
@@ -169,16 +181,53 @@ int Core::LuaState::DoBlock( const char * block, int args, int rargs )
     return rargs;
 }
 
+bool Core::LuaState::Init( )
+{
+    lua_getglobal( m_state, "core" );
+    lua_getfield( m_state, -1, "init" );
+
+    int error = lua_pcall( m_state, 0,0,0 );
+
+    if( error )
+    {
+        LOG_ERROR << "Unable to call init: " << lua_tostring( m_state, -1 ) << std::endl;
+        lua_pop( m_state, 1 );
+    }
+
+    lua_pop( m_state, 1 );
+
+    return error == 0;
+}
+
+bool Core::LuaState::Stop( )
+{
+    lua_getglobal( m_state, "core" );
+    lua_getfield( m_state, -1, "stop" );
+
+    int error = lua_pcall( m_state, 0,0,0 );
+
+    if( error )
+    {
+        LOG_ERROR << "Unable to call stop: " << lua_tostring( m_state, -1 ) << std::endl;
+        lua_pop( m_state, 1 );
+    }
+
+    lua_pop( m_state, 1 );
+
+    return error == 0;
+}
+
 void Core::LuaState::Update( float delta )
 { 
     if( m_activeUpdate )
     {
         lua_rawgeti( m_state, LUA_REGISTRYINDEX, m_coreUpdateFunctionReg );
         lua_pushnumber( m_state, delta );
-        Timer().Start();   
+		this->
+        m_timer.Start();   
         int error = lua_pcall( m_state, 1,0,0 );
-        Timer().Stop();
-        m_lastFrameTime = Timer().GetDelta();
+        m_timer.Stop();
+        m_lastFrameTime = m_timer.GetDelta();
 
         if( error )
         {

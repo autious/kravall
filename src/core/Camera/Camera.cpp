@@ -3,8 +3,52 @@
 
 namespace Core
 {
-	Camera* gameCamera;
+	Camera gameCamera;
 
+    const glm::mat4& Camera::GetProjectionMatrix() const 
+    {
+        return m_projectionMatrix;
+    }
+
+    const glm::mat4& Camera::GetViewMatrix() const
+    {
+        return m_viewMatrix;
+    }
+
+    void Camera::SetViewMatrix( const glm::mat4 & view )
+    {
+        m_viewMatrix = view;
+    }
+
+    void Camera::SetProjectionMatrix( const glm::mat4 & proj )
+    {
+        m_projectionMatrix = proj;
+    }
+
+    glm::vec3 Camera::GetForward() const
+    {
+		return glm::vec3( -m_viewMatrix[0][2], -m_viewMatrix[1][2], -m_viewMatrix[2][2] );
+    }
+    
+    glm::vec3 Camera::GetUp() const
+    {
+		return glm::vec3( m_viewMatrix[0][1], m_viewMatrix[1][1], m_viewMatrix[2][1] );
+    }
+
+    glm::vec3 Camera::GetRight() const
+    {
+        return glm::vec3( m_viewMatrix[0][0], m_viewMatrix[1][0], m_viewMatrix[2][0] );
+    }
+
+    glm::vec3 Camera::GetPosition() const 
+    {
+        //glm::vec4 f = m_viewMatrix * glm::vec4( 0,0,0,1);
+		glm::mat4 inv = glm::inverse( m_viewMatrix );
+        //return glm::vec3( f[0],f[1],f[2] );
+		return glm::vec3( inv[3][0], inv[3][1], inv[3][2] );
+    }
+
+    /*
 	Camera::Camera(const float& fov, const float& nearZ, const float& farZ)
 	{
 		m_fov = fov;
@@ -79,4 +123,5 @@ namespace Core
 		m_viewMatrix = glm::lookAt(m_position, m_position + camera_roll_direction,
 			glm::cross(camera_roll_direction, camera_pitch_direction));
 	}
+    */
 }

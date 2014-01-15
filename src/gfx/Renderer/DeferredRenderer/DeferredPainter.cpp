@@ -55,7 +55,7 @@ namespace GFX
 
 		// Clear depth RT
 		float c[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-		glClearBufferfv(GL_COLOR, 1, &glm::vec4(0.0f, 0.0f, 0.0f,std::numeric_limits<float>::max())[0]);
+		glClearBufferfv(GL_COLOR, 1, &glm::vec4(0.0f, 0.0f, 0.0f,1.0f)[0]);
 
 		m_shaderManager->UseProgram("StaticMesh");
 		

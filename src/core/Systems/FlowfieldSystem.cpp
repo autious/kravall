@@ -33,7 +33,7 @@ void Core::FlowfieldSystem::Update( float delta )
 				glm::vec3& position = *reinterpret_cast<glm::vec3*>(wpc->position);
 
 				#define FF_VS_PF_FACTOR 0.5f
-				#define FF_NORMAL_INFLUENCE 1.0f
+				#define FF_NORMAL_INFLUENCE 0.6f
 
 				if( instance->CheckPointInsideNode( glm::vec3(position), p ) )
 				{

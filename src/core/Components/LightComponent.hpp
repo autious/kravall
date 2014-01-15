@@ -11,6 +11,7 @@ namespace Core
 		GFX::GFXBitmask bitmask;
         
         float color[3];
+		float specColor[3];
         float intensity;
         
         union
@@ -18,16 +19,20 @@ namespace Core
             struct 
             {
                 float angle;
+                float penumbraAngle;
             } spotLight;
         } lightSpecific;
 
 		LightComponent()
 		{
 			bitmask = 0;
-			color[0] = 0;
-			color[1] = 0;
-			color[2] = 0;
-            intensity = 0;
+			color[0] = 0.0f;
+			color[1] = 0.0f;
+			color[2] = 0.0f;
+			specColor[0] = 0.0f;
+			specColor[1] = 0.0f;
+			specColor[2] = 0.0f;
+            intensity = 0.0f;
 		}
 
 		static LightComponent GC()

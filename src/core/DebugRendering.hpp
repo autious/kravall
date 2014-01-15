@@ -53,7 +53,7 @@ static void EntityHandlerMemoryRender()
 
     int count = 0;
 
-    for( int i = 0; i < edul.size(); i++ )
+    for( unsigned int i = 0; i < edul.size(); i++ )
     {
         bool renderCurrent = i == 0 
             || ((renderAllComponents) 
