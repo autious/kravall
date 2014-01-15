@@ -57,6 +57,8 @@ namespace Core
 		*/
 		void SetInputLine(const std::string& inputLine);
 
+        std::string GetInputLine( );
+
 		/*!
 		Executes the current line and adds the command to console and history.
 		*/
@@ -96,6 +98,7 @@ namespace Core
 		void PrintLine(std::string str, Color color);
 
 		inline bool IsVisible() { return m_visible; }
+        inline void SetVisible( bool value ) { m_visible = value; }
 		
 		void EnableInteractiveLua();
 
