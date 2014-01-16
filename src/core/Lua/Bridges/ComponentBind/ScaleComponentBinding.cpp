@@ -43,7 +43,7 @@ Core::ComponentSetters Core::ScaleComponentBinding::GetSetters()
             for( int i = 0; i < 3; i++ )
             {
                 lua_rawgeti( L, valueindex, i+1 ); 
-                sc->scale[i] = luau_checkfloat( L, valueindex );
+                sc->scale[i] = luau_checkfloat( L, -1 );
                 lua_pop( L, 1 );
             }   
         }

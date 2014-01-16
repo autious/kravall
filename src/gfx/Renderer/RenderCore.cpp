@@ -227,13 +227,16 @@ namespace GFX
 			GFX_CHECKTIME(m_deferredPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix), "Geometry");
 			GFX_CHECKTIME(m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix), "Lighting");
 
+			GFX_CHECKTIME( m_overlayPainter->Render( renderJobIndex, m_overlayViewMatrix, m_overlayProjMatrix ), "Console");
 			//Render FBO
 			if (m_showFBO != 0)
 				GFX_CHECKTIME(m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, m_showFBO), "FBO");
 
+
 			GFX_CHECKTIME(m_debugPainter->Render(m_depthBuffer, m_normalDepth, m_viewMatrix, m_projMatrix), "Debug");
+
 			GFX_CHECKTIME(m_consolePainter->Render(), "Console");
-			GFX_CHECKTIME(m_overlayPainter->Render( m_overlayViewMatrix, m_overlayProjMatrix ), "Console");
+
 			GFX_CHECKTIME(m_textPainter->Render(), "Text");
 		}
 		else
@@ -242,14 +245,16 @@ namespace GFX
 			m_deferredPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
 			m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
 			
+			m_overlayPainter->Render( renderJobIndex, m_overlayViewMatrix, m_overlayProjMatrix );
 			//Render FBO
 			if (m_showFBO != 0)
 				m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, m_showFBO);
 
 			m_debugPainter->Render(m_depthBuffer, m_normalDepth, m_viewMatrix, m_projMatrix);
+
 			m_consolePainter->Render();
-			m_overlayPainter->Render( m_overlayViewMatrix, m_overlayProjMatrix );
 			m_textPainter->Render();
+
 		}
 
 		m_renderJobManager->Clear();

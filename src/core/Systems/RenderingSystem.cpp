@@ -1,6 +1,7 @@
 #include "RenderingSystem.hpp"
 #include "World.hpp"
 #include <gfx/GFXInterface.hpp>
+
 namespace Core
 {
 	void RenderingSystem::Update(float delta)

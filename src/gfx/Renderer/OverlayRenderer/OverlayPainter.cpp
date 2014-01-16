@@ -41,12 +41,14 @@ namespace GFX
         LOG_INFO << "PROJ: " << m_projectionMatrixUniform << std::endl;
     }
 
-    void OverlayPainter::Render( glm::mat4& viewMatrix, glm::mat4& projectionMatrix )
+    void OverlayPainter::Render( unsigned int& renderIndex, glm::mat4& viewMatrix, glm::mat4& projectionMatrix )
     {
 		BasePainter::Render();
 
 		glDisable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
+        glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+
 
 		m_shaderManager->UseProgram("Overlay");
 		
@@ -73,16 +75,15 @@ namespace GFX
         m_shaderManager->SetUniform(1, viewMatrix, m_viewMatrixUniform);
         m_shaderManager->SetUniform(1, projectionMatrix, m_projectionMatrixUniform);
 
-		for (unsigned int i = 0; i < renderJobs.size(); i++)
+		for (; renderIndex < renderJobs.size(); renderIndex++)
 		{
-			bitmask = renderJobs[i].bitmask;
+			bitmask = renderJobs[renderIndex].bitmask;
 
 			objType = GetBitmaskValue(bitmask, BITMASK::TYPE);
-
-			// Break if no opaque object
+            
 			if (objType != GFX::OBJECT_TYPES::OVERLAY_GEOMETRY)
 			{
-				break;
+				continue;
 			}
 
 			viewport = GetBitmaskValue(bitmask, BITMASK::VIEWPORT_ID);
@@ -114,7 +115,7 @@ namespace GFX
 				glBindVertexArray(mesh.VAO);
 			}
 
-			m_shaderManager->SetUniform(1, *(glm::mat4*)renderJobs.at(i).value, m_modelMatrixUniform);
+			m_shaderManager->SetUniform(1, *(glm::mat4*)renderJobs.at(renderIndex).value, m_modelMatrixUniform);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IBO);
 			glDrawElements(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0);
 		}

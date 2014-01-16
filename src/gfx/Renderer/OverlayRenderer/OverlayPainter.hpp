@@ -39,7 +39,7 @@ namespace GFX
 		/*!
 		Main console rendering loop
 		*/
-        void Render( glm::mat4& viewMatrix, glm::mat4& projectionMatrix );
+        void Render( unsigned int& renderIndex, glm::mat4& viewMatrix, glm::mat4& projectionMatrix );
 
 	private:
 
