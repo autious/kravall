@@ -31,7 +31,7 @@ namespace Core
 	}
 
 
-	bool NavigationMesh::CheckPointInsideNode( glm::vec3 point, int node )
+	bool NavigationMesh::CheckPointInsideNode( glm::vec2 point, int node )
 	{
 		Core::NavigationMesh* instance = Core::GetNavigationMesh();
 		for( int i = 0; i < 4; i++ )
@@ -50,7 +50,7 @@ namespace Core
 			glm::vec3 cross = glm::normalize( glm::cross( (lineEnd - lineStart), glm::vec3( 0.0f, 1.0f, 0.0f ) ) );
 
 			// check if behind plane
-			float dot = glm::dot( cross, point - lineStart );
+			float dot = glm::dot( cross, glm::vec3(point.x, 0.0f, point.y) - lineStart );
 			if( dot <= 0 )
 				return false;
 		}
@@ -58,6 +58,20 @@ namespace Core
 		// point is inside all lines
 		return true;
 	}
+
+    bool NavigationMesh::CheckPointInsideNavigationMesh( glm::vec2 point )
+    {
+        bool found = false;
+
+        for(int i=0; i < nrNodes; ++i)
+        {
+            found = CheckPointInsideNode(point, i);
+            if(found)
+                break;
+        }
+
+        return found;
+    }
 
 	struct TraversalData
 	{
@@ -77,7 +91,7 @@ namespace Core
 	}
 
 
-	bool NavigationMesh::CalculateFlowfieldForGroup( glm::vec3 point, int group )
+	bool NavigationMesh::CalculateFlowfieldForGroup( glm::vec2 point, int group )
 	{
 		if( group >= maxFlowfields )
 		{

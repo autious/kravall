@@ -82,7 +82,7 @@ for i = -7, 6 do
 		rioter.create( asm, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], 0)
 	end
 end
-core.nav_mesh.set_group_goal(0, -43, 0, 4)
+core.nav_mesh.set_group_goal(0, -43, 4)
 
 local centerPoint = { 20.5, 0, -40 }		
 for i = -4, 4 do
@@ -90,7 +90,7 @@ for i = -4, 4 do
 		rioter.create( asm, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], 1)
 	end
 end
-core.nav_mesh.set_group_goal(1, -21, 0, 36)
+core.nav_mesh.set_group_goal(1, -21, 36)
 
 -- Debug
 --local centerPoint = { 49, 0, 5 }		

@@ -121,13 +121,22 @@ namespace Core
 		/*!
 			Returns true if point is inside node.
 		*/
-		bool CheckPointInsideNode( glm::vec3 point, int node );
+		bool CheckPointInsideNode( glm::vec2 point, int node );
+
+
+        /*!
+            Function for checking if a point is on the navigation mesh.
+            \param point The point to check if inside the navigation mesh.
+            \return Returns true if the given point is inside the navigation mesh, otherwise returns false.    
+        */
+        bool CheckPointInsideNavigationMesh( glm::vec2 point );
+       
 
 		/*!
 			If point is inside a node the flowfield to get to that node will be calculated for the respective group.
 			Returns false if no field is calculated.
 		*/
-		bool CalculateFlowfieldForGroup( glm::vec3 point, int group );
+		bool CalculateFlowfieldForGroup( glm::vec2 point, int group );
 
 		/*!
 			Uses the GFX debug system to draw the outlines of the navigation mesh.

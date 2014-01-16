@@ -35,7 +35,7 @@ void Core::FlowfieldSystem::Update( float delta )
 				#define FF_VS_PF_FACTOR 0.5f
 				#define FF_NORMAL_INFLUENCE 0.6f
 
-				if( instance->CheckPointInsideNode( glm::vec3(position), p ) )
+				if( instance->CheckPointInsideNode( glm::vec2(position.x, position.z), p ) )
 				{
 					Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>(*it);
 					

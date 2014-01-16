@@ -16,8 +16,8 @@
 
 #include <Lua/LuaMetatableTypes.hpp>
 
-#include <ComponentFramework/SystemTypes.hpp>
-#include <ComponentFramework/ComponentType.hpp>
+#include <TemplateUtility/TemplateIndex.hpp>
+#include <TemplateUtility/TemplatePresence.hpp>
 #include <World.hpp>
 
 namespace Core
