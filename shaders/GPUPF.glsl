@@ -61,11 +61,26 @@ float GetAgentChargeAt(int unitType, float distSqr)
 	//	return -100 + distSqr * (curves[0][unitType].z / 100);
 	//else if (distSqr <= curves[0][unitType].y)
 	//	return curves[0][unitType].x - distSqr * curves[0][unitType].w;
+	ChargeCurve c = curves[0][unitType];
 
-	if (distSqr > 0.001f && distSqr < curves[0][unitType].ch_cu_re_dec.z)
-		return -100 + distSqr * (curves[0][unitType].ch_cu_re_dec.z / 100);
-	else if (distSqr <= curves[0][unitType].ch_cu_re_dec.y)
-		return curves[0][unitType].ch_cu_re_dec.x - distSqr * curves[0][unitType].ch_cu_re_dec.w;
+	if(distSqr <= c.ch_cu_re_dec.y)
+	{
+		if (distSqr > 0.001f && distSqr < c.ch_cu_re_dec.z)
+			return (-100 + distSqr * (c.ch_cu_re_dec.z / 100));
+
+		return (c.ch_cu_re_dec.x - distSqr * c.ch_cu_re_dec.w);
+	}
+
+
+	//if (distSqr > 0.001f && distSqr < c.ch_cu_re_dec.z)
+	//	return -100 + distSqr * (c.ch_cu_re_dec.z / 100);
+	//else if (distSqr <= c.ch_cu_re_dec.y)
+	//	return c.ch_cu_re_dec.x - distSqr * c.ch_cu_re_dec.w;
+
+	//if (distSqr > 0.001f && distSqr < curves[0][unitType].ch_cu_re_dec.z)
+	//	return -100 + distSqr * (curves[0][unitType].ch_cu_re_dec.z / 100);
+	//else if (distSqr <= curves[0][unitType].ch_cu_re_dec.y)
+	//	return curves[0][unitType].ch_cu_re_dec.x - distSqr * curves[0][unitType].ch_cu_re_dec.w;
 
 	//if (distSqr < curves[0][unitType].ch_cu_re_dec.z)
 	//	return -100 + distSqr * (curves[0][unitType].ch_cu_re_dec.z / 100);
@@ -82,7 +97,7 @@ float GetEffectOnAgentAt(vec2 queryPosition, int groupID)
 	float positiveSum = 0.0f;
 	float negativeSum = 0.0f;
 	float currentSum = 0.0f;
-
+	
 	for (int i = 0; i < gInput.length(); ++i)
 	{
 		if (i > gEntityCount)
@@ -121,19 +136,8 @@ void main()
 		curves[0][0].ch_cu_re_dec = vec4(1.0f, 15.0f, 2.0f, 1.0f / (15.0f - 2.0f));
 		curves[0][1].ch_cu_re_dec = vec4(-100.0f, 15.0f, 1.0f, -100.0f / (15.0f - 1.0f));
 	}
-
-	//curves[0][0] =  vec4(1.0f, 15.0f, 2.0f, 1.0f / (15.0f - 2.0f));
-	//curves[0][1] = vec4(-100.0f, 15.0f, 1.0f, -100.0f / (15.0f - 1.0f));
 	
 	barrier();
-
-	//for (int i = 0; i < gInput.length(); i++)
-	//{
-	//	gOutput[i].direction_speed = gInput[i].direction_speed;
-	//	gOutput[i].goal_maxSpeed = gInput[i].goal_maxSpeed;
-	//}
-	//
-	//barrier();
 	
 	uint passCount = 0;
 	passCount = ( gEntityCount + WORK_GROUP_SIZE - 1) / WORK_GROUP_SIZE;

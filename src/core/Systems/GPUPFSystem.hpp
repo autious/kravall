@@ -45,8 +45,8 @@ namespace Core
 
 		struct DataOUT
 		{
-			glm::vec4 temp1;
-			glm::vec4 temp2;
+			glm::vec4 direction_speed;
+			glm::vec4 goal_maxSpeed;
 		};
 
 		GLuint m_shaderID;

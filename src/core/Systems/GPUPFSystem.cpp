@@ -46,12 +46,14 @@ namespace Core
 		else
 		{
 			glUseProgram(m_shaderID);
+
 			//if (!m_readBack)
 			{
 				//Set data in shader
 				glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_inDataBuffer);
 			
-				DataIN* in = (DataIN*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, MAXIMUM_ENTITIES * sizeof(DataIN), GL_MAP_WRITE_BIT);
+				DataIN* in = (DataIN*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, MAXIMUM_ENTITIES * sizeof(DataIN),
+					GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
 				int i = 0;
 				for (std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); it++)
 				{
@@ -69,7 +71,7 @@ namespace Core
 				}
 				glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 				glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
-				//glInvalidateBufferData(m_inDataBuffer);
+				glInvalidateBufferData(m_inDataBuffer);
 			
 				//Set entity count
 				glUniform1ui(m_entityCount, i);
@@ -83,29 +85,27 @@ namespace Core
 			
 				//Get data from shader
 				glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_outDataBuffer);
-				//DataOUT* out = (DataOUT*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_ONLY);
 				DataOUT* out = (DataOUT*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, MAXIMUM_ENTITIES * sizeof(DataOUT), GL_MAP_READ_BIT);
 
 				int i = 0;
 				for (std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); it++)
 				{
-					
 					MovementComponent* mc = WGETC<MovementComponent>(*it);
 
-					mc->direction[0] = out[i].temp1.x;
-					mc->direction[1] = out[i].temp1.y;
-					mc->direction[2] = out[i].temp1.z;
-					mc->speed = out[i].temp1.w;
+					mc->direction[0] = out[i].direction_speed.x;
+					mc->direction[1] = out[i].direction_speed.y;
+					mc->direction[2] = out[i].direction_speed.z;
+					mc->speed = out[i].direction_speed.w;
 				
-					mc->goal[0] = out[i].temp2.x;
-					mc->goal[1] = out[i].temp2.y;
-					mc->goal[2] = out[i].temp2.z;
-					mc->maxSpeed = out[i].temp2.w;
+					mc->goal[0] = out[i].goal_maxSpeed.x;
+					mc->goal[1] = out[i].goal_maxSpeed.y;
+					mc->goal[2] = out[i].goal_maxSpeed.z;
+					mc->maxSpeed = out[i].goal_maxSpeed.w;
 					i++;
 				}
 				glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
-				glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 				glInvalidateBufferData(m_outDataBuffer);
+				glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 			
 			}
 			
