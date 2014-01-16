@@ -1,10 +1,10 @@
 -- Create an internal table for simulating an object in Lua. Return it at the end to get a pointer to this object
 local t = {}
 
-local planeScale = 7
+local planeScale = 17
 
 -- Must be prefixed by the internal table name. Must have the name create (so that it is always the same) and the parameter asm
-function t.create(asm, posX, posY, posZ)
+function t.create(asm, posX, posY, posZ, scale)
 	asm:loadAssembly( 
 		{
 			{
@@ -21,11 +21,11 @@ function t.create(asm, posX, posY, posZ)
 			},
 			{
 				type = core.componentType.RotationComponent,
-				data = { rotation = { 0, 0, 0, 0 } }
+				data = { rotation = { -math.sin(math.pi/4.0), 0, 0, math.cos(math.pi/4.0) } }
 			},
 			{
 				type = core.componentType.ScaleComponent,
-				data = { scale = planeScale }
+				data = { scale = scale }
 			},
 			{
 				type = core.componentType.UnitTypeComponent,

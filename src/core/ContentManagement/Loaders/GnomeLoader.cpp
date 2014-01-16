@@ -70,6 +70,7 @@ namespace Core
         if(gnome != nullptr)
         {
             GFX::Content::LoadMesh(modelData->meshID, gnome->numberOfVertices, gnome->numberOfIndices, gnome->vertices, gnome->indices);
+			
 
             m_modelData.push_back(modelData);
             
@@ -179,12 +180,12 @@ namespace Core
 					/* Skeletal Animation */
 					for (int i = 0; i < header.numberOfAnimations; ++i)
 					{
-						m_file.read((char*)&animations[i].nameSize, sizeof(int));
-						char* tmp = new char[animations[i].nameSize];
-						m_file.read((char*)tmp, animations[i].nameSize);
-						animations[i].name = std::string(tmp);
+						m_file.read((char*)&gnome->animations[i].nameSize, sizeof(int));
+						char* tmp = new char[gnome->animations[i].nameSize];
+						m_file.read((char*)tmp, gnome->animations[i].nameSize);
+						gnome->animations[i].name = std::string(tmp);
 						delete [] tmp;
-						animations[i].boneAnim = new BoneForAnimation[header.numberOfBones];
+						gnome->animations[i].boneAnim = new BoneForAnimation[header.numberOfBones];
 
 						for (int j = 0; j < header.numberOfBones; ++j)
 						{
