@@ -12,6 +12,8 @@ local street_light_intensity = 2.0
 ambient.create(asm, 1.0, 1.0, 1.0, 0.1)
 directional.create(asm, -1, -1, 0.5)
 
+camera:lookAt( core.glm.vec3.new( -20, 35, 20 ), core.glm.vec3.new( 0, 0, 20 ) )
+
 -- Group 0 start to end, top row (left side)
 street_light.create(asm, -50, -0.5, street_light_intensity)
 street_light.create(asm, -40, -0.5, street_light_intensity)
