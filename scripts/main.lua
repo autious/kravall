@@ -13,6 +13,7 @@ comp = nil
 function core.init() 
     print( "Program starting in lua" )
     showSys()
+    toggle()
     openscenario( "test" )    
 end
 
