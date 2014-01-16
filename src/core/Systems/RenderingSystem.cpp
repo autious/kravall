@@ -24,7 +24,7 @@ namespace Core
 			translationMatrix = glm::translate(glm::mat4(1.0f), WorldPositionComponent::GetVec3(*wpc));
 			scaleMatrix = glm::scale(sc->scale, sc->scale, sc->scale);
 
-			//glm::mat4* modelMatrix = Core::world.m_frameHeap.NewObject<glm::mat4>(translationMatrix * rotationMatrix * scaleMatrix);
+			//Send the data through a drawcall to GFX
 			GFX::InstanceData* instanceData = Core::world.m_frameHeap.NewObject<GFX::InstanceData>();
 			instanceData->modelMatrix = translationMatrix * rotationMatrix * scaleMatrix;
 			instanceData->animationFrame = 0;
