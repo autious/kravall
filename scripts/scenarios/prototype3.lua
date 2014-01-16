@@ -28,7 +28,22 @@ for i = 1, side / 2 do
 	end
 end
 
-
+for i = -side / 2, -1 do
+	for p = -side / 2, -1 do
+		rioter.create( asm, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], 0 )
+	end                         
+	for p = 1, side / 2 do      
+		rioter.create( asm, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], 1 )
+	end                         
+end                             
+for i = 1, side / 2 do          
+	for p = -side / 2, -1 do    
+		rioter.create( asm, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], 2 )
+	end                         
+	for p = 1, side / 2 do      
+		rioter.create( asm, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], 3 )
+	end
+end
 
 for i = 0, 1023 do
 	local color = { math.random(), math.random(), math.random() }

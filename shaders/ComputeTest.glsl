@@ -1,7 +1,7 @@
 #version 430 core
 
 #define MAX_LIGHTS 1024
-#define MAX_LIGHTS_PER_TILE 64
+#define MAX_LIGHTS_PER_TILE 256
 #define WORK_GROUP_SIZE 16
 
 #pragma optionNV(fastmath on) 
@@ -63,14 +63,14 @@ uniform uint numSpotLights;
 uniform uint numDirLights;
 uniform uint numAmbientLights;
 
-shared uint minDepth = 0xFFFFFFFF;
-shared uint maxDepth = 0;
+shared uint minDepth;
+shared uint maxDepth;
 
 shared uint pointLightIndex[MAX_LIGHTS];
-shared uint pointLightCount = 0;
+shared uint pointLightCount;
 
 shared uint spotLightIndex[MAX_LIGHTS];
-shared uint spotLightCount = 0;
+shared uint spotLightCount;
 
 vec4 reconstruct_pos(float z, vec2 uv_f)
 {
