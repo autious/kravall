@@ -82,8 +82,8 @@ function C:update( dt )
         local x,y = mouse.getPosition()
 
         if mouse.isbuttondown( mouse.button.Left ) then
-            self.pitch = self.pitch + (y-self.py) * delta
-            self.yaw = self.yaw + (x-self.px) * delta
+            self.pitch = self.pitch + (y-self.py) * 0.3
+            self.yaw = self.yaw + (x-self.px) * 0.3
         end
 
         self.px = x
