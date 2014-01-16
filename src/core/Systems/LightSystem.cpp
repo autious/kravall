@@ -53,7 +53,7 @@ namespace Core
 					//wpc->position[2] = 45 * sin(double(i%16) * lel*0.1f + double(i));
 
 					data->position = WorldPositionComponent::GetVec3(*wpc);
-					data->radius_length = sc->scale;
+					data->radius_length = sc->scale[0];
 
 					//GFX::Debug::DrawSphere(data->position, sc->scale, glm::vec4(data->color, 1.0f), false);
 				}
@@ -77,7 +77,7 @@ namespace Core
 													RotationComponent::GetQuat(rc->rotation).y,
 													RotationComponent::GetQuat(rc->rotation).z );
 					data->position = WorldPositionComponent::GetVec3(*wpc);
-					data->radius_length = sc->scale;
+					data->radius_length = sc->scale[0];
 
 					//wpc->position[0] = float(45 * cos(lel + double(i)));
 					//wpc->position[2] = float(45 * sin(double(i%16) * lel*0.1f + double(i)));

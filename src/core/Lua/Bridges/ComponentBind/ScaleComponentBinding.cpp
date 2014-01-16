@@ -10,7 +10,12 @@ Core::ComponentGetters Core::ScaleComponentBinding::GetGetters()
     {
         ScaleComponent *sc = WGETC<ScaleComponent>( entity ); 
 
-        lua_pushnumber( L, sc->scale );   
+        lua_newtable( L );
+        for( int i = 0; i < 3; i++ )
+        {
+            lua_pushnumber( L, sc->scale[i] );
+            lua_rawseti( L, -2, i+1 );
+        }
 
         return 1;
     };
@@ -29,7 +34,18 @@ Core::ComponentSetters Core::ScaleComponentBinding::GetSetters()
         
         if( lua_isnumber(  L, valueindex ) )
         {
-            sc->scale = static_cast<float>(lua_tonumber( L, valueindex ));
+            sc->scale[0] = luau_tofloat( L, valueindex );
+            sc->scale[1] = luau_tofloat( L, valueindex );
+            sc->scale[2] = luau_tofloat( L, valueindex );
+        }
+        else if( lua_istable( L, valueindex ) )
+        {
+            for( int i = 0; i < 3; i++ )
+            {
+                lua_rawgeti( L, valueindex, i+1 ); 
+                sc->scale[i] = luau_checkfloat( L, valueindex );
+                lua_pop( L, 1 );
+            }   
         }
         else
         {

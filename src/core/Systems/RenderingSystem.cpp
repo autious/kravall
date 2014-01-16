@@ -21,7 +21,7 @@ namespace Core
 			rot = RotationComponent::GetQuat(rc->rotation);
 			rotationMatrix = glm::toMat4(rot);
 			translationMatrix = glm::translate(glm::mat4(1.0f), WorldPositionComponent::GetVec3(*wpc));
-			scaleMatrix = glm::scale(sc->scale, sc->scale, sc->scale);
+			scaleMatrix = glm::scale(sc->scale[0], sc->scale[1], sc->scale[2]);
 
 			//Build modelMatrix using linear allocator (FIX THIS)
 			glm::mat4* modelMatrix = Core::world.m_frameHeap.NewObject<glm::mat4>(translationMatrix * rotationMatrix * scaleMatrix);
