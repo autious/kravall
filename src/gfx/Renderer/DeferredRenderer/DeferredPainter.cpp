@@ -49,8 +49,8 @@ namespace GFX
 		glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_INSTANCES * sizeof(StaticMeshInstanceData), NULL, GL_STREAM_COPY);
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_instanceBuffer);
 	}
-
-	/*
+#define INSTANCED_DRAWING
+#ifdef INSTANCED_DRAWING
 	void DeferredPainter::Render(unsigned int& renderIndex, FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix)
 	{
 		BasePainter::Render();
@@ -136,14 +136,15 @@ namespace GFX
 						pData[j] = m_staticInstances[j];
 					}
 
+					//glInvalidateBufferData(m_instanceBuffer);
+
+					glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+
 					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IBO);
 					glDrawElementsInstanced(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0, instanceCount);
 
 					instanceCount = 0;
 
-					glInvalidateBufferData(m_instanceBuffer);
-
-					glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 				}
 				
 				if (endMe)
@@ -204,8 +205,8 @@ namespace GFX
 		renderIndex = i;
 
 	}
-	*/
-
+	
+#else
 	
 	void DeferredPainter::Render(unsigned int& renderIndex, FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix)
 	{
@@ -330,7 +331,8 @@ namespace GFX
 		renderIndex = i;
 
 	}
-
+	
+#endif
 
 	void DeferredPainter::BindGBuffer(FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID)
 	{
