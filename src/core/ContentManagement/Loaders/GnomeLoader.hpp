@@ -68,8 +68,6 @@ namespace Core
 			
 		};
 
-		Animation* animations;
-
 		struct VertexBoneAnimated
 		{
 			//Ordinary stuff
@@ -86,43 +84,6 @@ namespace Core
 			//uv
 			float uv[2];
 		};
-
-		struct Vertex
-		{
-			//Ordinary stuff
-			float position[3];
-			float normal[3];
-
-			//Normalmapping
-			float tangent[3];
-			float uv[2];
-		};
-
-		struct Mesh
-		{
-			int* indices;
-			Vertex* vertices;
-			VertexBoneAnimated* animatedVertices;
-		};
-
-		struct MorphKey
-		{
-			float keyTime;
-			Vertex* vertices;
-		};
-
-		struct MorphAnimation
-		{
-			int id;
-			int numberOfKeys;
-			MorphKey* keys;
-		};
-
-		//Animation* animations;
-		Bone* bones;
-		Header header;
-		//Mesh mesh;
-		MorphAnimation* morphAnimation;
 
         struct Gnome
         {

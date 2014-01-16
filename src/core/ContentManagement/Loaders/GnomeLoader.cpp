@@ -113,7 +113,7 @@ namespace Core
             }
         }
         GFX::Content::DeleteMesh(modelData->meshID);        
-        delete modelData;
+        delete modelData;        
     }
 
     const ModelData* GnomeLoader::getData(const Core::AssetHandle handle) const

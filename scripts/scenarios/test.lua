@@ -71,7 +71,7 @@ street_light.create(asm, 28, -35, street_light_intensity)
 local building = require "entities/building"
 		
 local plane = require "entities/plane"
-plane.create(asm, 0, -1, 0)
+plane.create(asm, 0, -1, 0, 150)
 
 building.create(asm, 64, 12)
 building.create(asm, 64, 2)
