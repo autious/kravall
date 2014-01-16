@@ -188,11 +188,7 @@ namespace GFX
 		LightData* pData = (LightData*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, MAXIMUM_LIGHTS * sizeof(LightData), 
 			GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
 
-		LightData p;
-		for (unsigned int i = 0; i < numLights; i++)
-		{
-			pData[i] = m_lights[i];
-		}
+		memcpy(pData, m_lights, numLights * sizeof(LightData));
 
 		glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 

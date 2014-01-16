@@ -42,11 +42,11 @@ namespace GFX
 		m_modelMatrixUniform = m_shaderManager->GetUniformLocation("StaticMesh", "modelMatrix");
 
 		m_uniformBufferManager->CreateBasicCameraUBO(m_shaderManager->GetShaderProgramID("StaticMesh"));
-		m_staticInstances = new StaticMeshInstanceData[1024];
+		m_staticInstances = new InstanceData[1024];
 
 		glGenBuffers(1, &m_instanceBuffer);
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_instanceBuffer);
-		glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_INSTANCES * sizeof(StaticMeshInstanceData), NULL, GL_STREAM_COPY);
+		glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_INSTANCES * sizeof(InstanceData), NULL, GL_STREAM_COPY);
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_instanceBuffer);
 	}
 #define INSTANCED_DRAWING
@@ -120,8 +120,7 @@ namespace GFX
 
 			if (material == currentMaterial && meshID == currentMesh && !endMe && instanceCount < MAX_INSTANCES)
 			{
-				StaticMeshInstanceData smid;
-				smid.modelMatrix = *(glm::mat4*)renderJobs.at(i).value;
+				InstanceData smid = *(InstanceData*)renderJobs.at(i).value;
 				m_staticInstances[instanceCount++] = smid;
 			}
 			else 
@@ -129,9 +128,9 @@ namespace GFX
 				if (i > 0)
 				{
 					glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_instanceBuffer);
-					StaticMeshInstanceData* pData = (StaticMeshInstanceData*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, MAX_INSTANCES * sizeof(StaticMeshInstanceData), 
+					InstanceData* pData = (InstanceData*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, MAX_INSTANCES * sizeof(InstanceData), 
 						GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
-					memcpy(pData, m_staticInstances, instanceCount * sizeof(StaticMeshInstanceData));
+					memcpy(pData, m_staticInstances, instanceCount * sizeof(InstanceData));
 
 					glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
@@ -185,8 +184,7 @@ namespace GFX
 					error = glGetError();
 				}
 
-				StaticMeshInstanceData smid;
-				smid.modelMatrix = *(glm::mat4*)renderJobs.at(i).value;
+				InstanceData smid = *(InstanceData*)renderJobs.at(i).value;
 				m_staticInstances[instanceCount++] = smid;
 			}
 

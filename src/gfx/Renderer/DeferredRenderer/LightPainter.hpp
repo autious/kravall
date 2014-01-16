@@ -11,7 +11,7 @@
 #include "../../Buffers/UniformBufferManager.hpp"
 #include <GL/glew.h>
 #include <vector>
-#include <gfx/Lights.hpp>
+#include <gfx/LightData.hpp>
 
 namespace GFX
 {
