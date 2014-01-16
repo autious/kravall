@@ -15,7 +15,7 @@ extern "C"
 	static int ResetLevelHeap( lua_State * L )
 	{
 		Core::world.m_levelHeap.Rewind();
-		return 1;
+		return 0;
 	}
 
 	static int LuaNewIndex(lua_State * L)
