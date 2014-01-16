@@ -19,6 +19,7 @@ namespace Core
 	class RenderingSystem;
 	class MovementSystem;
 	class FieldReactionSystem;
+	class GPUPFSystem;
 	class PickingSystem;
 	class AIDebugSystem;
 	class LightSystem;
@@ -27,7 +28,7 @@ namespace Core
 	class NavMeshCollisionSystem;
 	
     typedef SystemHandlerTemplate<RenderingSystem, LightSystem, NavMeshCollisionSystem, CollisionSystem2D,
-		PickingSystem, AIDebugSystem, FlowfieldSystem, FieldReactionSystem, MovementSystem> SystemHandler;
+		PickingSystem, AIDebugSystem, FlowfieldSystem, /*FieldReactionSystem,*/ GPUPFSystem, MovementSystem> SystemHandler;
     typedef EntityHandlerTemplate<SystemHandler, WorldPositionComponent, RotationComponent, ScaleComponent, 
 		GraphicsComponent, LightComponent, MovementComponent, UnitTypeComponent, AttributeComponent,
 		BoundingVolumeComponent> EntityHandler;
@@ -37,6 +38,7 @@ namespace Core
 #include <Systems/RenderingSystem.hpp>
 #include <Systems/MovementSystem.hpp>
 #include <Systems/FieldReactionSystem.hpp>
+#include <Systems/GPUPFSystem.hpp>
 #include <Systems/PickingSystem.hpp>
 #include <Systems/AIDebugSystem.hpp>
 #include <Systems/LightSystem.hpp>

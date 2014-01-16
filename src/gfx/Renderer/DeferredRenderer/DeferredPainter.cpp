@@ -128,6 +128,7 @@ namespace GFX
 			{
 				if (i > 0)
 				{
+					glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_instanceBuffer);
 					StaticMeshInstanceData* pData = (StaticMeshInstanceData*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, MAX_INSTANCES * sizeof(StaticMeshInstanceData), 
 						GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
 

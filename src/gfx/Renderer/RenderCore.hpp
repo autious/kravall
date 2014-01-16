@@ -146,6 +146,8 @@ namespace GFX
 		*/
 		void ResizeGBuffer();
 
+		void LoadGPUPF();
+
 
 		int m_windowWidth;
 		int m_windowHeight;

@@ -97,6 +97,16 @@ namespace GFX
 
 		// Set console width
 		m_consolePainter->SetConsoleHeight(m_windowHeight);
+
+		LoadGPUPF();
+	}
+
+	void RenderCore::LoadGPUPF()
+	{
+		m_shaderManager->CreateProgram("GPUPFCompute");
+		m_shaderManager->LoadShader("shaders/GPUPF.glsl", "GPUPF", GL_COMPUTE_SHADER);
+		m_shaderManager->AttachShader("GPUPF", "GPUPFCompute");
+		m_shaderManager->LinkProgram("GPUPFCompute");
 	}
 
 	void RenderCore::Resize(int width, int height)

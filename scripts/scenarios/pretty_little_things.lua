@@ -19,12 +19,14 @@ asm:loadAssembly(
 	},
 	{
 		type = core.componentType.ScaleComponent,
-		data = { scale = 5.0 }
+		data = { scale = 100.0 }
 	},
 	{
 		type = core.componentType.RotationComponent,
-		--data = { rotation = { 0,0, math.sin( 3.14 ), math.cos(3.14/2.0) } }
-		data = { rotation = { 0, 0, 0, 0 } }
+		--data = { rotation = { math.sin( 3.14 ),0, 0, math.cos(3.14/2.0) } }
+
+		data = { rotation = { -math.sin(math.pi/4.0), 0, 0, math.cos(math.pi/4.0) } }
+		--data = { rotation = { 0, 0, 0, 0 } }
 	}
 }
 )
