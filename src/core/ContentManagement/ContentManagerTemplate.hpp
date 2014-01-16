@@ -105,13 +105,16 @@ namespace Core
 
                     handle = m_loaders[loaderId]->Load(asset);                                
                     
-                    if(handle == nullptr)
+                    if(handle == nullptr )
                     {                        
                         LOGCM_FATAL << "Asset with name: " << asset << " was not found" << std::endl;
                         assert(handle != nullptr);
                     }
 
-                    AddReference<Loader>(assetHash, handle, Core::AssetStatus::CACHED);
+					// only increase references if references should be counted...
+					if( m_loaders[loaderId]->UseReferenceCounting() )
+						AddReference<Loader>(assetHash, handle, Core::AssetStatus::CACHED);
+
                     finisher(m_loaders[loaderId], handle);
                 }
             }
@@ -199,9 +202,14 @@ namespace Core
 
             Core::AssetStatus status = GetAssetStatus(loaderId, assetHash, handle);
 
-            int refsRemaining = DecreaseReference<Loader>(assetHash);
-            LOGCM_INFO << assetHash
+			// only decrease references if references are being counted...
+			int refsRemaining = 0;
+			if( m_loaders[loaderId]->UseReferenceCounting() )
+				refsRemaining = DecreaseReference<Loader>(assetHash);
+            
+			LOGCM_INFO << assetHash
                 << " now has: " << refsRemaining << " references" << std::endl;
+
             if( refsRemaining == 0)
             {
                 if(status == Core::AssetStatus::CACHED)
@@ -211,7 +219,7 @@ namespace Core
                     m_finisherList.push_back(std::make_tuple(m_loaders[Core::Index<Loader, std::tuple<Loaders...>>::value]
                                 , handle, [assetHash, this](Core::BaseAssetLoader* assetLoader, AssetHandle handle)
                         {
-                            if(this->GetReferenceCount<Loader>(assetHash) == 0)
+                            if(this->GetReferenceCount<Loader>(assetHash) == 0 )
                             {
                                 LOGCM_INFO << "Destroying asset with hash: " << assetHash << std::endl;
                                 assetLoader->Destroy(handle); 
@@ -262,6 +270,10 @@ namespace Core
                     m_loaders[loaderId]->Destroy(handle);
                     RemoveReference<Loader>(assetHash);
                 }
+				else if( !m_loaders[loaderId]->UseReferenceCounting() )
+				{
+					// this is ok behaviour...
+				}
                 else
                 {
                    LOGCM_FATAL << "Tryign to free unexisting asset: " << assetHash << std::endl; 
@@ -326,6 +338,11 @@ namespace Core
     private:
         AssetStatus GetAssetStatus(const unsigned int loaderId, const AssetHash assetHash, AssetHandle& handle )
         {
+			// check if content should always be loaded...
+			if( !m_loaders[loaderId]->UseReferenceCounting() )
+				return Core::AssetStatus::UNCACHED;
+
+			// check asset status
             for(Core::AssetVector::iterator it = m_assetList.begin(); it != m_assetList.end(); ++it)
             {
                 if( std::get<1>(*it) == loaderId && std::get<2>(*it) == assetHash)

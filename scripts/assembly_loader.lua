@@ -7,6 +7,7 @@ function M.loadPack( asmpack )
 
     asm.block_loads = false
     asm.entities = {}
+	asm.specific_loads = {}
 
     setmetatable( asm, {__index = ASM} )
 
@@ -89,6 +90,11 @@ function ASM:loadAssembly( asmtable )
     end
 end
 
+function ASM:specific_content( entity )
+	self.specific_loads[#self.specific_loads+1] = entity
+end
+	
+
 function ASM:destroy( )
     print( "DESTROY" )
     self.block_loads = true
@@ -101,6 +107,14 @@ function ASM:destroy( )
         end
     end
     self.entities = nil
+	
+	if self.specific_loads ~= nil then
+        for _,levelSpecifics in pairs( self.specific_loads ) do
+			core.contentmanager.free( levelSpecifics )
+        end
+    end
+    self.specific_loads = nil
+	
 end
 
 return M

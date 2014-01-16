@@ -124,7 +124,6 @@ namespace GFX
 		\param data Texture data
 		\param width Width of the texture
 		\param height Height of the texture
-		\return Handle of the texture
 		*/
 		DLL_API void LoadTexture2DFromMemory(unsigned int& out_id, unsigned char* data, int width, int height);
 

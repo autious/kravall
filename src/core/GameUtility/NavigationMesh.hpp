@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include <glm/glm.hpp>
+#include "Console/CLOP.hpp"
 
 namespace Core
 {
@@ -17,6 +18,16 @@ namespace Core
 		will set the Core::GetNavigationMesh pointer to point to this object.
 	*/
 	void SetNavigationMesh( Core::NavigationMesh* mesh );
+
+	/*!
+		Will toggle drawing of the navigation mesh.
+	*/
+	void ToggleDrawOfNavigationMesh(clop::ArgList args);
+
+	/*!
+		Will use the GFX debug system to draw the navigation mesh if loaded.
+	*/
+	void DrawToggledNavigationMesh();
 
 	/*!
 		Data structure for the navigation mesh. 
@@ -143,11 +154,10 @@ namespace Core
 		*/
 		void DrawDebug();
 	};
-
-
 }
 
 std::fstream& operator>> ( std::fstream& ff, Core::NavigationMesh::Node& node );
+
 
 
 #endif

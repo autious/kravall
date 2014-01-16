@@ -17,6 +17,7 @@ namespace Core
         virtual Core::AssetHandle LoadAsync(const char* assetname) = 0;
         virtual void FinishLoadAsync(Core::AssetHandle& handle) = 0;
         virtual void Destroy(const Core::AssetHandle handle) = 0;
+		virtual bool UseReferenceCounting() { return true; }
     private:
 
     };

@@ -2,8 +2,8 @@
 local ASML = require "assembly_loader" 
 local asm = ASML.loadPack( {} )
 
-navMesh = core.contentmanager.load( 
-		core.loaders.NavigationMeshLoader, "prototypeLevel.txt", function( value ) end, false )
+asm:specific_content( core.contentmanager.load( 
+		core.loaders.NavigationMeshLoader, "prototypeLevel.txt", function( value ) end, false ) )
 
 local ambient = require "entities/ambientLight"
 local directional = require "entities/directionalLight"
@@ -112,7 +112,7 @@ core.nav_mesh.set_group_goal(1, -21, 36)
 local navmesh = require "entities/navMesh"
 navmesh.create(asm, 0, -0.1, 0)
 local plane = require "entities/plane"
-plane.create(asm, 0, -1, 0)
+plane.create(asm, 0, -1, 0, 150)
 
 local navmesh = require "entities/navMesh"
 navmesh.create(asm, 0, -0.1, 0)

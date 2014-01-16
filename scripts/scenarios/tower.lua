@@ -2,12 +2,17 @@
 local ASML = require "assembly_loader" 
 local asm = ASML.loadPack( {} )
 
+asm:specific_content( core.contentmanager.load( 
+		core.loaders.NavigationMeshLoader, "prototypeLevel.txt", function( value ) end, false ) )
+
 local ambient = require "entities/ambientLight"
 local directional = require "entities/directionalLight"
 local street_light = require "entities/streetLight"
+local animated_tower = require "entities/animatedTower"
 local street_light_intensity = 2.0
 ambient.create(asm, 1.0, 1.0, 1.0, 0.1)
 directional.create(asm, -1, -1, 0.5)
+animated_tower.create(asm, 0, 0, 0)
 
 -- Group 0 start to end, top row (left side)
 street_light.create(asm, -50, -0.5, street_light_intensity)
@@ -69,9 +74,8 @@ street_light.create(asm, 14, -35, street_light_intensity)
 street_light.create(asm, 28, -35, street_light_intensity)
 
 local building = require "entities/building"
-		
 local plane = require "entities/plane"
-plane.create(asm, 0, -1, 0, 150)
+plane.create(asm, 0, 0, 0, 150)
 
 building.create(asm, 64, 12)
 building.create(asm, 64, 2)
@@ -116,7 +120,3 @@ building.create(asm, 36, 20)
 building.create(asm, 45, 19)
 building.create(asm, 56, 19)
 return asm;
-
-
-
-
