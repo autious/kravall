@@ -15,7 +15,6 @@ namespace Core
 
     NavigationMeshLoader::~NavigationMeshLoader()
     {
-
     }
 
     Core::AssetHandle NavigationMeshLoader::LoadAsync(const char* assetName)
@@ -38,9 +37,6 @@ namespace Core
     void NavigationMeshLoader::Destroy(const Core::AssetHandle handle)
     {
 		// memory is allocated on the level stack, no delete is required.
-
-		// set world instance of navemesh to zero. 
-		Core::SetNavigationMesh( nullptr );
     }
 
     const ModelData* NavigationMeshLoader::getData(const Core::AssetHandle handle) const
@@ -48,17 +44,14 @@ namespace Core
         return static_cast<const Core::ModelData*>(handle);
     }
 
-
+	bool NavigationMeshLoader::UseReferenceCounting()
+	{
+		return false;
+	}
 
 #define check( x, y ) if( x ) { LOG_ERROR << y << std::endl; return nullptr; }
 	NavigationMesh* NavigationMeshLoader::LoadNavigationMeshFromFile( const char* path )
 	{
-		if( Core::GetNavigationMesh() )
-		{
-			LOG_ERROR << "NavMesh is already loaded!" << std::endl;
-			return Core::GetNavigationMesh();
-		}
-
 		std::fstream ff;
 		ff.open( path, std::fstream::in );
 		check( !ff.is_open(), "Navmesh file could not be found! Trying to open: " << path );
@@ -71,7 +64,7 @@ namespace Core
 		NavigationMesh* instance = instance = Core::world.m_levelHeap.NewObject<Core::NavigationMesh>();
 
 		// allocate nodes
-		instance->nodes = Core::world.m_levelHeap.NewObjectArray<Core::NavigationMesh::Node>( nrNodes );
+		instance->nodes = Core::world.m_levelHeap.NewPODArray<Core::NavigationMesh::Node>( nrNodes );
 
 		// fill nodes
 		for( int i = 0; i < nrNodes; i++ )

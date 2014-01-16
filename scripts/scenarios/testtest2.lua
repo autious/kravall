@@ -35,9 +35,6 @@
 local ASML = require "assembly_loader" 
 local asm = ASML.loadPack( {} )
 
-asm:specific_content( core.contentmanager.load( 
-		core.loaders.NavigationMeshLoader, "prototypeLevel.txt", function( value ) end, false ) )
-		--core.loaders.NavigationMeshLoader, "extremeScenario.txt", function( value ) end, false ) )
 
 local rioter = require "entities/rioter"
 local police = require "entities/police"
@@ -47,7 +44,7 @@ local centerPoint = { 0, 0, 0 }
 local side = math.sqrt( 10 )
 for i = -side / 2, side / 2 do
 	for p = -side / 2, side / 2 do
-		rioter.create( asm, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], 0 )
+		--rioter.create( asm, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], 0 )
 	end
 end
 

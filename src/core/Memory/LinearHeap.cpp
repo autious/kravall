@@ -1,5 +1,6 @@
 #include "LinearHeap.hpp"
 
+#include <vector>
 
 namespace Core
 {
@@ -16,7 +17,7 @@ namespace Core
 
 
     void LinearHeap::Rewind()
-    {           
+    {       
         for(Finalizer* f = m_finalizerChain; f; f = f->m_finalizerChain)
         {
 			f->m_destructorCall( f->m_dataPointer );

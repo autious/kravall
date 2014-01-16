@@ -2,8 +2,8 @@
 local ASML = require "assembly_loader" 
 local asm = ASML.loadPack( {} )
 
-navMesh = core.contentmanager.load( 
-		core.loaders.NavigationMeshLoader, "extremeScenario.txt", function( value ) end, false )
+asm:specific_content( core.contentmanager.load( 
+		core.loaders.NavigationMeshLoader, "extremeScenario.txt", function( value ) end, false ) )
 
 local rioter = require "entities/rioter"
 local police = require "entities/police"
@@ -28,7 +28,9 @@ for i = 1, side / 2 do
 	end
 end
 
---camera:setPosition( core.glm.vec3.new( 45, 45, 45 ) )
+rioter.create( asm, 0, 0, 0, 0 )
+core.nav_mesh.set_group_goal(0, -30, 0, 0)
+
 camera:lookAt( core.glm.vec3.new( 65, 65, 65 ), core.glm.vec3.new( 0, 0, 0 ) )
 
 

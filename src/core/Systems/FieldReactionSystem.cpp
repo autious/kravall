@@ -181,22 +181,33 @@ void Core::FieldReactionSystem::UpdateAgents()
 				highestSum = chargeSum;
 				bestIndex = glm::vec2(1, 1);
 			}*/
+			
+			#define FF_VS_PF_FACTOR 1.0f
+			glm::vec3 pfVector;
 
 			if (highestSum - staySum > STAY_LIMIT)
 			{
 				if (bestIndex.x == 0.0f || bestIndex.y == 0.0f)
-					MovementComponent::SetDirection(mc->direction, bestIndex.x, 0.0f, bestIndex.y);
+					pfVector = glm::vec3( bestIndex.x, 0.0f, bestIndex.y);
 				else
 				{
-					float invLength = 1.0f / std::sqrt(bestIndex.x * bestIndex.x + bestIndex.y * bestIndex.y);
-
-					MovementComponent::InterpolateToDirection(mc->direction, bestIndex.x * invLength, 0.0f, bestIndex.y * invLength);
+					//float invLength = 1.0f / std::sqrt(bestIndex.x * bestIndex.x + bestIndex.y * bestIndex.y);
+					//MovementComponent::InterpolateToDirection(mc->direction, bestIndex.x * invLength, 0.0f, bestIndex.y * invLength);
+					pfVector = glm::normalize( glm::vec3( bestIndex.x, 0, bestIndex.y ) );
 				}
+
+				*reinterpret_cast<glm::vec3*>(mc->direction) = glm::normalize( 
+					*reinterpret_cast<glm::vec3*>(mc->direction) + 
+					pfVector * FF_VS_PF_FACTOR );	
 			}
 			else
 			{
-				MovementComponent::InterpolateToDirection(mc->direction, 0.0f, 0.0f, 0.0f);
+				pfVector = glm::vec3(0.0f);
+				//MovementComponent::InterpolateToDirection(mc->direction, 0.0f, 0.0f, 0.0f);
 			}
+
+			glm::vec3 position = *reinterpret_cast<glm::vec3*>(wpc->position);
+			GFX::Debug::DrawLine( position, position + *reinterpret_cast<glm::vec3*>(mc->direction), GFXColor( 1.0f, 0.0f, 0.0f, 1.0f ), false );
 		}
 	}
 }

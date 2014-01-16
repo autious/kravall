@@ -35,6 +35,7 @@ function help()
     print( "The following functions exist:" )
     print( "showSys()" )
     print( "showFBO(which)" )
+	print( "showMesh()" )
     print( "printAlexStatus()" )
 end
 
@@ -66,6 +67,7 @@ function closescenario()
         core.config.current_scenario:destroy()
         core.config.current_scenario = nil
         core.config.current_scenario_name = "No Scenario Loaded"
+		core.memory.clear_level_memory()
     end
 
     collectgarbage() --For niceness, always good to do right after loading a scenario as the
