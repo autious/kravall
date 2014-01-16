@@ -128,15 +128,10 @@ namespace GFX
 			{
 				if (i > 0)
 				{
+					glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_instanceBuffer);
 					StaticMeshInstanceData* pData = (StaticMeshInstanceData*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, MAX_INSTANCES * sizeof(StaticMeshInstanceData), 
 						GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
-
-					for (unsigned int j = 0; j < instanceCount; j++)
-					{
-						pData[j] = m_staticInstances[j];
-					}
-
-					//glInvalidateBufferData(m_instanceBuffer);
+					memcpy(pData, m_staticInstances, instanceCount * sizeof(StaticMeshInstanceData));
 
 					glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 

@@ -5,7 +5,7 @@ struct InstanceData
 	mat4 mm;
 };
 
-layout (std140, binding = 5) readonly buffer buffah
+layout (std140, binding = 4) readonly buffer buffah
 {
     InstanceData gInstances[];
 };
