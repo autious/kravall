@@ -9,8 +9,8 @@ entityMemoryOutputLevel = "partial", -- full, short or partial
 entityMemoryOutputComponents = { "WorldPositionComponent", "GraphicsComponent" },
 showFramebuffers = 0,
 initCameraFieldOfView = 45.0,
-initCameraNearClipDistance = 1.0,
-initCameraFarClipDistance = 1000.0,
+initCameraNearClipDistance = 5.0,
+initCameraFarClipDistance = 250.0,
 consoleFont = "assets/Fonts/ConsoleFont.font",
 defaultNrFlowfields = 20
 }

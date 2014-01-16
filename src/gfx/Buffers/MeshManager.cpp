@@ -81,7 +81,7 @@ namespace GFX
 
 		//bone indices
 		glEnableVertexAttribArray(3);
-		glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(GFX::Vertex), (void*)(12 * sizeof(float)));
+		glVertexAttribPointer(3, 4, GL_INT, GL_FALSE, sizeof(GFX::Vertex), (void*)(12 * sizeof(int)));
 		glVertexAttribDivisor(3, 0);
 
 		//bone weights

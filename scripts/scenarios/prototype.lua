@@ -112,7 +112,7 @@ core.nav_mesh.set_group_goal(1, -21, 0, 36)
 local navmesh = require "entities/navMesh"
 navmesh.create(asm, 0, -0.1, 0)
 local plane = require "entities/plane"
-plane.create(asm, 0, -1, 0)
+plane.create(asm, 0, -1, 0, 150)
 
 local navmesh = require "entities/navMesh"
 navmesh.create(asm, 0, -0.1, 0)
