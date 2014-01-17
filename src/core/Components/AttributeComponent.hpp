@@ -4,8 +4,8 @@
 namespace Core
 {
 	/*!
-		Enum specifying the stance of a police units.
-		There are three different stances: Passive, Defensive and Aggressive
+	Enum specifying the stance of a police units.
+	There are three different stances: Passive, Defensive and Aggressive
 	*/
 	enum PoliceStance
 	{
@@ -13,13 +13,18 @@ namespace Core
 	};
 
 	/*!
-		Enum specifying the alignment of the rioters.
-		A rioter's alignment defines its behaviour and reactions in different situations. There are two alignments:
-		Anarchist and Pacifist.
+	Enum specifying the alignment of the rioters.
+	A rioter's alignment defines its behaviour and reactions in different situations. There are two alignments:
+	Anarchist and Pacifist.
 	*/
 	enum RioterAlignment
 	{
 		Anarchist, Pacifist
+	};
+
+	enum RioterStance
+	{
+		Normal, Agitated, Attacking, Retreating, Civilian
 	};
 
 	struct AttributeComponent
@@ -62,11 +67,14 @@ namespace Core
 
 				/*! The rioter's pressure represented by an integer with range [0, 100]. */
 				int pressure;
+
+				/*! The rioter's stance represented by the RioterStance enum. */
+				RioterStance stance;
 			} rioter;
 		};
 
 		/*!
-			Default constructor. Initialises all members to 0 except stance which is defaulted to Passive.
+		Default constructor. Initialises all members to 0 except stance which is defaulted to Passive.
 		*/
 		AttributeComponent() : health(0), stamina(0), morale(0.0f)
 		{
@@ -76,16 +84,16 @@ namespace Core
 		}
 
 		/*!
-			Constructor for police initialising all members to starting values.
-			\param startHealth The initial health for the police unit.
-			\param startStamina The initial stamina for the police unit.
-			\param startMorale The initial morale for the police unit.
-			\param policeStance The initial stance of the police unit represented by the PoliceStance enum.
-			\param policeDefense The initial defence for the police unit.
-			\param policeMobility The initial mobility for the police unit.
+		Constructor for police initialising all members to starting values.
+		\param startHealth The initial health for the police unit.
+		\param startStamina The initial stamina for the police unit.
+		\param startMorale The initial morale for the police unit.
+		\param policeStance The initial stance of the police unit represented by the PoliceStance enum.
+		\param policeDefense The initial defence for the police unit.
+		\param policeMobility The initial mobility for the police unit.
 		*/
 		AttributeComponent(const int& startHealth, const int& startStamina, const float& startMorale,
-			const PoliceStance& policeStance, const int& policeSquad, const int& policeDefense, 
+			const PoliceStance& policeStance, const int& policeSquad, const int& policeDefense,
 			const float& policeMobility) : health(startHealth), stamina(startStamina), morale(startMorale)
 		{
 			police.stance = policeStance;
@@ -95,28 +103,30 @@ namespace Core
 		}
 
 		/*!
-			Constructor for rioter initialising all members to starting values.
-			\param startHealth The initial health for the rioter.
-			\param startStamina The initial stamina for the rioter.
-			\param startMorale The initial morale for the rioter.
-			\param rioterAlignment The initial alignment of the rioter represented by the RioterAlignment enum.
-			\param rioterRage The rioter's initial rage.
-			\param rioterPressure The initial pressure for the rioter.
+		Constructor for rioter initialising all members to starting values.
+		\param startHealth The initial health for the rioter.
+		\param startStamina The initial stamina for the rioter.
+		\param startMorale The initial morale for the rioter.
+		\param rioterAlignment The initial alignment of the rioter represented by the RioterAlignment enum.
+		\param rioterRage The rioter's initial rage.
+		\param rioterPressure The initial pressure for the rioter.
 		*/
 		AttributeComponent(const int& startHealth, const int& startStamina, const float& startMorale,
-			const RioterAlignment& rioterAlignment, const int& rioterGroupID, const int& rioterRage, 
-			const int& rioterPressure) : health(startHealth), stamina(startStamina), morale(startMorale)
+			const RioterAlignment& rioterAlignment, const int& rioterGroupID, const int& rioterRage,
+			const int& rioterPressure, const RioterStance& rioterStance) : health(startHealth), stamina(startStamina),
+			morale(startMorale)
 		{
 			rioter.alignment = rioterAlignment;
 			rioter.groupID = rioterGroupID;
 			rioter.rage = rioterRage;
 			rioter.pressure = rioterPressure;
+			rioter.stance = rioterStance;
 		}
 
-        inline static const char * GetName()
-        {
-            return "AttributeComponent";
-        }
+		inline static const char * GetName()
+		{
+			return "AttributeComponent";
+		}
 	};
 }
 #endif

@@ -45,11 +45,7 @@ void Core::PickingSystem::Update( float delta )
 
 			newDirection /= glm::length(newDirection);
 
-			MovementComponent::SetDirection(mc->direction, newDirection.x, newDirection.y, newDirection.z);
-
-			/*mc->direction[0] = newDirection.x;
-			mc->direction[1] = newDirection.y;
-			mc->direction[2] = newDirection.z;*/
+			MovementComponent::SetDirection(mc, newDirection.x, newDirection.y, newDirection.z);
 		}
 	}
 }

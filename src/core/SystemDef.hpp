@@ -14,6 +14,12 @@
 #include <Components/AttributeComponent.hpp>
 #include <Components/BoundingVolumeComponent.hpp>
 #include <Components/FlowfieldComponent.hpp>
+#include <Components/AreaComponent.hpp>
+#include <Components/NameComponent.hpp>
+
+/* TODO: Put your system up here instead of the end of the header. noobs */
+#include <Systems/NameSystem.hpp>
+#include <Systems/AreaLuaUpdateSystem.hpp>
 
 namespace Core
 {
@@ -30,11 +36,11 @@ namespace Core
 	
     typedef SystemHandlerTemplate<RenderingSystem, LightSystem, FlowfieldPositioningSystem, NavMeshCollisionSystem, 
 		CollisionSystem2D, PickingSystem, AIDebugSystem, FlowfieldSystem, FieldReactionSystem, 
-		MovementSystem> SystemHandler;
+		MovementSystem, NameSystem,AreaLuaUpdateSystem> SystemHandler;
 
     typedef EntityHandlerTemplate<SystemHandler, WorldPositionComponent, RotationComponent, ScaleComponent, 
 		GraphicsComponent, LightComponent, MovementComponent, UnitTypeComponent, AttributeComponent,
-		BoundingVolumeComponent, FlowfieldComponent> EntityHandler;
+		BoundingVolumeComponent, FlowfieldComponent,AreaComponent,NameComponent> EntityHandler;
 }
 
 /**********All systems after this line************/
