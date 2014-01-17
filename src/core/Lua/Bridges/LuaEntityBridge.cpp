@@ -60,6 +60,20 @@ extern "C"
         return entityBridge.DestroyEntity( L );    
     }
 
+    static int LuaEntityGC( lua_State * L )
+    {
+        LuaEntity * ent = luau_checkentity( L, 1 );
+          
+        if( ent->light == false )
+        {
+            LuaEntityDestroy( L );
+        }
+        else
+        {
+            LOG_DEBUG << "Ignoring GC on light entity." << std::endl; 
+        }
+    }
+
     static int LuaEntityIsValid( lua_State * L )
     {
         return entityBridge.IsValid( L );
@@ -120,7 +134,7 @@ Core::LuaEntityBridge::LuaEntityBridge( lua_State * L  )
             lua_settable( L, -3 );
 
             lua_getfield( L, coreTableIndex, "entity" );
-            lua_getfield( L, -1, "destroy" );
+            lua_pushcfunction( L, LuaEntityGC );
                 lua_pushstring( L, "__gc" );
                 lua_pushvalue( L, -2 );
                 lua_settable( L, -5 );

@@ -3,6 +3,7 @@
 
 #include <cstring>
 #include <logger/Logger.hpp>
+#include <string>
 
 namespace Core
 {
@@ -21,11 +22,29 @@ namespace Core
             if( len  >= NAME_LENGTH )
             {
                 LOG_WARNING << "NameComponent, Truncating name: " << srcName;
-                len = 39;
+                len = NAME_LENGTH-1;
             }
             memset( comp.name, '\0', NAME_LENGTH * sizeof( char ) );
             memcpy( comp.name, srcName, len * sizeof( char ) );
         };
+
+        inline static std::string GetTrunc( const char * srcName )
+        {
+            int len = strlen( srcName );
+
+            if( len  >= NAME_LENGTH )
+            {
+                char tmpName[NAME_LENGTH];
+                memset( tmpName, '\0', NAME_LENGTH * sizeof( char ) );
+                memcpy( tmpName, srcName, (NAME_LENGTH-1) * sizeof( char ) );
+
+                return std::string( tmpName );
+            }
+            else
+            {
+                return std::string( srcName );
+            }
+        }
 
         inline static const char* GetName()
         {
