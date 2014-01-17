@@ -66,11 +66,12 @@ extern "C"
           
         if( ent->light == false )
         {
-            LuaEntityDestroy( L );
+            return LuaEntityDestroy( L );
         }
         else
         {
             LOG_DEBUG << "Ignoring GC on light entity." << std::endl; 
+            return 0;
         }
     }
 
