@@ -10,11 +10,6 @@
 
 #include <World.hpp>
 
-void CalculateGroupMedianPosition(int groupId, float &x, float &y, float &z)
-{
-
-}
-
 extern "C"
 {
 	static int LuaSetGroupGoal(lua_State * L)
@@ -22,29 +17,26 @@ extern "C"
 		// Push the result of the CalculateFlowFieldForGroup to the lua stack. The function takes the four parameters entered
 		// when calling the function.
 		lua_pushboolean(L,
-			Core::GetNavigationMesh()->CalculateFlowfieldForGroup(glm::vec2(static_cast<float>(luaL_checknumber(L, 2)),
-																			static_cast<float>(luaL_checknumber(L, 3))),
+			Core::GetNavigationMesh()->CalculateFlowfieldForGroup(glm::vec3(static_cast<float>(luaL_checknumber(L, 2)),
+                                                                            static_cast<float>(luaL_checknumber(L, 3)),
+																			static_cast<float>(luaL_checknumber(L, 4))),
 																    static_cast<int>(luaL_checkinteger(L, 1)))
 			? 1 : 0);
 
 		return 1;
 	}
 
-    static int LuaGetGroupNavigationMeshPosition(lua_State * L)
+    static int LuaGetGroupNavigationMeshMedianPosition(lua_State * L)
     {
-        float x = 0.0f;
-        float y = 0.0f;
-        float z = 0.0f;
-        
-        //CalculateGroupMedianPosition(luaL_checknumber(L, 1), &x, &y, &z);
+        glm::vec3 medianPosition = Core::world.m_systemHandler.GetSystem<Core::GroupDataSystem>()->GetMedianPosition(luaL_checknumber(L, 1));
 
-        if(!Core::GetNavigationMesh()->CheckPointInsideNavigationMesh(glm::vec2(x, z)))
+        if(!Core::GetNavigationMesh()->CheckPointInsideNavigationMesh(medianPosition))
         {
-
+                     
         }
 
-        lua_pushnumber(L, x);
-        lua_pushnumber(L, y);
+        lua_pushnumber(L, medianPosition.x);
+        lua_pushnumber(L, medianPosition.z);
         
         return 2;
     }

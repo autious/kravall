@@ -31,7 +31,7 @@ namespace Core
 	}
 
 
-	bool NavigationMesh::CheckPointInsideNode( glm::vec2 point, int node )
+	bool NavigationMesh::CheckPointInsideNode( glm::vec3 point, int node )
 	{
 		Core::NavigationMesh* instance = Core::GetNavigationMesh();
 		for( int i = 0; i < 4; i++ )
@@ -59,7 +59,7 @@ namespace Core
 		return true;
 	}
 
-    bool NavigationMesh::CheckPointInsideNavigationMesh( glm::vec2 point )
+    bool NavigationMesh::CheckPointInsideNavigationMesh( glm::vec3 point )
     {
         bool found = false;
 

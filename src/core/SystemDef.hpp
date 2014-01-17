@@ -25,9 +25,10 @@ namespace Core
 	class CollisionSystem2D;
 	class FlowfieldSystem;
 	class NavMeshCollisionSystem;
+    class GroupDataSystem;
 	
     typedef SystemHandlerTemplate<RenderingSystem, LightSystem, NavMeshCollisionSystem, CollisionSystem2D,
-		PickingSystem, AIDebugSystem, FlowfieldSystem, FieldReactionSystem, MovementSystem> SystemHandler;
+		PickingSystem, AIDebugSystem, FlowfieldSystem, FieldReactionSystem, MovementSystem, GroupDataSystem> SystemHandler;
     typedef EntityHandlerTemplate<SystemHandler, WorldPositionComponent, RotationComponent, ScaleComponent, 
 		GraphicsComponent, LightComponent, MovementComponent, UnitTypeComponent, AttributeComponent,
 		BoundingVolumeComponent> EntityHandler;
@@ -43,5 +44,6 @@ namespace Core
 #include <Systems/CollisionSystem2D.hpp>
 #include <Systems/FlowfieldSystem.hpp>
 #include <Systems/NavMeshCollisionSystem.hpp>
+#include <Systems/GroupDataSystem.hpp>
 
 #endif

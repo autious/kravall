@@ -90,7 +90,7 @@ namespace Core
         template <typename System>
         System* GetSystem()
         {
-            return m_systems[Index<System, std::tuple<Args...>>::value];
+            return reinterpret_cast<System*>(m_systems[Index<System, std::tuple<Args...>>::value]);
         }
 
 

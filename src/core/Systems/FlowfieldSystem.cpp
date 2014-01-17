@@ -12,9 +12,6 @@ Core::FlowfieldSystem::FlowfieldSystem()
 {
 }
 
-
-
-
 void Core::FlowfieldSystem::Update( float delta )
 {
 	Core::NavigationMesh* instance = Core::GetNavigationMesh();
@@ -34,7 +31,7 @@ void Core::FlowfieldSystem::Update( float delta )
 				glm::vec3& position = *reinterpret_cast<glm::vec3*>(wpc->position);
 
 
-				if( instance->CheckPointInsideNode( glm::vec2(position.x, position.z), p ) )
+				if( instance->CheckPointInsideNode( position, p ) )
 				{
 					Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>(*it);
 					Core::AttributeComponent* attribc = WGETC<Core::AttributeComponent>(*it);
