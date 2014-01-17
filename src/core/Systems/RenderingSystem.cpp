@@ -1,6 +1,8 @@
 #include "RenderingSystem.hpp"
 #include "World.hpp"
 #include <gfx/GFXInterface.hpp>
+#include <gfx/InstanceData.hpp>
+
 namespace Core
 {
 	void RenderingSystem::Update(float delta)
@@ -21,13 +23,15 @@ namespace Core
 			rot = RotationComponent::GetQuat(rc->rotation);
 			rotationMatrix = glm::toMat4(rot);
 			translationMatrix = glm::translate(glm::mat4(1.0f), WorldPositionComponent::GetVec3(*wpc));
-			scaleMatrix = glm::scale(sc->scale, sc->scale, sc->scale);
+			scaleMatrix = glm::scale(sc->scale[0], sc->scale[1], sc->scale[2]);
 
-			//Build modelMatrix using linear allocator (FIX THIS)
-			glm::mat4* modelMatrix = Core::world.m_frameHeap.NewObject<glm::mat4>(translationMatrix * rotationMatrix * scaleMatrix);
-			//glm::mat4* modelMatrix = new glm::mat4(translationMatrix * rotationMatrix * scaleMatrix);
-			//delete modelMatrix;
-			GFX::Draw(gc->bitmask, (void*)modelMatrix);
+			//Send the data through a drawcall to GFX
+			GFX::InstanceData* instanceData = Core::world.m_frameHeap.NewObject<GFX::InstanceData>();
+			instanceData->modelMatrix = translationMatrix * rotationMatrix * scaleMatrix;
+			instanceData->animationFrame = 0;
+			instanceData->animationFrameOffset = 0;
+
+			GFX::Draw(gc->bitmask, (void*)instanceData);
 		}
 	}
 }

@@ -11,6 +11,9 @@
 #include <Lua/Bridges/ComponentBind/UnitTypeComponentBinding.hpp>
 #include <Lua/Bridges/ComponentBind/AttributeComponentBinding.hpp>
 #include <Lua/Bridges/ComponentBind/BoundingVolumeComponentBinding.hpp>
+#include <Lua/Bridges/ComponentBind/FlowfieldComponentBinding.hpp>
+#include <Lua/Bridges/ComponentBind/AreaComponentBinding.hpp>
+#include <Lua/Bridges/ComponentBind/NameComponentBinding.hpp>
 
 #include <cassert>
 
@@ -25,7 +28,10 @@ namespace Core
 	 MovementComponentBinding,
 	 UnitTypeComponentBinding, 
 	 AttributeComponentBinding, 
-	 BoundingVolumeComponentBinding> EntityBridge;
+	 BoundingVolumeComponentBinding,
+	 FlowfieldComponentBinding,
+     AreaComponentBinding,
+     NameComponentBinding> EntityBridge;
 }
 
 /*************/
@@ -54,6 +60,11 @@ extern "C"
         return entityBridge.DestroyEntity( L );    
     }
 
+    static int LuaEntityIsValid( lua_State * L )
+    {
+        return entityBridge.IsValid( L );
+    }
+
     static int LuaEntityToString( lua_State * L )
     {
         return entityBridge.EntityToString( L );
@@ -63,6 +74,7 @@ extern "C"
     {
         return entityBridge.ComponentTypeToString( L ); 
     }
+
 }
 
 Core::LuaEntityBridge::LuaEntityBridge( lua_State * L  )
@@ -91,6 +103,8 @@ Core::LuaEntityBridge::LuaEntityBridge( lua_State * L  )
             lua_pushstring( L, "destroy" );
             lua_pushcfunction( L, LuaEntityDestroy );
             lua_settable( L, -3 );
+            
+            luau_setfunction( L, "isValid", LuaEntityIsValid );
         lua_settable( L, -3 );
 
         if( luaL_newmetatable( L, ENTITY_META_TYPE ) == 0 )

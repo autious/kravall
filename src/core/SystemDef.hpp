@@ -13,6 +13,13 @@
 #include <Components/UnitTypeComponent.hpp>
 #include <Components/AttributeComponent.hpp>
 #include <Components/BoundingVolumeComponent.hpp>
+#include <Components/FlowfieldComponent.hpp>
+#include <Components/AreaComponent.hpp>
+#include <Components/NameComponent.hpp>
+
+/* TODO: Put your system up here instead of the end of the header. noobs */
+#include <Systems/NameSystem.hpp>
+#include <Systems/AreaLuaUpdateSystem.hpp>
 
 namespace Core
 {
@@ -26,12 +33,15 @@ namespace Core
 	class FlowfieldSystem;
 	class NavMeshCollisionSystem;
     class GroupDataSystem;
+	class FlowfieldPositioningSystem;
 	
-    typedef SystemHandlerTemplate<RenderingSystem, LightSystem, NavMeshCollisionSystem, CollisionSystem2D,
-		PickingSystem, AIDebugSystem, FlowfieldSystem, FieldReactionSystem, MovementSystem, GroupDataSystem> SystemHandler;
+    typedef SystemHandlerTemplate<RenderingSystem, LightSystem, FlowfieldPositioningSystem, NavMeshCollisionSystem, 
+		CollisionSystem2D, PickingSystem, AIDebugSystem, FlowfieldSystem, FieldReactionSystem, 
+		MovementSystem, NameSystem, GroupDataSystem, AreaLuaUpdateSystem> SystemHandler;
+
     typedef EntityHandlerTemplate<SystemHandler, WorldPositionComponent, RotationComponent, ScaleComponent, 
 		GraphicsComponent, LightComponent, MovementComponent, UnitTypeComponent, AttributeComponent,
-		BoundingVolumeComponent> EntityHandler;
+		BoundingVolumeComponent, FlowfieldComponent,AreaComponent,NameComponent> EntityHandler;
 }
 
 /**********All systems after this line************/
@@ -44,6 +54,10 @@ namespace Core
 #include <Systems/CollisionSystem2D.hpp>
 #include <Systems/FlowfieldSystem.hpp>
 #include <Systems/NavMeshCollisionSystem.hpp>
+<<<<<<< HEAD
 #include <Systems/GroupDataSystem.hpp>
+=======
+#include <Systems/FlowfieldPositioningSystem.hpp>
+>>>>>>> 6307259a30528a556be4b2c3dd81777c67674513
 
 #endif

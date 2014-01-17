@@ -88,6 +88,7 @@ Core::LuaGFXBridge::LuaGFXBridge( lua_State * L )
             lua_pushstring( L, "objectTypes" );
             lua_newtable( L ); //objectTypes table
                 int objectTypeTable = lua_gettop(L);
+                PushObjectType( L, GFX::OBJECT_TYPES::OVERLAY_GEOMETRY, "OverlayGeometry", objectTypeTable );
                 PushObjectType( L, GFX::OBJECT_TYPES::OPAQUE_GEOMETRY, "OpaqueGeometry" , objectTypeTable );
                 PushObjectType( L, GFX::OBJECT_TYPES::LIGHT, "Light" , objectTypeTable );
                 PushObjectType( L, GFX::OBJECT_TYPES::TRANSPARENT_GEOMETRY, "TransparentGeometry" , objectTypeTable );

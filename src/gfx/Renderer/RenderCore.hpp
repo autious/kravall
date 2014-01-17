@@ -9,6 +9,7 @@
 #include "DeferredRenderer/LightPainter.hpp"
 
 #include "Console/ConsolePainter.hpp"
+#include "OverlayRenderer/OverlayPainter.hpp"
 #include "DebugRenderer/DebugPainter.hpp"
 #include "TextRenderer/TextPainter.hpp"
 #include "SplashRenderer/SplashPainter.hpp"
@@ -77,6 +78,16 @@ namespace GFX
 		\param proj New projection matrix
 		*/
 		void SetProjMatrix(glm::mat4 proj);
+
+        /*!
+        Sets the view matrix used by the overlay camera
+        */
+        void SetOverlayViewMatrix( glm::mat4 view );
+
+        /*!
+        Sets the projection matrix used by the overlay camera
+        */
+        void SetOverlayProjMatrix( glm::mat4 proj );
 
 		/*!
 		Get window width
@@ -175,6 +186,7 @@ namespace GFX
 		ConsolePainter* m_consolePainter;
 		SplashPainter* m_splashPainter;
 		FBOPainter* m_fboPainter;
+        OverlayPainter* m_overlayPainter;
 		
 		void SubSystemTimeRender();
         std::vector<std::pair<const char*, std::chrono::microseconds>> m_subsystemTimes;
@@ -187,6 +199,9 @@ namespace GFX
 
 		glm::mat4 m_viewMatrix;
 		glm::mat4 m_projMatrix;
+
+        glm::mat4 m_overlayViewMatrix;
+        glm::mat4 m_overlayProjMatrix;
 
 		bool m_playSplash;
 

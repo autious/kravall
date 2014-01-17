@@ -5,13 +5,21 @@ namespace Core
 {
 	struct ScaleComponent
 	{
-		float scale;
+		float scale[3];
 
-		ScaleComponent() : scale(1.0f)
-		{}
+		ScaleComponent()
+		{
+            scale[0] = 1.0f;
+            scale[1] = 1.0f;
+            scale[2] = 1.0f;
+        }
 
-		ScaleComponent(float initScale) : scale(initScale)
-		{}
+		ScaleComponent(float initScale)
+		{
+            scale[0] = initScale;
+            scale[1] = initScale;
+            scale[2] = initScale;
+        }
 
         inline static const char* GetName()
         {

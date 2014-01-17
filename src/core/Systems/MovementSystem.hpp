@@ -31,6 +31,9 @@ namespace Core
 			\return The system's name.
 		*/
 		virtual const char* GetHumanName() { return "MovementSystem"; }
+
+	private:
+		void InterpolateDirections(MovementComponent* mc);
 	};
 }
 

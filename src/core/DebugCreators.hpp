@@ -34,7 +34,9 @@ static void CreateLightsAndTea()
 			wpc->position[1] = (float)(j * 20);
 	
 			Core::ScaleComponent* sc = WGETC<Core::ScaleComponent>(e2);
-			sc->scale = .10f;
+			sc->scale[0] = .10f;
+			sc->scale[1] = .10f;
+			sc->scale[2] = .10f;
 	
 			Core::RotationComponent* rc = WGETC<Core::RotationComponent>(e2);
 			rc->rotation[2] = sin(3.14f);
@@ -63,7 +65,7 @@ static void CreateLightsAndTea()
 			//wpc->position[1] = (float)(-400.0f + 600.0f * (rand()&1000)/1000.0f);
 			wpc->position[2] = (float)(-250.0f + 500.0f * (rand() & 1000) / 1000.0f);
 			Core::ScaleComponent* sc = WGETC<Core::ScaleComponent>(light);
-			sc->scale = 10.0f +5.0f * (rand() & 1000) / 1000.0f;
+			sc->scale[0] = sc->scale[1] = sc->scale[2] = 10.0f +5.0f * (rand() & 1000) / 1000.0f;
 	
 			Core::RotationComponent* rc = WGETC<Core::RotationComponent>(light);
 	}

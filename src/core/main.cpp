@@ -108,7 +108,6 @@ void run( GLFWwindow * window )
 
 	std::vector<Core::Entity> rioters;
 
-	//Core::GetInputManager().Initialize(window);
     Core::GetInputManager().Init( window );
 
     unsigned int meshID; 
@@ -156,9 +155,8 @@ void run( GLFWwindow * window )
 		
 		Core::Console().Update();
 
-		//gCamera->CalculateViewMatrix();
-		//Core::gameCamera->LookAt(glm::vec3(9001.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-
+        GFX::SetOverlayViewMatrix( Core::overlayCamera.GetViewMatrix() );
+        GFX::SetOverlayProjectionMatrix( Core::overlayCamera.GetProjectionMatrix() );
 		GFX::SetViewMatrix(Core::gameCamera.GetViewMatrix());
 		GFX::SetProjectionMatrix(Core::gameCamera.GetProjectionMatrix());
 

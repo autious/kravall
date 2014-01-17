@@ -1,4 +1,5 @@
 local Camera = require "camera" 
+local MainMenu = require "gui/MainMenu"
 
 -- Called on each frame
 camera = Camera.new()
@@ -10,8 +11,19 @@ end
 -- Called when program starts
 function core.init() 
     print( "Program starting in lua" )
-    openscenario( "test" )
     showSys()
+    toggleMenu()
+    openscenario( "test" )    
+end
+
+menuState = nil
+function toggleMenu()
+    if menuState == nil then
+        menuState = MainMenu.new()
+    else
+        menuState:destroy()
+        menuState = nil
+    end
 end
 
 -- Called when program end

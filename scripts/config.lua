@@ -6,13 +6,18 @@ initScreenWidth = 1280,
 initScreenHeight = 720,
 showSystems = false,
 entityMemoryOutputLevel = "partial", -- full, short or partial
-entityMemoryOutputComponents = { "WorldPositionComponent", "GraphicsComponent" },
+-- List of components to render debug data for.
+entityMemoryOutputComponents = { "WorldPositionComponent", 
+                                 "GraphicsComponent", 
+                                 "NameComponent",
+                                 "AreaComponent" },
 showFramebuffers = 0,
 initCameraFieldOfView = 45.0,
 initCameraNearClipDistance = 5.0,
 initCameraFarClipDistance = 250.0,
 consoleFont = "assets/Fonts/ConsoleFont.font",
-defaultNrFlowfields = 20
+defaultNrFlowfields = 20,
+debugRenderAreas = true
 }
 
 function showSys()
@@ -32,11 +37,12 @@ function showFBO(which)
 end
 
 function help()
-    print( "The following functions exist:" )
-    print( "showSys()" )
-    print( "showFBO(which)" )
-	print( "showMesh()" )
-    print( "printAlexStatus()" )
+    print "The following functions exist:" 
+    print "showSys()" 
+    print "showFBO(which)" 
+	print "showMesh()" 
+    print "print_env()" 
+    print "toggleMenu()"
 end
 
 -- Loads a scenario from the scenario folder and returns the assembly.
