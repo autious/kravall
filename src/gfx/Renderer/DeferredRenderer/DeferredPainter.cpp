@@ -25,20 +25,20 @@ namespace GFX
 
 		m_shaderManager->CreateProgram("StaticMesh");
 
+		//TODO: CHANGE THIS INTO A PROPER STATIC SHADER
 		m_shaderManager->LoadShader("shaders/SimpleGeometry.vertex", "StaticMeshVS", GL_VERTEX_SHADER);
-		//m_shaderManager->LoadShader("shaders/NormalMappedFS.glsl", "StaticMeshFS", GL_FRAGMENT_SHADER);
 		m_shaderManager->LoadShader("shaders/SimpleGeometry.fragment", "StaticMeshFS", GL_FRAGMENT_SHADER);
-		
 		m_shaderManager->AttachShader("StaticMeshVS", "StaticMesh");
 		m_shaderManager->AttachShader("StaticMeshFS", "StaticMesh");
-
 		m_shaderManager->LinkProgram("StaticMesh");
 
-		// TODO: Change texture names in shader
-		m_uniformTexture0 = m_shaderManager->GetUniformLocation("StaticMesh", "gDiffuse");
-		m_uniformTexture1 = m_shaderManager->GetUniformLocation("StaticMesh", "gNormal");
-		m_uniformTexture2 = m_shaderManager->GetUniformLocation("StaticMesh", "gSpecular");
-		m_uniformTexture3 = m_shaderManager->GetUniformLocation("StaticMesh", "gGlow");
+		//Normal mapped, non-animated shader
+		m_shaderManager->CreateProgram("NormalMappedStatic");
+		m_shaderManager->LoadShader("shaders/SimpleGeometry.vertex", "NormalMappedStaticVS", GL_VERTEX_SHADER);
+		m_shaderManager->LoadShader("shaders/NormalMappedFS.glsl", "NormalMappedStaticFS", GL_FRAGMENT_SHADER);
+		m_shaderManager->AttachShader("NormalMappedStaticVS", "NormalMappedStatic");
+		m_shaderManager->AttachShader("NormalMappedStaticFS", "NormalMappedStatic");
+		m_shaderManager->LinkProgram("NormalMappedStatic");
 
 		m_modelMatrixUniform = m_shaderManager->GetUniformLocation("StaticMesh", "modelMatrix");
 
@@ -168,16 +168,21 @@ namespace GFX
 						glUseProgram(mat.shaderProgramID);
 						error = glGetError(); 
 						currentShader = mat.shaderProgramID;
+
+						m_uniformTexture0 = m_shaderManager->GetUniformLocation(currentShader, "gDiffuse");
+						m_uniformTexture1 = m_shaderManager->GetUniformLocation(currentShader, "gNormal");
+						m_uniformTexture2 = m_shaderManager->GetUniformLocation(currentShader, "gSpecular");
+						m_uniformTexture3 = m_shaderManager->GetUniformLocation(currentShader, "gGlow");
 					}
 
 					//set textures
 					m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[0]).textureHandle, m_uniformTexture0, 0, GL_TEXTURE_2D);
-					m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[1]).textureHandle, m_uniformTexture2, 1, GL_TEXTURE_2D);
-					m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[2]).textureHandle, m_uniformTexture1, 2, GL_TEXTURE_2D);
+					m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[2]).textureHandle, m_uniformTexture1, 1, GL_TEXTURE_2D);
+					m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[1]).textureHandle, m_uniformTexture2, 2, GL_TEXTURE_2D);
 					m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[3]).textureHandle, m_uniformTexture3, 3, GL_TEXTURE_2D);
 				}
 
-				if (meshID != currentMesh)
+					if (meshID != currentMesh)
 				{
 					mesh = m_meshManager->GetMesh(meshID);
 					currentMesh = meshID;
@@ -185,7 +190,7 @@ namespace GFX
 					glBindVertexArray(mesh.VAO);
 					error = glGetError();
 				}
-
+					 
 				InstanceData smid = *(InstanceData*)renderJobs.at(i).value;
 				m_staticInstances[instanceCount++] = smid;
 			}

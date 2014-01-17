@@ -246,6 +246,11 @@ namespace GFX
 		return glGetUniformLocation(GetShaderProgramID(shaderProgramKey), uniformName.c_str());
 	}
 
+	GLint ShaderManager::GetUniformLocation(GLint programKey, std::string uniformName)
+	{
+		return glGetUniformLocation(programKey, uniformName.c_str());
+	}
+
 	GLint ShaderManager::GetUniformBlockLocation(std::string shaderProgramKey, std::string uniformBlockName)
 	{
 		return glGetUniformBlockIndex(GetShaderProgramID(shaderProgramKey), uniformBlockName.c_str());
