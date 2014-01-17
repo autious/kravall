@@ -13,7 +13,7 @@
 #include "../../Textures/TextureManager.hpp"
 #include "../../Buffers/MeshManager.hpp"
 #include "../../Material/MaterialManager.hpp"
-
+#include <gfx/InstanceData.hpp>
 namespace GFX
 {
 	class DeferredPainter : public BasePainter
@@ -69,6 +69,10 @@ namespace GFX
 		MeshManager* m_meshManager;
 		MaterialManager* m_materialManager;
 		TextureManager* m_textureManager;
+
+		InstanceData* m_staticInstances;
+		const unsigned int MAX_INSTANCES = 1024;
+		GLuint m_instanceBuffer;
 	};
 }
 

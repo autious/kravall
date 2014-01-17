@@ -20,7 +20,7 @@ namespace GFX
 		void UnbindMesh();
 		void DeleteMesh(unsigned long long id);
 
-		void LoadStaticMesh(unsigned int& meshID, const int& sizeVerts, const int& sizeIndices, StaticVertex* verts, int* indices);
+		void LoadMesh(unsigned int& meshID, const int& sizeVerts, const int& sizeIndices, GFX::Vertex* verts, int* indices);
 
 		inline Mesh GetMesh(const unsigned long long int& meshID) 
 		{ 

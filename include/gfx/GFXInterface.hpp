@@ -136,7 +136,6 @@ namespace GFX
 		\param data Texture data
 		\param width Width of the texture
 		\param height Height of the texture
-		\return Handle of the texture
 		*/
 		DLL_API void LoadTexture2DFromMemory(unsigned int& out_id, unsigned char* data, int width, int height);
 
@@ -146,9 +145,9 @@ namespace GFX
 		*/
 		DLL_API void DeleteTexture(unsigned int id);
 
-		DLL_API void LoadStaticMesh(unsigned int& meshID, int& sizeVerts, int& sizeIndices, GFX::StaticVertex* verts, int* indices);
+		DLL_API void LoadMesh(unsigned int& meshID, int& sizeVerts, int& sizeIndices, GFX::Vertex* verts, int* indices);
 
-		DLL_API void DeleteStaticMesh(unsigned int& meshID);
+		DLL_API void DeleteMesh(unsigned int& meshID);
 
 		/*!
 		Creates an empty material

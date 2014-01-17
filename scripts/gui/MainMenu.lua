@@ -1,7 +1,7 @@
 local MainMenu = {}
 
 local GUIBase = require "gui/component/GUIBase"
-require "gui/viewport"
+local viewport = require "gui/viewport"
 
 function MainMenu:destroy()
     self.t:destroy()

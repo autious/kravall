@@ -38,10 +38,11 @@ namespace Core
 
 		struct Bone
 		{
+            int id;
 			int parentID;
-			std::string Name;
-			int id;
+            int nameSize;
 			float offsetMatrix[4][4];
+			std::string name;
 		};
 
 		struct Keyframe
@@ -60,75 +61,40 @@ namespace Core
 
 		struct Animation
 		{
-			int fps;
-			int id;
+			//int fps;
+			int nameSize;
+			std::string name;
 			BoneForAnimation* boneAnim;
+			
 		};
-
-
-		Animation* animations;
 
 		struct VertexBoneAnimated
 		{
 			//Ordinary stuff
-			float position[3];
-			float normal[3];
+			float position[4];
+			float normal[4];
 
 			//Normalmapping
-			float tangent[3];
-			float uv[2];
+			float tangent[4];
 
 			//Animation
-			float boneWeight[4];
 			int boneIndex[4];
-		};
-
-		struct Vertex
-		{
-			//Ordinary stuff
-			float position[3];
-			float normal[3];
-
-			//Normalmapping
-			float tangent[3];
+			float boneWeight[4];
+			
+			//uv
 			float uv[2];
 		};
-
-		struct Mesh
-		{
-			int* indices;
-			Vertex* vertices;
-			VertexBoneAnimated* animatedVertices;
-		};
-
-		struct MorphKey
-		{
-			float keyTime;
-			Vertex* vertices;
-		};
-
-		struct MorphAnimation
-		{
-			int id;
-			int numberOfKeys;
-			MorphKey* keys;
-		};
-
-		//Animation* animations;
-		Bone* bones;
-		Header header;
-		//Mesh mesh;
-		MorphAnimation* morphAnimation;
 
         struct Gnome
         {
             int numberOfVertices;
-            GFX::StaticVertex* vertices;
+            GFX::Vertex* vertices;
             int numberOfIndices;
             int* indices;
+            int numberOfBones;
             Core::GnomeLoader::Bone* bones;
+            int numberOfAnimations;
             Core::GnomeLoader::Animation* animations;
-            //Core::GnomeLoader::Material* materials;
         };
 
         Core::GnomeLoader::Gnome* LoadGnomeFromFile(const char* fileName);

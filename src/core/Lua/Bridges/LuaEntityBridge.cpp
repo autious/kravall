@@ -11,6 +11,7 @@
 #include <Lua/Bridges/ComponentBind/UnitTypeComponentBinding.hpp>
 #include <Lua/Bridges/ComponentBind/AttributeComponentBinding.hpp>
 #include <Lua/Bridges/ComponentBind/BoundingVolumeComponentBinding.hpp>
+#include <Lua/Bridges/ComponentBind/FlowfieldComponentBinding.hpp>
 
 #include <cassert>
 
@@ -25,7 +26,8 @@ namespace Core
 	 MovementComponentBinding,
 	 UnitTypeComponentBinding, 
 	 AttributeComponentBinding, 
-	 BoundingVolumeComponentBinding> EntityBridge;
+	 BoundingVolumeComponentBinding,
+	 FlowfieldComponentBinding > EntityBridge;
 }
 
 /*************/

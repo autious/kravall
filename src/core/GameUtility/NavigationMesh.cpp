@@ -4,6 +4,8 @@
 #include <fstream>
 #include <logger/Logger.hpp>
 
+static bool drawNavigationMesh = true;
+
 namespace Core
 {
 	NavigationMesh* mesh;
@@ -34,7 +36,7 @@ namespace Core
 			nrInstances = Core::world.m_config.GetInt( "defaultNrFlowfields", 20 );
 		
 		// resize list of flowfields...
-		flowfields = Core::world.m_levelHeap.NewObjectArray<Core::NavigationMesh::Flowfield>( nrInstances );
+		flowfields = Core::world.m_levelHeap.NewPODArray<Core::NavigationMesh::Flowfield>( nrInstances );
 		maxFlowfields = nrInstances;
 		nrUsedFlowfields = 0;
 
@@ -42,8 +44,8 @@ namespace Core
 		for( int i = 0; i < nrInstances; i++ )
 		{
 			flowfields[i].edges = Core::world.m_levelHeap.NewPODArray<int>( nrNodes );
-			flowfields[i].list = (glm::vec3*)Core::world.m_levelHeap.NewPODArray<float>( nrNodes * 3 );
-			
+			flowfields[i].list = (glm::vec3*)Core::world.m_levelHeap.NewPODArray<float>( 3 * nrNodes );
+
 			std::memset( flowfields[i].edges, 0.0f, nrNodes * sizeof(int) );
 			std::memset( flowfields[i].list, 0.0f, nrNodes * sizeof(glm::vec3) );
 		}
@@ -69,6 +71,17 @@ namespace Core
 				}
 			}
 		}
+	}
+
+	void ToggleDrawOfNavigationMesh(clop::ArgList args)
+	{
+		drawNavigationMesh = !drawNavigationMesh;
+	}
+
+	void DrawToggledNavigationMesh()
+	{
+		if( Core::GetNavigationMesh() && drawNavigationMesh )
+			Core::GetNavigationMesh()->DrawDebug();
 	}
 }
 

@@ -2,6 +2,7 @@
 
 #include "../RenderCore.hpp"
 #include <logger/Logger.hpp>
+#include <utility/GLMStreams.hpp>
 
 namespace GFX
 {
@@ -36,9 +37,7 @@ namespace GFX
 		m_uniformTexture0 = m_shaderManager->GetUniformLocation("Overlay", "diffuseMap");
 		m_modelMatrixUniform = m_shaderManager->GetUniformLocation("Overlay", "modelMatrix");
 		m_viewMatrixUniform = m_shaderManager->GetUniformLocation("Overlay", "viewMatrix");
-        LOG_INFO << "VIEW: " << m_viewMatrixUniform << std::endl;
 		m_projectionMatrixUniform = m_shaderManager->GetUniformLocation("Overlay", "projectionMatrix");
-        LOG_INFO << "PROJ: " << m_projectionMatrixUniform << std::endl;
     }
 
     void OverlayPainter::Render( unsigned int& renderIndex, glm::mat4& viewMatrix, glm::mat4& projectionMatrix )
@@ -114,7 +113,8 @@ namespace GFX
 				glBindVertexArray(mesh.VAO);
 			}
 
-			m_shaderManager->SetUniform(1, *(glm::mat4*)renderJobs.at(renderIndex).value, m_modelMatrixUniform);
+            InstanceData* d = static_cast<InstanceData*>(renderJobs.at(renderIndex).value);
+			m_shaderManager->SetUniform(1, d->modelMatrix, m_modelMatrixUniform);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IBO);
 			glDrawElements(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0);
 		}

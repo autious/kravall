@@ -24,8 +24,6 @@
 #include <World.hpp>
 
 #include "Console/Console.hpp"
-#include "BGnomeImporter.hpp"
-
 #include "Console/CLOP.hpp"
 #include <sstream>
 
@@ -130,13 +128,14 @@ void run( GLFWwindow * window )
             }, false);
 
 	Core::world.m_contentManager.Load<Core::MaterialLoader>("assets/material/rioter.material", [&rioterMaterialID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
-			{
+			{ 
 				Core::MaterialData* data = static_cast<Core::MaterialData*>(handle);
 				rioterMaterialID = static_cast<unsigned int>(data->materialId);
 			}, false);
    
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));	
 
+	clop::Register( "showMesh", Core::ToggleDrawOfNavigationMesh );
 
 	LOG_INFO << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " " << std::endl;
 
@@ -170,6 +169,8 @@ void run( GLFWwindow * window )
         Core::world.m_contentManager.CallFinishers();
 		Core::world.m_systemHandler.Update(static_cast<float>(delta));
 		Core::world.m_luaState.Update(static_cast<float>(delta));
+
+		Core::DrawToggledNavigationMesh();
 
 		GFX::Debug::DisplayFBO(Core::world.m_config.GetInt( "showFramebuffers", -1 ));
 		glfwSwapBuffers(window);

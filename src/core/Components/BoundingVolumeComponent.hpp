@@ -153,7 +153,7 @@ namespace Core
 		{
 			type = BoundingVolumeType::SphereBoundingType;
 			collisionModel = collisionModelOFChoice;
-			std::memcpy( &data, &sphere,  MAX_SIZE_OF_BOUNDING_STRUCTS );
+			std::memcpy( &data, &sphere,  sizeof(BoundingSphere) );
 		}
 
 		/*!
@@ -164,7 +164,7 @@ namespace Core
 		{
 			type = Core::BoundingVolumeType::AABBBoundingType;
 			collisionModel = collisionModelOFChoice;
-			std::memcpy( &data, &aabb,  MAX_SIZE_OF_BOUNDING_STRUCTS );
+			std::memcpy( &data, &aabb,  sizeof(AABB) );
 
 		}
 

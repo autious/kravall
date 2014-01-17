@@ -1,7 +1,7 @@
 #include "LightSystem.hpp"
 #include "World.hpp"
 #include <gfx/GFXInterface.hpp>
-#include <gfx/Lights.hpp>
+#include <gfx/LightData.hpp>
 namespace Core
 {
 	static double lel = 0;

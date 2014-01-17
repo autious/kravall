@@ -1,6 +1,6 @@
 core.config = {
 showSplash = false,
-vsync = 1,
+vsync = 0,
 windowResizable = true,
 initScreenWidth = 1280,
 initScreenHeight = 720,
@@ -9,8 +9,8 @@ entityMemoryOutputLevel = "partial", -- full, short or partial
 entityMemoryOutputComponents = { "WorldPositionComponent", "GraphicsComponent" },
 showFramebuffers = 0,
 initCameraFieldOfView = 45.0,
-initCameraNearClipDistance = 1.0,
-initCameraFarClipDistance = 1000.0,
+initCameraNearClipDistance = 5.0,
+initCameraFarClipDistance = 250.0,
 consoleFont = "assets/Fonts/ConsoleFont.font",
 defaultNrFlowfields = 20
 }
@@ -35,6 +35,7 @@ function help()
     print( "The following functions exist:" )
     print( "showSys()" )
     print( "showFBO(which)" )
+	print( "showMesh()" )
     print( "printAlexStatus()" )
 end
 
@@ -66,6 +67,7 @@ function closescenario()
         core.config.current_scenario:destroy()
         core.config.current_scenario = nil
         core.config.current_scenario_name = "No Scenario Loaded"
+		core.memory.clear_level_memory()
     end
 
     collectgarbage() --For niceness, always good to do right after loading a scenario as the

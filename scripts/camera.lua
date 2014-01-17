@@ -41,7 +41,7 @@ end
 
 function C:getProjection()
     -- TODO: replace with callback.
-    return mat4.perspective( 60, self.width/self.height, 0.1, 1000 )
+    return mat4.perspective( core.config.initCameraFieldOfView, self.width/self.height, core.config.initCameraNearClipDistance, core.config.initCameraFarClipDistance )
 end
 
 local unit_right = vec3.new(1,0,0)
@@ -82,8 +82,8 @@ function C:update( dt )
         local x,y = mouse.getPosition()
 
         if mouse.isbuttondown( mouse.button.Left ) then
-            self.pitch = self.pitch + (y-self.py) * delta
-            self.yaw = self.yaw + (x-self.px) * delta
+            self.pitch = self.pitch + (y-self.py) * 0.3
+            self.yaw = self.yaw + (x-self.px) * 0.3
         end
 
         self.px = x

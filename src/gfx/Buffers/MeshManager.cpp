@@ -41,7 +41,8 @@ namespace GFX
 	
 	}
 
-	void MeshManager::LoadStaticMesh(unsigned int& meshID, const int& sizeVerts, const int& sizeIndices, StaticVertex* verts, int* indices)
+
+    void MeshManager::LoadMesh(unsigned int& meshID, const int& sizeVerts, const int& sizeIndices, GFX::Vertex* verts, int* indices)
 	{
 		Mesh mesh;
 		GLuint VBO;
@@ -52,7 +53,7 @@ namespace GFX
 		glGenBuffers(1, &VBO);
 
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeVerts * sizeof (StaticVertex), verts, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeVerts * sizeof (GFX::Vertex), verts, GL_STATIC_DRAW);
 
 		//Generate IBO
 		glGenBuffers(1, &IBO);
@@ -65,24 +66,33 @@ namespace GFX
 
 		//Position
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(StaticVertex), (void*)0);
+		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(GFX::Vertex), (void*)0);
+		glVertexAttribDivisor(0, 0);
 
 		//Normal
 		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(StaticVertex), (void*)(4 * sizeof(float)));
+		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(GFX::Vertex), (void*)(4 * sizeof(float)));
+		glVertexAttribDivisor(1, 0);
 
 		//Tangent
 		glEnableVertexAttribArray(2);
-		glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(StaticVertex), (void*)(8 * sizeof(float)));
-			
-		//Binormal
+		glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(GFX::Vertex), (void*)(8 * sizeof(float)));
+		glVertexAttribDivisor(2, 0);
+
+		//bone indices
 		glEnableVertexAttribArray(3);
-		glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(StaticVertex), (void*)(12 * sizeof(float)));
+		glVertexAttribPointer(3, 4, GL_INT, GL_FALSE, sizeof(GFX::Vertex), (void*)(12 * sizeof(int)));
+		glVertexAttribDivisor(3, 0);
+
+		//bone weights
+		glEnableVertexAttribArray(4);
+		glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(GFX::Vertex), (void*)(16 * sizeof(float)));
+		glVertexAttribDivisor(4, 0);
 
 		//UV
-		glEnableVertexAttribArray(4);
-		glVertexAttribPointer(4, 2, GL_FLOAT, GL_FALSE, sizeof(StaticVertex), (void*)(16 * sizeof(float)));
-
+		glEnableVertexAttribArray(5);
+		glVertexAttribPointer(5, 2, GL_FLOAT, GL_FALSE, sizeof(GFX::Vertex), (void*)(20 * sizeof(float)));
+		glVertexAttribDivisor(5, 0);
 
 
 		mesh.id = static_cast<unsigned int>(m_idCounter);
@@ -94,6 +104,5 @@ namespace GFX
 
 		meshID = mesh.id;
 	}
-
 	
 }

@@ -120,7 +120,7 @@ namespace GFX
 		void AddRenderJob(GFXBitmask bitmask, void* value);
 
 		void DeleteMesh(unsigned long long id);
-		void LoadStaticMesh(unsigned int& meshID, const int& sizeVerts, const int& sizeIndices, StaticVertex* verts, int* indices);
+		void LoadMesh(unsigned int& meshID, int& sizeVerts, int& sizeIndices, GFX::Vertex* verts, int* indices);
 
 		void LoadTexture(unsigned int& id, unsigned char* data, int width, int height);
 		void DeleteTexture(unsigned long long int id);
