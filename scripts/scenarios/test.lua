@@ -1,4 +1,3 @@
-
 local ASML = require "assembly_loader" 
 local asm = ASML.loadPack( {} )
 
@@ -115,8 +114,10 @@ building.create(asm, 28, 17)
 building.create(asm, 36, 20)
 building.create(asm, 45, 19)
 building.create(asm, 56, 19)
+
+--------------
+local area = dofile "scripts/entities/area.lua"
+
+area( asm, {0,0,0}, { 0,0, 1,0, 1,1, 0,1 }, "test_area" )
+
 return asm;
-
-
-
-

@@ -8,6 +8,7 @@
 #include <ContentManagement/ContentManager.hpp>
 
 #define WGETC Core::world.m_entityHandler.GetComponentTmpPointer
+#define CONF Core::world.m_config
 
 namespace Core
 {
