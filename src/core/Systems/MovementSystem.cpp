@@ -10,6 +10,8 @@ void Core::MovementSystem::Update(float delta)
 		WorldPositionComponent* wpc = WGETC<WorldPositionComponent>(*it);
 		MovementComponent* mc = WGETC<MovementComponent>(*it);
 
+		InterpolateDirections(mc);
+
 		wpc->position[0] += mc->direction[0] * mc->speed * delta;
 		wpc->position[1] += mc->direction[1] * mc->speed * delta;
 		wpc->position[2] += mc->direction[2] * mc->speed * delta;
@@ -33,7 +35,6 @@ void Core::MovementSystem::Update(float delta)
 			// Is negative if position is past the goal so stop.
 			if (dot < 0)
 			{
-				//MovementComponent::SetDirection();
 				/*mc->direction[0] = 0.0f;
 				mc->direction[1] = 0.0f;
 				mc->direction[2] = 0.0f;*/
@@ -64,4 +65,11 @@ void Core::MovementSystem::Update(float delta)
 		}
 		*/
 	}
+}
+
+void Core::MovementSystem::InterpolateDirections(MovementComponent* mc)
+{
+	mc->direction[0] = mc->newDirection[0];
+	mc->direction[1] = mc->newDirection[1];
+	mc->direction[2] = mc->newDirection[2];
 }

@@ -41,12 +41,12 @@ void Core::FlowfieldSystem::Update( float delta )
 			glm::vec3 midOfEdgeLinkingToNextNode = instance->flowfields[attribc->rioter.groupID].list[ ffc->node ];
 			if( glm::dot( midOfEdgeLinkingToNextNode, midOfEdgeLinkingToNextNode ) > 0.05f ) // goal node condition...
 			{
-				*reinterpret_cast<glm::vec3*>(mvmc->direction) = glm::normalize( 
+				*reinterpret_cast<glm::vec3*>(mvmc->newDirection) = glm::normalize( 
 					glm::normalize( instance->flowfields[attribc->rioter.groupID].list[ ffc->node ] - position ) 
 					- *reinterpret_cast<glm::vec3*>( instance->nodes[ ffc->node ].corners[ instance->flowfields[attribc->rioter.groupID].edges[ffc->node] ].normal ) * FF_NORMAL_INFLUENCE ); 
 			}
 			else
-				*reinterpret_cast<glm::vec3*>(mvmc->direction) = glm::vec3(0.0f);
+				*reinterpret_cast<glm::vec3*>(mvmc->newDirection) = glm::vec3(0.0f);
 
 
 		}

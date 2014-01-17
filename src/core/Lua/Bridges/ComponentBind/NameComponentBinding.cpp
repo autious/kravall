@@ -41,7 +41,7 @@ namespace Core
 
     ComponentType NameComponentBinding::GetComponentType()
     {
-        EntityHandler::GetComponentType<NameComponent>();
+		return EntityHandler::GetComponentType<NameComponent>();
     }
 
     const char* NameComponentBinding::GetComponentLuaName()
