@@ -14,6 +14,8 @@
 #include <Components/AttributeComponent.hpp>
 #include <Components/BoundingVolumeComponent.hpp>
 #include <Components/FlowfieldComponent.hpp>
+#include <Components/AreaComponent.hpp>
+#include <Components/NameComponent.hpp>
 
 namespace Core
 {
@@ -34,7 +36,7 @@ namespace Core
 
     typedef EntityHandlerTemplate<SystemHandler, WorldPositionComponent, RotationComponent, ScaleComponent, 
 		GraphicsComponent, LightComponent, MovementComponent, UnitTypeComponent, AttributeComponent,
-		BoundingVolumeComponent, FlowfieldComponent> EntityHandler;
+		BoundingVolumeComponent, FlowfieldComponent,AreaComponent,NameComponent> EntityHandler;
 }
 
 /**********All systems after this line************/
