@@ -43,8 +43,8 @@ local rioter = require "entities/rioter"
 local police = require "entities/police"
 local building = require "entities/building"
 		
-local centerPoint = { 0, 0, 0 }
-local side = math.sqrt( 10 )
+local centerPoint = { -5, 0, 0 }
+local side = math.sqrt( 100 )
 for i = -side / 2, side / 2 do
 	for p = -side / 2, side / 2 do
 		rioter.create( asm, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], 0 )
@@ -52,8 +52,13 @@ for i = -side / 2, side / 2 do
 end
 
 --rioter.create( asm, 0, 0, 0, 0 )
+--rioter.create( asm, 1, 0, 1, 0 )
+--rioter.create( asm, 3, 0, 3, 0 )
+--rioter.create( asm, 4, 0, 4, 0 )
+--rioter.create( asm, 10, 0, 10, 0 )
+--rioter.create( asm, 11, 0, 11, 0 )
 
-camera:lookAt( core.glm.vec3.new( 65, 65, 65 ), core.glm.vec3.new( 0, 0, 0 ) )
+camera:lookAt( core.glm.vec3.new( 5, 35, 5 ), core.glm.vec3.new( 0, 0, 0 ) )
 
 
 

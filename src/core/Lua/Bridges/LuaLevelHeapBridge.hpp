@@ -7,10 +7,10 @@
 
 namespace Core
 {
-    class LuaLinearHeapBridge
+    class LuaLevelHeapBridge
     {
     public:
-        LuaLinearHeapBridge( lua_State * L );
+        LuaLevelHeapBridge( lua_State * L );
     };
 }
 
