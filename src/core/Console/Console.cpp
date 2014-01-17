@@ -161,8 +161,10 @@ namespace Core
 	void DebugConsole::PasteClipboard()
 	{
 		std::string clipBoard = glfwGetClipboardString(mainWindow);
-		//PrintLine(clipBoard, Colors::Purple);
-		SetInputLine(m_inputLine+clipBoard);
+		std::string newInputLine = m_inputLine;
+		newInputLine.insert(m_cursorOffset, clipBoard);
+		m_inputLine = newInputLine;
+		m_cursorOffset = m_cursorOffset + clipBoard.length();
 	}
 
     void DebugConsole::OnKeyEvent( const Core::KeyEvent &e )
