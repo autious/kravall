@@ -37,7 +37,8 @@ out vec2 uvFS;
 
 void main()
 {
-
+#define INSTANCED
+#ifdef INSTANCED
 	//Move position to clip space
 	posW = gInstances[gl_InstanceID].mm * positionIN;
 	posFS = gProjection * gView * gInstances[gl_InstanceID].mm * positionIN;
@@ -47,15 +48,18 @@ void main()
 	tangentFS = gInstances[gl_InstanceID].mm * tangentIN;
 	//binormalFS = gInstances[gl_InstanceID].mm * binormalIN;
 
+#else
 
-	////Move position to clip space
-	//posW = modelMatrix * positionIN;
-	//posFS = gProjection * gView * modelMatrix * positionIN;
-	//
-	////Transform normal with model matrix
-	//normalFS = modelMatrix * normalIN;
-	//tangentFS = modelMatrix * tangentIN;
-	////binormalFS = modelMatrix * binormalIN;
+	//Move position to clip space
+	posW = modelMatrix * positionIN;
+	posFS = gProjection * gView * modelMatrix * positionIN;
+	
+	//Transform normal with model matrix
+	normalFS = modelMatrix * normalIN;
+	tangentFS = modelMatrix * tangentIN;
+	//binormalFS = modelMatrix * binormalIN;
+
+#endif
 
 	uvFS = uvIN;
 

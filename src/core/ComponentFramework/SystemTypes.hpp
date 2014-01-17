@@ -3,6 +3,9 @@
 
 #include <cstdint>
 #include <cstdlib>
+#include <limits>
+
+#define INVALID_ENTITY std::numeric_limits<Entity>::max()
 
 namespace Core
 {
@@ -10,6 +13,7 @@ namespace Core
     typedef uint64_t Aspect;
     typedef size_t ComponentType;
     typedef int ComponentId;
+
 }
 
 #endif

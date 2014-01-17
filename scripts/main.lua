@@ -13,7 +13,7 @@ function core.init()
     print( "Program starting in lua" )
     showSys()
     toggleMenu()
-    openscenario( "test" )    
+    --openscenario( "test" )    
 end
 
 menuState = nil
