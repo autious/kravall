@@ -37,7 +37,7 @@ out vec2 uvFS;
 
 void main()
 {
-#define INSTANCED
+//#define INSTANCED NOCOMMIT
 #ifdef INSTANCED
 	//Move position to clip space
 	posW = gInstances[gl_InstanceID].mm * positionIN;
