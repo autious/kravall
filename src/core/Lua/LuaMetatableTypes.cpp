@@ -5,11 +5,20 @@
 
 namespace Core
 {
-    Entity* LuaUNewEntity( lua_State * L )
+    LuaEntity* LuaUNewEntity( lua_State * L )
     {
-        Entity * ent = (Entity*)lua_newuserdata( L, sizeof( Entity ) ); 
+        LuaEntity * ent = (LuaEntity*)lua_newuserdata( L, sizeof( LuaEntity ) ); 
         luaL_getmetatable( L, ENTITY_META_TYPE );
         lua_setmetatable( L, -2 );
+        ent->light = false;
+
+        return ent;
+    }
+
+    LuaEntity* LuaUNewLightEntity( lua_State * L )
+    {
+        LuaEntity* ent = LuaUNewEntity( L );
+        ent->light = true;
 
         return ent;
     }

@@ -17,8 +17,17 @@ initCameraNearClipDistance = 5.0,
 initCameraFarClipDistance = 250.0,
 consoleFont = "assets/Fonts/ConsoleFont.font",
 defaultNrFlowfields = 20,
-debugRenderAreas = true
+debugRenderAreas = true,
+debugLightVolumes = false
 }
+
+function toggleLightVolumes()
+    if core.config.debugLightVolumes then
+        core.config.debugLightVolumes = false
+    else
+        core.config.debugLightVolumes = true
+    end
+end
 
 function showSys()
     if core.config.showSystems then

@@ -9,5 +9,8 @@
 #define GFX_INVALID_TEXTURE 3
 #define GFX_INVALID_SHADER 4
 
+#define GFX_INVALID_ANIMATION -1
+#define GFX_INVALID_SKELETON -2
+
 
 #endif

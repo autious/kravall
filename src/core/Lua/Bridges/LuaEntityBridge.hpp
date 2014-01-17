@@ -206,9 +206,9 @@ namespace Core
 
             Core::world.m_entityHandler.AddComponentsAspect( ent, asp ); 
 
-            Entity * userDataEntity = LuaUNewEntity( L );
+            LuaEntity * userDataEntity = LuaUNewEntity( L );
 
-            *userDataEntity = ent;
+            userDataEntity->entity = ent;
             return 1;
         }
 
@@ -224,24 +224,31 @@ namespace Core
             {
                 if( lua_isuserdata( L, i ) )
                 {
-                    Entity *entity = (Entity*)luaL_checkudata( L, i, ENTITY_META_TYPE );
-                    
-                    LOG_DEBUG << "Destroy call on entity: " <<  *entity << std::endl;
+                    LuaEntity *entity = luau_checkentity( L, i);
 
-                    if( *entity != std::numeric_limits<Entity>::max() )
+                    if( entity->light == false )
                     {
-                        if( Core::world.m_entityHandler.DestroyEntity( *entity ) == false )
+                        LOG_DEBUG << "Destroy call on entity: " <<  entity->entity << std::endl;
+
+                        if( entity->entity != std::numeric_limits<Entity>::max() )
                         {
-                            return luaL_error( L, "%s: Unable to remove given entity, parameter %d", __FUNCTION__, i );
+                            if( Core::world.m_entityHandler.DestroyEntity( entity->entity ) == false )
+                            {
+                                return luaL_error( L, "%s: Unable to remove given entity, parameter %d", __FUNCTION__, i );
+                            }
+                            else
+                            {
+                                entity->entity = std::numeric_limits<Entity>::max(); //Mark userdata as deleted.
+                            }
                         }
                         else
                         {
-                            *entity = std::numeric_limits<Entity>::max(); //Mark userdata as deleted.
+                            LOG_DEBUG << "Ignored destruction call on non-entity value." << std::endl;
                         }
                     }
                     else
                     {
-                        LOG_DEBUG << "Ignored destruction call on non-entity value." << std::endl;
+                        LOG_ERROR << "Attempting destruction on light entity, not allowed" << std::endl;
                     }
                 }
                 else
@@ -255,8 +262,8 @@ namespace Core
 
         static int IsValid( lua_State * L )
         {
-            Entity *entity = (Entity*)luaL_checkudata( L, 1, ENTITY_META_TYPE );
-            lua_pushboolean( L, *entity != std::numeric_limits<Entity>::max() );
+            LuaEntity *le = luau_checkentity( L, 1);
+            lua_pushboolean( L, le->entity != std::numeric_limits<Entity>::max() );
             return 1;
         }
 
@@ -270,12 +277,12 @@ namespace Core
 
             if( lua_isuserdata( L, 1 ) && lua_isuserdata( L, 2 ) )
             {
-                Entity entity = *((Entity*)luaL_checkudata( L, 1, ENTITY_META_TYPE ));
+                LuaEntity *le = luau_checkentity( L, 1);
                 ComponentType componentType = *(ComponentType*)luaL_checkudata( L, 2, COMPONENT_META_TYPE );
 
-                if( Core::world.m_entityHandler.HasComponent( entity, componentType ) )
+                if( Core::world.m_entityHandler.HasComponent( le->entity, componentType ) )
                 {
-                    CallST<ComponentHandlers...>::Set( entity, componentType, L, 3 );                      
+                    CallST<ComponentHandlers...>::Set( le->entity, componentType, L, 3 );                      
                 }
                 else
                 {
@@ -298,12 +305,12 @@ namespace Core
         {
             if( lua_isuserdata( L, 1 ) && lua_isuserdata( L, 2 ) )
             {
-                Entity entity = *((Entity*)luaL_checkudata( L, 1, ENTITY_META_TYPE ));
+                LuaEntity *le = luau_checkentity( L, 1 );
                 ComponentType componentType = *(ComponentType*)luaL_checkudata( L, 2, COMPONENT_META_TYPE );
 
-                if( Core::world.m_entityHandler.HasComponent( entity, componentType ) )
+                if( Core::world.m_entityHandler.HasComponent( le->entity, componentType ) )
                 {
-                    return CallST<ComponentHandlers...>::Get( entity, componentType, L );                      
+                    return CallST<ComponentHandlers...>::Get( le->entity, componentType, L );                      
                 }
                 else
                 {
@@ -322,9 +329,9 @@ namespace Core
         */
         static int EntityToString( lua_State *L )
         {
-            Entity entity = *(Entity*)luaL_checkudata( L, 1, ENTITY_META_TYPE );
+            LuaEntity *le = luau_checkentity( L, 1 );
 
-            lua_pushinteger( L, entity );  
+            lua_pushinteger( L, le->entity );  
             
             return 1;
         }
