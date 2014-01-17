@@ -7,6 +7,7 @@ namespace Core
 	static double lel = 0;
 	void LightSystem::Update(float delta)
 	{
+		bool displayLightVolumes = CONF.GetBool("debugLightVolumes", true);
 		glm::quat rot;
 		glm::mat4 rotationMatrix;
 		glm::mat4 translationMatrix;
@@ -54,8 +55,8 @@ namespace Core
 
 					data->position = WorldPositionComponent::GetVec3(*wpc);
 					data->radius_length = sc->scale[0];
-
-					//GFX::Debug::DrawSphere(data->position, sc->scale, glm::vec4(data->color, 1.0f), false);
+					if (displayLightVolumes)
+						GFX::Debug::DrawSphere(data->position, sc->scale[0], glm::vec4(data->color, 1.0f), false);
 				}
 				break;
 
@@ -81,10 +82,12 @@ namespace Core
 
 					//wpc->position[0] = float(45 * cos(lel + double(i)));
 					//wpc->position[2] = float(45 * sin(double(i%16) * lel*0.1f + double(i)));
-
-					//GFX::Debug::DrawSphere(data->position, sc->scale, glm::vec4(data->color, 1.0f), false);
-					//glm::vec3 dir = glm::normalize(glm::vec3(data->orientation)) * data->radius_length;
-					//GFX::Debug::DrawLine(data->position, data->position + dir, glm::vec4(data->color, 1.0f), 1.0f, false);
+					if (displayLightVolumes)
+					{
+						GFX::Debug::DrawSphere(data->position, sc->scale[0], glm::vec4(data->color, 1.0f), false);
+						glm::vec3 dir = glm::normalize(glm::vec3(data->orientation)) * data->radius_length;
+						GFX::Debug::DrawLine(data->position, data->position + dir, glm::vec4(data->color, 1.0f), 1.0f, false);
+					}
 				}
 				break;
 
