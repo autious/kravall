@@ -1,4 +1,4 @@
-return function ( asm, position, vertices, name )
+return function ( asm, position, vertices, name, callback )
     asm:loadAssembly(
     {
         {
@@ -16,8 +16,3 @@ return function ( asm, position, vertices, name )
         }
     })
 end
-
-
-
-
-
