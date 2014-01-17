@@ -3,6 +3,8 @@
 
 #include <logger/Logger.hpp>
 
+#define INSTANCED_DRAWING
+
 namespace GFX
 {
 	DeferredPainter::DeferredPainter(ShaderManager* shaderManager, UniformBufferManager* uniformBufferManager, RenderJobManager* renderJobManager,
@@ -42,14 +44,18 @@ namespace GFX
 		m_modelMatrixUniform = m_shaderManager->GetUniformLocation("StaticMesh", "modelMatrix");
 
 		m_uniformBufferManager->CreateBasicCameraUBO(m_shaderManager->GetShaderProgramID("StaticMesh"));
+
+#ifdef INSTANCED_DRAWING
+
 		m_staticInstances = new InstanceData[1024];
 
 		glGenBuffers(1, &m_instanceBuffer);
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_instanceBuffer);
 		glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_INSTANCES * sizeof(InstanceData), NULL, GL_STREAM_COPY);
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_instanceBuffer);
+
+#endif
 	}
-#define INSTANCED_DRAWING
 #ifdef INSTANCED_DRAWING
 	void DeferredPainter::Render(unsigned int& renderIndex, FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix)
 	{

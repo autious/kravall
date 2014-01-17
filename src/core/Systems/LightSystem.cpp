@@ -50,11 +50,9 @@ namespace Core
 					data->spec_color[1] = lc->specColor[1];
 					data->spec_color[2] = lc->specColor[2];
 
-					//wpc->position[0] = 45 * cos(lel + double(i));
-					//wpc->position[2] = 45 * sin(double(i%16) * lel*0.1f + double(i));
-
 					data->position = WorldPositionComponent::GetVec3(*wpc);
 					data->radius_length = sc->scale[0];
+
 					if (displayLightVolumes)
 						GFX::Debug::DrawSphere(data->position, sc->scale[0], glm::vec4(data->color, 1.0f), false);
 				}
@@ -80,8 +78,6 @@ namespace Core
 					data->position = WorldPositionComponent::GetVec3(*wpc);
 					data->radius_length = sc->scale[0];
 
-					//wpc->position[0] = float(45 * cos(lel + double(i)));
-					//wpc->position[2] = float(45 * sin(double(i%16) * lel*0.1f + double(i)));
 					if (displayLightVolumes)
 					{
 						GFX::Debug::DrawSphere(data->position, sc->scale[0], glm::vec4(data->color, 1.0f), false);
