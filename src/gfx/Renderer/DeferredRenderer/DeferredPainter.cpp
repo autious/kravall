@@ -3,7 +3,7 @@
 
 #include <logger/Logger.hpp>
 
-//#define INSTANCED_DRAWING // NOCOMMIT
+#define INSTANCED_DRAWING
 
 namespace GFX
 {
