@@ -26,7 +26,8 @@ namespace GFX
 		m_shaderManager->CreateProgram("StaticMesh");
 
 		m_shaderManager->LoadShader("shaders/SimpleGeometry.vertex", "StaticMeshVS", GL_VERTEX_SHADER);
-		m_shaderManager->LoadShader("shaders/SimpleGeometry.fragment", "StaticMeshFS", GL_FRAGMENT_SHADER);
+		m_shaderManager->LoadShader("shaders/NormalMappedFS.glsl", "StaticMeshFS", GL_FRAGMENT_SHADER);
+		//m_shaderManager->LoadShader("shaders/SimpleGeometry.fragment", "StaticMeshFS", GL_FRAGMENT_SHADER);
 		
 		m_shaderManager->AttachShader("StaticMeshVS", "StaticMesh");
 		m_shaderManager->AttachShader("StaticMeshFS", "StaticMesh");
@@ -34,10 +35,10 @@ namespace GFX
 		m_shaderManager->LinkProgram("StaticMesh");
 
 		// TODO: Change texture names in shader
-		m_uniformTexture0 = m_shaderManager->GetUniformLocation("StaticMesh", "diffuseMap");
-		m_uniformTexture1 = m_shaderManager->GetUniformLocation("StaticMesh", "normalMap");
-		m_uniformTexture2 = m_shaderManager->GetUniformLocation("StaticMesh", "specularMap");
-		m_uniformTexture3 = m_shaderManager->GetUniformLocation("StaticMesh", "glowMap");
+		m_uniformTexture0 = m_shaderManager->GetUniformLocation("StaticMesh", "gDiffuse");
+		m_uniformTexture1 = m_shaderManager->GetUniformLocation("StaticMesh", "gNormal");
+		m_uniformTexture2 = m_shaderManager->GetUniformLocation("StaticMesh", "gSpecular");
+		m_uniformTexture3 = m_shaderManager->GetUniformLocation("StaticMesh", "gGlow");
 
 		m_modelMatrixUniform = m_shaderManager->GetUniformLocation("StaticMesh", "modelMatrix");
 
@@ -165,14 +166,14 @@ namespace GFX
 					if (mat.shaderProgramID != currentShader)
 					{
 						glUseProgram(mat.shaderProgramID);
-						error = glGetError();
+						error = glGetError(); 
 						currentShader = mat.shaderProgramID;
 					}
 
 					//set textures
 					m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[0]).textureHandle, m_uniformTexture0, 0, GL_TEXTURE_2D);
-					m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[1]).textureHandle, m_uniformTexture1, 1, GL_TEXTURE_2D);
-					m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[2]).textureHandle, m_uniformTexture2, 2, GL_TEXTURE_2D);
+					m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[1]).textureHandle, m_uniformTexture2, 1, GL_TEXTURE_2D);
+					m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[2]).textureHandle, m_uniformTexture1, 2, GL_TEXTURE_2D);
 					m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[3]).textureHandle, m_uniformTexture3, 3, GL_TEXTURE_2D);
 				}
 

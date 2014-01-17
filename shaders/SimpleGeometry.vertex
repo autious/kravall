@@ -30,7 +30,7 @@ layout ( location = 4 ) in vec4 boneWeights;
 layout ( location = 5 ) in vec2 uvIN;
 
 out vec4 posFS;
-out vec4 posW;
+out vec4 posW; 
 out vec4 normalFS;
 out vec4 tangentFS;
 out vec2 uvFS;

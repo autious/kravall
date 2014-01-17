@@ -27,15 +27,15 @@ void main()
 	vec3 normal = normalize(normalFS.xyz);
 
 	tangent = normalize(tangent - dot(tangent, normal) * normal);
-	vec3 bitangent = cross(tangent, normal);
+	vec3 bitangent = -cross(tangent, normal);
 	
 	vec3 finalNormal;
 	mat3 TBN = mat3(tangent, bitangent, normal);
 	finalNormal = TBN * sampledNormal;
 	finalNormal = normalize(finalNormal);
 
-	gNormalDepthRT = vec4(finalNormal, posFS.z / posFS.w);
-	gDiffuseRT =  texture2D(diffuseMap, uvFS);
-	gSpecularRT = texture2D(gSpecular);
-	gGlowMatRT = vec4(texture2D(gGlow, uvFS), gMaterialID);
+	gNormalDepthRT = vec4(finalNormal, posFS.z / posFS.w);//vec4(finalNormal, );
+	gDiffuseRT =  texture2D(gDiffuse, uvFS);
+	gSpecularRT = texture2D(gSpecular, uvFS);
+	gGlowMatRT = vec4(texture2D(gGlow, uvFS).xyz, gMaterialID);
 }

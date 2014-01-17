@@ -19,7 +19,7 @@ namespace GFX
 			GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, width, height);
         */
 
-		LoadTexture(id, data, GL_TEXTURE_2D, GL_RGBA, GL_RGBA, GL_LINEAR, GL_LINEAR,
+		LoadTexture(id, data, GL_TEXTURE_2D, GL_RGBA, GL_RGBA, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR,
 			GL_REPEAT, GL_REPEAT, width, height);
 	}
 		
@@ -29,16 +29,24 @@ namespace GFX
 		const GLint& wrapS, const GLint& wrapT,
 		int width, int height)
 	{
+
+		GLfloat maxAniso = 0.0f;
+		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAniso);
+
+
 		GLuint textureHandle;
 		glGenTextures(1, &textureHandle);
 		glBindTexture(GL_TEXTURE_2D, textureHandle);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
+		
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
+
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapS);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapT);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAniso);
 
 		glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
 
 		TextureData texture;
 		texture.id = static_cast<unsigned int>(m_idCounter);
