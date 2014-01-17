@@ -1,6 +1,4 @@
-local t = {}
-
-function t.create(asm, posX, posY, posZ)
+return function(asm, posX, posY, posZ)
 	asm:loadAssembly( 
 		{
 			{
@@ -48,7 +46,7 @@ function t.create(asm, posX, posY, posZ)
 end
 
 
---function t.create(asm, posX, posY, posZ, dirx, dirz)
+--return function(asm, posX, posY, posZ, dirx, dirz)
 --	asm:loadAssembly( 
 --		{
 --			{
@@ -94,5 +92,3 @@ end
 --		}
 --	)
 --end
-
-return t
