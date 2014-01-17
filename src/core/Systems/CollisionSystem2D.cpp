@@ -1,7 +1,7 @@
 #include "CollisionSystem2D.hpp"
 #include "World.hpp"
 #include <gfx/GFXInterface.hpp>
-#include <logger\Logger.hpp>
+#include <logger/Logger.hpp>
 #include <algorithm>
 
 
