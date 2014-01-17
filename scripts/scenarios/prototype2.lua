@@ -8,6 +8,11 @@ asm:specific_content( core.contentmanager.load(
 local rioter = require "entities/rioter"
 local police = require "entities/police"
 local building = require "entities/building"
+
+local ambient = require "entities/ambientLight"
+local directional = require "entities/directionalLight"
+ambient.create(asm, 1.0, 1.0, 1.0, 0.1)
+directional.create(asm, -1, -1, 0.5)
 		
 local centerPoint = { 0, 0, 0 }
 local side = 32 -- math.sqrt( 1000 )
@@ -27,6 +32,11 @@ for i = 1, side / 2 do
 		rioter.create( asm, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], 3 )
 	end
 end
+core.nav_mesh.set_group_goal(3, -70, 0, 40)
+core.nav_mesh.set_group_goal(2, -70, 0, -40)
+core.nav_mesh.set_group_goal(1, 70, 0, 40)
+--core.nav_mesh.set_group_goal(2, -50, 0, 4)
+--core.nav_mesh.set_group_goal(3, -1, 0, 4)
 
 
 
@@ -46,7 +56,7 @@ for i = 0, 1023 do
         },
         {
             type = core.componentType.WorldPositionComponent,
-            data = { position = { -50.0 + 100.0 * math.random(), 5 + 2.5 * math.random(), -50.0 + 100.0 * math.random() } }
+            data = { position = { -20.0 + 100.0 * math.random(), 5 + 2.5 * math.random(), -20.0 + 100.0 * math.random() } }
         },
         {
             type = core.componentType.ScaleComponent,
@@ -61,7 +71,7 @@ for i = 0, 1023 do
 end
 
 rioter.create( asm, 0, 0, 0, 0 )
-core.nav_mesh.set_group_goal(0, -30, 0, 0)
+--core.nav_mesh.set_group_goal(0, -30, 0, 0)
 
 camera:lookAt( core.glm.vec3.new( 65, 65, 65 ), core.glm.vec3.new( 0, 0, 0 ) )
 

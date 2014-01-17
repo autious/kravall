@@ -26,8 +26,8 @@ namespace GFX
 		m_shaderManager->CreateProgram("StaticMesh");
 
 		m_shaderManager->LoadShader("shaders/SimpleGeometry.vertex", "StaticMeshVS", GL_VERTEX_SHADER);
-		m_shaderManager->LoadShader("shaders/NormalMappedFS.glsl", "StaticMeshFS", GL_FRAGMENT_SHADER);
-		//m_shaderManager->LoadShader("shaders/SimpleGeometry.fragment", "StaticMeshFS", GL_FRAGMENT_SHADER);
+		//m_shaderManager->LoadShader("shaders/NormalMappedFS.glsl", "StaticMeshFS", GL_FRAGMENT_SHADER);
+		m_shaderManager->LoadShader("shaders/SimpleGeometry.fragment", "StaticMeshFS", GL_FRAGMENT_SHADER);
 		
 		m_shaderManager->AttachShader("StaticMeshVS", "StaticMesh");
 		m_shaderManager->AttachShader("StaticMeshFS", "StaticMesh");

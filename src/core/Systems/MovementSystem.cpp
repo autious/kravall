@@ -19,7 +19,7 @@ void Core::MovementSystem::Update(float delta)
 			// Rotate model after direction
 			float angle = std::atan2(static_cast<double>(mc->direction[2]), static_cast<double>(mc->direction[0]));
 			RotationComponent* rc = WGETC<RotationComponent>(*it);
-
+		
 			*rc = RotationComponent::GetComponentRotateY(angle + 3.14f * 0.5f);
 		}
 
