@@ -1,4 +1,4 @@
-#include "LuaNavMeshBridge.hpp"
+#include "LuaGroupsBridge.hpp"
 
 #include <lua.h>
 #include <lualib.h>
@@ -62,7 +62,7 @@ extern "C"
 	}
 }
 
-Core::LuaNavMeshBridge::LuaNavMeshBridge(lua_State * L)
+Core::LuaGroupsBridge::LuaGroupsBridge(lua_State * L)
 {
 	int stackSize = lua_gettop(L);
 	lua_getglobal(L, "core");
@@ -71,7 +71,7 @@ Core::LuaNavMeshBridge::LuaNavMeshBridge(lua_State * L)
 
 	if (lua_isnil(L, -1) == false)
 	{
-		lua_pushstring(L, "nav_mesh");
+		lua_pushstring(L, "groups");
 
 		lua_newtable(L);
 			lua_pushstring(L, "set_group_goal");

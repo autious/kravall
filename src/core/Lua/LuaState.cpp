@@ -22,7 +22,7 @@
 #include <Lua/Bridges/LuaAttributeBridge.hpp>
 #include <Lua/Bridges/LuaBoundingVolumeBridge.hpp>
 #include <Lua/Bridges/LuaUnitTypeBridge.hpp>
-#include <Lua/Bridges/LuaNavMeshBridge.hpp>
+#include <Lua/Bridges/LuaGroupsBridge.hpp>
 #include <Lua/Bridges/LuaGLMBridge.hpp>
 #include <Lua/Bridges/LuaCameraBridge.hpp>
 #include <Lua/Bridges/LuaWindowBridge.hpp>
@@ -60,7 +60,7 @@ namespace Core
         LuaAttributeComponentBridge lacb;
         LuaBoundingVolumeComponentBridge lbvc;
         LuaUnitTypeComponentBridge lutcb;
-        LuaNavMeshBridge lnmb;
+        LuaGroupsBridge lnmb;
         LuaGLMBridge lglmb;
         LuaCameraBridge lcab;
         LuaWindowBridge lwb;
