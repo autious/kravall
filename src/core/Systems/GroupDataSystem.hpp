@@ -19,9 +19,25 @@ namespace Core
 
         virtual const char* GetHumanName() { return "GroupDataSystem"; }
 
-        inline glm::vec3 GetMedianPosition( int groupId ) { return m_medianPositions[groupId]; }
-        inline int GetMemberCount( int groupId ) { return m_groupMemberCounts[groupId]; }
-        inline int GetNumberOfGroups( int groupId ) { return m_nAllocatedGroups; }
+        inline glm::vec3 GetMedianPosition( int groupId ) 
+        { 
+            if(m_medianPositions)
+            {
+                return m_medianPositions[groupId]; 
+            }
+            return glm::vec3(0.0f, 0.0f, 0.0f);
+        }
+
+        inline int GetMemberCount( int groupId ) 
+        { 
+            if(m_groupMemberCounts)
+            {
+               return m_groupMemberCounts[groupId]; 
+            }
+            return 0;
+        }
+        
+        inline int GetNumberOfGroups() { return m_nAllocatedGroups; }
 
     private:
         void CalculateMedianPositions();

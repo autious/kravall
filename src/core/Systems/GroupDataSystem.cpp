@@ -6,11 +6,16 @@
 
 #include <cstring>
 
+#include <logger/Logger.hpp>
+
 namespace Core
 {
     GroupDataSystem::GroupDataSystem() : BaseSystem(EntityHandler::GenerateAspect<
             Core::WorldPositionComponent, UnitTypeComponent, AttributeComponent>(), 0ULL)
     {
+        m_nAllocatedGroups = 0;
+        m_medianPositions = nullptr;
+        m_groupMemberCounts = nullptr;
     }
 
     void GroupDataSystem::Update(float delta)
@@ -27,6 +32,12 @@ namespace Core
             memset(m_groupMemberCounts, 0, sizeof(int) * m_nAllocatedGroups);
             CalculateMedianPositions();
         }
+        else
+        {
+            m_nAllocatedGroups = 0;
+            m_medianPositions = nullptr;
+            m_groupMemberCounts = nullptr;
+        }
     }
 
     void GroupDataSystem::CalculateMedianPositions()
@@ -35,7 +46,7 @@ namespace Core
         {
             Core::UnitTypeComponent* utc = WGETC<Core::UnitTypeComponent>(*it);
 
-            if(utc->type != Core::UnitType::Rioter)
+            if(utc->type == Core::UnitType::Rioter)
             {
                 Core::AttributeComponent* atrbc = WGETC<Core::AttributeComponent>(*it);
                 Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(*it);
