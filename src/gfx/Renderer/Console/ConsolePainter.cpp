@@ -80,6 +80,7 @@ namespace GFX
 
 		DebugDrawing().Clear();
 	}
+
 	void ConsolePainter::SetConsoleHeight(int height)
 	{ 
 		m_consoleRect.position = glm::vec3(-1.0f, 1.0f, 0.0f);

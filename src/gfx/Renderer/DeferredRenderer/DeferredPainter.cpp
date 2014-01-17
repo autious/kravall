@@ -42,15 +42,15 @@ namespace GFX
 		m_modelMatrixUniform = m_shaderManager->GetUniformLocation("StaticMesh", "modelMatrix");
 
 		m_uniformBufferManager->CreateBasicCameraUBO(m_shaderManager->GetShaderProgramID("StaticMesh"));
-		m_staticInstances = new StaticMeshInstanceData[1024];
+		m_staticInstances = new InstanceData[1024];
 
 		glGenBuffers(1, &m_instanceBuffer);
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_instanceBuffer);
-		glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_INSTANCES * sizeof(StaticMeshInstanceData), NULL, GL_STREAM_COPY);
+		glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_INSTANCES * sizeof(InstanceData), NULL, GL_STREAM_COPY);
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_instanceBuffer);
 	}
-
-	/*
+#define INSTANCED_DRAWING
+#ifdef INSTANCED_DRAWING
 	void DeferredPainter::Render(unsigned int& renderIndex, FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix)
 	{
 		BasePainter::Render();
@@ -120,8 +120,7 @@ namespace GFX
 
 			if (material == currentMaterial && meshID == currentMesh && !endMe && instanceCount < MAX_INSTANCES)
 			{
-				StaticMeshInstanceData smid;
-				smid.modelMatrix = *(glm::mat4*)renderJobs.at(i).value;
+				InstanceData smid = *(InstanceData*)renderJobs.at(i).value;
 				m_staticInstances[instanceCount++] = smid;
 			}
 			else 
@@ -129,22 +128,18 @@ namespace GFX
 				if (i > 0)
 				{
 					glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_instanceBuffer);
-					StaticMeshInstanceData* pData = (StaticMeshInstanceData*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, MAX_INSTANCES * sizeof(StaticMeshInstanceData), 
-						GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
+					InstanceData* pData = (InstanceData*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, MAX_INSTANCES * sizeof(InstanceData), 
 
-					for (unsigned int j = 0; j < instanceCount; j++)
-					{
-						pData[j] = m_staticInstances[j];
-					}
+						GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
+					memcpy(pData, m_staticInstances, instanceCount * sizeof(InstanceData));
+
+					glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
 					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IBO);
 					glDrawElementsInstanced(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0, instanceCount);
 
 					instanceCount = 0;
 
-					glInvalidateBufferData(m_instanceBuffer);
-
-					glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 				}
 				
 				if (endMe)
@@ -190,8 +185,7 @@ namespace GFX
 					error = glGetError();
 				}
 
-				StaticMeshInstanceData smid;
-				smid.modelMatrix = *(glm::mat4*)renderJobs.at(i).value;
+				InstanceData smid = *(InstanceData*)renderJobs.at(i).value;
 				m_staticInstances[instanceCount++] = smid;
 			}
 
@@ -205,8 +199,8 @@ namespace GFX
 		renderIndex = i;
 
 	}
-	*/
-
+	
+#else
 	
 	void DeferredPainter::Render(unsigned int& renderIndex, FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix)
 	{
@@ -331,7 +325,8 @@ namespace GFX
 		renderIndex = i;
 
 	}
-
+	
+#endif
 
 	void DeferredPainter::BindGBuffer(FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID)
 	{

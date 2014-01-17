@@ -78,4 +78,15 @@ namespace Core
 
         return quat;
     }
+
+    Camera** LuaUNewCamera( lua_State * L )
+    {
+        Camera** cam = static_cast<Camera**>(lua_newuserdata( L, sizeof( Camera* ) ) );
+        *cam = nullptr;
+
+        luaL_getmetatable( L, CAMERA_META_TYPE );
+        lua_setmetatable( L, -2 ); 
+       
+        return cam;
+    }
 }

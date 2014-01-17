@@ -17,7 +17,8 @@ function t.create(asm, posX, posZ, strength)
 							color = { r, g, b },
 							intensity = strength,
 							type = core.gfx.objectTypes.Light,
-							lighttype = core.gfx.lightTypes.Point
+							lighttype = core.gfx.lightTypes.Point,
+                            speccolor = { r,g,b }
 						}
 			},
 			{

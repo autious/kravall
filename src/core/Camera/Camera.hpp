@@ -35,5 +35,6 @@ namespace Core
 		Initialized in main.
 	*/
 	extern Camera gameCamera;
+    extern Camera overlayCamera;
 }
 #endif

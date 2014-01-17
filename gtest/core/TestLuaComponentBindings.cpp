@@ -100,16 +100,20 @@ TEST( LuaBindingDataRetention, ScaleComponentBinding )
                            "local data = test_entity:get( core.componentType.ScaleComponent )\n"
                            "test_entity:destroy()\n"
                            "test_entity = nil\n"
-                           "return data.scale, elems( data )\n";
+                           "return data.scale[1], data.scale[2], data.scale[3], elems( data )\n";
 
     Core::world.m_luaState.DoBlock( lua_set );
 
-    int values = Core::world.m_luaState.DoBlock( lua_get, 0, 2 );
+    int values = Core::world.m_luaState.DoBlock( lua_get, 0, 4 );
 
     ASSERT_LE( 0, values );
     int count = lua_tointeger( Core::world.m_luaState.GetState(), -1 );
     EXPECT_EQ( 1, count ); 
     int data = lua_tonumber(Core::world.m_luaState.GetState(), -2 );
+    EXPECT_EQ( data, 2 );
+    data = lua_tonumber(Core::world.m_luaState.GetState(), -3 );
+    EXPECT_EQ( data, 2 );
+    data = lua_tonumber(Core::world.m_luaState.GetState(), -4 );
     EXPECT_EQ( data, 2 );
     lua_pop( Core::world.m_luaState.GetState(), values );
 }

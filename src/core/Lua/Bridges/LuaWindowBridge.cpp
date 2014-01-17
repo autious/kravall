@@ -47,8 +47,6 @@ namespace Core
         lua_getfield( m_state, -1, "window" );
         lua_getfield( m_state, -1, "windowSizeCallback" );
 
-        LOG_INFO << "HEJ" << std::endl;
-
         if( lua_isfunction( m_state, -1 ) )
         {
             lua_pushinteger( m_state, width );

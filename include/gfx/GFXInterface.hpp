@@ -65,6 +65,18 @@ namespace GFX
 	DLL_API void SetProjectionMatrix(GFXMat4x4 matrix);
 
 	/*!
+	Sets the view matrix used by the overlay cam
+	\param matrix Pointer to a 4x4 matrix
+	*/
+	DLL_API void SetOverlayViewMatrix(GFXMat4x4 matrix);
+
+	/*!
+	Sets the projection matrix used by the overlay cam
+	\param matrix Pointer to a 4x4 matrix
+	*/
+	DLL_API void SetOverlayProjectionMatrix(GFXMat4x4 matrix);
+
+	/*!
 	Issues a draw command to the graphics engine. 
 	\param bitmask The bitmask containing the type of draw call to be queued.
 	\param data A pointer to the data used for rendering

@@ -4,6 +4,7 @@
 namespace Core
 {
 	Camera gameCamera;
+    Camera overlayCamera;
 
     const glm::mat4& Camera::GetProjectionMatrix() const 
     {

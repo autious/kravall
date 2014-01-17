@@ -11,7 +11,8 @@ function t.create(asm, dirX, dirY, dirZ)
 							color = { 0.5, 0.5, 0.5},
 							intensity = 0.5,
 							type = core.gfx.objectTypes.Light,
-							lighttype = core.gfx.lightTypes.Dir
+							lighttype = core.gfx.lightTypes.Dir,
+                            speccolor = { r,g,b }
 						}
 			},
 			{

@@ -253,6 +253,13 @@ namespace Core
             return 0;
         }
 
+        static int IsValid( lua_State * L )
+        {
+            Entity *entity = (Entity*)luaL_checkudata( L, 1, ENTITY_META_TYPE );
+            lua_pushboolean( L, *entity != std::numeric_limits<Entity>::max() );
+            return 1;
+        }
+
         /*!
             Lua component data set function. takes entity id, component type and a table with data
             and sets it to the given entities component via component binding class object.

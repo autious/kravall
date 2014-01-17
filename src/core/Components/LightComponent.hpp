@@ -2,7 +2,7 @@
 #define SRC_CORE_COMPONENTS_LIGHT_COMPONENT_HPP
 
 #include <gfx/BitmaskDefinitions.hpp>
-#include <gfx/Lights.hpp>
+#include <gfx/LightData.hpp>
 
 namespace Core
 {
