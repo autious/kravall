@@ -18,7 +18,7 @@ void Core::FlowfieldSystem::Update( float delta )
 	if( instance )
 	{
 		// for all nodes
-		for( int p = 0; p < instance->nrNodes; p++ )
+		for( int p = 0; p < instance->m_nrNodes; p++ )
 		{
 			// for all entities
 			for( std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); it++ )
@@ -36,12 +36,12 @@ void Core::FlowfieldSystem::Update( float delta )
 					Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>(*it);
 					Core::AttributeComponent* attribc = WGETC<Core::AttributeComponent>(*it);
 
-					glm::vec3 midOfEdgeLinkingToNextNode = instance->flowfields[attribc->rioter.groupID].list[ p ];
+					glm::vec3 midOfEdgeLinkingToNextNode = instance->m_flowfields[attribc->rioter.groupID].list[ p ];
 					if( glm::dot( midOfEdgeLinkingToNextNode, midOfEdgeLinkingToNextNode ) > 0.05f ) // goal node condition...
 					{
 						*reinterpret_cast<glm::vec3*>(mvmc->direction) = glm::normalize( 
-							glm::normalize( instance->flowfields[attribc->rioter.groupID].list[ p ] - position ) 
-							- *reinterpret_cast<glm::vec3*>( instance->nodes[ p ].corners[ instance->flowfields[attribc->rioter.groupID].edges[p] ].normal ) * FF_NORMAL_INFLUENCE ); 
+							glm::normalize( instance->m_flowfields[attribc->rioter.groupID].list[ p ] - position ) 
+							- *reinterpret_cast<glm::vec3*>( instance->m_nodes[ p ].corners[ instance->m_flowfields[attribc->rioter.groupID].edges[p] ].normal ) * FF_NORMAL_INFLUENCE ); 
 					}
 					else
 						*reinterpret_cast<glm::vec3*>(mvmc->direction) = glm::vec3(0.0f);

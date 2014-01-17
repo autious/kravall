@@ -6,6 +6,8 @@
 #include <glm/glm.hpp>
 #include "Console/CLOP.hpp"
 
+#define MAX_NUMBER_OF_FLOWFIELDS 1000
+
 namespace Core
 {
 	struct NavigationMesh;
@@ -35,6 +37,7 @@ namespace Core
 	*/
 	struct NavigationMesh
 	{	
+
 		NavigationMesh()
 		{
 		}
@@ -93,35 +96,15 @@ namespace Core
 			glm::vec3* list;
 		};
 
-		/*!
-			The list of all the flowfield instances available.
-		*/
-		Flowfield* flowfields;
-		
-		/*!
-			Number of flowfields in use.
-		*/
-		int nrUsedFlowfields;
+        /*!
+            Creates a group and allocates memory for flowfields for the group.
+        */
+        int CreateGroup();
 
 		/*!
-			Number of flowfields allocated.
+			Will allocate flowfields from the level allocator.
 		*/
-		int maxFlowfields;
-
-		/*!
-			Node list for the loaded tree.
-		*/
-		Node* nodes;
-
-		/*!
-			current number of nodes reciding under the nodes-pointer.
-		*/
-		int nrNodes;
-
-		/*!
-			Will allocate said number of flowfiled instances from the level allocator.
-		*/
-		void InitFlowfieldInstances( int nrFlowfieldInstances = 0 );
+		void InitFlowfieldInstances();
 
 		/*!
 			Will calculate the linksToEdge values for the nodes.
@@ -151,6 +134,31 @@ namespace Core
 			Uses the GFX debug system to draw the outlines of the navigation mesh.
 		*/
 		void DrawDebug();
+
+		/*!
+			The list of all the flowfield instances available.
+		*/
+		Flowfield* m_flowfields;
+		
+		/*!
+			Number of flowfields in use.
+		*/
+		int m_nrUsedFlowfields;
+
+		/*!
+			Number of flowfields allocated.
+		*/
+		int m_maxFlowfields;
+
+		/*!
+			Node list for the loaded tree.
+		*/
+		Node* m_nodes;
+
+		/*!
+			current number of nodes reciding under the nodes-pointer.
+		*/
+		int m_nrNodes;
 	};
 }
 

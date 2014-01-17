@@ -30,9 +30,13 @@ extern "C"
     {
         glm::vec3 medianPosition = Core::world.m_systemHandler.GetSystem<Core::GroupDataSystem>()->GetMedianPosition(luaL_checknumber(L, 1));
 
-        if(!Core::GetNavigationMesh()->CheckPointInsideNavigationMesh(medianPosition))
+        Core::NavigationMesh* navMesh = Core::GetNavigationMesh();
+        if(navMesh)
         {
+            if(!navMesh->CheckPointInsideNavigationMesh(medianPosition))
+            {
                      
+            }
         }
 
         lua_pushnumber(L, medianPosition.x);
@@ -53,6 +57,21 @@ extern "C"
     {
         lua_pushnumber(L, Core::world.m_systemHandler.GetSystem<Core::GroupDataSystem>()->GetNumberOfGroups());
 
+        return 1;
+    }
+
+    static int LuaCreateGroup(lua_State * L)
+    {
+        Core::NavigationMesh* navMesh = Core::GetNavigationMesh();
+        if(navMesh)
+        {
+            lua_pushnumber(L, navMesh->CreateGroup());
+        }
+        else
+        {
+            luaL_error(L, "Navigation mesh does not exist");
+            lua_pushnumber(L, -1);
+        }
         return 1;
     }
 
@@ -88,6 +107,10 @@ Core::LuaGroupsBridge::LuaGroupsBridge(lua_State * L)
 
             lua_pushstring(L, "get_number_of_groups");
             lua_pushcfunction(L, LuaGetNumberOfGroups);
+        lua_settable(L, -3);
+
+            lua_pushstring(L, "create_group");
+            lua_pushcfunction(L, LuaCreateGroup);
         lua_settable(L, -3);
 
 		    lua_newtable(L);

@@ -64,14 +64,14 @@ namespace Core
 		NavigationMesh* instance = instance = Core::world.m_levelHeap.NewObject<Core::NavigationMesh>();
 
 		// allocate nodes
-		instance->nodes = Core::world.m_levelHeap.NewPODArray<Core::NavigationMesh::Node>( nrNodes );
+		instance->m_nodes = Core::world.m_levelHeap.NewPODArray<Core::NavigationMesh::Node>( nrNodes );
 
 		// fill nodes
 		for( int i = 0; i < nrNodes; i++ )
-			ff >> instance->nodes[ i ];
+			ff >> instance->m_nodes[ i ];
 
 		// set Core::world instance to the new instance
-		instance->nrNodes = nrNodes;
+		instance->m_nrNodes = nrNodes;
 
 		ff.close();
 

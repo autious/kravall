@@ -18,10 +18,10 @@ void Core::NavMeshCollisionSystem::Update( float delta )
 	Core::NavigationMesh* instance = Core::GetNavigationMesh();
 	if( instance )
 	{
-		// for all nodes
-		for( int p = 0; p < instance->nrNodes; p++ )
+		// for all m_nodes
+		for( int p = 0; p < instance->m_nrNodes; p++ )
 		{
-			float* points = instance->nodes[p].points;
+			float* points = instance->m_nodes[p].points;
 
 			// for all entities
 			for( std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); it++ )
@@ -40,7 +40,7 @@ void Core::NavMeshCollisionSystem::Update( float delta )
 				// check vs line
 				for( int i = 0; i < 4; i++ )
 				{
-					if( instance->nodes[p].corners[i].length < 0 || instance->nodes[p].corners[i].linksTo >= 0 )
+					if( instance->m_nodes[p].corners[i].length < 0 || instance->m_nodes[p].corners[i].linksTo >= 0 )
 						continue;
 
 					// fix indices for current line... 
@@ -53,9 +53,9 @@ void Core::NavMeshCollisionSystem::Update( float delta )
 					glm::vec3 fromStartToObject = position + *reinterpret_cast<glm::vec3*>( sphere.offset ) - lineStart;
 					
 					// check if outside line limits...
-					float distanceAlongLine = glm::dot( (lineEnd - lineStart) * instance->nodes[p].corners[i].inverseLength, fromStartToObject );
+					float distanceAlongLine = glm::dot( (lineEnd - lineStart) * instance->m_nodes[p].corners[i].inverseLength, fromStartToObject );
 
-					if( instance->nodes[p].corners[i].length < distanceAlongLine || distanceAlongLine < 0 )
+					if( instance->m_nodes[p].corners[i].length < distanceAlongLine || distanceAlongLine < 0 )
 						continue;
 
 					// check if collided with line...
@@ -70,7 +70,7 @@ void Core::NavMeshCollisionSystem::Update( float delta )
 				for( int i = 0; i < 4; i++ )
 				{
 					// check for last corner of triangle
-					if( instance->nodes[p].corners[i].linksTo < -1.5f )
+					if( instance->m_nodes[p].corners[i].linksTo < -1.5f )
 						continue;
 
 					int ii = i * 2;
@@ -89,7 +89,7 @@ void Core::NavMeshCollisionSystem::Update( float delta )
 		}
 		
 
-		// collision only for current 'and adjacent' nodes
+		// collision only for current 'and adjacent' m_nodes
 			// save current node in agents
 
 		// calculate flowfield

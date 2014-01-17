@@ -29,44 +29,47 @@ namespace Core
 		mesh = newMesh;
 	}
 
-	void NavigationMesh::InitFlowfieldInstances( int nrFlowfieldInstances )
+    int NavigationMesh::CreateGroup()
+    {
+        if(m_nrUsedFlowfields >= m_maxFlowfields)
+        {
+            LOG_FATAL << "Flowfield array is out of indices" << std::endl;
+        }
+
+        m_flowfields[m_nrUsedFlowfields].edges = Core::world.m_levelHeap.NewPODArray<int>( m_nrNodes );
+        m_flowfields[m_nrUsedFlowfields].list = reinterpret_cast<glm::vec3*>(Core::world.m_levelHeap.NewPODArray<unsigned char>(sizeof(glm::vec3) * m_nrNodes));
+
+		std::memset( m_flowfields[m_nrUsedFlowfields].edges, 0, m_nrNodes * sizeof(int) );
+		std::memset( m_flowfields[m_nrUsedFlowfields].list, 0, m_nrNodes * sizeof(glm::vec3) );
+
+        return m_nrUsedFlowfields++;
+    }
+
+	void NavigationMesh::InitFlowfieldInstances()
 	{
-		int nrInstances = nrFlowfieldInstances;
-		if( !nrInstances )
-			nrInstances = Core::world.m_config.GetInt( "defaultNrFlowfields", 20 );
-		
-		// resize list of flowfields...
-		flowfields = Core::world.m_levelHeap.NewPODArray<Core::NavigationMesh::Flowfield>( nrInstances );
-		maxFlowfields = nrInstances;
-		nrUsedFlowfields = 0;
+		m_maxFlowfields = Core::world.m_config.GetInt( "maxNumberOfFlowfields", MAX_NUMBER_OF_FLOWFIELDS);
 
-		// resize the size of each flowfield to hold the same number of vectors as there are nodes.
-		for( int i = 0; i < nrInstances; i++ )
-		{
-			flowfields[i].edges = Core::world.m_levelHeap.NewPODArray<int>( nrNodes );
-			flowfields[i].list = (glm::vec3*)Core::world.m_levelHeap.NewPODArray<float>( 3 * nrNodes );
-
-			std::memset( flowfields[i].edges, 0.0f, nrNodes * sizeof(int) );
-			std::memset( flowfields[i].list, 0.0f, nrNodes * sizeof(glm::vec3) );
-		}
+		// resize list of m_flowfields...
+		m_flowfields = Core::world.m_levelHeap.NewPODArray<Core::NavigationMesh::Flowfield>( m_maxFlowfields );
+		m_nrUsedFlowfields = 0;
 	}
 
 
 	void NavigationMesh::CalculateLinks()
 	{
-		// for all nodes
-		for( int i = 0; i < nrNodes; i++ )
+		// for all m_nodes
+		for( int i = 0; i < m_nrNodes; i++ )
 		{
 			// for every edge in the node
 			for( int p = 0; p < 4; p++ )
 			{
-				if( nodes[i].corners[p].linksTo >= 0 )
+				if( m_nodes[i].corners[p].linksTo >= 0 )
 				{
 					// for all edges in the linked-to node
 					for( int q = 0; q < 4; q++ )
 					{
-						if( nodes[nodes[i].corners[p].linksTo].corners[q].linksTo == i )
-							nodes[i].corners[p].linksToEdge = q;
+						if( m_nodes[m_nodes[i].corners[p].linksTo].corners[q].linksTo == i )
+							m_nodes[i].corners[p].linksToEdge = q;
 					}
 				}
 			}

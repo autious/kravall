@@ -26,18 +26,18 @@ namespace Core
 
 	bool NavigationMesh::CalculateFlowfieldForGroup( glm::vec3 point, int group )
 	{
-		if( group >= maxFlowfields )
+		if( group >= m_maxFlowfields )
 		{
 			LOG_FATAL << "Trying to calculate flowfield for group id above max nr groups, in function \"CalculateFlowfieldForGroup\"" << std::endl;
 			assert( false );
 			return false;
 		}
 
-		std::memset( flowfields[group].list, 0, nrNodes * sizeof( glm::vec3 ) );
+		std::memset( m_flowfields[group].list, 0, m_nrNodes * sizeof( glm::vec3 ) );
 
 		// find out what node we want to go to...
 		int node = -1;
-		for( int i = 0; i < nrNodes; i++ )
+		for( int i = 0; i < m_nrNodes; i++ )
 		{
 			if( CheckPointInsideNode( point, i ) )
 			{
@@ -54,19 +54,19 @@ namespace Core
 		// rig first node...		
 		for( int i = 0; i < 4; i++ )
 		{
-			int linksTo = nodes[ node ].corners[i].linksTo;
+			int linksTo = m_nodes[ node ].corners[i].linksTo;
 			if( linksTo >= 0 )
-				prioList.push_back( TraversalData( linksTo, nodes[ node ].corners[i].linksToEdge, -5.0f ) );
+				prioList.push_back( TraversalData( linksTo, m_nodes[ node ].corners[i].linksToEdge, -5.0f ) );
 		}
 		std::sort( prioList.begin(), prioList.end(), sortingFunction );
 
-		bool* visited = Core::world.m_frameHeap.NewPODArray<bool>( nrNodes );
-		std::memset( visited, false, sizeof(bool) * nrNodes );
+		bool* visited = Core::world.m_frameHeap.NewPODArray<bool>( m_nrNodes );
+		std::memset( visited, false, sizeof(bool) * m_nrNodes );
 
 		// run algorithm
 		while( prioList.size() != 0 )
 		{
-			Core::NavigationMesh::Node& current = nodes[ prioList[0].node ];
+			Core::NavigationMesh::Node& current = m_nodes[ prioList[0].node ];
 			
 			glm::vec3 mid;			
 
@@ -112,8 +112,8 @@ namespace Core
 				}
 			}
 
-			flowfields[group].list[ prioList[0].node ] = mid;
-			flowfields[group].edges[ prioList[0].node ] = prioList[0].entryEdge;
+			m_flowfields[group].list[ prioList[0].node ] = mid;
+			m_flowfields[group].edges[ prioList[0].node ] = prioList[0].entryEdge;
 
 			visited[ prioList[0].node ] = true;
 			prioList.erase( prioList.begin() );

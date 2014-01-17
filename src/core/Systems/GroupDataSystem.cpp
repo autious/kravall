@@ -23,7 +23,7 @@ namespace Core
         Core::NavigationMesh* navMesh = Core::GetNavigationMesh();
         if(navMesh)
         {
-            m_nAllocatedGroups = navMesh->nrUsedFlowfields;
+            m_nAllocatedGroups = navMesh->m_nrUsedFlowfields;
 
             m_medianPositions = reinterpret_cast<glm::vec3*>(world.m_frameHeap.NewPODArray<unsigned char>(m_nAllocatedGroups * sizeof(glm::vec3)));
             memset(m_medianPositions, 0, sizeof(glm::vec3) * m_nAllocatedGroups);
