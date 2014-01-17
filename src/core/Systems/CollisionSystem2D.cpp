@@ -125,7 +125,7 @@ void Core::CollisionSystem2D::Update( float delta )
 					myPosition = *reinterpret_cast<glm::vec3*>(wpc->position);
 				}
 
-				glm::vec3 collisionNormal = glm::normalize( myPosition - otherPosition );
+				glm::vec3 collisionNormal = glm::normalize( myPosition - otherPosition );	
 					
 				// check if entity should step aside to get around object...
 				Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>(*it);
