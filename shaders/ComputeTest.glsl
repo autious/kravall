@@ -118,7 +118,7 @@ vec4 CalculatePointlight( LightData light, SurfaceData surface, vec3 wPos, vec3 
 	
 	// Calculate attenuation
 	float dist = length( lightDir );
-	float att = 1.0f / dist - 1.0f / light.radius_length;// More attenuations to chose from at the bottom of this file
+	float att = (pow(clamp( 1 - pow(dist / light.radius_length, 4.0f), 0.0f, 1.0f), 2.0f)) / (pow(dist, 2.0f) + 1);// More attenuations to chose from at the bottom of this file
 
 	vec3 eyeDir = normalize(eyePosition - wPos);
 	return vec4(BlinnPhong(light, surface, eyeDir, lightDir, att), 0.0f);
@@ -139,7 +139,7 @@ vec4 CalculateSpotlight( LightData light, SurfaceData surface, vec3 wPos, vec3 e
 	{
 		// Calculate attenuation
 		float dist = length( lightDir );
-		float att = spot * (1.0f / dist - 1.0f / light.radius_length);// More attenuations to chose from at the bottom of this file
+		float att = spot * ((pow(clamp( 1 - pow(dist / light.radius_length, 4.0f), 0.0f, 1.0f), 2.0f)) / (pow(dist, 2.0f) + 1));// More attenuations to chose from at the bottom of this file
 
 		vec3 eyeDir = normalize(eyePosition - wPos);
 		return vec4(BlinnPhong(light, surface, eyeDir, lightDir, att), 0.0f);
@@ -155,6 +155,18 @@ vec4 CalculateDirlight( LightData light, SurfaceData surface, vec3 wPos, vec3 ey
 	vec3 eyeDir = normalize(eyePosition - wPos);
 	float df =  max( 0.0f, dot(surface.normalDepth.xyz, lightDir));
 	return vec4(BlinnPhong(light, surface, eyeDir, lightDir, 1.0f), 0.0f);
+}
+
+vec3 Uncharted2Tonemap(vec3 x)
+{
+	float A = 0.15;
+	float B = 0.50;
+	float C = 0.10;
+	float D = 0.20;
+	float E = 0.02;
+	float F = 0.30;
+
+    return ((x*(A*x+C*B)+D*E)/(x*(A*x+B)+D*F))-E/F;
 }
 
 void main()
@@ -347,7 +359,14 @@ void main()
 			color += vec4(lights[i].color*lights[i].intensity, 0.0f) * surface.diffuse;
 		}
 		
+		float exposure = 5.0f;
+		vec3 white_point = vec3(1.0f);
+		float gamma = 2.2f;
+
+		color.xyz = Uncharted2Tonemap(color.xyz * exposure) / Uncharted2Tonemap(white_point);
 		
+		color.xyz = pow(color.xyz, vec3(1.0f / gamma));
+
 		//if (gl_LocalInvocationID.x == 0 || gl_LocalInvocationID.y == 0)
 		//{
 		//	imageStore(outTexture, pixel, vec4(.2f, .2f, .2f, 1.0f));
@@ -382,3 +401,6 @@ void main()
 //float linearAttenuation = 0.12;
 //float quadraticAttenuation = 0.10;
 //float att = constantAttenuation / ((1+linearAttenuation*dist)*(1+quadraticAttenuation*dist*dist));
+
+//Unreal Engine 4 attenuation
+//float att = (pow(clamp( 1 - pow(dist / light.radius_length, 4.0f), 0.0f, 1.0f), 2.0f)) / (pow(dist, 2.0f) + 1);

@@ -34,8 +34,19 @@ void main()
 	finalNormal = TBN * sampledNormal;
 	finalNormal = normalize(finalNormal);
 
+	float gamma = 2.2f;
+
+	vec4 diffuse = texture2D(gDiffuse, uvFS);
+	diffuse.xyz = pow(diffuse.xyz, vec3(gamma));
+
+	vec4 spec = texture2D(gSpecular, uvFS);
+	spec.xyz = pow(spec.xyz, vec3(gamma));
+
+	vec4 glow = texture2D(gGlow, uvFS);
+	glow.xyz = pow(glow.xyz, vec3(gamma));
+
 	gNormalDepthRT = vec4(finalNormal, posFS.z / posFS.w);//vec4(finalNormal, );
-	gDiffuseRT =  texture2D(gDiffuse, uvFS);
-	gSpecularRT = texture2D(gSpecular, uvFS);
-	gGlowMatRT = vec4(texture2D(gGlow, uvFS).xyz, gMaterialID);
+	gDiffuseRT	=  diffuse;
+	gSpecularRT = spec;
+	gGlowMatRT = vec4(glow.xyz, gMaterialID);
 }
