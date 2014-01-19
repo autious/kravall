@@ -2,7 +2,7 @@
 #define SRC_GFX_TEXTURES_LUT_MANAGER_HPP
 
 #include <iostream>
-#include <map>
+#include <vector>
 #include "Textures/TextureManager.hpp"
 
 namespace GFX
@@ -16,10 +16,11 @@ namespace GFX
 		void Initialize(TextureManager* textureManager);
 
 		void Reload();
-		void SetActive(std::string name);
+		GLuint GetLUTHandle(std::string name);
 	private:
 
-		std::map<std::string, GLuint> m_LUT;
+		std::vector<std::string> m_LUTNames;
+		std::vector<GLuint> m_LUTTextures;
 		TextureManager* m_textureManager;
 
 	};

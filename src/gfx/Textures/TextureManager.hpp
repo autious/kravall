@@ -45,9 +45,10 @@ namespace GFX
 
 		void Load3DTexture(unsigned int& id, int width, int height, int depth, unsigned char* data);
 
+		void Load3DTexture(unsigned int& id, int width, int height, int depth, std::string filepath);
+
 		void CUBEMAPTEST(unsigned int& id);
 		void THREEDTEST(unsigned int& id);
-
 
 		void DeleteTexture(unsigned long long int id);
 

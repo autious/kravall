@@ -29,6 +29,25 @@ namespace Core
 	{
 		clop::Command("lua toggleLightVolumes()");
 	}
+
+	void ClopSetLUT(clop::ArgList args)
+	{
+		if (args.size() == 2)
+		{
+			std::string t = (std::string)args[1];
+			
+			size_t startpos = t.find_first_not_of(" \t");
+			if (std::string::npos != startpos)
+			{
+				t = t.substr(startpos);
+			}
+
+			if (t == "reload")
+				GFX::Content::ReloadLUT();
+			else
+				GFX::ColorSettings::SetLUT(t.c_str());
+		}
+	}
 	
 	void ClopShowFBO(clop::ArgList args)
 	{
@@ -95,6 +114,7 @@ namespace Core
 		
 		clop::Register("lipsum", ClopLipsum);
 
+		clop::Register("lut", ClopSetLUT);
 
 		// Register lua
 		clop::Register("lua", ClopLuaCommand);

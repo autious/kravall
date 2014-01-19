@@ -237,6 +237,27 @@ namespace GFX
 		{
 			return Renderer().SetShaderToMaterial(materialID, shaderID);
 		}
+
+		void ReloadLUT()
+		{
+			Renderer().ReloadLUT();
+		}
+	}
+}
+
+namespace GFX
+{
+	namespace Settings
+	{
+		
+	}
+
+	namespace ColorSettings
+	{
+		void SetLUT(const char* LUT)
+		{
+			Renderer().SetLUT(std::string(LUT));
+		}
 	}
 }
 

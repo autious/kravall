@@ -18,7 +18,6 @@ void main()
 
 	sourceColor = clamp(sourceColor, vec3(0.0f), vec3(1.0f));
 
-	float r = sourceColor.x;
 	float g = sourceColor.y;
 	float b = sourceColor.z;
 
@@ -26,9 +25,7 @@ void main()
 	sourceColor.z = g;
 
 	vec3 newUV = scale * sourceColor + offset;
-	//newUV.z = 1.0f - newUV.z;
-	//newUV.y = 1.0f - newUV.y;
-	//newUV.x = 1.0f - newUV.x;
+
 	//outputColor = texture2D(gSourceTexture, uv);
 	outputColor = texture(gLut, (newUV));
 

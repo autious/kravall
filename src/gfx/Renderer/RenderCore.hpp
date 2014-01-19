@@ -120,6 +120,9 @@ namespace GFX
 
 		void AddRenderJob(GFXBitmask bitmask, void* value);
 
+		void SetLUT(std::string LUT);
+		void ReloadLUT();
+
 		void DeleteMesh(unsigned long long id);
 		void LoadMesh(unsigned int& meshID, int& sizeVerts, int& sizeIndices, GFX::Vertex* verts, int* indices);
 
@@ -215,6 +218,7 @@ namespace GFX
 		glm::vec3 m_whitePoint;
 
 		GLuint m_toneMappedTexture;
+		std::string m_currentLUT;
 
 	};
 

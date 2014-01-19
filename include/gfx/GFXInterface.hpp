@@ -227,6 +227,8 @@ namespace GFX
 		\return Returns #GFX_SUCCESS, #GFX_INVALID_MATERIAL
 		*/
 		DLL_API int AttachShaderToMaterial(const unsigned long long int& materialID, const unsigned int& shaderID);
+
+		DLL_API void ReloadLUT();
 	}
 
 	namespace Debug
@@ -442,7 +444,7 @@ namespace GFX
 
 	} // namespace Settings
 
-	namespace LevelSpecific
+	namespace ColorSettings
 	{
 		/*!
 		Sets the white point which means a pixel should be full-brighted
@@ -455,6 +457,8 @@ namespace GFX
 		\param exposure
 		*/
 		DLL_API void SetExposure(float exposure);
+
+		DLL_API void SetLUT(const char* LUT);
 	}
 
 } // namespace GFX

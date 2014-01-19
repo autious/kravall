@@ -5,6 +5,7 @@
 #include <Shaders/ShaderManager.hpp>
 #include <Buffers/UniformBufferManager.hpp>
 #include "../../Textures/TextureManager.hpp"
+#include "../../Textures/LUTManager.hpp"
 
 namespace GFX
 {
@@ -33,11 +34,13 @@ namespace GFX
 		/*!
 		Main rendering loop
 		*/
-		void Render(const double& delta, const GLuint& tonemappedTexture);
+		void Render(const double& delta, const GLuint& tonemappedTexture, std::string LUT);
+
+		void ReloadLUT();
 
 	private:
 
-		void ColorGrading(const GLuint& tonemappedTexture);
+		void ColorGrading(const GLuint& tonemappedTexture, std::string LUT);
 		void OutputTexture(const GLuint& texturehandle);
 
 		GLint m_alphaUniform;
@@ -52,6 +55,7 @@ namespace GFX
 		int m_screenHeight;
 
 		TextureManager* m_textureManager;
+		LUTManager* m_LUTManager;
 
 	};
 }

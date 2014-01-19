@@ -110,6 +110,8 @@ namespace GFX
 		m_gamma = 2.2f;
 		m_exposure = 1.0f;
 		m_whitePoint = glm::vec3(1.0f);
+
+		m_currentLUT = "identity";
 	}
 
 	void RenderCore::LoadGPUPF()
@@ -133,6 +135,15 @@ namespace GFX
 		m_consolePainter->SetConsoleHeight(m_windowHeight);
 	}
 
+	void RenderCore::SetLUT(std::string LUT)
+	{
+		m_currentLUT = LUT;
+	}
+
+	void RenderCore::ReloadLUT()
+	{
+		m_postProcessingPainter->ReloadLUT();
+	}
 	
 	void RenderCore::AddRenderJob(GFXBitmask bitmask, void* value)
 	{
@@ -246,7 +257,7 @@ namespace GFX
 			GFX_CHECKTIME(m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, 
 				m_viewMatrix, m_projMatrix, m_exposure, m_gamma, m_whitePoint, m_toneMappedTexture), "Lighting");
 
-			m_postProcessingPainter->Render(delta, m_toneMappedTexture);
+			m_postProcessingPainter->Render(delta, m_toneMappedTexture, m_currentLUT);
 
 			GFX_CHECKTIME( m_overlayPainter->Render( renderJobIndex, m_overlayViewMatrix, m_overlayProjMatrix ), "Console");
 			//Render FBO
@@ -267,7 +278,7 @@ namespace GFX
 			m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, 
 				m_viewMatrix, m_projMatrix, m_exposure, m_gamma, m_whitePoint, m_toneMappedTexture);
 
-			m_postProcessingPainter->Render(delta, m_toneMappedTexture);
+			m_postProcessingPainter->Render(delta, m_toneMappedTexture, m_currentLUT);
 			
 			m_overlayPainter->Render( renderJobIndex, m_overlayViewMatrix, m_overlayProjMatrix );
 			//Render FBO

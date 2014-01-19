@@ -6,6 +6,7 @@ namespace GFX
 		: BasePainter(shaderManager, uniformBufferManager)
 	{
 		m_textureManager = textureManager;
+		m_LUTManager = new LUTManager();
 	}
 
 	PostProcessingPainter::~PostProcessingPainter()
@@ -15,6 +16,8 @@ namespace GFX
 	void PostProcessingPainter::Initialize(GLuint FBO, GLuint dummyVAO, int screenWidth, int screenHeight)
 	{
 		BasePainter::Initialize(FBO, dummyVAO);
+
+		m_LUTManager->Initialize(m_textureManager);
 
 		m_screenHeight = screenHeight;
 		m_screenWidth = screenWidth;
@@ -36,9 +39,14 @@ namespace GFX
 		m_textureManager->THREEDTEST(m_currentLut);
 	}
 
-	void PostProcessingPainter::Render(const double& delta, const GLuint& tonemappedTexture)
+	void PostProcessingPainter::ReloadLUT()
 	{
-		ColorGrading(tonemappedTexture);
+		m_LUTManager->Reload();
+	}
+
+	void PostProcessingPainter::Render(const double& delta, const GLuint& tonemappedTexture, std::string LUT)
+	{
+		ColorGrading(tonemappedTexture, LUT);
 		//glDisable(GL_DEPTH_TEST);
 		//glEnable(GL_BLEND);
 		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -50,7 +58,7 @@ namespace GFX
 	}
 
 
-	void PostProcessingPainter::ColorGrading(const GLuint& tonemappedTexture)
+	void PostProcessingPainter::ColorGrading(const GLuint& tonemappedTexture, std::string LUT)
 	{
 		BasePainter::ClearFBO();
 		m_shaderManager->UseProgram("ColorGrading");
@@ -59,7 +67,7 @@ namespace GFX
 		glDisable(GL_BLEND);
 		glDepthMask(GL_FALSE);
 		TextureManager::BindTexture(tonemappedTexture, m_sourceUniform, 0, GL_TEXTURE_2D);
-		TextureManager::BindTexture(m_textureManager->GetTexture(m_currentLut).textureHandle, m_LUTUniform, 1, GL_TEXTURE_3D);
+		TextureManager::BindTexture(m_textureManager->GetTexture(m_LUTManager->GetLUTHandle(LUT)).textureHandle, m_LUTUniform, 1, GL_TEXTURE_3D);
 
 		glBindVertexArray(m_dummyVAO);
 		glDrawArrays(GL_POINTS, 0, 1);

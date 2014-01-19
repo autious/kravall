@@ -93,7 +93,6 @@ GLFWwindow* init( int argc, char** argv )
                 GFX::Debug::SetStatisticsFont(fontData);
             });
 
-
     RegisterCLOPLogger();
 
     return window;
