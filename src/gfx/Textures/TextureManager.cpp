@@ -33,7 +33,6 @@ namespace GFX
 		GLfloat maxAniso = 0.0f;
 		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAniso);
 
-
 		GLuint textureHandle;
 		glGenTextures(1, &textureHandle);
 		glBindTexture(GL_TEXTURE_2D, textureHandle);
@@ -56,6 +55,106 @@ namespace GFX
 
 		id = texture.id;
 	}
+
+	void TextureManager::LoadCubemap(unsigned int& id, unsigned char* posX, unsigned char* negX, unsigned char* posY, unsigned char* negY, unsigned char* posZ, unsigned char* negZ, int width, int height)
+	{
+		GLfloat maxAniso = 0.0f;
+		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAniso);
+
+		GLuint textureHandle;
+		glGenTextures(1, &textureHandle);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, textureHandle);
+
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAniso);
+
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, posX);
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, negX);
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, posY);
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, negY);
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, posZ);
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, negZ);
+
+		//glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+
+		TextureData texture;
+		texture.id = static_cast<unsigned int>(m_idCounter);
+		m_idCounter++;
+		texture.textureHandle = textureHandle;
+		m_textures.push_back(texture);
+
+		id = texture.id;
+	}
+
+	void TextureManager::Load3DTexture(unsigned int& id, int width, int height, int depth, unsigned char* data)
+	{
+		GLuint textureHandle;
+		glGenTextures(1, &textureHandle);
+		glBindTexture(GL_TEXTURE_3D, textureHandle);
+
+		GLfloat maxAniso = 0.0f;
+		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAniso);
+
+		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
+
+		//glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAniso);
+
+		glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA, width, height, depth, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+
+		//glGenerateMipmap(GL_TEXTURE_3D);
+
+		TextureData texture;
+		texture.id = static_cast<unsigned int>(m_idCounter);
+		m_idCounter++;
+		texture.textureHandle = textureHandle;
+		m_textures.push_back(texture);
+
+		id = texture.id;
+	}
+
+	void TextureManager::THREEDTEST(unsigned int& id)
+	{
+		unsigned char* data;
+		int width;
+		int height;
+		data = stbi_load("assets/texture/Lut/test.png", &width, &height, 0, 0);
+		Load3DTexture(id, 32, 32, 32, data);
+	}
+
+	void TextureManager::CUBEMAPTEST(unsigned int& id)
+	{
+		unsigned char* posX;
+		int width;
+		int height;
+		posX = stbi_load("assets/texture/cubemaps/posx.png", &width, &height, 0, 0);
+
+		unsigned char* negX;
+		negX = stbi_load("assets/texture/cubemaps/negx.png", &width, &height, 0, 0);
+
+		unsigned char* posY;
+		posY = stbi_load("assets/texture/cubemaps/posy.png", &width, &height, 0, 0);
+
+		unsigned char* negY;
+		negY = stbi_load("assets/texture/cubemaps/negy.png", &width, &height, 0, 0);
+
+		unsigned char* posZ;
+		posZ = stbi_load("assets/texture/cubemaps/posz.png", &width, &height, 0, 0);
+
+		unsigned char* negZ;
+		negZ = stbi_load("assets/texture/cubemaps/negz.png", &width, &height, 0, 0);
+
+		LoadCubemap(id, posX, negX, posY, negY, posZ, negZ, width, height);
+	}
+
 
 	void TextureManager::DeleteTexture(unsigned long long int id)
 	{
@@ -121,7 +220,7 @@ namespace GFX
 	{
 		glUniform1i(uniform, position);
 		glActiveTexture(GL_TEXTURE0 + position);
-		glBindTexture(GL_TEXTURE_2D, textureHandle);
+		glBindTexture(target, textureHandle);
 	}
 
 	void TextureManager::UnbindTexture()

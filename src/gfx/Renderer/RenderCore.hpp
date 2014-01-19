@@ -14,6 +14,7 @@
 #include "TextRenderer/TextPainter.hpp"
 #include "SplashRenderer/SplashPainter.hpp"
 #include "FBORenderer/FBOPainter.hpp"
+#include "PostProcessing/PostProcessingPainter.hpp"
 
 #include "TextRenderer/TextManager.hpp"
 #include "DebugRenderer/DebugManager.hpp"
@@ -189,7 +190,9 @@ namespace GFX
 		SplashPainter* m_splashPainter;
 		FBOPainter* m_fboPainter;
         OverlayPainter* m_overlayPainter;
-		
+		PostProcessingPainter* m_postProcessingPainter;
+
+
 		void SubSystemTimeRender();
         std::vector<std::pair<const char*, std::chrono::microseconds>> m_subsystemTimes;
 		unsigned long long m_lastUpdateTime;
@@ -206,6 +209,12 @@ namespace GFX
         glm::mat4 m_overlayProjMatrix;
 
 		bool m_playSplash;
+
+		float m_gamma;
+		float m_exposure;
+		glm::vec3 m_whitePoint;
+
+		GLuint m_toneMappedTexture;
 
 	};
 

@@ -64,6 +64,10 @@ uniform uint numSpotLights;
 uniform uint numDirLights;
 uniform uint numAmbientLights;
 
+uniform vec3 gWhitePoint;
+uniform float gExposure;
+uniform float gGamma;
+
 shared uint minDepth;
 shared uint maxDepth;
 
@@ -328,9 +332,7 @@ void main()
 		surface.specular = imageLoad(specular, pixel);
 		surface.glow = imageLoad(glowMatID, pixel);
 		
-		
 		vec4 color = vec4(0.0f, 0.0f, 0.0f, 1.0f);
-
 
 		//point lights
 		uint i;
@@ -359,13 +361,10 @@ void main()
 			color += vec4(lights[i].color*lights[i].intensity, 0.0f) * surface.diffuse;
 		}
 		
-		float exposure = 5.0f;
-		vec3 white_point = vec3(1.0f);
-		float gamma = 2.2f;
-
-		color.xyz = Uncharted2Tonemap(color.xyz * exposure) / Uncharted2Tonemap(white_point);
-		
-		color.xyz = pow(color.xyz, vec3(1.0f / gamma));
+		//Tone map
+		color.xyz = Uncharted2Tonemap(color.xyz * gExposure) / Uncharted2Tonemap(gWhitePoint);
+		//Gamma correct
+		color.xyz = pow(color.xyz, vec3(1.0f / gGamma));
 
 		//if (gl_LocalInvocationID.x == 0 || gl_LocalInvocationID.y == 0)
 		//{

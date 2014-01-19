@@ -45,7 +45,7 @@ namespace GFX
 		\param specular Rendertarget for specular
 		\param glowMatID Rendertarget for glow and materialID
 		*/
-		void Render(unsigned int& renderIndex, FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix);
+		void Render(unsigned int& renderIndex, FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix, const float& gamma);
 
 	private:
 		
@@ -64,6 +64,13 @@ namespace GFX
 		GLuint m_uniformTexture3;
 
 		GLuint m_modelMatrixUniform;
+
+		GLuint m_gammaUniform;
+
+		GLint m_cameraPosUniform;
+
+		unsigned int testCubeMap;
+		GLint cubemapUniform;
 
 		RenderJobManager* m_renderJobManager;
 		MeshManager* m_meshManager;

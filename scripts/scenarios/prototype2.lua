@@ -42,7 +42,7 @@ core.nav_mesh.set_group_goal(1, 70, 0, 40)
 
 
 for i = 0, 1023 do
-	local color = { math.random(), math.random(), math.random() }
+	local color = {1, 1, 1 }
     asm:loadAssembly( 
     {
         {

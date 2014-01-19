@@ -11,6 +11,8 @@ uniform sampler2D gNormal;
 uniform sampler2D gSpecular;
 uniform sampler2D gGlow;
 
+uniform float gGamma;
+
 //out vec4 color;
 
 layout ( location = 1 ) out vec4 normalDepthRT;
@@ -20,18 +22,14 @@ layout ( location = 4 ) out vec4 glowMatIDRT;
 
 void main()
 {
-	
-	float gamma = 2.2f;
-
 	vec4 diffuse = texture2D(gDiffuse, uvFS);
-	diffuse.xyz = pow(diffuse.xyz, vec3(gamma));
+	diffuse.xyz = pow(diffuse.xyz, vec3(gGamma));
 
 	vec4 spec = texture2D(gSpecular, uvFS);
-	spec.xyz = pow(spec.xyz, vec3(gamma));
+	spec.xyz = pow(spec.xyz, vec3(gGamma));
 
 	vec4 glow = texture2D(gGlow, uvFS);
-	glow.xyz = pow(glow.xyz, vec3(gamma));
-
+	glow.xyz = pow(glow.xyz, vec3(gGamma));
 
 	normalDepthRT = vec4(normalize(normalFS.xyz), posFS.z / posFS.w);
 	diffuseRT = diffuse;

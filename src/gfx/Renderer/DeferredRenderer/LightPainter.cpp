@@ -37,7 +37,9 @@ namespace GFX
 
 		m_eyePosUniform = m_shaderManager->GetUniformLocation("ComputeTest", "eyePos");
 
-
+		m_gammaUniform = m_shaderManager->GetUniformLocation("ComputeTest", "gGamma");
+		m_exposureUniform = m_shaderManager->GetUniformLocation("ComputeTest", "gExposure");
+		m_whitePointUniform = m_shaderManager->GetUniformLocation("ComputeTest", "gWhitePoint");
 
 		numActiveLightsUniform = m_shaderManager->GetUniformLocation("ComputeTest", "numActiveLights");
 
@@ -80,7 +82,8 @@ namespace GFX
 
 
 
-	void LightPainter::Render(unsigned int& renderIndex, FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix)
+	void LightPainter::Render(unsigned int& renderIndex, FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, 
+		glm::mat4 viewMatrix, glm::mat4 projMatrix, float exposure, float gamma, glm::vec3 whitePoint, GLuint& toneMappedTexture)
 	{
 		m_shaderManager->UseProgram("ComputeTest");
 
@@ -93,6 +96,9 @@ namespace GFX
 		m_shaderManager->SetUniform(1, viewMatrix, m_viewUniform);
 		m_shaderManager->SetUniform(1, invProjView, m_invProjViewUniform);
 
+		m_shaderManager->SetUniform(exposure, m_exposureUniform);
+		m_shaderManager->SetUniform(gamma, m_gammaUniform);
+		m_shaderManager->SetUniform(1, whitePoint, m_whitePointUniform);
 
 		std::vector<RenderJobManager::RenderJob> renderJobs = m_renderJobManager->GetJobs();
 
@@ -195,28 +201,30 @@ namespace GFX
 		
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 
-		m_shaderManager->UseProgram("TQ");
-
-		glDisable(GL_DEPTH_TEST);
-		glDisable(GL_BLEND);
-		glDepthMask(GL_FALSE);
-
-		m_shaderManager->SetUniform(1.0f, alphaUniform);
-
-		TextureManager::BindTexture(m_textureHandle, textureUniform, 0, GL_TEXTURE_2D);
-
-		glBindVertexArray(m_dummyVAO);
-		glDrawArrays(GL_POINTS, 0, 1);
-
-		m_shaderManager->ResetProgram();
-
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_BLEND);
-		glDepthMask(GL_TRUE);
+		//m_shaderManager->UseProgram("TQ");
+		//
+		//glDisable(GL_DEPTH_TEST);
+		//glDisable(GL_BLEND);
+		//glDepthMask(GL_FALSE);
+		//
+		//m_shaderManager->SetUniform(1.0f, alphaUniform);
+		//
+		//TextureManager::BindTexture(m_textureHandle, textureUniform, 0, GL_TEXTURE_2D);
+		//
+		//glBindVertexArray(m_dummyVAO);
+		//glDrawArrays(GL_POINTS, 0, 1);
+		//
+		//m_shaderManager->ResetProgram();
+		//
+		//glEnable(GL_DEPTH_TEST);
+		//glEnable(GL_BLEND);
+		//glDepthMask(GL_TRUE);
 
 		BasePainter::ClearFBO();
 
 		TextureManager::UnbindTexture();
+
+		toneMappedTexture = m_textureHandle;
 		renderIndex = 0;
 	}
 }

@@ -227,8 +227,6 @@ namespace GFX
 		\return Returns #GFX_SUCCESS, #GFX_INVALID_MATERIAL
 		*/
 		DLL_API int AttachShaderToMaterial(const unsigned long long int& materialID, const unsigned int& shaderID);
-
-
 	}
 
 	namespace Debug
@@ -436,7 +434,28 @@ namespace GFX
 		*/
 		DLL_API void SetDoF(bool enabled);
 
+		/*!
+		Sets gamma
+		\param gamma
+		*/
+		DLL_API void SetGamma(float gamma);
+
 	} // namespace Settings
+
+	namespace LevelSpecific
+	{
+		/*!
+		Sets the white point which means a pixel should be full-brighted
+		\param whitePoint
+		*/
+		DLL_API void SetWhitePoint(GFXVec3 whitePoint);
+
+		/*!
+		Sets exposure
+		\param exposure
+		*/
+		DLL_API void SetExposure(float exposure);
+	}
 
 } // namespace GFX
 

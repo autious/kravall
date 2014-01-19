@@ -2,31 +2,31 @@ local ASML = require "assembly_loader"
 
 local asm = ASML.loadPack( {} )
 
---Plane
-asm:loadAssembly( 
-{
-	{
-		type = core.componentType.WorldPositionComponent,
-		data = { position = { 0, 10, 0 } }
-	},
-	{
-		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry },
-		load = { 
-					mesh = { core.loaders.GnomeLoader, "assets/plane.bgnome", false },
-					material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
-			   }
-	},
-	{
-		type = core.componentType.ScaleComponent,
-		data = { scale = 100.0 }
-	},
-	{
-		type = core.componentType.RotationComponent,
-		data = { rotation = { -math.sin(math.pi/4.0), 0, 0, math.cos(math.pi/4.0) } }
-	}
-}
-)
+----Plane
+--asm:loadAssembly( 
+--{
+--	{
+--		type = core.componentType.WorldPositionComponent,
+--		data = { position = { 0, 10, 0 } }
+--	},
+--	{
+--		type = core.componentType.GraphicsComponent,
+--		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry },
+--		load = { 
+--					mesh = { core.loaders.GnomeLoader, "assets/plane.bgnome", false },
+--					material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
+--			   }
+--	},
+--	{
+--		type = core.componentType.ScaleComponent,
+--		data = { scale = 100.0 }
+--	},
+--	{
+--		type = core.componentType.RotationComponent,
+--		data = { rotation = { -math.sin(math.pi/4.0), 0, 0, math.cos(math.pi/4.0) } }
+--	}
+--}
+--)
 
 --Cube
 asm:loadAssembly( 
@@ -40,7 +40,7 @@ asm:loadAssembly(
 		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/cube.bgnome", false },
-					material = { core.loaders.MaterialLoader, "assets/material/normalsTest.material", false }
+					material = { core.loaders.MaterialLoader, "assets/material/interiormap_test.material", false }
 			   }
 	},
 	{
@@ -67,7 +67,7 @@ asm:loadAssembly(
 		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/cube.bgnome", false },
-					material = { core.loaders.MaterialLoader, "assets/material/normalsTest.material", false }
+					material = { core.loaders.MaterialLoader, "assets/material/interiormap_test.material", false }
 			   }
 	},
 	{
@@ -94,7 +94,7 @@ asm:loadAssembly(
 		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/cube.bgnome", false },
-					material = { core.loaders.MaterialLoader, "assets/material/normalsTest.material", false }
+					material = { core.loaders.MaterialLoader, "assets/material/interiormap_test.material", false }
 			   }
 	},
 	{
@@ -103,7 +103,6 @@ asm:loadAssembly(
 	},
 	{
 		type = core.componentType.RotationComponent,
-		--data = { rotation = { 0,0, math.sin( 3.14 ), math.cos(3.14/2.0) } }
 		data = { rotation = { 1*math.sin( -3.14/4 ), 0, 0, math.cos( -3.14/4 ) } }
 	}
 }
@@ -121,7 +120,7 @@ asm:loadAssembly(
 		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/cube.bgnome", false },
-					material = { core.loaders.MaterialLoader, "assets/material/normalsTest.material", false }
+					material = { core.loaders.MaterialLoader, "assets/material/interiormap_test.material", false }
 			   }
 	},
 	{
@@ -130,7 +129,33 @@ asm:loadAssembly(
 	},
 	{
 		type = core.componentType.RotationComponent,
-		--data = { rotation = { 0,0, math.sin( 3.14 ), math.cos(3.14/2.0) } }
+		data = { rotation = { 1*math.sin( -3.14/4 ), 0, 0, math.cos( -3.14/4 ) } }
+	}
+}
+)
+
+
+--Cube
+asm:loadAssembly( 
+{
+	{
+		type = core.componentType.WorldPositionComponent,
+		data = { position = { 25, 10, 15 } }
+	},
+	{
+		type = core.componentType.GraphicsComponent,
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry },
+		load = { 
+					mesh = { core.loaders.GnomeLoader, "assets/sphere.bgnome", false },
+					material = { core.loaders.MaterialLoader, "assets/material/interiormap_test.material", false }
+			   }
+	},
+	{
+		type = core.componentType.ScaleComponent,
+		data = { scale = 10.0 }
+	},
+	{
+		type = core.componentType.RotationComponent,
 		data = { rotation = { 1*math.sin( -3.14/4 ), 0, 0, math.cos( -3.14/4 ) } }
 	}
 }
@@ -222,57 +247,57 @@ asm:loadAssembly(
 )
 
 
----- Directional light
---asm:loadAssembly( 
---{
---	{
---		type = core.componentType.LightComponent,
---		data =  { 
---					color = { 1.0, 1.0, 1.0 },
---					speccolor = { 1.0, 1.0, 1.0 },
---					intensity = 0.05,
---					type = core.gfx.objectTypes.Light,
---					lighttype = core.gfx.lightTypes.Dir
---				}
---	},
---	{
---		type = core.componentType.WorldPositionComponent,
---		data = { position = { 0, 0, 0 } }
---	},
---	{
---		type = core.componentType.ScaleComponent,
---		data = { scale = 1.0 } 
---	},
---	{
---		type = core.componentType.RotationComponent,
---		data = { rotation = { 2,-3,-1,0 } } -- Lights uses rotation component as a direction vector, not a quaternion
---	}
---} 
---)
----- Ambient light
---asm:loadAssembly( 
---{
---	{
---		type = core.componentType.LightComponent,
---		data =  { 
---					color = { 1.0, 1.0, 1.0 },
---					intensity = 0.01,
---					type = core.gfx.objectTypes.Light,
---					lighttype = core.gfx.lightTypes.Ambient
---				}
---	},
---	{
---		type = core.componentType.WorldPositionComponent,
---		data = { position = { 0, 0, 0 } }
---	},
---	{
---		type = core.componentType.ScaleComponent,
---		data = { scale = 1.0 }
---	},
---	{
---		type = core.componentType.RotationComponent,
---		data = { rotation = { 0,0,0,0 } }
---	}
---} 
---)
+-- Directional light
+asm:loadAssembly( 
+{
+	{
+		type = core.componentType.LightComponent,
+		data =  { 
+					color = { 1.0, 1.0, 1.0 },
+					speccolor = { 1.0, 1.0, 1.0 },
+					intensity = 0.05,
+					type = core.gfx.objectTypes.Light,
+					lighttype = core.gfx.lightTypes.Dir
+				}
+	},
+	{
+		type = core.componentType.WorldPositionComponent,
+		data = { position = { 0, 0, 0 } }
+	},
+	{
+		type = core.componentType.ScaleComponent,
+		data = { scale = 1.0 } 
+	},
+	{
+		type = core.componentType.RotationComponent,
+		data = { rotation = { 2,-3,-1,0 } } -- Lights uses rotation component as a direction vector, not a quaternion
+	}
+} 
+)
+-- Ambient light
+asm:loadAssembly( 
+{
+	{
+		type = core.componentType.LightComponent,
+		data =  { 
+					color = { 1.0, 1.0, 1.0 },
+					intensity = 0.01,
+					type = core.gfx.objectTypes.Light,
+					lighttype = core.gfx.lightTypes.Ambient
+				}
+	},
+	{
+		type = core.componentType.WorldPositionComponent,
+		data = { position = { 0, 0, 0 } }
+	},
+	{
+		type = core.componentType.ScaleComponent,
+		data = { scale = 1.0 }
+	},
+	{
+		type = core.componentType.RotationComponent,
+		data = { rotation = { 0,0,0,0 } }
+	}
+} 
+)
 return asm;

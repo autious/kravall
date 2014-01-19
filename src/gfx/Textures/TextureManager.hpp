@@ -30,7 +30,6 @@ namespace GFX
 		static void BindTexture(GLuint textureHandle, GLint uniform, GLuint position, GLenum target);
 		static void UnbindTexture();
 
-
 		TextureManager();
 		~TextureManager();
 
@@ -41,6 +40,14 @@ namespace GFX
 			const GLint& minFilter, const GLint& magFilter,
 			const GLint& wrapS, const GLint& wrapT,
 			int width, int height);
+
+		void LoadCubemap(unsigned int& id, unsigned char* posX, unsigned char* negX, unsigned char* posY, unsigned char* negY, unsigned char* posZ, unsigned char* negZ, int width, int height);
+
+		void Load3DTexture(unsigned int& id, int width, int height, int depth, unsigned char* data);
+
+		void CUBEMAPTEST(unsigned int& id);
+		void THREEDTEST(unsigned int& id);
+
 
 		void DeleteTexture(unsigned long long int id);
 
