@@ -45,7 +45,7 @@ void main()
 	// Entrance position into the room
 	vec4 pos = vec4(f * vec2(2.0, -2.0) - vec2(1.0, -1.0), -1.0, cubeIndex);
 	
-	vec3 dir = posW.xyz - vec3(gCameraPosition.x, gCameraPosition.y, gCameraPosition.z);
+	vec3 dir = posW.xyz - vec3(gCameraPosition.x, -gCameraPosition.y, gCameraPosition.z);
 	//dir.x = -dir.x;// * 2.2f;
 	//dir.y = dir.y * 0.3f;
 	//dir.z *= 5;

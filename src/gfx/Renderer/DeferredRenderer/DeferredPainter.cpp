@@ -111,7 +111,7 @@ namespace GFX
 		GFXBitmask bitmask;
 		int instanceCount = 0;
 		unsigned int i;
-		
+
 		bool endMe = false;
 		for (i = renderIndex; i < renderJobs.size(); i++)
 		{
@@ -195,6 +195,8 @@ namespace GFX
 
 						cubemapUniform = m_shaderManager->GetUniformLocation(currentShader, "gInteriorMap");
 						m_cameraPosUniform = m_shaderManager->GetUniformLocation(currentShader, "gCameraPosition");
+
+						m_shaderManager->SetUniform(viewMatrix[3][0], viewMatrix[3][1], viewMatrix[3][2], m_cameraPosUniform);
 					}
 
 					//set textures
@@ -204,10 +206,11 @@ namespace GFX
 					m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[3]).textureHandle, m_uniformTexture3, 3, GL_TEXTURE_2D);
 
 					m_textureManager->BindTexture(m_textureManager->GetTexture(testCubeMap).textureHandle, cubemapUniform, 4, GL_TEXTURE_CUBE_MAP);
-					m_shaderManager->SetUniform(viewMatrix[3][0], viewMatrix[3][1], viewMatrix[3][2], m_cameraPosUniform);
-
+					
 					//Set gamma
 					m_shaderManager->SetUniform(gamma, m_gammaUniform);
+
+					
 				}
 
 					if (meshID != currentMesh)
