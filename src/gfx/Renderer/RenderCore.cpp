@@ -140,6 +140,16 @@ namespace GFX
 		m_currentLUT = LUT;
 	}
 
+	void RenderCore::SetExposure(float exposure)
+	{
+		m_exposure = exposure;
+	}
+
+	void RenderCore::SetGamma(float gamma)
+	{
+		m_gamma = gamma;
+	}
+
 	void RenderCore::ReloadLUT()
 	{
 		m_postProcessingPainter->ReloadLUT();
@@ -327,6 +337,7 @@ namespace GFX
 
 		}
 	}
+
 	void RenderCore::InitializeGBuffer()
 	{
 		//Generate the FBO
@@ -417,6 +428,7 @@ namespace GFX
 	{
 		m_consolePainter->SetConsoleVisible(visible);
 	}
+
 	void RenderCore::SetSplash(bool splash)
 	{
 		m_playSplash = splash;

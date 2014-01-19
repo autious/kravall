@@ -48,6 +48,28 @@ namespace Core
 				GFX::ColorSettings::SetLUT(t.c_str());
 		}
 	}
+
+	void ClopSetExposure(clop::ArgList args)
+	{
+		if (args.size() == 2)
+		{
+			float t = (double)args[1];
+			
+			if (t > 0)
+				GFX::ColorSettings::SetExposure(t);
+		}
+	}
+
+	void ClopSetGamma(clop::ArgList args)
+	{
+		if (args.size() == 2)
+		{
+			float t = (double)args[1];
+
+			if (t > 0)
+				GFX::Settings::SetGamma(t);
+		}
+	}
 	
 	void ClopShowFBO(clop::ArgList args)
 	{
@@ -115,6 +137,9 @@ namespace Core
 		clop::Register("lipsum", ClopLipsum);
 
 		clop::Register("lut", ClopSetLUT);
+
+		clop::Register("exposure", ClopSetExposure);
+		clop::Register("gamma", ClopSetGamma);
 
 		// Register lua
 		clop::Register("lua", ClopLuaCommand);

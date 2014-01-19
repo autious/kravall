@@ -249,7 +249,10 @@ namespace GFX
 {
 	namespace Settings
 	{
-		
+		void SetGamma(float gamma)
+		{
+			Renderer().SetGamma(gamma);
+		}
 	}
 
 	namespace ColorSettings
@@ -258,6 +261,17 @@ namespace GFX
 		{
 			Renderer().SetLUT(std::string(LUT));
 		}
+
+		void SetWhitePoint(GFXVec3 whitePoint)
+		{
+
+		}
+
+		void SetExposure(float exposure)
+		{
+			Renderer().SetExposure(exposure);
+		}
+
 	}
 }
 
