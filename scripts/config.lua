@@ -18,5 +18,6 @@ initCameraFarClipDistance = 250.0,
 consoleFont = "assets/Fonts/ConsoleFont.font",
 defaultNrFlowfields = 20,
 debugRenderAreas = true,
-debugLightVolumes = false
+debugLightVolumes = false,
+animationQuality = 0 -- range 0 - 2, determines frames/second in animation
 }

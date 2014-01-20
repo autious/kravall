@@ -38,3 +38,12 @@ int AnimationManager::AddAnimationToSkeleton(const unsigned int& skeletonID, glm
 	else
 		return GFX_INVALID_SKELETON;
 }
+
+int AnimationManager::GetFrameCount(const unsigned int& skeletonID, const unsigned int& animationID, unsigned int& out_frameCount)
+{
+	if (m_skeletons.find(skeletonID) != m_skeletons.end())
+	{
+		return m_skeletons[skeletonID]->GetFrameCount(animationID, out_frameCount);
+	}
+	return GFX_INVALID_SKELETON;
+}

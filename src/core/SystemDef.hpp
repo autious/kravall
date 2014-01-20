@@ -16,6 +16,7 @@
 #include <Components/FlowfieldComponent.hpp>
 #include <Components/AreaComponent.hpp>
 #include <Components/NameComponent.hpp>
+#include <Components/AnimationComponent.hpp>
 
 /* TODO: Put your system up here instead of the end of the header. noobs */
 #include <Systems/NameSystem.hpp>
@@ -40,7 +41,7 @@ namespace Core
 
     typedef EntityHandlerTemplate<SystemHandler, WorldPositionComponent, RotationComponent, ScaleComponent, 
 		GraphicsComponent, LightComponent, MovementComponent, UnitTypeComponent, AttributeComponent,
-		BoundingVolumeComponent, FlowfieldComponent, AreaComponent, NameComponent> EntityHandler;
+		BoundingVolumeComponent, FlowfieldComponent,AreaComponent,NameComponent, AnimationComponent> EntityHandler;
 }
 
 /**********All systems after this line************/
