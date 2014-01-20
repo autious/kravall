@@ -25,9 +25,9 @@ namespace GFX
 	{
 		BasePainter::Initialize(FBO, dummyVAO);
 
-		m_shaderManager->CreateProgram("StaticMesh");
 
 		//TODO: CHANGE THIS INTO A PROPER STATIC SHADER
+		m_shaderManager->CreateProgram("StaticMesh");
 		m_shaderManager->LoadShader("shaders/SimpleGeometry.vertex", "StaticMeshVS", GL_VERTEX_SHADER);
 		m_shaderManager->LoadShader("shaders/SimpleGeometry.fragment", "StaticMeshFS", GL_FRAGMENT_SHADER);
 		m_shaderManager->AttachShader("StaticMeshVS", "StaticMesh");
@@ -41,6 +41,13 @@ namespace GFX
 		m_shaderManager->AttachShader("NormalMappedStaticVS", "NormalMappedStatic");
 		m_shaderManager->AttachShader("NormalMappedStaticFS", "NormalMappedStatic");
 		m_shaderManager->LinkProgram("NormalMappedStatic");
+		
+		m_shaderManager->CreateProgram("AnimatedMesh");
+		m_shaderManager->LoadShader("shaders/AnimatedMeshVS.glsl", "AnimatedMeshVS", GL_VERTEX_SHADER);
+		m_shaderManager->LoadShader("shaders/SimpleGeometry.fragment", "AnimatedMeshFS", GL_FRAGMENT_SHADER);
+		m_shaderManager->AttachShader("AnimatedMeshVS", "AnimatedMesh");
+		m_shaderManager->AttachShader("AnimatedMeshFS", "AnimatedMesh");
+		m_shaderManager->LinkProgram("AnimatedMesh");
 
 		m_modelMatrixUniform = m_shaderManager->GetUniformLocation("StaticMesh", "modelMatrix");
 

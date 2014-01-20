@@ -3,6 +3,7 @@
 
 #include <Shaders/ShaderManager.hpp>
 #include <Buffers/UniformBufferManager.hpp>
+#include <Animation/AnimationManager.hpp>
 
 #include "DeferredRenderer/FBOTexture.hpp"
 #include "DeferredRenderer/DeferredPainter.hpp"
@@ -139,6 +140,9 @@ namespace GFX
 		void RemoveTextureFromMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID);
         int GetShaderId(unsigned int& shaderId, const char* shaderName);
 		int SetShaderToMaterial(const unsigned long long int& materialID, const unsigned int& shaderID);
+		int CreateSkeleton(unsigned int& out_skeletonID);
+		int DeleteSkeleton(const unsigned int& skeletonID);
+		int AddAnimationToSkeleton(const unsigned int& skeletonID, glm::mat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame);
 
         /*!
         Sets the font used for rendering SubSystem statistics.
@@ -187,6 +191,7 @@ namespace GFX
 		MeshManager*			m_meshManager;
 		TextureManager*			m_textureManager;
 		MaterialManager*		m_materialManager;
+		AnimationManager*		m_animationManager;
 
 
 		DeferredPainter* m_deferredPainter;

@@ -94,8 +94,7 @@ GLFWwindow* init( int argc, char** argv )
             });
 
     RegisterCLOPLogger();
-
-    return window;
+	return window;
 }
 
 void run( GLFWwindow * window )

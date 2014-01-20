@@ -23,32 +23,32 @@ namespace GFX
 		m_screenHeight = screenHeight;
 
 
-		m_shaderManager->CreateProgram("ComputeTest");
-		m_shaderManager->LoadShader("shaders/ComputeTest.glsl", "Compute", GL_COMPUTE_SHADER);
-		m_shaderManager->AttachShader("Compute", "ComputeTest");
-		m_shaderManager->LinkProgram("ComputeTest");
+		m_shaderManager->CreateProgram("ComputeLighting");
+		m_shaderManager->LoadShader("shaders/ComputeLighting.glsl", "Compute", GL_COMPUTE_SHADER);
+		m_shaderManager->AttachShader("Compute", "ComputeLighting");
+		m_shaderManager->LinkProgram("ComputeLighting");
 
-		m_shaderManager->UseProgram("ComputeTest");
+		m_shaderManager->UseProgram("ComputeLighting");
 		
-		m_invProjViewUniform = m_shaderManager->GetUniformLocation("ComputeTest", "invProjView");
-		m_viewUniform = m_shaderManager->GetUniformLocation("ComputeTest", "view");
-		m_projUniform = m_shaderManager->GetUniformLocation("ComputeTest", "proj");
-		m_frambufferSizeUniform = m_shaderManager->GetUniformLocation("ComputeTest", "framebufferDim");
+		m_invProjViewUniform = m_shaderManager->GetUniformLocation("ComputeLighting", "invProjView");
+		m_viewUniform = m_shaderManager->GetUniformLocation("ComputeLighting", "view");
+		m_projUniform = m_shaderManager->GetUniformLocation("ComputeLighting", "proj");
+		m_frambufferSizeUniform = m_shaderManager->GetUniformLocation("ComputeLighting", "framebufferDim");
 
-		m_eyePosUniform = m_shaderManager->GetUniformLocation("ComputeTest", "eyePos");
+		m_eyePosUniform = m_shaderManager->GetUniformLocation("ComputeLighting", "eyePos");
 
-		m_gammaUniform = m_shaderManager->GetUniformLocation("ComputeTest", "gGamma");
-		m_exposureUniform = m_shaderManager->GetUniformLocation("ComputeTest", "gExposure");
-		m_whitePointUniform = m_shaderManager->GetUniformLocation("ComputeTest", "gWhitePoint");
+		m_gammaUniform = m_shaderManager->GetUniformLocation("ComputeLighting", "gGamma");
+		m_exposureUniform = m_shaderManager->GetUniformLocation("ComputeLighting", "gExposure");
+		m_whitePointUniform = m_shaderManager->GetUniformLocation("ComputeLighting", "gWhitePoint");
 
-		numActiveLightsUniform = m_shaderManager->GetUniformLocation("ComputeTest", "numActiveLights");
+		numActiveLightsUniform = m_shaderManager->GetUniformLocation("ComputeLighting", "numActiveLights");
 
-		m_numPointLightsUniform = m_shaderManager->GetUniformLocation("ComputeTest", "numPointLights");
-		m_numSpotLightsUniform = m_shaderManager->GetUniformLocation("ComputeTest", "numSpotLights");
-		m_numDirLightsUniform = m_shaderManager->GetUniformLocation("ComputeTest", "numDirLights");
-		m_numAmbientLightsUniform = m_shaderManager->GetUniformLocation("ComputeTest", "numAmbientLights");
+		m_numPointLightsUniform = m_shaderManager->GetUniformLocation("ComputeLighting", "numPointLights");
+		m_numSpotLightsUniform = m_shaderManager->GetUniformLocation("ComputeLighting", "numSpotLights");
+		m_numDirLightsUniform = m_shaderManager->GetUniformLocation("ComputeLighting", "numDirLights");
+		m_numAmbientLightsUniform = m_shaderManager->GetUniformLocation("ComputeLighting", "numAmbientLights");
 
-		glUniform1i(m_shaderManager->GetUniformLocation("ComputeTest", "destTex"), 0);
+		glUniform1i(m_shaderManager->GetUniformLocation("ComputeLighting", "destTex"), 0);
 
 		alphaUniform = m_shaderManager->GetUniformLocation("TQ", "alphaIN");
 		textureUniform = m_shaderManager->GetUniformLocation("TQ", "textureIN");
@@ -85,7 +85,7 @@ namespace GFX
 	void LightPainter::Render(unsigned int& renderIndex, FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, 
 		glm::mat4 viewMatrix, glm::mat4 projMatrix, float exposure, float gamma, glm::vec3 whitePoint, GLuint& toneMappedTexture)
 	{
-		m_shaderManager->UseProgram("ComputeTest");
+		m_shaderManager->UseProgram("ComputeLighting");
 
 		glm::vec3 cameraPos = -glm::vec3(viewMatrix[3]) * glm::mat3(viewMatrix);
 		m_shaderManager->SetUniform(1, cameraPos, m_eyePosUniform);
@@ -182,7 +182,7 @@ namespace GFX
 		m_shaderManager->SetUniform((GLuint)totalNumLights[LIGHT_TYPES::DIR], m_numDirLightsUniform);
 		m_shaderManager->SetUniform((GLuint)totalNumLights[LIGHT_TYPES::AMBIENT], m_numAmbientLightsUniform);
 
-		//TextureManager::BindTexture(diffuse->GetTextureHandle(), m_shaderManager->GetUniformLocation("ComputeTest", "normal"), 0, GL_TEXTURE_2D);
+		//TextureManager::BindTexture(diffuse->GetTextureHandle(), m_shaderManager->GetUniformLocation("ComputeLighting", "normal"), 0, GL_TEXTURE_2D);
 		glBindImageTexture(0, m_textureHandle, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
 		glBindImageTexture(1, normalDepth->GetTextureHandle(), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
 		glBindImageTexture(2, diffuse->GetTextureHandle(), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
