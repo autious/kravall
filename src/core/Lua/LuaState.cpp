@@ -26,8 +26,9 @@
 #include <Lua/Bridges/LuaGLMBridge.hpp>
 #include <Lua/Bridges/LuaCameraBridge.hpp>
 #include <Lua/Bridges/LuaWindowBridge.hpp>
-#include <Lua/Bridges/LuaLinerarHeapBridge.hpp>
+#include <Lua/Bridges/LuaLevelHeapBridge.hpp>
 #include <Lua/Bridges/LuaConsoleBridge.hpp>
+#include <Lua/Bridges/LuaNameSystemBridge.hpp>
 
 namespace Core
 {
@@ -48,7 +49,8 @@ namespace Core
         lcab(L),
         lwb(L),
         lcob(L),
-		llhb(L)
+		llhb(L),
+        lnsb(L)
         {}
             
         LuaBitmask lb;
@@ -65,7 +67,8 @@ namespace Core
         LuaCameraBridge lcab;
         LuaWindowBridge lwb;
         LuaConsoleBridge lcob;
-		LuaLinearHeapBridge llhb;
+        LuaNameSystemBridge lnsb;
+		LuaLevelHeapBridge llhb;
     };
 }
 
@@ -118,6 +121,8 @@ void Core::LuaState::OpenLibs()
     lua_newtable( m_state );
         lua_newtable( m_state );
         lua_setfield( m_state, -2, "config" );
+        lua_newtable( m_state );
+        lua_setfield( m_state, -2, "system" );
     lua_setglobal( m_state, "core" );
 
     bindings = new LuaStateBindings( m_state );

@@ -34,9 +34,16 @@ namespace Core
 		WMODE_FULLSCREEN_BORDERLESS
 	};
 
+	void PrintGLFWError(int errorCode, const char* errorMessage)
+	{
+		std::cout << "OpenGL error: " << errorMessage << std::endl;
+	}
+
 
 	int InitializeGLFW(GLFWwindow** window, int width, int height, enum WindowMode wMode )
 	{
+		glfwSetErrorCallback(PrintGLFWError);
+
 		/* Initialize the library */
 		if (!glfwInit())
 		{

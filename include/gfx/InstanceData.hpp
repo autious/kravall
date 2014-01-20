@@ -9,8 +9,8 @@ namespace GFX
 	struct InstanceData
 	{
 		glm::mat4 modelMatrix;
-		unsigned int animationFrame;
-		unsigned int animationFrameOffset;
+		unsigned int animationIndex;
+		unsigned int frameOffset;
 		unsigned int pad1;
 		unsigned int pad2;
 	};

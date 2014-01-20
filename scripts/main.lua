@@ -1,11 +1,18 @@
 local Camera = require "camera" 
 local MainMenu = require "gui/MainMenu"
+require "console"
+
+local current_scenario = nil
+local scenario_name = ""
 
 -- Called on each frame
 camera = Camera.new()
 
 function core.update( delta )
     camera:update( delta )
+    if current_scenario ~= nil then
+        current_scenario:update( delta )
+    end 
 end
 
 -- Called when program starts
@@ -13,7 +20,7 @@ function core.init()
     print( "Program starting in lua" )
     showSys()
     toggleMenu()
-    openscenario( "test" )    
+    --openscenario( "test" )    
 end
 
 menuState = nil
@@ -29,4 +36,27 @@ end
 -- Called when program end
 function core.stop()
     print "Program stopping in lua" 
+    closescenario()
+end
+
+function openscenario( name )
+    closescenario()
+    current_scenario = dofile( "scripts/scenarios/" .. name .. ".lua" )
+    current_scenario_name = name
+
+    collectgarbage() --For niceness, always good to do right after loading a scenario as the
+                     --assembly files are quite large.
+end
+
+function closescenario()
+    if current_scenario ~= nil then
+        print( "DESTROY" )
+        current_scenario:destroy()
+        current_scenario = nil
+        current_scenario_name = "No Scenario Loaded"
+		core.memory.clear_level_memory()
+    end
+
+    collectgarbage() --For niceness, always good to do right after loading a scenario as the
+                     --assembly files are quite large.
 end

@@ -19,7 +19,7 @@
 
 /* TODO: Put your system up here instead of the end of the header. noobs */
 #include <Systems/NameSystem.hpp>
-#include <Systems/AreaLuaUpdateSystem.hpp>
+#include <Systems/AreaSystem.hpp>
 
 namespace Core
 {

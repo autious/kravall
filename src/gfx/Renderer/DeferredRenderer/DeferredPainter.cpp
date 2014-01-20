@@ -3,6 +3,8 @@
 
 #include <logger/Logger.hpp>
 
+#define INSTANCED_DRAWING
+
 namespace GFX
 {
 	DeferredPainter::DeferredPainter(ShaderManager* shaderManager, UniformBufferManager* uniformBufferManager, RenderJobManager* renderJobManager,
@@ -23,8 +25,10 @@ namespace GFX
 	{
 		BasePainter::Initialize(FBO, dummyVAO);
 
-		m_shaderManager->CreateProgram("StaticMesh");
 
+
+		m_shaderManager->CreateProgram("StaticMesh");
+		
 		m_shaderManager->LoadShader("shaders/SimpleGeometry.vertex", "StaticMeshVS", GL_VERTEX_SHADER);
 		m_shaderManager->LoadShader("shaders/SimpleGeometry.fragment", "StaticMeshFS", GL_FRAGMENT_SHADER);
 		
@@ -32,6 +36,18 @@ namespace GFX
 		m_shaderManager->AttachShader("StaticMeshFS", "StaticMesh");
 
 		m_shaderManager->LinkProgram("StaticMesh");
+
+
+		
+		m_shaderManager->CreateProgram("AnimatedMesh");
+		
+		m_shaderManager->LoadShader("shaders/AnimatedMeshVS.glsl", "AnimatedMeshVS", GL_VERTEX_SHADER);
+		m_shaderManager->LoadShader("shaders/SimpleGeometry.fragment", "AnimatedMeshFS", GL_FRAGMENT_SHADER);
+		
+		m_shaderManager->AttachShader("AnimatedMeshVS", "AnimatedMesh");
+		m_shaderManager->AttachShader("AnimatedMeshFS", "AnimatedMesh");
+
+		m_shaderManager->LinkProgram("AnimatedMesh");
 
 		// TODO: Change texture names in shader
 		m_uniformTexture0 = m_shaderManager->GetUniformLocation("StaticMesh", "diffuseMap");
@@ -42,14 +58,18 @@ namespace GFX
 		m_modelMatrixUniform = m_shaderManager->GetUniformLocation("StaticMesh", "modelMatrix");
 
 		m_uniformBufferManager->CreateBasicCameraUBO(m_shaderManager->GetShaderProgramID("StaticMesh"));
+
+#ifdef INSTANCED_DRAWING
+
 		m_staticInstances = new InstanceData[1024];
 
 		glGenBuffers(1, &m_instanceBuffer);
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_instanceBuffer);
 		glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_INSTANCES * sizeof(InstanceData), NULL, GL_STREAM_COPY);
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_instanceBuffer);
+
+#endif
 	}
-#define INSTANCED_DRAWING
 #ifdef INSTANCED_DRAWING
 	void DeferredPainter::Render(unsigned int& renderIndex, FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix)
 	{

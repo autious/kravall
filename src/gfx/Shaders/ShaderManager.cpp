@@ -32,6 +32,8 @@ namespace GFX
 		GLuint shaderID = glCreateShader(type);
 		const char* source = m_textFile->GetCString();
 
+		//TODO: Implement preprocessor defines
+
 		if (shaderID != 0)
 		{
 			m_shaderData->SaveShader(shaderKey, shaderID);

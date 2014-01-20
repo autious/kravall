@@ -8,6 +8,7 @@ function M.loadPack( asmpack )
     asm.block_loads = false
     asm.entities = {}
 	asm.specific_loads = {}
+    asm.active_load_count = 0
 
     setmetatable( asm, {__index = ASM} )
 
@@ -18,10 +19,19 @@ function M.loadPack( asmpack )
     return asm
 end
 
+--dummy function to allow backward compatability to old scenarios
+function ASM:update( delta )
+end
+
+function ASM:isLoading( )
+    return self.active_load_count ~= 0
+end
+
 function ASM:loadAssembly( asmtable )  
     if self.entities ~= nil then
         local passedload = false
         local assets = {}
+        local entity = nil
 
         local componentTypes = {}
         -- Put the entity into the entity handler.
@@ -34,7 +44,7 @@ function ASM:loadAssembly( asmtable )
                 end
             else
 
-                local entity = core.entity.create( unpack( componentTypes ) )
+                entity = core.entity.create( unpack( componentTypes ) )
 
                 for k,v in ipairs( asmtable ) do 
                     entity:set( v.type, v.data ) 
@@ -60,7 +70,9 @@ function ASM:loadAssembly( asmtable )
                         async_load = loader_pair[3]
                     end
 
-                    assets[#assets+1] = core.contentmanager.load( loader_pair[1], loader_pair[2], function( value )
+                    assets[#assets+1] = core.contentmanager.load( loader_pair[1], 
+                    loader_pair[2], 
+                    function( value )
                         component.data[index] = value
                         count = count - 1
                         
@@ -69,9 +81,12 @@ function ASM:loadAssembly( asmtable )
                         if( count == 0 and passedload == true ) then
                             apply( asmtable )
                         end
-
-                    end, async_load)
-                     
+                        -- Decreasse the active load count.
+                        self.active_load_count = self.active_load_count - 1
+                    end, 
+                    async_load)
+                    -- Increase the load queue count.
+                    self.active_load_count = self.active_load_count + 1
                 end
             end
         end
@@ -85,6 +100,7 @@ function ASM:loadAssembly( asmtable )
             passedload = true
         end
 
+        return entity
     else
         error( "unable to load entity into destroyed assembly" )
     end
@@ -96,8 +112,8 @@ end
 	
 
 function ASM:destroy( )
-    print( "DESTROY" )
     self.block_loads = true
+    self.active_load_count = 0
     if self.entities ~= nil then
         for entity, assets in pairs( self.entities ) do
             entity:destroy()
@@ -114,7 +130,6 @@ function ASM:destroy( )
         end
     end
     self.specific_loads = nil
-	
 end
 
 return M

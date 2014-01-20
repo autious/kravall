@@ -3,6 +3,7 @@
 
 #include "BaseSystem.hpp"
 #include "PVector.hpp"
+#include "ComponentType.hpp"
 
 #include <array>
 #include <utility>
@@ -83,6 +84,13 @@ namespace Core
         BaseSystem *GetSystem( int id )
         {
             return m_systems[id];
+        }
+
+        template<typename C>
+        C* GetSystemT()
+        {
+            static const int index = Index<C,std::tuple<Args...>>::value;
+            return static_cast<C*>(m_systems[index]);
         }
 
         std::vector<std::pair<const char*,std::chrono::microseconds>> GetFrameTime()

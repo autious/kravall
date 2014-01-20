@@ -145,8 +145,44 @@ namespace GFX
 		*/
 		DLL_API void DeleteTexture(unsigned int id);
 
+		/*!
+		Loads a mesh to the GPU
+		\param meshID Reference to the id created for the mesh
+		\param sizeVerts Number of vertices in the mesh
+		\param sizeIndices Number of indices in the mesh
+		\param verts Array of vertices to use for the mesh
+		\param indices Array of indices to use for the mesh
+		*/
 		DLL_API void LoadMesh(unsigned int& meshID, int& sizeVerts, int& sizeIndices, GFX::Vertex* verts, int* indices);
+		
+		/*!
+		Creates a skeleton on the GPU
+		\param out_skeletonID Reference returning the id created for the skeleton
+		\return Returns #GFX_FAIL if unable to create skeleton, else returns #GFX_SUCCESS
+		*/
+		DLL_API int CreateSkeleton(unsigned int& out_skeletonID);
 
+		/*!
+		Deletes a skeleton, removing its animations
+		\param skeletonID The id of the skeleton to delete
+		\return Returns #GFX_FAIL if unable to remove skeleton, else returns #GFX_SUCCESS
+		*/
+		DLL_API int DeleteSkeleton(const unsigned int& skeletonID);
+
+		/*!
+		Adds an animation to a skeleton. The data must contain the same number of bones for all frames
+		\param skeletonID Reference id of the skeleton to bind the animation to
+		\param frames Array of bone matrices sorted by frame
+		\param numFrames Number of bone matrices in the array
+		\param numBonesPerFrame Number of bone matrices per frame
+		\return Returns the animation ID if successful, else returns #GFX_INVALID_ANIMATION or #GFX_INVALID_SKELETON
+		*/
+		DLL_API int AddAnimationToSkeleton(const unsigned int& skeletonID, GFXMat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame);
+
+		/*!
+		Deletes a mesh
+		\param meshID The id of the mesh to delete
+		*/
 		DLL_API void DeleteMesh(unsigned int& meshID);
 
 		/*!

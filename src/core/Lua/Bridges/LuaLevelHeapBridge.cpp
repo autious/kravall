@@ -1,4 +1,4 @@
-#include "LuaLinerarHeapBridge.hpp"
+#include "LuaLevelHeapBridge.hpp"
 
 #include <lua.h>
 #include <lualib.h>
@@ -24,7 +24,7 @@ extern "C"
 	}
 }
 
-Core::LuaLinearHeapBridge::LuaLinearHeapBridge( lua_State * L )
+Core::LuaLevelHeapBridge::LuaLevelHeapBridge( lua_State * L )
 {
 	int stackSize = lua_gettop( L );
 	lua_getglobal( L, "core" );

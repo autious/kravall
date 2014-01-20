@@ -2,6 +2,7 @@
 #define SRC_CORE_SYSTEMS_NAMESYSTEM_H
 
 #include <ComponentFramework/BaseSystem.hpp>
+#include <vector>
 
 namespace Core
 {
@@ -13,8 +14,8 @@ namespace Core
         NameSystem();
 
         virtual const char* GetHumanName() { return "NameSystem"; }
-    private:
 
+        std::vector<Entity> GetEntitiesByName( const char * name );
     };
 }
 
