@@ -19,7 +19,7 @@
 
 /* TODO: Put your system up here instead of the end of the header. noobs */
 #include <Systems/NameSystem.hpp>
-#include <Systems/AreaLuaUpdateSystem.hpp>
+#include <Systems/AreaSystem.hpp>
 
 namespace Core
 {
@@ -36,7 +36,7 @@ namespace Core
 	
     typedef SystemHandlerTemplate<RenderingSystem, LightSystem, FlowfieldPositioningSystem, NavMeshCollisionSystem, 
 		CollisionSystem2D, PickingSystem, AIDebugSystem, FlowfieldSystem, FieldReactionSystem, 
-		MovementSystem, NameSystem,AreaLuaUpdateSystem> SystemHandler;
+		MovementSystem, NameSystem,AreaSystem> SystemHandler;
 
     typedef EntityHandlerTemplate<SystemHandler, WorldPositionComponent, RotationComponent, ScaleComponent, 
 		GraphicsComponent, LightComponent, MovementComponent, UnitTypeComponent, AttributeComponent,

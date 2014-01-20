@@ -89,7 +89,6 @@ extern "C"
     {
         return entityBridge.ComponentTypeToString( L ); 
     }
-
 }
 
 Core::LuaEntityBridge::LuaEntityBridge( lua_State * L  )

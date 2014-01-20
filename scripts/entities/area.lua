@@ -1,5 +1,11 @@
-return function ( asm, position, vertices, name, callback )
-    asm:loadAssembly(
+function genfunction( entity, callback )
+    return function()
+        callback( entity )  
+    end
+end
+
+return function ( scen, position, vertices, name, callback_init, callback_tick )
+    scen:loadAssembly(
     {
         {
             type = core.componentType.WorldPositionComponent,
@@ -15,4 +21,12 @@ return function ( asm, position, vertices, name, callback )
 
         }
     })
+
+    if callback_init ~= nil then
+        scen:registerInitCallback( genfunction( ent, callback_init ) )
+    end
+
+    if callback_tick ~= nil then 
+        scen:registerTickCallback( genfunction( ent, callback_tick ) )
+    end
 end
