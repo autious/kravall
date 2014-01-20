@@ -85,9 +85,6 @@ void Core::CollisionSystem2D::Update( float delta )
 
 	int nextIndex = 0;
 
-	cullData data[500];
-	std::memcpy( data, cullingList, nrEntities * sizeof(cullData) );
-
 	while( true )
 	{
 		// rig current pass...

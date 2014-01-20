@@ -5,6 +5,9 @@
 #include <glm/glm.hpp>
 #include "Console/CLOP.hpp"
 
+#define NAVMESH_NO_CONNECTING_CORNERS -1
+#define NAVMESH_CONCAVE_CORNER_NODE -2
+
 namespace Core
 {
 	struct NavigationMesh;
@@ -79,6 +82,16 @@ namespace Core
 					Normal for the respective edge.
 				*/
 				float normal[3];
+
+				/*
+					This corner links to the following edge and node.
+				*/
+				int cornerConnectsToNode;
+
+				/*
+					This corner links to the following edge and node.
+				*/
+				int cornerConnectsToCorner;
 				
 			} corners[4];
 		};

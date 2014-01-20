@@ -49,7 +49,7 @@ namespace Core
 		if( node < 0 )
 			return false;
 
-		std::vector< TraversalData  > prioList;
+		std::vector< TraversalData > prioList;
 
 		// rig first node...		
 		for( int i = 0; i < 4; i++ )
@@ -108,11 +108,28 @@ namespace Core
 						// otherwise add new node to priolist
 						prioList.push_back( TraversalData( current.corners[i].linksTo, current.corners[i].linksToEdge, dist + prioList[0].entryDistance ));
 					}
-
 				}
 			}
 
+			// more dynamic but buggy
+			//glm::vec3 parentMid;
+			//{
+			//	int parentNode = current.corners[ prioList[0].entryEdge ].linksTo;
+			//	int parentEntryEdge = flowfields[group].edges[ parentNode ];
+			//
+			//
+			//	int ii = parentEntryEdge * 2;
+			//	int oo = ( ii + 2 ) % 8;
+			//
+			//	glm::vec3 lineStart = glm::vec3( nodes[ parentNode ].points[ ii ], 0.0f, nodes[ parentNode ].points[ ii + 1 ] );
+			//	glm::vec3 lineEnd	= glm::vec3( nodes[ parentNode ].points[ oo ], 0.0f, nodes[ parentNode ].points[ oo + 1 ] );
+			//	parentMid = lineStart + (( lineEnd - lineStart ) * 0.5f );	
+			//}
+			//flowfields[group].list[ prioList[0].node ] = parentMid;
+
 			flowfields[group].list[ prioList[0].node ] = mid;
+			
+
 			flowfields[group].edges[ prioList[0].node ] = prioList[0].entryEdge;
 
 			visited[ prioList[0].node ] = true;

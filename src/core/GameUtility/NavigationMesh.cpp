@@ -71,6 +71,73 @@ namespace Core
 				}
 			}
 		}
+			
+		// conncet corners...
+		for( int i = 0; i < nrNodes; i++ )
+		{
+			// for every edge in the node
+			for( int p = 0; p < 4; p++ )
+			{
+				// check if valid corner
+				if( nodes[i].corners[p].length < 0 )
+					continue;
+
+				int current = p * 2;
+				glm::vec2 cornerPos = glm::vec2( nodes[i].points[current], nodes[i].points[ current + 1 ] );
+
+				// calculate corner connections...
+				for( int q = 0; q < nrNodes; ++q )
+				{
+					//if( q == i )
+					//	continue;
+
+					// for every edge in the node
+					int nrCorners = 4;
+					if( nodes[q].corners[3].length < 0 )
+						nrCorners = 3;
+
+					for( int v = 0; v < nrCorners; ++v ) // ++v, much faster, such optimization... alltid något hurhurhur
+					{						
+						int otherCurrent = v * 2;
+						glm::vec2 otherCornerPos = glm::vec2( nodes[q].points[otherCurrent], nodes[q].points[ otherCurrent + 1 ] );
+
+						// check square distance to other corner
+						if( glm::dot( cornerPos - otherCornerPos, cornerPos - otherCornerPos ) < 0.05f )
+						{
+							// check which edge the corner connects to...
+							int prevIndex = v-1;
+							if( prevIndex < 0 )
+								prevIndex = nrCorners - 1;
+
+							int nextIndex = (v+1) % nrCorners;
+
+							// set connecting corner
+							if( nodes[q].corners[prevIndex].linksTo < 0 )
+							{
+								if( q != i )
+								{	
+									nodes[i].corners[p].cornerConnectsToNode = q;								
+									nodes[i].corners[p].cornerConnectsToCorner = prevIndex;
+								}
+							}
+							else if( nodes[q].corners[v].linksTo < 0 && q != i )
+							{
+								if( q != i )
+								{
+									nodes[i].corners[p].cornerConnectsToNode = q;
+									nodes[i].corners[p].cornerConnectsToCorner = nextIndex;
+								}
+							}
+							else if( q == i )
+							{
+								nodes[i].corners[p].cornerConnectsToNode = NAVMESH_CONCAVE_CORNER_NODE;
+								nodes[i].corners[p].cornerConnectsToCorner = NAVMESH_CONCAVE_CORNER_NODE;
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
 	void ToggleDrawOfNavigationMesh(clop::ArgList args)
@@ -96,6 +163,8 @@ std::fstream& operator>> ( std::fstream& ff, Core::NavigationMesh::Node& node )
 	// handle meta...
 	for( int i = 0; i < 4; i++ )
 	{
+		node.corners[i].cornerConnectsToNode = NAVMESH_NO_CONNECTING_CORNERS;
+
 		ff >> node.corners[i].linksTo;
 
 		int current = i * 2;
@@ -111,7 +180,6 @@ std::fstream& operator>> ( std::fstream& ff, Core::NavigationMesh::Node& node )
 			node.corners[i].length = std::sqrt( deltaX * deltaX + deltaY * deltaY );
 			node.corners[i].inverseLength = 1.0f / node.corners[i].length;
 		}
-
 
 		glm::vec3 lineStart = glm::vec3( node.points[ current ], 0.0f, node.points[ current + 1 ] );
 		glm::vec3 lineEnd	= glm::vec3( node.points[ following ], 0.0f, node.points[ following + 1 ] );

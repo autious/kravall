@@ -9,6 +9,7 @@
 #include <GameUtility/NavigationMesh.hpp>
 #include <Input/InputManager.hpp>
 
+#include <GameUtility/NavigationMeshAStar.hpp>
 
 void MarkClickedObject()
 {
@@ -84,6 +85,30 @@ void GetPlanePoint()
 }
 
 
+void TestPathFinding()
+{
+
+	//Core::PathComponent path = Core::PathFinder::GetPath( glm::vec3(0), glm::vec3( -105, 0, 38 ) );
+	Core::PathComponent path = Core::PathFinder::GetPath( glm::vec3(0), glm::vec3( -442, 0, 138 ) );
+	//Core::PathComponent path = Core::PathFinder::GetPath( glm::vec3(0), glm::vec3( -712, 0, -510 ) );
+	//Core::PathComponent path = Core::PathFinder::GetPath( glm::vec3( 707, 0, 501 ), glm::vec3( -712, 0, -510 ) );
+
+
+	//for( int i = 0; i < path.nrNodes - 1; i++ )
+	{
+		//glm::vec3 temp  = glm::vec3( path.nodes[ i * 2 + 0 ], 0, path.nodes[ i * 2 + 1 ] );
+		//glm::vec3 temp2 = glm::vec3( path.nodes[ i * 2 + 2 ], 0, path.nodes[ i * 2 + 3 ] );
+		//
+		//GFX::Debug::DrawLine( temp, temp2, GFXColor( 1, 1, 0, 1 ), false );
+	}
+
+
+
+
+}
+
+
+
 
 void Core::AIDebugSystem::Update( float delta )
 {
@@ -91,8 +116,10 @@ void Core::AIDebugSystem::Update( float delta )
 
 	CheckNavMeshCalculation();
 
+	TestPathFinding();
 
 
+	GetPlanePoint();
 
 	//if( Core::GetNavigationMesh() )
 	//	Core::GetNavigationMesh()->DrawDebug();
