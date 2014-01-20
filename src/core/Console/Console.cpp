@@ -744,7 +744,7 @@ namespace Core
 		long long t = (m_timer.GetTotal()) % 1000;
 		bool showCursor = (t < 500) ? true : false;
 
-		if (Core::GetInputManager().IsKeyPressedOnce(GLFW_KEY_TAB))
+		if (Core::GetInputManager().IsKeyPressedOnce(GLFW_KEY_GRAVE_ACCENT))
 		{
 			Toggle();
 		}
