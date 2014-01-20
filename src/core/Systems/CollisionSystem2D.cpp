@@ -17,7 +17,7 @@ struct cullData
 	Core::Entity ent;
 };
 
-bool sortCullData( cullData& me, cullData& other )
+static bool sortCullData( const cullData& me, const cullData& other )
 {
 	if( me.x == other.x )
 		return me.z < other.z;
@@ -85,8 +85,8 @@ void Core::CollisionSystem2D::Update( float delta )
 
 	int nextIndex = 0;
 
-	cullData data[500];
-	std::memcpy( data, cullingList, nrEntities * sizeof(cullData) );
+	//cullData data[500];
+	//std::memcpy( data, cullingList, nrEntities * sizeof(cullData) );
 
 	while( true )
 	{
