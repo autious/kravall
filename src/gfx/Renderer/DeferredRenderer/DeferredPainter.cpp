@@ -25,8 +25,10 @@ namespace GFX
 	{
 		BasePainter::Initialize(FBO, dummyVAO);
 
-		m_shaderManager->CreateProgram("StaticMesh");
 
+
+		m_shaderManager->CreateProgram("StaticMesh");
+		
 		m_shaderManager->LoadShader("shaders/SimpleGeometry.vertex", "StaticMeshVS", GL_VERTEX_SHADER);
 		m_shaderManager->LoadShader("shaders/SimpleGeometry.fragment", "StaticMeshFS", GL_FRAGMENT_SHADER);
 		
@@ -34,6 +36,18 @@ namespace GFX
 		m_shaderManager->AttachShader("StaticMeshFS", "StaticMesh");
 
 		m_shaderManager->LinkProgram("StaticMesh");
+
+
+		
+		m_shaderManager->CreateProgram("AnimatedMesh");
+		
+		m_shaderManager->LoadShader("shaders/AnimatedMeshVS.glsl", "AnimatedMeshVS", GL_VERTEX_SHADER);
+		m_shaderManager->LoadShader("shaders/SimpleGeometry.fragment", "AnimatedMeshFS", GL_FRAGMENT_SHADER);
+		
+		m_shaderManager->AttachShader("AnimatedMeshVS", "AnimatedMesh");
+		m_shaderManager->AttachShader("AnimatedMeshFS", "AnimatedMesh");
+
+		m_shaderManager->LinkProgram("AnimatedMesh");
 
 		// TODO: Change texture names in shader
 		m_uniformTexture0 = m_shaderManager->GetUniformLocation("StaticMesh", "diffuseMap");
