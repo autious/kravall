@@ -1,7 +1,23 @@
 #version 430
 
-#define MAX_INSTANCES 1000
+struct InstanceData
+{
+	mat4 mm;
+	uint animationIndex;
+	uint frameOffset;
+	uint pad1;
+	uint pad2;
+};
 
+layout (std140, binding = 4) readonly buffer instanceBuffer
+{
+    InstanceData gInstances[];
+};
+
+layout (std140, binding = 6) readonly buffer animationBuffer
+{
+	mat4x4 gBones[];
+};
 
 layout (shared) uniform PerFrameBlock
 {
@@ -9,47 +25,63 @@ layout (shared) uniform PerFrameBlock
 	mat4 gProjection;
 };
 
-layout uniform PerInstanceBlock
-{
-	PerInstanceData gInstances[MAX_INSTANCES];
-};
-
-struct PerInstanceData
-{
-	mat4 modelMatrix;
-	int animFrameID;
-	int animFrameOffset;
-	int pad1;
-	int pad2;
-};
+uniform mat4 modelMatrix;
 
 layout ( location = 0 ) in vec4 positionIN;
 layout ( location = 1 ) in vec4 normalIN;
 layout ( location = 2 ) in vec4 tangentIN;
-layout ( location = 3 ) in vec4 boneIndexIN;
-layout ( location = 4 ) in vec4 boneWeightsIN;
+layout ( location = 3 ) in ivec4 boneIndices;
+layout ( location = 4 ) in vec4 boneWeights;
 layout ( location = 5 ) in vec2 uvIN;
 
 out vec4 posFS;
 out vec4 posW;
 out vec4 normalFS;
 out vec4 tangentFS;
-out vec4 binormalFS;
 out vec2 uvFS;
 
-mat4 LoadBoneMatrix(vec3 animationData, float bone)
+mat4x4 GetBoneMatrix(InstanceData instanceData, int boneIndex)
 {
+	return gBones[instanceData.animationIndex + frameOffset + boneIndex];
 }
 
 void main()
 {
-	posW = modelMatrix * positionIN;
-	posFS = gProjection * gView * modelMatrix * positionIN;
+	// FUCK WESTAWAY
+	InstanceData instance = gInstances[gl_InstanceID];
+	// Apply animations
+	vec4 posA = vec4(0.0f);
+	vec4 normalA = vec4(0.0f);
+	vec4 tangentA = vec4(0.0f);
+	mat4x4 boneMat;
 
+	boneMat = GetBoneMatrix(instance, boneIndices[0]);
+	posA		+= boneWeights[0]*( boneMat * positionIN	);
+	normalA		+= boneWeights[0]*( boneMat * normalIN		);
+	tangentA	+= boneWeights[0]*( boneMat * tangentIN		);
+	
+	boneMat = GetBoneMatrix(instance, boneIndices[1]);
+	posA		+= boneWeights[1]*( boneMat * positionIN	);
+	normalA		+= boneWeights[1]*( boneMat * normalIN		);
+	tangentA	+= boneWeights[1]*( boneMat * tangentIN		);
+	
+	boneMat = GetBoneMatrix(instance, boneIndices[2]);
+	posA		+= boneWeights[2]*( boneMat * positionIN	);
+	normalA		+= boneWeights[2]*( boneMat * normalIN		);
+	tangentA	+= boneWeights[2]*( boneMat * tangentIN		);
+	
+	boneMat = GetBoneMatrix(instance, boneIndices[3]);
+	posA		+= boneWeights[3]*( boneMat * positionIN	);
+	normalA		+= boneWeights[3]*( boneMat * normalIN		);
+	tangentA	+= boneWeights[3]*( boneMat * tangentIN		);
+
+	//Move position to clip space
+	posW = instance.mm * posA;
+	posFS = gProjection * gView * instance.mm * posA;
+	
 	//Transform normal with model matrix
-	normalFS = modelMatrix * normalIN;
-	tangentFS = modelMatrix * tangentIN;
-	binormalFS = modelMatrix * binormalIN;
+	normalFS = instance.mm * normalA;
+	tangentFS = instance.mm * tangentA;
 
 	uvFS = uvIN;
 

@@ -9,6 +9,15 @@
 
 class Skeleton
 {
+private:
+	const unsigned int MAX_FRAMES = 512 * 512;
+
+	struct AnimationInfo
+	{
+		unsigned int numFrames;
+		unsigned int offset;
+		unsigned int numBonesPerFrame;
+	};
 public:
 	Skeleton();
 	~Skeleton();
@@ -21,10 +30,33 @@ public:
 	\return Returns the animation ID if successful, else returns #GFX_INVALID_ANIMATION or #GFX_INVALID_SKELETON
 	*/
 	int AddAnimation(glm::mat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame);
+	
+	/*!
+	Gets the number of frames in a particular animation.
+	\param animationID The id of the animation
+	\return Returns the number of frames in this animation if successful, else returns #GFX_INVALID_ANIMATION
+	*/
+	int GetFrameCount( const int& animationID );
+
+	/*!
+	Gets the number of animations in the skeleton.
+	\return Returns the number of animations in the skeleton
+	*/
+	inline int GetAnimationCount(){ return m_numAnimations; }
+
+	/*!
+	Gets the total number of frames in all animations connected to the skeleton.
+	\return Returns the number of frames connected to the skeleton
+	*/
+	inline int GetTotalFrames(){ return m_numFrames; }
+
 private:
-	GLuint m_animationTexture;
+	std::vector<glm::mat4x4> m_animations;
 	std::vector<AnimationInfo> m_animationInfo;
 	unsigned int m_numAnimations;
+	unsigned int m_numFrames;
+
+	GLuint m_animationBuffer;
 };
 
 #endif
