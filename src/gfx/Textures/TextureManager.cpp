@@ -130,41 +130,6 @@ namespace GFX
 		Load3DTexture(id, width, height, depth, data);
 	}
 
-	void TextureManager::THREEDTEST(unsigned int& id)
-	{
-		unsigned char* data;
-		int width;
-		int height;
-		data = stbi_load("assets/texture/Lut/test.png", &width, &height, 0, 0);
-		Load3DTexture(id, 32, 32, 32, data);
-	}
-
-	void TextureManager::CUBEMAPTEST(unsigned int& id)
-	{
-		unsigned char* posX;
-		int width;
-		int height;
-		posX = stbi_load("assets/texture/cubemaps/posx.png", &width, &height, 0, 0);
-
-		unsigned char* negX;
-		negX = stbi_load("assets/texture/cubemaps/negx.png", &width, &height, 0, 0);
-
-		unsigned char* posY;
-		posY = stbi_load("assets/texture/cubemaps/posy.png", &width, &height, 0, 0);
-
-		unsigned char* negY;
-		negY = stbi_load("assets/texture/cubemaps/negy.png", &width, &height, 0, 0);
-
-		unsigned char* posZ;
-		posZ = stbi_load("assets/texture/cubemaps/posz.png", &width, &height, 0, 0);
-
-		unsigned char* negZ;
-		negZ = stbi_load("assets/texture/cubemaps/negz.png", &width, &height, 0, 0);
-
-		LoadCubemap(id, posX, negX, posY, negY, posZ, negZ, width, height);
-	}
-
-
 	void TextureManager::DeleteTexture(unsigned long long int id)
 	{
 		unsigned int index = FindTexture(id);

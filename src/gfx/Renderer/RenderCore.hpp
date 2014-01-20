@@ -15,6 +15,7 @@
 #include "SplashRenderer/SplashPainter.hpp"
 #include "FBORenderer/FBOPainter.hpp"
 #include "PostProcessing/PostProcessingPainter.hpp"
+#include "GlobalIlluminationRenderer/GIPainter.hpp"
 
 #include "TextRenderer/TextManager.hpp"
 #include "DebugRenderer/DebugManager.hpp"
@@ -197,7 +198,7 @@ namespace GFX
 		FBOPainter* m_fboPainter;
         OverlayPainter* m_overlayPainter;
 		PostProcessingPainter* m_postProcessingPainter;
-
+		GIPainter* m_GIPainter;
 
 		void SubSystemTimeRender();
         std::vector<std::pair<const char*, std::chrono::microseconds>> m_subsystemTimes;

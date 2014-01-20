@@ -35,8 +35,6 @@ namespace GFX
 
 		m_LUTUniform = m_shaderManager->GetUniformLocation("ColorGrading", "gLut");
 		m_sourceUniform = m_shaderManager->GetUniformLocation("ColorGrading", "gSourceTexture");
-
-		m_textureManager->THREEDTEST(m_currentLut);
 	}
 
 	void PostProcessingPainter::ReloadLUT()

@@ -75,6 +75,8 @@ namespace GFX
 
 		m_postProcessingPainter = new PostProcessingPainter(m_shaderManager, m_uniformBufferManager, m_textureManager);
 
+		m_GIPainter = new GIPainter(m_shaderManager, m_uniformBufferManager);
+
 		m_debugPainter = new DebugPainter(m_shaderManager, m_uniformBufferManager);
 		m_textPainter = new TextPainter(m_shaderManager, m_uniformBufferManager);
 		m_consolePainter = new ConsolePainter(m_shaderManager, m_uniformBufferManager);
@@ -101,6 +103,7 @@ namespace GFX
 		m_fboPainter->Initialize(m_FBO, m_dummyVAO);
         m_overlayPainter->Initialize(m_FBO, m_dummyVAO);
 		m_postProcessingPainter->Initialize(m_FBO, m_dummyVAO, m_windowWidth, m_windowHeight);
+		m_GIPainter->Initialize(m_FBO, m_dummyVAO, m_windowWidth, m_windowHeight);
 
 		// Set console width
 		m_consolePainter->SetConsoleHeight(m_windowHeight);
@@ -267,7 +270,7 @@ namespace GFX
 			GFX_CHECKTIME(m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, 
 				m_viewMatrix, m_projMatrix, m_exposure, m_gamma, m_whitePoint, m_toneMappedTexture), "Lighting");
 
-			m_postProcessingPainter->Render(delta, m_toneMappedTexture, m_currentLUT);
+			GFX_CHECKTIME(m_postProcessingPainter->Render(delta, m_toneMappedTexture, m_currentLUT), "PostProcessing");
 
 			GFX_CHECKTIME( m_overlayPainter->Render( renderJobIndex, m_overlayViewMatrix, m_overlayProjMatrix ), "Console");
 			//Render FBO

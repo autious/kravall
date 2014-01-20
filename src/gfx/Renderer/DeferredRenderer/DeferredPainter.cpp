@@ -42,20 +42,9 @@ namespace GFX
 		m_shaderManager->AttachShader("NormalMappedStaticFS", "NormalMappedStatic");
 		m_shaderManager->LinkProgram("NormalMappedStatic");
 
-		//interior mapping
-
-		m_shaderManager->CreateProgram("InteriorMappedStatic");
-		m_shaderManager->LoadShader("shaders/SimpleGeometry.vertex", "InteriorMappedStaticVS", GL_VERTEX_SHADER);
-		m_shaderManager->LoadShader("shaders/InteriorMappingFS.glsl", "InteriorMappedStaticFS", GL_FRAGMENT_SHADER);
-		m_shaderManager->AttachShader("InteriorMappedStaticVS", "InteriorMappedStatic");
-		m_shaderManager->AttachShader("InteriorMappedStaticFS", "InteriorMappedStatic");
-		m_shaderManager->LinkProgram("InteriorMappedStatic");
-
 		m_modelMatrixUniform = m_shaderManager->GetUniformLocation("StaticMesh", "modelMatrix");
 
 		m_uniformBufferManager->CreateBasicCameraUBO(m_shaderManager->GetShaderProgramID("StaticMesh"));
-
-		m_textureManager->CUBEMAPTEST(testCubeMap);
 
 #ifdef INSTANCED_DRAWING
 
@@ -192,11 +181,6 @@ namespace GFX
 						m_uniformTexture3 = m_shaderManager->GetUniformLocation(currentShader, "gGlow");
 
 						m_gammaUniform = m_shaderManager->GetUniformLocation(currentShader, "gGamma");
-
-						cubemapUniform = m_shaderManager->GetUniformLocation(currentShader, "gInteriorMap");
-						m_cameraPosUniform = m_shaderManager->GetUniformLocation(currentShader, "gCameraPosition");
-
-						m_shaderManager->SetUniform(viewMatrix[3][0], viewMatrix[3][1], viewMatrix[3][2], m_cameraPosUniform);
 					}
 
 					//set textures
@@ -204,8 +188,6 @@ namespace GFX
 					m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[2]).textureHandle, m_uniformTexture1, 1, GL_TEXTURE_2D);
 					m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[1]).textureHandle, m_uniformTexture2, 2, GL_TEXTURE_2D);
 					m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[3]).textureHandle, m_uniformTexture3, 3, GL_TEXTURE_2D);
-
-					m_textureManager->BindTexture(m_textureManager->GetTexture(testCubeMap).textureHandle, cubemapUniform, 4, GL_TEXTURE_CUBE_MAP);
 					
 					//Set gamma
 					m_shaderManager->SetUniform(gamma, m_gammaUniform);
