@@ -30,6 +30,16 @@ namespace GFX
 		m_shaderManager->AttachShader("RMGS", "RadianceMap");
 		m_shaderManager->AttachShader("RMPS", "RadianceMap");
 		m_shaderManager->LinkProgram("RadianceMap");
+
+
+		m_shaderManager->CreateProgram("SSDO");
+		m_shaderManager->LoadShader("shaders/RenderToQuad/Quad.vertex", "SSDOVS", GL_VERTEX_SHADER);
+		m_shaderManager->LoadShader("shaders/FSQuad.geometry", "SSDOGS", GL_GEOMETRY_SHADER);
+		m_shaderManager->LoadShader("shaders/GlobalIllumination/SSDOFS.glsl", "SSDOFS", GL_FRAGMENT_SHADER);
+		m_shaderManager->AttachShader("SSDOVS", "SSDO");
+		m_shaderManager->AttachShader("SSDOGS", "SSDO");
+		m_shaderManager->AttachShader("SSDOFS", "SSDO");
+		m_shaderManager->LinkProgram("SSDO");
 	}
 
 	void GIPainter::Render(const double& delta, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular)
