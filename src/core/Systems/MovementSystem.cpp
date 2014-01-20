@@ -25,6 +25,13 @@ void Core::MovementSystem::Update(float delta)
 			*rc = RotationComponent::GetComponentRotateY(angle + 3.14f * 0.5f);
 		}
 
+		// Draw the debug lines showing the rioter's direction.
+		GFX::Debug::DrawLine(Core::WorldPositionComponent::GetVec3(*wpc),
+							 glm::vec3(wpc->position[0] + mc->direction[0],
+									   wpc->position[1] + mc->direction[1],
+									   wpc->position[2] + mc->direction[2]),
+							 GFXColor(1.0f, 0.0f, 0.0f, 1.0f), false);
+
 		if (mc->goal[0] < FLT_MAX)
 		{
 			// Dot product between the direction and the vector from the current position to the goal.
@@ -69,7 +76,26 @@ void Core::MovementSystem::Update(float delta)
 
 void Core::MovementSystem::InterpolateDirections(MovementComponent* mc)
 {
-	mc->direction[0] = mc->newDirection[0];
-	mc->direction[1] = mc->newDirection[1];
-	mc->direction[2] = mc->newDirection[2];
+	if (mc->direction[0] == 0.0f && mc->direction[1] == 0.0f && mc->direction[2] == 0.0f)
+	{
+		mc->direction[0] = mc->newDirection[0];
+		mc->direction[1] = mc->newDirection[1];
+		mc->direction[2] = mc->newDirection[2];
+	}
+	else
+	{
+		glm::vec3 oldDir = glm::vec3(mc->direction[0], mc->direction[1], mc->direction[2]);
+		glm::vec3 newDir = glm::vec3(mc->newDirection[0], mc->newDirection[1], mc->newDirection[2]);
+	
+		newDir = glm::lerp(oldDir, newDir, 1.0f);
+		newDir = glm::normalize(newDir);
+	
+		mc->direction[0] = newDir.x;
+		mc->direction[1] = newDir.y;
+		mc->direction[2] = newDir.z;
+	}
+
+	//mc->direction[0] = mc->newDirection[0];
+	//mc->direction[1] = mc->newDirection[1];
+	//mc->direction[2] = mc->newDirection[2];
 }

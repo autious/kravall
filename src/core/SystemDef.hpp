@@ -36,11 +36,11 @@ namespace Core
 	
     typedef SystemHandlerTemplate<RenderingSystem, LightSystem, FlowfieldPositioningSystem, NavMeshCollisionSystem, 
 		CollisionSystem2D, PickingSystem, AIDebugSystem, FlowfieldSystem, FieldReactionSystem, 
-		MovementSystem, NameSystem,AreaLuaUpdateSystem> SystemHandler;
+		MovementSystem, NameSystem, AreaLuaUpdateSystem> SystemHandler;
 
     typedef EntityHandlerTemplate<SystemHandler, WorldPositionComponent, RotationComponent, ScaleComponent, 
 		GraphicsComponent, LightComponent, MovementComponent, UnitTypeComponent, AttributeComponent,
-		BoundingVolumeComponent, FlowfieldComponent,AreaComponent,NameComponent> EntityHandler;
+		BoundingVolumeComponent, FlowfieldComponent, AreaComponent, NameComponent> EntityHandler;
 }
 
 /**********All systems after this line************/
