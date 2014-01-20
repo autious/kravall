@@ -19,7 +19,9 @@ void Core::MovementSystem::Update(float delta)
 		if (mc->direction[0] =! 0 || mc->direction[1] != 0 || mc->direction[2] != 0)
 		{
 			// Rotate model after direction
-			float angle = std::atan2(static_cast<double>(mc->direction[2]), static_cast<double>(mc->direction[0]));
+			float angle = static_cast<float>(std::atan2(static_cast<double>(mc->direction[2]), 
+														static_cast<double>(mc->direction[0])));
+			angle += 3.141592f; // Translate [-pi, pi] range to [0, 2pi] 
 			RotationComponent* rc = WGETC<RotationComponent>(*it);
 
 			*rc = RotationComponent::GetComponentRotateY(angle + 3.14f * 0.5f);
@@ -69,7 +71,28 @@ void Core::MovementSystem::Update(float delta)
 
 void Core::MovementSystem::InterpolateDirections(MovementComponent* mc)
 {
-	mc->direction[0] = mc->newDirection[0];
-	mc->direction[1] = mc->newDirection[1];
-	mc->direction[2] = mc->newDirection[2];
+	if (mc->direction[0] == 0.0f && mc->direction[1] == 0.0f && mc->direction[2] == 0.0f)
+	{
+		mc->direction[0] = mc->newDirection[0];
+		mc->direction[1] = mc->newDirection[1];
+		mc->direction[2] = mc->newDirection[2];
+	}
+	else
+	{
+		float oldAngle = std::atan2(mc->direction[2], mc->direction[0]) + 3.141592f; // Translate [-pi, pi] range to [0, 2pi]
+		float newAngle = std::atan2(mc->newDirection[2], mc->newDirection[0]) + 3.141592f; // Translate [-pi, pi] range to [0, 2pi]
+		float delta = 1.0f;
+
+		newAngle = newAngle * delta + oldAngle * (1.0f - delta);
+		glm::vec2 newDir = glm::vec2(std::cos(newAngle), std::sin(newAngle));
+		newDir = glm::normalize(newDir);
+
+		mc->direction[0] = newDir.x;
+		mc->direction[1] = 0.0f;
+		mc->direction[2] = newDir.y;
+	}
+
+	//mc->direction[0] = mc->newDirection[0];
+	//mc->direction[1] = mc->newDirection[1];
+	//mc->direction[2] = mc->newDirection[2];
 }
