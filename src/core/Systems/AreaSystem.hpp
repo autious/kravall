@@ -5,14 +5,14 @@
 
 namespace Core
 {
-    class AreaLuaUpdateSystem : public BaseSystem
+    class AreaSystem : public BaseSystem
     {
     public:
         virtual void Update( float delta ) override;
 
-        AreaLuaUpdateSystem();
+        AreaSystem();
 
-        virtual const char* GetHumanName() { return "AreaLuaUpdateSystem"; }
+        virtual const char* GetHumanName() { return "AreaSystem"; }
     private:
         void DrawAreas();
 

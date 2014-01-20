@@ -1,5 +1,7 @@
 #include "Skeleton.hpp"
 
+#include <cstring>
+
 Skeleton::Skeleton()
 {
 	glGenBuffers(1, &m_animationBuffer);

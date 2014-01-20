@@ -1,12 +1,12 @@
 #ifndef SRC_CORE_COMPONENTFRAMEWORK_BASESYSTEM_H
 #define SRC_CORE_COMPONENTFRAMEWORK_BASESYSTEM_H
 #include "SystemTypes.hpp"
+#include "EntityBag.hpp"
 
 #include <vector>
 
 namespace Core
 {
-     
     class BaseSystem
     {
     public:
@@ -16,6 +16,14 @@ namespace Core
             should be saved in the internal entity list.
         */
         BaseSystem( Aspect inclusive, Aspect exclusive );
+
+        /*!
+            Alternate base constructor, takes a vector of bags
+            that have their own aspect definition.
+            Each bag will be filled by the systems ChangedAspect callback
+            to match their internal aspect setup.
+        */
+        BaseSystem( std::vector<EntityBag> bags );
 
         virtual ~BaseSystem() {}
         
@@ -37,8 +45,14 @@ namespace Core
     protected:
         /*!
             Systems personal entities list.
+            Kept for backwards compatability
         */
         std::vector<Entity> m_entities;
+
+        /*!
+            Bags containing entities
+        */
+        std::vector<EntityBag> m_bags;
 
     private:
         Aspect m_inclusive, m_exclusive;

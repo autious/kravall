@@ -1,22 +1,23 @@
-#include "AreaLuaUpdateSystem.hpp"
+#include "AreaSystem.hpp"
 
 #include <SystemDef.hpp>
 #include <World.hpp>
 #include <gfx/GFXInterface.hpp>
 #include <utility/Colors.hpp>
+#include <GameUtility/AreaUtility.hpp>
 
 namespace Core
 {
-    AreaLuaUpdateSystem::AreaLuaUpdateSystem()
-        : BaseSystem( EntityHandler::GenerateAspect<AreaComponent,WorldPositionComponent>(), 0ULL )
+    AreaSystem::AreaSystem()
+        : BaseSystem( {{EntityHandler::GenerateAspect<AreaComponent,WorldPositionComponent>(), 0ULL}, {EntityHandler::GenerateAspect<UnitTypeComponent,WorldPositionComponent>(), 0ULL}} )
     {
         
     }
 
-    void AreaLuaUpdateSystem::DrawAreas()
+    void AreaSystem::DrawAreas()
     {
-	    for (std::vector<Entity>::iterator it = m_entities.begin();
-            it != m_entities.end();
+	    for (std::vector<Entity>::iterator it = m_bags[0].m_entities.begin();
+            it != m_bags[0].m_entities.end();
             it++)
         {
             AreaComponent * ac = WGETC<AreaComponent>(*it);
@@ -45,12 +46,23 @@ namespace Core
         }
     }
 
-    void AreaLuaUpdateSystem::Update( float delta )
+    void AreaSystem::Update( float delta )
     {
         if( CONF.GetBool( "debugRenderAreas", true ) )
         {
             DrawAreas();
         }
-        
+
+	    for (std::vector<Entity>::iterator areaIt = m_bags[0].m_entities.begin();
+            areaIt != m_bags[0].m_entities.end();
+            areaIt++)
+        {
+            for (std::vector<Entity>::iterator riotIt = m_bags[1].m_entities.begin();
+                riotIt != m_bags[1].m_entities.end();
+                riotIt++)
+            {
+                 
+            }
+        }
     }
 }
