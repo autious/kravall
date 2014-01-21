@@ -157,11 +157,13 @@ namespace Core
 
     void DebugConsole::OnCharEvent( const Core::CharEvent &e )
     {
-        if( IsVisible() )
+        if( IsVisible() && delayInput == false )
         {
             m_inputLine.insert(m_inputLine.begin()+m_cursorOffset, 1, (unsigned char)e.codepoint);
             m_cursorOffset++;
         }
+
+        delayInput = false;
     }
 
 	void DebugConsole::PasteClipboard()
@@ -175,6 +177,7 @@ namespace Core
 
     void DebugConsole::OnKeyEvent( const Core::KeyEvent &e )
     {
+
         if( IsVisible() )
         {
             if( e.action != GLFW_RELEASE )
@@ -241,6 +244,16 @@ namespace Core
                     Add();
             }
         }
+
+		if ( e.action == GLFW_PRESS && e.key == Core::world.m_config.GetInt( "toggleConsoleButton", GLFW_KEY_GRAVE_ACCENT ) )
+		{
+			Toggle();
+            //Delay the key in hopes that 
+            //the console wil ignore the button pressed.
+            // This might not always work if more input is queued
+            // as data isn't pushed one press at a time
+            delayInput = true;
+		}
     }
 
 	void DebugConsole::SetInputLine(const std::string& inputLine)
@@ -744,10 +757,6 @@ namespace Core
 		long long t = (m_timer.GetTotal()) % 1000;
 		bool showCursor = (t < 500) ? true : false;
 
-		if (Core::GetInputManager().IsKeyPressedOnce(GLFW_KEY_GRAVE_ACCENT))
-		{
-			Toggle();
-		}
 		const int x = 10;
 		if (m_visible)
 		{
