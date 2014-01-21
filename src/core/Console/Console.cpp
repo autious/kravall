@@ -90,18 +90,13 @@ namespace Core
 		m_lastCursorOffset = 0;
         m_font = nullptr;
 
-		clop::Register("clear", ClopClearConsole);
-		clop::Register("clr", ClopClearConsole);
-		
-		clop::Register("lipsum", ClopLipsum);
-
-
-		// Register lua
-		clop::Register("lua", ClopLuaCommand);
-		
-		clop::Register("sysinfo", ClopShowSys);
-		clop::Register("lights", ClopShowDebugLightVolumes);
-		clop::Register("fbo", ClopShowFBO);
+		clop::Register("clear",		ClopClearConsole);
+		clop::Register("clr",		ClopClearConsole);
+		clop::Register("lipsum",	ClopLipsum);
+		clop::Register("lua",		ClopLuaCommand);
+		clop::Register("sysinfo",	ClopShowSys);
+		clop::Register("lights",	ClopShowDebugLightVolumes);
+		clop::Register("fbo",		ClopShowFBO);
 		
 		Line line = {"Welcome to the console, have a nice day.", Colors::Gold};
 		m_console.push_back(line);
@@ -136,14 +131,14 @@ namespace Core
 	void DebugConsole::EnableInteractiveLua()
 	{
 		if (!m_interactiveLua)
-			Console().PrintLine("Interactive lua enabled", Colors::Gold);
+			Console().PrintLine("Interactive lua enabled (exit by pressing ctrl+c)", Colors::CornflowerBlue);
 		m_interactiveLua = true;
 	}
 
 	void DebugConsole::DisableInteractiveLua()
 	{
 		if (m_interactiveLua)
-			Console().PrintLine("Interactive lua disabled", Colors::Gold);
+			Console().PrintLine("Interactive lua disabled", Colors::CornflowerBlue);
 		m_interactiveLua = false;
 	}
 

@@ -30,6 +30,7 @@ namespace Core
 			instanceData->modelMatrix = translationMatrix * rotationMatrix * scaleMatrix;
 			instanceData->animationIndex = 0;
 			instanceData->frameOffset = 0;
+			instanceData->rnd_seed = *it;
 
 			GFX::Draw(gc->bitmask, (void*)instanceData);
 		}
