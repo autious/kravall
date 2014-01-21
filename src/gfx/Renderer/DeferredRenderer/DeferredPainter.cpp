@@ -33,12 +33,12 @@ namespace GFX
 		m_shaderManager->AttachShader("StaticNormalVS", "StaticNormal");
 		m_shaderManager->AttachShader("StaticNormalFS", "StaticNormal");
 		m_shaderManager->LinkProgram("StaticNormal");
-
-
+		
+		
 		
 		m_shaderManager->CreateProgram("AnimatedNormal");
 		m_shaderManager->LoadShader("shaders/geometry/AnimatedNormalVS.glsl", "AnimatedNormalVS", GL_VERTEX_SHADER);
-		m_shaderManager->LoadShader("shaders/geometry/SimpleGeometryFS.glsl", "AnimatedNormalFS", GL_FRAGMENT_SHADER);
+		m_shaderManager->LoadShader("shaders/geometry/StaticNormalFS.glsl",   "AnimatedNormalFS", GL_FRAGMENT_SHADER);
 		m_shaderManager->AttachShader("AnimatedNormalVS", "AnimatedNormal");
 		m_shaderManager->AttachShader("AnimatedNormalFS", "AnimatedNormal");
 		m_shaderManager->LinkProgram("AnimatedNormal");
@@ -55,7 +55,7 @@ namespace GFX
 		
 		m_shaderManager->CreateProgram("AnimatedBlend");
 		m_shaderManager->LoadShader("shaders/geometry/AnimatedBlendVS.glsl", "AnimatedBlendVS", GL_VERTEX_SHADER);
-		m_shaderManager->LoadShader("shaders/geometry/StaticBlendFS.glsl", "AnimatedBlendFS", GL_FRAGMENT_SHADER);
+		m_shaderManager->LoadShader("shaders/geometry/StaticBlendFS.glsl",   "AnimatedBlendFS", GL_FRAGMENT_SHADER);
 		m_shaderManager->AttachShader("AnimatedBlendVS", "AnimatedBlend");
 		m_shaderManager->AttachShader("AnimatedBlendFS", "AnimatedBlend");
 		m_shaderManager->LinkProgram("AnimatedBlend");
@@ -63,14 +63,14 @@ namespace GFX
 
 
 		// TODO: Change texture names in shader
-		m_uniformTexture0 = m_shaderManager->GetUniformLocation("StaticNormal", "diffuseMap");
-		m_uniformTexture1 = m_shaderManager->GetUniformLocation("StaticNormal", "normalMap");
-		m_uniformTexture2 = m_shaderManager->GetUniformLocation("StaticNormal", "specularMap");
-		m_uniformTexture3 = m_shaderManager->GetUniformLocation("StaticNormal", "glowMap");
+		m_uniformTexture0 = m_shaderManager->GetUniformLocation("StaticBlend", "diffuseMap");
+		m_uniformTexture1 = m_shaderManager->GetUniformLocation("StaticBlend", "normalMap");
+		m_uniformTexture2 = m_shaderManager->GetUniformLocation("StaticBlend", "specularMap");
+		m_uniformTexture3 = m_shaderManager->GetUniformLocation("StaticBlend", "glowMap");
 
-		m_modelMatrixUniform = m_shaderManager->GetUniformLocation("StaticNormal", "modelMatrix");
+		m_modelMatrixUniform = m_shaderManager->GetUniformLocation("StaticBlend", "modelMatrix");
 
-		m_uniformBufferManager->CreateBasicCameraUBO(m_shaderManager->GetShaderProgramID("StaticNormal"));
+		m_uniformBufferManager->CreateBasicCameraUBO(m_shaderManager->GetShaderProgramID("StaticBlend"));
 
 #ifdef INSTANCED_DRAWING
 
@@ -96,8 +96,7 @@ namespace GFX
 		// Clear depth RT
 		float c[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 		glClearBufferfv(GL_COLOR, 1, &glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)[0]);
-
-		m_shaderManager->UseProgram("StaticNormal");
+		m_shaderManager->UseProgram("StaticBlend");
 
 		BasicCamera bc;
 		bc.viewMatrix = viewMatrix;
@@ -199,13 +198,21 @@ namespace GFX
 						glUseProgram(mat.shaderProgramID);
 						error = glGetError();
 						currentShader = mat.shaderProgramID;
+						m_uniformTexture0 = m_shaderManager->GetUniformLocation(currentShader, "diffuseMap");
+						m_uniformTexture1 = m_shaderManager->GetUniformLocation(currentShader, "normalMap");
+						m_uniformTexture2 = m_shaderManager->GetUniformLocation(currentShader, "specularMap");
+						m_uniformTexture3 = m_shaderManager->GetUniformLocation(currentShader, "glowMap");
 					}
 
 					//set textures
 					m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[0]).textureHandle, m_uniformTexture0, 0, GL_TEXTURE_2D);
+					error = glGetError();
 					m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[2]).textureHandle, m_uniformTexture1, 1, GL_TEXTURE_2D);
+					error = glGetError();
 					m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[1]).textureHandle, m_uniformTexture2, 2, GL_TEXTURE_2D);
+					error = glGetError();
 					m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[3]).textureHandle, m_uniformTexture3, 3, GL_TEXTURE_2D);
+					error = glGetError();
 				}
 
 				if (meshID != currentMesh)
