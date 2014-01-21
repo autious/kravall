@@ -5,7 +5,7 @@ struct InstanceData
 	mat4 mm;
 	uint animationFrame;
 	uint animationOffset;
-	uint pad1;
+	uint rnd_seed;
 	uint pad2;
 };
 

@@ -26,11 +26,11 @@ void Core::MovementSystem::Update(float delta)
 		}
 
 		// Draw the debug lines showing the rioter's direction.
-		GFX::Debug::DrawLine(Core::WorldPositionComponent::GetVec3(*wpc),
-							 glm::vec3(wpc->position[0] + mc->direction[0],
-									   wpc->position[1] + mc->direction[1],
-									   wpc->position[2] + mc->direction[2]),
-							 GFXColor(1.0f, 0.0f, 0.0f, 1.0f), false);
+		//GFX::Debug::DrawLine(Core::WorldPositionComponent::GetVec3(*wpc),
+		//					 glm::vec3(wpc->position[0] + mc->direction[0],
+		//							   wpc->position[1] + mc->direction[1],
+		//							   wpc->position[2] + mc->direction[2]),
+		//					 GFXColor(1.0f, 0.0f, 0.0f, 1.0f), false);
 
 		if (mc->goal[0] < FLT_MAX)
 		{

@@ -13,6 +13,7 @@ extern "C"
     static int LuaDrawText( lua_State *L )
     {
         GFX::RenderText( localFontData, glm::vec2( luaL_checkinteger(L ,1 ), luaL_checkinteger( L, 2 ) ),1.0f, Colors::White, luaL_checkstring( L, 3 ) );
+		return 0;
     }
 }
 
