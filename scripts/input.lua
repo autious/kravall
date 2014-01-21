@@ -11,16 +11,20 @@
 --    print( "onbutton " .. button .. " " .. action .. " " .. mods ) 
 --end
 --
---function core.input.mouse.onscroll( xoffset, yoffset )
---    print( "onscroll " .. xoffset .. yoffset )
---end
---
+
 
 local input = {}
 local onpositions = {}
+local onscroll = {}
 
 function core.input.mouse.onposition( x,y )
     for k,v in pairs( onpositions ) do
+       k( x,y ) 
+    end 
+end
+
+function core.input.mouse.onscroll( x, y )
+    for k,v in pairs( onscroll ) do
        k( x,y ) 
     end 
 end
@@ -31,6 +35,14 @@ end
 
 function input.deregisterOnposition( func )
     onpositions[func] = nil
+end
+
+function input.registerOnScroll( func )
+    onscroll[func] = true
+end
+
+function input.deregisterOnScroll( func )
+    onscroll[func] = nil
 end
 
 return input

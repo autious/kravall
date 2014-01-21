@@ -2,18 +2,18 @@ local ent = require "entities"
 local scenario = require "scenario"
 local scen = scenario.new()
 
--- ents
+scen.asm:specific_content( core.contentmanager.load( 
+		core.loaders.NavigationMeshLoader, "prototypeLevel.txt", function( value ) end, false ) )
+
 local ambient = ent.get "ambientLight"
 local directional = ent.get "directionalLight"
 local street_light = ent.get "streetLight"
-local area = ent.get "area"
-
----
-
 local street_light_intensity = 2.0
 
 ambient(scen, 1.0, 1.0, 1.0, 0.1)
 directional(scen, -1, -1, 0.5)
+
+camera:lookAt( core.glm.vec3.new( -20, 35, 20 ), core.glm.vec3.new( 0, 0, 20 ) )
 
 -- Group 0 start to end, top row (left side)
 street_light(scen, -50, -0.5, street_light_intensity)
@@ -74,10 +74,53 @@ street_light(scen, 6, -34, street_light_intensity)
 street_light(scen, 14, -35, street_light_intensity)
 street_light(scen, 28, -35, street_light_intensity)
 
+local rioter = ent.get "rioter"
+local police = ent.get "police"
 local building = ent.get "building"
-		
+	
+-- Release	
+local centerPoint = { 49, 0, 5 }		
+for i = -7, 6 do
+	for p = -6, 6 do
+		rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], 0)
+	end
+end
+core.nav_mesh.set_group_goal(0, -43, 0, 4)
+
+local centerPoint = { 20.5, 0, -40 }		
+for i = -4, 4 do
+	for p = -5, 5 do
+		rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], 1)
+	end
+end
+core.nav_mesh.set_group_goal(1, -21, 0, 36)
+
+-- Debug
+--local centerPoint = { 49, 0, 5 }		
+--for i = -2, 2 do
+--	for p = -2, 2 do
+--		rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], 0)
+--	end
+--end
+--core.nav_mesh.set_group_goal(0, -43, 0, 4)
+--
+--local centerPoint = { 20.5, 0, -40 }		
+--for i = -2, 2 do
+--	for p = -2, 2 do
+--		rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], 1)
+--	end
+--end
+--core.nav_mesh.set_group_goal(1, -21, 0, 36)
+
+local navmesh = ent.get "navMesh"
+navmesh(scen, 0, -0.1, 0)
 local plane = ent.get "plane"
 plane(scen, 0, -1, 0, 150)
+
+local navmesh = ent.get "navMesh"
+navmesh(scen, 0, -0.1, 0)
+local plane = ent.get "plane"
+plane(scen, 0, -1, 0)
 
 building(scen, 64, 12)
 building(scen, 64, 2)
@@ -122,18 +165,15 @@ building(scen, 36, 20)
 building(scen, 45, 19)
 building(scen, 56, 19)
 
---------------
-local function area_init( entity )
---    print ("Wow, such init")
+local area = ent.get "area"
+
+function printCount( ent )
+--    print( core.system.area.getAreaRioterCount( ent ) ) 
+    for _,ent in pairs( core.system.area.getAreaRioters( ent ) ) do
+        scen.asm:destroyEntity( ent )
+    end
 end
 
-local function area_update( entity )
---    print ("Wow, such update")
-end
-
-area( scen, {0,0,0}, { 0,0, 1,0, 1,1, 0,1 }, "test_area", area_init, area_update )
-
-scen:registerTickCallback( function()  end)
-scen:registerInitCallback( function() print "init" end )
+area( scen, {0,0,0}, { 5,-5, 5,5, -5,5, -5,-5 }, "test_area", nil, printCount )
 
 return scen;

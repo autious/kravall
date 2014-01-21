@@ -28,8 +28,9 @@ namespace Core
 			//Send the data through a drawcall to GFX
 			GFX::InstanceData* instanceData = Core::world.m_frameHeap.NewObject<GFX::InstanceData>();
 			instanceData->modelMatrix = translationMatrix * rotationMatrix * scaleMatrix;
-			instanceData->animationFrame = 0;
-			instanceData->animationFrameOffset = 0;
+			instanceData->animationIndex = 0;
+			instanceData->frameOffset = 0;
+			instanceData->rnd_seed = *it;
 
 			GFX::Draw(gc->bitmask, (void*)instanceData);
 		}

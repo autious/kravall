@@ -180,6 +180,15 @@ namespace GFX
 		DLL_API int AddAnimationToSkeleton(const unsigned int& skeletonID, GFXMat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame);
 
 		/*!
+		Gets the number of frames in a particular animation.
+		\param skeletonID The id of the skeleton
+		\param animationID The id of the animation
+		\param out_frameCount The number of frames in this animation
+		\return Returns #GFX_SUCCESS if successful, else returns #GFX_INVALID_ANIMATION or #GFX_INVALID_SKELETON
+		*/
+		DLL_API int GetAnimationFrameCount(const unsigned int& skeletonID, const unsigned int& animationID, unsigned int& out_frameCount);
+
+		/*!
 		Deletes a mesh
 		\param meshID The id of the mesh to delete
 		*/

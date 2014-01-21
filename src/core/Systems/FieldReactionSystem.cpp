@@ -79,14 +79,14 @@ void Core::FieldReactionSystem::UpdateAgents()
 					if (chargeSum > highestSum)
 					{
 						highestSum = chargeSum;
-						//bestIndex = glm::vec2(i, j);
 						bestIndex.x = i;
 						bestIndex.y = j;
 					}
 				}
 			}
 			
-			#define FF_VS_PF_FACTOR 1.0f
+			#define PF_FACTOR 1.0f
+			#define FF_FACTOR 1.0f
 			glm::vec3 pfVector;
 
 			if (highestSum - staySum > STAY_LIMIT)
@@ -94,33 +94,21 @@ void Core::FieldReactionSystem::UpdateAgents()
 				if (bestIndex.x == 0.0f || bestIndex.y == 0.0f)
 					pfVector = glm::vec3( bestIndex.x, 0.0f, bestIndex.y);
 				else
-				{
-					//float invLength = 1.0f / std::sqrt(bestIndex.x * bestIndex.x + bestIndex.y * bestIndex.y);
-					//MovementComponent::InterpolateToDirection(mc->direction, bestIndex.x * invLength, 0.0f, bestIndex.y * invLength);
 					pfVector = glm::normalize( glm::vec3( bestIndex.x, 0, bestIndex.y ) );
-				}
-
-				//*reinterpret_cast<glm::vec3*>(mc->direction) = glm::normalize( 
-				//	*reinterpret_cast<glm::vec3*>(mc->direction) +
-				//	pfVector * FF_VS_PF_FACTOR );
-
-				glm::vec3 newDir = glm::vec3(mc->newDirection[0] + pfVector.x * FF_VS_PF_FACTOR,
-											 mc->newDirection[1] + pfVector.y * FF_VS_PF_FACTOR,
-											 mc->newDirection[2] + pfVector.z * FF_VS_PF_FACTOR);
-
-				if ((std::abs(newDir.x) + std::abs(newDir.y) + std::abs(newDir.z)) > 0.1f)
-					glm::normalize(newDir);
-					
-				MovementComponent::SetDirection(mc, mc->newDirection[0], mc->newDirection[1], mc->newDirection[2]);
 			}
 			else
-			{
 				pfVector = glm::vec3(0.0f);
-				//MovementComponent::InterpolateToDirection(mc->direction, 0.0f, 0.0f, 0.0f);
-			}
 
-			glm::vec3 position = *reinterpret_cast<glm::vec3*>(wpc->position);
-			GFX::Debug::DrawLine(position, position + *reinterpret_cast<glm::vec3*>(mc->newDirection), GFXColor(1.0f, 0.0f, 0.0f, 1.0f), false);
+			// Update the direction, making sure it is normalised (if not zero).
+			glm::vec3 newDir = glm::vec3(
+				mc->newDirection[0] * FF_FACTOR + pfVector.x * PF_FACTOR,
+				mc->newDirection[1] * FF_FACTOR + pfVector.y * PF_FACTOR,
+				mc->newDirection[2] * FF_FACTOR + pfVector.z * PF_FACTOR);
+
+			if ((std::abs(newDir.x) + std::abs(newDir.y) + std::abs(newDir.z)) > 0.1f)
+				glm::normalize(newDir);
+
+			MovementComponent::SetDirection(mc, newDir.x, newDir.y, newDir.z);
 		}
 	}
 }
@@ -135,16 +123,6 @@ float Core::FieldReactionSystem::GetEffectOnAgentAt(const Entity queryAgent, Wor
 	{
 		if (queryAgent != (*it2)) // 6.
 		{
-			/*int matchID = -1;
-			if (groupID >= 0)
-			{
-				Core::AttributeComponent* ac = WGETC<AttributeComponent>(*it2);
-				matchID = ac->rioter.groupID;
-			}
-
-			if (matchID != groupID)
-				continue;*/
-
 			WorldPositionComponent* wpc = WGETC<WorldPositionComponent>(*it2);
 			WorldPositionComponent distVec = WorldPositionComponent(wpc->position[0] - queryPosition->position[0],
 																	wpc->position[1] - queryPosition->position[1],
@@ -152,10 +130,6 @@ float Core::FieldReactionSystem::GetEffectOnAgentAt(const Entity queryAgent, Wor
 
 			float distanceSqr = (distVec.position[0] * distVec.position[0]) +
 				(distVec.position[2] * distVec.position[2]);
-
-			/*float dx = wpc->position[0] - queryPosition->position[0];
-			float dz = wpc->position[2] - queryPosition->position[2];
-			float distanceSqr = dx * dx + dz * dz;*/
 
 			int matchID = -1;
 			if (groupID >= 0)
@@ -186,7 +160,7 @@ float Core::FieldReactionSystem::GetAgentsChargeAt(Entity chargedAgent, float di
 
 	if (distSqrd > 0.001f && distSqrd < CURVE[0][indexFromType].repelRadius)
 		return -100 + distSqrd * (CURVE[0][indexFromType].repelRadius / 100);
-	else if (distSqrd <= CURVE[0][indexFromType].cutoff /*&& groupID == matchGroupID*/)
+	else if (distSqrd <= CURVE[0][indexFromType].cutoff)
 		return CURVE[0][indexFromType].charge - distSqrd * CURVE[0][indexFromType].decline;
 	else
 		return 0.0f;

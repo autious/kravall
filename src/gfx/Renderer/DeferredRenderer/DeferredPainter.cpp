@@ -25,25 +25,52 @@ namespace GFX
 	{
 		BasePainter::Initialize(FBO, dummyVAO);
 
-		m_shaderManager->CreateProgram("StaticMesh");
 
-		m_shaderManager->LoadShader("shaders/SimpleGeometry.vertex", "StaticMeshVS", GL_VERTEX_SHADER);
-		m_shaderManager->LoadShader("shaders/SimpleGeometry.fragment", "StaticMeshFS", GL_FRAGMENT_SHADER);
+		// Normal map shaders
+		m_shaderManager->CreateProgram("StaticNormal");
+		m_shaderManager->LoadShader("shaders/geometry/StaticNormalVS.glsl", "StaticNormalVS", GL_VERTEX_SHADER);
+		m_shaderManager->LoadShader("shaders/geometry/StaticNormalFS.glsl", "StaticNormalFS", GL_FRAGMENT_SHADER);
+		m_shaderManager->AttachShader("StaticNormalVS", "StaticNormal");
+		m_shaderManager->AttachShader("StaticNormalFS", "StaticNormal");
+		m_shaderManager->LinkProgram("StaticNormal");
 		
-		m_shaderManager->AttachShader("StaticMeshVS", "StaticMesh");
-		m_shaderManager->AttachShader("StaticMeshFS", "StaticMesh");
+		
+		
+		m_shaderManager->CreateProgram("AnimatedNormal");
+		m_shaderManager->LoadShader("shaders/geometry/AnimatedNormalVS.glsl", "AnimatedNormalVS", GL_VERTEX_SHADER);
+		m_shaderManager->LoadShader("shaders/geometry/StaticNormalFS.glsl",   "AnimatedNormalFS", GL_FRAGMENT_SHADER);
+		m_shaderManager->AttachShader("AnimatedNormalVS", "AnimatedNormal");
+		m_shaderManager->AttachShader("AnimatedNormalFS", "AnimatedNormal");
+		m_shaderManager->LinkProgram("AnimatedNormal");
 
-		m_shaderManager->LinkProgram("StaticMesh");
+
+		// Blend map shaders
+		m_shaderManager->CreateProgram("StaticBlend");
+		m_shaderManager->LoadShader("shaders/geometry/StaticBlendVS.glsl", "StaticBlendVS", GL_VERTEX_SHADER);
+		m_shaderManager->LoadShader("shaders/geometry/StaticBlendFS.glsl", "StaticBlendFS", GL_FRAGMENT_SHADER);
+		m_shaderManager->AttachShader("StaticBlendVS", "StaticBlend");
+		m_shaderManager->AttachShader("StaticBlendFS", "StaticBlend");
+		m_shaderManager->LinkProgram("StaticBlend");
+
+		
+		m_shaderManager->CreateProgram("AnimatedBlend");
+		m_shaderManager->LoadShader("shaders/geometry/AnimatedBlendVS.glsl", "AnimatedBlendVS", GL_VERTEX_SHADER);
+		m_shaderManager->LoadShader("shaders/geometry/StaticBlendFS.glsl",   "AnimatedBlendFS", GL_FRAGMENT_SHADER);
+		m_shaderManager->AttachShader("AnimatedBlendVS", "AnimatedBlend");
+		m_shaderManager->AttachShader("AnimatedBlendFS", "AnimatedBlend");
+		m_shaderManager->LinkProgram("AnimatedBlend");
+
+
 
 		// TODO: Change texture names in shader
-		m_uniformTexture0 = m_shaderManager->GetUniformLocation("StaticMesh", "diffuseMap");
-		m_uniformTexture1 = m_shaderManager->GetUniformLocation("StaticMesh", "normalMap");
-		m_uniformTexture2 = m_shaderManager->GetUniformLocation("StaticMesh", "specularMap");
-		m_uniformTexture3 = m_shaderManager->GetUniformLocation("StaticMesh", "glowMap");
+		m_uniformTexture0 = m_shaderManager->GetUniformLocation("StaticBlend", "diffuseMap");
+		m_uniformTexture1 = m_shaderManager->GetUniformLocation("StaticBlend", "normalMap");
+		m_uniformTexture2 = m_shaderManager->GetUniformLocation("StaticBlend", "specularMap");
+		m_uniformTexture3 = m_shaderManager->GetUniformLocation("StaticBlend", "glowMap");
 
-		m_modelMatrixUniform = m_shaderManager->GetUniformLocation("StaticMesh", "modelMatrix");
+		m_modelMatrixUniform = m_shaderManager->GetUniformLocation("StaticBlend", "modelMatrix");
 
-		m_uniformBufferManager->CreateBasicCameraUBO(m_shaderManager->GetShaderProgramID("StaticMesh"));
+		m_uniformBufferManager->CreateBasicCameraUBO(m_shaderManager->GetShaderProgramID("StaticBlend"));
 
 #ifdef INSTANCED_DRAWING
 
@@ -69,8 +96,7 @@ namespace GFX
 		// Clear depth RT
 		float c[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 		glClearBufferfv(GL_COLOR, 1, &glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)[0]);
-
-		m_shaderManager->UseProgram("StaticMesh");
+		m_shaderManager->UseProgram("StaticBlend");
 
 		BasicCamera bc;
 		bc.viewMatrix = viewMatrix;
@@ -172,13 +198,21 @@ namespace GFX
 						glUseProgram(mat.shaderProgramID);
 						error = glGetError();
 						currentShader = mat.shaderProgramID;
+						m_uniformTexture0 = m_shaderManager->GetUniformLocation(currentShader, "diffuseMap");
+						m_uniformTexture1 = m_shaderManager->GetUniformLocation(currentShader, "normalMap");
+						m_uniformTexture2 = m_shaderManager->GetUniformLocation(currentShader, "specularMap");
+						m_uniformTexture3 = m_shaderManager->GetUniformLocation(currentShader, "glowMap");
 					}
 
 					//set textures
 					m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[0]).textureHandle, m_uniformTexture0, 0, GL_TEXTURE_2D);
-					m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[1]).textureHandle, m_uniformTexture1, 1, GL_TEXTURE_2D);
-					m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[2]).textureHandle, m_uniformTexture2, 2, GL_TEXTURE_2D);
+					error = glGetError();
+					m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[2]).textureHandle, m_uniformTexture1, 1, GL_TEXTURE_2D);
+					error = glGetError();
+					m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[1]).textureHandle, m_uniformTexture2, 2, GL_TEXTURE_2D);
+					error = glGetError();
 					m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[3]).textureHandle, m_uniformTexture3, 3, GL_TEXTURE_2D);
+					error = glGetError();
 				}
 
 				if (meshID != currentMesh)
@@ -220,7 +254,7 @@ namespace GFX
 		float c[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 		glClearBufferfv(GL_COLOR, 1, &glm::vec4(0.0f, 0.0f, 0.0f,1.0f)[0]);
 
-		m_shaderManager->UseProgram("StaticMesh");
+		m_shaderManager->UseProgram("StaticNormal");
 		
 		BasicCamera bc;
 		bc.viewMatrix = viewMatrix;
