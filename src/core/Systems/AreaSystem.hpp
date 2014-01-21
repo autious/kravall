@@ -1,6 +1,9 @@
 #ifndef SRC_CORE_SYSTEMS_AREALUAUPDATESYSTEM_H
 #define SRC_CORE_SYSTEMS_AREALUAUPDATESYSTEM_H
 
+#include <map>
+#include <vector>
+
 #include <ComponentFramework/BaseSystem.hpp>
 
 namespace Core
@@ -12,10 +15,14 @@ namespace Core
 
         AreaSystem();
 
+        virtual void ChangedEntity( Entity id, Aspect old_asp, Aspect new_asp );
         virtual const char* GetHumanName() { return "AreaSystem"; }
+
+        std::vector<Entity> GetAreaEntities( Entity id );
     private:
         void DrawAreas();
 
+        std::map<Entity,std::vector<Entity>> rioterContainList;
     };
 }
 
