@@ -18,7 +18,8 @@ namespace Core
         virtual void ChangedEntity( Entity id, Aspect old_asp, Aspect new_asp );
         virtual const char* GetHumanName() { return "AreaSystem"; }
 
-        std::vector<Entity> GetAreaEntities( Entity id );
+        std::vector<Entity> GetAreaRioters( Entity id );
+        int GetAreaRioterCount( Entity id );
     private:
         void DrawAreas();
 

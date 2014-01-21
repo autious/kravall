@@ -103,4 +103,31 @@ namespace Core
             rioterContainList.erase( id );
         }
     }
+        
+
+    std::vector<Entity> AreaSystem::GetAreaRioters( Entity id )
+    {
+        try
+        {
+            std::vector<Entity> area = rioterContainList.at(id);
+            return area;
+        }
+        catch( std::out_of_range ofr )
+        {
+            return std::vector<Entity>();
+        }
+    }
+
+    int AreaSystem::GetAreaRioterCount( Entity id )
+    {
+        try
+        {
+            std::vector<Entity> area = rioterContainList.at(id);
+            return area.size();
+        }
+        catch( std::out_of_range ofr )
+        {
+            return 0;
+        }
+    }
 }
