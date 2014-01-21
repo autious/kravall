@@ -44,7 +44,32 @@ function currentscenario()
     print( core.config.current_scenario_name )
 end
 
-    
+function getCompleteTable( table, prefix, input_table )
+    input_table = input_table or {}
+
+    if prefix == nil then
+        prefix = ""
+    end
+
+    if table == nil then
+       table = core
+       prefix = "core"
+    end  
+
+    for k,v in  pairs( table ) do
+        if type( v ) == "function" then
+            input_table[#input_table+1] = prefix .. "." .. k .. "("
+        elseif type( v ) == "table" then
+            input_table[#input_table+1] = prefix .. "." .. k 
+                print_env( v, prefix .. "." .. k, input_table )
+        else
+            input_table[#input_table+1] = prefix .. "." .. k 
+        end
+    end
+
+    return input_table
+end
+
 -- Prints all keys and sub-keys for given table, useful if you want to see what core looks like.
 function print_env( table, prefix)
     if prefix == nil then
@@ -66,7 +91,6 @@ function print_env( table, prefix)
             print( prefix .. "." .. k )
         end
     end
-
 end
 
 function print_loaded()

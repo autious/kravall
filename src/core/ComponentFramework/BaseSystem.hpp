@@ -37,7 +37,7 @@ namespace Core
             Aspect has changed
         */
 
-        void ChangedEntity( Entity id, Aspect old_asp, Aspect new_asp );
+        virtual void ChangedEntity( Entity id, Aspect old_asp, Aspect new_asp );
 
         bool AspectMatch( Aspect asp );
 
