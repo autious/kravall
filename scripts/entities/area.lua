@@ -5,7 +5,7 @@ function genfunction( entity, callback )
 end
 
 return function ( scen, position, vertices, name, callback_init, callback_tick )
-    scen:loadAssembly(
+    local ent = scen:loadAssembly(
     {
         {
             type = core.componentType.WorldPositionComponent,
@@ -29,4 +29,6 @@ return function ( scen, position, vertices, name, callback_init, callback_tick )
     if callback_tick ~= nil then 
         scen:registerTickCallback( genfunction( ent, callback_tick ) )
     end
+
+    return ent
 end
