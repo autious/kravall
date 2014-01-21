@@ -46,7 +46,7 @@ void main()
 	vec4 colorG = randColor(rnd_seed); // Shirt
 
 	// Create random colors for pants
-	vec4 colorB = randColor(rnd_seed + 55);// 0.5 * (vec4(0.1f, 0.5f, 0.8f, 1.0f) + randColor(rnd_seed+52)); // Pants
+	vec4 colorB = randColor(2*rnd_seed + 55);// 0.5 * (vec4(0.1f, 0.5f, 0.8f, 1.0f) + randColor(rnd_seed+52)); // Pants
 	
 	// Create random colors for Accessories/Extra
 	//vec4 colorA = randColor(rnd_seed + 55); // Extra

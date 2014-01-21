@@ -23,7 +23,6 @@ end
 -- Called when program starts
 function core.init() 
     print( "Program starting in lua" )
-    showSys()
     toggleMenu()
     --openscenario( "test" )    
 end
