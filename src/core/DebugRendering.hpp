@@ -9,11 +9,11 @@ static void LuaInfoRender()
     std::stringstream ss;
 
     ss << "Memory: " << Core::world.m_luaState.GetMemoryUse() << "Kb";
-    GFX::RenderText( fontData, glm::vec2( 615, screenHeight - 40 ), 1.0f, Colors::White, "Lua"  );
-    GFX::RenderText( fontData, glm::vec2( 615, screenHeight - 25 ), 1.0f, Colors::White, ss.str().c_str()  );
+    GFX::RenderText( localFontData, glm::vec2( 615, screenHeight - 40 ), 1.0f, Colors::White, "Lua"  );
+    GFX::RenderText( localFontData, glm::vec2( 615, screenHeight - 25 ), 1.0f, Colors::White, ss.str().c_str()  );
     std::stringstream ss2;
     ss2 << "Update: " << std::fixed << std::setw( 7 ) << std::setprecision(4) << std::setfill( '0' ) << Core::world.m_luaState.GetUpdateTiming().count() / 1000.0f << "ms";
-    GFX::RenderText( fontData, glm::vec2( 615, screenHeight - 10 ), 1.0f, Colors::White, ss2.str().c_str()  );
+    GFX::RenderText( localFontData, glm::vec2( 615, screenHeight - 10 ), 1.0f, Colors::White, ss2.str().c_str()  );
 
     GFX::Debug::DrawRectangle(glm::vec2( 610, screenHeight - 55 ),
             glm::vec2(175, 50), true, glm::vec4( 0.5f,0.5f,0.5f,0.5f) );
@@ -65,7 +65,7 @@ static void EntityHandlerMemoryRender()
         ss <<  std::get<0>(edul[i]);
 
         if( renderCurrent )
-            GFX::RenderText(fontData, glm::vec2(10, GFX::GetScreenHeight()+12-2*20*(elementCount)+20*2*count), 1.0f, Colors::White, ss.str().c_str());
+            GFX::RenderText(localFontData, glm::vec2(10, GFX::GetScreenHeight()+12-2*20*(elementCount)+20*2*count), 1.0f, Colors::White, ss.str().c_str());
 
         ss.str("");
         ss.clear();
@@ -77,7 +77,7 @@ static void EntityHandlerMemoryRender()
         ss << memAlloc << "Kb ";
 
         if( renderCurrent )
-            GFX::RenderText(fontData, glm::vec2(10, GFX::GetScreenHeight()+12-2*20*(elementCount)+20*count*2+20*1), 1.0f, Colors::White, ss.str().c_str());
+            GFX::RenderText(localFontData, glm::vec2(10, GFX::GetScreenHeight()+12-2*20*(elementCount)+20*count*2+20*1), 1.0f, Colors::White, ss.str().c_str());
 
         if( i > 0 )
         {
@@ -99,8 +99,8 @@ static void EntityHandlerMemoryRender()
     ss << totalMemoryUse << "Kb ";
     ss << totalMemoryAllocation << "Kb ";
 
-    GFX::RenderText(fontData, glm::vec2(10, GFX::GetScreenHeight()+12-2*20*(elementCount)+20*elementCount*2-40), 1.0f, Colors::White, "Total Components" );
-    GFX::RenderText(fontData, glm::vec2(10, GFX::GetScreenHeight()+12-2*20*(elementCount)+20*elementCount*2-20), 1.0f, Colors::White, ss.str().c_str() );
+    GFX::RenderText(localFontData, glm::vec2(10, GFX::GetScreenHeight()+12-2*20*(elementCount)+20*elementCount*2-40), 1.0f, Colors::White, "Total Components" );
+    GFX::RenderText(localFontData, glm::vec2(10, GFX::GetScreenHeight()+12-2*20*(elementCount)+20*elementCount*2-20), 1.0f, Colors::White, ss.str().c_str() );
 
     GFX::Debug::DrawRectangle(glm::vec2(5,GFX::GetScreenHeight()-5-2*20*(elementCount) ), 
         glm::vec2(295, 2*20*(elementCount)), true, glm::vec4( 0.5f,0.5f,0.5f,0.5f) );
@@ -122,7 +122,7 @@ static void SystemTimeRender()
             std::stringstream ss;
             
             ss << times[i].first << ": " << std::fixed << std::setw( 7 ) << std::setprecision(4) << std::setfill( '0' ) << times[i].second.count() / 1000.0f << "ms";
-	        GFX::RenderText(fontData, glm::vec2(310, GFX::GetScreenHeight()+12-20*times.size()+20*i), 1.0f, Colors::White, ss.str().c_str());
+	        GFX::RenderText(localFontData, glm::vec2(310, GFX::GetScreenHeight()+12-20*times.size()+20*i), 1.0f, Colors::White, ss.str().c_str());
         }
 
 	    GFX::Debug::DrawRectangle(glm::vec2(305,GFX::GetScreenHeight()-5-20*times.size() ), 
@@ -152,11 +152,11 @@ static void TestRendering()
 	//GFX::Debug::DrawRectangle(glm::vec2(0, 0), glm::vec2(200, 20), true, Colors::Aquamarine);
 	//GFX::Debug::DrawRectangle(glm::vec2(100, 20), glm::vec2(100, 40), false, Colors::Chocolate);
 
-	//GFX::RenderText(fontData, glm::vec2(0, 100), 1.0f, Colors::Black, "The Quick Brown Fox Jumps Over The Lazy Dog");
-	//GFX::RenderText(fontData, glm::vec2(10, 120), 1.0f, Colors::Blue, "The Quick Brown Fox Jumps Over The Lazy Dog");
-	//GFX::RenderText(fontData, glm::vec2(20, 140), 1.0f, Colors::Green, "The Quick Brown Fox Jumps Over The Lazy Dog");
-	//GFX::RenderText(fontData, glm::vec2(30, 160), 1.0f, Colors::CornflowerBlue, "The Quick Brown Fox Jumps Over The Lazy Dog");
-	//GFX::RenderText(fontData, glm::vec2(40, 180), 1.0f, Colors::White, "The Quick Brown Fox Jumps Over The Lazy Dog????");
+	//GFX::RenderText(localFontData, glm::vec2(0, 100), 1.0f, Colors::Black, "The Quick Brown Fox Jumps Over The Lazy Dog");
+	//GFX::RenderText(localFontData, glm::vec2(10, 120), 1.0f, Colors::Blue, "The Quick Brown Fox Jumps Over The Lazy Dog");
+	//GFX::RenderText(localFontData, glm::vec2(20, 140), 1.0f, Colors::Green, "The Quick Brown Fox Jumps Over The Lazy Dog");
+	//GFX::RenderText(localFontData, glm::vec2(30, 160), 1.0f, Colors::CornflowerBlue, "The Quick Brown Fox Jumps Over The Lazy Dog");
+	//GFX::RenderText(localFontData, glm::vec2(40, 180), 1.0f, Colors::White, "The Quick Brown Fox Jumps Over The Lazy Dog????");
 	//
-	//GFX::RenderText(fontData, glm::vec2(0, 200), 1.0f, Colors::Gold, "ABCDEFGHIJKLMNOPQRSTUVWXYZASIUHDOIASHUDIOASHDA1234567890*'^&%#!?");
+	//GFX::RenderText(localFontData, glm::vec2(0, 200), 1.0f, Colors::Gold, "ABCDEFGHIJKLMNOPQRSTUVWXYZASIUHDOIASHUDIOASHDA1234567890*'^&%#!?");
 }

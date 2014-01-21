@@ -10,7 +10,6 @@ local mouse = core.input.mouse
 local camera= core.camera.gameCamera
 local key = keyboard.key
 
-
 function C.new( )
     local self = {}
     self.position = vec3.new( 0,0,0 )
@@ -120,7 +119,6 @@ function C:update( dt )
     end
 end
 
-    
 function C:setPosition( pos )
 	self.position = pos	
 end

@@ -85,7 +85,8 @@ void Core::FieldReactionSystem::UpdateAgents()
 				}
 			}
 			
-			#define FF_VS_PF_FACTOR 1.0f
+			#define PF_FACTOR 1.0f
+			#define FF_FACTOR 1.0f
 			glm::vec3 pfVector;
 
 			if (highestSum - staySum > STAY_LIMIT)
@@ -99,14 +100,15 @@ void Core::FieldReactionSystem::UpdateAgents()
 				pfVector = glm::vec3(0.0f);
 
 			// Update the direction, making sure it is normalised (if not zero).
-			glm::vec3 newDir = glm::vec3(mc->newDirection[0] + pfVector.x * FF_VS_PF_FACTOR,
-				mc->newDirection[1] + pfVector.y * FF_VS_PF_FACTOR,
-				mc->newDirection[2] + pfVector.z * FF_VS_PF_FACTOR);
+			glm::vec3 newDir = glm::vec3(
+				mc->newDirection[0] * FF_FACTOR + pfVector.x * PF_FACTOR,
+				mc->newDirection[1] * FF_FACTOR + pfVector.y * PF_FACTOR,
+				mc->newDirection[2] * FF_FACTOR + pfVector.z * PF_FACTOR);
 
 			if ((std::abs(newDir.x) + std::abs(newDir.y) + std::abs(newDir.z)) > 0.1f)
-				glm::normalize(newDir);
+				newDir = glm::normalize(newDir);
 
-			MovementComponent::SetDirection(mc, mc->newDirection[0], mc->newDirection[1], mc->newDirection[2]);
+			MovementComponent::SetDirection(mc, newDir.x, newDir.y, newDir.z);
 		}
 	}
 }
