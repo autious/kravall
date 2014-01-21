@@ -166,5 +166,5 @@ building(scen, 45, 19)
 building(scen, 56, 19)
 
 local area = ent.get "area"
-area( scen, {10,0,0}, { 5,-5, 5,5, -5,5, -5,-5 }, "test_area" )
+area( scen, {0,0,0}, { 5,-5, 5,5, -5,5, -5,-5 }, "test_area" )
 return scen;
