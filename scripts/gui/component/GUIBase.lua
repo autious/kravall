@@ -55,7 +55,7 @@ function GUIBase:createEntity()
 
     self.ent:set( core.componentType.GraphicsComponent, { type = core.gfx.objectTypes.OverlayGeometry} )
     self.ent:set( core.componentType.WorldPositionComponent, { position = {10,-10, 0} } )
-    self.ent:set( core.componentType.ScaleComponent, {scale = {100,100,1}} )
+    self.ent:set( core.componentType.ScaleComponent, {scale = {150,122,1}} )
     self.ent:set( core.componentType.RotationComponent, { rotation = {0,0,0,1}} )
 end
 

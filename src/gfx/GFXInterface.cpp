@@ -252,6 +252,11 @@ namespace GFX
 			return Renderer().AddAnimationToSkeleton(skeletonID, frames, numFrames, numBonesPerFrame);
 		}
 
+		int GetAnimationFrameCount(const unsigned int& skeletonID, const unsigned int& animationID, unsigned int& out_frameCount)
+		{
+			return Renderer().GetAnimationFrameCount(skeletonID, animationID, out_frameCount);
+		}
+
 	}
 }
 

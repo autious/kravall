@@ -150,6 +150,8 @@ namespace Core
 		std::vector<std::string> m_history;
 
 		Core::HighresTimer m_timer;
+
+        bool delayInput = false;
 	};
 	DebugConsole& Console();
 
