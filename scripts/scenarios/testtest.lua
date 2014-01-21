@@ -47,7 +47,7 @@ local centerPoint = { -5, 0, 0 }
 local side = math.sqrt( 100 )
 for i = -side / 2, side / 2 do
 	for p = -side / 2, side / 2 do
-		rioter.create( asm, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], 0 )
+		rioter( asm, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], 0 )
 	end
 end
 
