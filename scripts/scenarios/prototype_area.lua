@@ -166,5 +166,12 @@ building(scen, 45, 19)
 building(scen, 56, 19)
 
 local area = ent.get "area"
-area( scen, {0,0,0}, { 5,-5, 5,5, -5,5, -5,-5 }, "test_area" )
+
+function printCount( ent )
+--    print( core.system.area.getAreaRioterCount( ent ) ) 
+--    print( #(core.system.area.getAreaRioters( ent )) ) 
+end
+
+area( scen, {0,0,0}, { 5,-5, 5,5, -5,5, -5,-5 }, "test_area", nil, printCount )
+
 return scen;
