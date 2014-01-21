@@ -11,7 +11,7 @@ namespace GFX
 		glm::mat4 modelMatrix;
 		unsigned int animationIndex;
 		unsigned int frameOffset;
-		unsigned int pad1;
+		unsigned int rnd_seed;
 		unsigned int pad2;
 	};
 
