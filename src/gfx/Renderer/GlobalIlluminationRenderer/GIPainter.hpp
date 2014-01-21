@@ -34,7 +34,7 @@ namespace GFX
 		void Resize(int width, int height);
 
 		FBOTexture* m_SSDOTexture;
-
+		FBOTexture* m_blurTexture;
 
 	private:
 		void InitFBO();
@@ -49,8 +49,23 @@ namespace GFX
 		int m_screenHeight;
 
 		GLuint m_SSDOFBO;
+		GLuint m_blurFBO;
 
 		GLuint m_seedTexture;
+
+		//SSDO uniforms
+		GLint m_invProjUniform;
+		GLint m_eyePosUniform;
+		GLint m_screenSizeUniform;
+		GLint m_occlusionRadiusUniform;
+		GLint m_maxOcclusionDistanceUniform;
+
+		GLint m_normalDepthUniform;
+		GLint m_noiseUniform;
+
+		float m_occlusionRadius;
+		float m_maxOcclusionDistance;
+
 	};
 }
 

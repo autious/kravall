@@ -98,7 +98,7 @@ vec3 BlinnPhong( LightData light, SurfaceData surface, vec3 eyeDirection, vec3 l
 	intensity = df;
 
 	float light_occlusion = 1 - clamp(dot(vec4(lightDirection , 1.0f), surface.occlusion), 0.0f, 1.0f);
-	light_occlusion *= 3.0f;
+
 	diffuseColor = surface.diffuse.xyz * intensity * light.color * light.intensity * attenuation * light_occlusion;
 
 	// Specular
