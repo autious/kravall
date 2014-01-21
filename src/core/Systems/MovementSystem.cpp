@@ -78,7 +78,6 @@ void Core::MovementSystem::Update(float delta)
 
 void Core::MovementSystem::InterpolateDirections(MovementComponent* mc, float delta)
 {
-	delta = 1.0f;
 	if (mc->direction[0] == 0.0f && mc->direction[1] == 0.0f && mc->direction[2] == 0.0f)
 	{
 		mc->direction[0] = mc->newDirection[0];
