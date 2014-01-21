@@ -27,6 +27,7 @@ Core::FieldReactionSystem::FieldReactionSystem() : BaseSystem(EntityHandler::Gen
 
 void Core::FieldReactionSystem::Update(float delta)
 {
+	return;
 	UpdateAgents();
 
 	if (m_showPF)

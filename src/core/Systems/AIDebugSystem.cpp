@@ -89,7 +89,7 @@ void TestPathFinding()
 {
 
 	//Core::PathComponent path = Core::PathFinder::GetPath( glm::vec3(0), glm::vec3( -105, 0, 38 ) );
-	Core::PathComponent path = Core::PathFinder::GetPath( glm::vec3(0), glm::vec3( -442, 0, 138 ) );
+	//Core::PathComponent path = Core::PathFinder::GetPath( glm::vec3(0), glm::vec3( -442, 0, 138 ) );
 	//Core::PathComponent path = Core::PathFinder::GetPath( glm::vec3(0), glm::vec3( -712, 0, -510 ) );
 	//Core::PathComponent path = Core::PathFinder::GetPath( glm::vec3( 707, 0, 501 ), glm::vec3( -712, 0, -510 ) );
 

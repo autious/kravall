@@ -79,9 +79,14 @@ namespace Core
 				*/
 				float inverseLength;
 				/*!
-					Normal for the respective edge.
+					2D Normal for the respective edge.
 				*/
-				float normal[3];
+				float normal[2];
+
+				/*!
+					2D midpoint for the node.
+				*/
+				float mid[2];
 
 				/*
 					This corner links to the following edge and node.
@@ -97,7 +102,7 @@ namespace Core
 		};
 
 		/*!
-			Struct containing a list of direction vectors with the same size as Core::NavigationMesh::nrNodes.
+			Struct containing a list of direction vectors and from-goal entry edges with the same size as Core::NavigationMesh::nrNodes.
 		*/
 		struct Flowfield
 		{

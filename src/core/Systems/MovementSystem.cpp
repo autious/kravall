@@ -1,6 +1,9 @@
 #include "MovementSystem.hpp"
 #include "World.hpp"
 
+
+
+
 void Core::MovementSystem::Update(float delta)
 {
 	for (std::vector<Entity>::iterator it = m_entities.begin();
@@ -16,7 +19,7 @@ void Core::MovementSystem::Update(float delta)
 		wpc->position[1] += mc->direction[1] * mc->speed * delta;
 		wpc->position[2] += mc->direction[2] * mc->speed * delta;
 
-		if (mc->direction[0] =! 0 || mc->direction[1] != 0 || mc->direction[2] != 0)
+		if (mc->direction[0] != 0 || mc->direction[1] != 0 || mc->direction[2] != 0)
 		{
 			// Rotate model after direction
 			float angle = std::atan2(static_cast<double>(mc->direction[2]), static_cast<double>(mc->direction[0]));

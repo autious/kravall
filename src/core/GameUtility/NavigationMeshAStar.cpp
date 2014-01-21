@@ -5,34 +5,22 @@
 #include <algorithm>
 #include <logger/Logger.hpp>
 
-#define NO_COLLISION_FOUND -1.0f
+#define NO_LINE_COLLISION -0.5f
+#define NO_LINE_COLLISION_VALUE -1.0f
 
 namespace Core
 {
 
-	struct LineCheckReturnByReference
+	struct LineCheckReturnStruct
 	{
 		int node, edge;
 		float t;
 	};
 
-	struct PathElement
+	
+	void CheckLine( glm::vec3 start, glm::vec3 goal, Core::NavigationMesh* instance, int startNode, LineCheckReturnStruct& result )
 	{
-		PathElement() {}
-
-		PathElement( glm::vec3 start, glm::vec3 goal, int startNode ) 
-			: origin( start ), end( goal ), startNode( startNode )
-		{
-		}
-
-		glm::vec3 origin;
-		glm::vec3 end;
-		int startNode;
-	};
-
-	void CheckLine( glm::vec3 start, glm::vec3 goal, Core::NavigationMesh* instance, int startNode, LineCheckReturnByReference& result )
-	{
-		result.t = NO_COLLISION_FOUND;
+		result.t = NO_LINE_COLLISION_VALUE;
 		result.node = startNode;
 		
 		bool* visited = Core::world.m_frameHeap.NewPODArray<bool>( instance->nrNodes );
@@ -106,6 +94,65 @@ namespace Core
 			head++;
 		}
 	}
+
+	bool PathFinder::CheckLineVsNavMesh( glm::vec3 from, glm::vec3 to )
+	{
+		Core::NavigationMesh* instance = Core::GetNavigationMesh();
+		if( !instance )
+			return false;
+
+		// get starting node...
+		int startNode = -1;
+		for( int i = 0; i < instance->nrNodes; i++ )
+		{
+			if( instance->CheckPointInsideNode( from, i ) )
+			{
+				startNode = i;
+				break;
+			}
+		}
+
+		// start is outside...
+		if( startNode < 0 )
+			return false;
+
+		LineCheckReturnStruct result;
+		CheckLine( from, to, instance, startNode, result );
+
+		if( result.t < NO_LINE_COLLISION )
+			return true;
+		return false;
+	}
+
+
+
+
+
+
+
+	/*
+
+	//struct PathComponent
+	//{
+	//	int nrNodes;
+	//	float nodes[ 2 * 50 ];
+	//};
+
+	//struct PathElement
+	//{
+	//	PathElement() {}
+	//
+	//	PathElement( glm::vec3 start, glm::vec3 goal, int startNode ) 
+	//		: origin( start ), end( goal ), startNode( startNode )
+	//	{
+	//	}
+	//
+	//	glm::vec3 origin;
+	//	glm::vec3 end;
+	//	int startNode;
+	//};
+
+
 
 #define SHOWDEBUG
 
@@ -368,7 +415,8 @@ namespace Core
 	}
 }
 
-
+*/
+}
 
 //glm::vec3 lineStart = glm::vec3( instance->nodes[result.node].points[ result.edge * 2 ], 0, instance->nodes[result.node].points[ result.edge * 2 + 1 ] );
 //glm::vec3 lineEnd = glm::vec3( instance->nodes[result.node].points[ result.edge * 2 + 2 ], 0, instance->nodes[result.node].points[ result.edge * 2 + 3 ] );

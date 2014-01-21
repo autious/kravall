@@ -80,61 +80,106 @@ namespace Core
 
 			if( !visited[ prioList[0].node ] )
 			{
-				// for all corners of the current node
-				for( int i = 0; i < 4; i++ )
+				if( prioList.size() != 0 )
 				{
-					if( current.corners[i].linksTo < 0 )
-						continue;
-
-					if( prioList.size() == 0 )
-						break;
-
-					glm::vec3 otherMid;
-
+					// for all corners of the current node
+					for( int i = 0; i < 4; i++ )
 					{
-						int ii = i * 2;
-						int oo = ( ii + 2 ) % 8;
-						glm::vec3 lineStart = glm::vec3( current.points[ ii], 0.0f, current.points[ ii + 1 ] );
-						glm::vec3 lineEnd	= glm::vec3( current.points[ oo ], 0.0f, current.points[ oo + 1 ] );
-						otherMid = lineStart + (( lineEnd - lineStart ) * 0.5f );
-					}
+						if( current.corners[i].linksTo < 0 )
+							continue;
 
-					// distance to the next node
-					float dist = glm::distance( otherMid, mid );
+						glm::vec3 otherMid;
+
+						{
+							int ii = i * 2;
+							int oo = ( ii + 2 ) % 8;
+							glm::vec3 lineStart = glm::vec3( current.points[ ii], 0.0f, current.points[ ii + 1 ] );
+							glm::vec3 lineEnd	= glm::vec3( current.points[ oo ], 0.0f, current.points[ oo + 1 ] );
+							otherMid = lineStart + (( lineEnd - lineStart ) * 0.5f );
+						}
+
+						// distance to the next node
+						float dist = glm::distance( otherMid, mid );
 				
-					// check so not the entry edge...
-					if( i != prioList[0].entryEdge && !visited[ current.corners[i].linksTo ] )
-					{
-						// otherwise add new node to priolist
-						prioList.push_back( TraversalData( current.corners[i].linksTo, current.corners[i].linksToEdge, dist + prioList[0].entryDistance ));
+						// check so not the entry edge...
+						if( i != prioList[0].entryEdge && !visited[ current.corners[i].linksTo ] )
+						{
+							// otherwise add new node to priolist
+							prioList.push_back( TraversalData( current.corners[i].linksTo, current.corners[i].linksToEdge, dist + prioList[0].entryDistance ));
+						}
 					}
 				}
 			}
 
+
 			// more dynamic but buggy
-			//glm::vec3 parentMid;
-			//{
-			//	int parentNode = current.corners[ prioList[0].entryEdge ].linksTo;
-			//	int parentEntryEdge = flowfields[group].edges[ parentNode ];
-			//
-			//
-			//	int ii = parentEntryEdge * 2;
-			//	int oo = ( ii + 2 ) % 8;
-			//
-			//	glm::vec3 lineStart = glm::vec3( nodes[ parentNode ].points[ ii ], 0.0f, nodes[ parentNode ].points[ ii + 1 ] );
-			//	glm::vec3 lineEnd	= glm::vec3( nodes[ parentNode ].points[ oo ], 0.0f, nodes[ parentNode ].points[ oo + 1 ] );
-			//	parentMid = lineStart + (( lineEnd - lineStart ) * 0.5f );	
-			//}
-			//flowfields[group].list[ prioList[0].node ] = parentMid;
+			glm::vec3 parentMid;
 
-			flowfields[group].list[ prioList[0].node ] = mid;
+			{
+				int parentNode = current.corners[ prioList[0].entryEdge ].linksTo;
+				int parentEntryEdge = flowfields[group].edges[ parentNode ];
 			
+			
+				int ii = parentEntryEdge * 2;
+				int oo = ( ii + 2 ) % 8;
+			
+				glm::vec3 lineStart = glm::vec3( nodes[ parentNode ].points[ ii ], 0.0f, nodes[ parentNode ].points[ ii + 1 ] );
+				glm::vec3 lineEnd	= glm::vec3( nodes[ parentNode ].points[ oo ], 0.0f, nodes[ parentNode ].points[ oo + 1 ] );
+				parentMid = lineStart + (( lineEnd - lineStart ) * 0.5f );	
+			}
 
+
+			flowfields[group].list[ prioList[0].node ] = parentMid;
 			flowfields[group].edges[ prioList[0].node ] = prioList[0].entryEdge;
 
 			visited[ prioList[0].node ] = true;
 			prioList.erase( prioList.begin() );
 			std::sort( prioList.begin(), prioList.end(), sortingFunction );
+
+
+
+			// new try...
+
+			//int parentNode = current.corners[ prioList[0].entryEdge ].linksTo;
+			//int parentEntryEdge = flowfields[group].edges[ parentNode ];
+			//
+			//// parent normal...
+			//float* normal = nodes[ parentNode ].corners[ parentEntryEdge ].normal;
+			//glm::vec3 parentNormal = glm::vec3( normal[0], 0.0f, normal[1] );
+			//
+			//int parentCornerIndex = parentEntryEdge * 2;
+			//glm::vec3 parentCorner = glm::vec3( nodes[ parentNode ].points[ parentEntryEdge ], 0.0f, nodes[ parentNode ].points[ parentEntryEdge + 1 ] );
+			//
+			//// indexes for own linking edge...
+			//int ii = prioList[0].entryEdge * 2;
+			//int oo = ( ii + 2 ) % 8;
+			//
+			//glm::vec3 cornerA = glm::vec3( nodes[ prioList[0].node ].points[ ii ], 0.0f, nodes[ prioList[0].node ].points[ ii + 1 ] );
+			//glm::vec3 cornerB	= glm::vec3( nodes[ prioList[0].node ].points[ oo ], 0.0f, nodes[ prioList[0].node ].points[ oo + 1 ] );
+			//
+			//float distanceA = glm::dot( parentNormal, cornerA - parentCorner );
+			//float distanceB = glm::dot( parentNormal, cornerB - parentCorner );
+			//
+			////flowfields[group].list[ prioList[0].node ] = parentMid;
+			//
+			//if( distanceA < distanceB )
+			//{
+			//	flowfields[group].list[ prioList[0].node ] = cornerA + ( cornerB - cornerA ) * 0.25f;
+			//}
+			//else
+			//{
+			//	flowfields[group].list[ prioList[0].node ] = cornerB + ( cornerA - cornerB ) * 0.25f;
+			//}
+						
+			//float* normal = nodes[ prioList[0].node ].corners[ prioList[0].entryEdge ].normal;
+			//flowfields[group].list[ prioList[0].node ] = mid + glm::vec3( normal[0], 0.0f, normal[1] ) * 100.0f;
+			
+
+			//flowfields[group].edges[ prioList[0].node ] = prioList[0].entryEdge;
+			//
+			//visited[ prioList[0].node ] = true;
+			//prioList.erase( prioList.begin() );
+			//std::sort( prioList.begin(), prioList.end(), sortingFunction );
 
 		}
 

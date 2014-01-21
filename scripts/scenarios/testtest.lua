@@ -11,14 +11,14 @@ local police = ent.get "police"
 local building = require "entities/building"
 		
 local centerPoint = { -5, 0, 0 }
-local side = math.sqrt( 20 )
-for i = -side / 2, side / 2 do
-	for p = -side / 2, side / 2 do
-		rioter( asm, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], 0 )
-	end
-end
+local side = math.sqrt( 300 )
+--for i = -side / 2, side / 2 do
+--	for p = -side / 2, side / 2 do
+--		rioter( asm, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], 0 )
+--	end
+--end
 
---rioter( asm, 0, 0, 0, 0 )
+rioter( asm, 0, 0, 0, 0 )
 --rioter( asm, 1, 0, 1, 0 )
 --rioter( asm, 3, 0, 3, 0 )
 --rioter( asm, 4, 0, 4, 0 )

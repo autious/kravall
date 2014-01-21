@@ -186,7 +186,8 @@ std::fstream& operator>> ( std::fstream& ff, Core::NavigationMesh::Node& node )
 
 		// calc normal
 		glm::vec3 cross = glm::normalize( glm::cross( (lineEnd - lineStart), glm::vec3( 0.0f, 1.0f, 0.0f ) ) );
-		*reinterpret_cast<glm::vec3*>(node.corners[i].normal) = cross;
+		node.corners[i].normal[0] = cross.x;
+		node.corners[i].normal[1] = cross.z;
 
 	}
 

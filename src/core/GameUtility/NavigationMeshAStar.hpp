@@ -7,42 +7,35 @@
 
 namespace Core
 {
-	
-	struct PathComponent
-	{
-		int nrNodes;
-		float nodes[ 2 * 50 ];
-	};
-
-
 
 	class PathFinder
 	{
-	public:
 
+	public:		
+		//static PathComponent GetPath( glm::vec3 start, glm::vec3 goal );
 
+		bool CheckLineVsNavMesh( glm::vec3 from, glm::vec3 to );
 
-
-	public:
-
-
-		static PathComponent GetPath( glm::vec3 start, glm::vec3 goal );
-
-
-
+	
 	private:
 
-
-
-	private:
-
-		
-
+				
 
 
 	};
 
-
-
-
+	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
