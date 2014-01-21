@@ -4,11 +4,9 @@ local T = {}
 
 function T.new()
     local self = {}
+
     self.objectiveHandler = objective_handler.new()
-    self.objectiveHandler:addObjective(objective.new("Kill your people"))
-
     setmetatable( self, { __index = T } )
-
     return self
 end
 
@@ -17,7 +15,7 @@ function T:update( delta )
 end
 
 function T:destroy()
-    
+    self.objectiveHandler:destroy() 
 end
 
 function T:name()

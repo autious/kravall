@@ -26,7 +26,6 @@ function core.init()
     showSys()
     toggleMenu()
     --openscenario( "test" )    
-    setgamemode( "normal" )
 end
 
 menuState = nil

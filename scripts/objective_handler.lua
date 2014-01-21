@@ -12,8 +12,10 @@ function O:update( delta )
         for index ,obj in pairs( self.objectives ) do
             
             if obj.state == "success" then
-                core.draw.drawText( 20, index * 20 + 20 + 150, "[X]" )
-            else
+                core.draw.drawText( 20, index * 20 + 20 + 150, "[/]" )
+            elseif obj.state == "fail" then
+                core.draw.drawText( 20, index * 20 + 20 + 150, "[x]" )
+            else  
                 core.draw.drawText( 20, index * 20 + 20 + 150, "[ ]" )
             end
                 
