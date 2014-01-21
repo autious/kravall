@@ -268,6 +268,7 @@ namespace GFX
 			GFX_CHECKTIME(glFinish(), "glFinish");
 
 			GFX_CHECKTIME(m_renderJobManager->Sort(), "Sorting");
+
 			GFX_CHECKTIME(m_deferredPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix, m_gamma), "Geometry");
 			GFX_CHECKTIME(m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, 
 				m_viewMatrix, m_projMatrix, m_exposure, m_gamma, m_whitePoint, m_toneMappedTexture), "Lighting");
@@ -452,5 +453,10 @@ namespace GFX
 	int RenderCore::AddAnimationToSkeleton(const unsigned int& skeletonID, glm::mat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame)
 	{
 		return m_animationManager->AddAnimationToSkeleton(skeletonID, frames, numFrames, numBonesPerFrame);
+	}
+
+	int RenderCore::GetAnimationFrameCount(const unsigned int& skeletonID, const unsigned int& animationID, unsigned int& out_frameCount)
+	{
+		return m_animationManager->GetFrameCount(skeletonID, animationID, out_frameCount);
 	}
 }

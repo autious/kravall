@@ -28,16 +28,30 @@ namespace GFX
 		/*!
 		Main rendering loop
 		*/
-		void Render(const double& delta, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular );
+		void Render(const double& delta, FBOTexture* normalDepth, FBOTexture* diffuse, glm::mat4 viewMatrix, glm::mat4 projMatrix);
 
 		void Resize(int width, int height);
 
 	private:
-		GLuint m_radianceTexture;
+		void InitFBO();
+		void BindRadianceFBO();
+		void BindSSDOFBO();
 
 		int m_screenWidth;
 		int m_screenHeight;
 
+		GLuint m_radianceFBO;
+		GLuint m_SSDOFBO;
+
+		FBOTexture* m_radianceTexture;
+		FBOTexture* m_SSDOTexture;
+
+		//Radiance uniforms
+		GLint m_diffuseUniform;
+		GLint m_normalsDepthUniform;
+		GLint m_lightDirUniform;
+		GLint m_lightDiffuseUniform;
+		GLint m_invViewProjUniform;
 	};
 }
 

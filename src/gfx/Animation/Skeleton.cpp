@@ -1,5 +1,7 @@
 #include "Skeleton.hpp"
 
+#include <cstring>
+
 Skeleton::Skeleton()
 {
 	glGenBuffers(1, &m_animationBuffer);
@@ -46,10 +48,13 @@ int Skeleton::AddAnimation(glm::mat4x4* frames, const unsigned int& numFrames, c
 	}
 }
 
-int Skeleton::GetFrameCount(const int& animationID)
+int Skeleton::GetFrameCount(const int& animationID, unsigned int& out_frameCount)
 {
 	if (animationID > 0 && animationID < m_animationInfo.size())
-		return m_animationInfo[animationID].numFrames;
+	{
+		out_frameCount = m_animationInfo[animationID].numFrames;
+		return GFX_SUCCESS;
+	}
 	else
 		return GFX_INVALID_ANIMATION;
 }

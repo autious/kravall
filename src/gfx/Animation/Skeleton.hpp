@@ -34,9 +34,10 @@ public:
 	/*!
 	Gets the number of frames in a particular animation.
 	\param animationID The id of the animation
-	\return Returns the number of frames in this animation if successful, else returns #GFX_INVALID_ANIMATION
+	\param out_frameCount The number of frames in this animation
+	\return Returns #GFX_SUCCESS if successful, else returns #GFX_INVALID_ANIMATION
 	*/
-	int GetFrameCount( const int& animationID );
+	int GetFrameCount( const int& animationID, unsigned int& out_frameCount );
 
 	/*!
 	Gets the number of animations in the skeleton.

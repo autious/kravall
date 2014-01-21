@@ -143,6 +143,7 @@ namespace GFX
 		int CreateSkeleton(unsigned int& out_skeletonID);
 		int DeleteSkeleton(const unsigned int& skeletonID);
 		int AddAnimationToSkeleton(const unsigned int& skeletonID, glm::mat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame);
+		int GetAnimationFrameCount(const unsigned int& skeletonID, const unsigned int& animationID, unsigned int& out_frameCount);
 
         /*!
         Sets the font used for rendering SubSystem statistics.

@@ -24,7 +24,7 @@ namespace GFX
 
 		m_shaderManager->CreateProgram("ColorGrading");
 		m_shaderManager->LoadShader("shaders/RenderToQuad/Quad.vertex", "CGVS", GL_VERTEX_SHADER);
-		m_shaderManager->LoadShader("shaders/FSQuad.geometry", "CGGS", GL_GEOMETRY_SHADER);
+		m_shaderManager->LoadShader("shaders/FSQuadGS.glsl", "CGGS", GL_GEOMETRY_SHADER);
 		m_shaderManager->LoadShader("shaders/PostProcessing/ColorGradingPS.glsl", "CGPS", GL_FRAGMENT_SHADER);
 		m_shaderManager->AttachShader("CGVS", "ColorGrading");
 		m_shaderManager->AttachShader("CGGS", "ColorGrading");

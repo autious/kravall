@@ -36,6 +36,8 @@ public:
 	*/
 	int AddAnimationToSkeleton(const unsigned int& skeletonID, glm::mat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame);
 
+	int GetFrameCount(const unsigned int& skeletonID, const unsigned int& animationID, unsigned int& out_frameCount);
+
 private:
 	std::map<unsigned int, Skeleton*> m_skeletons;
 	unsigned int m_idCounter;

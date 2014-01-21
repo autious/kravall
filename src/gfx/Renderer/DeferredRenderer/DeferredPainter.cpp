@@ -28,15 +28,15 @@ namespace GFX
 
 		//TODO: CHANGE THIS INTO A PROPER STATIC SHADER
 		m_shaderManager->CreateProgram("StaticMesh");
-		m_shaderManager->LoadShader("shaders/SimpleGeometry.vertex", "StaticMeshVS", GL_VERTEX_SHADER);
-		m_shaderManager->LoadShader("shaders/SimpleGeometry.fragment", "StaticMeshFS", GL_FRAGMENT_SHADER);
+		m_shaderManager->LoadShader("shaders/SimpleGeometryVS.glsl", "StaticMeshVS", GL_VERTEX_SHADER);
+		m_shaderManager->LoadShader("shaders/SimpleGeometryFS.glsl", "StaticMeshFS", GL_FRAGMENT_SHADER);
 		m_shaderManager->AttachShader("StaticMeshVS", "StaticMesh");
 		m_shaderManager->AttachShader("StaticMeshFS", "StaticMesh");
 		m_shaderManager->LinkProgram("StaticMesh");
 
 		//Normal mapped, non-animated shader
 		m_shaderManager->CreateProgram("NormalMappedStatic");
-		m_shaderManager->LoadShader("shaders/SimpleGeometry.vertex", "NormalMappedStaticVS", GL_VERTEX_SHADER);
+		m_shaderManager->LoadShader("shaders/SimpleGeometryVS.glsl", "NormalMappedStaticVS", GL_VERTEX_SHADER);
 		m_shaderManager->LoadShader("shaders/NormalMappedFS.glsl", "NormalMappedStaticFS", GL_FRAGMENT_SHADER);
 		m_shaderManager->AttachShader("NormalMappedStaticVS", "NormalMappedStatic");
 		m_shaderManager->AttachShader("NormalMappedStaticFS", "NormalMappedStatic");
@@ -44,7 +44,7 @@ namespace GFX
 		
 		m_shaderManager->CreateProgram("AnimatedMesh");
 		m_shaderManager->LoadShader("shaders/AnimatedMeshVS.glsl", "AnimatedMeshVS", GL_VERTEX_SHADER);
-		m_shaderManager->LoadShader("shaders/SimpleGeometry.fragment", "AnimatedMeshFS", GL_FRAGMENT_SHADER);
+		m_shaderManager->LoadShader("shaders/SimpleGeometryFS.glsl", "AnimatedMeshFS", GL_FRAGMENT_SHADER);
 		m_shaderManager->AttachShader("AnimatedMeshVS", "AnimatedMesh");
 		m_shaderManager->AttachShader("AnimatedMeshFS", "AnimatedMesh");
 		m_shaderManager->LinkProgram("AnimatedMesh");
