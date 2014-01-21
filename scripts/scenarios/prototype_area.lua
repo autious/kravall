@@ -169,7 +169,9 @@ local area = ent.get "area"
 
 function printCount( ent )
 --    print( core.system.area.getAreaRioterCount( ent ) ) 
---    print( #(core.system.area.getAreaRioters( ent )) ) 
+    for _,ent in pairs( core.system.area.getAreaRioters( ent ) ) do
+        scen.asm:destroyEntity( ent )
+    end
 end
 
 area( scen, {0,0,0}, { 5,-5, 5,5, -5,5, -5,-5 }, "test_area", nil, printCount )

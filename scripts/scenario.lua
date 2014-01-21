@@ -14,7 +14,7 @@ function S.new( )
     self.asm = assembly_loader.loadPack({})
 
 
-    setmetatable( self, {__index = S, __newindex = function() error"NO" end, __gc = S.destroy } )
+    setmetatable( self, {__index = S, __newindex = function() error "NO" end, __gc = S.destroy } )
 
     return self
 end
@@ -28,16 +28,19 @@ function S:doneLoading()
 end
 
 function S:registerTickCallback( func )
-    print "Regging tick callback"
+    if type( func ) ~= "function" then
+        error( "Tick callback given is not a function" )
+    end
     self.tickCallbacks[#self.tickCallbacks+1] = func
     self.tccount = #self.tickCallbacks
 end
 
 function S:registerInitCallback( func )
-    print "Regging init callback"
+    if type( func ) ~= "function" then
+        error( "Tick callback given is not a function" )
+    end
     self.initCallbacks[#(self.initCallbacks)+1] = func
     self.iccount = #(self.initCallbacks)
-    print( #(self.initCallbacks) )
 end
 
 function S:update( delta )

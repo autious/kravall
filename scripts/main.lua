@@ -1,4 +1,4 @@
-local Camera = require "camera" 
+local Camera = require "rts_camera" 
 local MainMenu = require "gui/MainMenu"
 require "console"
 

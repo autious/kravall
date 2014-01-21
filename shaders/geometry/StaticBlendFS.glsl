@@ -32,14 +32,15 @@ void main()
 	vec4 colorB = vec4( 0.09, 0.39, 0.88, 1.0f ); // Pants
 	//vec4 colorA = vec4( 1.0f, 0.0f, 1.0f, 1.0f ); // Extra
 	
-	diffuseColor = mix(diffuseColor, diffuseColor*colorR, blendMap.r);
-	diffuseColor = mix(diffuseColor, diffuseColor*colorG, blendMap.g);
-	diffuseColor = mix(diffuseColor, diffuseColor*colorB, blendMap.b);
+	vec4 result = diffuseColor;
+	result = mix(result, diffuseColor*colorR, blendMap.r);
+	result = mix(result, diffuseColor*colorG, blendMap.g);
+	result = mix(result, diffuseColor*colorB, blendMap.b);
 	//diffuseColor = mix(diffuseColor, colorA, blendMap.a);
 
 	// Save to render targets
 	normalDepthRT = vec4(normalize(normalFS.xyz), posFS.z / posFS.w);
-	diffuseRT = diffuseColor;
+	diffuseRT = result;
 	specularRT = specColor;
 	glowMatIDRT = glowColor;
 }
