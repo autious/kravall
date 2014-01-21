@@ -41,6 +41,7 @@ function checkObjCount( ent )
     end
 
     if count > 5 then
+        objDontDie.state = "success"
         objLeadThrough.state = "success" 
     end
 
