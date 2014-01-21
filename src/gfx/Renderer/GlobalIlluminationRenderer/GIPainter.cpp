@@ -334,8 +334,8 @@ namespace GFX
 			if (lightType == GFX::LIGHT_TYPES::DIR)
 			{
 				LightData light = *reinterpret_cast<LightData*>(renderJobs[i].value);
-				float angle = glm::angle(light.orientation, glm::vec3(0,1,0));
-				m_shaderManager->SetUniform(1.0f, m_lightRotationUniform);
+				float angle = glm::angle(light.orientation, glm::vec3(1,0,0));
+				m_shaderManager->SetUniform(angle, m_lightRotationUniform);
 
 				glGetError();
 			}

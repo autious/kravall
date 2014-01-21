@@ -26,7 +26,7 @@ void main()
 	vec4 wPos = ReconstructPosition(normal_depth.w, uv);
 
 	vec4 normal = normalize(vec4(normal_depth.xyz, 0.0f));
-	float cosAlpha = max(0.0f, dot(gLightDir.xyz, normal.xyz));
+	float cosAlpha = max(0.0f, dot(-gLightDir.xyz, normal.xyz));
 
 	outputColor = vec4(cosAlpha) * color;
 	outputColor.w = 1.0f;

@@ -101,7 +101,7 @@ void main()
 			//WE DONT HAVE AN ENVIRONMENT MAP, WAT DO?
 			//vec3 senderRadiance = texture2D(envmapTexture, vec2( phi / (2.0*PI), 1.0 - theta / PI ) ).rgb;
 
-			vec3 radiance = vec3(0.1f) * visibility * receiverGeometricTerm;
+			vec3 radiance = vec3(1.0f) * visibility * receiverGeometricTerm;
 			directRadianceSum += radiance;
 			
 			vec3 ambientRadiance = vec3(1.0f) * receiverGeometricTerm;
