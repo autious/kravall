@@ -82,7 +82,7 @@ namespace GFX
 
 
 
-	void LightPainter::Render(unsigned int& renderIndex, FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, 
+	void LightPainter::Render(unsigned int& renderIndex, FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, FBOTexture* SSDOTexture,
 		glm::mat4 viewMatrix, glm::mat4 projMatrix, float exposure, float gamma, glm::vec3 whitePoint, GLuint& toneMappedTexture)
 	{
 		m_shaderManager->UseProgram("ComputeLighting");
@@ -188,6 +188,7 @@ namespace GFX
 		glBindImageTexture(2, diffuse->GetTextureHandle(), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
 		glBindImageTexture(3, specular->GetTextureHandle(), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
 		glBindImageTexture(4, glowMatID->GetTextureHandle(), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
+		glBindImageTexture(5, SSDOTexture->GetTextureHandle(), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
 
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_pointLightBuffer);
 		LightData* pData = (LightData*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, MAXIMUM_LIGHTS * sizeof(LightData), 

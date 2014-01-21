@@ -273,7 +273,7 @@ namespace GFX
 			
 			GFX_CHECKTIME(m_GIPainter->Render(delta, m_normalDepth, m_diffuse, m_viewMatrix, m_projMatrix), "GI");
 
-			GFX_CHECKTIME(m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, 
+			GFX_CHECKTIME(m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_GIPainter->m_SSDOTexture,
 				m_viewMatrix, m_projMatrix, m_exposure, m_gamma, m_whitePoint, m_toneMappedTexture), "Lighting");
 
 			GFX_CHECKTIME(m_postProcessingPainter->Render(delta, m_toneMappedTexture, m_currentLUT), "PostProcessing");
@@ -282,7 +282,7 @@ namespace GFX
 			//Render FBO
 			
 			if (m_showFBO != 0)
-				GFX_CHECKTIME(m_fboPainter->Render(m_normalDepth, m_diffuse, m_GIPainter->m_SSDOTexture, m_GIPainter->m_radianceTexture, m_windowWidth, m_windowHeight, m_showFBO), "FBO");
+				GFX_CHECKTIME(m_fboPainter->Render(m_normalDepth, m_diffuse, m_GIPainter->m_SSDOTexture, m_glowMatID, m_windowWidth, m_windowHeight, m_showFBO), "FBO");
 
 
 			GFX_CHECKTIME(m_debugPainter->Render(m_depthBuffer, m_normalDepth, m_viewMatrix, m_projMatrix), "Debug");
@@ -298,7 +298,7 @@ namespace GFX
 
 			m_GIPainter->Render(delta, m_normalDepth, m_diffuse, m_viewMatrix, m_projMatrix);
 
-			m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, 
+			m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_GIPainter->m_SSDOTexture,
 				m_viewMatrix, m_projMatrix, m_exposure, m_gamma, m_whitePoint, m_toneMappedTexture);
 
 			m_postProcessingPainter->Render(delta, m_toneMappedTexture, m_currentLUT);
@@ -307,7 +307,7 @@ namespace GFX
 			//Render FBO
 			
 			if (m_showFBO != 0)
-				m_fboPainter->Render(m_normalDepth, m_diffuse, m_GIPainter->m_SSDOTexture, m_GIPainter->m_radianceTexture, m_windowWidth, m_windowHeight, m_showFBO);
+				m_fboPainter->Render(m_normalDepth, m_diffuse, m_GIPainter->m_SSDOTexture, m_glowMatID, m_windowWidth, m_windowHeight, m_showFBO);
 
 			m_debugPainter->Render(m_depthBuffer, m_normalDepth, m_viewMatrix, m_projMatrix);
 

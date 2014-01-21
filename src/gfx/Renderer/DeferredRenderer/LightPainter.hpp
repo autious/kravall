@@ -43,7 +43,7 @@ namespace GFX
 		\param specular Rendertarget for specular
 		\param glowMatID Rendertarget for glow and materialID
 		*/
-		void Render(unsigned int& renderIndex, FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, 
+		void Render(unsigned int& renderIndex, FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, FBOTexture* SSDOTexture,
 			glm::mat4 viewMatrix, glm::mat4 projMatrix, float exposure, float gamma, glm::vec3 whitePoint, GLuint& toneMappedTexture);
 
 		void Resize(int screenWidth, int screenHeight);

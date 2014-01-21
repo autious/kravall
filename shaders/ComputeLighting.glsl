@@ -32,6 +32,7 @@ struct SurfaceData
 	vec4 diffuse;
 	vec4 specular;
 	vec4 glow;
+	vec4 occlusion;
 };
 
 struct Tile
@@ -45,6 +46,7 @@ layout (binding = 1, rgba32f) uniform readonly image2D normalDepth;
 layout (binding = 2, rgba32f) uniform readonly image2D diffuse;
 layout (binding = 3, rgba32f) uniform readonly image2D specular;
 layout (binding = 4, rgba32f) uniform readonly image2D glowMatID;
+layout (binding = 5, rgba32f) uniform readonly image2D occlusion;
 
 layout (std430, binding = 5) readonly buffer BufferObject
 {
@@ -95,7 +97,9 @@ vec3 BlinnPhong( LightData light, SurfaceData surface, vec3 eyeDirection, vec3 l
 	float df =  max( 0.0f, dot(surface.normalDepth.xyz, lightDirection));
 	intensity = df;
 
-	diffuseColor = surface.diffuse.xyz * intensity * light.color * light.intensity * attenuation;
+	float light_occlusion = 1 - clamp(dot(vec4(lightDirection , 1.0f), surface.occlusion), 0.0f, 1.0f);
+	light_occlusion *= 3.0f;
+	diffuseColor = surface.diffuse.xyz * intensity * light.color * light.intensity * attenuation * light_occlusion;
 
 	// Specular
 	vec3 specColor = vec3(0.0f, 0.0f, 0.0f);
@@ -107,8 +111,7 @@ vec3 BlinnPhong( LightData light, SurfaceData surface, vec3 eyeDirection, vec3 l
 	
 		// Temp vars, need materials with these channels
 
-
-		specColor = surface.specular.xyz * intensity * light.spec_color * light.intensity * attenuation;
+		specColor = surface.specular.xyz * intensity * light.spec_color * light.intensity * attenuation * light_occlusion;
 	}
 	return diffuseColor + specColor;
 }
@@ -331,7 +334,8 @@ void main()
 		surface.diffuse = imageLoad(diffuse, pixel);
 		surface.specular = imageLoad(specular, pixel);
 		surface.glow = imageLoad(glowMatID, pixel);
-		
+		surface.occlusion = imageLoad(occlusion, pixel);
+
 		vec4 color = vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
 		//point lights
@@ -360,9 +364,10 @@ void main()
 		{
 			color += vec4(lights[i].color*lights[i].intensity, 0.0f) * surface.diffuse;
 		}
-		
+
 		//Tone map
 		color.xyz = Uncharted2Tonemap(color.xyz * gExposure) / Uncharted2Tonemap(gWhitePoint);
+
 		//Gamma correct
 		color.xyz = pow(color.xyz, vec3(1.0f / gGamma));
 
@@ -379,6 +384,7 @@ void main()
 			//color = vec4(0.0f, (viewDepth), 0.0f, 0.0f);
 			//color += vec4(float(minDepthZ<(2*d-1.0 + 0.00001f) && minDepthZ>(2*d-1.0 - 0.00001f))*0.5f, 0.0f, 0.0f, 0.0f);
 			imageStore(outTexture, pixel, color);
+			//imageStore(outTexture, pixel, vec4(surface.occlusion.xyz,1.0f));
 			//imageStore(outTexture, pixel, vec4(minDepthZ));
 			//imageStore(outTexture, pixel, vec4(pointLightCount / 25.0f));
 			//imageStore(outTexture, pixel, vec4(vec2(tilePos.xy), 0.0f, 1.0f));
