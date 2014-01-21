@@ -1,10 +1,14 @@
 #include "RenderingSystem.hpp"
-#include "World.hpp"
+
 #include <gfx/GFXInterface.hpp>
 #include <gfx/InstanceData.hpp>
+#include <World.hpp>
 
 namespace Core
 {
+
+    RenderingSystem::RenderingSystem() :BaseSystem(EntityHandler::GenerateAspect<GraphicsComponent, WorldPositionComponent, RotationComponent, ScaleComponent>(), 0ULL)
+		{}
 	void RenderingSystem::Update(float delta)
 	{
 		glm::quat rot;
@@ -30,6 +34,7 @@ namespace Core
 			instanceData->modelMatrix = translationMatrix * rotationMatrix * scaleMatrix;
 			instanceData->animationIndex = 0;
 			instanceData->frameOffset = 0;
+			instanceData->rnd_seed = *it;
 
 			GFX::Draw(gc->bitmask, (void*)instanceData);
 		}

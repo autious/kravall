@@ -1,6 +1,8 @@
 local ent = require "entities"
 local scenario = require "scenario"
+local objective = require "objective" 
 local scen = scenario.new()
+local gamemode = setgamemode( "normal" )
 
 scen.asm:specific_content( core.contentmanager.load( 
 		core.loaders.NavigationMeshLoader, "prototypeLevel.txt", function( value ) end, false ) )
@@ -9,6 +11,44 @@ local ambient = ent.get "ambientLight"
 local directional = ent.get "directionalLight"
 local street_light = ent.get "streetLight"
 local street_light_intensity = 2.0
+
+
+-- SCRIPTS \/
+local DONT_DIE_MSG = "Don't let the anarachists die" 
+local objDontDie = objective.new( DONT_DIE_MSG ) 
+
+local ESCORT_MSG = "Escort atleast 5 anarchists to their home."
+local objLeadThrough = objective.new( ESCORT_MSG )
+
+gamemode.objectiveHandler:addObjective( objDontDie )
+gamemode.objectiveHandler:addObjective( objLeadThrough )
+
+
+function printCount( ent )
+--    print( core.system.area.getAreaRioterCount( ent ) ) 
+    for _,ent in pairs( core.system.area.getAreaRioters( ent ) ) do
+        scen.asm:destroyEntity( ent )
+    end
+end
+
+function checkObjCount( ent )
+    local count = core.system.area.getAreaRioterCount( ent )
+    local alive_count = core.system.rioterData.getRiotersInGroupCount( 1 )
+
+    if alive_count < 5 then
+        objDontDie.state = "fail"   
+        objLeadThrough.state = "fail"
+    end
+
+    if count > 5 then
+        objDontDie.state = "success"
+        objLeadThrough.state = "success" 
+    end
+
+    objDontDie.title = DONT_DIE_MSG .. " " .. alive_count .. " still alive."
+end
+
+-- DATA \/
 
 ambient(scen, 1.0, 1.0, 1.0, 0.1)
 directional(scen, -1, -1, 0.5)
@@ -167,11 +207,8 @@ building(scen, 56, 19)
 
 local area = ent.get "area"
 
-function printCount( ent )
---    print( core.system.area.getAreaRioterCount( ent ) ) 
---    print( #(core.system.area.getAreaRioters( ent )) ) 
-end
 
-area( scen, {0,0,0}, { 5,-5, 5,5, -5,5, -5,-5 }, "test_area", nil, printCount )
+area( scen, {2,0,0}, { 5,-5, 5,5, -5,5, -5,-5 }, "test_area", nil, printCount )
+area( scen, {-21,0,36}, { 5,-5, 5,5, -5,5, -5,-5 }, "test_area", nil, checkObjCount )
 
 return scen;

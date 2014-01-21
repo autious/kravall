@@ -33,7 +33,7 @@ namespace Core
 		virtual const char* GetHumanName() { return "MovementSystem"; }
 
 	private:
-		void InterpolateDirections(MovementComponent* mc);
+		void InterpolateDirections(MovementComponent* mc, float delta);
 	};
 }
 

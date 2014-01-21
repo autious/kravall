@@ -5,7 +5,7 @@ struct InstanceData
 	mat4 mm;
 	uint animationFrame;
 	uint animationOffset;
-	uint pad1;
+	uint rnd_seed;
 	uint pad2;
 };
 
@@ -34,6 +34,7 @@ out vec4 posW;
 out vec4 normalFS;
 out vec4 tangentFS;
 out vec2 uvFS;
+flat out uint rnd_seed;
 
 void main()
 {
@@ -47,6 +48,7 @@ void main()
 	normalFS = gInstances[gl_InstanceID].mm * normalIN;
 	tangentFS = gInstances[gl_InstanceID].mm * tangentIN;
 	//binormalFS = gInstances[gl_InstanceID].mm * binormalIN;
+	rnd_seed = gInstances[gl_InstanceID].rnd_seed;
 
 #else
 
