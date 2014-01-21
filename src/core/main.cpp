@@ -12,7 +12,6 @@
 #include <WindowHandling/GLFWInclude.hpp>
 #include "WindowHandling/InitializeGLFW.hpp"
 
-#include <gfx/GFXInterface.hpp>
 #include <utility/Colors.hpp>
 #include "Camera/Camera.hpp"
 #include <ComponentFramework/SystemHandlerTemplate.hpp>
@@ -40,13 +39,13 @@
 
 static bool killProgram = false;
 
-static GFX::FontData* fontData;
-
 #include <DebugRendering.hpp>
 #include <DebugCreators.hpp>
 #include <CLOPLoggerCallback.hpp>
 
 GLFWwindow *mainWindow = nullptr;
+
+GFX::FontData* localFontData;
 
 // Just an example of a clop function
 // This function gets registred in Init with clop::Register("exit", ClopCloseWindow);
@@ -88,9 +87,9 @@ GLFWwindow* init( int argc, char** argv )
 
     Core::world.m_contentManager.Load<Core::TTFLoader>(Core::world.m_config.GetString("consoleFont", "assets/Fonts/ConsoleFont.font").c_str(), [](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
             {
-                fontData = static_cast<GFX::FontData*>(handle);
-                Core::Console().Init(fontData);  
-                GFX::Debug::SetStatisticsFont(fontData);
+                localFontData = static_cast<GFX::FontData*>(handle);
+                Core::Console().Init(localFontData);  
+                GFX::Debug::SetStatisticsFont(localFontData);
             });
 
     RegisterCLOPLogger();
