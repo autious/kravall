@@ -7,8 +7,7 @@ uniform sampler2D gNormals_depth;
 
 out vec4 outputColor;
 
-uniform vec4 gLightDir;
-uniform vec4 gLightDiffuse;
+uniform vec3 gLightDir;
 
 uniform mat4 gInvViewProj;
 
