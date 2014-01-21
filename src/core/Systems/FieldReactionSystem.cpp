@@ -106,7 +106,7 @@ void Core::FieldReactionSystem::UpdateAgents()
 				mc->newDirection[2] * FF_FACTOR + pfVector.z * PF_FACTOR);
 
 			if ((std::abs(newDir.x) + std::abs(newDir.y) + std::abs(newDir.z)) > 0.1f)
-				glm::normalize(newDir);
+				newDir = glm::normalize(newDir);
 
 			MovementComponent::SetDirection(mc, newDir.x, newDir.y, newDir.z);
 		}
