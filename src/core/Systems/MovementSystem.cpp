@@ -19,18 +19,20 @@ void Core::MovementSystem::Update(float delta)
 		if (mc->direction[0] != 0 || mc->direction[1] != 0 || mc->direction[2] != 0)
 		{
 			// Rotate model after direction
-			float angle = std::atan2(static_cast<double>(mc->direction[2]), static_cast<double>(mc->direction[0]));
+			float angle = static_cast<float>(std::atan2(static_cast<double>(mc->direction[2]), 
+														static_cast<double>(mc->direction[0])));
+
 			RotationComponent* rc = WGETC<RotationComponent>(*it);
 
-			*rc = RotationComponent::GetComponentRotateY(angle + 3.14f * 0.5f);
+			*rc = RotationComponent::GetComponentRotateY(-angle - 3.141592f * 0.5f);
 		}
 
 		// Draw the debug lines showing the rioter's direction.
-		//GFX::Debug::DrawLine(Core::WorldPositionComponent::GetVec3(*wpc),
-		//					 glm::vec3(wpc->position[0] + mc->direction[0],
-		//							   wpc->position[1] + mc->direction[1],
-		//							   wpc->position[2] + mc->direction[2]),
-		//					 GFXColor(1.0f, 0.0f, 0.0f, 1.0f), false);
+		GFX::Debug::DrawLine(Core::WorldPositionComponent::GetVec3(*wpc),
+							 glm::vec3(wpc->position[0] + mc->direction[0],
+									   wpc->position[1] + mc->direction[1],
+									   wpc->position[2] + mc->direction[2]),
+							 GFXColor(1.0f, 0.0f, 0.0f, 1.0f), false);
 
 		if (mc->goal[0] < FLT_MAX)
 		{

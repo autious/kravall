@@ -30,7 +30,8 @@ function C.new( )
     window.registerWindowSizeCallback( windowResizeCallback )
 
     local function onscroll( x, y )
-        self.position = self.position - vec3.new(0,1,0) * y * 0.5;
+        local forward = camera:getForward()
+        self.position = self.position + forward * y * 0.5;
     end
 
     input.registerOnScroll( onscroll )
