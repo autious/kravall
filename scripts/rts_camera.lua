@@ -1,5 +1,7 @@
 local input = require "input" 
 local window = require "window"
+local math = require "math"
+
 local C = {}
 
 local vec3 = core.glm.vec3
@@ -135,6 +137,19 @@ function C:update( dt )
             if self.forwardVelocity > 0 then
                 self.forwardVelocity = 0
             end
+        end
+
+        if x < 20 then 
+            self.position = self.position - xzRight  * core.config.cameraScrollingSpeed * delta
+        end
+        if self.width-x < 20 then
+            self.position = self.position + xzRight  * core.config.cameraScrollingSpeed * delta
+        end
+        if y < 20 then
+            self.position = self.position + xzUp * core.config.cameraScrollingSpeed * delta
+        end
+        if self.height-y < 20 then
+            self.position = self.position - xzUp * core.config.cameraScrollingSpeed * delta
         end
 
         self.px = x
