@@ -2,7 +2,11 @@ local window = {}
 local windowSizeCallback = {}
 local windowFocusCallback = {}
 
+window.width,window.height = core.window.getSize()
+
 function core.window.windowSizeCallback( width, height )
+    window.width = width
+    window.height = height
     for k,v in pairs( windowSizeCallback ) do
         k(width,height)
     end

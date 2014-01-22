@@ -101,7 +101,7 @@ end
 --core.nav_mesh.set_group_goal(0, -43, 0, 4)
 
 local centerPoint = { 20.5, 0, -40 }		
-for i = 3, 4 do --4, 4 do
+for i = -4, 4 do
 	for p = -5, 5 do
 		rioter( asm, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], 1)
 	end

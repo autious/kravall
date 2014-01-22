@@ -21,8 +21,14 @@ int Core::MaterialLoaderBridge::Load( lua_State * L )
                 lua_State * L = Core::world.m_luaState.GetState();
                 lua_rawgeti( L, LUA_REGISTRYINDEX, callbackRegIndex );
                 lua_pushinteger( L, data->materialId );
-
-                int error = lua_pcall( L, 1,0,0 );
+                    
+                lua_newtable( L );
+                    lua_pushinteger( L, data->diffuseTexture->width );
+                    lua_setfield(L,-2, "diffuseWidth" );
+                    lua_pushinteger( L, data->diffuseTexture->height );
+                    lua_setfield(L,-2, "diffuseHeight" );
+                
+                int error = lua_pcall( L, 2,0,0 );
 
                 if( error )
                 {

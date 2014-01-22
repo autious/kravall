@@ -14,7 +14,7 @@ const float Core::FieldReactionSystem::STAY_LIMIT = 0.1f;
 const float Core::FieldReactionSystem::FIELD_CELL_SIDE_SIZE = FIELD_SIDE_LENGTH / static_cast<float>(FIELD_SIDE_CELL_COUNT);
 const frsChargeCurve Core::FieldReactionSystem::CURVE[1][2] =
 {
-	{{0.0f, 5.0f, 10.0f}, {-5000.0f, 15.0f, 1.0f} }
+	{{0.0f, 5.0f, 1.2f}, {-5000.0f, 15.0f, 1.0f} }
 };
 
 Core::FieldReactionSystem::FieldReactionSystem() : BaseSystem(EntityHandler::GenerateAspect<WorldPositionComponent, MovementComponent,
@@ -68,7 +68,7 @@ void Core::FieldReactionSystem::UpdateAgents()
 
 			float highestSum = GetEffectOnAgentAt(*it, wpc, ac->rioter.groupID);
 			float staySum = highestSum;
-			
+
 			for (int i = -1; i < 2; ++i) // 3.
 			{
 				for (int j = -1; j < 2; ++j) // 4.
@@ -76,7 +76,7 @@ void Core::FieldReactionSystem::UpdateAgents()
 					if (i == 0 && j == 0)
 						continue;
 
-                    WorldPositionComponent wpct(wpc->position[0] + i, wpc->position[1],
+					WorldPositionComponent wpct(wpc->position[0] + i, wpc->position[1],
 						wpc->position[2] + j);
 
 					float chargeSum = GetEffectOnAgentAt(*it, &wpct, ac->rioter.groupID);
@@ -89,15 +89,15 @@ void Core::FieldReactionSystem::UpdateAgents()
 					}
 				}
 			}
-			
+
 			glm::vec3 pfVector;
 
 			if (highestSum - staySum > STAY_LIMIT)
 			{
 				if (bestIndex.x == 0.0f || bestIndex.y == 0.0f)
-					pfVector = glm::vec3( bestIndex.x, 0.0f, bestIndex.y);
+					pfVector = glm::vec3(bestIndex.x, 0.0f, bestIndex.y);
 				else
-					pfVector = glm::normalize( glm::vec3( bestIndex.x, 0, bestIndex.y ) );
+					pfVector = glm::normalize(glm::vec3(bestIndex.x, 0, bestIndex.y));
 			}
 			else
 				pfVector = glm::vec3(0.0f);
@@ -114,11 +114,18 @@ void Core::FieldReactionSystem::UpdateAgents()
 				wpc->position[2] + mc->newDirection[2]),
 				GFXColor(0.0f, 0.0f, 0.0f, 1.0f), false);
 
+			float dot = glm::dot(glm::vec2(mc->newDirection[0], mc->newDirection[2]), glm::vec2(pfVector.x, pfVector.z));
+
+			if (dot < 0.0f)
+			{
+				MovementComponent::SetDirection(mc, 0.0f, 0.0f, 0.0f);
+			}
+
 			// Update the direction, making sure it is normalised (if not zero).
-			glm::vec3 newDir = glm::vec3(
-				mc->newDirection[0] * FF_FACTOR + pfVector.x * PF_FACTOR,
-				mc->newDirection[1] * FF_FACTOR + pfVector.y * PF_FACTOR,
-				mc->newDirection[2] * FF_FACTOR + pfVector.z * PF_FACTOR);
+			glm::vec3 newDir = glm::vec3(mc->newDirection[0] * FF_FACTOR + pfVector.x * PF_FACTOR,
+								mc->newDirection[1] * FF_FACTOR + pfVector.y * PF_FACTOR,
+								mc->newDirection[2] * FF_FACTOR + pfVector.z * PF_FACTOR);
+			
 
 			if ((std::abs(newDir.x) + std::abs(newDir.y) + std::abs(newDir.z)) > 0.1f)
 				newDir = glm::normalize(newDir);
