@@ -10,11 +10,6 @@ function GUIBase:newindex( index, value )
     error( "Nope" )
 end
 
-local vComponentTypes = { core.componentType.GraphicsComponent,
-                          core.componentType.WorldPositionComponent,
-                          core.componentType.ScaleComponent,
-                          core.componentType.RotationComponent}
-
 function GUIBase.new()
     local self = {}
 

@@ -13,7 +13,7 @@ function O:isWin()
 end
 
 function O:isLoss()
-    return self.state == "loss"
+    return self.state == "fail"
 end
 
 function O:update( delta )
@@ -42,16 +42,14 @@ function O:update( delta )
             self.state = "success" 
         end
         
-        local loss = true
-
+        local fail = true
         for i,o in pairs( self.objectives ) do
-            if o.state ~= "loss" then
-                loss = false  
+            if o.state ~= "fail" then
+                fail = false  
             end
         end
-
-        if loss then
-            self.state = "loss"
+        if fail then
+            self.state = "fail"
         end
     end
 end
