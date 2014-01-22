@@ -5,6 +5,9 @@
 #include <glm/glm.hpp>
 #include "Console/CLOP.hpp"
 
+#define NAVMESH_NO_CONNECTING_CORNERS -1
+#define NAVMESH_CONCAVE_CORNER_NODE -2
+
 namespace Core
 {
 	struct NavigationMesh;
@@ -76,18 +79,29 @@ namespace Core
 				*/
 				float inverseLength;
 				/*!
-					Normal for the respective edge.
+					2D Normal for the respective edge.
 				*/
-				float normal[3];
+				float normal[2];
+
+				/*
+					This corner links to the following edge and node.
+				*/
+				int cornerConnectsToNode;
+
+				/*
+					This corner links to the following edge and node.
+				*/
+				int cornerConnectsToCorner;
 				
 			} corners[4];
 		};
 
 		/*!
-			Struct containing a list of direction vectors with the same size as Core::NavigationMesh::nrNodes.
+			Struct containing a list of direction vectors and from-goal entry edges with the same size as Core::NavigationMesh::nrNodes.
 		*/
 		struct Flowfield
 		{
+			float goal[2];
 			int* edges;
 			glm::vec3* list;
 		};

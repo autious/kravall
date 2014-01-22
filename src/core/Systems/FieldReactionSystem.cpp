@@ -3,17 +3,21 @@
 #include <logger/Logger.hpp>
 
 #define frsChargeCurve Core::FieldReactionSystem::ChargeCurve
+#define PF_FACTOR 1.0f
+#define FF_FACTOR 1.0f
+#define CAP_POSITIVE 10.0f
+#define CAP_NEGATIVE -100000000.0f
 
 const float Core::FieldReactionSystem::STAY_LIMIT = 0.1f;
 
 const float Core::FieldReactionSystem::FIELD_CELL_SIDE_SIZE = FIELD_SIDE_LENGTH / static_cast<float>(FIELD_SIDE_CELL_COUNT);
 const frsChargeCurve Core::FieldReactionSystem::CURVE[1][2] =
 {
-	{{1.0f, 15.0f, 2.0f}, {-100.0f, 15.0f, 1.0f} }
+	{{1.0f, 10.0f, 2.0f}, {-1000.0f, 10.0f, 1.0f} }
 };
 
 Core::FieldReactionSystem::FieldReactionSystem() : BaseSystem(EntityHandler::GenerateAspect<WorldPositionComponent, MovementComponent,
-	UnitTypeComponent, AttributeComponent>(), 0ULL), m_showPF(false), m_updateCounter(0)
+	UnitTypeComponent, AttributeComponent>(), 0ULL), m_showPF(false), m_updateCounter(0), m_drawFieldCenter(0.0f, 0.0f)
 {
 	for (int i = 0; i < FIELD_SIDE_CELL_COUNT; ++i)
 	{
@@ -85,8 +89,6 @@ void Core::FieldReactionSystem::UpdateAgents()
 				}
 			}
 			
-			#define PF_FACTOR 1.0f
-			#define FF_FACTOR 1.0f
 			glm::vec3 pfVector;
 
 			if (highestSum - staySum > STAY_LIMIT)
@@ -150,7 +152,7 @@ float Core::FieldReactionSystem::GetEffectOnAgentAt(const Entity queryAgent, Wor
 		}
 	}
 
-	return positiveSum + negativeSum;
+	return std::min(positiveSum, CAP_POSITIVE) + std::max(negativeSum, CAP_NEGATIVE);
 }
 
 float Core::FieldReactionSystem::GetAgentsChargeAt(Entity chargedAgent, float distSqrd)
@@ -281,8 +283,7 @@ void Core::FieldReactionSystem::CommitDebugField()
 
 glm::vec3 Core::FieldReactionSystem::GetPositionFromFieldIndex(int xIndex, int zIndex, float yPos)
 {
-	float cellHalfSize = FIELD_CELL_SIDE_SIZE * 0.5f;
-	float fieldStart = -FIELD_SIDE_LENGTH * 0.5f - cellHalfSize;
+	float fieldStart = (-FIELD_SIDE_LENGTH - FIELD_CELL_SIDE_SIZE) * 0.5f;
 
 	return GFXVec3(fieldStart + FIELD_CELL_SIDE_SIZE * xIndex, 
 				   yPos, 
