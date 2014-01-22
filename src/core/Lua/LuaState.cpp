@@ -145,9 +145,18 @@ void Core::LuaState::OpenLibs()
     assert( sanity == lua_gettop(m_state) );
 }
 
+void Core::LuaState::CloseLibs()
+{
+    if( bindings != nullptr )
+        delete bindings;
+    bindings = nullptr;
+}
+
 Core::LuaState::~LuaState()
 {
-    delete bindings;
+    CloseLibs(); //Ensure that libs are closed, should happen earlier.
+                //Risk for fucky destructor calls in bindings otherwise.
+                //if the lua state is on the stack.
     lua_close( m_state );
 }
 
