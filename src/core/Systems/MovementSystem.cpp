@@ -30,11 +30,11 @@ void Core::MovementSystem::Update(float delta)
 		}
 
 		// Draw the debug lines showing the rioter's direction.
-		GFX::Debug::DrawLine(Core::WorldPositionComponent::GetVec3(*wpc),
+		/*GFX::Debug::DrawLine(Core::WorldPositionComponent::GetVec3(*wpc),
 							 glm::vec3(wpc->position[0] + mc->direction[0],
 									   wpc->position[1] + mc->direction[1],
 									   wpc->position[2] + mc->direction[2]),
-							 GFXColor(1.0f, 0.0f, 0.0f, 1.0f), false);
+							 GFXColor(1.0f, 0.0f, 0.0f, 1.0f), false);*/
 
 		if (mc->goal[0] < FLT_MAX)
 		{
@@ -91,7 +91,7 @@ void Core::MovementSystem::InterpolateDirections(MovementComponent* mc, float de
 		glm::vec3 oldDir = glm::vec3(mc->direction[0], mc->direction[1], mc->direction[2]);
 		glm::vec3 newDir = glm::vec3(mc->newDirection[0], mc->newDirection[1], mc->newDirection[2]);
 	
-		newDir = glm::lerp(oldDir, newDir, TURN_FACTOR * delta);
+		newDir = glm::lerp(oldDir, newDir, /*TURN_FACTOR * delta*/ 1.0f);
 
         //Must check if the new dir is 0 before normalizing
         if( glm::length2( newDir ) > 0 )

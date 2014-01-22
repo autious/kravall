@@ -62,7 +62,7 @@ namespace Core
 		
 		float m_field[FIELD_SIDE_CELL_COUNT][FIELD_SIDE_CELL_COUNT];
 		float m_calculatingField[FIELD_SIDE_CELL_COUNT][FIELD_SIDE_CELL_COUNT];
-		glm::vec2 m_drawFieldCenter;
+		glm::vec3 m_drawFieldCenter;
 		bool m_showPF;
 		int m_updateCounter;
 

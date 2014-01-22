@@ -5,7 +5,7 @@
 #define frsChargeCurve Core::FieldReactionSystem::ChargeCurve
 #define PF_FACTOR 1.0f
 #define FF_FACTOR 0.1f
-#define CAP_POSITIVE 10.0f
+#define CAP_POSITIVE 100000000.0f
 #define CAP_NEGATIVE -100000000.0f
 
 const float Core::FieldReactionSystem::STAY_LIMIT = 0.1f;
@@ -13,11 +13,11 @@ const float Core::FieldReactionSystem::STAY_LIMIT = 0.1f;
 const float Core::FieldReactionSystem::FIELD_CELL_SIDE_SIZE = FIELD_SIDE_LENGTH / static_cast<float>(FIELD_SIDE_CELL_COUNT);
 const frsChargeCurve Core::FieldReactionSystem::CURVE[1][2] =
 {
-	{{1.0f, 10.0f, 2.0f}, {-1000.0f, 10.0f, 1.0f} }
+	{{1.0f, 10.0f, 2.0f}, {-10.0f, 10.0f, 1.0f} }
 };
 
 Core::FieldReactionSystem::FieldReactionSystem() : BaseSystem(EntityHandler::GenerateAspect<WorldPositionComponent, MovementComponent,
-	UnitTypeComponent, AttributeComponent>(), 0ULL), m_showPF(true), m_updateCounter(0), m_drawFieldCenter(0.0f, 0.0f)
+	UnitTypeComponent, AttributeComponent>(), 0ULL), m_showPF(true), m_updateCounter(0), m_drawFieldCenter(-4.0f, -0.5f, -21.0f)
 {
 	for (int i = 0; i < FIELD_SIDE_CELL_COUNT; ++i)
 	{
@@ -31,13 +31,13 @@ Core::FieldReactionSystem::FieldReactionSystem() : BaseSystem(EntityHandler::Gen
 
 void Core::FieldReactionSystem::Update(float delta)
 {
-	UpdateAgents();
-
 	if (m_showPF)
 	{
 		UpdateDebugField();
 		DrawDebugField();
 	}
+
+	UpdateAgents();
 }
 
 void Core::FieldReactionSystem::UpdateAgents()
@@ -100,6 +100,18 @@ void Core::FieldReactionSystem::UpdateAgents()
 			}
 			else
 				pfVector = glm::vec3(0.0f);
+
+			// Draw a yellow PF direction line and a green ff direction line for each rioter.
+			GFX::Debug::DrawLine(Core::WorldPositionComponent::GetVec3(*wpc),
+				glm::vec3(wpc->position[0] + pfVector.x,
+				wpc->position[1] + pfVector.y,
+				wpc->position[2] + pfVector.z),
+				GFXColor(1.0f, 1.0f, 0.0f, 1.0f), false);
+			GFX::Debug::DrawLine(Core::WorldPositionComponent::GetVec3(*wpc),
+				glm::vec3(wpc->position[0] + mc->newDirection[0],
+				wpc->position[1] + mc->newDirection[1],
+				wpc->position[2] + mc->newDirection[2]),
+				GFXColor(0.0f, 1.0f, 0.0f, 1.0f), false);
 
 			// Update the direction, making sure it is normalised (if not zero).
 			glm::vec3 newDir = glm::vec3(
@@ -285,7 +297,7 @@ glm::vec3 Core::FieldReactionSystem::GetPositionFromFieldIndex(int xIndex, int z
 {
 	float fieldStart = (-FIELD_SIDE_LENGTH - FIELD_CELL_SIDE_SIZE) * 0.5f;
 
-	return GFXVec3(fieldStart + FIELD_CELL_SIDE_SIZE * xIndex, 
-				   yPos, 
-				   fieldStart + FIELD_CELL_SIDE_SIZE * zIndex);
+	return GFXVec3(fieldStart + FIELD_CELL_SIDE_SIZE * xIndex + m_drawFieldCenter.x, 
+				   yPos + m_drawFieldCenter.y, 
+				   fieldStart + FIELD_CELL_SIDE_SIZE * zIndex + m_drawFieldCenter.z);
 }
