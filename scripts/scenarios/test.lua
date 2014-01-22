@@ -7,9 +7,9 @@ local ambient = ent.get "ambientLight"
 local directional = ent.get "directionalLight"
 local street_light = ent.get "streetLight"
 local area = ent.get "area"
+local whitebox = ent.get "whitebox"
 
 ---
-
 local street_light_intensity = 2.0
 
 ambient(scen, 1.0, 1.0, 1.0, 0.1)
@@ -121,6 +121,12 @@ building(scen, 28, 17)
 building(scen, 36, 20)
 building(scen, 45, 19)
 building(scen, 56, 19)
+
+for x=-10,10 do
+    for y=-10,10 do
+        whitebox(scen,x*200,0,y*200)
+    end
+end
 
 --------------
 local function area_init( entity )
