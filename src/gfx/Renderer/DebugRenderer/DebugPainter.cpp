@@ -138,6 +138,25 @@ namespace GFX
 
 			m_uniformBufferManager->SetBasicCameraUBO(bc);
 
+			// Draw boxes
+			m_shaderManager->UseProgram("DebugBox");
+			for (unsigned int i = 0; i < DebugDrawing().GetFilledBoxes().size(); ++i)
+			{
+				DebugBox b = DebugDrawing().GetFilledBoxes()[i];
+
+				m_shaderManager->SetUniform(1, b.color, m_boxColorUniform);
+				m_shaderManager->SetUniform(1, b.position, m_boxPosUniform);
+				m_shaderManager->SetUniform(1, b.dimensions, m_boxDimUniform);
+				
+				if (b.useDepth)
+					glEnable(GL_DEPTH_TEST);
+				else
+					glDisable(GL_DEPTH_TEST); 
+
+				glDrawArrays(GL_POINTS, 0, 1);
+			}
+			m_shaderManager->ResetProgram();
+			
 
 			// Draw lines3D
 			m_shaderManager->UseProgram("DebugLine");
@@ -159,25 +178,6 @@ namespace GFX
 				glDrawArrays(GL_POINTS, 0, 1);
 			}
 			glLineWidth(1.0f);
-			m_shaderManager->ResetProgram();
-
-			// Draw boxes
-			m_shaderManager->UseProgram("DebugBox");
-			for (unsigned int i = 0; i < DebugDrawing().GetFilledBoxes().size(); ++i)
-			{
-				DebugBox b = DebugDrawing().GetFilledBoxes()[i];
-
-				m_shaderManager->SetUniform(1, b.color, m_boxColorUniform);
-				m_shaderManager->SetUniform(1, b.position, m_boxPosUniform);
-				m_shaderManager->SetUniform(1, b.dimensions, m_boxDimUniform);
-				
-				if (b.useDepth)
-					glEnable(GL_DEPTH_TEST);
-				else
-					glDisable(GL_DEPTH_TEST); 
-
-				glDrawArrays(GL_POINTS, 0, 1);
-			}
 			m_shaderManager->ResetProgram();
 
 			// Draw 2D

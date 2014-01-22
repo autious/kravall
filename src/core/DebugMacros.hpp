@@ -1,0 +1,29 @@
+#ifndef SRC_CORE_DEBUGMACROS_HPP
+#define SRC_CORE_DEBUGMACROS_HPP
+
+
+
+#define SHOW_POLICE_CAN_SEE_GOAL
+//#define SHOW_2D_COLLISION_CULLING_QUADS
+//#define SHOW_2D_COLLISION_LINE_BETWEEN_COLLISIONS
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#endif
