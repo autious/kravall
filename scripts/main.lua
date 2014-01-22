@@ -1,5 +1,6 @@
 local Camera = require "rts_camera" 
 local MainMenu = require "gui/MainMenu"
+local image = require "factories/image"
 require "console"
 
 local current_scenario = nil
@@ -23,6 +24,7 @@ end
 -- Called when program starts
 function core.init() 
     print( "Program starting in lua" )
+    logo = image( 10,10, "assets/material/ui/test.material", false )
     toggleMenu()
     --openscenario( "test" )    
 end
