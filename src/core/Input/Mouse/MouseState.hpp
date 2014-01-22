@@ -1,6 +1,8 @@
 #ifndef CORE_INPUT_MOUSE_MOUSE_HPP
 #define CORE_INPUT_MOUSE_MOUSE_HPP
 
+#include <WindowHandling/GLFWInclude.hpp>
+
 namespace Core
 {
     class MouseState
@@ -16,7 +18,7 @@ namespace Core
         void GetCursorPosition(int& x, int& y);
 
     private:        
-        static const int NUMBER_OF_BUTTONS = 3;
+        static const int NUMBER_OF_BUTTONS = GLFW_MOUSE_BUTTON_LAST + 1;
         bool m_buttonValues[NUMBER_OF_BUTTONS];
 
         int m_cursorPositionX;

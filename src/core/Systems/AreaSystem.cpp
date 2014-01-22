@@ -9,7 +9,7 @@
 namespace Core
 {
     AreaSystem::AreaSystem()
-        : BaseSystem( {{EntityHandler::GenerateAspect<AreaComponent,WorldPositionComponent>(), 0ULL}, {EntityHandler::GenerateAspect<AttributeComponent,WorldPositionComponent>(), 0ULL}} )
+        : BaseSystem( {{EntityHandler::GenerateAspect<AreaComponent,WorldPositionComponent>(), 0ULL}, {EntityHandler::GenerateAspect<AttributeComponent,WorldPositionComponent,UnitTypeComponent>(), 0ULL}} )
     {
         
     }
@@ -80,12 +80,17 @@ namespace Core
                 riotIt++)
             {
                 WorldPositionComponent *rioterWPC = WGETC<WorldPositionComponent>(*riotIt);
-                if( Core::AreaUtility::CheckPointInsideNode(
-                            WorldPositionComponent::GetVec3(*rioterWPC), 
-                            areaAC->vertices, 
-                            WorldPositionComponent::GetVec3(*areaWPC)))
+                UnitTypeComponent *type = WGETC<UnitTypeComponent>(*riotIt);
+
+                if( type->type == Core::UnitType::Rioter )
                 {
-                    rioterContainList[*areaIt].push_back( *riotIt );
+                    if( Core::AreaUtility::CheckPointInsideNode(
+                                WorldPositionComponent::GetVec3(*rioterWPC), 
+                                areaAC->vertices, 
+                                WorldPositionComponent::GetVec3(*areaWPC)))
+                    {
+                        rioterContainList[*areaIt].push_back( *riotIt );
+                    }
                 }
             }
         }

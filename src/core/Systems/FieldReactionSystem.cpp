@@ -17,7 +17,7 @@ const frsChargeCurve Core::FieldReactionSystem::CURVE[1][2] =
 };
 
 Core::FieldReactionSystem::FieldReactionSystem() : BaseSystem(EntityHandler::GenerateAspect<WorldPositionComponent, MovementComponent,
-	UnitTypeComponent, AttributeComponent>(), 0ULL), m_showPF(false), m_updateCounter(0)
+	UnitTypeComponent, AttributeComponent>(), 0ULL), m_showPF(true), m_updateCounter(0), m_drawFieldCenter(0.0f, 0.0f)
 {
 	for (int i = 0; i < FIELD_SIDE_CELL_COUNT; ++i)
 	{
@@ -283,8 +283,7 @@ void Core::FieldReactionSystem::CommitDebugField()
 
 glm::vec3 Core::FieldReactionSystem::GetPositionFromFieldIndex(int xIndex, int zIndex, float yPos)
 {
-	float cellHalfSize = FIELD_CELL_SIDE_SIZE * 0.5f;
-	float fieldStart = -FIELD_SIDE_LENGTH * 0.5f - cellHalfSize;
+	float fieldStart = (-FIELD_SIDE_LENGTH - FIELD_CELL_SIDE_SIZE) * 0.5f;
 
 	return GFXVec3(fieldStart + FIELD_CELL_SIDE_SIZE * xIndex, 
 				   yPos, 
