@@ -184,6 +184,7 @@ void run( GLFWwindow * window )
     //Deregister clop before the stack starts unwinding!
     DeregisterCLOPLogger();
 
+    Core::world.m_luaState.CloseLibs();
 	Core::world.m_constantHeap.Rewind();
 
     Core::GLFWWindowCallbackHandler::Free();

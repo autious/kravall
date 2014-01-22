@@ -4,6 +4,7 @@
 #include <DebugMacros.hpp>
 #include <GameUtility/GameData.hpp>
 
+const float Core::MovementSystem::TURN_FACTOR = 10.0f;
 
 void Core::MovementSystem::Update(float delta)
 {
@@ -74,7 +75,7 @@ void Core::MovementSystem::InterpolateDirections(MovementComponent* mc, float de
 		glm::vec3 oldDir = glm::vec3(mc->direction[0], mc->direction[1], mc->direction[2]);
 		glm::vec3 newDir = glm::vec3(mc->newDirection[0], mc->newDirection[1], mc->newDirection[2]);
 	
-		newDir = glm::lerp(oldDir, newDir, 1.0f * delta); //1.0f should probably be some kind of turnspeed variable
+		newDir = glm::lerp(oldDir, newDir, TURN_FACTOR * delta);
 
         //Must check if the new dir is 0 before normalizing
         if( glm::length2( newDir ) > 0 )
