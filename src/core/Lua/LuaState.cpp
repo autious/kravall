@@ -31,6 +31,7 @@
 #include <Lua/Bridges/LuaNameSystemBridge.hpp>
 #include <Lua/Bridges/LuaAreaSystemBridge.hpp>
 #include <Lua/Bridges/LuaDrawBridge.hpp>
+#include <Lua/Bridges/LuaRioterDataSystemBridge.hpp>
 
 namespace Core
 {
@@ -54,7 +55,8 @@ namespace Core
 		llhb(L),
         lnsb(L),
         lasb(L),
-        ldb(L)
+        ldb(L),
+        lrdsb(L)
         {}
             
         LuaBitmask lb;
@@ -75,6 +77,7 @@ namespace Core
 		LuaLevelHeapBridge llhb;
         LuaAreaSystemBridge lasb;
         LuaDrawBridge ldb;
+        LuaRioterDataSystemBridge lrdsb;
     };
 }
 
@@ -142,9 +145,18 @@ void Core::LuaState::OpenLibs()
     assert( sanity == lua_gettop(m_state) );
 }
 
+void Core::LuaState::CloseLibs()
+{
+    if( bindings != nullptr )
+        delete bindings;
+    bindings = nullptr;
+}
+
 Core::LuaState::~LuaState()
 {
-    delete bindings;
+    CloseLibs(); //Ensure that libs are closed, should happen earlier.
+                //Risk for fucky destructor calls in bindings otherwise.
+                //if the lua state is on the stack.
     lua_close( m_state );
 }
 
