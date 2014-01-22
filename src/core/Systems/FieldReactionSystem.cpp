@@ -3,21 +3,22 @@
 #include <logger/Logger.hpp>
 
 #define frsChargeCurve Core::FieldReactionSystem::ChargeCurve
+#define PF_DRAW_DIVIDE_FACTOR 0.05f
 #define PF_FACTOR 1.0f
-#define FF_FACTOR 0.1f
-#define CAP_POSITIVE 100000000.0f
-#define CAP_NEGATIVE -100000000.0f
+#define FF_FACTOR 0.0001f
+#define CAP_POSITIVE 1000000.0f
+#define CAP_NEGATIVE -1000000.0f
 
 const float Core::FieldReactionSystem::STAY_LIMIT = 0.1f;
 
 const float Core::FieldReactionSystem::FIELD_CELL_SIDE_SIZE = FIELD_SIDE_LENGTH / static_cast<float>(FIELD_SIDE_CELL_COUNT);
 const frsChargeCurve Core::FieldReactionSystem::CURVE[1][2] =
 {
-	{{1.0f, 10.0f, 2.0f}, {-10.0f, 10.0f, 1.0f} }
+	{{0.0f, 5.0f, 10.0f}, {-5000.0f, 15.0f, 1.0f} }
 };
 
 Core::FieldReactionSystem::FieldReactionSystem() : BaseSystem(EntityHandler::GenerateAspect<WorldPositionComponent, MovementComponent,
-	UnitTypeComponent, AttributeComponent>(), 0ULL), m_showPF(true), m_updateCounter(0), m_drawFieldCenter(-4.0f, -0.5f, -21.0f)
+	UnitTypeComponent, AttributeComponent>(), 0ULL), m_showPF(true), m_updateCounter(0), m_drawFieldCenter(1, -0.5f, -35) //(-4.0f, -0.5f, -31.0f)
 {
 	for (int i = 0; i < FIELD_SIDE_CELL_COUNT; ++i)
 	{
@@ -101,7 +102,7 @@ void Core::FieldReactionSystem::UpdateAgents()
 			else
 				pfVector = glm::vec3(0.0f);
 
-			// Draw a yellow PF direction line and a green ff direction line for each rioter.
+			// Draw a yellow PF direction line and a black ff direction line for each rioter.
 			GFX::Debug::DrawLine(Core::WorldPositionComponent::GetVec3(*wpc),
 				glm::vec3(wpc->position[0] + pfVector.x,
 				wpc->position[1] + pfVector.y,
@@ -111,7 +112,7 @@ void Core::FieldReactionSystem::UpdateAgents()
 				glm::vec3(wpc->position[0] + mc->newDirection[0],
 				wpc->position[1] + mc->newDirection[1],
 				wpc->position[2] + mc->newDirection[2]),
-				GFXColor(0.0f, 1.0f, 0.0f, 1.0f), false);
+				GFXColor(0.0f, 0.0f, 0.0f, 1.0f), false);
 
 			// Update the direction, making sure it is normalised (if not zero).
 			glm::vec3 newDir = glm::vec3(
@@ -288,7 +289,7 @@ void Core::FieldReactionSystem::CommitDebugField()
 	{
 		for (int j = 0; j < FIELD_SIDE_CELL_COUNT; ++j)
 		{
-			m_field[i][j] = m_calculatingField[i][j];
+			m_field[i][j] = m_calculatingField[i][j] * PF_DRAW_DIVIDE_FACTOR;
 		}
 	}
 }

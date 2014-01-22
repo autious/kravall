@@ -3,6 +3,8 @@
 
 #include <SystemDef.hpp>
 
+#define POLICE_GOAL_ARRIVAL_THRESHOLD 1.0f
+
 namespace Core
 {
 	/*!

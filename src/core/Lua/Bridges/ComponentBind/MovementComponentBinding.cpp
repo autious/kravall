@@ -47,11 +47,11 @@ Core::ComponentGetters Core::MovementComponentBinding::GetGetters()
         return 1;
     };
 
-	getters["maxSpeed"] = []( Core::Entity entity, lua_State *L )
+	getters["desiredSpeed"] = []( Core::Entity entity, lua_State *L )
     {
         MovementComponent *mvc = WGETC<MovementComponent>( entity );
 
-        lua_pushnumber( L, mvc->maxSpeed );
+        lua_pushnumber( L, mvc->desiredSpeed );
 
         return 1;
     };
@@ -94,6 +94,7 @@ Core::ComponentSetters Core::MovementComponentBinding::GetSetters()
                 if( lua_isnumber( L, -1 ) )
                 {
                     mvc->direction[i] = static_cast<float>(lua_tonumber( L, -1 ));  
+					mvc->newDirection[i] = 0; // NOCOMMIT
                 }
 
                 lua_pop( L, 1 );
@@ -136,13 +137,13 @@ Core::ComponentSetters Core::MovementComponentBinding::GetSetters()
         }
     };
 
-	setters["maxSpeed"] = []( Core::Entity entity, lua_State * L, int valueindex )
+	setters["desiredSpeed"] = []( Core::Entity entity, lua_State * L, int valueindex )
     {
         MovementComponent *mvc = WGETC<MovementComponent>( entity );
         
         if( lua_isnumber(  L, valueindex ) )
         {
-            mvc->maxSpeed = static_cast<float>(lua_tonumber( L, valueindex ));
+            mvc->desiredSpeed = static_cast<float>(lua_tonumber( L, valueindex ));
         }
         else
         {
@@ -172,7 +173,6 @@ Core::ComponentSetters Core::MovementComponentBinding::GetSetters()
 		else if( lua_isboolean( L, -1 ) )
 		{
 			mvc->goal[0] = FLT_MAX;
-			return;
 		}
     };
 

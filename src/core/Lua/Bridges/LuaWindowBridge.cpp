@@ -95,4 +95,30 @@ namespace Core
         lua_pop( m_state, 2 );
 
     }
+
+    void LuaWindowBridge::WindowFocus( int focus )
+    {
+        lua_getglobal( m_state, "core" );
+        lua_getfield( m_state, -1, "window" );
+        lua_getfield( m_state, -1, "windowFocusCallback" );
+
+        if( lua_isfunction( m_state, -1 ) )
+        {
+            lua_pushinteger( m_state, focus );
+
+            int error = lua_pcall( m_state, 1, 0, 0);
+
+            if( error )
+            {
+                LOG_ERROR << "Error when using callback core.window.framebufferSizeCallback:" << lua_tostring( m_state, -1 ) << std::endl;
+                lua_pop( m_state, 1 );
+            }
+        }
+        else
+        {
+            lua_pop( m_state,1 );
+        }
+
+        lua_pop( m_state, 2 );
+    }
 }

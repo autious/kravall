@@ -15,8 +15,8 @@ namespace Core
 		/*! The object's current speed. Represented by a floating point and should never exceed maxSpeed. */
 		float speed;
 
-		/*! The object's maximum speed. This is used with acceleration and should limit the range of speed. */
-		float maxSpeed;
+		/*! The object's desired speed. The speed will attempt to reach this speed. */
+		float desiredSpeed;
 
 		/*! 
 			Should NEVER be set directly - use the static function SetDirection instead. An array specifying the 
@@ -34,7 +34,7 @@ namespace Core
 		float goal[3];
 
 		/*! Default constructor. Initialising all members to 0. */
-		MovementComponent() : speed(0.0f), maxSpeed(0.0f)
+		MovementComponent() : speed(0.0f), desiredSpeed(0.0f)
 		{
 			direction[0] = 0.0f;
 			direction[1] = 0.0f;
@@ -55,11 +55,9 @@ namespace Core
 			\param dirY The y-component of the movement direction vector.
 			\param dirZ The z-component of the movement direction vector.
 			\param startSpeed The initial speed of the object.
-			\param highestSpeed The maximum speed for the object.
 		*/
-		MovementComponent(const float& dirX, const float& dirY, const float& dirZ, const float& startSpeed,
-			const float& highestSpeed)
-			: speed(startSpeed), maxSpeed(highestSpeed)
+		MovementComponent(const float& dirX, const float& dirY, const float& dirZ, const float& startSpeed)
+			: speed(startSpeed), desiredSpeed(startSpeed)
 		{
 			direction[0] = dirX;
 			direction[1] = dirY;

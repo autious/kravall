@@ -35,8 +35,9 @@ namespace Core
 	class FlowfieldSystem;
 	class NavMeshCollisionSystem;
 	class FlowfieldPositioningSystem;
+	class PoliceGoalSystem;
 	
-    typedef SystemHandlerTemplate<RenderingSystem, LightSystem, FlowfieldPositioningSystem, NavMeshCollisionSystem, 
+    typedef SystemHandlerTemplate<RenderingSystem, LightSystem, PoliceGoalSystem, FlowfieldPositioningSystem, NavMeshCollisionSystem, 
 		CollisionSystem2D, PickingSystem, AIDebugSystem, FlowfieldSystem, FieldReactionSystem, 
 		MovementSystem, NameSystem, AreaSystem,RioterDataSystem> SystemHandler;
 
@@ -55,5 +56,6 @@ namespace Core
 #include <Systems/FlowfieldSystem.hpp>
 #include <Systems/NavMeshCollisionSystem.hpp>
 #include <Systems/FlowfieldPositioningSystem.hpp>
+#include <Systems/PoliceGoalSystem.hpp>
 
 #endif

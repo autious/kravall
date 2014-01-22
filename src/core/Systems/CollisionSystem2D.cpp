@@ -3,7 +3,7 @@
 #include <gfx/GFXInterface.hpp>
 #include <logger/Logger.hpp>
 #include <algorithm>
-
+#include <DebugMacros.hpp>
 
 Core::CollisionSystem2D::CollisionSystem2D()
 	: BaseSystem( EntityHandler::GenerateAspect< WorldPositionComponent, BoundingVolumeComponent, MovementComponent >(), 0ULL )
@@ -24,10 +24,24 @@ static bool sortCullData( const cullData& me, const cullData& other )
 	return me.x < other.x;
 }
 
+void DrawCullingQuads( cullData* cullingList, int nrEntities, int gridNodeSize )
+{
+	for( int i = 0; i < nrEntities; i++)
+	{
+		Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(cullingList[i].ent);
+		GFX::Debug::DrawSphere( glm::vec3(wpc->position[0], 0, wpc->position[2] ), 0.05f, GFXColor( 1, 0, 0, 1 ), false );
+
+		int x = cullingList[i].x;
+		int y = cullingList[i].z;
+		GFX::Debug::DrawBox( 
+			glm::vec3( x * gridNodeSize + gridNodeSize * 0.5f, 0, y * gridNodeSize + gridNodeSize * 0.5f ), glm::vec3( gridNodeSize, 0, gridNodeSize ), false, GFXColor( 1, 0, 0, 1 ), false );
+	}
+}
+
 
 void Core::CollisionSystem2D::Update( float delta )
 {
-	
+	return;
 	int nrEntities = m_entities.size();
 
 	float maxRadius = 0.0f;
@@ -46,7 +60,6 @@ void Core::CollisionSystem2D::Update( float delta )
 	
 	float gridNodeSize = 4.0f;
 
-	//float invMaxDoubleRadius = 1.0f / (2.0f * maxRadius);
 	float invMaxDoubleRadius = 1.0f / gridNodeSize;
 	cullData* cullingList = Core::world.m_frameHeap.NewPODArray<cullData>( nrEntities );
 
@@ -65,28 +78,15 @@ void Core::CollisionSystem2D::Update( float delta )
 	
 
 	// debug draw culling quads....
-	//for( int i = 0; i < nrEntities; i++)
-	//{
-	//	Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(cullingList[i].ent);
-	//	//GFX::Debug::DrawSphere( glm::vec3(wpc->position[0], 0, wpc->position[2] ), 0.1f, GFXColor( 1, 0, 0, 1 ), false );
-	//
-	//	int x = cullingList[i].x;
-	//	int y = cullingList[i].z;
-	//	GFX::Debug::DrawBox( 
-	//		//glm::vec3( x * (2.0f * maxRadius) + maxRadius, 0, y * (2.0f * maxRadius) + maxRadius ), glm::vec3( 2.0f * maxRadius, 0, 2.0f * maxRadius ), false, GFXColor( 1, 0, 0, 1 ), false );
-	//		glm::vec3( x * gridNodeSize + gridNodeSize * 0.5f, 0, y * gridNodeSize + gridNodeSize * 0.5f ), glm::vec3( gridNodeSize, 0, gridNodeSize ), false, GFXColor( 1, 0, 0, 1 ), false );
-	//}
+	#ifdef SHOW_2D_COLLISION_CULLING_QUADS
+	DrawCullingQuads( cullingList, nrEntities, gridNodeSize );
+	#endif
 
 	Core::Entity* toCheck			= Core::world.m_frameHeap.NewPODArray<Core::Entity>( nrEntities );
 	Core::Entity* toCheckAgainst	= Core::world.m_frameHeap.NewPODArray<Core::Entity>( nrEntities );
 
 	int currentX = cullingList[0].x;
 	int currentZ = cullingList[0].z;
-
-	int nextIndex = 0;
-
-	//cullData data[500];
-	//std::memcpy( data, cullingList, nrEntities * sizeof(cullData) );
 
 	while( true )
 	{
@@ -158,8 +158,9 @@ void Core::CollisionSystem2D::Update( float delta )
 				if( sqareDistance < (otherSphere->radius + mySphere->radius) * (otherSphere->radius + mySphere->radius) )
 				{
 					// Collision detected!
-					// move myself away from collision. If the other entity is static, move the entire overlap away from the entity,
-					// otherwise move half the distance as to achieve mutual collision resolution
+#ifdef SHOW_2D_COLLISION_LINE_BETWEEN_COLLISIONS
+					GFX::Debug::DrawLine( myPosition, otherPosition, GFXColor( 1.0f, 1.0f, 0.0f, 1.0f ), false );
+#endif
 
 					// if objects are on top of eachother
 					if( sqareDistance == 0 )
@@ -170,6 +171,7 @@ void Core::CollisionSystem2D::Update( float delta )
 					
 					glm::vec3 collisionNormal = glm::normalize( myPosition - otherPosition );
 				
+					// buggy code, and prob. not neccecery...
 					//// check if entity should step aside to get around object...
 					//if( glm::dot( collisionNormal, *reinterpret_cast<glm::vec3*>(mvmc->direction) ) < -0.999 )
 					//{							
@@ -185,31 +187,32 @@ void Core::CollisionSystem2D::Update( float delta )
 					float deltaDist = ((otherSphere->radius + mySphere->radius) - std::sqrt( sqareDistance ));
 					glm::vec3 movement;
 
+					// move myself away from collision. If the other entity is static, move the entire overlap away from the entity,
+					// otherwise move half the distance as to achieve mutual collision resolution
 					switch( bvcOther->collisionModel )
 					{
 					case Core::BoundingVolumeCollisionModel::DynamicResolution:
-						
+
+
 						// Head of list will always bow for tail of list in perfect frontal collision.
-						//*myPosition		+= collisionNormal * ( delta * 0.66666666f);
+						{
+							movement = glm::vec3(0);
+							movement += collisionNormal * ( deltaDist * 0.5f );
+							wpc->position[0] += movement.x;
+							wpc->position[2] += movement.z;
+						}
 
 						// Head and tail is equal when in perfect frontal collision. Would theoretically results in 
 						// less flow but potentially better crowd dynamics when in a closed environment. 
-						*reinterpret_cast<glm::vec3*>(wpc->position)		+= collisionNormal * ( deltaDist * 0.5f );
-						*reinterpret_cast<glm::vec3*>(wpcOther->position)	-= collisionNormal * ( deltaDist * 0.5f );
+						{
+							movement = glm::vec3(0);
+							movement -= collisionNormal * ( deltaDist * 0.5f );
+							wpcOther->position[0] += movement.x;
+							wpcOther->position[2] += movement.z;
+						}
 
 						// update own position for following tests...
-						myPosition = *reinterpret_cast<glm::vec3*>(wpc->position);
-						myPosition.y = 0.0f; // collision in XZ plane only
-
-						//movement = glm::vec3(0);
-						//movement += collisionNormal * ( delta * 0.5f );
-						//wpc->position[0] += movement.x;
-						//wpc->position[2] += movement.z;
-						//
-						//movement = glm::vec3(0);
-						//movement -= collisionNormal * ( delta * 0.5f );
-						//wpcOther->position[0] += movement.x;
-						//wpcOther->position[2] += movement.z;
+						myPosition = glm::vec3( wpc->position[0], 0.0f, wpc->position[2] );
 
 						break;
 
@@ -220,6 +223,8 @@ void Core::CollisionSystem2D::Update( float delta )
 						wpc->position[0] += movement.x;
 						wpc->position[2] += movement.z;
 
+						// update own position for following tests...
+						myPosition = glm::vec3( wpc->position[0], 0.0f, wpc->position[2] );
 
 						break;
 

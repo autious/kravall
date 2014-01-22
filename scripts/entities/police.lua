@@ -28,18 +28,22 @@ return function(asm, posX, posY, posZ)
 			{
 				type = core.componentType.MovementComponent,
 				data = { direction = { 0, 0, 0 }, newDirection = { 0, 0, 0 }, speed = 5.8, 
-						maxSpeed = 50, goal = { posX, posY, posZ } }
+						maxSpeed = 5.8, goal = false }
 			},
 			{
 				type = core.componentType.AttributeComponent,
 				data = { health = 0, stamina = 0, morale = 0, 
-					   stance = core.PoliceStance.Passive, defense = 0, mobility = 0, squadID = 0 }
+					   stance = core.PoliceStance.Passive, defense = 0, mobility = 0, squadID = 1 }
 			},
 			{
 				type = core.componentType.BoundingVolumeComponent,
 				data = { sphereOffset = { 0, 0, 0 }, sphereRadius = 0.7, 
 						collisionModel = core.BoundingVolumeCollisionModel.DynamicResolution, 
 						type = core.BoundingVolumeType.SphereBoundingType }
+			},
+			{
+				type = core.componentType.FlowfieldComponent,
+				data = { node = -1 }
 			}
 		}
 	)
