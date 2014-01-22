@@ -3,7 +3,7 @@
 #include <gfx/GFXInterface.hpp>
 #include <logger/Logger.hpp>
 
-#include <GameUtility/NavigationMeshAStar.hpp>
+#include <GameUtility/PathfindingUtility.hpp>
 
 #include <DebugMacros.hpp>
 #include <Systems/MovementSystem.hpp>

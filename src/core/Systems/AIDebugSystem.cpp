@@ -9,7 +9,7 @@
 #include <GameUtility/NavigationMesh.hpp>
 #include <Input/InputManager.hpp>
 
-#include <GameUtility/NavigationMeshAStar.hpp>
+#include <GameUtility/PathfindingUtility.hpp>
 
 void MarkClickedObject()
 {

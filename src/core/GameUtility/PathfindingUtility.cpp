@@ -1,4 +1,4 @@
-#include "NavigationMeshAStar.hpp"
+#include "PathfindingUtility.hpp"
 #include <GameUtility/NavigationMesh.hpp>
 #include <World.hpp>
 

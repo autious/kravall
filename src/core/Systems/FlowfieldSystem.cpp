@@ -96,34 +96,15 @@ void Core::FlowfieldSystem::Update( float delta )
 				float sqdistance = glm::dot( otherMid - lineMid, otherMid - lineMid ) + 0.001f;  
 				float ratio = ( squareDistanceToEntryLine / sqdistance );
 				
-				ratio = ratio > 1.0f ? 1.0f : ratio;
-				ratio = ratio < 0.5f ? 0.5f : ratio;
+				ratio = ratio > 0.5f ? 0.5f : ratio;
+				ratio = ratio < 0.0f ? 0.0f : ratio;
 
 				glm::vec3 flowfieldDirection = glm::normalize( -normal * (1 - ratio) + dirctionToEdgeInNextNode * ( ratio + 0.5f ) );
 				MovementComponent::SetDirection( mvmc, flowfieldDirection.x, 0, flowfieldDirection.z );
 
-
-				//*reinterpret_cast<glm::vec3*>(mvmc->newDirection) = glm::normalize(
-				//	-normal * (1 - ratio) + dirctionToEdgeInNextNode * ( ratio + 0.5f ));
-
-
-
-
-				
-				//*reinterpret_cast<glm::vec3*>(mvmc->newDirection) = testDirection;
-				//*reinterpret_cast<glm::vec3*>(mvmc->newDirection) = dirctionToEdgeInNextNode;
-
-				// left-overs...
-				//*reinterpret_cast<glm::vec3*>(mvmc->newDirection) = glm::normalize( );
-					//- *reinterpret_cast<glm::vec3*>( instance->nodes[ ffc->node ].corners[ instance->flowfields[attribc->rioter.groupID].edges[ffc->node] ].normal ) * FF_NORMAL_INFLUENCE ); 
-					//- normal * FF_NORMAL_INFLUENCE );
-
-				//GFX::Debug::DrawLine(position, position + *reinterpret_cast<glm::vec3*>(mvmc->newDirection), GFXColor(1.0f, 0.5f, 0.0f, 1.0f), false);
-
 			}
 			else
 				MovementComponent::SetDirection( mvmc, 0.0f, 0.0f, 0.0f );
-				//*reinterpret_cast<glm::vec3*>(mvmc->newDirection) = glm::vec3(0.0f);
 
 
 		}

@@ -16,6 +16,9 @@ namespace Core
 	};
 
 
+	/*!
+		class responsible for holding speed data for different states.
+	*/
 	class GameData
 	{
 	private:

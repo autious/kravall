@@ -40,7 +40,6 @@
 static bool killProgram = false;
 
 #include <DebugRendering.hpp>
-#include <DebugCreators.hpp>
 #include <CLOPLoggerCallback.hpp>
 
 GLFWwindow *mainWindow = nullptr;
