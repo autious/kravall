@@ -99,7 +99,7 @@ vec3 BlinnPhong( LightData light, SurfaceData surface, vec3 eyeDirection, vec3 l
 
 	float light_occlusion = 1 - clamp(dot(vec4(lightDirection , 1.0f), surface.occlusion), 0.0f, 1.0f);
 
-	diffuseColor = surface.diffuse.xyz * intensity * light.color * light.intensity * attenuation * light_occlusion;
+	diffuseColor = surface.diffuse.xyz * intensity * light.color * light.intensity * attenuation;// * light_occlusion;
 
 	// Specular
 	vec3 specColor = vec3(0.0f, 0.0f, 0.0f);
@@ -111,7 +111,7 @@ vec3 BlinnPhong( LightData light, SurfaceData surface, vec3 eyeDirection, vec3 l
 	
 		// Temp vars, need materials with these channels
 
-		specColor = surface.specular.xyz * intensity * light.spec_color * light.intensity * attenuation * light_occlusion;
+		specColor = surface.specular.xyz * intensity * light.spec_color * light.intensity * attenuation;// * light_occlusion;
 	}
 	return diffuseColor + specColor;
 }

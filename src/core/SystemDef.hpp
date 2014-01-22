@@ -19,12 +19,13 @@
 #include <Components/AnimationComponent.hpp>
 
 /* TODO: Put your system up here instead of the end of the header. noobs */
+#include <Systems/RenderingSystem.hpp>
 #include <Systems/NameSystem.hpp>
 #include <Systems/AreaSystem.hpp>
+#include <Systems/RioterDataSystem.hpp>
 
 namespace Core
 {
-	class RenderingSystem;
 	class MovementSystem;
 	class FieldReactionSystem;
 	class GPUPFSystem;
@@ -38,7 +39,7 @@ namespace Core
 	
     typedef SystemHandlerTemplate<RenderingSystem, LightSystem, FlowfieldPositioningSystem, NavMeshCollisionSystem, 
 		CollisionSystem2D, PickingSystem, AIDebugSystem, FlowfieldSystem,/* FieldReactionSystem,*/ GPUPFSystem,
-		MovementSystem, NameSystem, AreaSystem> SystemHandler;
+		MovementSystem, NameSystem, AreaSystem, RioterDataSystem> SystemHandler;
 
     typedef EntityHandlerTemplate<SystemHandler, WorldPositionComponent, RotationComponent, ScaleComponent, 
 		GraphicsComponent, LightComponent, MovementComponent, UnitTypeComponent, AttributeComponent,
@@ -46,7 +47,6 @@ namespace Core
 }
 
 /**********All systems after this line************/
-#include <Systems/RenderingSystem.hpp>
 #include <Systems/MovementSystem.hpp>
 #include <Systems/FieldReactionSystem.hpp>
 #include <Systems/GPUPFSystem.hpp>

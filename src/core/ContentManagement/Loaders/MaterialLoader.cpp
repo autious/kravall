@@ -81,6 +81,18 @@ namespace Core
                 data->diffuseTexture = texture;
             }
 
+			if (normalBlendTexture.size())
+			{
+				textureHash = MurmurHash2(normalBlendTexture.c_str(), normalBlendTexture.size(), normalBlendTexture.size());
+				if (!GetTextureCacheStatus(textureHash, texture))
+				{
+					texture = new Core::TextureData;
+					BufferTextureData(LoadTextureData(normalBlendTexture.c_str(), texture), texture);
+					AddTextureToMaterial(data->materialId, texture->textureId);
+				}
+				data->normalBlendTexture = texture;
+			}
+
             if(specularTexture.size())
             {
                 textureHash = MurmurHash2(specularTexture.c_str(), specularTexture.size(), specularTexture.size());
@@ -92,19 +104,7 @@ namespace Core
                 }
                 data->specularTexture = texture;
             }
-
-            if(normalBlendTexture.size())
-            {
-                textureHash = MurmurHash2(normalBlendTexture.c_str(), normalBlendTexture.size(), normalBlendTexture.size());
-                if(!GetTextureCacheStatus(textureHash, texture))
-                {
-                    texture = new Core::TextureData;
-                    BufferTextureData(LoadTextureData(normalBlendTexture.c_str(), texture), texture);
-                    AddTextureToMaterial(data->materialId, texture->textureId);
-                }
-                data->normalBlendTexture = texture;
-            }
-
+          
             if(glowTexture.size())
             {
                 textureHash = MurmurHash2(glowTexture.c_str(), glowTexture.size(), glowTexture.size());

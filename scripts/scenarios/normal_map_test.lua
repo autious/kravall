@@ -2,6 +2,8 @@ local ASML = require "assembly_loader"
 
 local asm = ASML.loadPack( {} )
 
+camera:lookAt( core.glm.vec3.new( -20, 35, 20 ), core.glm.vec3.new( 0, 0, 20 ) )
+
 --Plane
 asm:loadAssembly( 
 {

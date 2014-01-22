@@ -132,4 +132,15 @@ function ASM:destroy( )
     self.specific_loads = nil
 end
 
+function ASM:destroyEntity( softHandle )
+    for entity, assets in pairs( self.entities ) do
+        if entity:isSameEntity( softHandle ) then
+            entity:destroy()
+            for k, asset in pairs( assets ) do
+                core.contentmanager.free( asset )
+            end
+        end
+    end
+end
+
 return M

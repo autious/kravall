@@ -84,6 +84,14 @@ extern "C"
     {
         return entityBridge.EntityToString( L );
     }
+    
+    static int LuaEntityIsSameEntity( lua_State * L )
+    {
+        LuaEntity * e1 = luau_checkentity( L , 1 );
+        LuaEntity * e2 = luau_checkentity( L , 2 );
+
+        return (e1->entity == e2->entity) && (e1->entity != INVALID_ENTITY);
+    }
 
     static int LuaComponentTypeToString( lua_State * L )
     {
@@ -120,6 +128,7 @@ Core::LuaEntityBridge::LuaEntityBridge( lua_State * L  )
             lua_settable( L, -3 );
             
             luau_setfunction( L, "isValid", LuaEntityIsValid );
+            luau_setfunction( L, "isSameEntity", LuaEntityIsSameEntity );
         lua_settable( L, -3 );
 
         if( luaL_newmetatable( L, ENTITY_META_TYPE ) == 0 )
