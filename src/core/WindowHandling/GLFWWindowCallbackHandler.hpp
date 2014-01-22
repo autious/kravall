@@ -13,6 +13,7 @@ namespace Core
         public:
             virtual void WindowResize( int width, int height ) = 0;
             virtual void FramebufferResize( int width, int height ) = 0;
+            virtual void WindowFocus( int focus ) = 0;
     };
 
     class GLFWWindowCallbackHandler
