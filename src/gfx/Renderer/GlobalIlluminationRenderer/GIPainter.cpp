@@ -33,24 +33,24 @@ namespace GFX
 
 		m_shaderManager->ResetProgram();
 
-		m_shaderManager->CreateProgram("SSDO");
-		m_shaderManager->LoadShader("shaders/RenderToQuad/Quad.vertex", "SSDOVS", GL_VERTEX_SHADER);
-		m_shaderManager->LoadShader("shaders/FSQuadGS.glsl", "SSDOGS", GL_GEOMETRY_SHADER);
-		m_shaderManager->LoadShader("shaders/GlobalIllumination/DSSDOFS.glsl", "SSDOFS", GL_FRAGMENT_SHADER);
-		m_shaderManager->AttachShader("SSDOVS", "SSDO");
-		m_shaderManager->AttachShader("SSDOGS", "SSDO");
-		m_shaderManager->AttachShader("SSDOFS", "SSDO");
-		m_shaderManager->LinkProgram("SSDO");
+		m_shaderManager->CreateProgram("DSSDO");
+		m_shaderManager->LoadShader("shaders/RenderToQuad/Quad.vertex", "DSSDOVS", GL_VERTEX_SHADER);
+		m_shaderManager->LoadShader("shaders/FSQuadGS.glsl", "DSSDOGS", GL_GEOMETRY_SHADER);
+		m_shaderManager->LoadShader("shaders/GlobalIllumination/DSSDOFS.glsl", "DSSDOFS", GL_FRAGMENT_SHADER);
+		m_shaderManager->AttachShader("DSSDOVS", "DSSDO");
+		m_shaderManager->AttachShader("DSSDOGS", "DSSDO");
+		m_shaderManager->AttachShader("DSSDOFS", "DSSDO");
+		m_shaderManager->LinkProgram("DSSDO");
+		m_shaderManager->UseProgram("DSSDO");
 
-		m_shaderManager->UseProgram("SSDO");
-		m_invProjUniform = m_shaderManager->GetUniformLocation("SSDO", "gInvProjView");
-		m_eyePosUniform = m_shaderManager->GetUniformLocation("SSDO", "gEyePosition");
-		m_screenSizeUniform = m_shaderManager->GetUniformLocation("SSDO", "gScreenSize");
-		m_maxOcclusionDistanceUniform = m_shaderManager->GetUniformLocation("SSDO", "gMaxOcclusionDistance");
-		m_occlusionRadiusUniform = m_shaderManager->GetUniformLocation("SSDO", "gOcclusionRadius");
+		m_invProjUniform = m_shaderManager->GetUniformLocation("DSSDO", "gInvProjView");
+		m_eyePosUniform = m_shaderManager->GetUniformLocation("DSSDO", "gEyePosition");
+		m_screenSizeUniform = m_shaderManager->GetUniformLocation("DSSDO", "gScreenSize");
+		m_maxOcclusionDistanceUniform = m_shaderManager->GetUniformLocation("DSSDO", "gMaxOcclusionDistance");
+		m_occlusionRadiusUniform = m_shaderManager->GetUniformLocation("DSSDO", "gOcclusionRadius");
 
-		m_normalDepthUniform = m_shaderManager->GetUniformLocation("SSDO", "gNormals_depth");
-		m_noiseUniform = m_shaderManager->GetUniformLocation("SSDO", "gNoiseTexture");
+		m_normalDepthUniform = m_shaderManager->GetUniformLocation("DSSDO", "gNormals_depth");
+		m_noiseUniform = m_shaderManager->GetUniformLocation("DSSDO", "gNoiseTexture");
 
 		m_seedTexture = TextureManager::LoadFromFile("assets/texture/noise.png", GL_TEXTURE_2D, GL_RGBA, GL_RGBA, GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT);
 
@@ -73,6 +73,26 @@ namespace GFX
 		m_shaderManager->AttachShader("GBVGS", "GaussianBlurVertical");
 		m_shaderManager->AttachShader("GBVFS", "GaussianBlurVertical");
 		m_shaderManager->LinkProgram("GaussianBlurVertical");
+
+		m_shaderManager->CreateProgram("SSDORadiance");
+		m_shaderManager->LoadShader("shaders/RenderToQuad/Quad.vertex", "RadianceVS", GL_VERTEX_SHADER);
+		m_shaderManager->LoadShader("shaders/FSQuadGS.glsl", "RadianceGS", GL_GEOMETRY_SHADER);
+		m_shaderManager->LoadShader("shaders/GlobalIllumination/SSDORadianceFS.glsl", "RadianceFS", GL_FRAGMENT_SHADER);
+		m_shaderManager->AttachShader("RadianceVS", "SSDORadiance");
+		m_shaderManager->AttachShader("RadianceGS", "SSDORadiance");
+		m_shaderManager->AttachShader("RadianceFS", "SSDORadiance");
+		m_shaderManager->LinkProgram("SSDORadiance");
+		m_shaderManager->UseProgram("SSDORadiance");
+
+		m_shaderManager->CreateProgram("SSDO");
+		m_shaderManager->LoadShader("shaders/RenderToQuad/Quad.vertex", "SSDOVS", GL_VERTEX_SHADER);
+		m_shaderManager->LoadShader("shaders/FSQuadGS.glsl", "SSDOGS", GL_GEOMETRY_SHADER);
+		m_shaderManager->LoadShader("shaders/GlobalIllumination/SSDOFS.glsl", "SSDOFS", GL_FRAGMENT_SHADER);
+		m_shaderManager->AttachShader("SSDOVS", "SSDO");
+		m_shaderManager->AttachShader("SSDOGS", "SSDO");
+		m_shaderManager->AttachShader("SSDOFS", "SSDO");
+		m_shaderManager->LinkProgram("SSDO");
+		m_shaderManager->UseProgram("SSDO");
 	}
 
 	void GIPainter::InitFBO()
@@ -170,7 +190,7 @@ namespace GFX
 		BindSSDOFBO();
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
-		m_shaderManager->UseProgram("SSDO");
+		m_shaderManager->UseProgram("DSSDO");
 
 		TextureManager::BindTexture(normalDepth->GetTextureHandle(), m_normalDepthUniform, 0, GL_TEXTURE_2D);
 		TextureManager::BindTexture(m_seedTexture, m_noiseUniform, 1, GL_TEXTURE_2D);
