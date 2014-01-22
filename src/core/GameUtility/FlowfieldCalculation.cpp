@@ -93,7 +93,7 @@ namespace Core
 
 				if( prioList[0].entryDistance < distances[ prioList[0].node ] ) 
 				{
-					LOG_ERROR << __FILE__ << "   " << __FUNCTIONW__ << "   this should not happen! " << std::endl;
+					LOG_ERROR << __FILE__ << "   " << __FUNCTION__ << "   this should not happen! " << std::endl;
 					assert(false);
 				}
 
