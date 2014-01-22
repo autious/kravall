@@ -108,7 +108,7 @@ function C:update( dt )
         
         local x,y = mouse.getPosition()
 
-        if mouse.isbuttondown( mouse.button.Left ) then
+        if mouse.isbuttondown( mouse.button.Middle ) then
             self.pitch = self.pitch + (y-self.py) * 0.3
             self.yaw = self.yaw + (x-self.px) * 0.3
         end 
@@ -116,11 +116,11 @@ function C:update( dt )
         if self.mousePressLocation ~= nil then
             self.position = self.position + xzRight * (x-self.mousePressLocation.x) * 0.01 * delta
             self.position = self.position - xzUp * (y-self.mousePressLocation.y) * 0.01 * delta
-            if mouse.isbuttondown( mouse.button.Middle ) == false then
+            if mouse.isbuttondown( mouse.button[5] ) == false then
                 self.mousePressLocation = nil
             end
         else
-            if mouse.isbuttondown( mouse.button.Middle ) then
+            if mouse.isbuttondown( mouse.button[5] ) then
                 self.mousePressLocation = {x=x,y=y}
             end
         end
