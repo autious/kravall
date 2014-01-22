@@ -13,6 +13,7 @@ ambient(asm, 1.0, 1.0, 1.0, 0.1)
 directional(asm, -1, -1, 0.5)
 
 camera:lookAt( core.glm.vec3.new( -20, 35, 20 ), core.glm.vec3.new( 0, 0, 20 ) )
+--camera:lookAt( core.glm.vec3.new( -20, 10, 20 ), core.glm.vec3.new( 0, 0, 20 ) )
 
 -- Group 0 start to end, top row (left side)
 street_light(asm, -50, -0.5, street_light_intensity)
@@ -76,7 +77,20 @@ street_light(asm, 28, -35, street_light_intensity)
 local rioter = ent.get "rioter"
 local police = ent.get "police"
 local building = ent.get "building"
-	
+
+local dist = 1.2
+local centerPoint = { -4, 0, -21}
+for i = -2, 2 do
+	for j = -1, 1 do
+		police(asm, i * dist + centerPoint[1], 0 + centerPoint[2], j * dist + centerPoint[3])
+	end
+end
+
+--police(asm, 1, 0, -22);
+--police(asm, 1, 0, -21);
+--police(asm, 1, 0, -20);
+
+
 -- Release	
 local centerPoint = { 49, 0, 5 }		
 for i = -7, 6 do
