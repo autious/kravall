@@ -1,7 +1,7 @@
 local AABB = {}
 
 function AABB.new( x, y, width, height )
-    self
+    self = {}
     self.x = x
     self.y = y
     self.width = width

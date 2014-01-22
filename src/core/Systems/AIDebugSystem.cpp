@@ -108,7 +108,7 @@ void TestPathFinding()
 }
 
 
-
+#include <GameUtility/GameData.hpp>
 
 void Core::AIDebugSystem::Update( float delta )
 {
@@ -121,6 +121,6 @@ void Core::AIDebugSystem::Update( float delta )
 
 	GetPlanePoint();
 
-	//if( Core::GetNavigationMesh() )
-	//	Core::GetNavigationMesh()->DrawDebug();
+
+
 }

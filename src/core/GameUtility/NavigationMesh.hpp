@@ -83,11 +83,6 @@ namespace Core
 				*/
 				float normal[2];
 
-				/*!
-					2D midpoint for the node.
-				*/
-				float mid[2];
-
 				/*
 					This corner links to the following edge and node.
 				*/
@@ -106,6 +101,7 @@ namespace Core
 		*/
 		struct Flowfield
 		{
+			float goal[2];
 			int* edges;
 			glm::vec3* list;
 		};

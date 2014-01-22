@@ -124,6 +124,24 @@ namespace Core
 		return false;
 	}
 
+	bool PathFinder::CheckLineVsNavMesh( glm::vec3 from, glm::vec3 to, int startNode )
+	{
+		Core::NavigationMesh* instance = Core::GetNavigationMesh();
+		if( !instance || startNode < 0 )
+			return false;
+
+		if( instance->CheckPointInsideNode( from, startNode ) )
+		{
+			LineCheckReturnStruct result;
+			CheckLine( from, to, instance, startNode, result );
+			if( result.t < NO_LINE_COLLISION )
+				return true;
+		}
+
+
+		return false;
+	}
+
 
 
 

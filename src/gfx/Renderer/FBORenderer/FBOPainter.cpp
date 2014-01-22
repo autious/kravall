@@ -20,7 +20,7 @@ namespace GFX
 
 		//load shader
 		m_shaderManager->LoadShader("shaders/RenderToQuad/Quad.vertex", "QVS", GL_VERTEX_SHADER);
-		m_shaderManager->LoadShader("shaders/FSQuad.geometry", "QGS", GL_GEOMETRY_SHADER);
+		m_shaderManager->LoadShader("shaders/FSQuadGS.glsl", "QGS", GL_GEOMETRY_SHADER);
 		m_shaderManager->LoadShader("shaders/RenderToQuad/Quad.fragment", "QFS", GL_FRAGMENT_SHADER);
 		m_shaderManager->CreateProgram("TQ");
 

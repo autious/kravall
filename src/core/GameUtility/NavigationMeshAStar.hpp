@@ -1,5 +1,5 @@
-//#include "NavigationMesh.hpp"
-//#include <World.hpp>
+#ifndef GAME_UTILITY_PATHFINDER_HPP
+#define GAME_UTILITY_PATHFINDER_HPP
 
 #include <algorithm>
 #include <logger/Logger.hpp>
@@ -7,14 +7,24 @@
 
 namespace Core
 {
+	// Im going to fix this one of these days ;)
+	//struct PathComponent
+	//{
+	//	int nrNodes;
+	//	float nodes[ 2 * 50 ];
+	//};
+	//static PathComponent GetPath( glm::vec3 start, glm::vec3 goal );
+
+
 
 	class PathFinder
 	{
 
 	public:		
-		//static PathComponent GetPath( glm::vec3 start, glm::vec3 goal );
+		
 
-		bool CheckLineVsNavMesh( glm::vec3 from, glm::vec3 to );
+		static bool CheckLineVsNavMesh( glm::vec3 from, glm::vec3 to );
+		static bool CheckLineVsNavMesh( glm::vec3 from, glm::vec3 to, int startNode );
 
 	
 	private:
@@ -27,15 +37,5 @@ namespace Core
 	
 }
 
-
-
-
-
-
-
-
-
-
-
-
+#endif
 

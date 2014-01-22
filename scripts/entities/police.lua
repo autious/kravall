@@ -27,7 +27,7 @@ return function(asm, posX, posY, posZ)
 			},
 			{
 				type = core.componentType.MovementComponent,
-				data = { direction = { 0, 0, 0 }, speed = 5.8, maxSpeed = 50, goal = { posX, posY, posZ } }
+				data = { direction = { 0, 0, 0 }, speed = 5.8, disiredSpeed = 5.8, goal = false }
 			},
 			{
 				type = core.componentType.AttributeComponent,
@@ -39,6 +39,10 @@ return function(asm, posX, posY, posZ)
 				data = { sphereOffset = { 0, 0, 0 }, sphereRadius = 0.7, 
 						collisionModel = core.BoundingVolumeCollisionModel.DynamicResolution, 
 						type = core.BoundingVolumeType.SphereBoundingType }
+			},
+			{
+				type = core.componentType.FlowfieldComponent,
+				data = { node = -1 }
 			}
 		}
 	)

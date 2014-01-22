@@ -16,10 +16,11 @@
 #include <Components/FlowfieldComponent.hpp>
 #include <Components/AreaComponent.hpp>
 #include <Components/NameComponent.hpp>
+#include <Components/AnimationComponent.hpp>
 
 /* TODO: Put your system up here instead of the end of the header. noobs */
 #include <Systems/NameSystem.hpp>
-#include <Systems/AreaLuaUpdateSystem.hpp>
+#include <Systems/AreaSystem.hpp>
 
 namespace Core
 {
@@ -33,14 +34,15 @@ namespace Core
 	class FlowfieldSystem;
 	class NavMeshCollisionSystem;
 	class FlowfieldPositioningSystem;
+	class PoliceGoalSystem;
 	
-    typedef SystemHandlerTemplate<RenderingSystem, LightSystem, FlowfieldPositioningSystem, NavMeshCollisionSystem, 
+    typedef SystemHandlerTemplate<RenderingSystem, LightSystem, PoliceGoalSystem, FlowfieldPositioningSystem, NavMeshCollisionSystem, 
 		CollisionSystem2D, PickingSystem, AIDebugSystem, FlowfieldSystem, FieldReactionSystem, 
-		MovementSystem, NameSystem,AreaLuaUpdateSystem> SystemHandler;
+		MovementSystem, NameSystem, AreaSystem> SystemHandler;
 
     typedef EntityHandlerTemplate<SystemHandler, WorldPositionComponent, RotationComponent, ScaleComponent, 
 		GraphicsComponent, LightComponent, MovementComponent, UnitTypeComponent, AttributeComponent,
-		BoundingVolumeComponent, FlowfieldComponent,AreaComponent,NameComponent> EntityHandler;
+		BoundingVolumeComponent, FlowfieldComponent,AreaComponent,NameComponent, AnimationComponent> EntityHandler;
 }
 
 /**********All systems after this line************/
@@ -54,5 +56,6 @@ namespace Core
 #include <Systems/FlowfieldSystem.hpp>
 #include <Systems/NavMeshCollisionSystem.hpp>
 #include <Systems/FlowfieldPositioningSystem.hpp>
+#include <Systems/PoliceGoalSystem.hpp>
 
 #endif

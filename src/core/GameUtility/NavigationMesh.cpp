@@ -43,6 +43,9 @@ namespace Core
 		// resize the size of each flowfield to hold the same number of vectors as there are nodes.
 		for( int i = 0; i < nrInstances; i++ )
 		{
+			flowfields[i].goal[ 0 ] = FLT_MAX;
+			flowfields[i].goal[ 1 ] = FLT_MAX;
+
 			flowfields[i].edges = Core::world.m_levelHeap.NewPODArray<int>( nrNodes );
 			flowfields[i].list = (glm::vec3*)Core::world.m_levelHeap.NewPODArray<float>( 3 * nrNodes );
 
@@ -188,7 +191,6 @@ std::fstream& operator>> ( std::fstream& ff, Core::NavigationMesh::Node& node )
 		glm::vec3 cross = glm::normalize( glm::cross( (lineEnd - lineStart), glm::vec3( 0.0f, 1.0f, 0.0f ) ) );
 		node.corners[i].normal[0] = cross.x;
 		node.corners[i].normal[1] = cross.z;
-
 	}
 
 	return ff;

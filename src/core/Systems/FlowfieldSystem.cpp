@@ -21,33 +21,39 @@ void Core::FlowfieldSystem::Update( float delta )
 		// for all entities
 		for( std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); it++ )
 		{
-			UnitTypeComponent* utc = WGETC<UnitTypeComponent>(*it);
-			if(	utc->type != Core::UnitType::Rioter )
-				continue;
-
 			Core::FlowfieldComponent* ffc = WGETC<Core::FlowfieldComponent>(*it);
 			
 			// entity is not assigned to a node...
-			Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>(*it);
 			if( ffc->node < 0 )
-			{
-				*reinterpret_cast<glm::vec3*>(mvmc->newDirection) = glm::vec3(0.0f);
 				continue;
-			}
+
+			int groupID;
+			Core::AttributeComponent* attribc = WGETC<Core::AttributeComponent>(*it);
+			UnitTypeComponent* utc = WGETC<UnitTypeComponent>(*it);
+			if(	utc->type == Core::UnitType::Rioter )
+				groupID = attribc->rioter.groupID;
+			else
+				groupID = attribc->police.squadID;
+
+			Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>(*it);
+
+			if( mvmc->goal[0] != FLT_MAX )
+				continue;
+
 
 			Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(*it);
 			glm::vec3& position = *reinterpret_cast<glm::vec3*>(wpc->position);
+			
 
-			Core::AttributeComponent* attribc = WGETC<Core::AttributeComponent>(*it);
-
-			glm::vec3 midOfEdgeLinkingToNextNode = instance->flowfields[attribc->rioter.groupID].list[ ffc->node ];
+			glm::vec3 midOfEdgeLinkingToNextNode = instance->flowfields[groupID].list[ ffc->node ];
 			if( glm::dot( midOfEdgeLinkingToNextNode, midOfEdgeLinkingToNextNode ) > 0.05f ) // goal node condition...
-			//if( instance->flowfields[attribc->rioter.groupID].edges[ ffc->node] < 0.0f ) // goal node condition...
 			{
-				float* edgeNormal = instance->nodes[ ffc->node ].corners[ instance->flowfields[attribc->rioter.groupID].edges[ffc->node] ].normal;
-				glm::vec3 normal = glm::vec3( edgeNormal[0], 0.0f, edgeNormal[1] );
 
-				glm::vec3 dirctionToEdgeInNextNode = glm::normalize( instance->flowfields[attribc->rioter.groupID].list[ ffc->node ] - position );
+				float* edgeNormal = instance->nodes[ ffc->node ].corners[ instance->flowfields[groupID].edges[ffc->node] ].normal;
+				glm::vec3 normal = glm::vec3( edgeNormal[0], 0.0f, edgeNormal[1] );
+				glm::vec3 dirctionToEdgeInNextNode = glm::normalize( instance->flowfields[groupID].list[ ffc->node ] - position );
+
+
 
 				// calc distance from opposite edges...
 				float squareDistanceToEntryLine;
@@ -55,7 +61,7 @@ void Core::FlowfieldSystem::Update( float delta )
 				glm::vec3 otherMid;
 				
 				{
-					int ii = instance->flowfields[attribc->rioter.groupID].edges[ ffc->node ] * 2;
+					int ii = instance->flowfields[groupID].edges[ ffc->node ] * 2;
 					int oo = ( ii + 2 ) % 8;
 			
 					glm::vec3 lineStart = glm::vec3( instance->nodes[ ffc->node ].points[ ii ], 0.0f, instance->nodes[ ffc->node ].points[ ii + 1 ] );
@@ -67,45 +73,42 @@ void Core::FlowfieldSystem::Update( float delta )
 					squareDistanceToEntryLine *= squareDistanceToEntryLine; // make it squared
 				}
 
-				if( instance->nodes[ ffc->node ].corners[3].length > 0 ) // if quad... 
+				// if quad
+				if( instance->nodes[ ffc->node ].corners[3].length > 0 )  
 				{
-					int ii = ((instance->flowfields[attribc->rioter.groupID].edges[ ffc->node ] + 2) % 4) * 2;
+					int ii = ((instance->flowfields[groupID].edges[ ffc->node ] + 2) % 4) * 2;
 					int oo = ( ii + 2 ) % 8;
 					
 					glm::vec3 lineStart = glm::vec3( instance->nodes[ ffc->node ].points[ ii ], 0.0f, instance->nodes[ ffc->node ].points[ ii + 1 ] );
 					glm::vec3 lineEnd	= glm::vec3( instance->nodes[ ffc->node ].points[ oo ], 0.0f, instance->nodes[ ffc->node ].points[ oo + 1 ] );
 					otherMid = lineStart + (( lineEnd - lineStart ) * 0.5f );
-
-					//otherMid = instance->flowfields[attribc->rioter.groupID].list[ ffc->node ];
-
 				}
-				else // otherwise it's a triangle...
+				// otherwise it's a triangle...
+				else 
 				{
 					// get oppisite corner...
-					int ii = ((instance->flowfields[attribc->rioter.groupID].edges[ ffc->node ] + 2) % 3) * 2;
+					int ii = ((instance->flowfields[groupID].edges[ ffc->node ] + 2) % 3) * 2;
 					otherMid =  glm::vec3( instance->nodes[ ffc->node ].points[ ii ], 0.0f, instance->nodes[ ffc->node ].points[ ii + 1 ] );
-					//otherMid = instance->flowfields[attribc->rioter.groupID].list[ ffc->node ];
 				}
 
 
 				// entity can be further from this point if a non quadratic node, wierd behaviour mighht result... keep your eyes vigilalt and open!
 				float sqdistance = glm::dot( otherMid - lineMid, otherMid - lineMid ) + 0.001f;  
-
-				//#define FF_NORMAL_INFLUENCE 0.5f
-				float ratio = ( squareDistanceToEntryLine / sqdistance ) ; // + FF_NORMAL_INFLUENCE;
-				
-				//glm::vec3 testDirection = glm::normalize( (lineMid + ( ooo - lineMid ) * 0.5f) - position );
+				float ratio = ( squareDistanceToEntryLine / sqdistance );
 				
 				ratio = ratio > 1.0f ? 1.0f : ratio;
 				ratio = ratio < 0.5f ? 0.5f : ratio;
 
-				//GFX::Debug::DrawSphere( lineMid, 5.0f, GFXColor(1), false );
-				//GFX::Debug::DrawSphere( otherMid, 2.0f, GFXColor(1), false );
-				
-				GFX::Debug::DrawSphere( instance->flowfields[attribc->rioter.groupID].list[ ffc->node ], 2.0f, GFXColor( 1, 1, 0, 1 ), false );
+				glm::vec3 flowfieldDirection = glm::normalize( -normal * (1 - ratio) + dirctionToEdgeInNextNode * ( ratio + 0.5f ) );
+				MovementComponent::SetDirection( mvmc, flowfieldDirection.x, 0, flowfieldDirection.z );
 
-				*reinterpret_cast<glm::vec3*>(mvmc->newDirection) = glm::normalize(
-					-normal * (1 - ratio) + dirctionToEdgeInNextNode * ( ratio + 0.5f ));
+
+				//*reinterpret_cast<glm::vec3*>(mvmc->newDirection) = glm::normalize(
+				//	-normal * (1 - ratio) + dirctionToEdgeInNextNode * ( ratio + 0.5f ));
+
+
+
+
 				
 				//*reinterpret_cast<glm::vec3*>(mvmc->newDirection) = testDirection;
 				//*reinterpret_cast<glm::vec3*>(mvmc->newDirection) = dirctionToEdgeInNextNode;
@@ -119,7 +122,8 @@ void Core::FlowfieldSystem::Update( float delta )
 
 			}
 			else
-				*reinterpret_cast<glm::vec3*>(mvmc->newDirection) = glm::vec3(0.0f);
+				MovementComponent::SetDirection( mvmc, 0.0f, 0.0f, 0.0f );
+				//*reinterpret_cast<glm::vec3*>(mvmc->newDirection) = glm::vec3(0.0f);
 
 
 		}
