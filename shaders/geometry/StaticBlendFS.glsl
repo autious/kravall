@@ -45,9 +45,9 @@ vec4 randColor( uint seed )
 	float tg = rand(wang_hash(seed+2));
 	float tb = rand(wang_hash(seed+3));
 	return vec4( 
-					0.3 + .4 * tr, 
-					0.3 + .4 * tg, 
-					0.3 + .4 * tb, 
+					tr, 
+					tg, 
+					tb, 
 					1.0f 
 				);
 }
@@ -88,5 +88,5 @@ void main()
 	gNormalDepthRT = vec4(normalize(normalFS.xyz), posFS.z / posFS.w);
 	gDiffuseRT = result;
 	gSpecularRT = specColor;
-	gGlowMatIDRT = blendMap;
+	gGlowMatIDRT = result;
 }
