@@ -53,7 +53,6 @@ function C.new( )
 end
 
 function C:getProjection()
-    -- TODO: replace with callback.
     return mat4.perspective( core.config.initCameraFieldOfView, self.width/self.height, core.config.initCameraNearClipDistance, core.config.initCameraFarClipDistance )
 end
 
@@ -104,7 +103,6 @@ function C:update( dt )
         if keyboard.iskeydown( key.Left_control ) then
             self.position = self.position - vec3.new(0,1,0) * delta
         end
-
         
         local x,y = mouse.getPosition()
 
@@ -124,7 +122,6 @@ function C:update( dt )
                 self.mousePressLocation = {x=x,y=y}
             end
         end
-        
 
         self.position = self.position + forward * self.forwardVelocity * delta;
     
@@ -145,8 +142,8 @@ function C:update( dt )
 
         local px,py,pz = self.position:get()
 
-        if py > 130 then
-            py = 130
+        if py > 250 then
+            py = 250
             self.forwardVelocity = 0
         elseif py < 10 then
             py = 10
