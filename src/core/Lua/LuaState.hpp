@@ -32,6 +32,7 @@ namespace Core
             ~LuaState();
             
             void OpenLibs();
+            void CloseLibs();
             bool Execute( const char *filename ); 
             bool DoBlock( const char *block );
             int DoBlock( const char * block, int args, int rargs );
