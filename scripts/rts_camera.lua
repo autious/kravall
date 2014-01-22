@@ -15,6 +15,9 @@ function C.new( )
     self.position = vec3.new( 0,0,0 )
     self.pitch = 0
     self.yaw = 0
+    self.forwardVelocity = 0
+    self.accelerationFactor = 1
+    self.deaccelerationFactor = 0.5
 
     self.width = core.config.initScreenWidth
     self.height = core.config.initScreenHeight
@@ -31,7 +34,8 @@ function C.new( )
 
     local function onscroll( x, y )
         local forward = camera:getForward()
-        self.position = self.position + forward * y * 0.5;
+        --self.position = self.position + forward * y * 0.5;
+        self.forwardVelocity = self.forwardVelocity + y * self.accelerationFactor;
     end
 
     input.registerOnScroll( onscroll )
@@ -71,6 +75,7 @@ function C:update( dt )
         local rx,ry,rz = camera:getRight():get()
         local xzUp = vec3.new(0,0,0)
         local xzRight = vec3.new(0,0,0)
+        local forward = camera:getForward()
 
         if ux ~= 0 or uz ~= 0 then
              xzUp = vec3.new( ux,0,uz ):normalize()
@@ -79,7 +84,6 @@ function C:update( dt )
         if rx ~= 0 or rz ~= 0 then
              xzRight= vec3.new( rx,0,rz ):normalize()
         end
-        
         
         if keyboard.iskeydown( key.W ) then
             self.position = self.position + xzUp * delta
@@ -99,6 +103,7 @@ function C:update( dt )
         if keyboard.iskeydown( key.Left_control ) then
             self.position = self.position - vec3.new(0,1,0) * delta
         end
+
         
         local x,y = mouse.getPosition()
 
@@ -110,8 +115,34 @@ function C:update( dt )
             self.position = self.position + xzUp * (y-self.py) * 0.05 * delta
         end 
 
+        self.position = self.position + forward * self.forwardVelocity * delta;
+    
+        if self.forwardVelocity > 0 then
+            self.forwardVelocity = self.forwardVelocity - self.deaccelerationFactor * delta;
+            if self.forwardVelocity < 0 then
+                self.forwardVelocity = 0
+            end
+        elseif self.forwardVelocity < 0 then
+            self.forwardVelocity = self.forwardVelocity + self.deaccelerationFactor * delta;
+            if self.forwardVelocity > 0 then
+                self.forwardVelocity = 0
+            end
+        end
+
         self.px = x
         self.py = y
+
+        local px,py,pz = self.position:get()
+
+        if py > 130 then
+            py = 130
+            self.forwardVelocity = 0
+        elseif py < 10 then
+            py = 10
+            self.forwardVelocity = 0
+        end
+        self.position = vec3.new( px,py,pz )
+
 
         local proj = self:getProjection()
         local view = self:getView()
