@@ -18,6 +18,7 @@ function C.new( )
     self.forwardVelocity = 0
     self.accelerationFactor = 1
     self.deaccelerationFactor = 0.5
+    self.mousePressLocation = nil
 
     self.width = core.config.initScreenWidth
     self.height = core.config.initScreenHeight
@@ -110,10 +111,20 @@ function C:update( dt )
         if mouse.isbuttondown( mouse.button.Left ) then
             self.pitch = self.pitch + (y-self.py) * 0.3
             self.yaw = self.yaw + (x-self.px) * 0.3
-        elseif mouse.isbuttondown( mouse.button.Middle ) then
-            self.position = self.position - xzRight * (x-self.px) * 0.05 * delta
-            self.position = self.position + xzUp * (y-self.py) * 0.05 * delta
         end 
+
+        if self.mousePressLocation ~= nil then
+            self.position = self.position + xzRight * (x-self.mousePressLocation.x) * 0.01 * delta
+            self.position = self.position - xzUp * (y-self.mousePressLocation.y) * 0.01 * delta
+            if mouse.isbuttondown( mouse.button.Middle ) == false then
+                self.mousePressLocation = nil
+            end
+        else
+            if mouse.isbuttondown( mouse.button.Middle ) then
+                self.mousePressLocation = {x=x,y=y}
+            end
+        end
+        
 
         self.position = self.position + forward * self.forwardVelocity * delta;
     
