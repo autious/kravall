@@ -78,9 +78,9 @@ local rioter = ent.get "rioter"
 local police = ent.get "police"
 local building = ent.get "building"
 
-local dist = 2.4
+local dist = 1.8
 local centerPoint = { -4, 0, -21}
-for i = -2, 2 do
+for i = -4, 3 do
 	j= 0 --for j = -1, 1 do
 		police(asm, i * dist + centerPoint[1], 0 + centerPoint[2], j * dist + centerPoint[3])
 	--end
@@ -99,6 +99,8 @@ end
 --	end
 --end
 --core.nav_mesh.set_group_goal(0, -43, 0, 4)
+--rioter( asm, 6 * 1.5 + centerPoint[1], 0  + centerPoint[2], 6 * 1.5  + centerPoint[3], 0)
+--rioter( asm, 6 * 1.5 + centerPoint[1], 0  + centerPoint[2], -7 * 1.5  + centerPoint[3], 0)
 
 local centerPoint = { 20.5, 0, -40 }		
 for i = -4, 4 do

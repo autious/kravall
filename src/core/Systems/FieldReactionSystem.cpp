@@ -8,6 +8,7 @@
 #define FF_FACTOR 0.5f
 #define CAP_POSITIVE 1000000.0f
 #define CAP_NEGATIVE -1000000.0f
+#define MINIMUM_CHARGE 100.0f  // Is negated later!
 
 const float Core::FieldReactionSystem::STAY_LIMIT = 0.1f;
 
@@ -18,7 +19,7 @@ const frsChargeCurve Core::FieldReactionSystem::CURVE[1][2] =
 };
 
 Core::FieldReactionSystem::FieldReactionSystem() : BaseSystem(EntityHandler::GenerateAspect<WorldPositionComponent, MovementComponent,
-	UnitTypeComponent, AttributeComponent>(), 0ULL), m_showPF(false), m_updateCounter(0), m_drawFieldCenter(-4.0f, -0.5f, -31.0f)
+	UnitTypeComponent, AttributeComponent>(), 0ULL), m_showPF(true), m_updateCounter(0), m_drawFieldCenter(-4.0f, -0.5f, -31.0f) //(20.0f, -0.5f, -40.0f)
 {
 	for (int i = 0; i < FIELD_SIDE_CELL_COUNT; ++i)
 	{
@@ -72,10 +73,10 @@ void Core::FieldReactionSystem::UpdateAgents()
 			// Calculate which index is closest to the flow field direction.
 			float highestSum = GetEffectOnAgentAt(*it, &wpcOffset, ac->rioter.groupID);
 			float staySum = highestSum;
-			float ffDirectionCharge = 0.0f;
-			float ffDot = std::numeric_limits<float>::min();
+			//float ffDirectionCharge = 0.0f;
+			//float ffDot = std::numeric_limits<float>::min();
 
-			for (int i = -1; i < 2; ++i) // 3.
+			/*for (int i = -1; i < 2; ++i) // 3.
 			{
 				for (int j = -1; j < 2; ++j) // 4.
 				{
@@ -103,6 +104,110 @@ void Core::FieldReactionSystem::UpdateAgents()
 						ffDirectionCharge = chargeSum;
 					}
 				}
+			}*/
+
+			// ---------------------------------------- -1, 0 ----------------------------------------
+			WorldPositionComponent wpct(wpcOffset.position[0] - 1, wpcOffset.position[1],
+				wpcOffset.position[2] + 0);
+
+			float chargeSum = GetEffectOnAgentAt(*it, &wpct, ac->rioter.groupID);
+
+			if (chargeSum > highestSum)
+			{
+				highestSum = chargeSum;
+				bestIndex.x = -1;
+				bestIndex.y = 0;
+			}
+
+			// ---------------------------------------- 1, 0 ----------------------------------------
+			wpct = WorldPositionComponent(wpcOffset.position[0] + 1, wpcOffset.position[1],
+				wpcOffset.position[2] + 0);
+
+			chargeSum = GetEffectOnAgentAt(*it, &wpct, ac->rioter.groupID);
+
+			if (chargeSum > highestSum)
+			{
+				highestSum = chargeSum;
+				bestIndex.x = 1;
+				bestIndex.y = 0;
+			}
+
+			// ---------------------------------------- 0, -1 ----------------------------------------
+			wpct = WorldPositionComponent(wpcOffset.position[0] + 0, wpcOffset.position[1],
+				wpcOffset.position[2] -1);
+
+			chargeSum = GetEffectOnAgentAt(*it, &wpct, ac->rioter.groupID);
+
+			if (chargeSum > highestSum)
+			{
+				highestSum = chargeSum;
+				bestIndex.x = 0;
+				bestIndex.y = -1;
+			}
+
+			// ---------------------------------------- 0, 1 ----------------------------------------
+			wpct = WorldPositionComponent(wpcOffset.position[0] + 0, wpcOffset.position[1],
+				wpcOffset.position[2] + 1);
+
+			chargeSum = GetEffectOnAgentAt(*it, &wpct, ac->rioter.groupID);
+
+			if (chargeSum > highestSum)
+			{
+				highestSum = chargeSum;
+				bestIndex.x = 0;
+				bestIndex.y = 1;
+			}
+
+			// ---------------------------------------- -1, -1 ----------------------------------------
+			wpct = WorldPositionComponent(wpcOffset.position[0] - 1, wpcOffset.position[1],
+				wpcOffset.position[2] - 1);
+
+			chargeSum = GetEffectOnAgentAt(*it, &wpct, ac->rioter.groupID);
+
+			if (chargeSum > highestSum)
+			{
+				highestSum = chargeSum;
+				bestIndex.x = -1;
+				bestIndex.y = -1;
+			}
+
+			// ---------------------------------------- 1, -1 ----------------------------------------
+			wpct = WorldPositionComponent(wpcOffset.position[0] + 1, wpcOffset.position[1],
+				wpcOffset.position[2] - 1);
+
+			chargeSum = GetEffectOnAgentAt(*it, &wpct, ac->rioter.groupID);
+
+			if (chargeSum > highestSum)
+			{
+				highestSum = chargeSum;
+				bestIndex.x = 1;
+				bestIndex.y = -1;
+			}
+
+			// ---------------------------------------- -1, 1 ----------------------------------------
+			wpct = WorldPositionComponent(wpcOffset.position[0] - 1, wpcOffset.position[1],
+				wpcOffset.position[2] + 1);
+
+			chargeSum = GetEffectOnAgentAt(*it, &wpct, ac->rioter.groupID);
+
+			if (chargeSum > highestSum)
+			{
+				highestSum = chargeSum;
+				bestIndex.x = -1;
+				bestIndex.y = 1;
+			}
+
+			// ---------------------------------------- 1, 1 ----------------------------------------
+			wpct = WorldPositionComponent(wpcOffset.position[0] + 1, wpcOffset.position[1],
+				wpcOffset.position[2] + 1);
+
+			chargeSum = GetEffectOnAgentAt(*it, &wpct, ac->rioter.groupID);
+
+			if (chargeSum > highestSum)
+			{
+				highestSum = chargeSum;
+				bestIndex.x = 1;
+				bestIndex.y = 1;
 			}
 
 			glm::vec3 pfVector;
@@ -119,7 +224,7 @@ void Core::FieldReactionSystem::UpdateAgents()
 
 			float dot = glm::dot(glm::vec2(mc->newDirection[0], mc->newDirection[2]), glm::vec2(pfVector.x, pfVector.z));
 
-			if (dot < 0.0f || (ffDirectionCharge < 0.0f && ffDirectionCharge < highestSum))
+			if (dot < 0.0f /*|| (ffDirectionCharge < 0.0f && ffDirectionCharge < highestSum)*/)
 			{
 				//float factor = 1.0 / (-ffDirectionCharge * 1000.0f);
 				//mc->newDirection[0] *= factor;
@@ -128,7 +233,6 @@ void Core::FieldReactionSystem::UpdateAgents()
 
 				MovementComponent::SetDirection(mc, 0.0f, 0.0f, 0.0f);
 			}
-
 			// Draw a yellow PF direction line and a black ff direction line for each rioter.
 			GFX::Debug::DrawLine(Core::WorldPositionComponent::GetVec3(*wpc),
 				glm::vec3(wpc->position[0] + pfVector.x,
@@ -144,14 +248,14 @@ void Core::FieldReactionSystem::UpdateAgents()
 
 			// Update the direction, making sure it is normalised (if not zero).
 			glm::vec3 newDir = glm::vec3(mc->newDirection[0] * FF_FACTOR + pfVector.x * PF_FACTOR,
-								mc->newDirection[1] * FF_FACTOR + pfVector.y * PF_FACTOR,
-								mc->newDirection[2] * FF_FACTOR + pfVector.z * PF_FACTOR);
-			
+				mc->newDirection[1] * FF_FACTOR + pfVector.y * PF_FACTOR,
+				mc->newDirection[2] * FF_FACTOR + pfVector.z * PF_FACTOR);
 
 			if ((std::abs(newDir.x) + std::abs(newDir.y) + std::abs(newDir.z)) > 0.1f)
 				newDir = glm::normalize(newDir);
 
 			MovementComponent::SetDirection(mc, newDir.x, newDir.y, newDir.z);
+			//MovementComponent::SetDirection(mc, 0.0f, 0.0f, 0.0f);
 		}
 	}
 }
@@ -202,7 +306,7 @@ float Core::FieldReactionSystem::GetAgentsChargeAt(Entity chargedAgent, float di
 	int indexFromType = static_cast<int>(utc->type);
 
 	if (distSqrd > 0.001f && distSqrd < CURVE[0][indexFromType].repelRadius)
-		return -100 + distSqrd * (CURVE[0][indexFromType].repelRadius / 100);
+		return -MINIMUM_CHARGE + distSqrd * (CURVE[0][indexFromType].repelRadius / MINIMUM_CHARGE);
 	else if (distSqrd <= CURVE[0][indexFromType].cutoff)
 		return CURVE[0][indexFromType].charge - distSqrd * CURVE[0][indexFromType].decline;
 	else
@@ -268,7 +372,7 @@ void Core::FieldReactionSystem::UpdateDebugField()
 		{
 			WorldPositionComponent pos = WorldPositionComponent(GetPositionFromFieldIndex(i, j));
             //std::numeric_limits is never given to any real entity.
-			m_calculatingField[i][j] = GetEffectOnAgentAt( std::numeric_limits<Entity>::max(), &pos) * 0.5f;
+			m_calculatingField[i][j] = GetEffectOnAgentAt(std::numeric_limits<Entity>::max(), &pos);
 		}
 	}
 

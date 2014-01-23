@@ -56,7 +56,7 @@ namespace Core
 		static const int FIELD_SIDE_LENGTH = 24;
 		static const int FIELD_SIDE_CELL_COUNT = 60;
 		static const float FIELD_CELL_SIDE_SIZE;
-		static const int FIELD_UPDATE_FRAME_COUNT = 5;
+		static const int FIELD_UPDATE_FRAME_COUNT = 10;
 		static const int FIELD_UPDATE_ROW_COUNT = FIELD_SIDE_CELL_COUNT / FIELD_UPDATE_FRAME_COUNT;
 		static const ChargeCurve CURVE[1][2];
 		
