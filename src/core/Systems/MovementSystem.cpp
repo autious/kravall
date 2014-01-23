@@ -4,7 +4,8 @@
 #include <DebugMacros.hpp>
 #include <GameUtility/GameData.hpp>
 
-const float Core::MovementSystem::TURN_FACTOR = 10.0f;
+//const float Core::MovementSystem::TURN_FACTOR = 10.0f;
+const float Core::MovementSystem::TURN_FACTOR = 7.5f;
 
 void Core::MovementSystem::Update(float delta)
 {
@@ -17,7 +18,6 @@ void Core::MovementSystem::Update(float delta)
 	{
 		WorldPositionComponent* wpc = WGETC<WorldPositionComponent>(*it);
 		MovementComponent* mc = WGETC<MovementComponent>(*it);
-
 
 		// process speed...
 		float mod = mc->desiredSpeed > mc->speed ? walking.acceleration : walking.deceleration;
@@ -71,10 +71,10 @@ void Core::MovementSystem::InterpolateDirections(MovementComponent* mc, float de
 		glm::vec3 oldDir = glm::vec3(mc->direction[0], mc->direction[1], mc->direction[2]);
 		glm::vec3 newDir = glm::vec3(mc->newDirection[0], mc->newDirection[1], mc->newDirection[2]);
 	
-		newDir = glm::lerp(oldDir, newDir, /*TURN_FACTOR * delta*/ 1.0f);
+		newDir = glm::lerp(oldDir, newDir, TURN_FACTOR * delta);
 
         //Must check if the new dir is 0 before normalizing
-        if( glm::length2( newDir ) > 0 )
+        if( glm::length( newDir ) > 0 )
         {
 		    newDir = glm::normalize(newDir);
         }

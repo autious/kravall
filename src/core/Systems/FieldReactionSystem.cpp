@@ -3,9 +3,9 @@
 #include <logger/Logger.hpp>
 
 #define frsChargeCurve Core::FieldReactionSystem::ChargeCurve
-#define PF_DRAW_DIVIDE_FACTOR 0.05f
-#define PF_FACTOR 1.0f
-#define FF_FACTOR 0.0001f
+#define PF_DRAW_DIVIDE_FACTOR 0.0001f
+#define PF_FACTOR 0.5f
+#define FF_FACTOR 0.5f
 #define CAP_POSITIVE 1000000.0f
 #define CAP_NEGATIVE -1000000.0f
 
@@ -14,11 +14,11 @@ const float Core::FieldReactionSystem::STAY_LIMIT = 0.1f;
 const float Core::FieldReactionSystem::FIELD_CELL_SIDE_SIZE = FIELD_SIDE_LENGTH / static_cast<float>(FIELD_SIDE_CELL_COUNT);
 const frsChargeCurve Core::FieldReactionSystem::CURVE[1][2] =
 {
-	{{0.0f, 5.0f, 1.2f}, {-5000.0f, 15.0f, 1.0f} }
+	{{0.0f, 5.0f, 1.0f}, {-5000.0f, 15.0f, 1.0f} }
 };
 
 Core::FieldReactionSystem::FieldReactionSystem() : BaseSystem(EntityHandler::GenerateAspect<WorldPositionComponent, MovementComponent,
-	UnitTypeComponent, AttributeComponent>(), 0ULL), m_showPF(true), m_updateCounter(0), m_drawFieldCenter(1, -0.5f, -35) //(-4.0f, -0.5f, -31.0f)
+	UnitTypeComponent, AttributeComponent>(), 0ULL), m_showPF(false), m_updateCounter(0), m_drawFieldCenter(-4.0f, -0.5f, -31.0f)
 {
 	for (int i = 0; i < FIELD_SIDE_CELL_COUNT; ++i)
 	{
@@ -64,10 +64,16 @@ void Core::FieldReactionSystem::UpdateAgents()
 
 		if (utc->type == UnitType::Rioter) // 2.
 		{
+			WorldPositionComponent wpcOffset(wpc->position[0] + mc->newDirection[0] / 2.0f, 
+											wpc->position[1] + mc->newDirection[1] / 2.0f,
+											wpc->position[2] + mc->newDirection[2] / 2.0f);
 			glm::vec2 bestIndex = glm::vec2(0.0f, 0.0f);
 
-			float highestSum = GetEffectOnAgentAt(*it, wpc, ac->rioter.groupID);
+			// Calculate which index is closest to the flow field direction.
+			float highestSum = GetEffectOnAgentAt(*it, &wpcOffset, ac->rioter.groupID);
 			float staySum = highestSum;
+			float ffDirectionCharge = 0.0f;
+			float ffDot = std::numeric_limits<float>::min();
 
 			for (int i = -1; i < 2; ++i) // 3.
 			{
@@ -76,8 +82,8 @@ void Core::FieldReactionSystem::UpdateAgents()
 					if (i == 0 && j == 0)
 						continue;
 
-					WorldPositionComponent wpct(wpc->position[0] + i, wpc->position[1],
-						wpc->position[2] + j);
+					WorldPositionComponent wpct(wpcOffset.position[0] + i, wpcOffset.position[1],
+						wpcOffset.position[2] + j);
 
 					float chargeSum = GetEffectOnAgentAt(*it, &wpct, ac->rioter.groupID);
 
@@ -86,6 +92,15 @@ void Core::FieldReactionSystem::UpdateAgents()
 						highestSum = chargeSum;
 						bestIndex.x = i;
 						bestIndex.y = j;
+					}
+
+					glm::vec2 ijNormalised = glm::normalize(glm::vec2(i, j));
+					float indexDot = glm::dot(glm::vec2(mc->newDirection[0], mc->newDirection[2]), ijNormalised);
+
+					if (indexDot > ffDot)
+					{
+						ffDot = indexDot;
+						ffDirectionCharge = chargeSum;
 					}
 				}
 			}
@@ -102,24 +117,30 @@ void Core::FieldReactionSystem::UpdateAgents()
 			else
 				pfVector = glm::vec3(0.0f);
 
+			float dot = glm::dot(glm::vec2(mc->newDirection[0], mc->newDirection[2]), glm::vec2(pfVector.x, pfVector.z));
+
+			if (dot < 0.0f || (ffDirectionCharge < 0.0f && ffDirectionCharge < highestSum))
+			{
+				//float factor = 1.0 / (-ffDirectionCharge * 1000.0f);
+				//mc->newDirection[0] *= factor;
+				//mc->newDirection[1] *= factor;
+				//mc->newDirection[2] *= factor;
+
+				MovementComponent::SetDirection(mc, 0.0f, 0.0f, 0.0f);
+			}
+
 			// Draw a yellow PF direction line and a black ff direction line for each rioter.
 			GFX::Debug::DrawLine(Core::WorldPositionComponent::GetVec3(*wpc),
 				glm::vec3(wpc->position[0] + pfVector.x,
 				wpc->position[1] + pfVector.y,
 				wpc->position[2] + pfVector.z),
-				GFXColor(1.0f, 1.0f, 0.0f, 1.0f), false);
+				GFXColor(1.0f, 1.0f, 0.0f, 1.0f), 1, false);
+
 			GFX::Debug::DrawLine(Core::WorldPositionComponent::GetVec3(*wpc),
 				glm::vec3(wpc->position[0] + mc->newDirection[0],
 				wpc->position[1] + mc->newDirection[1],
 				wpc->position[2] + mc->newDirection[2]),
-				GFXColor(0.0f, 0.0f, 0.0f, 1.0f), false);
-
-			float dot = glm::dot(glm::vec2(mc->newDirection[0], mc->newDirection[2]), glm::vec2(pfVector.x, pfVector.z));
-
-			if (dot < 0.0f)
-			{
-				MovementComponent::SetDirection(mc, 0.0f, 0.0f, 0.0f);
-			}
+				GFXColor(0.0f, 0.0f, 0.0f, 1.0f), 1, false);
 
 			// Update the direction, making sure it is normalised (if not zero).
 			glm::vec3 newDir = glm::vec3(mc->newDirection[0] * FF_FACTOR + pfVector.x * PF_FACTOR,
@@ -271,7 +292,7 @@ void Core::FieldReactionSystem::DrawDebugField()
 {
 	float cellHalfSize = FIELD_CELL_SIDE_SIZE * 0.5f;
 	float fieldStart = -FIELD_SIDE_LENGTH * 0.5f - cellHalfSize;
-	float yPos = 0.0f;
+	float yPos = 0.5f;
 
 	for (int i = 0; i < FIELD_SIDE_CELL_COUNT; ++i)
 	{

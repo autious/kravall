@@ -150,6 +150,8 @@ void run( GLFWwindow * window )
 		double delta = (thisFrame - lastFrameTime) / 1000.0;
 		lastFrameTime = thisFrame;
 
+		// NOCOMMIT
+		//delta = 0.01f;
 		
 		Core::Console().Update();
 

@@ -78,9 +78,9 @@ local rioter = ent.get "rioter"
 local police = ent.get "police"
 local building = ent.get "building"
 
-local dist = 1.2
+local dist = 2.4
 local centerPoint = { -4, 0, -21}
-for i = -5, 5 do
+for i = -2, 2 do
 	j= 0 --for j = -1, 1 do
 		police(asm, i * dist + centerPoint[1], 0 + centerPoint[2], j * dist + centerPoint[3])
 	--end
