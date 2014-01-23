@@ -41,7 +41,7 @@ void DrawCullingQuads( cullData* cullingList, int nrEntities, int gridNodeSize )
 
 void Core::CollisionSystem2D::Update( float delta )
 {
-	
+
 	int nrEntities = m_entities.size();
 
 	float maxRadius = 0.0f;

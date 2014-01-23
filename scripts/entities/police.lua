@@ -33,7 +33,7 @@ return function(asm, posX, posY, posZ)
 			{
 				type = core.componentType.AttributeComponent,
 				data = { health = 0, stamina = 0, morale = 0, 
-					   stance = core.PoliceStance.Passive, defense = 0, mobility = 0, squadID = 0 }
+					   stance = core.PoliceStance.Passive, defense = 0, mobility = 0, squadID = 1 }
 			},
 			{
 				type = core.componentType.BoundingVolumeComponent,
