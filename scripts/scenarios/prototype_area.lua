@@ -126,7 +126,7 @@ for i = -7, 6 do
 		rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], groupOneGroupId)
 	end
 end
---core.groups.set_group_goal(groupOneGroupId, -43, 0, 4)
+core.groups.set_group_goal(groupOneGroupId, -43, 0, 4)
 
 local groupTwoGroupId = core.groups.create_group()
 local centerPoint = { 20.5, 0, -40 }		
@@ -135,7 +135,7 @@ for i = -4, 4 do
 		rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], groupTwoGroupId)
 	end
 end
---core.groups.set_group_goal(groupTwoGroupId, -21, 0, 36)
+core.groups.set_group_goal(groupTwoGroupId, -21, 0, 36)
 
 -- Debug
 --local centerPoint = { 49, 0, 5 }		
