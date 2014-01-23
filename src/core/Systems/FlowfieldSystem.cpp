@@ -44,13 +44,13 @@ void Core::FlowfieldSystem::Update( float delta )
 			glm::vec3& position = *reinterpret_cast<glm::vec3*>(wpc->position);
 			
 
-			glm::vec3 midOfEdgeLinkingToNextNode = instance->flowfields[groupID].list[ ffc->node ];
+			glm::vec3 midOfEdgeLinkingToNextNode = instance->m_flowfields[groupID].list[ ffc->node ];
 			if( glm::dot( midOfEdgeLinkingToNextNode, midOfEdgeLinkingToNextNode ) > 0.05f ) // goal node condition...
 			{
 
-				float* edgeNormal = instance->nodes[ ffc->node ].corners[ instance->flowfields[groupID].edges[ffc->node] ].normal;
+				float* edgeNormal = instance->m_nodes[ ffc->node ].corners[ instance->m_flowfields[groupID].edges[ffc->node] ].normal;
 				glm::vec3 normal = glm::vec3( edgeNormal[0], 0.0f, edgeNormal[1] );
-				glm::vec3 dirctionToEdgeInNextNode = glm::normalize( instance->flowfields[groupID].list[ ffc->node ] - position );
+				glm::vec3 dirctionToEdgeInNextNode = glm::normalize( instance->m_flowfields[groupID].list[ ffc->node ] - position );
 
 
 
@@ -60,11 +60,11 @@ void Core::FlowfieldSystem::Update( float delta )
 				glm::vec3 otherMid;
 				
 				{
-					int ii = instance->flowfields[groupID].edges[ ffc->node ] * 2;
+					int ii = instance->m_flowfields[groupID].edges[ ffc->node ] * 2;
 					int oo = ( ii + 2 ) % 8;
 			
-					glm::vec3 lineStart = glm::vec3( instance->nodes[ ffc->node ].points[ ii ], 0.0f, instance->nodes[ ffc->node ].points[ ii + 1 ] );
-					glm::vec3 lineEnd	= glm::vec3( instance->nodes[ ffc->node ].points[ oo ], 0.0f, instance->nodes[ ffc->node ].points[ oo + 1 ] );
+					glm::vec3 lineStart = glm::vec3( instance->m_nodes[ ffc->node ].points[ ii ], 0.0f, instance->m_nodes[ ffc->node ].points[ ii + 1 ] );
+					glm::vec3 lineEnd	= glm::vec3( instance->m_nodes[ ffc->node ].points[ oo ], 0.0f, instance->m_nodes[ ffc->node ].points[ oo + 1 ] );
 					lineMid = lineStart + (( lineEnd - lineStart ) * 0.5f );
 
 					glm::vec3 cross = glm::normalize( glm::cross( (lineEnd - lineStart), glm::vec3( 0.0f, 1.0f, 0.0f ) ) );
@@ -73,21 +73,21 @@ void Core::FlowfieldSystem::Update( float delta )
 				}
 
 				// if quad
-				if( instance->nodes[ ffc->node ].corners[3].length > 0 )  
+				if( instance->m_nodes[ ffc->node ].corners[3].length > 0 )  
 				{
-					int ii = ((instance->flowfields[groupID].edges[ ffc->node ] + 2) % 4) * 2;
+					int ii = ((instance->m_flowfields[groupID].edges[ ffc->node ] + 2) % 4) * 2;
 					int oo = ( ii + 2 ) % 8;
 					
-					glm::vec3 lineStart = glm::vec3( instance->nodes[ ffc->node ].points[ ii ], 0.0f, instance->nodes[ ffc->node ].points[ ii + 1 ] );
-					glm::vec3 lineEnd	= glm::vec3( instance->nodes[ ffc->node ].points[ oo ], 0.0f, instance->nodes[ ffc->node ].points[ oo + 1 ] );
+					glm::vec3 lineStart = glm::vec3( instance->m_nodes[ ffc->node ].points[ ii ], 0.0f, instance->m_nodes[ ffc->node ].points[ ii + 1 ] );
+					glm::vec3 lineEnd	= glm::vec3( instance->m_nodes[ ffc->node ].points[ oo ], 0.0f, instance->m_nodes[ ffc->node ].points[ oo + 1 ] );
 					otherMid = lineStart + (( lineEnd - lineStart ) * 0.5f );
 				}
 				// otherwise it's a triangle...
 				else 
 				{
 					// get oppisite corner...
-					int ii = ((instance->flowfields[groupID].edges[ ffc->node ] + 2) % 3) * 2;
-					otherMid =  glm::vec3( instance->nodes[ ffc->node ].points[ ii ], 0.0f, instance->nodes[ ffc->node ].points[ ii + 1 ] );
+					int ii = ((instance->m_flowfields[groupID].edges[ ffc->node ] + 2) % 3) * 2;
+					otherMid =  glm::vec3( instance->m_nodes[ ffc->node ].points[ ii ], 0.0f, instance->m_nodes[ ffc->node ].points[ ii + 1 ] );
 				}
 
 
@@ -114,7 +114,7 @@ void Core::FlowfieldSystem::Update( float delta )
 
 				// left-overs...
 				//*reinterpret_cast<glm::vec3*>(mvmc->newDirection) = glm::normalize( );
-					//- *reinterpret_cast<glm::vec3*>( instance->nodes[ ffc->node ].corners[ instance->flowfields[attribc->rioter.groupID].edges[ffc->node] ].normal ) * FF_NORMAL_INFLUENCE ); 
+					//- *reinterpret_cast<glm::vec3*>( instance->m_nodes[ ffc->node ].corners[ instance->m_flowfields[attribc->rioter.groupID].edges[ffc->node] ].normal ) * FF_NORMAL_INFLUENCE ); 
 					//- normal * FF_NORMAL_INFLUENCE );
 
 				//GFX::Debug::DrawLine(position, position + *reinterpret_cast<glm::vec3*>(mvmc->newDirection), GFXColor(1.0f, 0.5f, 0.0f, 1.0f), false);

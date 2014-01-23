@@ -23,11 +23,11 @@ namespace Core
 		result.t = NO_LINE_COLLISION_VALUE;
 		result.node = startNode;
 		
-		bool* visited = Core::world.m_frameHeap.NewPODArray<bool>( instance->nrNodes );
-		std::memset( visited, false, sizeof(bool) * instance->nrNodes );
+		bool* visited = Core::world.m_frameHeap.NewPODArray<bool>( instance->m_nrNodes );
+		std::memset( visited, false, sizeof(bool) * instance->m_nrNodes );
 
 		std::vector<int> nodeList;
-		nodeList.reserve( instance->nrNodes );
+		nodeList.reserve( instance->m_nrNodes );
 
 		float distanceToTarget = glm::distance( start, goal );
 
@@ -38,7 +38,7 @@ namespace Core
 		//int currentNode = startNode;
 		while( nodeList.size() != head )
 		{
-			Core::NavigationMesh::Node* current = &instance->nodes[ nodeList[head] ];
+			Core::NavigationMesh::Node* current = &instance->m_nodes[ nodeList[head] ];
 			for( int p = 0; p < 4; p++ )
 			{
 				// check if triangle or non-collidable line...
@@ -74,7 +74,7 @@ namespace Core
 				}
 			}
 
-			// has not intersected with any nodes yet, add more nodes to list
+			// has not intersected with any m_nodes yet, add more m_nodes to list
 			if( result.t < 0 )
 			{
 				for( int p = 0; p < 4; p++ )
@@ -103,7 +103,7 @@ namespace Core
 
 		// get starting node...
 		int startNode = -1;
-		for( int i = 0; i < instance->nrNodes; i++ )
+		for( int i = 0; i < instance->m_nrNodes; i++ )
 		{
 			if( instance->CheckPointInsideNode( from, i ) )
 			{
@@ -152,8 +152,8 @@ namespace Core
 
 	//struct PathComponent
 	//{
-	//	int nrNodes;
-	//	float nodes[ 2 * 50 ];
+	//	int m_nrNodes;
+	//	float m_nodes[ 2 * 50 ];
 	//};
 
 	//struct PathElement
@@ -181,7 +181,7 @@ namespace Core
 	PathComponent PathFinder::GetPath( glm::vec3 start, glm::vec3 goal )
 	{
 		PathComponent path;
-		path.nrNodes = 0;
+		path.m_nrNodes = 0;
 
 		Core::NavigationMesh* instance = Core::GetNavigationMesh();
 		if( !instance )
@@ -189,7 +189,7 @@ namespace Core
 
 		// get starting node...
 		int startNode = -1;
-		for( int i = 0; i < instance->nrNodes; i++ )
+		for( int i = 0; i < instance->m_nrNodes; i++ )
 		{
 			if( instance->CheckPointInsideNode( start, i ) )
 			{
@@ -241,11 +241,11 @@ namespace Core
 			GFX::Debug::DrawSphere( wayPoints[tail].origin + glm::normalize( wayPoints[tail].end - wayPoints[tail].origin ) * result.t, 2.0f, GFXColor( 1, 1, 0, 1 ), false );
 
 			int node = 8;
-			int size = instance->nodes[node].corners[3].length < 0 ? 3 : 4;
+			int size = instance->m_nodes[node].corners[3].length < 0 ? 3 : 4;
 			//for( int oo = 0; oo < size; oo++ )
 			//{
 			//	glm::vec3 point = glm::vec3(
-			//	instance->nodes[node].points[oo * 2], 0, instance->nodes[node].points[oo * 2 + 1] ); 
+			//	instance->m_nodes[node].points[oo * 2], 0, instance->m_nodes[node].points[oo * 2 + 1] ); 
 			//
 			//	GFX::Debug::DrawSphere( point, 4.0f, GFXColor( 1, 1, 0.5, 1 ), false );
 			//}
@@ -256,28 +256,28 @@ namespace Core
 
 				// if closest hit is backside of edge, we are shooting from a corner.
 				// walk sideways along the walls and shoot from the next node...
-				float* normal = instance->nodes[result.node].corners[result.edge].normal;
+				float* normal = instance->m_nodes[result.node].corners[result.edge].normal;
 				if( glm::dot( wayPoints[tail].end - wayPoints[tail].origin, glm::vec3( normal[0], normal[1], normal[2] ) ) > 0 )
 				{
 					glm::vec2 currentCorner = glm::vec2( wayPoints[tail].origin.x, wayPoints[tail].origin.z );
 
 					// find current corner in current node...
 					int nrCorners = 4;
-					if( instance->nodes[wayPoints[tail].startNode].corners[3].length < 0 )
+					if( instance->m_nodes[wayPoints[tail].startNode].corners[3].length < 0 )
 						nrCorners = 3;
 
 					for( int v = 0; v < nrCorners; ++v )
 					{						
 						int otherCurrent = v * 2;
 						glm::vec2 cornerPos = glm::vec2( 
-							instance->nodes[wayPoints[tail].startNode].points[ otherCurrent ], 
-							instance->nodes[wayPoints[tail].startNode].points[ otherCurrent + 1 ] );
+							instance->m_nodes[wayPoints[tail].startNode].points[ otherCurrent ], 
+							instance->m_nodes[wayPoints[tail].startNode].points[ otherCurrent + 1 ] );
 						
-						int tempNextCornerNode = instance->nodes[wayPoints[tail].startNode].corners[v].cornerConnectsToNode;
+						int tempNextCornerNode = instance->m_nodes[wayPoints[tail].startNode].corners[v].cornerConnectsToNode;
 						if( tempNextCornerNode >= 0 )
 						{
 							//glm::vec3 point = glm::vec3(
-							//instance->nodes[tempNextCornerNode].points[0], 0, instance->nodes[tempNextCornerNode].points[1] ); 
+							//instance->m_nodes[tempNextCornerNode].points[0], 0, instance->m_nodes[tempNextCornerNode].points[1] ); 
 							//
 							//GFX::Debug::DrawSphere( point, 4.0f, GFXColor( 1, 0, 0, 1 ), false );
 						}
@@ -286,7 +286,7 @@ namespace Core
 						if( glm::dot( cornerPos - currentCorner, cornerPos - currentCorner ) < 0.05f )
 						{
 							//glm::vec3 point = glm::vec3(
-							//instance->nodes[wayPoints[tail].startNode].points[0], 0, instance->nodes[wayPoints[tail].startNode].points[1] ); 
+							//instance->m_nodes[wayPoints[tail].startNode].points[0], 0, instance->m_nodes[wayPoints[tail].startNode].points[1] ); 
 
 							//GFX::Debug::DrawSphere( glm::vec3( cornerPos.x, 0.0f, cornerPos.y ), 4.0f, GFXColor( 1, 0, 0, 1 ), false );
 
@@ -294,7 +294,7 @@ namespace Core
 							//#define NAVMESH_CONCAVE_CORNER_NODE -2
 
 							// starting node for new ray
-							int nextCornerNode = instance->nodes[wayPoints[tail].startNode].corners[v].cornerConnectsToNode;
+							int nextCornerNode = instance->m_nodes[wayPoints[tail].startNode].corners[v].cornerConnectsToNode;
 							if( nextCornerNode == NAVMESH_CONCAVE_CORNER_NODE )
 							{
 								int prevCorner = (v + nrCorners - 1) % nrCorners;
@@ -303,9 +303,9 @@ namespace Core
 								glm::vec3 corner;
 								
 								corner = glm::vec3( 
-									instance->nodes[ wayPoints[tail].startNode ].points[ prevCorner * 2 ], 
+									instance->m_nodes[ wayPoints[tail].startNode ].points[ prevCorner * 2 ], 
 									0.0f, 
-									instance->nodes[ wayPoints[tail].startNode ].points[ prevCorner * 2 + 1 ]);
+									instance->m_nodes[ wayPoints[tail].startNode ].points[ prevCorner * 2 + 1 ]);
 								wayPoints[head++] = PathElement( corner, wayPoints[tail].end, nextCornerNode );
 
 								
@@ -323,11 +323,11 @@ namespace Core
 
 
 							// get start position for new ray...
-							int corner = instance->nodes[wayPoints[tail].startNode].corners[v].cornerConnectsToCorner;
+							int corner = instance->m_nodes[wayPoints[tail].startNode].corners[v].cornerConnectsToCorner;
 							glm::vec3 nextCornerPos = glm::vec3( 
-								instance->nodes[nextCornerNode].points[ corner * 2 ],
+								instance->m_nodes[nextCornerNode].points[ corner * 2 ],
 								0.0f, 
-								instance->nodes[nextCornerNode].points[ corner * 2 + 1 ] );
+								instance->m_nodes[nextCornerNode].points[ corner * 2 + 1 ] );
 						
 							GFX::Debug::DrawLine( nextCornerPos, wayPoints[tail].origin, GFXColor( 1, 1, 0, 1 ), false );
 							
@@ -348,8 +348,8 @@ namespace Core
 				// corners of hit edge...
 				int ii = result.edge * 2;
 				int oo = ( ii + 2 ) % 8;
-				glm::vec3 lineStart = glm::vec3( instance->nodes[result.node].points[ ii ], 0, instance->nodes[result.node].points[ ii + 1 ] );
-				glm::vec3 lineEnd	= glm::vec3( instance->nodes[result.node].points[ oo ], 0, instance->nodes[result.node].points[ oo + 1 ] );
+				glm::vec3 lineStart = glm::vec3( instance->m_nodes[result.node].points[ ii ], 0, instance->m_nodes[result.node].points[ ii + 1 ] );
+				glm::vec3 lineEnd	= glm::vec3( instance->m_nodes[result.node].points[ oo ], 0, instance->m_nodes[result.node].points[ oo + 1 ] );
 				
 				LineCheckReturnByReference resultA;
 				CheckLine( lineStart, wayPoints[tail].origin, instance, result.node, resultA );
@@ -436,8 +436,8 @@ namespace Core
 */
 }
 
-//glm::vec3 lineStart = glm::vec3( instance->nodes[result.node].points[ result.edge * 2 ], 0, instance->nodes[result.node].points[ result.edge * 2 + 1 ] );
-//glm::vec3 lineEnd = glm::vec3( instance->nodes[result.node].points[ result.edge * 2 + 2 ], 0, instance->nodes[result.node].points[ result.edge * 2 + 3 ] );
+//glm::vec3 lineStart = glm::vec3( instance->m_nodes[result.node].points[ result.edge * 2 ], 0, instance->m_nodes[result.node].points[ result.edge * 2 + 1 ] );
+//glm::vec3 lineEnd = glm::vec3( instance->m_nodes[result.node].points[ result.edge * 2 + 2 ], 0, instance->m_nodes[result.node].points[ result.edge * 2 + 3 ] );
 //
 //GFX::Debug::DrawLine( 
 //	start,
@@ -448,19 +448,19 @@ namespace Core
 // working line intersection test...
 
 //// for every node
-//for( int i = 0; i < instance->nrNodes; i++ )
+//for( int i = 0; i < instance->m_nrNodes; i++ )
 //{
 //	// for every line
 //	for( int p = 0; p < 4; p++ )
 //	{
 //		// check if triangle or non-collidable line...
-//		if( instance->nodes[i].corners[p].length < 0 || instance->nodes[i].corners[p].linksTo >= 0 )
+//		if( instance->m_nodes[i].corners[p].length < 0 || instance->m_nodes[i].corners[p].linksTo >= 0 )
 //			continue;
 //
 //		int ii = p * 2;
 //		int oo = ( ii + 2 ) % 8;
-//		glm::vec3 lineStart = glm::vec3( instance->nodes[i].points[ ii ], 0, instance->nodes[i].points[ ii + 1 ] );
-//		glm::vec3 lineEnd	= glm::vec3( instance->nodes[i].points[ oo ], 0, instance->nodes[i].points[ oo + 1 ] );
+//		glm::vec3 lineStart = glm::vec3( instance->m_nodes[i].points[ ii ], 0, instance->m_nodes[i].points[ ii + 1 ] );
+//		glm::vec3 lineEnd	= glm::vec3( instance->m_nodes[i].points[ oo ], 0, instance->m_nodes[i].points[ oo + 1 ] );
 //
 //		float A = glm::determinant( glm::mat2x2( start.x, start.z, goal.x, goal.z ) );
 //		float B = glm::determinant( glm::mat2x2( lineStart.x, lineStart.z, lineEnd.x, lineEnd.z ) );
@@ -471,11 +471,11 @@ namespace Core
 //
 //		glm::vec3 hit = glm::vec3( intersectionX, 0.0f, intersectionZ );
 //
-//		float alongLine = glm::dot( hit - lineStart, (lineEnd - lineStart) * instance->nodes[i].corners[p].inverseLength );
-//		if( alongLine > 0 && alongLine < instance->nodes[i].corners[p].length )
+//		float alongLine = glm::dot( hit - lineStart, (lineEnd - lineStart) * instance->m_nodes[i].corners[p].inverseLength );
+//		if( alongLine > 0 && alongLine < instance->m_nodes[i].corners[p].length )
 //		{
 //
-//			glm::vec3 hitPos = lineStart + alongLine * (lineEnd - lineStart) * instance->nodes[i].corners[p].inverseLength;
+//			glm::vec3 hitPos = lineStart + alongLine * (lineEnd - lineStart) * instance->m_nodes[i].corners[p].inverseLength;
 //			float t = glm::distance( hitPos, start );
 //
 //			if( result.t > t || result.t < 0 )
