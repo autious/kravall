@@ -25,14 +25,14 @@ end
 function core.init() 
     print( "Program starting in lua" )
     logo = image( 10,10, "assets/material/ui/test.material", false )
-    toggleMenu()
+    --toggleMenu()
     --openscenario( "test" )    
 end
 
 menuState = nil
 function toggleMenu()
     if menuState == nil then
-        menuState = MainMenu.new()
+        menuState = MainMenu:new()
     else
         menuState:destroy()
         menuState = nil
