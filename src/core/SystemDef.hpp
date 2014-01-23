@@ -54,10 +54,7 @@ namespace Core
 #include <Systems/CollisionSystem2D.hpp>
 #include <Systems/FlowfieldSystem.hpp>
 #include <Systems/NavMeshCollisionSystem.hpp>
-<<<<<<< HEAD
 #include <Systems/GroupDataSystem.hpp>
-=======
 #include <Systems/FlowfieldPositioningSystem.hpp>
->>>>>>> 6307259a30528a556be4b2c3dd81777c67674513
 
 #endif
