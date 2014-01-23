@@ -32,6 +32,8 @@ namespace GFX
 		GLuint shaderID = glCreateShader(type);
 		const char* source = m_textFile->GetCString();
 
+		//TODO: Implement preprocessor defines
+
 		if (shaderID != 0)
 		{
 			m_shaderData->SaveShader(shaderKey, shaderID);
@@ -240,10 +242,15 @@ namespace GFX
 		glUseProgram(0);
 	}
 
-
+	
 	GLint ShaderManager::GetUniformLocation(std::string shaderProgramKey, std::string uniformName)
 	{
 		return glGetUniformLocation(GetShaderProgramID(shaderProgramKey), uniformName.c_str());
+	}
+
+	GLint ShaderManager::GetUniformLocation(GLuint shaderProgramID, std::string uniformName)
+	{
+		return glGetUniformLocation(shaderProgramID, uniformName.c_str());
 	}
 
 	GLint ShaderManager::GetUniformBlockLocation(std::string shaderProgramKey, std::string uniformBlockName)

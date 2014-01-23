@@ -3,7 +3,7 @@
 
 #include <fstream>
 #include <logger/Logger.hpp>
-
+#include <limits>
 static bool drawNavigationMesh = true;
 
 namespace Core
@@ -38,6 +38,8 @@ namespace Core
 
         m_flowfields[m_nrUsedFlowfields].edges = Core::world.m_levelHeap.NewPODArray<int>( m_nrNodes );
         m_flowfields[m_nrUsedFlowfields].list = reinterpret_cast<glm::vec3*>(Core::world.m_levelHeap.NewPODArray<unsigned char>(sizeof(glm::vec3) * m_nrNodes));
+        m_flowfields[m_nrUsedFlowfields].goal[0] = std::numeric_limits<float>::max();
+        m_flowfields[m_nrUsedFlowfields].goal[1] = std::numeric_limits<float>::max();
 
 		std::memset( m_flowfields[m_nrUsedFlowfields].edges, 0, m_nrNodes * sizeof(int) );
 		std::memset( m_flowfields[m_nrUsedFlowfields].list, 0, m_nrNodes * sizeof(glm::vec3) );

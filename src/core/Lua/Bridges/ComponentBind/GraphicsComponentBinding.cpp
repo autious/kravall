@@ -81,7 +81,6 @@ Core::ComponentSetters Core::GraphicsComponentBinding::GetSetters()
         GraphicsComponent *gc = WGETC<GraphicsComponent>( entity );
 
         GFXObjectType * gfxot = (GFXObjectType*)luaL_checkudata( L, valueindex, GFX_OBJECT_TYPE_META );
-        LOG_DEBUG << *gfxot << std::endl;
 
         GFX::SetBitmaskValue( gc->bitmask, GFX::BITMASK::TYPE, *gfxot );
     };

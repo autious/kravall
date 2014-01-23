@@ -16,7 +16,7 @@ namespace Core
 		float speed;
 
 		/*! The object's maximum speed. This is used with acceleration and should limit the range of speed. */
-		float maxSpeed;
+		float disiredSpeed;
 
 		/*! 
 			Should NEVER be set directly - use the static function SetDirection instead. An array specifying the 
@@ -34,7 +34,7 @@ namespace Core
 		float goal[3];
 
 		/*! Default constructor. Initialising all members to 0. */
-		MovementComponent() : speed(0.0f), maxSpeed(0.0f)
+		MovementComponent() : speed(0.0f), disiredSpeed(0.0f)
 		{
 			direction[0] = 0.0f;
 			direction[1] = 0.0f;
@@ -59,7 +59,7 @@ namespace Core
 		*/
 		MovementComponent(const float& dirX, const float& dirY, const float& dirZ, const float& startSpeed,
 			const float& highestSpeed)
-			: speed(startSpeed), maxSpeed(highestSpeed)
+			: speed(startSpeed), disiredSpeed(highestSpeed)
 		{
 			direction[0] = dirX;
 			direction[1] = dirY;

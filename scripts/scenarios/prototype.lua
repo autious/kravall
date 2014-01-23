@@ -13,6 +13,7 @@ ambient(asm, 1.0, 1.0, 1.0, 0.1)
 directional(asm, -1, -1, 0.5)
 
 camera:lookAt( core.glm.vec3.new( -20, 35, 20 ), core.glm.vec3.new( 0, 0, 20 ) )
+--camera:lookAt( core.glm.vec3.new( -20, 10, 20 ), core.glm.vec3.new( 0, 0, 20 ) )
 
 -- Group 0 start to end, top row (left side)
 street_light(asm, -50, -0.5, street_light_intensity)
@@ -76,23 +77,39 @@ street_light(asm, 28, -35, street_light_intensity)
 local rioter = ent.get "rioter"
 local police = ent.get "police"
 local building = ent.get "building"
-	
--- Release	
-local centerPoint = { 49, 0, 5 }		
-for i = -7, 6 do
-	for p = -6, 6 do
-		rioter( asm, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], 0)
+
+local policeGroup = core.groups.create_group()
+local dist = 1.2
+local centerPoint = { -4, 0, -21}
+for i = -5, 5 do
+	for j = -1, 1 do
+		police(asm, i * dist + centerPoint[1], 0 + centerPoint[2], j * dist + centerPoint[3], policeGroup)
 	end
 end
-core.groups.set_group_goal(0, -43, 0, 4)
+core.groups.set_group_goal(policeGroup, -43, 0, 4)
 
+--police(asm, 1, 0, -22);
+--police(asm, 1, 0, -21);
+--police(asm, 1, 0, -20);
+
+
+-- Release	
+--local centerPoint = { 49, 0, 5 }		
+--for i = -7, 6 do
+--	for p = -6, 6 do
+--		rioter( asm, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], 0)
+--	end
+--end
+--core.nav_mesh.set_group_goal(0, -43, 0, 4)
+
+local rioterGroup = core.groups.create_group()
 local centerPoint = { 20.5, 0, -40 }		
 for i = -4, 4 do
 	for p = -5, 5 do
-		rioter( asm, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], 1)
+		rioter( asm, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rioterGroup)
 	end
 end
-core.groups.set_group_goal(1, -21, 0, 36)
+core.groups.set_group_goal(rioterGroup, -21, 0, 36)
 
 
 -- Debug
@@ -113,14 +130,9 @@ core.groups.set_group_goal(1, -21, 0, 36)
 --core.nav_mesh.set_group_goal(1, -21, 0, 36)
 
 local navmesh = ent.get "navMesh"
-navmesh(asm, 0, -0.1, 0)
+--navmesh(asm, 0, -0.1, 0)
 local plane = ent.get "plane"
 plane(asm, 0, -1, 0, 150)
-
-local navmesh = ent.get "navMesh"
-navmesh(asm, 0, -0.1, 0)
-local plane = ent.get "plane"
-plane(asm, 0, -1, 0)
 
 building(asm, 64, 12)
 building(asm, 64, 2)

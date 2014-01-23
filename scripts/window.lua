@@ -1,11 +1,29 @@
-
 local window = {}
 local windowSizeCallback = {}
+local windowFocusCallback = {}
+
+window.width,window.height = core.window.getSize()
 
 function core.window.windowSizeCallback( width, height )
+    window.width = width
+    window.height = height
     for k,v in pairs( windowSizeCallback ) do
         k(width,height)
     end
+end
+
+function core.window.windowFocusCallback( focus )
+    for k,v in pairs( windowFocusCallback ) do
+        k(focus)
+    end
+end
+
+function window.registerWindowFocusCallback( func )
+    windowFocusCallback[func] = true
+end
+
+function window.deregisterWindowFocusCallback( func )
+    windowFocusCallback[func] = nil
 end
 
 function window.registerWindowSizeCallback( func )

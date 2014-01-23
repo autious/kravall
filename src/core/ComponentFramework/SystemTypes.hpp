@@ -3,6 +3,9 @@
 
 #include <cstdint>
 #include <cstdlib>
+#include <limits>
+
+#define INVALID_ENTITY std::numeric_limits<Core::Entity>::max()
 
 namespace Core
 {
