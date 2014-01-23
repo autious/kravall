@@ -119,21 +119,23 @@ local police = ent.get "police"
 local building = ent.get "building"
 	
 -- Release	
+local groupOneGroupId = core.groups.create_group()
 local centerPoint = { 49, 0, 5 }		
 for i = -7, 6 do
 	for p = -6, 6 do
-		rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], 0)
+		rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], groupOneGroupId)
 	end
 end
-core.nav_mesh.set_group_goal(0, -43, 0, 4)
+--core.groups.set_group_goal(groupOneGroupId, -43, 0, 4)
 
+local groupTwoGroupId = core.groups.create_group()
 local centerPoint = { 20.5, 0, -40 }		
 for i = -4, 4 do
 	for p = -5, 5 do
-		rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], 1)
+		rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], groupTwoGroupId)
 	end
 end
-core.nav_mesh.set_group_goal(1, -21, 0, 36)
+--core.groups.set_group_goal(groupTwoGroupId, -21, 0, 36)
 
 -- Debug
 --local centerPoint = { 49, 0, 5 }		
