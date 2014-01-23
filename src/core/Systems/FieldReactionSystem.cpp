@@ -102,6 +102,13 @@ void Core::FieldReactionSystem::UpdateAgents()
 			else
 				pfVector = glm::vec3(0.0f);
 
+			float dot = glm::dot(glm::vec2(mc->newDirection[0], mc->newDirection[2]), glm::vec2(pfVector.x, pfVector.z));
+
+			if (dot < 0.0f)
+			{
+				MovementComponent::SetDirection(mc, 0.0f, 0.0f, 0.0f);
+			}
+
 			// Draw a yellow PF direction line and a black ff direction line for each rioter.
 			GFX::Debug::DrawLine(Core::WorldPositionComponent::GetVec3(*wpc),
 				glm::vec3(wpc->position[0] + pfVector.x,
@@ -113,13 +120,6 @@ void Core::FieldReactionSystem::UpdateAgents()
 				wpc->position[1] + mc->newDirection[1],
 				wpc->position[2] + mc->newDirection[2]),
 				GFXColor(0.0f, 0.0f, 0.0f, 1.0f), false);
-
-			float dot = glm::dot(glm::vec2(mc->newDirection[0], mc->newDirection[2]), glm::vec2(pfVector.x, pfVector.z));
-
-			if (dot < 0.0f)
-			{
-				MovementComponent::SetDirection(mc, 0.0f, 0.0f, 0.0f);
-			}
 
 			// Update the direction, making sure it is normalised (if not zero).
 			glm::vec3 newDir = glm::vec3(mc->newDirection[0] * FF_FACTOR + pfVector.x * PF_FACTOR,
