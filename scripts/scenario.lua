@@ -11,6 +11,11 @@ function S.new( )
     self.initCallbacks = {}
     self.icindex = 0
     self.iccount = 0
+
+    self.updateCallbacks = {}
+    self.ucindex = 0
+    self.uccount = 0
+
     self.asm = assembly_loader.loadPack({})
 
 
@@ -43,6 +48,14 @@ function S:registerInitCallback( func )
     self.iccount = #(self.initCallbacks)
 end
 
+function S:registerUpdateCallback( func )
+    if type( func ) ~= "function" then
+        error( "Tick callback given is not a function" )
+    end
+    self.updateCallbacks[#(self.updateCallbacks)+1] = func
+    self.uccount = #(self.updateCallbacks)
+end
+
 function S:update( delta )
     -- If we finish loading all assets, run the init functions.
     if self.asm:isLoading() == false and self.ranInit == false then
@@ -54,17 +67,18 @@ function S:update( delta )
         end
     else
 
-        for k,v in ipairs( self.tickCallbacks ) do
-            v()
+        for k,v in ipairs( self.updateCallbacks ) do
+            v(delta)
         end
-        -- Call one tick callback
-       -- if self.tccount > 0 then
-       --     self.tcindex = self.tcindex + 1
-       --     if self.tcindex > self.tccount then
-       --         self.tcindex = 1
-       --     end
-       --     self.tickCallbacks[self.tcindex]()
-       -- end
+
+         --Call one tick callback
+         if self.tccount > 0 then
+             self.tcindex = self.tcindex + 1
+             if self.tcindex > self.tccount then
+                 self.tcindex = 1
+             end
+             self.tickCallbacks[self.tcindex]()
+         end
     end
 end
 
