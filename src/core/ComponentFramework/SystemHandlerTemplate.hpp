@@ -4,6 +4,7 @@
 #include "BaseSystem.hpp"
 #include "PVector.hpp"
 #include <TemplateUtility/TemplateIndex.hpp>
+
 #include <array>
 #include <utility>
 #include <vector>
@@ -86,10 +87,11 @@ namespace Core
             return m_systems[id];
         }
 
+
         template <typename System>
         System* GetSystem()
         {
-            return static_cast<System*>(m_systems[Index<System, std::tuple<Args...>>::value]);
+            return reinterpret_cast<System*>(m_systems[Index<System, std::tuple<Args...>>::value]);
         }
 
         std::vector<std::pair<const char*,std::chrono::microseconds>> GetFrameTime()

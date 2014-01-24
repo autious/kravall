@@ -24,8 +24,10 @@ local side = math.sqrt( 50 )
 --rioter( asm, 4, 0, 4, 0 )
 --rioter( asm, 10, 0, 10, 0 )
 --rioter( asm, 11, 0, 11, 0 )
-local policeGroup = core.groups.create_group();
-police( asm, 0, 0, 0, policeGroup );
+
+local squadID = core.groups.create_group()
+
+police( asm, 0, 0, 0, squadID );
 
 camera:lookAt( core.glm.vec3.new( 55, 55, 55 ), core.glm.vec3.new( 0, 0, 0 ) )
 

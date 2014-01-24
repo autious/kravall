@@ -27,7 +27,7 @@ namespace Core
 
 	bool NavigationMesh::CalculateFlowfieldForGroup( glm::vec3 point, int group )
 	{
-		if( group >= m_maxFlowfields )
+		if( group >= maxFlowfields )
 		{
 			LOG_FATAL << "Trying to calculate flowfield for group id above max nr groups, in function \"CalculateFlowfieldForGroup\"" << std::endl;
 			assert( false );
@@ -35,13 +35,14 @@ namespace Core
 		}
 
 		// reset group metadata...
-		m_flowfields[group].goal[ 0 ] = FLT_MAX;
-		m_flowfields[group].goal[ 1 ] = FLT_MAX;
-		std::memset( m_flowfields[group].list, 0, m_nrNodes * sizeof( glm::vec3 ) );
+		flowfields[group].goal[ 0 ] = FLT_MAX;
+		flowfields[group].goal[ 1 ] = FLT_MAX;
+		std::memset( flowfields[group].list, 0, nrNodes * sizeof( glm::vec3 ) );
+
 
 		// find out what node we want to go to...
 		int node = -1;
-		for( int i = 0; i < m_nrNodes; i++ )
+		for( int i = 0; i < nrNodes; i++ )
 		{
 			if( CheckPointInsideNode( point, i ) )
 			{
@@ -63,14 +64,14 @@ namespace Core
 		// rig first node...		
 		for( int i = 0; i < 4; i++ )
 		{
-			int linksTo = m_nodes[ node ].corners[i].linksTo;
+			int linksTo = nodes[ node ].corners[i].linksTo;
 			if( linksTo >= 0 )
-				prioList.push_back( TraversalData( linksTo, m_nodes[ node ].corners[i].linksToEdge, -5.0f, -1 ) );
+				prioList.push_back( TraversalData( linksTo, nodes[ node ].corners[i].linksToEdge, -5.0f, -1 ) );
 		}
 		std::sort( prioList.begin(), prioList.end(), sortingFunction );
 
-		bool* visited = Core::world.m_frameHeap.NewPODArray<bool>( m_nrNodes );
-		std::memset( visited, false, sizeof(bool) * m_nrNodes );
+		bool* visited = Core::world.m_frameHeap.NewPODArray<bool>( nrNodes );
+		std::memset( visited, false, sizeof(bool) * nrNodes );
 
 		float* distances = Core::world.m_frameHeap.NewPODArray<float>( m_nrNodes );
 		std::memset( distances, 0.0f, sizeof(float) * m_nrNodes );
@@ -79,7 +80,7 @@ namespace Core
 		// run algorithm
 		while( prioList.size() != 0 )
 		{
-			Core::NavigationMesh::Node& current = m_nodes[ prioList[0].node ];
+			Core::NavigationMesh::Node& current = nodes[ prioList[0].node ];
 			
 			// redundancy check, if sorting is perfect, this should never have any effect
 			// note; this block kills of added m_nodes that are already visited. this is vital functionality.
@@ -132,6 +133,8 @@ namespace Core
 
 						// distance to the next node
 						float dist = glm::distance( otherMid, mid );
+
+						//if( prioList[0] )
 				
 						// check so not the entry edge, otherwise add new node to priolist
 						if( i != prioList[0].entryEdge )
@@ -142,6 +145,9 @@ namespace Core
 					}
 				}
 			}
+
+			if( prioList[0].node == 8 )
+				int pp = 0;
 
 			// calculate mid point of the entry edge in parent node, this makes the path a bit more flowing
 			glm::vec3 parentMid;

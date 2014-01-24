@@ -87,13 +87,13 @@ void Core::PoliceGoalSystem::Update( float delta )
 		if( walk )
 		{
 			// set speed according to state...
-			mvmc->disiredSpeed = GameData::GetWalkingSpeed().speedToDesire;
+			mvmc->desiredSpeed = GameData::GetWalkingSpeed().speedToDesire;
 
 
 		}
 		else
 		{
-			mvmc->disiredSpeed = 0.0f;
+			mvmc->desiredSpeed = 0.0f;
 		}
 	}
 }

@@ -112,7 +112,7 @@ void run( GLFWwindow * window )
     unsigned int copMaterialID;
 	unsigned int rioterMaterialID;
 
-    Core::world.m_contentManager.Load<Core::GnomeLoader>("assets/model/animated/police/cop/cop-light_00.bgnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+    Core::world.m_contentManager.Load<Core::GnomeLoader>("assets/model/animated/police/cop/police-female_00.bgnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
             {
                 Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
                 const Core::ModelData* data = gnomeLoader->getData(handle);
@@ -150,6 +150,8 @@ void run( GLFWwindow * window )
 		double delta = (thisFrame - lastFrameTime) / 1000.0;
 		lastFrameTime = thisFrame;
 
+		// NOCOMMIT
+		//delta = 0.01f;
 		
 		Core::Console().Update();
 

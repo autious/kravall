@@ -29,9 +29,10 @@ void Core::FlowfieldSystem::Update( float delta )
 			int groupID;
 			Core::AttributeComponent* attribc = WGETC<Core::AttributeComponent>(*it);
 			UnitTypeComponent* utc = WGETC<UnitTypeComponent>(*it);
-			if(	utc->type == Core::UnitType::Rioter )
+			if (utc->type == Core::UnitType::Rioter)
 				groupID = attribc->rioter.groupID;
 			else
+				//continue;
 				groupID = attribc->police.squadID;
 
 			Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>(*it);
@@ -52,7 +53,7 @@ void Core::FlowfieldSystem::Update( float delta )
 				glm::vec3 normal = glm::vec3( edgeNormal[0], 0.0f, edgeNormal[1] );
 				glm::vec3 dirctionToEdgeInNextNode = glm::normalize( instance->m_flowfields[groupID].list[ ffc->node ] - position );
 
-
+				GFX::Debug::DrawSphere( instance->flowfields[groupID].list[ ffc->node ], 4.0f, GFXColor( 1, 1, 0, 1 ), false );
 
 				// calc distance from opposite edges...
 				float squareDistanceToEntryLine;
@@ -98,7 +99,11 @@ void Core::FlowfieldSystem::Update( float delta )
 				ratio = ratio > 1.0f ? 1.0f : ratio;
 				ratio = ratio < 0.5f ? 0.5f : ratio;
 
-				glm::vec3 flowfieldDirection = glm::normalize( -normal * (1 - ratio) + dirctionToEdgeInNextNode * ( ratio + 0.5f ) );
+				glm::vec3 flowfieldDirection = -normal * (1 - ratio) + dirctionToEdgeInNextNode * (ratio + 0.5f);
+
+				//if (glm::length(flowfieldDirection) > 0.0f)
+				flowfieldDirection = glm::normalize(flowfieldDirection);
+
 				MovementComponent::SetDirection( mvmc, flowfieldDirection.x, 0, flowfieldDirection.z );
 
 
@@ -121,8 +126,12 @@ void Core::FlowfieldSystem::Update( float delta )
 
 			}
 			else
+			{
 				MovementComponent::SetDirection( mvmc, 0.0f, 0.0f, 0.0f );
 				//*reinterpret_cast<glm::vec3*>(mvmc->newDirection) = glm::vec3(0.0f);
+
+				GFX::Debug::DrawSphere( wpc->GetVec3(*wpc), 8.0f, GFXColor( 1, 1, 1, 1 ), false );
+			}
 
 
 		}

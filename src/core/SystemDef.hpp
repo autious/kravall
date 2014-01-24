@@ -41,7 +41,7 @@ namespace Core
 	
     typedef SystemHandlerTemplate<RenderingSystem, LightSystem, PoliceGoalSystem, FlowfieldPositioningSystem, NavMeshCollisionSystem, 
 		CollisionSystem2D, PickingSystem, AIDebugSystem, FlowfieldSystem, FieldReactionSystem, 
-		MovementSystem, NameSystem, AreaSystem, GroupDataSystem, RioterDataSystem> SystemHandler;
+		MovementSystem, NameSystem, GroupDataSystem, AreaSystem,RioterDataSystem> SystemHandler;
 
     typedef EntityHandlerTemplate<SystemHandler, WorldPositionComponent, RotationComponent, ScaleComponent, 
 		GraphicsComponent, LightComponent, MovementComponent, UnitTypeComponent, AttributeComponent,

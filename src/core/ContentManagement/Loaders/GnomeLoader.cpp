@@ -120,20 +120,35 @@ namespace Core
     {
         return static_cast<const Core::ModelData*>(handle);
     }
+	std::string GetFileNameAndPath(std::string filename, std::string delim)
+	{
+		std::string gFile; 
 
+		size_t pos = filename.find_last_of(delim);
+
+		for (unsigned int i = 0; i < pos; i++)
+		{
+			gFile.push_back(filename[i]); //Letter-by-letter string cut
+		}
+
+		return gFile;
+	}
     Core::GnomeLoader::Gnome* GnomeLoader::LoadGnomeFromFile(const char* fileName)
     {
 		std::fstream m_file;
+		std::fstream m_animationFile;
 
 		m_file.open(fileName, std::ios::in | std::ios::binary);
+		m_animationFile.open(GetFileNameAndPath(fileName,".") + ".bagnome", std::ios::in | std::ios::binary);
         if (m_file)
         {
             Core::GnomeLoader::Header header;
-
+			Core::GnomeLoader::AnimationHeader animationHeader;
 
 			/* Magic */
-			char m_magicByte[6];
+			char m_magicByte[6], m_magicByteAnimation[10];
 			m_file.read((char*)m_magicByte, 6);
+			m_animationFile.read((char*)m_magicByteAnimation, 10);
 
 			if (strcmp(m_magicByte, "GNOME") != 0)
 			{
@@ -142,20 +157,18 @@ namespace Core
 				return nullptr;
 			}
 
-			/* Header */
-			m_file.read((char*)&header, sizeof(Header));
+			Core::GnomeLoader::Gnome* gnome = new Core::GnomeLoader::Gnome;
 
-            Core::GnomeLoader::Gnome* gnome = new Core::GnomeLoader::Gnome;
+			/* Header */
+			m_file.read((char*)&header, sizeof(header));
 
             gnome->numberOfVertices = header.numberOfVertices;
 			gnome->numberOfIndices = header.numberOfIndices;
             gnome->numberOfBones = header.numberOfBones;
-            gnome->numberOfAnimations = header.numberOfAnimations;
 
 			gnome->vertices = new GFX::Vertex[header.numberOfVertices];
 			gnome->indices = new int[header.numberOfIndices];
             gnome->bones = new Core::GnomeLoader::Bone[header.numberOfBones];
-            gnome->animations = new Core::GnomeLoader::Animation[header.numberOfAnimations];
 
 			/* Vertex */
 			m_file.read((char*)gnome->vertices, sizeof(GFX::Vertex) * header.numberOfVertices);
@@ -175,29 +188,64 @@ namespace Core
                     gnome->bones[k].name = std::string(boneName);
                     delete[] boneName;
 				}
-				if (header.numberOfAnimations)
-				{
-					/* Skeletal Animation */
-					for (int i = 0; i < header.numberOfAnimations; ++i)
-					{
-						m_file.read((char*)&gnome->animations[i].nameSize, sizeof(int));
-						char* tmp = new char[gnome->animations[i].nameSize];
-						m_file.read((char*)tmp, gnome->animations[i].nameSize);
-						gnome->animations[i].name = std::string(tmp);
-						delete [] tmp;
-						gnome->animations[i].boneAnim = new BoneForAnimation[header.numberOfBones];
 
-						for (int j = 0; j < header.numberOfBones; ++j)
+				/* Animation File */
+				if (m_animationFile) //Not the prettiest code ever made, but hey, if it works, it works! :D
+				{
+					/* Magic Byte */
+					if (strcmp(m_magicByteAnimation, "ANIMGNOME") == 0)
+					{
+						/* Header */
+						m_animationFile.read((char*)&animationHeader, sizeof(animationHeader));
+						gnome->numberOfAnimations = animationHeader.numberOfAnimations;
+
+						if (animationHeader.numberOfBones == header.numberOfBones)
 						{
-							m_file.read((char*)&gnome->animations[i].boneAnim[j].numKeys, sizeof(int));
-							gnome->animations[i].boneAnim[j].Keyframes = new Keyframe[gnome->animations[i].boneAnim[j].numKeys];
-							m_file.read((char*)gnome->animations[i].boneAnim[j].Keyframes, sizeof(Keyframe)* gnome->animations[i].boneAnim[j].numKeys);
+							gnome->animations = new Core::GnomeLoader::Animation[animationHeader.numberOfAnimations];
+
+							/* Animation */
+							for (int i = 0; i < animationHeader.numberOfAnimations; ++i)
+							{
+								m_file.read((char*)&gnome->animations[i].nameSize, sizeof(int));
+								char* tmp = new char[gnome->animations[i].nameSize];
+								m_file.read((char*)tmp, gnome->animations[i].nameSize);
+								gnome->animations[i].name = std::string(tmp);
+								delete[] tmp;
+								gnome->animations[i].boneAnim = new BoneForAnimation[header.numberOfBones];
+
+								for (int j = 0; j < header.numberOfBones; ++j)
+								{
+									m_file.read((char*)&gnome->animations[i].boneAnim[j].numKeys, sizeof(int));
+									gnome->animations[i].boneAnim[j].Keyframes = new Keyframe[gnome->animations[i].boneAnim[j].numKeys];
+									m_file.read((char*)gnome->animations[i].boneAnim[j].Keyframes, sizeof(Keyframe)* gnome->animations[i].boneAnim[j].numKeys);
+								}
+							}
 						}
+						else
+						{
+							gnome->numberOfAnimations = 0;
+							gnome->animations = new Core::GnomeLoader::Animation[gnome->numberOfAnimations];
+							LOG_FATAL << fileName << ": Number of bones do not match .bgnome and .bagnome. Have you used the correct animation file?" << std::endl;
+							std::cout << "Binary Animation GNOME File do not match .bgnome, proceeds without animation..." << std::endl;
+						}
+					}
+					else
+					{
+						gnome->numberOfAnimations = 0;
+						gnome->animations = new Core::GnomeLoader::Animation[gnome->numberOfAnimations];
+						std::cout << "Binary Animation GNOME File is missing for " << GetFileNameAndPath(fileName, ".") << ".bagnome, proceeds without animation..." << std::endl;
 					}
 				}
 			}
+			else
+			{
+				gnome->numberOfAnimations = 0;
+				gnome->animations = new Core::GnomeLoader::Animation[gnome->numberOfAnimations];
+				std::cout << "there was no bones, ignoring reading .bagnome" << std::endl;
+			}
 
 			/* Done! */
+			m_animationFile.close();
             m_file.close();
             return gnome;
         }

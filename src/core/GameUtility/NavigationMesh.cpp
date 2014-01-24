@@ -31,47 +31,49 @@ namespace Core
 
     int NavigationMesh::CreateGroup()
     {
-        if(m_nrUsedFlowfields >= m_maxFlowfields)
+        if(nrUsedFlowfields >= maxFlowfields)
         {
             LOG_FATAL << "Flowfield array is out of indices" << std::endl;
         }
 
-        m_flowfields[m_nrUsedFlowfields].edges = Core::world.m_levelHeap.NewPODArray<int>( m_nrNodes );
-        m_flowfields[m_nrUsedFlowfields].list = reinterpret_cast<glm::vec3*>(Core::world.m_levelHeap.NewPODArray<unsigned char>(sizeof(glm::vec3) * m_nrNodes));
-        m_flowfields[m_nrUsedFlowfields].goal[0] = std::numeric_limits<float>::max();
-        m_flowfields[m_nrUsedFlowfields].goal[1] = std::numeric_limits<float>::max();
+        flowfields[nrUsedFlowfields].edges = Core::world.m_levelHeap.NewPODArray<int>( nrNodes );
+		flowfields[nrUsedFlowfields].list = (glm::vec3*)Core::world.m_levelHeap.NewPODArray<float>( 3 * nrNodes );
 
-		std::memset( m_flowfields[m_nrUsedFlowfields].edges, 0, m_nrNodes * sizeof(int) );
-		std::memset( m_flowfields[m_nrUsedFlowfields].list, 0, m_nrNodes * sizeof(glm::vec3) );
 
-        return m_nrUsedFlowfields++;
+		std::memset( flowfields[nrUsedFlowfields].edges, 0, nrNodes * sizeof(int) );
+		std::memset( flowfields[nrUsedFlowfields].list, 0, nrNodes * sizeof(glm::vec3) );
+
+		flowfields[nrUsedFlowfields].goal[ 0 ] = FLT_MAX;
+		flowfields[nrUsedFlowfields].goal[ 1 ] = FLT_MAX;
+
+        return nrUsedFlowfields++;
     }
 
 	void NavigationMesh::InitFlowfieldInstances()
 	{
-		m_maxFlowfields = Core::world.m_config.GetInt( "maxNumberOfFlowfields", MAX_NUMBER_OF_FLOWFIELDS);
+		maxFlowfields = Core::world.m_config.GetInt( "maxNumberOfFlowfields", MAX_NUMBER_OF_FLOWFIELDS);
 
 		// resize list of m_flowfields...
-		m_flowfields = Core::world.m_levelHeap.NewPODArray<Core::NavigationMesh::Flowfield>( m_maxFlowfields );
-		m_nrUsedFlowfields = 0;
+		flowfields = Core::world.m_levelHeap.NewPODArray<Core::NavigationMesh::Flowfield>( maxFlowfields );
+		nrUsedFlowfields = 0;
 	}
 
 
 	void NavigationMesh::CalculateLinks()
 	{
 		// for all m_nodes
-		for( int i = 0; i < m_nrNodes; i++ )
+		for( int i = 0; i < nrNodes; i++ )
 		{
 			// for every edge in the node
 			for( int p = 0; p < 4; p++ )
 			{
-				if( m_nodes[i].corners[p].linksTo >= 0 )
+				if( nodes[i].corners[p].linksTo >= 0 )
 				{
 					// for all edges in the linked-to node
 					for( int q = 0; q < 4; q++ )
 					{
-						if( m_nodes[m_nodes[i].corners[p].linksTo].corners[q].linksTo == i )
-							m_nodes[i].corners[p].linksToEdge = q;
+						if( nodes[nodes[i].corners[p].linksTo].corners[q].linksTo == i )
+							nodes[i].corners[p].linksToEdge = q;
 					}
 				}
 			}

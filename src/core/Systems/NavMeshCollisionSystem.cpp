@@ -32,7 +32,7 @@ void Core::NavMeshCollisionSystem::Update( float delta )
 			if( ffc->node < 0 )
 				continue;
 
-			float* points = instance->m_nodes[ffc->node].points;
+			float* points = instance->nodes[ffc->node].points;
 
 			Core::BoundingSphere& sphere = *reinterpret_cast<Core::BoundingSphere*>(bvc->data);
 			Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(*it);
@@ -41,7 +41,7 @@ void Core::NavMeshCollisionSystem::Update( float delta )
 			// check vs line
 			for( int i = 0; i < 4; i++ )
 			{
-				if( instance->m_nodes[ffc->node].corners[i].length < 0 || instance->m_nodes[ffc->node].corners[i].linksTo >= 0 )
+				if( instance->nodes[ffc->node].corners[i].length < 0 || instance->nodes[ffc->node].corners[i].linksTo >= 0 )
 					continue;
 
 				// fix indices for current line... 
@@ -54,9 +54,9 @@ void Core::NavMeshCollisionSystem::Update( float delta )
 				glm::vec3 fromStartToObject = position + *reinterpret_cast<glm::vec3*>( sphere.offset ) - lineStart;
 					
 				// check if outside line limits...
-				float distanceAlongLine = glm::dot( (lineEnd - lineStart) * instance->m_nodes[ffc->node].corners[i].inverseLength, fromStartToObject );
+				float distanceAlongLine = glm::dot( (lineEnd - lineStart) * instance->nodes[ffc->node].corners[i].inverseLength, fromStartToObject );
 
-				if( instance->m_nodes[ffc->node].corners[i].length < distanceAlongLine || distanceAlongLine < 0 )
+				if( instance->nodes[ffc->node].corners[i].length < distanceAlongLine || distanceAlongLine < 0 )
 					continue;
 
 				// check if collided with line...
@@ -71,7 +71,7 @@ void Core::NavMeshCollisionSystem::Update( float delta )
 			for( int i = 0; i < 4; i++ )
 			{
 				// check for last corner of triangle
-				if( instance->m_nodes[ffc->node].corners[i].linksTo < -1.5f )
+				if( instance->nodes[ffc->node].corners[i].linksTo < -1.5f )
 					continue;
 
 				int ii = i * 2;

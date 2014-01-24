@@ -10,6 +10,7 @@
 #define NAVMESH_NO_CONNECTING_CORNERS -1
 #define NAVMESH_CONCAVE_CORNER_NODE -2
 
+
 namespace Core
 {
 	struct NavigationMesh;
@@ -151,27 +152,27 @@ namespace Core
 		/*!
 			The list of all the flowfield instances available.
 		*/
-		Flowfield* m_flowfields;
+		Flowfield* flowfields;
 		
 		/*!
 			Number of flowfields in use.
 		*/
-		int m_nrUsedFlowfields;
+		int nrUsedFlowfields;
 
 		/*!
 			Number of flowfields allocated.
 		*/
-		int m_maxFlowfields;
+		int maxFlowfields;
 
 		/*!
 			Node list for the loaded tree.
 		*/
-		Node* m_nodes;
+		Node* nodes;
 
 		/*!
 			current number of nodes reciding under the nodes-pointer.
 		*/
-		int m_nrNodes;
+		int nrNodes;
 	};
 }
 
