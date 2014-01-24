@@ -13,7 +13,7 @@ LogHandler* LogSystem::fatalHandler[]		= {new ConsoleHandler( LogSystem::LogType
 LogHandler* LogSystem::errorHandler[]		= {new ConsoleHandler( LogSystem::LogType::logType_error ),nullptr,nullptr,nullptr};
 LogHandler* LogSystem::warningHandler[]	    = {new ConsoleHandler( LogSystem::LogType::logType_warning ),nullptr,nullptr,nullptr};
 
-char ignoreList[1024];
+char ignoreList[1024*8];
 
 struct IgnoreListnitializer
 {

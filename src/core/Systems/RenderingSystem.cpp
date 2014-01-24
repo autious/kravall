@@ -23,20 +23,23 @@ namespace Core
 			GraphicsComponent* gc		= WGETC<GraphicsComponent>(*it);
 			ScaleComponent* sc			= WGETC<ScaleComponent>(*it);
 
-			//Build the matrices needed for model matrix
-			rot = RotationComponent::GetQuat(rc->rotation);
-			rotationMatrix = glm::toMat4(rot);
-			translationMatrix = glm::translate(glm::mat4(1.0f), WorldPositionComponent::GetVec3(*wpc));
-			scaleMatrix = glm::scale(sc->scale[0], sc->scale[1], sc->scale[2]);
+            if( gc->render )
+            {
+                //Build the matrices needed for model matrix
+                rot = RotationComponent::GetQuat(rc->rotation);
+                rotationMatrix = glm::toMat4(rot);
+                translationMatrix = glm::translate(glm::mat4(1.0f), WorldPositionComponent::GetVec3(*wpc));
+                scaleMatrix = glm::scale(sc->scale[0], sc->scale[1], sc->scale[2]);
 
-			//Send the data through a drawcall to GFX
-			GFX::InstanceData* instanceData = Core::world.m_frameHeap.NewObject<GFX::InstanceData>();
-			instanceData->modelMatrix = translationMatrix * rotationMatrix * scaleMatrix;
-			instanceData->animationIndex = 0;
-			instanceData->frameOffset = 0;
-			instanceData->rnd_seed = *it;
+                //Send the data through a drawcall to GFX
+                GFX::InstanceData* instanceData = Core::world.m_frameHeap.NewObject<GFX::InstanceData>();
+                instanceData->modelMatrix = translationMatrix * rotationMatrix * scaleMatrix;
+                instanceData->animationIndex = 0;
+                instanceData->frameOffset = 0;
+                instanceData->rnd_seed = *it;
 
-			GFX::Draw(gc->bitmask, (void*)instanceData);
+                GFX::Draw(gc->bitmask, (void*)instanceData);
+            }
 		}
 	}
 }

@@ -1,5 +1,4 @@
 local GUI = { components = {} }
-
 local viewport = require "gui/viewport"
 
 function GUI:new(o)

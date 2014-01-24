@@ -8,7 +8,7 @@ return function(asm, x,y,z )
         },
         {
             type = core.componentType.GraphicsComponent,
-            data = { mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry },
+            data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry },
             load = { 
                         mesh = { core.loaders.GnomeLoader, "assets/tower.bgnome" },
                         material = { core.loaders.MaterialLoader, "assets/material/simple.material" }

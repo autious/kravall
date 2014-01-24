@@ -36,9 +36,12 @@ namespace Core
         Auxiliary function for LuaEntityBridgeTemplate
     */
     template<typename Handler>
-    void HandlerCallSet( Entity entity, lua_State* L, int tableindex )
+    void HandlerCallSet( Entity entity, lua_State* L, int tableindex, int ignoreHardIndex )
     {
         ComponentSetters setters = Handler::GetSetters();  
+
+        int setter_count = setters.size();
+        int incoming_count = 0;
 
         if( lua_istable( L, tableindex ) )
         {
@@ -51,22 +54,59 @@ namespace Core
                     const char * name = lua_tostring( L, -2 );
                     try
                     {
+                        incoming_count++;
                         ComponentSet componentSetter = setters.at(name);
                         componentSetter( entity, L, lua_gettop( L ) );
                     }
                     catch( const std::out_of_range& orr )
                     {
                         LOG_WARNING << __FUNCTION__ << ": " << Handler::GetComponentLuaName() << "Binding" << ": Ignoring parameter: " << name << std::endl;
+                        incoming_count--;
                     }
                 }
                 /* Pops the value, leaving the key for the next iteration */
                 lua_pop( L, 1 );
             } 
+
+            if( setter_count != incoming_count && !lua_toboolean(L, ignoreHardIndex ))
+            {
+                std::stringstream ss;
+                for( ComponentSetters::iterator setterIt = setters.begin();
+                        setterIt != setters.end();
+                        setterIt++ )
+                {
+                    bool hasit = false; 
+                    /* Table iteration similar to luas own for k,v in pairs(table) do...*/
+                    lua_pushnil(L); //First key for the iterator
+                    while( lua_next( L , tableindex ) != 0 )
+                    {
+                        if( lua_isstring( L, -2 ) )
+                        {
+                            const char * name = lua_tostring( L, -2 );
+                            if( strcmp( name, setterIt->first.c_str() ) == 0  )
+                            {
+                                hasit = true;
+                            }
+                        }
+                        /* Pops the value, leaving the key for the next iteration */
+                        lua_pop( L, 1 );
+                    } 
+
+                    if( hasit == false )
+                        ss << setterIt->first << std::endl; 
+                }
+                std::string error = ss.str();
+                 
+                //TODO: throw exception and do lua error further up
+                //      this error might currently cause an exception:
+                luaL_error( L, "There is a mismatch in parameter count coming in and how many setters there are for this component, either set the ignoreHardIndex flag to true (extra parameter after the input table) or expand incoming table. Following are missing:\n %s \nincoming: %d  setters: %d", error.c_str(), incoming_count, setter_count);
+            }
         }
         else
         {
+            //TODO: throw exception and do lua error further up
             luaL_error( L, "Unable to set data for %s, given tableindex is not a table", Handler::GetComponentLuaName() );
-        }   
+        }
     }
 
     /*! 
@@ -113,11 +153,11 @@ namespace Core
     template<typename Handler>
     struct CallST<Handler>
     {
-        static void Set( Entity entity, ComponentType componentType, lua_State * L, int tableIndex )
+        static void Set( Entity entity, ComponentType componentType, lua_State * L, int tableIndex, int ignoreMissingIndex )
         {
             if( Handler::GetComponentType() == componentType )
             {
-                HandlerCallSet<Handler>( entity, L, tableIndex );
+                HandlerCallSet<Handler>( entity, L, tableIndex, ignoreMissingIndex );
             }
             else
             {
@@ -150,12 +190,12 @@ namespace Core
     template<typename Handler, typename... Handlers>
     struct CallST<Handler,Handlers...>
     {
-        static void Set( Entity entity, ComponentType componentType, lua_State * L, int tableIndex )
+        static void Set( Entity entity, ComponentType componentType, lua_State * L, int tableIndex, int ignoreCheckIndex )
         {
             if( Handler::GetComponentType() == componentType )
-                HandlerCallSet<Handler>( entity, L, tableIndex );
+                HandlerCallSet<Handler>( entity, L, tableIndex, ignoreCheckIndex );
             else
-                CallST<Handlers...>::Set( entity, componentType, L, tableIndex );
+                CallST<Handlers...>::Set( entity, componentType, L, tableIndex, ignoreCheckIndex );
         }
 
         static int Get( Entity entity, ComponentType componentType, lua_State * L )
@@ -273,8 +313,6 @@ namespace Core
         */
         static int Set( lua_State * L )
         {
-            assert( lua_gettop( L ) == 3 );
-
             if( lua_isuserdata( L, 1 ) && lua_isuserdata( L, 2 ) )
             {
                 LuaEntity *le = luau_checkentity( L, 1);
@@ -282,7 +320,7 @@ namespace Core
 
                 if( Core::world.m_entityHandler.HasComponent( le->entity, componentType ) )
                 {
-                    CallST<ComponentHandlers...>::Set( le->entity, componentType, L, 3 );                      
+                    CallST<ComponentHandlers...>::Set( le->entity, componentType, L, 3,4 );                      
                 }
                 else
                 {

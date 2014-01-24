@@ -98,3 +98,7 @@ function print_loaded()
         print( k )
     end
 end
+
+function errorHandler( errorMessage )
+    return errorMessage .. "\n"  .. debug.traceback()
+end

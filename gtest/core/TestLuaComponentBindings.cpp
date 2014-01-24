@@ -11,7 +11,7 @@
 TEST( LuaBindingDataRetention, GraphicsComponentBinding )
 {
     const char * lua_set = "test_entity = core.entity.create( core.componentType.GraphicsComponent )\n"
-                           "test_entity:set( core.componentType.GraphicsComponent, { mesh = 10, material = 9, type = core.gfx.objectTypes.OpaqueGeometry } )\n";
+                           "test_entity:set( core.componentType.GraphicsComponent, { mesh = 10, material = 9, type = core.gfx.objectTypes.OpaqueGeometry, render = true } )\n";
 
 
     const char * lua_get = "local function elems( table )\n"
@@ -24,21 +24,23 @@ TEST( LuaBindingDataRetention, GraphicsComponentBinding )
                            "local data = test_entity:get( core.componentType.GraphicsComponent )\n"
                            "test_entity:destroy()\n"
                            "test_entity = nil\n"
-                           "return data.type, data.material, data.mesh, elems( data )\n";
+                           "return data.render, data.type, data.material, data.mesh, elems( data )\n";
 
     Core::world.m_luaState.DoBlock( lua_set );
 
-    int values = Core::world.m_luaState.DoBlock( lua_get, 0, 4 );
+    int values = Core::world.m_luaState.DoBlock( lua_get, 0, 5 );
     ASSERT_LE( 0, values );
 
     int count = lua_tointeger( Core::world.m_luaState.GetState(), -1 );
-    EXPECT_EQ( 3, count ); 
+    EXPECT_EQ( 4, count ); 
     int data = lua_tointeger(Core::world.m_luaState.GetState(), -2 );
     EXPECT_EQ( data, 10 );
     data = lua_tointeger(Core::world.m_luaState.GetState(), -3 );
     EXPECT_EQ( data, 9 );
     Core::GFXObjectType * objectType  = (Core::GFXObjectType*)luaL_checkudata( Core::world.m_luaState.GetState(), -4, GFX_OBJECT_TYPE_META );
     EXPECT_EQ( *objectType, GFX::OBJECT_TYPES::OPAQUE_GEOMETRY );
+    bool render = lua_toboolean( Core::world.m_luaState.GetState(), -4 );
+    EXPECT_EQ( true, render );
     
     lua_pop( Core::world.m_luaState.GetState(), values );
 }

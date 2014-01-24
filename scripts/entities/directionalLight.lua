@@ -9,7 +9,8 @@ return function(asm, dirX, dirY, dirZ)
 							type = core.gfx.objectTypes.Light,
 							lighttype = core.gfx.lightTypes.Dir,
                             speccolor = { r,g,b }
-						}
+						},
+                ignoreHard = true
 			},
 			{
 				type = core.componentType.WorldPositionComponent,

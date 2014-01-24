@@ -8,10 +8,10 @@ function AABB:new(o)
 end
 
 function AABB:collides( x,y )
-    return (self.x < x and 
-            x < self.x + self.width and 
-            self.y < y and 
-            y < self.y + self.height)
+    return (self[1] < x and 
+            x < self[1] + self[3] and 
+            self[2] < y and 
+            y < self[2] + self[4])
 end
 
 return AABB
