@@ -78,16 +78,18 @@ local rioter = ent.get "rioter"
 local police = ent.get "police"
 local building = ent.get "building"
 
+
+local policeGroup = core.system.groups.createGroup();
+
 local dist = 2.4
 local centerPoint = { -4, 0, -21}
 for i = -2, 2 do
 	j= 0 --for j = -1, 1 do
-		police(asm, i * dist + centerPoint[1], 0 + centerPoint[2], j * dist + centerPoint[3])
+		police(asm, i * dist + centerPoint[1], 0 + centerPoint[2], j * dist + centerPoint[3], policeGroup)
 	--end
 end
-<<<<<<< HEAD
-core.groups.set_group_goal(0, -43, 0, 4)
-=======
+--core.system.groups.setGroupGoal(policeGroup, -43, 0, 4)
+    
 
 --police(asm, 1, 0, -22);
 --police(asm, 1, 0, -21);
@@ -102,16 +104,15 @@ core.groups.set_group_goal(0, -43, 0, 4)
 --	end
 --end
 --core.nav_mesh.set_group_goal(0, -43, 0, 4)
->>>>>>> development
 
-local rioterGroup = core.groups.create_group()
+local rioterGroup = core.system.groups.createGroup()
 local centerPoint = { 20.5, 0, -40 }		
 for i = -4, 4 do
 	for p = -5, 5 do
 		rioter( asm, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rioterGroup)
 	end
 end
-core.groups.set_group_goal(rioterGroup, -21, 0, 36)
+core.system.groups.setGroupGoal(rioterGroup, -21, 0, 36)
 
 
 -- Debug

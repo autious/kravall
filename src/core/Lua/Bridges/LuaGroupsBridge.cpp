@@ -88,46 +88,42 @@ Core::LuaGroupsBridge::LuaGroupsBridge(lua_State * L)
 
 	int coreTableIndex = lua_gettop(L);
 
-	if (lua_isnil(L, -1) == false)
-	{
-		lua_pushstring(L, "groups");
+    lua_getfield(L, -1, "system");
+	
 
-		lua_newtable(L);
-			lua_pushstring(L, "set_group_goal");
-			lua_pushcfunction(L, LuaSetGroupGoal);
-		lua_settable(L, -3);
+    lua_pushstring(L, "groups");
 
-            lua_pushstring(L, "get_group_median_position");
-            lua_pushcfunction(L, LuaGetGroupNavigationMeshMedianPosition);
-        lua_settable(L, -3);
+    lua_newtable(L);
+        lua_pushstring(L, "setGroupGoal");
+        lua_pushcfunction(L, LuaSetGroupGoal);
+    lua_settable(L, -3);
 
-            lua_pushstring(L, "get_group_member_count");
-            lua_pushcfunction(L, LuaGetGroupMemberCount);
-        lua_settable(L, -3);
+        lua_pushstring(L, "getGroupMedianPosition");
+        lua_pushcfunction(L, LuaGetGroupNavigationMeshMedianPosition);
+    lua_settable(L, -3);
 
-            lua_pushstring(L, "get_number_of_groups");
-            lua_pushcfunction(L, LuaGetNumberOfGroups);
-        lua_settable(L, -3);
+        lua_pushstring(L, "getGroupMemberCount");
+        lua_pushcfunction(L, LuaGetGroupMemberCount);
+    lua_settable(L, -3);
 
-            lua_pushstring(L, "create_group");
-            lua_pushcfunction(L, LuaCreateGroup);
-        lua_settable(L, -3);
+        lua_pushstring(L, "getNumberOfGroups");
+        lua_pushcfunction(L, LuaGetNumberOfGroups);
+    lua_settable(L, -3);
 
-		    lua_newtable(L);
-			    lua_pushstring(L, "__newindex");
-			    lua_pushcfunction(L, LuaNewIndex);
-			lua_settable(L, - 3);
+        lua_pushstring(L, "createGroup");
+        lua_pushcfunction(L, LuaCreateGroup);
+    lua_settable(L, -3);
 
-		lua_setmetatable(L, -2);
+        lua_newtable(L);
+            lua_pushstring(L, "__newindex");
+            lua_pushcfunction(L, LuaNewIndex);
+        lua_settable(L, - 3);
 
-		lua_settable(L, -3);
-	}
-	else
-	{
-		LOG_ERROR << "Missing core table" << std::endl;
-	}
+    lua_setmetatable(L, -2);
 
-	lua_pop(L, 1); //pop core table
+    lua_settable(L, -3);
+
+	lua_pop(L, 2); 
 
 	assert(stackSize == lua_gettop(L));
 }
