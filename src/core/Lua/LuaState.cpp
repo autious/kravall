@@ -136,12 +136,6 @@ void Core::LuaState::OpenLibs()
 
     bindings = new LuaStateBindings( m_state );
 
-    lua_getglobal( m_state, "core" ); //Let's lock down core now.
-        lua_newtable( m_state );
-        luau_setfunction( m_state, "__newindex", LuaCoreNewindex );
-    lua_setmetatable( m_state, -2 ),
-    lua_pop( m_state, 1 );
-
     assert( sanity == lua_gettop(m_state) );
 }
 

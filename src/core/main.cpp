@@ -200,28 +200,28 @@ void run( GLFWwindow * window )
             //TODO: Timing hook
             Core::world.m_frameHeap.Rewind();
 
-            fpsCounters[fpsCounterIndex++] = 1.0 / timeAccumulator;
-            if(fpsCounterIndex == FPS_COUNTERS_SIZE)
-            {
-                double averageFps = 0.0;
-                for(int i=0; i < FPS_COUNTERS_SIZE; ++i)
-                {
-                    averageFps += fpsCounters[i];
-                }
-
-                averageFps /= FPS_COUNTERS_SIZE;
-                LOG_DEBUG << "FPS: " << static_cast<int>(averageFps) << std::endl;
-                fpsCounterIndex = 0;
-
-                lua_State* L = Core::world.m_luaState.GetState();
-                lua_getglobal(L, "core");
-                    lua_pushstring(L, "framesPerSecond");
-                    lua_pushnumber(L, averageFps);
-                lua_settable(L, -3);
-                lua_pop(L, 1);
-            }
 
             timeAccumulator = 0.0;
+        }
+
+        fpsCounters[fpsCounterIndex++] = 1.0 / delta;
+        if(fpsCounterIndex == FPS_COUNTERS_SIZE)
+        {
+            double averageFps = 0.0;
+            for(int i=0; i < FPS_COUNTERS_SIZE; ++i)
+            {
+                averageFps += fpsCounters[i];
+            }
+
+            averageFps /= FPS_COUNTERS_SIZE;
+            fpsCounterIndex = 0;
+
+            lua_State* L = Core::world.m_luaState.GetState();
+            lua_getglobal(L, "core");
+                lua_pushstring(L, "framesPerSecond");
+                lua_pushnumber(L, averageFps);
+            lua_settable(L, -3);
+            lua_pop(L, 1);
         }
     }
 
