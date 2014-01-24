@@ -15,6 +15,8 @@ namespace Core
 
         virtual void WindowResize( int width, int height ) override;
         virtual void FramebufferResize( int width, int height ) override;
+        virtual void WindowFocus( int focus ) override;
+
 
     private:
         lua_State *m_state;

@@ -1,12 +1,20 @@
 #include "BaseSystem.hpp"
 #include <cassert>
 
+#include <limits>
 #include <iostream>
 
 Core::BaseSystem::BaseSystem( Aspect inclusive, Aspect exclusive )
 {
     m_inclusive = inclusive;
     m_exclusive = exclusive;
+}
+
+Core::BaseSystem::BaseSystem( std::vector<EntityBag> bags )
+{
+    m_bags = bags;
+    m_inclusive = 0;
+    m_exclusive = std::numeric_limits<Core::Aspect>::max();
 }
 
 void Core::BaseSystem::ChangedEntity( Entity id, Aspect old_asp, Aspect new_asp )
@@ -40,6 +48,13 @@ void Core::BaseSystem::ChangedEntity( Entity id, Aspect old_asp, Aspect new_asp 
     if( AspectMatch( new_asp ) && new_asp != 0ULL )
     {
         m_entities.push_back( id );
+    }
+
+    for( std::vector<EntityBag>::iterator it = m_bags.begin();
+            it != m_bags.end();
+            it++ )
+    {
+        it->ChangedEntity( id, old_asp, new_asp );
     }
 }
 

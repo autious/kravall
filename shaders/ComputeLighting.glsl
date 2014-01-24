@@ -1,7 +1,7 @@
 #version 430 core
 
 #define MAX_LIGHTS 1024
-#define MAX_LIGHTS_PER_TILE 64
+#define MAX_LIGHTS_PER_TILE 256
 #define WORK_GROUP_SIZE 16
 //#define SHOW_LIGHT_TILES
 

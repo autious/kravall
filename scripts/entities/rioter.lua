@@ -27,7 +27,8 @@ return function(asm, posX, posY, posZ, group)
 			},
 			{
 				type = core.componentType.MovementComponent,
-				data = { direction = { 0, 0, 0 }, speed = 3, maxSpeed = 6, goal = false }
+				data = { direction = { 0, 0, 0 }, newDirection = { 0, 0, 0 }, speed = 5.8, 
+				disiredSpeed = 5.8, goal = false }
 			},
 			{
 				type = core.componentType.AttributeComponent,

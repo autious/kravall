@@ -7,6 +7,9 @@
 #include "Console/CLOP.hpp"
 
 #define MAX_NUMBER_OF_FLOWFIELDS 1000
+#define NAVMESH_NO_CONNECTING_CORNERS -1
+#define NAVMESH_CONCAVE_CORNER_NODE -2
+
 
 namespace Core
 {
@@ -80,18 +83,29 @@ namespace Core
 				*/
 				float inverseLength;
 				/*!
-					Normal for the respective edge.
+					2D Normal for the respective edge.
 				*/
-				float normal[3];
+				float normal[2];
+
+				/*
+					This corner links to the following edge and node.
+				*/
+				int cornerConnectsToNode;
+
+				/*
+					This corner links to the following edge and node.
+				*/
+				int cornerConnectsToCorner;
 				
 			} corners[4];
 		};
 
 		/*!
-			Struct containing a list of direction vectors with the same size as Core::NavigationMesh::nrNodes.
+			Struct containing a list of direction vectors and from-goal entry edges with the same size as Core::NavigationMesh::nrNodes.
 		*/
 		struct Flowfield
 		{
+			float goal[2];
 			int* edges;
 			glm::vec3* list;
 		};
@@ -138,27 +152,27 @@ namespace Core
 		/*!
 			The list of all the flowfield instances available.
 		*/
-		Flowfield* m_flowfields;
+		Flowfield* flowfields;
 		
 		/*!
 			Number of flowfields in use.
 		*/
-		int m_nrUsedFlowfields;
+		int nrUsedFlowfields;
 
 		/*!
 			Number of flowfields allocated.
 		*/
-		int m_maxFlowfields;
+		int maxFlowfields;
 
 		/*!
 			Node list for the loaded tree.
 		*/
-		Node* m_nodes;
+		Node* nodes;
 
 		/*!
 			current number of nodes reciding under the nodes-pointer.
 		*/
-		int m_nrNodes;
+		int nrNodes;
 	};
 }
 

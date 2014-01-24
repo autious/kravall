@@ -39,6 +39,7 @@ namespace GFX
 		delete(m_renderJobManager);
 		delete(m_textureManager);
 		delete(m_materialManager);
+		delete(m_animationManager);
 
 		delete(m_deferredPainter);
 		delete(m_lightPainter);
@@ -67,6 +68,7 @@ namespace GFX
 		m_meshManager = new MeshManager();
 		m_textureManager = new TextureManager();
 		m_materialManager = new MaterialManager();
+		m_animationManager = new AnimationManager();
 
 		m_deferredPainter = new DeferredPainter(m_shaderManager, m_uniformBufferManager, 
 			m_renderJobManager, m_meshManager, m_textureManager, m_materialManager);
@@ -91,7 +93,7 @@ namespace GFX
 
 
 		m_deferredPainter->Initialize(m_FBO, m_dummyVAO);
-		m_lightPainter->Initialize(m_FBO, m_dummyVAO, m_windowWidth, m_windowHeight);
+		//m_lightPainter->Initialize(m_FBO, m_dummyVAO, m_windowWidth, m_windowHeight);
 		m_debugPainter->Initialize(m_FBO, m_dummyVAO);
 		m_textPainter->Initialize(m_FBO, m_dummyVAO);
 		m_consolePainter->Initialize(m_FBO, m_dummyVAO);
@@ -224,8 +226,9 @@ namespace GFX
 			GFX_CHECKTIME(glFinish(), "glFinish");
 
 			GFX_CHECKTIME(m_renderJobManager->Sort(), "Sorting");
+			
 			GFX_CHECKTIME(m_deferredPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix), "Geometry");
-			GFX_CHECKTIME(m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix), "Lighting");
+			//GFX_CHECKTIME(m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix), "Lighting");
 
 			GFX_CHECKTIME( m_overlayPainter->Render( renderJobIndex, m_overlayViewMatrix, m_overlayProjMatrix ), "Console");
 			//Render FBO
@@ -243,7 +246,7 @@ namespace GFX
 		{
 			m_renderJobManager->Sort();
 			m_deferredPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
-			m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
+			//m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
 			
 			m_overlayPainter->Render( renderJobIndex, m_overlayViewMatrix, m_overlayProjMatrix );
 			//Render FBO
@@ -385,5 +388,25 @@ namespace GFX
 	void RenderCore::SetSplash(bool splash)
 	{
 		m_playSplash = splash;
+	}
+
+	int RenderCore::CreateSkeleton(unsigned int& out_skeletonID)
+	{
+		return m_animationManager->CreateSkeleton(out_skeletonID);
+	}
+
+	int RenderCore::DeleteSkeleton(const unsigned int& skeletonID)
+	{
+		return m_animationManager->DeleteSkeleton(skeletonID);
+	}
+
+	int RenderCore::AddAnimationToSkeleton(const unsigned int& skeletonID, glm::mat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame)
+	{
+		return m_animationManager->AddAnimationToSkeleton(skeletonID, frames, numFrames, numBonesPerFrame);
+	}
+
+	int RenderCore::GetAnimationFrameCount(const unsigned int& skeletonID, const unsigned int& animationID, unsigned int& out_frameCount)
+	{
+		return m_animationManager->GetFrameCount(skeletonID, animationID, out_frameCount);
 	}
 }

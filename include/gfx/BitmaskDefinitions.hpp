@@ -11,8 +11,8 @@ namespace GFX
 		static const GFXBitmask VIEWPORT_ID = 0x3800000000000000ULL;
 		static const GFXBitmask LAYER = 0x0700000000000000ULL;
 		static const GFXBitmask TRANSLUCENCY_TYPE = 0x00C0000000000000ULL;
-		static const GFXBitmask LIGHT_TYPE = TRANSLUCENCY_TYPE;
 		static const GFXBitmask MESH_ID = 0x003FFF8000000000ULL;
+		static const GFXBitmask LIGHT_TYPE = MESH_ID;
 		static const GFXBitmask MATERIAL_ID = 0x0000007FFF000000ULL;
 		static const GFXBitmask DEPTH = 0x0000000000FFFFFFULL;
 	}

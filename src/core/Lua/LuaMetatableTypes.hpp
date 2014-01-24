@@ -24,18 +24,24 @@
 #include <ComponentFramework/SystemHandlerTemplate.hpp>
 #include <Camera/Camera.hpp>
 
+struct LuaEntity
+{
+    Core::Entity entity;
+    bool light;
+};
+
 inline glm::vec2* luau_checkglmvec2( lua_State* state, int pos ) { return static_cast<glm::vec2*>(luaL_checkudata( state, pos, GLMVEC2_META_TYPE )); }
 inline glm::vec3* luau_checkglmvec3( lua_State* state, int pos ) { return static_cast<glm::vec3*>(luaL_checkudata( state, pos, GLMVEC3_META_TYPE )); }
 inline glm::vec4* luau_checkglmvec4( lua_State* state, int pos ) { return static_cast<glm::vec4*>(luaL_checkudata( state, pos, GLMVEC4_META_TYPE )); }
 inline glm::mat4* luau_checkglmmat4( lua_State* state, int pos ) { return static_cast<glm::mat4*>(luaL_checkudata( state, pos, GLMMAT4_META_TYPE )); }
 inline glm::quat* luau_checkglmquat( lua_State* state, int pos ) { return static_cast<glm::quat*>(luaL_checkudata( state, pos, GLMQUAT_META_TYPE )); }
 inline Core::Camera** luau_checkcamera( lua_State* state, int pos ) { return static_cast<Core::Camera**>(luaL_checkudata( state, pos, CAMERA_META_TYPE )); }
+inline LuaEntity* luau_checkentity( lua_State* state, int pos ) { return static_cast<LuaEntity*>(luaL_checkudata( state, pos, ENTITY_META_TYPE ) ); }
 
 namespace Core
 {
-
-
-    Entity* LuaUNewEntity( lua_State * L );
+    LuaEntity* LuaUNewEntity( lua_State * L );
+    LuaEntity* LuaUNewLightEntity( lua_State * L );
 
     uint64_t* LuaUNewBitmask( lua_State * L );
 

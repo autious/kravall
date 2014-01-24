@@ -26,8 +26,12 @@
 #include <Lua/Bridges/LuaGLMBridge.hpp>
 #include <Lua/Bridges/LuaCameraBridge.hpp>
 #include <Lua/Bridges/LuaWindowBridge.hpp>
-#include <Lua/Bridges/LuaLinerarHeapBridge.hpp>
+#include <Lua/Bridges/LuaLevelHeapBridge.hpp>
 #include <Lua/Bridges/LuaConsoleBridge.hpp>
+#include <Lua/Bridges/LuaNameSystemBridge.hpp>
+#include <Lua/Bridges/LuaAreaSystemBridge.hpp>
+#include <Lua/Bridges/LuaDrawBridge.hpp>
+#include <Lua/Bridges/LuaRioterDataSystemBridge.hpp>
 
 namespace Core
 {
@@ -48,7 +52,11 @@ namespace Core
         lcab(L),
         lwb(L),
         lcob(L),
-		llhb(L)
+		llhb(L),
+        lnsb(L),
+        lasb(L),
+        ldb(L),
+        lrdsb(L)
         {}
             
         LuaBitmask lb;
@@ -65,7 +73,11 @@ namespace Core
         LuaCameraBridge lcab;
         LuaWindowBridge lwb;
         LuaConsoleBridge lcob;
-		LuaLinearHeapBridge llhb;
+        LuaNameSystemBridge lnsb;
+		LuaLevelHeapBridge llhb;
+        LuaAreaSystemBridge lasb;
+        LuaDrawBridge ldb;
+        LuaRioterDataSystemBridge lrdsb;
     };
 }
 
@@ -118,6 +130,8 @@ void Core::LuaState::OpenLibs()
     lua_newtable( m_state );
         lua_newtable( m_state );
         lua_setfield( m_state, -2, "config" );
+        lua_newtable( m_state );
+        lua_setfield( m_state, -2, "system" );
     lua_setglobal( m_state, "core" );
 
     bindings = new LuaStateBindings( m_state );
@@ -131,9 +145,18 @@ void Core::LuaState::OpenLibs()
     assert( sanity == lua_gettop(m_state) );
 }
 
+void Core::LuaState::CloseLibs()
+{
+    if( bindings != nullptr )
+        delete bindings;
+    bindings = nullptr;
+}
+
 Core::LuaState::~LuaState()
 {
-    delete bindings;
+    CloseLibs(); //Ensure that libs are closed, should happen earlier.
+                //Risk for fucky destructor calls in bindings otherwise.
+                //if the lua state is on the stack.
     lua_close( m_state );
 }
 

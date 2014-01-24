@@ -11,8 +11,6 @@ uniform sampler2D normalMap;
 uniform sampler2D specularMap;
 uniform sampler2D glowMap;
 
-//out vec4 color;
-
 layout ( location = 1 ) out vec4 normalDepthRT;
 layout ( location = 2 ) out vec4 diffuseRT;
 layout ( location = 3 ) out vec4 specularRT;

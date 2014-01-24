@@ -4,6 +4,7 @@
 #include <Renderer/RenderCore.hpp>
 #include <Shaders/ShaderManager.hpp>
 #include <Buffers/MeshManager.hpp>
+#include <Animation/AnimationManager.hpp>
 #include <gfx/Vertex.hpp>
 #include <GFXInterface.hpp>
 
@@ -235,6 +236,27 @@ namespace GFX
 		{
 			return Renderer().SetShaderToMaterial(materialID, shaderID);
 		}
+
+		int CreateSkeleton(unsigned int& out_skeletonID)
+		{
+			return Renderer().CreateSkeleton(out_skeletonID);
+		}
+
+		int DeleteSkeleton(const unsigned int& skeletonID)
+		{
+			return Renderer().DeleteSkeleton(skeletonID);
+		}
+
+		int AddAnimationToSkeleton(const unsigned int& skeletonID, GFXMat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame)
+		{
+			return Renderer().AddAnimationToSkeleton(skeletonID, frames, numFrames, numBonesPerFrame);
+		}
+
+		int GetAnimationFrameCount(const unsigned int& skeletonID, const unsigned int& animationID, unsigned int& out_frameCount)
+		{
+			return Renderer().GetAnimationFrameCount(skeletonID, animationID, out_frameCount);
+		}
+
 	}
 }
 

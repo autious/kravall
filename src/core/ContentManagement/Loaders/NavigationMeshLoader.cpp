@@ -61,17 +61,17 @@ namespace Core
 		ff >> nrNodes;
 		check( nrNodes <= 0, "Number of nodes in file cannot be less or equal to zero!" );
 
-		NavigationMesh* instance = instance = Core::world.m_levelHeap.NewObject<Core::NavigationMesh>();
+		NavigationMesh* instance = Core::world.m_levelHeap.NewObject<Core::NavigationMesh>();
 
 		// allocate nodes
-		instance->m_nodes = Core::world.m_levelHeap.NewPODArray<Core::NavigationMesh::Node>( nrNodes );
+		instance->nodes = Core::world.m_levelHeap.NewPODArray<Core::NavigationMesh::Node>( nrNodes ); 
 
 		// fill nodes
 		for( int i = 0; i < nrNodes; i++ )
-			ff >> instance->m_nodes[ i ];
+			ff >> instance->nodes[ i ];
 
 		// set Core::world instance to the new instance
-		instance->m_nrNodes = nrNodes;
+		instance->nrNodes = nrNodes;
 
 		ff.close();
 

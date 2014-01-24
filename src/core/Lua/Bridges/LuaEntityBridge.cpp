@@ -60,6 +60,21 @@ extern "C"
         return entityBridge.DestroyEntity( L );    
     }
 
+    static int LuaEntityGC( lua_State * L )
+    {
+        LuaEntity * ent = luau_checkentity( L, 1 );
+          
+        if( ent->light == false )
+        {
+            return LuaEntityDestroy( L );
+        }
+        else
+        {
+            LOG_DEBUG << "Ignoring GC on light entity." << std::endl; 
+            return 0;
+        }
+    }
+
     static int LuaEntityIsValid( lua_State * L )
     {
         return entityBridge.IsValid( L );
@@ -69,16 +84,24 @@ extern "C"
     {
         return entityBridge.EntityToString( L );
     }
+    
+    static int LuaEntityIsSameEntity( lua_State * L )
+    {
+        LuaEntity * e1 = luau_checkentity( L , 1 );
+        LuaEntity * e2 = luau_checkentity( L , 2 );
+
+        return (e1->entity == e2->entity) && (e1->entity != INVALID_ENTITY);
+    }
 
     static int LuaComponentTypeToString( lua_State * L )
     {
         return entityBridge.ComponentTypeToString( L ); 
     }
-
 }
 
 Core::LuaEntityBridge::LuaEntityBridge( lua_State * L  )
 {
+	int sanity = lua_gettop(L);
     lua_getglobal( L, "core" );  
 
     int coreTableIndex = lua_gettop( L );
@@ -105,6 +128,7 @@ Core::LuaEntityBridge::LuaEntityBridge( lua_State * L  )
             lua_settable( L, -3 );
             
             luau_setfunction( L, "isValid", LuaEntityIsValid );
+            luau_setfunction( L, "isSameEntity", LuaEntityIsSameEntity );
         lua_settable( L, -3 );
 
         if( luaL_newmetatable( L, ENTITY_META_TYPE ) == 0 )
@@ -118,14 +142,12 @@ Core::LuaEntityBridge::LuaEntityBridge( lua_State * L  )
             lua_pushstring( L, "__index" );
             lua_getfield( L, coreTableIndex, "entity" ); 
             lua_settable( L, -3 );
-
-            lua_getfield( L, coreTableIndex, "entity" );
-            lua_getfield( L, -1, "destroy" );
-                lua_pushstring( L, "__gc" );
-                lua_pushvalue( L, -2 );
-                lua_settable( L, -5 );
-            lua_pop( L, 2 );
-
+			
+			lua_pushstring( L, "__gc" );
+            lua_pushcfunction( L, LuaEntityGC );
+			lua_settable( L, -3 );
+            
+            
         lua_pop( L , 1 ); //Pop the entity meta table. remove if something else ends up removing the entity from the stack.
 
         if( luaL_newmetatable( L, COMPONENT_META_TYPE ) == 0 )
@@ -181,4 +203,5 @@ Core::LuaEntityBridge::LuaEntityBridge( lua_State * L  )
     }
 
     lua_pop( L, 1 );
+	assert(sanity==lua_gettop(L));
 }

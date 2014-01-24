@@ -874,7 +874,7 @@ namespace Core
         lua_getglobal( L, "core" );         
             lua_newtable( L ); //glm
 
-				lua_newtable( L ); //vec3
+				lua_newtable( L ); //vec2
                 int vec2_table = lua_gettop( L );
                     luau_setfunction( L, "new", LuaVec2New );
                     luau_setfunction( L, "dot", LuaVec2Dot );

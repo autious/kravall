@@ -31,45 +31,116 @@ namespace Core
 
     int NavigationMesh::CreateGroup()
     {
-        if(m_nrUsedFlowfields >= m_maxFlowfields)
+        if(nrUsedFlowfields >= maxFlowfields)
         {
             LOG_FATAL << "Flowfield array is out of indices" << std::endl;
         }
 
-        m_flowfields[m_nrUsedFlowfields].edges = Core::world.m_levelHeap.NewPODArray<int>( m_nrNodes );
-        m_flowfields[m_nrUsedFlowfields].list = reinterpret_cast<glm::vec3*>(Core::world.m_levelHeap.NewPODArray<unsigned char>(sizeof(glm::vec3) * m_nrNodes));
+        flowfields[nrUsedFlowfields].edges = Core::world.m_levelHeap.NewPODArray<int>( nrNodes );
+		flowfields[nrUsedFlowfields].list = (glm::vec3*)Core::world.m_levelHeap.NewPODArray<float>( 3 * nrNodes );
 
-		std::memset( m_flowfields[m_nrUsedFlowfields].edges, 0, m_nrNodes * sizeof(int) );
-		std::memset( m_flowfields[m_nrUsedFlowfields].list, 0, m_nrNodes * sizeof(glm::vec3) );
 
-        return m_nrUsedFlowfields++;
+		std::memset( flowfields[nrUsedFlowfields].edges, 0, nrNodes * sizeof(int) );
+		std::memset( flowfields[nrUsedFlowfields].list, 0, nrNodes * sizeof(glm::vec3) );
+
+		flowfields[nrUsedFlowfields].goal[ 0 ] = FLT_MAX;
+		flowfields[nrUsedFlowfields].goal[ 1 ] = FLT_MAX;
+
+        return nrUsedFlowfields++;
     }
 
 	void NavigationMesh::InitFlowfieldInstances()
 	{
-		m_maxFlowfields = Core::world.m_config.GetInt( "maxNumberOfFlowfields", MAX_NUMBER_OF_FLOWFIELDS);
+		maxFlowfields = Core::world.m_config.GetInt( "maxNumberOfFlowfields", MAX_NUMBER_OF_FLOWFIELDS);
 
 		// resize list of m_flowfields...
-		m_flowfields = Core::world.m_levelHeap.NewPODArray<Core::NavigationMesh::Flowfield>( m_maxFlowfields );
-		m_nrUsedFlowfields = 0;
+		flowfields = Core::world.m_levelHeap.NewPODArray<Core::NavigationMesh::Flowfield>( maxFlowfields );
+		nrUsedFlowfields = 0;
 	}
 
 
 	void NavigationMesh::CalculateLinks()
 	{
 		// for all m_nodes
-		for( int i = 0; i < m_nrNodes; i++ )
+		for( int i = 0; i < nrNodes; i++ )
 		{
 			// for every edge in the node
 			for( int p = 0; p < 4; p++ )
 			{
-				if( m_nodes[i].corners[p].linksTo >= 0 )
+				if( nodes[i].corners[p].linksTo >= 0 )
 				{
 					// for all edges in the linked-to node
 					for( int q = 0; q < 4; q++ )
 					{
-						if( m_nodes[m_nodes[i].corners[p].linksTo].corners[q].linksTo == i )
-							m_nodes[i].corners[p].linksToEdge = q;
+						if( nodes[nodes[i].corners[p].linksTo].corners[q].linksTo == i )
+							nodes[i].corners[p].linksToEdge = q;
+					}
+				}
+			}
+		}
+			
+		// conncet corners...
+		for( int i = 0; i < nrNodes; i++ )
+		{
+			// for every edge in the node
+			for( int p = 0; p < 4; p++ )
+			{
+				// check if valid corner
+				if( nodes[i].corners[p].length < 0 )
+					continue;
+
+				int current = p * 2;
+				glm::vec2 cornerPos = glm::vec2( nodes[i].points[current], nodes[i].points[ current + 1 ] );
+
+				// calculate corner connections...
+				for( int q = 0; q < nrNodes; ++q )
+				{
+					//if( q == i )
+					//	continue;
+
+					// for every edge in the node
+					int nrCorners = 4;
+					if( nodes[q].corners[3].length < 0 )
+						nrCorners = 3;
+
+					for( int v = 0; v < nrCorners; ++v ) // ++v, much faster, such optimization... alltid något hurhurhur
+					{						
+						int otherCurrent = v * 2;
+						glm::vec2 otherCornerPos = glm::vec2( nodes[q].points[otherCurrent], nodes[q].points[ otherCurrent + 1 ] );
+
+						// check square distance to other corner
+						if( glm::dot( cornerPos - otherCornerPos, cornerPos - otherCornerPos ) < 0.05f )
+						{
+							// check which edge the corner connects to...
+							int prevIndex = v-1;
+							if( prevIndex < 0 )
+								prevIndex = nrCorners - 1;
+
+							int nextIndex = (v+1) % nrCorners;
+
+							// set connecting corner
+							if( nodes[q].corners[prevIndex].linksTo < 0 )
+							{
+								if( q != i )
+								{	
+									nodes[i].corners[p].cornerConnectsToNode = q;								
+									nodes[i].corners[p].cornerConnectsToCorner = prevIndex;
+								}
+							}
+							else if( nodes[q].corners[v].linksTo < 0 && q != i )
+							{
+								if( q != i )
+								{
+									nodes[i].corners[p].cornerConnectsToNode = q;
+									nodes[i].corners[p].cornerConnectsToCorner = nextIndex;
+								}
+							}
+							else if( q == i )
+							{
+								nodes[i].corners[p].cornerConnectsToNode = NAVMESH_CONCAVE_CORNER_NODE;
+								nodes[i].corners[p].cornerConnectsToCorner = NAVMESH_CONCAVE_CORNER_NODE;
+							}
+						}
 					}
 				}
 			}
@@ -99,6 +170,8 @@ std::fstream& operator>> ( std::fstream& ff, Core::NavigationMesh::Node& node )
 	// handle meta...
 	for( int i = 0; i < 4; i++ )
 	{
+		node.corners[i].cornerConnectsToNode = NAVMESH_NO_CONNECTING_CORNERS;
+
 		ff >> node.corners[i].linksTo;
 
 		int current = i * 2;
@@ -115,14 +188,13 @@ std::fstream& operator>> ( std::fstream& ff, Core::NavigationMesh::Node& node )
 			node.corners[i].inverseLength = 1.0f / node.corners[i].length;
 		}
 
-
 		glm::vec3 lineStart = glm::vec3( node.points[ current ], 0.0f, node.points[ current + 1 ] );
 		glm::vec3 lineEnd	= glm::vec3( node.points[ following ], 0.0f, node.points[ following + 1 ] );
 
 		// calc normal
 		glm::vec3 cross = glm::normalize( glm::cross( (lineEnd - lineStart), glm::vec3( 0.0f, 1.0f, 0.0f ) ) );
-		*reinterpret_cast<glm::vec3*>(node.corners[i].normal) = cross;
-
+		node.corners[i].normal[0] = cross.x;
+		node.corners[i].normal[1] = cross.z;
 	}
 
 	return ff;

@@ -14,5 +14,7 @@
 :inoremap jk <esc> 
 :map! <F4><F2> <C-R>=expand('%:t:r')<CR>
 
+:map <F5><F5> :!luac -p $(find ./ -name "*.lua")
+
 autocmd VimEnter * NERDTree
 autocmd VimEnter * wincmd p

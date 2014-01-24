@@ -23,6 +23,11 @@ namespace Core
         {
             GFX::Resize(width, height);
         }
+
+        virtual void WindowFocus( int focus )
+        {
+
+        }
     } buffResize;
     
     
@@ -34,9 +39,17 @@ namespace Core
 		WMODE_FULLSCREEN_BORDERLESS
 	};
 
+	/*! Callback function to be called when GLFW functions fail. Prints the error message to the console. */
+	void PrintGLFWError(int errorCode, const char* errorMessage)
+	{
+		std::cout << "OpenGL error: " << errorMessage << std::endl;
+	}
+
 
 	int InitializeGLFW(GLFWwindow** window, int width, int height, enum WindowMode wMode )
 	{
+		glfwSetErrorCallback(PrintGLFWError);
+
 		/* Initialize the library */
 		if (!glfwInit())
 		{

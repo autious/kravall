@@ -16,14 +16,16 @@
 #include <Components/FlowfieldComponent.hpp>
 #include <Components/AreaComponent.hpp>
 #include <Components/NameComponent.hpp>
+#include <Components/AnimationComponent.hpp>
 
 /* TODO: Put your system up here instead of the end of the header. noobs */
+#include <Systems/RenderingSystem.hpp>
 #include <Systems/NameSystem.hpp>
-#include <Systems/AreaLuaUpdateSystem.hpp>
+#include <Systems/AreaSystem.hpp>
+#include <Systems/RioterDataSystem.hpp>
 
 namespace Core
 {
-	class RenderingSystem;
 	class MovementSystem;
 	class FieldReactionSystem;
 	class PickingSystem;
@@ -34,18 +36,18 @@ namespace Core
 	class NavMeshCollisionSystem;
     class GroupDataSystem;
 	class FlowfieldPositioningSystem;
+	class PoliceGoalSystem;
 	
-    typedef SystemHandlerTemplate<RenderingSystem, LightSystem, FlowfieldPositioningSystem, NavMeshCollisionSystem, 
+    typedef SystemHandlerTemplate<RenderingSystem, LightSystem, PoliceGoalSystem, FlowfieldPositioningSystem, NavMeshCollisionSystem, 
 		CollisionSystem2D, PickingSystem, AIDebugSystem, FlowfieldSystem, FieldReactionSystem, 
-		MovementSystem, NameSystem, GroupDataSystem, AreaLuaUpdateSystem> SystemHandler;
+		MovementSystem, NameSystem, GroupDataSystem, AreaSystem,RioterDataSystem> SystemHandler;
 
     typedef EntityHandlerTemplate<SystemHandler, WorldPositionComponent, RotationComponent, ScaleComponent, 
 		GraphicsComponent, LightComponent, MovementComponent, UnitTypeComponent, AttributeComponent,
-		BoundingVolumeComponent, FlowfieldComponent,AreaComponent,NameComponent> EntityHandler;
+		BoundingVolumeComponent, FlowfieldComponent,AreaComponent,NameComponent, AnimationComponent> EntityHandler;
 }
 
 /**********All systems after this line************/
-#include <Systems/RenderingSystem.hpp>
 #include <Systems/MovementSystem.hpp>
 #include <Systems/FieldReactionSystem.hpp>
 #include <Systems/PickingSystem.hpp>
@@ -56,5 +58,6 @@ namespace Core
 #include <Systems/NavMeshCollisionSystem.hpp>
 #include <Systems/GroupDataSystem.hpp>
 #include <Systems/FlowfieldPositioningSystem.hpp>
+#include <Systems/PoliceGoalSystem.hpp>
 
 #endif

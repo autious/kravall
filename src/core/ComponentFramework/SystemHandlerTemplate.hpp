@@ -87,12 +87,12 @@ namespace Core
             return m_systems[id];
         }
 
+
         template <typename System>
         System* GetSystem()
         {
             return reinterpret_cast<System*>(m_systems[Index<System, std::tuple<Args...>>::value]);
         }
-
 
         std::vector<std::pair<const char*,std::chrono::microseconds>> GetFrameTime()
         {
