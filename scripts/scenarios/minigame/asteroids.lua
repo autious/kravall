@@ -19,13 +19,13 @@ local spaceship = scen:loadAssembly(
 		type = core.componentType.GraphicsComponent,
 		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry },
 		load = { 
-					mesh = { core.loaders.GnomeLoader, "assets/pyramid.bgnome", false },
-					material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
+					mesh = { core.loaders.GnomeLoader, "assets/asteroidship.bgnome", false },
+					material = { core.loaders.MaterialLoader, "assets/material/asteroids/roids_white.material", false }
 			   }
 	},
 	{
 		type = core.componentType.ScaleComponent,
-		data = { scale = 5.0 }
+		data = { scale = 1.5 }
 	},
 	{
 		type = core.componentType.RotationComponent,
@@ -35,58 +35,58 @@ local spaceship = scen:loadAssembly(
 }
 )
 -- Directional light
-scen:loadAssembly( 
-{
-	{
-		type = core.componentType.LightComponent,
-		data =  { 
-					color = { 0.1, 0.3, 1.0 },
-					speccolor = { 0.1, 0.3, 1.0 },
-					intensity = 0.5,
-					type = core.gfx.objectTypes.Light,
-					lighttype = core.gfx.lightTypes.Dir
-				}
-	},
-	{
-		type = core.componentType.WorldPositionComponent,
-		data = { position = { 0, 0, 0 } }
-	},
-	{
-		type = core.componentType.ScaleComponent,
-		data = { scale = 1.0 } 
-	},
-	{
-		type = core.componentType.RotationComponent,
-		data = { rotation = { 2,-3,-1,0 } } -- Lights uses rotation component as a direction vector, not a quaternion
-	}
-} 
-)
+--scen:loadAssembly( 
+--{
+--	{
+--		type = core.componentType.LightComponent,
+--		data =  { 
+--					color = { 0.3, 0.3, 0.3 },
+--					speccolor = { 0.1, 0.3, 1.0 },
+--					intensity = 0.5,
+--					type = core.gfx.objectTypes.Light,
+--					lighttype = core.gfx.lightTypes.Dir
+--				}
+--	},
+--	{
+--		type = core.componentType.WorldPositionComponent,
+--		data = { position = { 0, 0, 0 } }
+--	},
+--	{
+--		type = core.componentType.ScaleComponent,
+--		data = { scale = 1.0 } 
+--	},
+--	{
+--		type = core.componentType.RotationComponent,
+--		data = { rotation = { 2,-3,-1,0 } } -- Lights uses rotation component as a direction vector, not a quaternion
+--	}
+--} 
+--)
 -- Ambient light
-scen:loadAssembly( 
-{
-	{
-		type = core.componentType.LightComponent,
-		data =  { 
-					color = { 1.0, 1.0, 1.0 },
-					intensity = 0.05,
-					type = core.gfx.objectTypes.Light,
-					lighttype = core.gfx.lightTypes.Ambient
-				}
-	},
-	{
-		type = core.componentType.WorldPositionComponent,
-		data = { position = { 0, 0, 0 } }
-	},
-	{
-		type = core.componentType.ScaleComponent,
-		data = { scale = 1.0 }
-	},
-	{
-		type = core.componentType.RotationComponent,
-		data = { rotation = { 0,0,0,0 } }
-	}
-} 
-)
+--scen:loadAssembly( 
+--{
+--	{
+--		type = core.componentType.LightComponent,
+--		data =  { 
+--					color = { 1.0, 1.0, 1.0 },
+--					intensity = 0.01,
+--					type = core.gfx.objectTypes.Light,
+--					lighttype = core.gfx.lightTypes.Ambient
+--				}
+--	},
+--	{
+--		type = core.componentType.WorldPositionComponent,
+--		data = { position = { 0, 0, 0 } }
+--	},
+--	{
+--		type = core.componentType.ScaleComponent,
+--		data = { scale = 1.0 }
+--	},
+--	{
+--		type = core.componentType.RotationComponent,
+--		data = { rotation = { 0,0,0,0 } }
+--	}
+--} 
+--)
 --Plane
 scen:loadAssembly( 
 {
@@ -99,12 +99,36 @@ scen:loadAssembly(
 		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/plane.bgnome", false },
-					material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
+					material = { core.loaders.MaterialLoader, "assets/material/asteroids/roids_black.material", false }
 			   }
 	},
 	{
 		type = core.componentType.ScaleComponent,
 		data = { scale = 150.0 }
+	},
+	{
+		type = core.componentType.RotationComponent,
+		data = { rotation = { -math.sin(math.pi/4.0), 0, 0, math.cos(math.pi/4.0) } }
+	}
+}
+)--Background Plane
+scen:loadAssembly( 
+{
+	{
+		type = core.componentType.WorldPositionComponent,
+		data = { position = { 0, 5, 0 } }
+	},
+	{
+		type = core.componentType.GraphicsComponent,
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry },
+		load = { 
+					mesh = { core.loaders.GnomeLoader, "assets/plane.bgnome", false },
+					material = { core.loaders.MaterialLoader, "assets/material/asteroids/roids_white.material", false }
+			   }
+	},
+	{
+		type = core.componentType.ScaleComponent,
+		data = { scale = 160.0 }
 	},
 	{
 		type = core.componentType.RotationComponent,
@@ -120,7 +144,7 @@ local thrustLight = scen:loadAssembly(
 		data =  { 
 					color = {1.0, 0.4, 0.0},
 					speccolor = {1.0, 0.4, 0.0},
-					intensity = 25.0,
+					intensity = 15.0,
 					spotangle = 3.14/4.0,
 					spotpenumbra = 0.1,
 					type = core.gfx.objectTypes.Light,
@@ -133,7 +157,7 @@ local thrustLight = scen:loadAssembly(
 	},
 	{
 		type = core.componentType.ScaleComponent,
-		data = { scale = 15.0 } 
+		data = { scale = 25.0 } 
 	},
 	{
 		type = core.componentType.RotationComponent,
@@ -150,7 +174,7 @@ local function CreateBullet()
 			data =  { 
 						color = {0.3 + math.random()*0.7, 0.3 + math.random()*0.7,  0.3 + math.random()*0.7},
 						speccolor = {0.3 + math.random()*0.7, 0.3 + math.random()*0.7,  0.3 + math.random()*0.7},
-						intensity = 5.0,
+						intensity = 0.5,
 						type = core.gfx.objectTypes.Light,
 						lighttype = core.gfx.lightTypes.Point
 					}
@@ -161,7 +185,7 @@ local function CreateBullet()
 		},
 		{
 			type = core.componentType.ScaleComponent,
-			data = { scale = 5.0 } 
+			data = { scale = 10.0 } 
 		},
 		{
 			type = core.componentType.RotationComponent,
@@ -183,7 +207,7 @@ local function CreateAsteroid(scale, position)
 			data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry },
 			load = { 
 						mesh = { core.loaders.GnomeLoader, "assets/sphere.bgnome", false },
-						material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
+						material = { core.loaders.MaterialLoader, "assets/material/asteroids/roids_white.material", false }
 				   }
 		},
 		{
@@ -201,7 +225,14 @@ end
 
 camera:lookAt( core.glm.vec3.new( 0, 200, 0 ), core.glm.vec3.new( 0, 0, 0 ) )
 
-
+local showTutorial = true
+local enterWasDown = true
+local started = false
+local level = 0
+local difficulty = 5
+local score = 0
+local maxLives = 3
+local lives = maxLives
 local alive = true
 local t = 0
 local playerX = 0
@@ -224,15 +255,34 @@ local bullets = {}
 local asteroids = {}
 
 local function InitAsteroids(n)
+	local size = 3
+	local minSpawn = 45
+	local maxSpawn = (boundX + boundY) / 2 - minSpawn
 	for i=1,n do
-		size = 3
-		table.insert(asteroids, {entity = CreateAsteroid(5*size, {boundX - 5 + 10 * math.random(), boundY - 5 + 10 * math.random()}), direction = math.pi * 2 * math.random(), size = size})
+		local randVec = {1 - 2 * math.random(), 1 - 2 * math.random()}
+		local randDist = minSpawn + math.random() * maxSpawn
+		
+		
+		if randVec[1] == 0 and randVec[2] == 0 then
+			randVec[1] = 1
+		end
+		
+		-- normalize
+		local length = math.sqrt(randVec[1]*randVec[1] + randVec[2]*randVec[2])
+		randVec[1] = randVec[1] / length
+		randVec[2] = randVec[2] / length
+		
+		randVec[1] = randVec[1] * randDist
+		randVec[2] = randVec[2] * randDist
+		
+		
+		table.insert(asteroids, {entity = CreateAsteroid(5*size, randVec), direction = math.pi * 2 * math.random(), size = size})
 	end
 end
 
-InitAsteroids(5)
+InitAsteroids(difficulty)
 
-local function RestartGame()
+local function RestartGame(diff)
 	-- Clear tables
 	for i=1,#asteroids do
 		asteroids[i].entity:destroy()
@@ -251,9 +301,10 @@ local function RestartGame()
 	velocity = {0,0}
 	playerDirection = 0
 	shootTimer = 0
+	difficulty = diff
 	
 	--Create asteroids
-	InitAsteroids(5)
+	InitAsteroids(difficulty)
 end
 
 
@@ -283,6 +334,7 @@ local function bulletHitAsteroid(bulletID)
 				table.insert(asteroids, {entity = CreateAsteroid(5*size, {bulletPos[1], bulletPos[3]}), direction = math.pi * 2 * math.random(), size = size})
 			end
 			wasHit = true
+			score = score + 10
 			break
 		else
 			i = i + 1
@@ -307,7 +359,7 @@ local function UpdateBullets(delta)
 			table.remove(bullets, i)
 		else
 			wpc.position[1] = wpc.position[1] + bulletSpeed * math.cos(bullets[i].direction) * delta
-			wpc.position[2] = 11.0
+			wpc.position[2] = 10.5
 			wpc.position[3] = wpc.position[3] + bulletSpeed * math.sin(bullets[i].direction) * delta
 			bullets[i].entity:set(core.componentType.WorldPositionComponent, wpc)
 			i = i + 1
@@ -360,17 +412,82 @@ local function Move(delta)
 	local rightTurn = keyboard.iskeydown( key.Right )
 	local shooting = keyboard.iskeydown( key.Left_shift )
 	
+	local enterIsDown = false
+	if keyboard.iskeydown( key.Enter ) then
+		if not enterWasDown then
+			enterIsDown = true
+		end
+		enterWasDown = true
+	else
+		enterWasDown = false
+	end
+	
+	UpdateAsteroids(delta)
+	
+	-- Insert coin
+	if not started then
+		local wpc;
+		wpc = spaceship:get(core.componentType.WorldPositionComponent)
+		wpc.position[1] = playerX
+		wpc.position[2] = -1000.0
+		wpc.position[3] = playerY
+		spaceship:set(core.componentType.WorldPositionComponent, wpc)
+		core.draw.drawText( 580, 340, "INSERT COIN")
+		if enterIsDown then
+			started = true
+			enterIsDown = false
+			showTutorial = true
+		else
+			return
+		end
+	end
+	
+	-- Draw tutorial
+	if showTutorial then
+		core.draw.drawText( 605, 300, "CONTROLS:" )
+		core.draw.drawText( 598, 340, "ARROWS FLY" )
+		core.draw.drawText( 568, 380, "LSHIFT SHOOT LASER" )
+		if enterIsDown then
+			showTutorial = false
+			RestartGame(difficulty)
+		else
+			return
+		end
+	end
+	
 	-- You are dead!
 	if not alive then
 		thrusting = false
 		leftTurn = false
 		rightTurn = false
 		shooting = false
-		core.draw.drawText( 605, 300, "YOU DED!" )
-		core.draw.drawText( 590, 340, "PRESS ENTER!" )
-		if keyboard.iskeydown( key.Enter ) then
-			RestartGame()
-			return
+		if lives == 0 then
+			core.draw.drawText( 605, 300, "YOU DED!" )
+			core.draw.drawText( 580, 340, "FINAL SCORE: "..score )
+			core.draw.drawText( 590, 380, "PRESS ENTER!" )
+			if enterIsDown then
+				lives = maxLives
+				difficulty = 5
+				score = 0
+				lives = maxLives
+				level = 0
+				started = false
+				RestartGame(difficulty)
+				return
+			end
+		else
+			if lives > 1 then
+				core.draw.drawText( 540, 300, "TRY AGAIN..."..lives.." LIVES LEFT" )
+			else
+				core.draw.drawText( 545, 300, "TRY AGAIN..."..lives.." LIFE LEFT" )
+			end
+			core.draw.drawText( 590, 340, "PRESS ENTER!" )
+			if enterIsDown then
+				lives = lives - 1
+				alive = true
+				RestartGame(difficulty)
+				return
+			end
 		end
 	end
 	
@@ -414,7 +531,8 @@ local function Move(delta)
 	end
 	local flameLight = thrustLight:get(core.componentType.LightComponent)
 	-- Flicker light
-	flameLight.spotangle = (1.5-(speed/topSpeed))*(0.5 + 0.5 * math.random()) * 3.14/4.0
+	
+	flameLight.spotangle = (1.5-(speed/topSpeed))*(0.5 + 0.5 * math.random()) * 3.14/8.0
 	thrustLight:set(core.componentType.LightComponent, flameLight)
 	
 	-- Turning
@@ -428,7 +546,7 @@ local function Move(delta)
 	end
 	
 	flameRot.rotation[1] = math.cos(math.pi + playerDirection)
-	flameRot.rotation[2] = -1
+	flameRot.rotation[2] = -0.5
 	flameRot.rotation[3] = math.sin(math.pi + playerDirection)
 	flameRot.rotation[4] = 0
 	thrustLight:set(core.componentType.RotationComponent, flameRot)
@@ -462,7 +580,6 @@ local function Move(delta)
 	end
 	
 	UpdateBullets(delta)
-	UpdateAsteroids(delta)
 	
 	
 	local wpc;
@@ -483,15 +600,18 @@ local function Move(delta)
 	
 	if #asteroids == 0 then
 		core.draw.drawText( 540, 300, "CONGRADULAZION, YOU WIN!" )
+		core.draw.drawText( 590, 340, "PRESS ENTER!" )
+		if enterIsDown then
+			difficulty = difficulty + 1
+			level = level + 1
+			RestartGame(difficulty)
+			return
+		end
 	end
 	
-	--for i=1, numPointlights do
-	--	wpc = pointLights[i]:get(core.componentType.WorldPositionComponent)
-	--	wpc.position[1] = (10 + i)*math.cos(-(timeee+4.5*i))
-	--	wpc.position[2] = 12.5
-	--	wpc.position[3] = (10 + i)*math.sin(-(timeee+4.5*i))
-	--	pointLights[i]:set(core.componentType.WorldPositionComponent, wpc)
-	--end
+	core.draw.drawText( 300, 35, "LEVEL: "..level )
+	core.draw.drawText( 300, 55, "SCORE: "..score )
+	core.draw.drawText( 300, 75, "EXTRA LIFE: "..lives )
 	
 	
 	
