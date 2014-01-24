@@ -93,7 +93,7 @@ namespace GFX
 
 
 		m_deferredPainter->Initialize(m_FBO, m_dummyVAO);
-		//m_lightPainter->Initialize(m_FBO, m_dummyVAO, m_windowWidth, m_windowHeight);
+		m_lightPainter->Initialize(m_FBO, m_dummyVAO, m_windowWidth, m_windowHeight);
 		m_debugPainter->Initialize(m_FBO, m_dummyVAO);
 		m_textPainter->Initialize(m_FBO, m_dummyVAO);
 		m_consolePainter->Initialize(m_FBO, m_dummyVAO);
@@ -228,7 +228,7 @@ namespace GFX
 			GFX_CHECKTIME(m_renderJobManager->Sort(), "Sorting");
 			
 			GFX_CHECKTIME(m_deferredPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix), "Geometry");
-			//GFX_CHECKTIME(m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix), "Lighting");
+			GFX_CHECKTIME(m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix), "Lighting");
 
 			GFX_CHECKTIME( m_overlayPainter->Render( renderJobIndex, m_overlayViewMatrix, m_overlayProjMatrix ), "Console");
 			//Render FBO
@@ -246,7 +246,7 @@ namespace GFX
 		{
 			m_renderJobManager->Sort();
 			m_deferredPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
-			//m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
+			m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
 			
 			m_overlayPainter->Render( renderJobIndex, m_overlayViewMatrix, m_overlayProjMatrix );
 			//Render FBO

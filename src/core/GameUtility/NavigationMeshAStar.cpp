@@ -23,11 +23,11 @@ namespace Core
 		result.t = NO_LINE_COLLISION_VALUE;
 		result.node = startNode;
 		
-		bool* visited = Core::world.m_frameHeap.NewPODArray<bool>( instance->m_nrNodes );
-		std::memset( visited, false, sizeof(bool) * instance->m_nrNodes );
+		bool* visited = Core::world.m_frameHeap.NewPODArray<bool>( instance->nrNodes );
+		std::memset( visited, false, sizeof(bool) * instance->nrNodes );
 
 		std::vector<int> nodeList;
-		nodeList.reserve( instance->m_nrNodes );
+		nodeList.reserve( instance->nrNodes );
 
 		float distanceToTarget = glm::distance( start, goal );
 
@@ -38,7 +38,7 @@ namespace Core
 		//int currentNode = startNode;
 		while( nodeList.size() != head )
 		{
-			Core::NavigationMesh::Node* current = &instance->m_nodes[ nodeList[head] ];
+			Core::NavigationMesh::Node* current = &instance->nodes[ nodeList[head] ];
 			for( int p = 0; p < 4; p++ )
 			{
 				// check if triangle or non-collidable line...
@@ -103,7 +103,7 @@ namespace Core
 
 		// get starting node...
 		int startNode = -1;
-		for( int i = 0; i < instance->m_nrNodes; i++ )
+		for( int i = 0; i < instance->nrNodes; i++ )
 		{
 			if( instance->CheckPointInsideNode( from, i ) )
 			{

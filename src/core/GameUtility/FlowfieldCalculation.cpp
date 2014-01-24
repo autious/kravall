@@ -55,8 +55,8 @@ namespace Core
 			return false;
 
 
-		m_flowfields[group].goal[ 0 ] = point.x;
-		m_flowfields[group].goal[ 1 ] = point.z;
+		flowfields[group].goal[ 0 ] = point.x;
+		flowfields[group].goal[ 1 ] = point.z;
 
 
 		std::vector< TraversalData > prioList;
@@ -73,8 +73,8 @@ namespace Core
 		bool* visited = Core::world.m_frameHeap.NewPODArray<bool>( nrNodes );
 		std::memset( visited, false, sizeof(bool) * nrNodes );
 
-		float* distances = Core::world.m_frameHeap.NewPODArray<float>( m_nrNodes );
-		std::memset( distances, 0.0f, sizeof(float) * m_nrNodes );
+		float* distances = Core::world.m_frameHeap.NewPODArray<float>( nrNodes );
+		std::memset( distances, 0.0f, sizeof(float) * nrNodes );
 
 
 		// run algorithm
@@ -152,16 +152,16 @@ namespace Core
 			// calculate mid point of the entry edge in parent node, this makes the path a bit more flowing
 			glm::vec3 parentMid;
 			int parentNode = current.corners[ prioList[0].entryEdge ].linksTo;
-			int parentEntryEdge = m_flowfields[group].edges[ parentNode ];		
+			int parentEntryEdge = flowfields[group].edges[ parentNode ];		
 			int ii = parentEntryEdge * 2;
 			int oo = ( ii + 2 ) % 8;			
-			glm::vec3 startOfLine = glm::vec3( m_nodes[ parentNode ].points[ ii ], 0.0f, m_nodes[ parentNode ].points[ ii + 1 ] );
-			glm::vec3 endOfLine	= glm::vec3( m_nodes[ parentNode ].points[ oo ], 0.0f, m_nodes[ parentNode ].points[ oo + 1 ] );
+			glm::vec3 startOfLine = glm::vec3( nodes[ parentNode ].points[ ii ], 0.0f, nodes[ parentNode ].points[ ii + 1 ] );
+			glm::vec3 endOfLine	= glm::vec3( nodes[ parentNode ].points[ oo ], 0.0f, nodes[ parentNode ].points[ oo + 1 ] );
 			parentMid = startOfLine + (( endOfLine - startOfLine ) * 0.5f );	
 
 			// assign values to the flowfield...
-			m_flowfields[group].list[ prioList[0].node ] = parentMid;
-			m_flowfields[group].edges[ prioList[0].node ] = prioList[0].entryEdge;
+			flowfields[group].list[ prioList[0].node ] = parentMid;
+			flowfields[group].edges[ prioList[0].node ] = prioList[0].entryEdge;
 			distances[ prioList[0].node ] = prioList[0].entryDistance;
 
 			// set metadata for calculation...

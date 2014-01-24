@@ -80,33 +80,33 @@ namespace Core
 		}
 			
 		// conncet corners...
-		for( int i = 0; i < m_nrNodes; i++ )
+		for( int i = 0; i < nrNodes; i++ )
 		{
 			// for every edge in the node
 			for( int p = 0; p < 4; p++ )
 			{
 				// check if valid corner
-				if( m_nodes[i].corners[p].length < 0 )
+				if( nodes[i].corners[p].length < 0 )
 					continue;
 
 				int current = p * 2;
-				glm::vec2 cornerPos = glm::vec2( m_nodes[i].points[current], m_nodes[i].points[ current + 1 ] );
+				glm::vec2 cornerPos = glm::vec2( nodes[i].points[current], nodes[i].points[ current + 1 ] );
 
 				// calculate corner connections...
-				for( int q = 0; q < m_nrNodes; ++q )
+				for( int q = 0; q < nrNodes; ++q )
 				{
 					//if( q == i )
 					//	continue;
 
 					// for every edge in the node
 					int nrCorners = 4;
-					if( m_nodes[q].corners[3].length < 0 )
+					if( nodes[q].corners[3].length < 0 )
 						nrCorners = 3;
 
 					for( int v = 0; v < nrCorners; ++v ) // ++v, much faster, such optimization... alltid något hurhurhur
 					{						
 						int otherCurrent = v * 2;
-						glm::vec2 otherCornerPos = glm::vec2( m_nodes[q].points[otherCurrent], m_nodes[q].points[ otherCurrent + 1 ] );
+						glm::vec2 otherCornerPos = glm::vec2( nodes[q].points[otherCurrent], nodes[q].points[ otherCurrent + 1 ] );
 
 						// check square distance to other corner
 						if( glm::dot( cornerPos - otherCornerPos, cornerPos - otherCornerPos ) < 0.05f )
@@ -119,26 +119,26 @@ namespace Core
 							int nextIndex = (v+1) % nrCorners;
 
 							// set connecting corner
-							if( m_nodes[q].corners[prevIndex].linksTo < 0 )
+							if( nodes[q].corners[prevIndex].linksTo < 0 )
 							{
 								if( q != i )
 								{	
-									m_nodes[i].corners[p].cornerConnectsToNode = q;								
-									m_nodes[i].corners[p].cornerConnectsToCorner = prevIndex;
+									nodes[i].corners[p].cornerConnectsToNode = q;								
+									nodes[i].corners[p].cornerConnectsToCorner = prevIndex;
 								}
 							}
-							else if( m_nodes[q].corners[v].linksTo < 0 && q != i )
+							else if( nodes[q].corners[v].linksTo < 0 && q != i )
 							{
 								if( q != i )
 								{
-									m_nodes[i].corners[p].cornerConnectsToNode = q;
-									m_nodes[i].corners[p].cornerConnectsToCorner = nextIndex;
+									nodes[i].corners[p].cornerConnectsToNode = q;
+									nodes[i].corners[p].cornerConnectsToCorner = nextIndex;
 								}
 							}
 							else if( q == i )
 							{
-								m_nodes[i].corners[p].cornerConnectsToNode = NAVMESH_CONCAVE_CORNER_NODE;
-								m_nodes[i].corners[p].cornerConnectsToCorner = NAVMESH_CONCAVE_CORNER_NODE;
+								nodes[i].corners[p].cornerConnectsToNode = NAVMESH_CONCAVE_CORNER_NODE;
+								nodes[i].corners[p].cornerConnectsToCorner = NAVMESH_CONCAVE_CORNER_NODE;
 							}
 						}
 					}

@@ -38,13 +38,13 @@ void Core::FlowfieldPositioningSystem::Update( float delta )
 					int i;
 					for( i = 0; i < 4; i++ )
 					{
-						if( instance->m_nodes[ffc->node].corners[i].linksTo < 0 )
+						if( instance->nodes[ffc->node].corners[i].linksTo < 0 )
 							continue;
 
-						if( instance->CheckPointInsideNode( position, instance->m_nodes[ffc->node].corners[i].linksTo ) )
+						if( instance->CheckPointInsideNode( position, instance->nodes[ffc->node].corners[i].linksTo ) )
 						{
 							// assign new node...
-							ffc->node = instance->m_nodes[ffc->node].corners[i].linksTo;
+							ffc->node = instance->nodes[ffc->node].corners[i].linksTo;
 							break;
 						}
 					}
@@ -62,7 +62,7 @@ void Core::FlowfieldPositioningSystem::Update( float delta )
 			// if not assigned to a node, loop through all of them.
 			if( ffc->node < 0 )
 			{
-				for( int i = 0; i < instance->m_nrNodes; i++ )
+				for( int i = 0; i < instance->nrNodes; i++ )
 				{
 					if( instance->CheckPointInsideNode( position, i ) )
 					{
