@@ -33,6 +33,12 @@ namespace Core
 			int numberOfTriangles;
 			int numberOfIndices;
 			int numberOfBones;
+			//int numberOfAnimations;
+		};
+
+		struct AnimationHeader
+		{
+			int numberOfBones;
 			int numberOfAnimations;
 		};
 

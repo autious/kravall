@@ -29,9 +29,10 @@ void Core::FlowfieldSystem::Update( float delta )
 			int groupID;
 			Core::AttributeComponent* attribc = WGETC<Core::AttributeComponent>(*it);
 			UnitTypeComponent* utc = WGETC<UnitTypeComponent>(*it);
-			if(	utc->type == Core::UnitType::Rioter )
+			if (utc->type == Core::UnitType::Rioter)
 				groupID = attribc->rioter.groupID;
 			else
+				//continue;
 				groupID = attribc->police.squadID;
 
 			Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>(*it);
@@ -98,7 +99,11 @@ void Core::FlowfieldSystem::Update( float delta )
 				ratio = ratio > 1.0f ? 1.0f : ratio;
 				ratio = ratio < 0.5f ? 0.5f : ratio;
 
-				glm::vec3 flowfieldDirection = glm::normalize( -normal * (1 - ratio) + dirctionToEdgeInNextNode * ( ratio + 0.5f ) );
+				glm::vec3 flowfieldDirection = -normal * (1 - ratio) + dirctionToEdgeInNextNode * (ratio + 0.5f);
+
+				//if (glm::length(flowfieldDirection) > 0.0f)
+				flowfieldDirection = glm::normalize(flowfieldDirection);
+
 				MovementComponent::SetDirection( mvmc, flowfieldDirection.x, 0, flowfieldDirection.z );
 
 
