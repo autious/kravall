@@ -148,7 +148,7 @@ namespace Core
 			/* Magic */
 			char m_magicByte[6], m_magicByteAnimation[10];
 			m_file.read((char*)m_magicByte, 6);
-			m_file.read((char*)m_magicByteAnimation, 10);
+			m_animationFile.read((char*)m_magicByteAnimation, 10);
 
 			if (strcmp(m_magicByte, "GNOME") != 0)
 			{
@@ -160,7 +160,7 @@ namespace Core
 			Core::GnomeLoader::Gnome* gnome = new Core::GnomeLoader::Gnome;
 
 			/* Header */
-			m_file.read((char*)&header, sizeof(Header));
+			m_file.read((char*)&header, sizeof(header));
 
             gnome->numberOfVertices = header.numberOfVertices;
 			gnome->numberOfIndices = header.numberOfIndices;
@@ -190,13 +190,13 @@ namespace Core
 				}
 
 				/* Animation File */
-				if (m_animationFile) //Not the most beatiful code ever made, but hey, if it works, it works! :D
+				if (m_animationFile) //Not the prettiest code ever made, but hey, if it works, it works! :D
 				{
 					/* Magic Byte */
 					if (strcmp(m_magicByteAnimation, "ANIMGNOME") == 0)
 					{
 						/* Header */
-						m_animationFile.read((char*)&animationHeader, sizeof(AnimationHeader));
+						m_animationFile.read((char*)&animationHeader, sizeof(animationHeader));
 						gnome->numberOfAnimations = animationHeader.numberOfAnimations;
 
 						if (animationHeader.numberOfBones == header.numberOfBones)
@@ -224,7 +224,7 @@ namespace Core
 						else
 						{
 							gnome->numberOfAnimations = 0;
-							gnome->animations = new Core::GnomeLoader::Animation[animationHeader.numberOfAnimations];
+							gnome->animations = new Core::GnomeLoader::Animation[gnome->numberOfAnimations];
 							LOG_FATAL << fileName << ": Number of bones do not match .bgnome and .bagnome. Have you used the correct animation file?" << std::endl;
 							std::cout << "Binary Animation GNOME File do not match .bgnome, proceeds without animation..." << std::endl;
 						}
@@ -232,10 +232,16 @@ namespace Core
 					else
 					{
 						gnome->numberOfAnimations = 0;
-						gnome->animations = new Core::GnomeLoader::Animation[animationHeader.numberOfAnimations];
+						gnome->animations = new Core::GnomeLoader::Animation[gnome->numberOfAnimations];
 						std::cout << "Binary Animation GNOME File is missing for " << GetFileNameAndPath(fileName, ".") << ".bagnome, proceeds without animation..." << std::endl;
 					}
 				}
+			}
+			else
+			{
+				gnome->numberOfAnimations = 0;
+				gnome->animations = new Core::GnomeLoader::Animation[gnome->numberOfAnimations];
+				std::cout << "there was no bones, ignoring reading .bagnome" << std::endl;
 			}
 
 			/* Done! */
