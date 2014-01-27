@@ -64,7 +64,7 @@ namespace Core
 			
 					in[i].position_unitType = glm::vec4(wpc->position[0], wpc->position[1], wpc->position[2], utc->type);
 					in[i].direction_speed = glm::vec4(mc->newDirection[0], mc->newDirection[1], mc->newDirection[2], mc->speed);
-					in[i].goal_maxSpeed = glm::vec4(mc->goal[0], mc->goal[1], mc->goal[2], mc->maxSpeed);
+					in[i].goal_maxSpeed = glm::vec4(mc->goal[0], mc->goal[1], mc->goal[2], mc->desiredSpeed);
 					in[i].health_stamina_morale_stancealignment = glm::vec4(ac->health, ac->stamina, ac->morale, ac->rioter.alignment);
 					in[i].groupSquadID_defenseRage_mobilityPressure_empty = glm::vec4(ac->rioter.groupID, ac->rioter.rage, ac->rioter.pressure, 0);
 					i++;
@@ -100,7 +100,7 @@ namespace Core
 					mc->goal[0] = out[i].goal_maxSpeed.x;
 					mc->goal[1] = out[i].goal_maxSpeed.y;
 					mc->goal[2] = out[i].goal_maxSpeed.z;
-					mc->maxSpeed = out[i].goal_maxSpeed.w;
+					mc->desiredSpeed = out[i].goal_maxSpeed.w;
 					i++;
 				}
 				glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);

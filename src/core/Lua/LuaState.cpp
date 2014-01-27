@@ -22,7 +22,7 @@
 #include <Lua/Bridges/LuaAttributeBridge.hpp>
 #include <Lua/Bridges/LuaBoundingVolumeBridge.hpp>
 #include <Lua/Bridges/LuaUnitTypeBridge.hpp>
-#include <Lua/Bridges/LuaNavMeshBridge.hpp>
+#include <Lua/Bridges/LuaGroupsBridge.hpp>
 #include <Lua/Bridges/LuaGLMBridge.hpp>
 #include <Lua/Bridges/LuaCameraBridge.hpp>
 #include <Lua/Bridges/LuaWindowBridge.hpp>
@@ -68,7 +68,7 @@ namespace Core
         LuaAttributeComponentBridge lacb;
         LuaBoundingVolumeComponentBridge lbvc;
         LuaUnitTypeComponentBridge lutcb;
-        LuaNavMeshBridge lnmb;
+        LuaGroupsBridge lnmb;
         LuaGLMBridge lglmb;
         LuaCameraBridge lcab;
         LuaWindowBridge lwb;
@@ -135,12 +135,6 @@ void Core::LuaState::OpenLibs()
     lua_setglobal( m_state, "core" );
 
     bindings = new LuaStateBindings( m_state );
-
-    lua_getglobal( m_state, "core" ); //Let's lock down core now.
-        lua_newtable( m_state );
-        luau_setfunction( m_state, "__newindex", LuaCoreNewindex );
-    lua_setmetatable( m_state, -2 ),
-    lua_pop( m_state, 1 );
 
     assert( sanity == lua_gettop(m_state) );
 }

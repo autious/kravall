@@ -3,8 +3,8 @@
 
 #include "PVector.hpp"
 #include "EntityVector.hpp"
-#include "ComponentType.hpp"
-#include "CheckTemplatePresence.hpp"
+#include <TemplateUtility/TemplateIndex.hpp>
+#include <TemplateUtility/TemplatePresence.hpp>
 
 #include <cstdint>
 #include <cassert>

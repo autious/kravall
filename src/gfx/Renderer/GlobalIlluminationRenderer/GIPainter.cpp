@@ -164,7 +164,7 @@ namespace GFX
 		m_shaderManager->UseProgram("GaussianBlurHorizontal");
 
 		TextureManager::BindTexture(m_SSDOTexture->GetTextureHandle(), m_shaderManager->GetUniformLocation("GaussianBlurHorizontal", "gTexture"), 0, GL_TEXTURE_2D);
-		m_shaderManager->SetUniform(m_screenWidth / 4, m_screenHeight / 4, m_shaderManager->GetUniformLocation("GaussianBlurHorizontal", "gScreenDimensions"));
+		m_shaderManager->SetUniform(m_screenWidth, m_screenHeight, m_shaderManager->GetUniformLocation("GaussianBlurHorizontal", "gScreenDimensions"));
 
 		glBindVertexArray(m_dummyVAO);
 		glDrawArrays(GL_POINTS, 0, 1);

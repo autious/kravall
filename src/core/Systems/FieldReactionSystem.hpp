@@ -47,7 +47,7 @@ namespace Core
 			ChargeCurve() : charge(0.0f), cutoff(0.0f), repelRadius(0.0f), decline(0.0f) {}
 
 			ChargeCurve(float peakCharge, float cutoffLimit, float repelDistance) : charge(peakCharge),
-				cutoff(cutoffLimit), repelRadius(repelDistance), decline(peakCharge / (cutoffLimit - repelDistance)) {}
+				cutoff(cutoffLimit), repelRadius(repelDistance), decline(peakCharge / (cutoffLimit/* - repelDistance*/)) {}
 		};
 
 		static const float STAY_LIMIT;
@@ -62,6 +62,7 @@ namespace Core
 		
 		float m_field[FIELD_SIDE_CELL_COUNT][FIELD_SIDE_CELL_COUNT];
 		float m_calculatingField[FIELD_SIDE_CELL_COUNT][FIELD_SIDE_CELL_COUNT];
+		glm::vec3 m_drawFieldCenter;
 		bool m_showPF;
 		int m_updateCounter;
 

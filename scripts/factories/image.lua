@@ -1,4 +1,5 @@
-return function( x,y, material )  
+return function( x,y, material, c )  
+    c = c or false
     local self = {}
     setmetatable( self,{ __index = { destroy = function(self)
                 self.ent:destroy()
@@ -26,14 +27,24 @@ return function( x,y, material )
         end, 
         false )
 
+    
     self.material = core.contentmanager.load( 
         core.loaders.MaterialLoader, 
         material,
-        function ( material_handle )
+        function ( material_handle, meta_data )
             -- Check if the value exist and if the entity is not destroyed.
             if self.ent and self.ent:isValid() then 
                 self.ent:set( core.componentType.GraphicsComponent, { material = material_handle } )
-                self.ent:set( core.componentType.ScaleComponent, {scale = {150,122,1}} )
+                self.ent:set( core.componentType.ScaleComponent, {scale = {meta_data.diffuseWidth,meta_data.diffuseHeight,1}} )
+
+                px = x 
+                py = y
+                if c then
+                    px = x - meta_data.diffuseWidth/2
+                    py = y - meta_data.diffuseHeight/2
+                end
+
+                self.ent:set( core.componentType.WorldPositionComponent, { position = {px,-py, 0} } )
             else
                 error( "Unable to set VAO handle on Gui Component, invalid entity" )
             end
@@ -41,7 +52,6 @@ return function( x,y, material )
         false )
 
     self.ent:set( core.componentType.GraphicsComponent, { type = core.gfx.objectTypes.OverlayGeometry} )
-    self.ent:set( core.componentType.WorldPositionComponent, { position = {x,-y, 0} } )
     self.ent:set( core.componentType.RotationComponent, { rotation = {0,0,0,1}} )
 
     return self

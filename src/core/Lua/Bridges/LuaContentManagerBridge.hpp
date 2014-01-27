@@ -5,7 +5,7 @@
 #include <lualib.h>
 #include <lauxlib.h>
 
-#include <ComponentFramework/ComponentType.hpp>
+#include <TemplateUtility/TemplateIndex.hpp>
 #include <ContentManagement/ContentManager.hpp>
 #include <Lua/Bridges/ContentLoading/ContentHandle.hpp>
 

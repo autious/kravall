@@ -8,7 +8,7 @@ extern "C"
 {
     static int LuaGetRiotersInGroupCount( lua_State * L )
     {
-        Core::RioterDataSystem *as = Core::world.m_systemHandler.GetSystemT<Core::RioterDataSystem>();
+        Core::RioterDataSystem *as = Core::world.m_systemHandler.GetSystem<Core::RioterDataSystem>();
         lua_pushinteger( L, as->GetRioterInGroupCount( luaL_checkinteger( L, 1 ) ) );
     
         return 1;
@@ -16,7 +16,7 @@ extern "C"
 
     static int LuaGetRiotersInGroup( lua_State * L)
     {
-        Core::RioterDataSystem *as = Core::world.m_systemHandler.GetSystemT<Core::RioterDataSystem>();
+        Core::RioterDataSystem *as = Core::world.m_systemHandler.GetSystem<Core::RioterDataSystem>();
 
         std::vector<Core::Entity> ents = as->GetRiotersInGroup( luaL_checkinteger(L, 1 ) );
 

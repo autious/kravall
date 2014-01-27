@@ -370,7 +370,8 @@ void main()
 
 		//Gamma correct
 		color.xyz = pow(color.xyz, vec3(1.0f / gGamma));
-
+		color += surface.glow;
+		
 		//if (gl_LocalInvocationID.x == 0 || gl_LocalInvocationID.y == 0)
 		//{
 		//	imageStore(outTexture, pixel, vec4(.2f, .2f, .2f, 1.0f));
