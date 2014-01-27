@@ -1,7 +1,9 @@
 local Camera = require "rts_camera" 
 local MainMenu = require "gui/MainMenu"
 local image = require "factories/image"
+local viewport = require "gui/viewport" 
 require "console"
+
 
 local current_scenario = nil
 local current_scenario_name = ""

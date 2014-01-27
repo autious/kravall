@@ -25,8 +25,8 @@ namespace GFX
 		BasePainter::Initialize(FBO, dummyVAO);
 
 		// Load shared shaders (vertex and fragment)
-		m_shaderManager->LoadShader("shaders/Overlay/Overlay_vs.glsl", "OverlayVS", GL_VERTEX_SHADER);
-		m_shaderManager->LoadShader("shaders/Overlay/Overlay_fs.glsl", "OverlayFS", GL_FRAGMENT_SHADER);
+		m_shaderManager->LoadShader("shaders/overlay/OverlayVS.glsl", "OverlayVS", GL_VERTEX_SHADER);
+		m_shaderManager->LoadShader("shaders/overlay/OverlayFS.glsl", "OverlayFS", GL_FRAGMENT_SHADER);
 
 		// Create and attach rect debug shaders
 		m_shaderManager->CreateProgram("Overlay");
