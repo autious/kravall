@@ -130,7 +130,7 @@ void Core::FlowfieldSystem::Update( float delta )
 				MovementComponent::SetDirection( mvmc, 0.0f, 0.0f, 0.0f );
 				//*reinterpret_cast<glm::vec3*>(mvmc->newDirection) = glm::vec3(0.0f);
 
-				GFX::Debug::DrawSphere( wpc->GetVec3(*wpc), 8.0f, GFXColor( 1, 1, 1, 1 ), false );
+				//GFX::Debug::DrawSphere( wpc->GetVec3(*wpc), 8.0f, GFXColor( 1, 1, 1, 1 ), false );
 			}
 
 

@@ -14,28 +14,35 @@ asm:specific_content( core.contentmanager.load(
 local rioter = ent.get "rioter"
 local police = ent.get "police"
 local building = ent.get "building"
-		
 local centerPoint = { 0, 0, 0 }
 local side = 32 -- math.sqrt( 1000 )
+
+
+local gOne = core.system.groups.createGroup()
+local gTwo = core.system.groups.createGroup()
+local gThree = core.system.groups.createGroup()
+local gFour = core.system.groups.createGroup()
+
 for i = -side / 2, -1 do
 	for p = -side / 2, -1 do
-		rioter( asm, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], 0 )
+		rioter( asm, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], gOne )
 	end                         
 	for p = 1, side / 2 do      
-		rioter( asm, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], 1 )
+		rioter( asm, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], gTwo )
 	end                         
 end                             
 for i = 1, side / 2 do          
 	for p = -side / 2, -1 do    
-		rioter( asm, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], 2 )
+		rioter( asm, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], gThree )
 	end                         
 	for p = 1, side / 2 do      
-		rioter( asm, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], 3 )
+		rioter( asm, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], gFour )
 	end
 end
-core.nav_mesh.set_group_goal(3, -70, 0, 40)
-core.nav_mesh.set_group_goal(2, -70, 0, -40)
-core.nav_mesh.set_group_goal(1, 70, 0, 40)
+
+core.system.groups.setGroupGoal(gFour, -70, 0, 40)
+core.system.groups.setGroupGoal(gThree, -70, 0, -40)
+core.system.groups.setGroupGoal(gTwo, 70, 0, 40)
 --core.nav_mesh.set_group_goal(2, -50, 0, 4)
 --core.nav_mesh.set_group_goal(3, -1, 0, 4)
 
@@ -72,7 +79,7 @@ for i = 0, 1023 do
 end
 
 rioter( asm, 0, 0, 0, 0 )
-core.nav_mesh.set_group_goal(0, -30, 0, 0)
+core.system.groups.setGroupGoal(gOne, -30, 0, 0)
 
 camera:lookAt( core.glm.vec3.new( 65, 65, 65 ), core.glm.vec3.new( 0, 0, 0 ) )
 
