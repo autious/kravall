@@ -1,5 +1,7 @@
 #include "LinearAllocator.hpp"
 
+#include <logger/Logger.hpp>
+
 namespace Core
 {
     LinearAllocator::LinearAllocator(void* memoryPointer, size_t size)
@@ -10,8 +12,14 @@ namespace Core
 
     void* LinearAllocator::Allocate(const size_t size)    
     {
-        unsigned char* pointer = m_memoryPointer + size > m_endPointer ? nullptr : m_memoryPointer;
+        unsigned char* pointer = m_memoryPointer + size > m_endPointer 
+            ? nullptr : m_memoryPointer;
         m_memoryPointer += size;
+
+        if(!pointer)
+        {
+            LOG_FATAL << "Linear allocator with size: " << m_endPointer - m_startPointer << " bytes ran out of memory, returning null" << std::endl;
+        }
         return pointer;
     }
 
