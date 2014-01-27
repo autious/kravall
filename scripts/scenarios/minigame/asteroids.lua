@@ -457,6 +457,14 @@ local function Move(delta)
 	
 	-- You are dead!
 	if not alive then
+		local wpc;
+		wpc = spaceship:get(core.componentType.WorldPositionComponent)
+		wpc.position[1] = playerX
+		wpc.position[2] = -1000.0
+		wpc.position[3] = playerY
+		spaceship:set(core.componentType.WorldPositionComponent, wpc)
+		print("ded")
+		
 		thrusting = false
 		leftTurn = false
 		rightTurn = false
@@ -467,7 +475,7 @@ local function Move(delta)
 			core.draw.drawText( 590, 380, "PRESS ENTER!" )
 			if enterIsDown then
 				lives = maxLives
-				difficulty = 5
+				difficulty = 3
 				score = 0
 				lives = maxLives
 				level = 0
