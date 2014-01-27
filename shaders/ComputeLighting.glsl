@@ -86,7 +86,7 @@ vec4 reconstruct_pos(float z, vec2 uv_f)
     return vec4((sPos.xyz / sPos.w ), sPos.w);
 }
 
-vec3 BlinnPhong( LightData light, SurfaceData surface, vec3 eyeDirection, vec3 lightDirection, float attenuation )
+vec3 BlinnPhong( LightData light, SurfaceData surface, vec3 eyeDirection, vec3 lightDirection, float attenuation)
 {
 	lightDirection = normalize(lightDirection);
 
@@ -99,7 +99,7 @@ vec3 BlinnPhong( LightData light, SurfaceData surface, vec3 eyeDirection, vec3 l
 
 	float light_occlusion = 1 - clamp(dot(vec4(lightDirection , 1.0f), surface.occlusion), 0.0f, 1.0f);
 
-	diffuseColor = surface.diffuse.xyz * intensity * light.color * light.intensity * attenuation;// * light_occlusion;
+	diffuseColor = surface.diffuse.xyz * intensity * light.color * light.intensity * attenuation;
 
 	// Specular
 	vec3 specColor = vec3(0.0f, 0.0f, 0.0f);
@@ -111,9 +111,11 @@ vec3 BlinnPhong( LightData light, SurfaceData surface, vec3 eyeDirection, vec3 l
 	
 		// Temp vars, need materials with these channels
 
-		specColor = surface.specular.xyz * intensity * light.spec_color * light.intensity * attenuation;// * light_occlusion;
+		specColor = surface.specular.xyz * intensity * light.spec_color * light.intensity * attenuation;
 	}
-	return diffuseColor + specColor;
+
+
+	return (diffuseColor + specColor) * light_occlusion;
 }
 
 vec4 CalculatePointlight( LightData light, SurfaceData surface, vec3 wPos, vec3 eyePosition)
@@ -359,6 +361,9 @@ void main()
 		}
 		
 		ofst = numPointLights + numSpotLights + numDirLights;
+
+		//float light_occlusion = 1 - clamp(dot(vec4(lightDirection , 1.0f), surface.occlusion), 0.0f, 1.0f);
+
 		// Ambient lights
 		for(i = ofst; i < numAmbientLights + ofst; i++)
 		{

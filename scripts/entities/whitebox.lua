@@ -11,7 +11,7 @@ return function(asm, x,y,z )
             data = { mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry },
             load = { 
                         mesh = { core.loaders.GnomeLoader, "assets/model/test_whitebox.bgnome" },
-                        material = { core.loaders.MaterialLoader, "assets/material/brick.material" }
+                        material = { core.loaders.MaterialLoader, "assets/material/whitePixel.material" }
                    }
         
         },

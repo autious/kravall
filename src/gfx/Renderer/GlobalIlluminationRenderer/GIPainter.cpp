@@ -25,7 +25,7 @@ namespace GFX
 		m_blurTexture = new FBOTexture();
 
 		m_occlusionRadius = 3.0f;
-		m_maxOcclusionDistance = 12.0f;
+		m_maxOcclusionDistance = 14.0f;
 
 		InitFBO();
 

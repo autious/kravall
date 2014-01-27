@@ -28,31 +28,31 @@ asm:loadAssembly(
 }
 )
 --Cube
-asm:loadAssembly( 
-{
-	{
-		type = core.componentType.WorldPositionComponent,
-		data = { position = { 200, 10, 0 } }
-	},
-	{
-		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry },
-		load = { 
-					mesh = { core.loaders.GnomeLoader, "assets/cube.bgnome", false },
-					material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
-			   }
-	},
-	{
-		type = core.componentType.ScaleComponent,
-		data = { scale = 10.0 }
-	},
-	{
-		type = core.componentType.RotationComponent,
-		--data = { rotation = { 0,0, math.sin( 3.14 ), math.cos(3.14/2.0) } }
-		data = { rotation = { 1*math.sin( -3.14/4 ), 0, 0, math.cos( -3.14/4 ) } }
-	}
-}
-)
+--asm:loadAssembly( 
+--{
+--	{
+--		type = core.componentType.WorldPositionComponent,
+--		data = { position = { 200, 10, 0 } }
+--	},
+--	{
+--		type = core.componentType.GraphicsComponent,
+--		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry },
+--		load = { 
+--					mesh = { core.loaders.GnomeLoader, "assets/cube.bgnome", false },
+--					material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
+--			   }
+--	},
+--	{
+--		type = core.componentType.ScaleComponent,
+--		data = { scale = 10.0 }
+--	},
+--	{
+--		type = core.componentType.RotationComponent,
+--		--data = { rotation = { 0,0, math.sin( 3.14 ), math.cos(3.14/2.0) } }
+--		data = { rotation = { 1*math.sin( -3.14/4 ), 0, 0, math.cos( -3.14/4 ) } }
+--	}
+--}
+--)
 --Teapot
 asm:loadAssembly( 
 {
