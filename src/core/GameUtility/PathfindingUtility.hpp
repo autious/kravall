@@ -23,8 +23,8 @@ namespace Core
 	public:		
 		
 
-		static bool CheckLineVsNavMesh( glm::vec3 from, glm::vec3 to );
-		static bool CheckLineVsNavMesh( glm::vec3 from, glm::vec3 to, int startNode );
+		static bool CheckLineVsNavMesh( glm::vec3 from, glm::vec3 to, float cornerRadius );
+		static bool CheckLineVsNavMesh( glm::vec3 from, glm::vec3 to, float cornerRadius, int startNode );
 
 	
 	private:

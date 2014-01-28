@@ -40,7 +40,6 @@
 static bool killProgram = false;
 
 #include <DebugRendering.hpp>
-#include <DebugCreators.hpp>
 #include <CLOPLoggerCallback.hpp>
 
 GLFWwindow *mainWindow = nullptr;
@@ -112,7 +111,7 @@ void run( GLFWwindow * window )
     unsigned int copMaterialID;
 	unsigned int rioterMaterialID;
 
-    Core::world.m_contentManager.Load<Core::GnomeLoader>("assets/model/animated/police/cop/cop-light_00.bgnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+    Core::world.m_contentManager.Load<Core::GnomeLoader>("assets/model/animated/police/cop/police-female_00.bgnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
             {
                 Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
                 const Core::ModelData* data = gnomeLoader->getData(handle);
@@ -143,40 +142,90 @@ void run( GLFWwindow * window )
 	Core::HighresTimer timer;
 	long long lastFrameTime = timer.GetTotal();
 	long long thisFrame = timer.GetTotal();
+    double timeAccumulator = 0.0;
+    const double MAXIMUM_TIME_STEP = 1.0/15.0;
+    const double MINIMUM_TIME_STEP = 1.0/120.0;
+
+    const int FPS_COUNTERS_SIZE = 20;
+    double fpsCounters[FPS_COUNTERS_SIZE];
+    int fpsCounterIndex = 0;
+
+    
+    LOG_WARNING << "Startup complete, setting output to \"" << CONF.GetString( "consoleOutputLevel", "debug" ) << "\" level (to change this do lua core.config.consoleOutputLevel=\"debug\" or change the setting in scripts/config.lua" << std::endl;
+
 	while (!glfwWindowShouldClose(window) && killProgram == false)
 	{
+        //Set the output filtering level for the console.
+        std::string consoleOutputLevel = CONF.GetString( "consoleOutputLevel", "debug" );
+        SetCLOPLevel( consoleOutputLevel.c_str() );
+
 		// calc delta time
 		thisFrame = timer.GetTotal();
 		double delta = (thisFrame - lastFrameTime) / 1000.0;
 		lastFrameTime = thisFrame;
 
-		
-		Core::Console().Update();
+        double minimumTimeStep = Core::world.m_config.GetDouble("timeStepMinimum", MINIMUM_TIME_STEP);
+        double maximumTimeStep = Core::world.m_config.GetDouble("timeStepMaximum", MAXIMUM_TIME_STEP);
 
-        GFX::SetOverlayViewMatrix( Core::overlayCamera.GetViewMatrix() );
-        GFX::SetOverlayProjectionMatrix( Core::overlayCamera.GetProjectionMatrix() );
-		GFX::SetViewMatrix(Core::gameCamera.GetViewMatrix());
-		GFX::SetProjectionMatrix(Core::gameCamera.GetProjectionMatrix());
+        timeAccumulator += delta;
 
-		//TestRendering();
+        if(timeAccumulator > maximumTimeStep)
+        {
+            timeAccumulator = maximumTimeStep;
+        }
 
-	    //TODO: Timing hook
-        SystemTimeRender();
-		GFX::Render(delta);
+        if(timeAccumulator > minimumTimeStep)
+        {            
+            Core::Console().Update();
 
-        Core::world.m_contentManager.CallFinishers();
-		Core::world.m_systemHandler.Update(static_cast<float>(delta));
-		Core::world.m_luaState.Update(static_cast<float>(delta));
+            GFX::SetOverlayViewMatrix( Core::overlayCamera.GetViewMatrix() );
+            GFX::SetOverlayProjectionMatrix( Core::overlayCamera.GetProjectionMatrix() );
+            GFX::SetViewMatrix(Core::gameCamera.GetViewMatrix());
+            GFX::SetProjectionMatrix(Core::gameCamera.GetProjectionMatrix());
 
-		Core::DrawToggledNavigationMesh();
+            //TestRendering();
 
-		GFX::Debug::DisplayFBO(Core::world.m_config.GetInt( "showFramebuffers", -1 ));
-		glfwSwapBuffers(window);
-		Core::GetInputManager().PollEvents();
-        Core::GetInputManager().CallListeners();
+            //TODO: Timing hook
+            SystemTimeRender();
+            GFX::Render(timeAccumulator);
 
-		//TODO: Timing hook
-		Core::world.m_frameHeap.Rewind();
+            Core::world.m_contentManager.CallFinishers();
+            Core::world.m_systemHandler.Update(static_cast<float>(timeAccumulator));
+            Core::world.m_luaState.Update(static_cast<float>(timeAccumulator));
+
+            Core::DrawToggledNavigationMesh();
+
+            GFX::Debug::DisplayFBO(Core::world.m_config.GetInt( "showFramebuffers", -1 ));
+            glfwSwapBuffers(window);
+            Core::GetInputManager().PollEvents();
+            Core::GetInputManager().CallListeners();
+
+            //TODO: Timing hook
+            Core::world.m_frameHeap.Rewind();
+
+
+            timeAccumulator = 0.0;
+        }
+
+        fpsCounters[fpsCounterIndex++] = 1.0 / delta;
+        if(fpsCounterIndex == FPS_COUNTERS_SIZE)
+        {
+            double averageFps = 0.0;
+            for(int i=0; i < FPS_COUNTERS_SIZE; ++i)
+            {
+                averageFps += fpsCounters[i];
+            }
+
+            averageFps /= FPS_COUNTERS_SIZE;
+            fpsCounterIndex = 0;
+
+            lua_State* L = Core::world.m_luaState.GetState();
+            lua_getglobal(L, "core");
+                lua_pushstring(L, "framesPerSecond");
+                lua_pushnumber(L, averageFps);
+            lua_settable(L, -3);
+            lua_pop(L, 1);
+        }
     }
 
     Core::world.m_luaState.Stop();

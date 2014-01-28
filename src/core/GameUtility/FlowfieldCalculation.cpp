@@ -39,6 +39,7 @@ namespace Core
 		flowfields[group].goal[ 1 ] = FLT_MAX;
 		std::memset( flowfields[group].list, 0, nrNodes * sizeof( glm::vec3 ) );
 
+
 		// find out what node we want to go to...
 		int node = -1;
 		for( int i = 0; i < nrNodes; i++ )
@@ -82,7 +83,7 @@ namespace Core
 			Core::NavigationMesh::Node& current = nodes[ prioList[0].node ];
 			
 			// redundancy check, if sorting is perfect, this should never have any effect
-			// note; this block kills of added nodes that are already visited. this is vital functionality.
+			// note; this block kills of added m_nodes that are already visited. this is vital functionality.
 			if( visited[ prioList[0].node ] )
 			{
 				if( prioList[0].node == 4 )
@@ -132,6 +133,8 @@ namespace Core
 
 						// distance to the next node
 						float dist = glm::distance( otherMid, mid );
+
+						//if( prioList[0] )
 				
 						// check so not the entry edge, otherwise add new node to priolist
 						if( i != prioList[0].entryEdge )
@@ -142,6 +145,9 @@ namespace Core
 					}
 				}
 			}
+
+			if( prioList[0].node == 0 )
+				int pp = 0;
 
 			// calculate mid point of the entry edge in parent node, this makes the path a bit more flowing
 			glm::vec3 parentMid;

@@ -371,9 +371,8 @@ namespace Core
         else
         {
             LOG_FATAL << "Could not open material file: " << assetFileName << std::endl;
-            assert(false);
+            return false;
         }
-        return false;
     }
 
     unsigned char* MaterialLoader::LoadTextureData(const char* textureFileName, Core::TextureData* &data)

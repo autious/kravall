@@ -47,7 +47,7 @@ namespace Core
 			ChargeCurve() : charge(0.0f), cutoff(0.0f), repelRadius(0.0f), decline(0.0f) {}
 
 			ChargeCurve(float peakCharge, float cutoffLimit, float repelDistance) : charge(peakCharge),
-				cutoff(cutoffLimit), repelRadius(repelDistance), decline(peakCharge / (cutoffLimit - repelDistance)) {}
+				cutoff(cutoffLimit), repelRadius(repelDistance), decline(peakCharge / (cutoffLimit/* - repelDistance*/)) {}
 		};
 
 		static const float STAY_LIMIT;
@@ -56,13 +56,13 @@ namespace Core
 		static const int FIELD_SIDE_LENGTH = 24;
 		static const int FIELD_SIDE_CELL_COUNT = 60;
 		static const float FIELD_CELL_SIDE_SIZE;
-		static const int FIELD_UPDATE_FRAME_COUNT = 5;
+		static const int FIELD_UPDATE_FRAME_COUNT = 10;
 		static const int FIELD_UPDATE_ROW_COUNT = FIELD_SIDE_CELL_COUNT / FIELD_UPDATE_FRAME_COUNT;
 		static const ChargeCurve CURVE[1][2];
 		
 		float m_field[FIELD_SIDE_CELL_COUNT][FIELD_SIDE_CELL_COUNT];
 		float m_calculatingField[FIELD_SIDE_CELL_COUNT][FIELD_SIDE_CELL_COUNT];
-		glm::vec2 m_drawFieldCenter;
+		glm::vec3 m_drawFieldCenter;
 		bool m_showPF;
 		int m_updateCounter;
 

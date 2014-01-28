@@ -1,4 +1,4 @@
-return function(asm, posX, posY, posZ)
+return function(asm, posX, posY, posZ, groupID)
 	asm:loadAssembly( 
 		{
 			{
@@ -28,16 +28,14 @@ return function(asm, posX, posY, posZ)
 			{
 				type = core.componentType.MovementComponent,
 				data = { direction = { 0, 0, 0 }, newDirection = { 0, 0, 0 }, speed = 5.8, 
-						maxSpeed = 5.8, goal = false },
+			    desiredSpeed = 5.8, goal = false },
                 ignoreHard = true 
-        
 			},
 			{
 				type = core.componentType.AttributeComponent,
 				data = { health = 0, stamina = 0, morale = 0, 
-					   stance = core.PoliceStance.Passive, defense = 0, mobility = 0, squadID = 0 },
+					   stance = core.PoliceStance.Passive, defense = 0, mobility = 0, squadID = groupID },
                 ignoreHard = true
-                
 			},
 			{
 				type = core.componentType.BoundingVolumeComponent,

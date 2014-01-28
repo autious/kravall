@@ -7,12 +7,10 @@ local gamemode = setgamemode( "normal" )
 scen.asm:specific_content( core.contentmanager.load( 
 		core.loaders.NavigationMeshLoader, "prototypeLevel.txt", function( value ) end, false ) )
 
-
 local ambient = ent.get "ambientLight"
 local directional = ent.get "directionalLight"
 local street_light = ent.get "streetLight"
 local street_light_intensity = 2.0
-
 
 
 -- SCRIPTS \/
@@ -56,7 +54,6 @@ ambient(scen, 1.0, 1.0, 1.0, 0.1)
 directional(scen, -1, -1, 0.5)
 
 camera:lookAt( core.glm.vec3.new( -20, 35, 20 ), core.glm.vec3.new( 0, 0, 20 ) )
-print( "LOL" )
 
 -- Group 0 start to end, top row (left side)
 street_light(scen, -50, -0.5, street_light_intensity)
@@ -71,7 +68,6 @@ street_light(scen, 30.5, -2, street_light_intensity)
 street_light(scen, 40, -4, street_light_intensity)
 street_light(scen, 49.5, -4, street_light_intensity)
 street_light(scen, 59, -4, street_light_intensity)
-
 
 -- Group 0 start to end, bottom row (right side)
 street_light(scen, -50, 10, street_light_intensity)

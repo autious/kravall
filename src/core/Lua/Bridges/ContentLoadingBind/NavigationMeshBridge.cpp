@@ -19,20 +19,29 @@ int Core::NavigationMeshBridge::Load( lua_State * L )
     Core::world.m_contentManager.Load<Core::NavigationMeshLoader>(lua_tostring(L,2), [callbackRegIndex]
     (Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
     {
-        Core::NavigationMeshLoader* navMeshLoader = dynamic_cast<Core::NavigationMeshLoader*>(baseLoader);
-        const Core::ModelData* data = navMeshLoader->getData(handle);
-        
+
         lua_State * L = Core::world.m_luaState.GetState();
-        lua_rawgeti( L, LUA_REGISTRYINDEX, callbackRegIndex );
-        lua_pushinteger( L, data->meshID );
-        int error = lua_pcall(L, 1,0,0 );
 
-        if( error )
+        if( handle == nullptr )
         {
-            LOG_ERROR << __FUNCTION__ << "Unable to callback from NavigationMeshLoader" << lua_tostring( L, -1 ) << std::endl;
+            LOG_ERROR << "NavigationMeshLoaderBridge: Unable to callback into lua with datahandle, handle is null" << std::endl;
+        }
+        else
+        {
+            Core::NavigationMeshLoader* navMeshLoader = dynamic_cast<Core::NavigationMeshLoader*>(baseLoader);
+            const Core::ModelData* data = navMeshLoader->getData(handle);
+            
+            lua_rawgeti( L, LUA_REGISTRYINDEX, callbackRegIndex );
+            lua_pushinteger( L, data->meshID );
+            int error = lua_pcall(L, 1,0,0 );
 
-            //Pop the error.
-            lua_pop(L,1 );
+            if( error )
+            {
+                LOG_ERROR << __FUNCTION__ << "Unable to callback from NavigationMeshLoader" << lua_tostring( L, -1 ) << std::endl;
+
+                //Pop the error.
+                lua_pop(L,1 );
+            }
         }
 
         luaL_unref( L, LUA_REGISTRYINDEX, callbackRegIndex );

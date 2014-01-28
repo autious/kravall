@@ -42,7 +42,7 @@ end
 
 function S:registerInitCallback( func )
     if type( func ) ~= "function" then
-        error( "Tick callback given is not a function" )
+        error( "Init callback given is not a function" )
     end
     self.initCallbacks[#(self.initCallbacks)+1] = func
     self.iccount = #(self.initCallbacks)
@@ -50,7 +50,7 @@ end
 
 function S:registerUpdateCallback( func )
     if type( func ) ~= "function" then
-        error( "Tick callback given is not a function" )
+        error( "Update callback given is not a function" )
     end
     self.updateCallbacks[#(self.updateCallbacks)+1] = func
     self.uccount = #(self.updateCallbacks)

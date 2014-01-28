@@ -41,7 +41,7 @@ void DrawCullingQuads( cullData* cullingList, int nrEntities, int gridNodeSize )
 
 void Core::CollisionSystem2D::Update( float delta )
 {
-	
+
 	int nrEntities = m_entities.size();
 
 	float maxRadius = 0.0f;
@@ -228,10 +228,10 @@ void Core::CollisionSystem2D::Update( float delta )
 
 						break;
 
-					default:
-						GFX::Debug::DrawSphere( myPosition, 10.0f, GFXColor( 1.0f, 0.0f, 0.0f, 1.0f ), false );
-						GFX::Debug::DrawSphere( otherPosition, 10.0f, GFXColor( 1.0f, 0.0f, 0.0f, 1.0f ), false );
-						break;
+					//default:
+					//	GFX::Debug::DrawSphere( myPosition, 10.0f, GFXColor( 1.0f, 0.0f, 0.0f, 1.0f ), false );
+					//	GFX::Debug::DrawSphere( otherPosition, 10.0f, GFXColor( 1.0f, 0.0f, 0.0f, 1.0f ), false );
+					//	break;
 					}
 				}
 			}

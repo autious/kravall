@@ -1,6 +1,5 @@
 return function(asm, r, g, b, intensity)
-    print( "in" )
-	asm:loadAssembly( 
+	return asm:loadAssembly( 
 		{
 			{
 				type = core.componentType.LightComponent,
@@ -26,5 +25,4 @@ return function(asm, r, g, b, intensity)
 			}
 		} 
 	)
-    print( "out" )
 end
