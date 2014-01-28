@@ -43,8 +43,8 @@ namespace Core
 		std::memset( flowfields[nrUsedFlowfields].edges, 0, nrNodes * sizeof(int) );
 		std::memset( flowfields[nrUsedFlowfields].list, 0, nrNodes * sizeof(glm::vec3) );
 
-		flowfields[nrUsedFlowfields].goal[ 0 ] = FLT_MAX;
-		flowfields[nrUsedFlowfields].goal[ 1 ] = FLT_MAX;
+		flowfields[nrUsedFlowfields].goal[ 0 ] = std::numeric_limits<float>::max();
+		flowfields[nrUsedFlowfields].goal[ 1 ] = std::numeric_limits<float>::max();
 
         return nrUsedFlowfields++;
     }
@@ -103,7 +103,7 @@ namespace Core
 					if( nodes[q].corners[3].length < 0 )
 						nrCorners = 3;
 
-					for( int v = 0; v < nrCorners; ++v ) // ++v, much faster, such optimization... alltid något hurhurhur
+					for( int v = 0; v < nrCorners; ++v ) 
 					{						
 						int otherCurrent = v * 2;
 						glm::vec2 otherCornerPos = glm::vec2( nodes[q].points[otherCurrent], nodes[q].points[ otherCurrent + 1 ] );
@@ -171,6 +171,7 @@ std::fstream& operator>> ( std::fstream& ff, Core::NavigationMesh::Node& node )
 	for( int i = 0; i < 4; i++ )
 	{
 		node.corners[i].cornerConnectsToNode = NAVMESH_NO_CONNECTING_CORNERS;
+		node.blocked[i] = false;
 
 		ff >> node.corners[i].linksTo;
 

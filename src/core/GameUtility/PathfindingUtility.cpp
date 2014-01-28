@@ -27,7 +27,7 @@ namespace Core
 		std::memset( visited, false, sizeof(bool) * instance->nrNodes );
 
 		std::vector<int> nodeList;
-		nodeList.reserve( instance->nrNodes );
+		nodeList.reserve( instance->nrNodes * 0.4f );
 
 		float distanceToTarget = glm::distance( start, goal );
 
@@ -49,12 +49,12 @@ namespace Core
 				int oo = ( ii + 2 ) % 8;
 				glm::vec3 lineStart = glm::vec3( current->points[ ii ], 0, current->points[ ii + 1 ] );
 				glm::vec3 lineEnd	= glm::vec3( current->points[ oo ], 0, current->points[ oo + 1 ] );
-				
+
 				// check vs. ray
 				float A = glm::determinant( glm::mat2x2( start.x, start.z, goal.x, goal.z ) );
 				float B = glm::determinant( glm::mat2x2( lineStart.x, lineStart.z, lineEnd.x, lineEnd.z ) );
 				float divider = glm::determinant( glm::mat2x2( start.x - goal.x, start.z - goal.z, lineStart.x - lineEnd.x, lineStart.z - lineEnd.z  ) );
-		
+				
 				float intersectionX = glm::determinant( glm::mat2x2( A, start.x - goal.x , B, lineStart.x - lineEnd.x ) ) / divider;
 				float intersectionZ = glm::determinant( glm::mat2x2( A, start.z - goal.z , B, lineStart.z - lineEnd.z ) ) / divider;
 		

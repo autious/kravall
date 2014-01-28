@@ -9,6 +9,7 @@ local rioter = ent.get "rioter"
 local police = ent.get "police"
 local building = ent.get "building"
 		
+		
 local centerPoint = { 0, 0, 0 }
 local side = 32 -- math.sqrt( 1000 )
 for i = -side / 2, -1 do

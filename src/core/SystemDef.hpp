@@ -23,6 +23,7 @@
 #include <Systems/NameSystem.hpp>
 #include <Systems/AreaSystem.hpp>
 #include <Systems/GroupDataSystem.hpp>
+#include <Systems/NavMeshBlockingSystem.hpp>
 
 namespace Core
 {
@@ -40,7 +41,7 @@ namespace Core
 	
     typedef SystemHandlerTemplate<RenderingSystem, LightSystem, PoliceGoalSystem, FlowfieldPositioningSystem, NavMeshCollisionSystem, 
 		CollisionSystem2D, PickingSystem, AIDebugSystem, FlowfieldSystem, FieldReactionSystem, 
-		MovementSystem, NameSystem, GroupDataSystem, AreaSystem> SystemHandler;
+		MovementSystem, NameSystem, GroupDataSystem, AreaSystem, NavMeshBlockingSystem> SystemHandler;
 
     typedef EntityHandlerTemplate<SystemHandler, WorldPositionComponent, RotationComponent, ScaleComponent, 
 		GraphicsComponent, LightComponent, MovementComponent, UnitTypeComponent, AttributeComponent,

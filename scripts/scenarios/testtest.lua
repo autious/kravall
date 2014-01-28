@@ -14,12 +14,13 @@ scen.asm:specific_content( core.contentmanager.load(
 local rioter = ent.get "rioter"
 local police = ent.get "police"
 local building = require "entities/building"
-		
---local centerPoint = { -5, 0, 0 }
---local side = math.sqrt( 50 )
+
+local squadID = core.system.groups.createGroup()		
+local centerPoint = { 0, 0, 0 }
+--local side = math.sqrt( 1000 )
 --for i = -side / 2, side / 2 do
 --	for p = -side / 2, side / 2 do
---		rioter( asm, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], 0 )
+--		police( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], squadID )
 --	end
 --end
 
@@ -30,7 +31,7 @@ local building = require "entities/building"
 --rioter( asm, 10, 0, 10, 0 )
 --rioter( asm, 11, 0, 11, 0 )
 
-local squadID = core.system.groups.createGroup()
+
 police( scen, 0, 0, 0, squadID );
 --police( asm, 0, 0, 0, squadID );
 --police( asm, 0, 0, 0, squadID );

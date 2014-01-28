@@ -4,8 +4,6 @@
 
 #include <gfx/GFXInterface.hpp>
 
-#define FF_NORMAL_INFLUENCE 1.6f
-
 Core::FlowfieldSystem::FlowfieldSystem()
 	: BaseSystem( EntityHandler::GenerateAspect<
 		WorldPositionComponent, UnitTypeComponent, AttributeComponent, FlowfieldComponent >(), 0ULL )
@@ -32,7 +30,6 @@ void Core::FlowfieldSystem::Update( float delta )
 			if (utc->type == Core::UnitType::Rioter)
 				groupID = attribc->rioter.groupID;
 			else
-				//continue;
 				groupID = attribc->police.squadID;
 
 			Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>(*it);
@@ -98,15 +95,11 @@ void Core::FlowfieldSystem::Update( float delta )
 				float sqdistance = glm::dot( otherMid - lineMid, otherMid - lineMid ) + 0.001f;  
 				float ratio = ( squareDistanceToEntryLine / sqdistance );
 
-				ratio = ratio > 0.5f ? 0.5f : ratio;
+				ratio = ratio > 0.8f ? 0.8f : ratio;
 				ratio = ratio < 0.0f ? 0.0f : ratio;				
 
-				glm::vec3 flowfieldDirection = glm::normalize( -normal * (1 - ratio) + dirctionToEdgeInNextNode * (ratio + 0.5f) );
+				glm::vec3 flowfieldDirection = glm::normalize( -normal * (1 - ratio) + dirctionToEdgeInNextNode * (ratio + 0.2f) );
 
-
-
-				//GFX::Debug::DrawLine( position, position + flowfieldDirection * 20.f, GFXColor( 1, 0, 1, 1 ), false );
-				//GFX::Debug::DrawSphere( lineStart + ( lineEnd - lineStart ) * 0.5f, 4.0f, GFXColor( 1, 1, 0, 1 ), false );
 
 				MovementComponent::SetDirection( mvmc, flowfieldDirection.x, 0, flowfieldDirection.z );
 

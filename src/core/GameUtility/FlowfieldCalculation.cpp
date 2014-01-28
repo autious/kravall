@@ -35,8 +35,8 @@ namespace Core
 		}
 
 		// reset group metadata...
-		flowfields[group].goal[ 0 ] = FLT_MAX;
-		flowfields[group].goal[ 1 ] = FLT_MAX;
+		flowfields[group].goal[ 0 ] = std::numeric_limits<float>::max();
+		flowfields[group].goal[ 1 ] = std::numeric_limits<float>::max();
 		std::memset( flowfields[group].list, 0, nrNodes * sizeof( glm::vec3 ) );
 
 
@@ -65,7 +65,7 @@ namespace Core
 		for( int i = 0; i < 4; i++ )
 		{
 			int linksTo = nodes[ node ].corners[i].linksTo;
-			if( linksTo >= 0 )
+			if( linksTo >= 0 && !nodes[ node ].blocked[i] )
 				prioList.push_back( TraversalData( linksTo, nodes[ node ].corners[i].linksToEdge, -5.0f, -1 ) );
 		}
 		std::sort( prioList.begin(), prioList.end(), sortingFunction );
@@ -83,11 +83,9 @@ namespace Core
 			Core::NavigationMesh::Node& current = nodes[ prioList[0].node ];
 			
 			// redundancy check, if sorting is perfect, this should never have any effect
-			// note; this block kills of added m_nodes that are already visited. this is vital functionality.
+			// note; this block kills of added nodes that are already visited. this is vital functionality.
 			if( visited[ prioList[0].node ] )
 			{
-				if( prioList[0].node == 4 )
-					int o = 0;
 
 				float Adist = prioList[0].entryDistance;
 				float Bdist = distances[ prioList[0].node ];
@@ -120,7 +118,8 @@ namespace Core
 					// for all corners of the current node
 					for( int i = 0; i < 4; i++ )
 					{
-						if( current.corners[i].linksTo < 0 )
+						// the later half of this if will not be run if the first one is true, henc no explotion... 
+						if( current.corners[i].linksTo < 0 || nodes[ current.corners[ i ].linksTo ].blocked[ current.corners[ i ].linksToEdge ] )
 							continue;
 
 						// calculate midpoint for the outgoing edge...
@@ -133,8 +132,6 @@ namespace Core
 
 						// distance to the next node
 						float dist = glm::distance( otherMid, mid );
-
-						//if( prioList[0] )
 				
 						// check so not the entry edge, otherwise add new node to priolist
 						if( i != prioList[0].entryEdge )
