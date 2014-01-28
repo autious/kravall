@@ -5,6 +5,8 @@
 
 #include <glm/glm.hpp>
 
+#include <vector>
+
 namespace Core 
 {
     /*!
@@ -39,9 +41,13 @@ namespace Core
         
         inline int GetNumberOfGroups() { return m_nAllocatedGroups; }
 
+        std::vector<Core::Entity> GetMembersInGroup(int groupId);
+
     private:
         void CalculateMedianPositions();
+        void CalculateMembersInGroups();
 
+        std::vector<std::vector<Core::Entity>> m_membersInGroups;
         int m_nAllocatedGroups;
         glm::vec3* m_medianPositions;
         int* m_groupMemberCounts;

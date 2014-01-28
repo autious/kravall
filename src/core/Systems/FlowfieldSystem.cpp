@@ -53,7 +53,7 @@ void Core::FlowfieldSystem::Update( float delta )
 				glm::vec3 normal = glm::vec3( edgeNormal[0], 0.0f, edgeNormal[1] );
 				glm::vec3 dirctionToEdgeInNextNode = glm::normalize( instance->flowfields[groupID].list[ ffc->node ] - position );
 
-				GFX::Debug::DrawSphere( instance->flowfields[groupID].list[ ffc->node ], 4.0f, GFXColor( 1, 1, 0, 1 ), false );
+				//GFX::Debug::DrawSphere( instance->flowfields[groupID].list[ ffc->node ], 4.0f, GFXColor( 1, 1, 0, 1 ), false );
 
 				// calc distance from opposite edges...
 				float squareDistanceToEntryLine;

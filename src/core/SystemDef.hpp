@@ -22,7 +22,6 @@
 #include <Systems/RenderingSystem.hpp>
 #include <Systems/NameSystem.hpp>
 #include <Systems/AreaSystem.hpp>
-#include <Systems/RioterDataSystem.hpp>
 #include <Systems/GroupDataSystem.hpp>
 
 namespace Core
@@ -41,8 +40,8 @@ namespace Core
 	class PoliceGoalSystem;
 	
     typedef SystemHandlerTemplate<RenderingSystem, LightSystem, PoliceGoalSystem, FlowfieldPositioningSystem, NavMeshCollisionSystem, 
-	CollisionSystem2D, PickingSystem, AIDebugSystem, FlowfieldSystem, /*FieldReactionSystem,*/ GPUPFSystem,
-		MovementSystem, NameSystem, GroupDataSystem, AreaSystem,RioterDataSystem> SystemHandler;
+	CollisionSystem2D, PickingSystem, AIDebugSystem, FlowfieldSystem, FieldReactionSystem,/* GPUPFSystem,*/
+		MovementSystem, NameSystem, GroupDataSystem, AreaSystem> SystemHandler;
 
     typedef EntityHandlerTemplate<SystemHandler, WorldPositionComponent, RotationComponent, ScaleComponent, 
 		GraphicsComponent, LightComponent, MovementComponent, UnitTypeComponent, AttributeComponent,

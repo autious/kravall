@@ -206,18 +206,18 @@ namespace Core
 							/* Animation */
 							for (int i = 0; i < animationHeader.numberOfAnimations; ++i)
 							{
-								m_file.read((char*)&gnome->animations[i].nameSize, sizeof(int));
+								m_animationFile.read((char*)&gnome->animations[i].nameSize, sizeof(int));
 								char* tmp = new char[gnome->animations[i].nameSize];
-								m_file.read((char*)tmp, gnome->animations[i].nameSize);
+								m_animationFile.read((char*)tmp, gnome->animations[i].nameSize);
 								gnome->animations[i].name = std::string(tmp);
 								delete[] tmp;
 								gnome->animations[i].boneAnim = new BoneForAnimation[header.numberOfBones];
 
 								for (int j = 0; j < header.numberOfBones; ++j)
 								{
-									m_file.read((char*)&gnome->animations[i].boneAnim[j].numKeys, sizeof(int));
+									m_animationFile.read((char*)&gnome->animations[i].boneAnim[j].numKeys, sizeof(int));
 									gnome->animations[i].boneAnim[j].Keyframes = new Keyframe[gnome->animations[i].boneAnim[j].numKeys];
-									m_file.read((char*)gnome->animations[i].boneAnim[j].Keyframes, sizeof(Keyframe)* gnome->animations[i].boneAnim[j].numKeys);
+									m_animationFile.read((char*)gnome->animations[i].boneAnim[j].Keyframes, sizeof(Keyframe)* gnome->animations[i].boneAnim[j].numKeys);
 								}
 							}
 						}

@@ -1,8 +1,7 @@
 #include "LuaGroupsBridge.hpp"
 
-#include <lua.h>
-#include <lualib.h>
-#include <lauxlib.h>
+#include <Lua/LuaUtility.hpp>
+#include <Lua/LuaMetatableTypes.hpp>
 
 #include <GameUtility/NavigationMesh.hpp>
 #include <logger/Logger.hpp>
@@ -75,6 +74,24 @@ extern "C"
         return 1;
     }
 
+    static int LuaGetMembersInGroup(lua_State * L)
+    {
+        Core::GroupDataSystem* groupSystem = Core::world.m_systemHandler.GetSystem<Core::GroupDataSystem>();
+
+        std::vector<Core::Entity> entities = groupSystem->GetMembersInGroup(luaL_checkinteger(L, 1));
+
+        lua_newtable(L);
+        int pos = 1;
+        for(std::vector<Core::Entity>::iterator it = entities.begin(); it != entities.end(); ++it)
+        {
+            LuaEntity *le = Core::LuaUNewLightEntity(L);
+            le->entity = *it;
+            lua_rawseti(L, -2, pos++);
+        }
+
+        return 1;
+    }
+
 	static int LuaNewIndex(lua_State * L)
 	{
 		return luaL_error(L, "Read only table");
@@ -112,6 +129,10 @@ Core::LuaGroupsBridge::LuaGroupsBridge(lua_State * L)
 
         lua_pushstring(L, "createGroup");
         lua_pushcfunction(L, LuaCreateGroup);
+    lua_settable(L, -3);
+
+        lua_pushstring(L, "getMembersInGroup");
+        lua_pushcfunction(L, LuaGetMembersInGroup);
     lua_settable(L, -3);
 
         lua_newtable(L);
