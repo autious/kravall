@@ -275,6 +275,8 @@ float Core::FieldReactionSystem::GetEffectOnAgentAt(const Entity queryAgent, Wor
 																	wpc->position[1] - queryPosition->position[1],
 																	wpc->position[2] - queryPosition->position[2]);
 
+			UnitTypeComponent* utc = WGETC<UnitTypeComponent>(*it2);
+
 			float distanceSqr = (distVec.position[0] * distVec.position[0]) +
 				(distVec.position[2] * distVec.position[2]);
 
@@ -285,7 +287,7 @@ float Core::FieldReactionSystem::GetEffectOnAgentAt(const Entity queryAgent, Wor
 				matchID = ac->rioter.groupID;
 			}
 
-			if (distanceSqr >= CURVE[0][0].repelRadius && matchID != groupID)
+			if (distanceSqr >= CURVE[0][0].repelRadius && (utc->type == UnitType::Rioter && matchID != groupID))
 				continue;
 
 			currentSum += GetAgentsChargeAt(*it2, distanceSqr); // 7.

@@ -13,7 +13,7 @@ extern "C"
 {
     static int LuaGetEntitiesByName( lua_State *L )
     {
-        Core::NameSystem *ns = Core::world.m_systemHandler.GetSystemT<Core::NameSystem>();
+        Core::NameSystem *ns = Core::world.m_systemHandler.GetSystem<Core::NameSystem>();
 
         std::vector<Core::Entity> ents = ns->GetEntitiesByName( luaL_checkstring( L, 1 ) );
 

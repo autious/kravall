@@ -10,7 +10,7 @@ extern "C"
 {
     static int LuaGetAreaRioters( lua_State * L )
     {
-        Core::AreaSystem *as = Core::world.m_systemHandler.GetSystemT<Core::AreaSystem>();
+        Core::AreaSystem *as = Core::world.m_systemHandler.GetSystem<Core::AreaSystem>();
         LuaEntity * ent = luau_checkentity( L, 1 );
 
         std::vector<Core::Entity> ents = as->GetAreaRioters( ent->entity );
@@ -29,7 +29,7 @@ extern "C"
 
     static int LuaGetAreaRioterCount( lua_State * L )
     {
-        Core::AreaSystem *as = Core::world.m_systemHandler.GetSystemT<Core::AreaSystem>();
+        Core::AreaSystem *as = Core::world.m_systemHandler.GetSystem<Core::AreaSystem>();
         LuaEntity * ent = luau_checkentity( L, 1 );
         
         lua_pushinteger( L, as->GetAreaRioterCount( ent->entity ) );

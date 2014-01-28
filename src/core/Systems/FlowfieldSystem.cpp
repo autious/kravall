@@ -4,14 +4,13 @@
 
 #include <gfx/GFXInterface.hpp>
 
+#define FF_NORMAL_INFLUENCE 1.6f
+
 Core::FlowfieldSystem::FlowfieldSystem()
 	: BaseSystem( EntityHandler::GenerateAspect<
 		WorldPositionComponent, UnitTypeComponent, AttributeComponent, FlowfieldComponent >(), 0ULL )
 {
 }
-
-
-
 
 void Core::FlowfieldSystem::Update( float delta )
 {
@@ -33,8 +32,8 @@ void Core::FlowfieldSystem::Update( float delta )
 			if (utc->type == Core::UnitType::Rioter)
 				groupID = attribc->rioter.groupID;
 			else
-				continue;
-				//groupID = attribc->police.squadID;
+				//continue;
+				groupID = attribc->police.squadID;
 
 			Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>(*it);
 
@@ -54,7 +53,7 @@ void Core::FlowfieldSystem::Update( float delta )
 				glm::vec3 normal = glm::vec3( edgeNormal[0], 0.0f, edgeNormal[1] );
 				glm::vec3 dirctionToEdgeInNextNode = glm::normalize( instance->flowfields[groupID].list[ ffc->node ] - position );
 
-
+				GFX::Debug::DrawSphere( instance->flowfields[groupID].list[ ffc->node ], 4.0f, GFXColor( 1, 1, 0, 1 ), false );
 
 				// calc distance from opposite edges...
 				float squareDistanceToEntryLine;
@@ -120,15 +119,19 @@ void Core::FlowfieldSystem::Update( float delta )
 
 				// left-overs...
 				//*reinterpret_cast<glm::vec3*>(mvmc->newDirection) = glm::normalize( );
-					//- *reinterpret_cast<glm::vec3*>( instance->nodes[ ffc->node ].corners[ instance->flowfields[attribc->rioter.groupID].edges[ffc->node] ].normal ) * FF_NORMAL_INFLUENCE ); 
+					//- *reinterpret_cast<glm::vec3*>( instance->m_nodes[ ffc->node ].corners[ instance->m_flowfields[attribc->rioter.groupID].edges[ffc->node] ].normal ) * FF_NORMAL_INFLUENCE ); 
 					//- normal * FF_NORMAL_INFLUENCE );
 
 				//GFX::Debug::DrawLine(position, position + *reinterpret_cast<glm::vec3*>(mvmc->newDirection), GFXColor(1.0f, 0.5f, 0.0f, 1.0f), false);
 
 			}
 			else
+			{
 				MovementComponent::SetDirection( mvmc, 0.0f, 0.0f, 0.0f );
 				//*reinterpret_cast<glm::vec3*>(mvmc->newDirection) = glm::vec3(0.0f);
+
+				GFX::Debug::DrawSphere( wpc->GetVec3(*wpc), 8.0f, GFXColor( 1, 1, 1, 1 ), false );
+			}
 
 
 		}

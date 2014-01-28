@@ -15,8 +15,8 @@
 #include <ContentManagement/LoaderIncludes.hpp>
 #include <ContentManagement/MurmurHash.hpp>
 
-#include <ComponentFramework/CheckTemplatePresence.hpp>
-#include <ComponentFramework/ComponentType.hpp>
+#include <TemplateUtility/TemplatePresence.hpp>
+#include <TemplateUtility/TemplateIndex.hpp>
 
 #include <logger/Logger.hpp>
 
