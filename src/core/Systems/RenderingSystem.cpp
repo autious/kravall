@@ -22,6 +22,7 @@ namespace Core
 			RotationComponent* rc		= WGETC<RotationComponent>(*it);
 			GraphicsComponent* gc		= WGETC<GraphicsComponent>(*it);
 			ScaleComponent* sc			= WGETC<ScaleComponent>(*it);
+			AnimationComponent* ac		= WGETC<AnimationComponent>(*it);
 
 			//Build the matrices needed for model matrix
 			rot = RotationComponent::GetQuat(rc->rotation);
@@ -32,10 +33,18 @@ namespace Core
 			//Send the data through a drawcall to GFX
 			GFX::InstanceData* instanceData = Core::world.m_frameHeap.NewObject<GFX::InstanceData>();
 			instanceData->modelMatrix = translationMatrix * rotationMatrix * scaleMatrix;
+			instanceData->rnd_seed = *it;
 			instanceData->animationIndex = 0;
 			instanceData->frameOffset = 0;
-			instanceData->rnd_seed = *it;
+			instanceData->skeletonID = -1;
 
+			if (ac != nullptr)
+			{
+				instanceData->animationIndex = ac->animationID;
+				instanceData->frameOffset = ac->currentFrame;
+				instanceData->skeletonID = ac->skeletonID;
+			}
+			
 			GFX::Draw(gc->bitmask, (void*)instanceData);
 		}
 	}

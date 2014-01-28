@@ -23,6 +23,7 @@
 #include <Systems/NameSystem.hpp>
 #include <Systems/AreaSystem.hpp>
 #include <Systems/GroupDataSystem.hpp>
+#include <Systems/AnimationSystem.hpp>
 
 namespace Core
 {
@@ -39,9 +40,9 @@ namespace Core
 	class FlowfieldPositioningSystem;
 	class PoliceGoalSystem;
 	
-    typedef SystemHandlerTemplate<RenderingSystem, LightSystem, PoliceGoalSystem, FlowfieldPositioningSystem, NavMeshCollisionSystem, 
+    typedef SystemHandlerTemplate<LightSystem, PoliceGoalSystem, FlowfieldPositioningSystem, NavMeshCollisionSystem, 
 	CollisionSystem2D, PickingSystem, AIDebugSystem, FlowfieldSystem, /*FieldReactionSystem,*/ GPUPFSystem,
-		MovementSystem, NameSystem, GroupDataSystem, AreaSystem> SystemHandler;
+		MovementSystem, NameSystem, GroupDataSystem, AreaSystem, AnimationSystem, RenderingSystem> SystemHandler;
 
     typedef EntityHandlerTemplate<SystemHandler, WorldPositionComponent, RotationComponent, ScaleComponent, 
 		GraphicsComponent, LightComponent, MovementComponent, UnitTypeComponent, AttributeComponent,

@@ -51,6 +51,8 @@ public:
 	*/
 	inline int GetTotalFrames(){ return m_numFrames; }
 
+	void BindBuffers();
+
 private:
 	std::vector<glm::mat4x4> m_animations;
 	std::vector<AnimationInfo> m_animationInfo;

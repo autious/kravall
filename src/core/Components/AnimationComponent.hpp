@@ -9,9 +9,12 @@ namespace Core
 	{
 		int skeletonID;
 		int animationID;
+
 		float currentTime;
 		bool loop;
 		bool playing;
+		float speed;
+		unsigned int currentFrame;
 
 		AnimationComponent()
 		{
@@ -20,6 +23,8 @@ namespace Core
 			currentTime = 0.0f;
 			loop = false;
 			playing = false;
+			speed = 0.0f;
+			currentFrame = 0;
 		}
 		inline static const char * GetName()
 		{

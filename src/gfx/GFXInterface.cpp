@@ -274,6 +274,16 @@ namespace GFX
 		{
 			Renderer().SetGamma(gamma);
 		}
+
+		unsigned int GetAnimationFramerate()
+		{
+			return Renderer().GetAnimationFramerate();
+		}
+
+		void SetAnimationFramerate(unsigned int framerate)
+		{
+			Renderer().SetAnimationFramerate(framerate);
+		}
 	}
 
 	namespace ColorSettings
@@ -292,7 +302,6 @@ namespace GFX
 		{
 			Renderer().SetExposure(exposure);
 		}
-	
 	}
 }
 

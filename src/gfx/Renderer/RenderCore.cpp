@@ -1,5 +1,6 @@
 #include "RenderCore.hpp"
 #include <sstream>
+#include <algorithm>
 #include <iomanip>
 #include <utility/Colors.hpp>
 #include <GFXDefines.hpp>
@@ -20,6 +21,7 @@ namespace GFX
 		m_showStatistics = false;
         m_font = nullptr;
 		m_showFBO = 0;
+		m_animationFramerate = 12;
 	}
 
 	RenderCore::~RenderCore()
@@ -159,6 +161,10 @@ namespace GFX
 	{
 		m_postProcessingPainter->ReloadLUT();
 	}
+	void RenderCore::SetAnimationFramerate(unsigned int framerate)
+	{
+		m_animationFramerate = std::max(std::min(framerate, 48U), 12U);
+	}
 	
 	void RenderCore::AddRenderJob(GFXBitmask bitmask, void* value)
 	{
@@ -269,7 +275,7 @@ namespace GFX
 
 			GFX_CHECKTIME(m_renderJobManager->Sort(), "Sorting");
 
-			GFX_CHECKTIME(m_deferredPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix, m_gamma), "Geometry");
+			GFX_CHECKTIME(m_deferredPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix, m_gamma), "Geometry");
 			
 			GFX_CHECKTIME(m_GIPainter->Render(delta, m_normalDepth, m_diffuse, m_viewMatrix, m_projMatrix), "GI");
 
@@ -294,7 +300,8 @@ namespace GFX
 		else
 		{
 			m_renderJobManager->Sort();
-			m_deferredPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix, m_gamma);
+
+			m_deferredPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix, m_gamma);
 
 			m_GIPainter->Render(delta, m_normalDepth, m_diffuse, m_viewMatrix, m_projMatrix);
 

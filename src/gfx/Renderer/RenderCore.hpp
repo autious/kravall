@@ -152,6 +152,10 @@ namespace GFX
         inline void SetStatisticsFont(GFX::FontData* font) { m_font = font; }
 		inline void ShowStatistics(bool enabled){ m_showStatistics = enabled; }
 		inline void ShowFBO(int which){ m_showFBO = ( which >= 0 && which <= 5 ) ? which : 0; }
+		
+		void SetAnimationFramerate(unsigned int framerate);
+		inline unsigned int GetAnimationFramerate(){ return m_animationFramerate; }
+
 	private:
 		RenderCore();
 		~RenderCore();
@@ -229,6 +233,8 @@ namespace GFX
 
 		GLuint m_toneMappedTexture;
 		std::string m_currentLUT;
+
+		unsigned int m_animationFramerate;
 
 	};
 

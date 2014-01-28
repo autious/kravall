@@ -38,6 +38,8 @@ public:
 
 	int GetFrameCount(const unsigned int& skeletonID, const unsigned int& animationID, unsigned int& out_frameCount);
 
+	void BindSkeleton(const unsigned int& skeletonID);
+
 private:
 	std::map<unsigned int, Skeleton*> m_skeletons;
 	unsigned int m_idCounter;
