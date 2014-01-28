@@ -47,3 +47,12 @@ int AnimationManager::GetFrameCount(const unsigned int& skeletonID, const unsign
 	}
 	return GFX_INVALID_SKELETON;
 }
+
+
+void AnimationManager::BindSkeleton(const unsigned int& skeletonID)
+{
+	if (m_skeletons.find(skeletonID) != m_skeletons.end())
+	{
+		m_skeletons[skeletonID]->BindBuffers();
+	}
+}

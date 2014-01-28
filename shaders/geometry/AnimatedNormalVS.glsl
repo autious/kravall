@@ -47,7 +47,6 @@ mat4x4 GetBoneMatrix(InstanceData instanceData, int boneIndex)
 
 void main()
 {
-	// FUCK WESTAWAY
 	InstanceData instance = gInstances[gl_InstanceID];
 	// Apply animations
 	vec4 posA = vec4(0.0f);

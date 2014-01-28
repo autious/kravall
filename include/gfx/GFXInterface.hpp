@@ -178,7 +178,7 @@ namespace GFX
 		\return Returns the animation ID if successful, else returns #GFX_INVALID_ANIMATION or #GFX_INVALID_SKELETON
 		*/
 		DLL_API int AddAnimationToSkeleton(const unsigned int& skeletonID, GFXMat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame);
-
+		
 		/*!
 		Gets the number of frames in a particular animation.
 		\param skeletonID The id of the skeleton
@@ -187,6 +187,18 @@ namespace GFX
 		\return Returns #GFX_SUCCESS if successful, else returns #GFX_INVALID_ANIMATION or #GFX_INVALID_SKELETON
 		*/
 		DLL_API int GetAnimationFrameCount(const unsigned int& skeletonID, const unsigned int& animationID, unsigned int& out_frameCount);
+		
+		/*!
+		Gets the animation play framerate.
+		\return Returns animation play framerate
+		*/
+		DLL_API unsigned int GetAnimationFramerate();
+
+		/*!
+		Sets the animation play framerate.
+		\param framerate The target framerate for animations (clamped between 12 and 48 fps)
+		*/
+		DLL_API void SetAnimationFramerate(unsigned int framerate);
 
 		/*!
 		Deletes a mesh

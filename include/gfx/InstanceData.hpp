@@ -12,7 +12,7 @@ namespace GFX
 		unsigned int animationIndex;
 		unsigned int frameOffset;
 		unsigned int rnd_seed;
-		unsigned int pad2;
+		int skeletonID;
 	};
 
 	//struct StaticMeshInstanceData
