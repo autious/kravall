@@ -283,8 +283,8 @@ void main()
 			FFDirection.z * FF_FACTOR + pfVector.z * PF_FACTOR);
 			
 			//barrier();
-
-			newDir = normalize(newDir);
+			if (length(newDir) > 0)
+				newDir = normalize(newDir);
 
 			gOutput[index].newDirection_speed = vec4(newDir, gInput[index].newDirection_speed.w);
 		}											

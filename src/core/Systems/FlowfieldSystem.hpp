@@ -7,8 +7,7 @@
 namespace Core
 {
 	/*!
-		System responsible for assigning flowfield influence to agents and
-		check their position vs. the navigation mesh.
+		System responsible for assigning respective direction from flowfield to agents.
 	*/
     class FlowfieldSystem : public BaseSystem
     {

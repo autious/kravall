@@ -8,7 +8,7 @@ return function(asm, dirX, dirY, dirZ)
 							intensity = 0.5,
 							type = core.gfx.objectTypes.Light,
 							lighttype = core.gfx.lightTypes.Dir,
-                            speccolor = { r,g,b }
+                            speccolor = { 0.1,0.1,0.1 }
 						}
 			},
 			{

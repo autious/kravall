@@ -3,7 +3,7 @@
 #include <gfx/GFXInterface.hpp>
 #include <logger/Logger.hpp>
 
-#include <GameUtility/NavigationMeshAStar.hpp>
+#include <GameUtility/PathfindingUtility.hpp>
 
 #include <DebugMacros.hpp>
 #include <Systems/MovementSystem.hpp>
@@ -48,7 +48,7 @@ void Core::PoliceGoalSystem::Update( float delta )
 
 		bool walk = true;
 
-		if( PathFinder::CheckLineVsNavMesh( position, target, ffc->node ) ) 
+		if( PathFinder::CheckLineVsNavMesh( position, target, 3.0f, ffc->node ) ) 
 		{
 			glm::vec2 deltaVector = glm::vec2(target.x, target.z ) - glm::vec2( wpc->position[0], wpc->position[2] );
 			float dot = glm::dot( deltaVector, deltaVector );

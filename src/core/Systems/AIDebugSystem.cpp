@@ -9,7 +9,7 @@
 #include <GameUtility/NavigationMesh.hpp>
 #include <Input/InputManager.hpp>
 
-#include <GameUtility/NavigationMeshAStar.hpp>
+#include <GameUtility/PathfindingUtility.hpp>
 
 void MarkClickedObject()
 {
@@ -138,10 +138,14 @@ void Core::AIDebugSystem::Update( float delta )
 
 				glm::vec3 lineStart = glm::vec3( points[ ii ], 0.0f, points[ ii + 1 ] );
 				glm::vec3 lineEnd	= glm::vec3( points[ oo ], 0.0f, points[ oo + 1 ] );
-				
-				glm::vec3 cross = glm::normalize( glm::cross( (lineEnd - lineStart), glm::vec3( 0.0f, 1.0f, 0.0f ) ) );
 
-				GFX::Debug::DrawLine( lineStart + (lineEnd - lineStart) * 0.5f, lineStart + (lineEnd - lineStart) * 0.5f + cross, GFXColor( 0, 0, 1, 1 ), false  );
+				if( p == 0 )
+				{
+					//GFX::Debug::DrawSphere( lineStart + (lineEnd - lineStart) * 0.5f, 1.3f, GFXColor( 1, 0, 0, 1 ), false );
+				}
+				
+				//glm::vec3 cross = glm::normalize( glm::cross( (lineEnd - lineStart), glm::vec3( 0.0f, 1.0f, 0.0f ) ) );
+				//GFX::Debug::DrawLine( lineStart + (lineEnd - lineStart) * 0.5f, lineStart + (lineEnd - lineStart) * 0.5f + cross, GFXColor( 0, 0, 1, 1 ), false  );
 			}
 		}
 

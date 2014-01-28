@@ -181,7 +181,10 @@ std::fstream& operator>> ( std::fstream& ff, Core::NavigationMesh::Node& node )
 		
 		// calc length, set to negative if the node is a triangle...
 		if( node.corners[i].linksTo < -1.5f )
+		{
 			node.corners[i].length = -1.0f;
+			continue;
+		}
 		else
 		{
 			node.corners[i].length = std::sqrt( deltaX * deltaX + deltaY * deltaY );

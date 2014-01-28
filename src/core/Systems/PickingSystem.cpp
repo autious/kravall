@@ -43,7 +43,6 @@ void Core::PickingSystem::Update( float delta )
 			mc->goal[1] = groundHit.y;
 			mc->goal[2] = groundHit.z;
 
-			//glm::vec3 newDirection = groundHit - glm::vec3(wpc->position[0], groundHit.y, wpc->position[2]);
 			glm::vec3 newDirection = glm::vec3(groundHit.x - wpc->position[0], 0.0f, groundHit.z - wpc->position[2]);
 
 			newDirection /= glm::length(newDirection);

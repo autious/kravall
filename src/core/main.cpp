@@ -40,7 +40,6 @@
 static bool killProgram = false;
 
 #include <DebugRendering.hpp>
-#include <DebugCreators.hpp>
 #include <CLOPLoggerCallback.hpp>
 
 GLFWwindow *mainWindow = nullptr;
@@ -169,10 +168,7 @@ void run( GLFWwindow * window )
         }
 
         if(timeAccumulator > minimumTimeStep)
-        {
-            // NOCOMMIT
-            //delta = 0.01f;
-            
+        {            
             Core::Console().Update();
 
             GFX::SetOverlayViewMatrix( Core::overlayCamera.GetViewMatrix() );

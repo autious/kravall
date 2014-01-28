@@ -108,7 +108,7 @@ namespace Core
                     if(handle == nullptr )
                     {                        
                         LOGCM_FATAL << "Asset with name: " << asset << " was not found" << std::endl;
-                        assert(handle != nullptr);
+                        //assert(handle != nullptr);
                     }
 
 					// only increase references if references should be counted...
@@ -222,7 +222,15 @@ namespace Core
                             if(this->GetReferenceCount<Loader>(assetHash) == 0 )
                             {
                                 LOGCM_INFO << "Destroying asset with hash: " << assetHash << std::endl;
-                                assetLoader->Destroy(handle); 
+                                if( handle == nullptr )
+                                {
+                                    LOGCM_WARNING << "Ignoring destroy of invalid handle." << std::endl;
+                                }
+                                else
+                                {
+                                    assetLoader->Destroy(handle); 
+                                }
+
                                 this->RemoveReference<Loader>(assetHash);
                             }
                             else

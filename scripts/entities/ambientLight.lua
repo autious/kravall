@@ -1,5 +1,5 @@
 return function(asm, r, g, b, intensity)
-	asm:loadAssembly( 
+	return asm:loadAssembly( 
 		{
 			{
 				type = core.componentType.LightComponent,
