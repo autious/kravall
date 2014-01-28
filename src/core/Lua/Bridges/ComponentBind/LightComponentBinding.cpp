@@ -157,6 +157,10 @@ Core::ComponentSetters Core::LightComponentBinding::GetSetters()
                 {
                     lc->specColor[i] = static_cast<float>(lua_tonumber( L, -1 ));  
                 }
+                else 
+                {
+                    LOG_ERROR << "Value speccolor in entity " << entity << " is not a number as expected." << std::endl;
+                }
 
                 lua_pop( L, 1 );
             }
