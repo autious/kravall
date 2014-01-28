@@ -1,5 +1,6 @@
 #include "RenderCore.hpp"
 #include <sstream>
+#include <algorithm>
 #include <iomanip>
 #include <utility/Colors.hpp>
 #include <GFXDefines.hpp>
@@ -20,6 +21,7 @@ namespace GFX
 		m_showStatistics = false;
         m_font = nullptr;
 		m_showFBO = 0;
+		m_animationFramerate = 12;
 	}
 
 	RenderCore::~RenderCore()
@@ -117,6 +119,10 @@ namespace GFX
 		m_consolePainter->SetConsoleHeight(m_windowHeight);
 	}
 
+	void RenderCore::SetAnimationFramerate(unsigned int framerate)
+	{
+		m_animationFramerate = std::max(std::min(framerate, 48U), 12U);
+	}
 	
 	void RenderCore::AddRenderJob(GFXBitmask bitmask, void* value)
 	{
@@ -227,7 +233,7 @@ namespace GFX
 
 			GFX_CHECKTIME(m_renderJobManager->Sort(), "Sorting");
 			
-			GFX_CHECKTIME(m_deferredPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix), "Geometry");
+			GFX_CHECKTIME(m_deferredPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix), "Geometry");
 			GFX_CHECKTIME(m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix), "Lighting");
 
 			GFX_CHECKTIME( m_overlayPainter->Render( renderJobIndex, m_overlayViewMatrix, m_overlayProjMatrix ), "Console");
@@ -245,7 +251,7 @@ namespace GFX
 		else
 		{
 			m_renderJobManager->Sort();
-			m_deferredPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
+			m_deferredPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
 			m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
 			
 			m_overlayPainter->Render( renderJobIndex, m_overlayViewMatrix, m_overlayProjMatrix );

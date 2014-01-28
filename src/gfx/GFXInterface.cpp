@@ -257,6 +257,16 @@ namespace GFX
 			return Renderer().GetAnimationFrameCount(skeletonID, animationID, out_frameCount);
 		}
 
+		unsigned int GetAnimationFramerate()
+		{
+			return Renderer().GetAnimationFramerate();
+		}
+
+		void SetAnimationFramerate(unsigned int framerate)
+		{
+			Renderer().SetAnimationFramerate(framerate);
+		}
+
 	}
 }
 

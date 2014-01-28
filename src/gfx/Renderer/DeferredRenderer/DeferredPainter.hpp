@@ -14,6 +14,7 @@
 #include "../../Buffers/MeshManager.hpp"
 #include "../../Material/MaterialManager.hpp"
 #include <gfx/InstanceData.hpp>
+#include <Animation/AnimationManager.hpp>
 namespace GFX
 {
 	class DeferredPainter : public BasePainter
@@ -45,7 +46,7 @@ namespace GFX
 		\param specular Rendertarget for specular
 		\param glowMatID Rendertarget for glow and materialID
 		*/
-		void Render(unsigned int& renderIndex, FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix);
+		void Render(const AnimationManager* animationManager, unsigned int& renderIndex, FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix);
 
 	private:
 		

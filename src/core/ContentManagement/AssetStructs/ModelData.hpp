@@ -8,6 +8,7 @@ namespace Core
     struct ModelData
     {
 		unsigned int meshID;
+		unsigned int skeletonID;
     };
 }
 

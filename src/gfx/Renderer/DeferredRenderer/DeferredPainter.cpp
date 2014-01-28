@@ -84,7 +84,7 @@ namespace GFX
 #endif
 	}
 #ifdef INSTANCED_DRAWING
-	void DeferredPainter::Render(unsigned int& renderIndex, FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix)
+	void DeferredPainter::Render(const AnimationManager* animationManager, unsigned int& renderIndex, FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix)
 	{
 		BasePainter::Render();
 
@@ -191,7 +191,8 @@ namespace GFX
 					//assert(mat.textures.size() == 4); 
 
 					currentMaterial = material;
-
+					
+					
 					//compare shader
 					if (mat.shaderProgramID != currentShader)
 					{
