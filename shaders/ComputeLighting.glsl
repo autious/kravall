@@ -346,6 +346,8 @@ void main()
 		{
 			color += vec4(lights[i].color*lights[i].intensity, 0.0f) * surface.diffuse;
 		}
+
+		color += surface.glow;
 		
 		
 		//if (gl_LocalInvocationID.x == 0 || gl_LocalInvocationID.y == 0)
