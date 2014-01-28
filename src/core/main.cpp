@@ -168,10 +168,7 @@ void run( GLFWwindow * window )
         }
 
         if(timeAccumulator > minimumTimeStep)
-        {
-            // NOCOMMIT
-            //delta = 0.01f;
-            
+        {            
             Core::Console().Update();
 
             GFX::SetOverlayViewMatrix( Core::overlayCamera.GetViewMatrix() );

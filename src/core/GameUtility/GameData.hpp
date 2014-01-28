@@ -3,7 +3,7 @@
 
 #include <Systems/AIDebugSystem.hpp>
 
-struct TempInitGameData; // NOCOMMIT
+struct TempInitGameData; // This should be moved to config || scenario? || gamemode? fix when implementing running etc.
 
 namespace Core
 {

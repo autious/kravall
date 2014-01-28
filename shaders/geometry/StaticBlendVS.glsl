@@ -38,7 +38,7 @@ flat out uint rnd_seed;
 
 void main()
 {
-//#define INSTANCED
+#define INSTANCED
 #ifdef INSTANCED
 	//Move position to clip space
 	posW = gInstances[gl_InstanceID].mm * positionIN;
