@@ -38,15 +38,14 @@ namespace Core
 		{
 			glm::vec4 position_unitType;
 			glm::vec4 direction_speed;
-			glm::vec4 goal_maxSpeed;
+			glm::vec4 newDirection_empty;
 			glm::vec4 health_stamina_morale_stancealignment;
 			glm::vec4 groupSquadID_defenseRage_mobilityPressure_empty;
 		};
 
 		struct DataOUT
 		{
-			glm::vec4 direction_speed;
-			glm::vec4 goal_maxSpeed;
+			glm::vec4 newDirection_speed;
 		};
 
 		GLuint m_shaderID;

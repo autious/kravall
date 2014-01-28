@@ -290,7 +290,7 @@ float Core::FieldReactionSystem::GetEffectOnAgentAt(const Entity queryAgent, Wor
 			if (distanceSqr >= CURVE[0][0].repelRadius && (utc->type == UnitType::Rioter && matchID != groupID))
 				continue;
 
-			currentSum += GetAgentsChargeAt(*it2, distanceSqr); // 7.
+			currentSum = GetAgentsChargeAt(*it2, distanceSqr); // 7.
 
 			if (currentSum >= 0)
 				positiveSum += currentSum;
