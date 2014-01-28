@@ -1,5 +1,6 @@
 local Camera = require "rts_camera" 
 local MainMenu = require "gui/MainMenu"
+local viewport = require "gui/viewport"
 local image = require "factories/image"
 local viewport = require "gui/viewport" 
 require "console"
@@ -34,7 +35,7 @@ end
 menuState = nil
 function toggleMenu()
     if menuState == nil then
-        menuState = MainMenu.new()
+        menuState = MainMenu:new()
     else
         menuState:destroy()
         menuState = nil

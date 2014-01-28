@@ -10,14 +10,14 @@ return function(asm, x,y,z )
             type = core.componentType.GraphicsComponent,
             data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry },
             load = { 
-                        mesh = { core.loaders.GnomeLoader, "assets/model/test_whitebox.bgnome" },
-                        material = { core.loaders.MaterialLoader, "assets/material/whitePixel.material" }
+                        mesh = { core.loaders.GnomeLoader, "assets/tower.bgnome" },
+                        material = { core.loaders.MaterialLoader, "assets/material/simple.material" }
                    }
         
         },
         {
             type = core.componentType.ScaleComponent,
-            data = { scale = 100.0 }
+            data = { scale = 1.0 }
         },
         {
             type = core.componentType.RotationComponent,

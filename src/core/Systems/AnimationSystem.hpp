@@ -6,6 +6,7 @@
 #include <glm/glm.hpp>
 
 #include <vector>
+#include <string>
 #include <map>
 
 namespace Core 

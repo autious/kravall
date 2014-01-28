@@ -4,13 +4,12 @@ return function(asm, r, g, b, intensity)
 			{
 				type = core.componentType.LightComponent,
 				data =  { 
-							--color = { 1.0, 1.0, 1.0 },
-							--intensity = 0.05,
 							color = { r, g, b },
 							intensity = intensity,
 							type = core.gfx.objectTypes.Light,
 							lighttype = core.gfx.lightTypes.Ambient
-						}
+						},
+                ignoreHard = true
 			},
 			{
 				type = core.componentType.WorldPositionComponent,
