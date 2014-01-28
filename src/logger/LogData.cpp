@@ -85,7 +85,7 @@ void LogSystem::RegisterLogHandler( LogHandler** handlerChannel, LogHandler* new
 
     for( int i = 0; i < LOGGER_LIMIT; i++ )
     {
-        if( handlerChannel[i] == nullptr )
+        if( handlerChannel[i] == nullptr || handlerChannel[i] == newHandler )
         {
             handlerChannel[i] = newHandler;
             worked = true;

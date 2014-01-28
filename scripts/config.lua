@@ -22,5 +22,6 @@ debugRenderAreas = true,
 debugLightVolumes = false,
 animationQuality = 0, -- range 0 - 2, determines frames/second in animation
 toggleConsoleButton = core.input.keyboard.key.GRAVE_ACCENT,
-cameraScrollingSpeed = 0
+cameraScrollingSpeed = 0,
+consoleOutputLevel = "warning" -- debug, warning, error, fatal
 }
