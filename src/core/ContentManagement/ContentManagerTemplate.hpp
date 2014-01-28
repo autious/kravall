@@ -107,7 +107,7 @@ namespace Core
                     
                     if(handle == nullptr )
                     {                        
-                        LOGCM_FATAL << "Asset with name: " << asset << " was not found" << std::endl;
+                        LOGCM_FATAL << "Asset with name: " << asset << " failed to load" << std::endl;
                         assert(handle != nullptr);
                     }
 

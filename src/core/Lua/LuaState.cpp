@@ -31,6 +31,7 @@
 #include <Lua/Bridges/LuaNameSystemBridge.hpp>
 #include <Lua/Bridges/LuaAreaSystemBridge.hpp>
 #include <Lua/Bridges/LuaDrawBridge.hpp>
+#include <Lua/Bridges/LuaPickingBridge.hpp>
 
 namespace Core
 {
@@ -54,7 +55,8 @@ namespace Core
 		llhb(L),
         lnsb(L),
         lasb(L),
-        ldb(L)
+        ldb(L),
+        lpib(L)
         {}
             
         LuaBitmask lb;
@@ -75,6 +77,7 @@ namespace Core
 		LuaLevelHeapBridge llhb;
         LuaAreaSystemBridge lasb;
         LuaDrawBridge ldb;
+        LuaPickingBridge lpib;
     };
 }
 
