@@ -1,7 +1,7 @@
 local boxScale = 3
 
 return function(asm, posX, posZ)
-	asm:loadAssembly( 
+return	asm:loadAssembly( 
 		{
 			{
 				type = core.componentType.GraphicsComponent,

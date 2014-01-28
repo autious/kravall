@@ -1,4 +1,5 @@
 #include "ShaderManager.hpp"
+#include <logger/Logger.hpp>
 
 namespace GFX
 {
@@ -23,7 +24,7 @@ namespace GFX
 		}
 		catch (std::exception e)
 		{
-			std::cout << (std::string("Could not load file from ") + filepath + ": " + e.what()).c_str();
+			LOG_ERROR << (std::string("Could not load file from ") + filepath + ": " + e.what()).c_str();
 
 		}
 
