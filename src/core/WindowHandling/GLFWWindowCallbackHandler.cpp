@@ -23,6 +23,14 @@ extern "C"
             Core::GLFWWindowCallbackHandler::Get().m_callbacks[i]->WindowResize( width, height );
         }
     }
+
+    static void WindowFocusCallback( GLFWwindow * window, int focus )
+    {
+        for( unsigned int i = 0; i < Core::GLFWWindowCallbackHandler::Get().m_callbacks.size(); i++ )
+        {
+            Core::GLFWWindowCallbackHandler::Get().m_callbacks[i]->WindowFocus( focus );
+        }
+    }
 }
 
 namespace Core
@@ -37,7 +45,6 @@ namespace Core
         } 
 
         return *instance;
-
     }
 
     void GLFWWindowCallbackHandler::Free()
@@ -57,6 +64,7 @@ namespace Core
         m_window = window;
         glfwSetFramebufferSizeCallback(window, FramebufferResizeCallback);
         glfwSetWindowSizeCallback(window, WindowResizeCallback);
+        glfwSetWindowFocusCallback(window, WindowFocusCallback );
     }
      
     void GLFWWindowCallbackHandler::FreeWindow( )
@@ -65,6 +73,7 @@ namespace Core
         {
             glfwSetFramebufferSizeCallback(m_window, nullptr);
             glfwSetWindowSizeCallback(m_window, nullptr);
+            glfwSetWindowFocusCallback(m_window, nullptr );
         }
 
         m_window = nullptr;

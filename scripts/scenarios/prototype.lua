@@ -12,8 +12,8 @@ local street_light_intensity = 2.0
 ambient(asm, 1.0, 1.0, 1.0, 0.1)
 directional(asm, -1, -1, 0.5)
 
-camera:lookAt( core.glm.vec3.new( -20, 35, 20 ), core.glm.vec3.new( 0, 0, 20 ) )
---camera:lookAt( core.glm.vec3.new( -20, 10, 20 ), core.glm.vec3.new( 0, 0, 20 ) )
+--camera:lookAt( core.glm.vec3.new( -20, 35, 20 ), core.glm.vec3.new( 0, 0, 20 ) )
+camera:lookAt( core.glm.vec3.new( -20, 35, 0 ), core.glm.vec3.new( 0, 0, 30 ) )
 
 -- Group 0 start to end, top row (left side)
 street_light(asm, -50, -0.5, street_light_intensity)
@@ -78,13 +78,18 @@ local rioter = ent.get "rioter"
 local police = ent.get "police"
 local building = ent.get "building"
 
-local dist = 1.2
+
+local policeGroup = core.system.groups.createGroup();
+
+local dist = 2.4
 local centerPoint = { -4, 0, -21}
-for i = -5, 5 do
-	for j = -1, 1 do
-		police(asm, i * dist + centerPoint[1], 0 + centerPoint[2], j * dist + centerPoint[3])
-	end
+for i = -2, 2 do
+	j= 0 --for j = -1, 1 do
+		police(asm, i * dist + centerPoint[1], 0 + centerPoint[2], j * dist + centerPoint[3], policeGroup)
+	--end
 end
+--core.system.groups.setGroupGoal(policeGroup, -43, 0, 4)
+    
 
 --police(asm, 1, 0, -22);
 --police(asm, 1, 0, -21);
@@ -100,13 +105,15 @@ end
 --end
 --core.nav_mesh.set_group_goal(0, -43, 0, 4)
 
+local rioterGroup = core.system.groups.createGroup()
 local centerPoint = { 20.5, 0, -40 }		
 for i = -4, 4 do
 	for p = -5, 5 do
-		rioter( asm, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], 1)
+		rioter( asm, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rioterGroup)
 	end
 end
-core.nav_mesh.set_group_goal(1, -21, 0, 36)
+core.system.groups.setGroupGoal(rioterGroup, -21, 0, 36)
+
 
 -- Debug
 --local centerPoint = { 49, 0, 5 }		

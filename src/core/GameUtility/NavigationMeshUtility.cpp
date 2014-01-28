@@ -50,7 +50,7 @@ namespace Core
 			glm::vec3 cross = glm::normalize( glm::cross( (lineEnd - lineStart), glm::vec3( 0.0f, 1.0f, 0.0f ) ) );
 
 			// check if behind plane
-			float dot = glm::dot( cross, point - lineStart );
+			float dot = glm::dot( cross, glm::vec3(point.x, 0.0f, point.z) - lineStart );
 			if( dot <= 0 )
 				return false;
 		}
@@ -58,4 +58,18 @@ namespace Core
 		// point is inside all lines
 		return true;
 	}
+
+    bool NavigationMesh::CheckPointInsideNavigationMesh( glm::vec3 point )
+    {
+        bool found = false;
+
+        for(int i=0; i < nrNodes; ++i)
+        {
+            found = CheckPointInsideNode(point, i);
+            if(found)
+                break;
+        }
+
+        return found;
+    }
 }

@@ -119,23 +119,21 @@ local police = ent.get "police"
 local building = ent.get "building"
 	
 -- Release	
-local groupOneGroupId = core.system.groups.createGroup()
 local centerPoint = { 49, 0, 5 }		
 for i = -7, 6 do
 	for p = -6, 6 do
-		rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], groupOneGroupId)
+		rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], 0)
 	end
 end
-core.system.groups.setGroupGoal(groupOneGroupId, -43, 0, 4)
+core.nav_mesh.set_group_goal(0, -43, 0, 4)
 
-local groupTwoGroupId = core.system.groups.createGroup()
 local centerPoint = { 20.5, 0, -40 }		
 for i = -4, 4 do
 	for p = -5, 5 do
-		rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], groupTwoGroupId)
+		rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], 1)
 	end
 end
-core.system.groups.setGroupGoal(groupTwoGroupId, -21, 0, 36)
+core.nav_mesh.set_group_goal(1, -21, 0, 36)
 
 -- Debug
 --local centerPoint = { 49, 0, 5 }		
@@ -164,7 +162,7 @@ navmesh(scen, 0, -0.1, 0)
 local plane = ent.get "plane"
 plane(scen, 0, -1, 0)
 
-local lol_building = building(scen, 64, 12)
+building(scen, 64, 12)
 building(scen, 64, 2)
 building(scen, 64, -8)
 building(scen, 55, -12)
@@ -210,7 +208,7 @@ building(scen, 56, 19)
 local area = ent.get "area"
 
 
-area( scen, {2,0,0}, { 5,-5, 5,5, -5,5, -5,-5 }, "test_area", nil, printCount )
+area( scen, {-2,0,0}, { 6,-6, 6,6, -6,6, -6,-6 }, "test_area", nil, printCount )
 area( scen, {-21,0,36}, { 5,-5, 5,5, -5,5, -5,-5 }, "test_area", nil, checkObjCount )
 
 return scen;

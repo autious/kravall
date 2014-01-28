@@ -23,6 +23,11 @@ namespace Core
         {
             GFX::Resize(width, height);
         }
+
+        virtual void WindowFocus( int focus )
+        {
+
+        }
     } buffResize;
     
     

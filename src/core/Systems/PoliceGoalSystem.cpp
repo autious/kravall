@@ -48,7 +48,7 @@ void Core::PoliceGoalSystem::Update( float delta )
 
 		bool walk = true;
 
-		if( PathFinder::CheckLineVsNavMesh( position, target, ffc->node ) ) 
+		if( PathFinder::CheckLineVsNavMesh( position, target, 3.0f, ffc->node ) ) 
 		{
 			glm::vec2 deltaVector = glm::vec2(target.x, target.z ) - glm::vec2( wpc->position[0], wpc->position[2] );
 			float dot = glm::dot( deltaVector, deltaVector );
@@ -87,13 +87,13 @@ void Core::PoliceGoalSystem::Update( float delta )
 		if( walk )
 		{
 			// set speed according to state...
-			mvmc->disiredSpeed = GameData::GetWalkingSpeed().speedToDesire;
+			mvmc->desiredSpeed = GameData::GetWalkingSpeed().speedToDesire;
 
 
 		}
 		else
 		{
-			mvmc->disiredSpeed = 0.0f;
+			mvmc->desiredSpeed = 0.0f;
 		}
 	}
 }

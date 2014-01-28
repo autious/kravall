@@ -1,12 +1,15 @@
 #ifndef CORE_CONTENT_MANAGEMENT_ASSET_STRUCTS_NAVIGATION_MESH_HPP
+
 #define CORE_CONTENT_MANAGEMENT_ASSET_STRUCTS_NAVIGATION_MESH_HPP
 
 #include <fstream>
 #include <glm/glm.hpp>
 #include "Console/CLOP.hpp"
 
+#define MAX_NUMBER_OF_FLOWFIELDS 1000
 #define NAVMESH_NO_CONNECTING_CORNERS -1
 #define NAVMESH_CONCAVE_CORNER_NODE -2
+
 
 namespace Core
 {
@@ -37,6 +40,7 @@ namespace Core
 	*/
 	struct NavigationMesh
 	{	
+
 		NavigationMesh()
 		{
 		}
@@ -106,6 +110,45 @@ namespace Core
 			glm::vec3* list;
 		};
 
+        /*!
+            Creates a group and allocates memory for flowfields for the group.
+        */
+        int CreateGroup();
+
+		/*!
+			Will allocate flowfields from the level allocator.
+		*/
+		void InitFlowfieldInstances();
+
+		/*!
+			Will calculate the linksToEdge values for the nodes.
+		*/
+		void CalculateLinks();
+
+		// NavigationMesh utility...
+		/*!
+			Returns true if point is inside node.
+		*/
+		bool CheckPointInsideNode( glm::vec3 point, int node );
+
+        /*!
+            Function for checking if a point is on the navigation mesh.
+            \param point The point to check if inside the navigation mesh.
+            \return Returns true if the given point is inside the navigation mesh, otherwise returns false.    
+        */
+        bool CheckPointInsideNavigationMesh( glm::vec3 point );
+
+		/*!
+			If point is inside a node the flowfield to get to that node will be calculated for the respective group.
+			Returns false if no field is calculated.
+		*/
+		bool CalculateFlowfieldForGroup( glm::vec3 point, int group );
+
+		/*!
+			Uses the GFX debug system to draw the outlines of the navigation mesh.
+		*/
+		void DrawDebug();
+
 		/*!
 			The list of all the flowfield instances available.
 		*/
@@ -130,34 +173,6 @@ namespace Core
 			current number of nodes reciding under the nodes-pointer.
 		*/
 		int nrNodes;
-
-
-		/*!
-			Will allocate said number of flowfiled instances from the level allocator.
-		*/
-		void InitFlowfieldInstances( int nrFlowfieldInstances = 0 );
-
-		/*!
-			Will calculate the linksToEdge values for the nodes.
-		*/
-		void CalculateLinks();
-
-		// NavigationMesh utility...
-		/*!
-			Returns true if point is inside node.
-		*/
-		bool CheckPointInsideNode( glm::vec3 point, int node );
-
-		/*!
-			If point is inside a node the flowfield to get to that node will be calculated for the respective group.
-			Returns false if no field is calculated.
-		*/
-		bool CalculateFlowfieldForGroup( glm::vec3 point, int group );
-
-		/*!
-			Uses the GFX debug system to draw the outlines of the navigation mesh.
-		*/
-		void DrawDebug();
 	};
 }
 

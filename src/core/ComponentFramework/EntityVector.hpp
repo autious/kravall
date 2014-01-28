@@ -2,7 +2,7 @@
 #define SRC_CORE_COMPONENTFRAMEWORK_ENTITYVECTOR_H
 
 
-#include "ComponentType.hpp"
+#include <TemplateUtility/TemplateIndex.hpp>
 #include "SystemTypes.hpp"
 
 #include <cstdlib>

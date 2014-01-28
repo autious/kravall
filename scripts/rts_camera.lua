@@ -24,6 +24,7 @@ function C.new( )
 
     self.width = core.config.initScreenWidth
     self.height = core.config.initScreenHeight
+    self.infocus = true
 
     --mouse.setPosition( self.width/2, self.height/2 );
 
@@ -34,6 +35,11 @@ function C.new( )
         self.height = height 
     end
     window.registerWindowSizeCallback( windowResizeCallback )
+    
+    local function focus( f )
+        self.infocus = (f ~= 0)
+    end
+    window.registerWindowFocusCallback( focus )
 
     local function onscroll( x, y )
         local forward = camera:getForward()
@@ -45,6 +51,7 @@ function C.new( )
         
     local function destruct( )
         window.deregisterWindowSizeCallback( windowResizeCallback )
+        window.deregisterWindowFocusCallback( focus )
         input.deregisterOnScroll( onscroll )
     end
         
@@ -72,7 +79,7 @@ end
 function C:update( dt )
     local delta = dt * 30
 
-    if core.console.isVisible() == false then
+    if core.console.isVisible() == false and self.infocus == true then
         local ux,uy,uz = camera:getUp():get()
         local rx,ry,rz = camera:getRight():get()
         local xzUp = vec3.new(0,0,0)

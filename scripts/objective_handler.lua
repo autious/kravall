@@ -3,8 +3,17 @@ local O = {}
 function O.new()
     local self = {}
     self.objectives = {}
+    self.state = ""
     setmetatable( self, { __index = O } )
     return self
+end
+
+function O:isWin()
+    return self.state == "success"
+end
+
+function O:isLoss()
+    return self.state == "fail"
 end
 
 function O:update( delta )
@@ -20,6 +29,27 @@ function O:update( delta )
             end
                 
             core.draw.drawText( 55, index * 20 + 20 + 150, obj.title )
+        end
+    end
+    if self.state == "" then
+        local won = true
+        for i,o in pairs( self.objectives ) do
+            if o.state ~= "success" then
+                won = false  
+            end
+        end
+        if won then
+            self.state = "success" 
+        end
+        
+        local fail = true
+        for i,o in pairs( self.objectives ) do
+            if o.state ~= "fail" then
+                fail = false  
+            end
+        end
+        if fail then
+            self.state = "fail"
         end
     end
 end

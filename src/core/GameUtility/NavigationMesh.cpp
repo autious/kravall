@@ -3,7 +3,7 @@
 
 #include <fstream>
 #include <logger/Logger.hpp>
-
+#include <limits>
 static bool drawNavigationMesh = true;
 
 namespace Core
@@ -29,35 +29,39 @@ namespace Core
 		mesh = newMesh;
 	}
 
-	void NavigationMesh::InitFlowfieldInstances( int nrFlowfieldInstances )
+    int NavigationMesh::CreateGroup()
+    {
+        if(nrUsedFlowfields >= maxFlowfields)
+        {
+            LOG_FATAL << "Flowfield array is out of indices" << std::endl;
+        }
+
+        flowfields[nrUsedFlowfields].edges = Core::world.m_levelHeap.NewPODArray<int>( nrNodes );
+		flowfields[nrUsedFlowfields].list = (glm::vec3*)Core::world.m_levelHeap.NewPODArray<float>( 3 * nrNodes );
+
+
+		std::memset( flowfields[nrUsedFlowfields].edges, 0, nrNodes * sizeof(int) );
+		std::memset( flowfields[nrUsedFlowfields].list, 0, nrNodes * sizeof(glm::vec3) );
+
+		flowfields[nrUsedFlowfields].goal[ 0 ] = FLT_MAX;
+		flowfields[nrUsedFlowfields].goal[ 1 ] = FLT_MAX;
+
+        return nrUsedFlowfields++;
+    }
+
+	void NavigationMesh::InitFlowfieldInstances()
 	{
-		int nrInstances = nrFlowfieldInstances;
-		if( !nrInstances )
-			nrInstances = Core::world.m_config.GetInt( "defaultNrFlowfields", 20 );
-		
-		// resize list of flowfields...
-		flowfields = Core::world.m_levelHeap.NewPODArray<Core::NavigationMesh::Flowfield>( nrInstances );
-		maxFlowfields = nrInstances;
+		maxFlowfields = Core::world.m_config.GetInt( "maxNumberOfFlowfields", MAX_NUMBER_OF_FLOWFIELDS);
+
+		// resize list of m_flowfields...
+		flowfields = Core::world.m_levelHeap.NewPODArray<Core::NavigationMesh::Flowfield>( maxFlowfields );
 		nrUsedFlowfields = 0;
-
-		// resize the size of each flowfield to hold the same number of vectors as there are nodes.
-		for( int i = 0; i < nrInstances; i++ )
-		{
-			flowfields[i].goal[ 0 ] = FLT_MAX;
-			flowfields[i].goal[ 1 ] = FLT_MAX;
-
-			flowfields[i].edges = Core::world.m_levelHeap.NewPODArray<int>( nrNodes );
-			flowfields[i].list = (glm::vec3*)Core::world.m_levelHeap.NewPODArray<float>( 3 * nrNodes );
-
-			std::memset( flowfields[i].edges, 0.0f, nrNodes * sizeof(int) );
-			std::memset( flowfields[i].list, 0.0f, nrNodes * sizeof(glm::vec3) );
-		}
 	}
 
 
 	void NavigationMesh::CalculateLinks()
 	{
-		// for all nodes
+		// for all m_nodes
 		for( int i = 0; i < nrNodes; i++ )
 		{
 			// for every edge in the node
@@ -99,7 +103,7 @@ namespace Core
 					if( nodes[q].corners[3].length < 0 )
 						nrCorners = 3;
 
-					for( int v = 0; v < nrCorners; ++v ) // ++v, much faster, such optimization... alltid något hurhurhur
+					for( int v = 0; v < nrCorners; ++v ) // ++v, much faster, such optimization... alltid nÃ¥got hurhurhur
 					{						
 						int otherCurrent = v * 2;
 						glm::vec2 otherCornerPos = glm::vec2( nodes[q].points[otherCurrent], nodes[q].points[ otherCurrent + 1 ] );
@@ -184,6 +188,7 @@ std::fstream& operator>> ( std::fstream& ff, Core::NavigationMesh::Node& node )
 			node.corners[i].inverseLength = 1.0f / node.corners[i].length;
 		}
 
+
 		glm::vec3 lineStart = glm::vec3( node.points[ current ], 0.0f, node.points[ current + 1 ] );
 		glm::vec3 lineEnd	= glm::vec3( node.points[ following ], 0.0f, node.points[ following + 1 ] );
 
@@ -191,6 +196,7 @@ std::fstream& operator>> ( std::fstream& ff, Core::NavigationMesh::Node& node )
 		glm::vec3 cross = glm::normalize( glm::cross( (lineEnd - lineStart), glm::vec3( 0.0f, 1.0f, 0.0f ) ) );
 		node.corners[i].normal[0] = cross.x;
 		node.corners[i].normal[1] = cross.z;
+
 	}
 
 	return ff;

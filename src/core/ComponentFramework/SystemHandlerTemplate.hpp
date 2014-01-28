@@ -3,13 +3,14 @@
 
 #include "BaseSystem.hpp"
 #include "PVector.hpp"
-#include "ComponentType.hpp"
+#include <TemplateUtility/TemplateIndex.hpp>
 
 #include <array>
 #include <utility>
 #include <vector>
 
 #include <Timer.hpp>
+
 
 #define GNAME( name ) #name
 
@@ -86,11 +87,11 @@ namespace Core
             return m_systems[id];
         }
 
-        template<typename C>
-        C* GetSystemT()
+
+        template <typename System>
+        System* GetSystem()
         {
-            static const int index = Index<C,std::tuple<Args...>>::value;
-            return static_cast<C*>(m_systems[index]);
+            return reinterpret_cast<System*>(m_systems[Index<System, std::tuple<Args...>>::value]);
         }
 
         std::vector<std::pair<const char*,std::chrono::microseconds>> GetFrameTime()
