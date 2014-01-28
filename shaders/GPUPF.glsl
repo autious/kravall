@@ -7,6 +7,13 @@
 #define RIOTER_TYPE 0
 #define POLICE_TYPE 1
 
+#define PF_DRAW_DIVIDE_FACTOR 0.0001f
+#define PF_FACTOR 0.5f
+#define FF_FACTOR 0.5f
+#define CAP_POSITIVE 1000000.0f
+#define CAP_NEGATIVE -1000000.0f
+#define MINIMUM_CHARGE 100.0f  // Is negated later!
+
 #pragma optionNV(fastmath on) 
 #pragma optionNV(ifcvt none) 
 #pragma optionNV(inline all) 
@@ -114,8 +121,8 @@ float GetEffectOnAgentAt(vec2 queryPosition, int groupID)
 			matchID = int(gInput[i].groupSquadID_defenseRage_mobilityPressure_empty.x);
 		}
 	
-		//if (distSqr >= curves[0][0].ch_cu_re_dec.z && matchID != groupID)
-		//	continue;
+		if (distSqr >= curves[0][0].ch_cu_re_dec.z && matchID != groupID)
+			continue;
 	
 		currentSum = GetAgentChargeAt(int(gInput[i].position_unitType.w), distSqr);
 	
@@ -133,8 +140,8 @@ void main()
 {
 	if (gl_LocalInvocationIndex == 0)
 	{
-		curves[0][0].ch_cu_re_dec = vec4(1.0f, 15.0f, 2.0f, 1.0f / (15.0f - 2.0f));
-		curves[0][1].ch_cu_re_dec = vec4(-100.0f, 15.0f, 1.0f, -100.0f / (15.0f - 1.0f));
+		curves[0][0].ch_cu_re_dec = vec4(0.0f, 5.0f, 1.0f, 0.0f / (5.0f - 1.0f));
+		curves[0][1].ch_cu_re_dec = vec4(-5000.0f, 15.0f, 1.0f, -5000.0f / (15.0f - 1.0f));
 	}
 	
 	barrier();
@@ -158,7 +165,8 @@ void main()
 		
 			float highestSum = GetEffectOnAgentAt(vec2(gInput[index].position_unitType.x, gInput[index].position_unitType.z), int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
 			float staySum = highestSum;
-		
+
+			/*
 			for(int i = -1; i < 2; ++i)
 			{
 				for(int j = -1; j < 2; ++j)
@@ -176,7 +184,88 @@ void main()
 					}
 				}
 			}
-		
+			*/
+
+			// ---------------------------------------- -1, 0 ----------------------------------------
+			float chargeSum = GetEffectOnAgentAt(vec2(gInput[index].position_unitType.x - 1, gInput[index].position_unitType.z + 0),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
+					
+			if(chargeSum > highestSum)
+			{
+				highestSum = chargeSum;
+				bestIndex.x = -1;
+				bestIndex.y = 0;
+			}
+
+			// ---------------------------------------- 1, 0 ----------------------------------------
+			chargeSum = GetEffectOnAgentAt(vec2(gInput[index].position_unitType.x + 1, gInput[index].position_unitType.z + 0),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
+					
+			if(chargeSum > highestSum)
+			{
+				highestSum = chargeSum;
+				bestIndex.x = 1;
+				bestIndex.y = 0;
+			}
+
+			// ---------------------------------------- 0, -1 ----------------------------------------
+			chargeSum = GetEffectOnAgentAt(vec2(gInput[index].position_unitType.x + 0, gInput[index].position_unitType.z - 1),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
+					
+			if(chargeSum > highestSum)
+			{
+				highestSum = chargeSum;
+				bestIndex.x = 0;
+				bestIndex.y = -1;
+			}
+
+			// ---------------------------------------- 0, 1 ----------------------------------------
+			chargeSum = GetEffectOnAgentAt(vec2(gInput[index].position_unitType.x + 0, gInput[index].position_unitType.z + 1),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
+					
+			if(chargeSum > highestSum)
+			{
+				highestSum = chargeSum;
+				bestIndex.x = 0;
+				bestIndex.y = 1;
+			}
+
+			// ---------------------------------------- -1, -1 ----------------------------------------
+			chargeSum = GetEffectOnAgentAt(vec2(gInput[index].position_unitType.x - 1, gInput[index].position_unitType.z - 1),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
+					
+			if(chargeSum > highestSum)
+			{
+				highestSum = chargeSum;
+				bestIndex.x = -1;
+				bestIndex.y = -1;
+			}
+
+			// ---------------------------------------- 1, -1 ----------------------------------------
+			chargeSum = GetEffectOnAgentAt(vec2(gInput[index].position_unitType.x + 1, gInput[index].position_unitType.z - 1),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
+					
+			if(chargeSum > highestSum)
+			{
+				highestSum = chargeSum;
+				bestIndex.x = 1;
+				bestIndex.y = -1;
+			}
+
+			// ---------------------------------------- -1, 1 ----------------------------------------
+			chargeSum = GetEffectOnAgentAt(vec2(gInput[index].position_unitType.x - 1, gInput[index].position_unitType.z + 1),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
+					
+			if(chargeSum > highestSum)
+			{
+				highestSum = chargeSum;
+				bestIndex.x = -1;
+				bestIndex.y = 1;
+			}
+
+			// ---------------------------------------- 1, 1 ----------------------------------------
+			chargeSum = GetEffectOnAgentAt(vec2(gInput[index].position_unitType.x + 1, gInput[index].position_unitType.z + 1),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
+					
+			if(chargeSum > highestSum)
+			{
+				highestSum = chargeSum;
+				bestIndex.x = 1;
+				bestIndex.y = 1;
+			}
+
 			float FF_VS_PF_FACTOR = 1.0f;
 			vec3 pfVector;
 
