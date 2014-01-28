@@ -94,7 +94,6 @@ Core::ComponentSetters Core::MovementComponentBinding::GetSetters()
                 if( lua_isnumber( L, -1 ) )
                 {
                     mvc->direction[i] = static_cast<float>(lua_tonumber( L, -1 ));  
-					mvc->newDirection[i] = 0; // NOCOMMIT
                 }
 
                 lua_pop( L, 1 );

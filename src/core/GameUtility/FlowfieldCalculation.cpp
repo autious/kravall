@@ -146,7 +146,7 @@ namespace Core
 				}
 			}
 
-			if( prioList[0].node == 8 )
+			if( prioList[0].node == 0 )
 				int pp = 0;
 
 			// calculate mid point of the entry edge in parent node, this makes the path a bit more flowing

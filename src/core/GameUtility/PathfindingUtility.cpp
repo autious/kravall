@@ -1,4 +1,4 @@
-#include "NavigationMeshAStar.hpp"
+#include "PathfindingUtility.hpp"
 #include <GameUtility/NavigationMesh.hpp>
 #include <World.hpp>
 
@@ -18,7 +18,7 @@ namespace Core
 	};
 
 	
-	void CheckLine( glm::vec3 start, glm::vec3 goal, Core::NavigationMesh* instance, int startNode, LineCheckReturnStruct& result )
+	void CheckLineWithCornerCheck( glm::vec3 start, glm::vec3 goal, float radius, Core::NavigationMesh* instance, int startNode, LineCheckReturnStruct& result )
 	{
 		result.t = NO_LINE_COLLISION_VALUE;
 		result.node = startNode;
@@ -49,7 +49,8 @@ namespace Core
 				int oo = ( ii + 2 ) % 8;
 				glm::vec3 lineStart = glm::vec3( current->points[ ii ], 0, current->points[ ii + 1 ] );
 				glm::vec3 lineEnd	= glm::vec3( current->points[ oo ], 0, current->points[ oo + 1 ] );
-		
+				
+				// check vs. ray
 				float A = glm::determinant( glm::mat2x2( start.x, start.z, goal.x, goal.z ) );
 				float B = glm::determinant( glm::mat2x2( lineStart.x, lineStart.z, lineEnd.x, lineEnd.z ) );
 				float divider = glm::determinant( glm::mat2x2( start.x - goal.x, start.z - goal.z, lineStart.x - lineEnd.x, lineStart.z - lineEnd.z  ) );
@@ -60,18 +61,39 @@ namespace Core
 				glm::vec3 hit = glm::vec3( intersectionX, 0.0f, intersectionZ );
 		
 				float alongLine = glm::dot( hit - lineStart, (lineEnd - lineStart) * current->corners[p].inverseLength );
+
+				// check vs. corner
+				glm::vec3 toSphere = glm::vec3( current->points[ii], 0.0f, current->points[ii+1] ) - start;
+				float squareLength = glm::dot( toSphere, toSphere );
+				float projectedDistanceToSphere = glm::dot( toSphere, glm::normalize( goal - start ) );
+
+				float t = std::numeric_limits<float>::max();
+
+				// ray is inside the sphere, ignore...
+				// sphere is behind the ray and ray is not inside it, ignore...
+				// the sphere is too far from the line, ignore...
+				if( !(squareLength < radius * radius || projectedDistanceToSphere < 0 || squareLength - projectedDistanceToSphere * projectedDistanceToSphere > radius * radius) ) 
+				{
+					float sphereIntersectionDelta = sqrt( radius * radius - (squareLength - projectedDistanceToSphere * projectedDistanceToSphere) );	
+					if( projectedDistanceToSphere - sphereIntersectionDelta < result.t || result.t < 0.0f )
+						t = projectedDistanceToSphere - sphereIntersectionDelta;
+				}
+
 				if( alongLine > 0 && alongLine < current->corners[p].length )
 				{
 					glm::vec3 hitPos = lineStart + alongLine * (lineEnd - lineStart) * current->corners[p].inverseLength;
-					float t = glm::distance( hitPos, start );
-
-					if( ( result.t > t ||  result.t < 0 ) && t > 0.01f && glm::dot( goal - start, hitPos - start ) > 0 && t < distanceToTarget - 0.01f )
-					{
-						result.node = nodeList[head];
-						result.edge = p;
-						result.t = t;
-					}
+					float line_t = glm::distance( hitPos, start );
+					if( line_t < t && glm::dot( goal - start, hitPos - start ) > 0 )
+						t = line_t;
 				}
+
+				if( ( t < result.t ||  result.t < 0 ) && t > 0.01f && t != std::numeric_limits<float>::max() )
+				{
+					result.node = nodeList[head];
+					result.edge = p;
+					result.t = t;
+				}
+
 			}
 
 			// has not intersected with any m_nodes yet, add more m_nodes to list
@@ -93,9 +115,12 @@ namespace Core
 			// done with current node, step to next...
 			head++;
 		}
+
+		if( result.t > distanceToTarget - 0.01f )
+			result.t = NO_LINE_COLLISION_VALUE;
 	}
 
-	bool PathFinder::CheckLineVsNavMesh( glm::vec3 from, glm::vec3 to )
+	bool PathFinder::CheckLineVsNavMesh( glm::vec3 from, glm::vec3 to, float cornerRadius )
 	{
 		Core::NavigationMesh* instance = Core::GetNavigationMesh();
 		if( !instance )
@@ -117,14 +142,14 @@ namespace Core
 			return false;
 
 		LineCheckReturnStruct result;
-		CheckLine( from, to, instance, startNode, result );
+		CheckLineWithCornerCheck( from, to, cornerRadius, instance, startNode, result );
 
 		if( result.t < NO_LINE_COLLISION )
 			return true;
 		return false;
 	}
 
-	bool PathFinder::CheckLineVsNavMesh( glm::vec3 from, glm::vec3 to, int startNode )
+	bool PathFinder::CheckLineVsNavMesh( glm::vec3 from, glm::vec3 to, float cornerRadius, int startNode )
 	{
 		Core::NavigationMesh* instance = Core::GetNavigationMesh();
 		if( !instance || startNode < 0 )
@@ -133,7 +158,7 @@ namespace Core
 		if( instance->CheckPointInsideNode( from, startNode ) )
 		{
 			LineCheckReturnStruct result;
-			CheckLine( from, to, instance, startNode, result );
+			CheckLineWithCornerCheck( from, to, cornerRadius, instance, startNode, result );
 			if( result.t < NO_LINE_COLLISION )
 				return true;
 		}

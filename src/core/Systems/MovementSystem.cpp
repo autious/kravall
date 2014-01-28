@@ -66,6 +66,12 @@ void Core::MovementSystem::InterpolateDirections(MovementComponent* mc, float de
 		mc->direction[1] = mc->newDirection[1];
 		mc->direction[2] = mc->newDirection[2];
 	}
+	if (mc->newDirection[0] == 0.0f && mc->newDirection[1] == 0.0f && mc->newDirection[2] == 0.0f)
+	{
+		mc->direction[0] = mc->newDirection[0];
+		mc->direction[1] = mc->newDirection[1];
+		mc->direction[2] = mc->newDirection[2];
+	}
 	else
 	{
 		glm::vec3 oldDir = glm::vec3(mc->direction[0], mc->direction[1], mc->direction[2]);

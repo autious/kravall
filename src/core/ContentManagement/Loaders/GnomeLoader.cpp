@@ -179,7 +179,7 @@ namespace Core
 
 		m_file.open(fileName, std::ios::in | std::ios::binary);
 		m_animationFile.open(GetFileNameAndPath(fileName,".") + ".bagnome", std::ios::in | std::ios::binary);
-        if (m_file)
+        if (m_file.good())
         {
             Core::GnomeLoader::Header header;
 			Core::GnomeLoader::AnimationHeader animationHeader;
