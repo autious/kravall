@@ -39,6 +39,39 @@ static void RegisterCLOPLogger()
     LogSystem::RegisterLogHandler( LogSystem::warningHandler, clopHandlerWarning );
 }
 
+static const char* levels[] = { "fatal", "error", "warning", "debug" };
+
+static void SetCLOPLevel( const char * level )
+{
+    LogSystem::DeregisterLogHandler( LogSystem::debugHandler, clopHandlerDebug );
+    LogSystem::DeregisterLogHandler( LogSystem::fatalHandler, clopHandlerFatal );
+    LogSystem::DeregisterLogHandler( LogSystem::errorHandler, clopHandlerError );
+    LogSystem::DeregisterLogHandler( LogSystem::warningHandler, clopHandlerWarning );
+
+    int l = 0;
+    for( ;l < 4; l++ )
+    {
+        if( strcmp( levels[l], level ) == 0 )
+        {
+            break;
+        }
+    }
+
+    switch( l )
+    {
+        default:
+        case 4:
+        case 3:
+            LogSystem::RegisterLogHandler( LogSystem::debugHandler, clopHandlerDebug );
+        case 2:
+            LogSystem::RegisterLogHandler( LogSystem::warningHandler, clopHandlerWarning );
+        case 1:
+            LogSystem::RegisterLogHandler( LogSystem::errorHandler, clopHandlerError );
+        case 0:
+            LogSystem::RegisterLogHandler( LogSystem::fatalHandler, clopHandlerFatal );
+    }
+}
+
 static void DeregisterCLOPLogger()
 {
     LogSystem::DeregisterLogHandler( LogSystem::debugHandler, clopHandlerDebug );
