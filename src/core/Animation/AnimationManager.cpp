@@ -10,11 +10,12 @@ namespace Core
 	void AnimationManager::PlayAnimation(const Entity& entity, const std::string& animationName)
 	{
 		Core::AnimationComponent* ac = WGETC<Core::AnimationComponent>(entity);
-		if (ac != nullptr)
+		Core::GraphicsComponent* gc = WGETC<Core::GraphicsComponent>(entity);
+		if (ac != nullptr && gc != nullptr)
 		{
-			int skeletonID = ac->skeletonID;
-			int animationID = GetAnimationID(skeletonID, animationName);
-			if (skeletonID < 0 || animationID < 0)
+			unsigned int meshID = GFX::GetBitmaskValue(gc->bitmask, GFX::BITMASK::MESH_ID);
+			int animationID = GetAnimationID(meshID, animationName);
+			if (animationID < 0)
 			{
 				LOG_WARNING << "Failed to play animation \'" << animationName << "\': Cannot find animation";
 			}
@@ -35,11 +36,12 @@ namespace Core
 	void AnimationManager::LoopAnimation(const Entity& entity, const std::string& animationName)
 	{
 		Core::AnimationComponent* ac = WGETC<Core::AnimationComponent>(entity);
-		if (ac != nullptr)
+		Core::GraphicsComponent* gc = WGETC<Core::GraphicsComponent>(entity);
+		if (ac != nullptr && gc != nullptr)
 		{
-			int skeletonID = ac->skeletonID;
-			int animationID = GetAnimationID(skeletonID, animationName);
-			if (skeletonID < 0 || skeletonID > (int)m_skeletons.size() || animationID < 0)
+			unsigned int meshID = GFX::GetBitmaskValue(gc->bitmask, GFX::BITMASK::MESH_ID);
+			int animationID = GetAnimationID(meshID, animationName);
+			if (animationID < 0)
 			{
 				LOG_WARNING << "Failed to loop animation \'" << animationName << "\': Cannot find animation";
 			}
@@ -70,10 +72,10 @@ namespace Core
 		}
 	}
 
-	int AnimationManager::GetAnimationID(int skeletonID, std::string animationName)
+	int AnimationManager::GetAnimationID(int meshID, std::string animationName)
 	{
-		if (m_skeletons[skeletonID].find(animationName) != m_skeletons[skeletonID].end())
-			return m_skeletons[skeletonID][animationName];
+		if (m_skeletons[meshID].find(animationName) != m_skeletons[meshID].end())
+			return m_skeletons[meshID][animationName];
 		else
 			return -1;
 	}

@@ -1,4 +1,5 @@
 #include "MeshManager.hpp"
+#include <gfx/GFXDefines.hpp>
 
 #include <iostream>
 namespace GFX
@@ -42,6 +43,29 @@ namespace GFX
 	
 	}
 
+	int MeshManager::BindSkeletonToMesh(const unsigned int& meshID, const int& skeletonID)
+	{
+		unsigned int index = FindMesh(meshID);
+
+		if (index != std::numeric_limits<decltype(index)>::max())
+		{
+			m_meshes[index].skeletonID = skeletonID;
+			return GFX_SUCCESS;
+		}
+		return GFX_FAIL;
+	}
+
+	int MeshManager::GetSkeletonID(const unsigned int& meshID)
+	{
+		unsigned int index = FindMesh(meshID);
+
+		if (index != std::numeric_limits<decltype(index)>::max())
+		{
+			return m_meshes[index].skeletonID;
+		}
+		return -1;
+	}
+
     void MeshManager::LoadMesh(unsigned int& meshID, const int& sizeVerts, const int& sizeIndices, GFX::Vertex* verts, int* indices)
 	{
 		Mesh mesh;
@@ -81,7 +105,7 @@ namespace GFX
 
 		//bone indices
 		glEnableVertexAttribArray(3);
-		glVertexAttribPointer(3, 4, GL_INT, GL_FALSE, sizeof(GFX::Vertex), (void*)(12 * sizeof(int)));
+		glVertexAttribIPointer(3, 4, GL_INT, sizeof(GFX::Vertex), (void*)(12 * sizeof(int)));
 		glVertexAttribDivisor(3, 0);
 
 		//bone weights
@@ -100,6 +124,7 @@ namespace GFX
 		mesh.VAO = VAO;
 		mesh.IBO = IBO;
 		mesh.indexCount = sizeIndices;
+		mesh.skeletonID = -1;
 		m_meshes.push_back(mesh);
 
 		meshID = mesh.id;

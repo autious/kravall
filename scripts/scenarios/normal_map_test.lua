@@ -13,7 +13,7 @@ asm:loadAssembly(
 	},
 	{
 		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry },
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/plane.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
@@ -39,7 +39,7 @@ asm:loadAssembly(
 	},
 	{
 		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry },
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/cube.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/normalsTest.material", false }
@@ -66,7 +66,7 @@ asm:loadAssembly(
 	},
 	{
 		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry },
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/cube.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/normalsTest.material", false }
@@ -93,7 +93,7 @@ asm:loadAssembly(
 	},
 	{
 		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry },
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/cube.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/normalsTest.material", false }
@@ -120,7 +120,7 @@ asm:loadAssembly(
 	},
 	{
 		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry },
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/cube.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/normalsTest.material", false }
@@ -201,9 +201,9 @@ asm:loadAssembly(
 		data =  { 
 					color = { 0.2, 0.7, 0.8 },
 					speccolor = { 0.2, 0.7, 0.8 },
-					intensity = 15.0,
+					intensity = 150.0,
 					spotangle = 3.14/3.0,
-					spotpenumbra = 0.5,
+					spotpenumbra = 0.1,
 					type = core.gfx.objectTypes.Light,
 					lighttype = core.gfx.lightTypes.Spot
 				}

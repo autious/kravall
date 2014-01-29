@@ -111,9 +111,9 @@ in float sMorale, in float sPressure, in float sRage, in int sType, in int sStat
 	//float pressureFactor;
 	//float rageFactor;
 
-	rMorale = moodCurve.moraleFactor * att * sMorale;
-	rPressure = moodCurve.pressureFactor * att * sPressure;
-	rRage = moodCure.rageFactor * att * sRage;
+	rMorale += moodCurve.moraleFactor * attenuation * sMorale;
+	rPressure += moodCurve.pressureFactor * attenuation * sPressure;
+	rRage += moodCurve.rageFactor * attenuation * sRage;
 }
 
 float GetAgentChargeAt(int unitType, float distSqr)
