@@ -104,7 +104,8 @@ void TestPathFinding()
 		//GFX::Debug::DrawLine( temp, temp2, GFXColor( 1, 1, 0, 1 ), false );
 	}
 
-
+	if( Core::GetNavigationMesh() )
+		Core::GetNavigationMesh()->CalculateFlowfieldForGroup( glm::vec3( 0,0,350 ), 1 );
 
 
 }
