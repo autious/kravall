@@ -59,7 +59,9 @@ for i = 0, 1023 do
                         speccolor = color,
                         intensity = 1.0,
                         type = core.gfx.objectTypes.Light,
-                        lighttype = core.gfx.lightTypes.Point
+                        lighttype = core.gfx.lightTypes.Point,
+						spotangle = 0,
+						spotpenumbra = 0
                     }
         },
         {

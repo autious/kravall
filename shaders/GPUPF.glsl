@@ -40,7 +40,6 @@ struct ChargeCurve
 struct DataIN
 {
 	vec4 position_unitType;
-	vec4 direction_speed;
 	vec4 newDirection_speed;
 	vec4 health_stamina_morale_stancealignment;
 	vec4 groupSquadID_defenseRage_mobilityPressure_empty;
@@ -63,49 +62,35 @@ layout (std430, binding = 1) restrict writeonly buffer OutputBuffer
 
 uniform uint gEntityCount;
 
-//vec4 curves[1][2];
 shared ChargeCurve curves[1][2];
 
 float GetAgentChargeAt(int unitType, float distSqr)
 {
-	//ChargeCurve curves[1][2];
-	//curves[0][0].ch_cu_re_dec = vec4(1.0f, 15.0f, 2.0f, 1.0f / (15.0f - 2.0f));
-	//curves[0][1].ch_cu_re_dec = vec4(-100.0f, 15.0f, 1.0f, -100.0f / (15.0f - 1.0f));
-
-	//if (distSqr > 0.001f && distSqr < curves[0][unitType].z)
-	//	return -100 + distSqr * (curves[0][unitType].z / 100);
-	//else if (distSqr <= curves[0][unitType].y)
-	//	return curves[0][unitType].x - distSqr * curves[0][unitType].w;
-	//ChargeCurve c = curves[0][unitType];
-	//
-	//if(distSqr <= c.ch_cu_re_dec.y)
-	//{
-	//	if (distSqr > 0.001f && distSqr < c.ch_cu_re_dec.z)
-	//		return (-MINIMUM_CHARGE + distSqr * (c.ch_cu_re_dec.z / MINIMUM_CHARGE));
-	//
-	//	return (c.ch_cu_re_dec.x - distSqr * c.ch_cu_re_dec.w);
-	//}
-
-
-	//if (distSqr > 0.001f && distSqr < c.ch_cu_re_dec.z)
-	//	return -100 + distSqr * (c.ch_cu_re_dec.z / 100);
-	//else if (distSqr <= c.ch_cu_re_dec.y)
-	//	return c.ch_cu_re_dec.x - distSqr * c.ch_cu_re_dec.w;
-
-	//if (distSqr > 0.001f && distSqr < curves[0][unitType].ch_cu_re_dec.z)
-	//	return -100 + distSqr * (curves[0][unitType].ch_cu_re_dec.z / 100);
-	//else if (distSqr <= curves[0][unitType].ch_cu_re_dec.y)
-	//	return curves[0][unitType].ch_cu_re_dec.x - distSqr * curves[0][unitType].ch_cu_re_dec.w;
 	ChargeCurve c = curves[0][unitType];
 	
-	return float(distSqr < c.ch_cu_re_dec.z) * (-100 + distSqr * (c.ch_cu_re_dec.z / 100)) + 
+	return float(distSqr > 0.001f && distSqr < c.ch_cu_re_dec.z) * (-MINIMUM_CHARGE + distSqr * (c.ch_cu_re_dec.z / MINIMUM_CHARGE)) + 
 	float(distSqr <= c.ch_cu_re_dec.y) * ( c.ch_cu_re_dec.x - distSqr * c.ch_cu_re_dec.w);
-	
-	
-	
-	//return 0.0f;
 }
 
+uint wang_hash(uint seed)
+{
+    seed = (seed ^ 61) ^ (seed >> 16);
+    seed *= 9;
+    seed = seed ^ (seed >> 4);
+    seed *= 0x27d4eb2d;
+    seed = seed ^ (seed >> 15);
+    return seed;
+}
+
+// Xorshift algorithm from George Marsaglia's paper
+float rand( uint seed )
+{
+	uint rng_state = seed;
+    rng_state ^= (rng_state << 13);
+    rng_state ^= (rng_state >> 17);
+    rng_state ^= (rng_state << 5);
+    return float( rng_state ) * (1.0 / 4294967296.0);
+}
 
 
 float GetEffectOnAgentAt(vec2 queryPosition, int groupID)
@@ -149,8 +134,8 @@ void main()
 {
 	if (gl_LocalInvocationIndex == 0)
 	{
-		curves[0][0].ch_cu_re_dec = vec4(0.0f, 5.0f, 1.0f, 0.0f / (5.0f));
-		curves[0][1].ch_cu_re_dec = vec4(-5000.0f, 25.0f, 1.0f, -5000.0f / (25.0f));
+		curves[0][0].ch_cu_re_dec = vec4(0.0f, 2.0f, 1.0f, 0.0f / (2.0f));
+		curves[0][1].ch_cu_re_dec = vec4(-5000.0f, 15.0f, 1.0f, -5000.0f / (15.0f));
 	}
 	
 	barrier();
@@ -164,55 +149,33 @@ void main()
 		
 		if (index > gEntityCount)
 			break;
-	
-		//gOutput[index].newDirection_speed = gInput[index].newDirection_speed;
-		//gOutput[index].goal_maxSpeed = gInput[index].goal_maxSpeed;
+
+		gOutput[index].newDirection_speed = gInput[index].newDirection_speed;
 
 		if (int(gInput[index].position_unitType.w) == RIOTER_TYPE)
 		{
 			vec2 bestIndex = vec2(0.0f, 0.0f);
 
 			vec3 offsetPos = vec3(
-			gInput[index].position_unitType.x + gInput[index].newDirection_speed.x / 2.0f,
-			gInput[index].position_unitType.y + gInput[index].newDirection_speed.y / 2.0f, 
-			gInput[index].position_unitType.z + gInput[index].newDirection_speed.z / 2.0f);
+			gInput[index].position_unitType.x + 0 * gInput[index].newDirection_speed.x / 2.0f,
+			gInput[index].position_unitType.y + 0 * gInput[index].newDirection_speed.y / 2.0f, 
+			gInput[index].position_unitType.z + 0 * gInput[index].newDirection_speed.z / 2.0f);
 		
 			float highestSum = GetEffectOnAgentAt(vec2(offsetPos.x, offsetPos.z), int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
 			float staySum = highestSum;
 
-			
-
-			/*
-			for(int i = -1; i < 2; ++i)
-			{
-				for(int j = -1; j < 2; ++j)
-				{
-					if(i == 0 && j == 0)
-						continue;
-			
-					float chargeSum = GetEffectOnAgentAt(vec2(gInput[index].position_unitType.x + i, gInput[index].position_unitType.z + j),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
-					
-					if(chargeSum > highestSum)
-					{
-						highestSum = chargeSum;
-						bestIndex.x = i;
-						bestIndex.y = j;
-					}
-				}
-			}
-			*/
-			
 			CalculatedCharge chargeSums[8];
-			
+
+			float chargeSum = 0;
+
 			// ---------------------------------------- -1, 0 ----------------------------------------
-			float chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x - 1, offsetPos.z + 0),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
-			
+			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x - 1, offsetPos.z + 0),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
 			chargeSums[0].x = -1;
 			chargeSums[0].y = 0;
 			chargeSums[0].chargeSum = chargeSum;
-			
+
 			// ---------------------------------------- 1, 0 ----------------------------------------
-			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 1, offsetPos.z + 0),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
+			 chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 1, offsetPos.z + 0),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
 			chargeSums[1].x = 1;
 			chargeSums[1].y = 0;
 			chargeSums[1].chargeSum = chargeSum;
@@ -252,7 +215,8 @@ void main()
 			chargeSums[7].x = 1;
 			chargeSums[7].y = 1;
 			chargeSums[7].chargeSum = chargeSum;
-			
+
+			bool set = false;
 			for (int i = 0; i < 8; i++)
 			{
 				if (chargeSums[i].chargeSum > highestSum)
@@ -261,9 +225,13 @@ void main()
 					bestIndex.x = chargeSums[i].x;
 					bestIndex.y = chargeSums[i].y;
 				}
+				//else if (chargeSums[i].chargeSum == highestSum)
+				//{
+				//	highestSum = chargeSums[i].chargeSum;
+				//	bestIndex.x = mix(bestIndex.x, chargeSums[i].x, rand(wang_hash(uint(offsetPos.x))) - 0.5f);
+				//	bestIndex.y = mix(bestIndex.y, chargeSums[i].y, rand(wang_hash(uint(offsetPos.z))) - 0.5f);
+				//}
 			}
-
-			//barrier();
 
 			vec3 pfVector = vec3(0.0f);
 			
@@ -271,7 +239,7 @@ void main()
 			{
 				pfVector = vec3( bestIndex.x, 0, bestIndex.y );
 
-				if (length(pfVector) > 0.0f)
+				if (length(pfVector) > 0.1f)
 					pfVector = normalize(pfVector);
 			}
 			
@@ -289,7 +257,6 @@ void main()
 			FFDirection.y * FF_FACTOR + pfVector.y * PF_FACTOR,
 			FFDirection.z * FF_FACTOR + pfVector.z * PF_FACTOR);
 			
-			//barrier();
 			if (length(newDir) > 0.1f)
 				newDir = normalize(newDir);
 

@@ -40,7 +40,7 @@ return function(asm, posX, posY, posZ, group)
 			},
 			{
 				type = core.componentType.BoundingVolumeComponent,
-				data = { sphereOffset = { 0, 0, 0 }, sphereRadius = 0.7, 
+				data = { sphereOffset = { 0, 0, 0 }, sphereRadius = 0.3, 
 						collisionModel = core.BoundingVolumeCollisionModel.DynamicResolution, 
 						type = core.BoundingVolumeType.SphereBoundingType }
 			},
