@@ -35,7 +35,7 @@ function GUIComponent:new(o)
                     o.onPress() 
                     o.press = true
                 end
-            elseif action == core.input.action.Release then
+            elseif action == core.input.action.Release and o.inside == true then
                 o.onRelease()         
                 o.press = false
             end 

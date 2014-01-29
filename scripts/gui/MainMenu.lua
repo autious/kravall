@@ -6,8 +6,8 @@ MainMenu = {}
 function MainMenu:new(o)
     o = o or {}
 
-    o.gui = GUI:new()  
-   -- o.gui:addComponent(Button:new({x=100,y=100}))
+    o.gui = GUI:new()
+    o.gui:addComponent(Button:new({x=100,y=100}))
 
     setmetatable( o, self )
     self.__index = self
