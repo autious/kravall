@@ -47,7 +47,7 @@ namespace Core
 		{
 			glUseProgram(m_shaderID);
 
-			if (!m_readBack)
+			//if (!m_readBack)
 			{
 				//Set data in shader
 				glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_inDataBuffer);
