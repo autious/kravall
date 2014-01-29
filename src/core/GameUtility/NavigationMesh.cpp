@@ -37,7 +37,7 @@ namespace Core
         }
 
         flowfields[nrUsedFlowfields].edges = Core::world.m_levelHeap.NewPODArray<int>( nrNodes );
-		flowfields[nrUsedFlowfields].list = static_cast<glm::vec3*>(Core::world.m_levelHeap.NewPODArray<float>( 3 * nrNodes ));
+		flowfields[nrUsedFlowfields].list = reinterpret_cast<glm::vec3*>(Core::world.m_levelHeap.NewPODArray<float>( 3 * nrNodes ));
 
 
 		std::memset( flowfields[nrUsedFlowfields].edges, 0, nrNodes * sizeof(int) );
