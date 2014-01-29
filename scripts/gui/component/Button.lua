@@ -22,6 +22,8 @@ function Button:new(o)
     o.width = o.pressedImg.width
     o.height = o.pressedImg.height
 
+    o.onClick = o.onClick or function() print "click" end
+
     o.GUIComponent = GUIComponent:new
                                         {
                                             x=o.x,
@@ -45,6 +47,8 @@ function Button:onPress()
     self.pressedImg.ent:set( core.componentType.GraphicsComponent, { render = true }, true )
     self.releasedImg.ent:set( core.componentType.GraphicsComponent, { render = false }, true )
     self.hoverImg.ent:set( core.componentType.GraphicsComponent, { render = false }, true )
+
+    self.onClick() 
 end
 
 function Button:onRelease()
