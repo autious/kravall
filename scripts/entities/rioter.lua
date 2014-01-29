@@ -1,5 +1,5 @@
 return function(asm, posX, posY, posZ, group)
-	asm:loadAssembly( 
+	return asm:loadAssembly( 
 		{
 			{
 				type = core.componentType.GraphicsComponent,
