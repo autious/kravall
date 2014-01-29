@@ -23,6 +23,15 @@ namespace Core
         return ent;
     }
 
+    LuaAspect* LuaUNewAspect( lua_State * L )
+    {
+        LuaAspect* asp = (LuaAspect*)lua_newuserdata(L, sizeof(LuaAspect));
+        luaL_getmetatable(L, ASPECT_META_TYPE);
+        lua_setmetatable(L, -2);
+
+        return asp;
+    }
+
     uint64_t* LuaUNewBitmask( lua_State * L )
     {
         uint64_t * data = (uint64_t*)lua_newuserdata( L, sizeof( uint64_t ));
