@@ -15,6 +15,8 @@
 #include "TextRenderer/TextPainter.hpp"
 #include "SplashRenderer/SplashPainter.hpp"
 #include "FBORenderer/FBOPainter.hpp"
+#include "PostProcessing/PostProcessingPainter.hpp"
+#include "GlobalIlluminationRenderer/GIPainter.hpp"
 
 #include "TextRenderer/TextManager.hpp"
 #include "DebugRenderer/DebugManager.hpp"
@@ -120,6 +122,12 @@ namespace GFX
 
 		void AddRenderJob(GFXBitmask bitmask, void* value);
 
+		void SetLUT(std::string LUT);
+		void ReloadLUT();
+
+		void SetExposure(float exposure);
+		void SetGamma(float gamma);
+
 		void DeleteMesh(unsigned long long id);
 		void LoadMesh(unsigned int& meshID, int& sizeVerts, int& sizeIndices, GFX::Vertex* verts, int* indices);
 
@@ -166,6 +174,8 @@ namespace GFX
 		*/
 		void ResizeGBuffer();
 
+		void LoadGPUPF();
+
 
 		int m_windowWidth;
 		int m_windowHeight;
@@ -197,7 +207,9 @@ namespace GFX
 		SplashPainter* m_splashPainter;
 		FBOPainter* m_fboPainter;
         OverlayPainter* m_overlayPainter;
-		
+		PostProcessingPainter* m_postProcessingPainter;
+		GIPainter* m_GIPainter;
+
 		void SubSystemTimeRender();
         std::vector<std::pair<const char*, std::chrono::microseconds>> m_subsystemTimes;
 		unsigned long long m_lastUpdateTime;
@@ -214,6 +226,13 @@ namespace GFX
         glm::mat4 m_overlayProjMatrix;
 
 		bool m_playSplash;
+
+		float m_gamma;
+		float m_exposure;
+		glm::vec3 m_whitePoint;
+
+		GLuint m_toneMappedTexture;
+		std::string m_currentLUT;
 
 		unsigned int m_animationFramerate;
 

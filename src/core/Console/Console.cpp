@@ -29,6 +29,47 @@ namespace Core
 	{
 		clop::Command("lua toggleLightVolumes()");
 	}
+
+	void ClopSetLUT(clop::ArgList args)
+	{
+		if (args.size() == 2)
+		{
+			std::string t = (std::string)args[1];
+			
+			size_t startpos = t.find_first_not_of(" \t");
+			if (std::string::npos != startpos)
+			{
+				t = t.substr(startpos);
+			}
+
+			if (t == "reload")
+				GFX::Content::ReloadLUT();
+			else
+				GFX::ColorSettings::SetLUT(t.c_str());
+		}
+	}
+
+	void ClopSetExposure(clop::ArgList args)
+	{
+		if (args.size() == 2)
+		{
+			float t = (double)args[1];
+			
+			if (t > 0)
+				GFX::ColorSettings::SetExposure(t);
+		}
+	}
+
+	void ClopSetGamma(clop::ArgList args)
+	{
+		if (args.size() == 2)
+		{
+			float t = (double)args[1];
+
+			if (t > 0)
+				GFX::Settings::SetGamma(t);
+		}
+	}
 	
 	void ClopShowFBO(clop::ArgList args)
 	{
@@ -97,6 +138,9 @@ namespace Core
 		clop::Register("sysinfo",	ClopShowSys);
 		clop::Register("lights",	ClopShowDebugLightVolumes);
 		clop::Register("fbo",		ClopShowFBO);
+		clop::Register("lut", ClopSetLUT);
+		clop::Register("exposure", ClopSetExposure);
+		clop::Register("gamma", ClopSetGamma);
 		
 		Line line = {"Welcome to the console, have a nice day.", Colors::Gold};
 		m_console.push_back(line);

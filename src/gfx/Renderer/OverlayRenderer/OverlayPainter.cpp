@@ -118,5 +118,7 @@ namespace GFX
 		}
 
 		m_shaderManager->ResetProgram();
+		glEnable(GL_DEPTH_TEST);
+		glDisable(GL_BLEND);
     }
 }

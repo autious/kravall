@@ -6,6 +6,7 @@ uniform sampler2D gSpecular;
 uniform sampler2D gGlow;
 
 uniform float gMaterialID;
+uniform float gGamma;
 
 in vec4 posFS;
 in vec4 posW;
@@ -27,15 +28,24 @@ void main()
 	vec3 normal = normalize(normalFS.xyz);
 
 	tangent = normalize(tangent - dot(tangent, normal) * normal);
-	vec3 bitangent = cross(tangent, normal);
+	vec3 bitangent = -cross(tangent, normal);
 	
 	vec3 finalNormal;
 	mat3 TBN = mat3(tangent, bitangent, normal);
 	finalNormal = TBN * sampledNormal;
 	finalNormal = normalize(finalNormal);
 
-	gNormalDepthRT = vec4(finalNormal, posFS.z / posFS.w);
-	gDiffuseRT =  texture2D(diffuseMap, uvFS);
-	gSpecularRT = texture2D(gSpecular);
-	gGlowMatRT = vec4(texture2D(gGlow, uvFS), gMaterialID);
+	vec4 diffuse = texture2D(gDiffuse, uvFS);
+	diffuse.xyz = pow(diffuse.xyz, vec3(gGamma));
+
+	vec4 spec = texture2D(gSpecular, uvFS);
+	spec.xyz = pow(spec.xyz, vec3(gGamma));
+
+	vec4 glow = texture2D(gGlow, uvFS);
+	glow.xyz = pow(glow.xyz, vec3(gGamma));
+
+	gNormalDepthRT = vec4(finalNormal, posFS.z / posFS.w);//vec4(finalNormal, );
+	gDiffuseRT	=  diffuse;
+	gSpecularRT = spec;
+	gGlowMatRT = vec4(glow.xyz, gMaterialID);
 }

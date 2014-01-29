@@ -13,7 +13,7 @@ namespace Core
 
     void AnimationSystem::Update(float delta)
     {
-		unsigned int animationFramerate = GFX::Content::GetAnimationFramerate();
+		unsigned int animationFramerate = GFX::Settings::GetAnimationFramerate();
 
         for(std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); ++it)
         {

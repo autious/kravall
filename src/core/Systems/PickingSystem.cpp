@@ -29,6 +29,9 @@ void Core::PickingSystem::Update( float delta )
 	{
 		glm::vec3 groundHit = GetGroundHit(x,y);
 
+		std::cout << groundHit.x << std::endl;
+		std::cout << groundHit.z << std::endl;
+
 		Core::UnitTypeComponent* utc = WGETC<Core::UnitTypeComponent>(lastEntity);
 
 		if (utc->type == Core::UnitType::Police)

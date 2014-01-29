@@ -26,7 +26,6 @@ namespace Core
 			speed = 0.0f;
 			currentFrame = 0;
 		}
-
 		inline static const char * GetName()
 		{
 			return "AnimationComponent";

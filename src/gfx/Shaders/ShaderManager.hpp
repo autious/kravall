@@ -101,6 +101,8 @@ namespace GFX
 		GLint GetUniformLocation(std::string shaderProgramKey, std::string uniformName);
 		GLint GetUniformLocation(GLuint shaderProgramID, std::string uniformName);
 
+		GLint GetUniformLocation(GLint programKey, std::string uniformName);
+
 		GLint GetUniformBlockLocation(std::string shaderProgramKey, std::string uniformBlockName);
 
 		void SetUniform(GLuint x, GLuint uniformLocation);

@@ -189,18 +189,6 @@ namespace GFX
 		DLL_API int GetAnimationFrameCount(const unsigned int& skeletonID, const unsigned int& animationID, unsigned int& out_frameCount);
 		
 		/*!
-		Gets the animation play framerate.
-		\return Returns animation play framerate
-		*/
-		DLL_API unsigned int GetAnimationFramerate();
-
-		/*!
-		Sets the animation play framerate.
-		\param framerate The target framerate for animations (clamped between 12 and 48 fps)
-		*/
-		DLL_API void SetAnimationFramerate(unsigned int framerate);
-
-		/*!
 		Deletes a mesh
 		\param meshID The id of the mesh to delete
 		*/
@@ -249,7 +237,7 @@ namespace GFX
 		*/
 		DLL_API int AttachShaderToMaterial(const unsigned long long int& materialID, const unsigned int& shaderID);
 
-
+		DLL_API void ReloadLUT();
 	}
 
 	namespace Debug
@@ -457,7 +445,45 @@ namespace GFX
 		*/
 		DLL_API void SetDoF(bool enabled);
 
+		/*!
+		Sets gamma
+		\param gamma
+		*/
+		DLL_API void SetGamma(float gamma);
+
+
+
+		/*!
+		Gets the animation play framerate.
+		\return Returns animation play framerate
+		*/
+		DLL_API unsigned int GetAnimationFramerate();
+
+		/*!
+		Sets the animation play framerate.
+		\param framerate The target framerate for animations (clamped between 12 and 48 fps)
+		*/
+		DLL_API void SetAnimationFramerate(unsigned int framerate);
+
+
 	} // namespace Settings
+
+	namespace ColorSettings
+	{
+		/*!
+		Sets the white point which means a pixel should be full-brighted
+		\param whitePoint
+		*/
+		DLL_API void SetWhitePoint(GFXVec3 whitePoint);
+
+		/*!
+		Sets exposure
+		\param exposure
+		*/
+		DLL_API void SetExposure(float exposure);
+
+		DLL_API void SetLUT(const char* LUT);
+	}
 
 } // namespace GFX
 
