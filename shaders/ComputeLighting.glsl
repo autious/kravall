@@ -380,7 +380,7 @@ void main()
 		}
 
 		//Add occlusion
-		color.xyz *= sumOcclusion;
+		//color.xyz *= sumOcclusion;
 
 		//Tone map
 		color.xyz = Uncharted2Tonemap(color.xyz * gExposure) / Uncharted2Tonemap(gWhitePoint);

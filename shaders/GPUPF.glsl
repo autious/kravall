@@ -130,7 +130,7 @@ float GetEffectOnAgentAt(vec2 queryPosition, int groupID)
 			matchID = int(gInput[i].groupSquadID_defenseRage_mobilityPressure_empty.x);
 		}
 	
-		if (distSqr >= curves[0][0].ch_cu_re_dec.z && (matchID != groupID && gInput[i].position_unitType.w == RIOTER_TYPE) )
+		if (distSqr >= curves[0][0].ch_cu_re_dec.z && (gInput[i].position_unitType.w == RIOTER_TYPE && matchID != groupID) )
 			continue;
 	
 		currentSum = GetAgentChargeAt(int(gInput[i].position_unitType.w), distSqr);
@@ -150,7 +150,7 @@ void main()
 	if (gl_LocalInvocationIndex == 0)
 	{
 		curves[0][0].ch_cu_re_dec = vec4(0.0f, 5.0f, 1.0f, 0.0f / (5.0f));
-		curves[0][1].ch_cu_re_dec = vec4(-5000.0f, 15.0f, 1.0f, -5000.0f / (15.0f));
+		curves[0][1].ch_cu_re_dec = vec4(-5000.0f, 25.0f, 1.0f, -5000.0f / (25.0f));
 	}
 	
 	barrier();
@@ -171,9 +171,16 @@ void main()
 		if (int(gInput[index].position_unitType.w) == RIOTER_TYPE)
 		{
 			vec2 bestIndex = vec2(0.0f, 0.0f);
+
+			vec3 offsetPos = vec3(
+			gInput[index].position_unitType.x + gInput[index].newDirection_speed.x / 2.0f,
+			gInput[index].position_unitType.y + gInput[index].newDirection_speed.y / 2.0f, 
+			gInput[index].position_unitType.z + gInput[index].newDirection_speed.z / 2.0f);
 		
-			float highestSum = GetEffectOnAgentAt(vec2(gInput[index].position_unitType.x, gInput[index].position_unitType.z), int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
+			float highestSum = GetEffectOnAgentAt(vec2(offsetPos.x, offsetPos.z), int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
 			float staySum = highestSum;
+
+			
 
 			/*
 			for(int i = -1; i < 2; ++i)
@@ -198,50 +205,50 @@ void main()
 			CalculatedCharge chargeSums[8];
 			
 			// ---------------------------------------- -1, 0 ----------------------------------------
-			float chargeSum = GetEffectOnAgentAt(vec2(gInput[index].position_unitType.x - 1, gInput[index].position_unitType.z + 0),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
+			float chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x - 1, offsetPos.z + 0),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
 			
 			chargeSums[0].x = -1;
 			chargeSums[0].y = 0;
 			chargeSums[0].chargeSum = chargeSum;
 			
 			// ---------------------------------------- 1, 0 ----------------------------------------
-			chargeSum = GetEffectOnAgentAt(vec2(gInput[index].position_unitType.x + 1, gInput[index].position_unitType.z + 0),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
+			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 1, offsetPos.z + 0),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
 			chargeSums[1].x = 1;
 			chargeSums[1].y = 0;
 			chargeSums[1].chargeSum = chargeSum;
 			
 			// ---------------------------------------- 0, -1 ----------------------------------------
-			chargeSum = GetEffectOnAgentAt(vec2(gInput[index].position_unitType.x + 0, gInput[index].position_unitType.z - 1),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
+			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 0, offsetPos.z - 1),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
 			chargeSums[2].x = 0;
 			chargeSums[2].y = -1;
 			chargeSums[2].chargeSum = chargeSum;
 			
 			// ---------------------------------------- 0, 1 ----------------------------------------
-			chargeSum = GetEffectOnAgentAt(vec2(gInput[index].position_unitType.x + 0, gInput[index].position_unitType.z + 1),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
+			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 0, offsetPos.z + 1),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
 			chargeSums[3].x = 0;
 			chargeSums[3].y = 1;
 			chargeSums[3].chargeSum = chargeSum;
 			
 			// ---------------------------------------- -1, -1 ----------------------------------------
-			chargeSum = GetEffectOnAgentAt(vec2(gInput[index].position_unitType.x - 1, gInput[index].position_unitType.z - 1),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
+			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x - 1, offsetPos.z - 1),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
 			chargeSums[4].x = -1;
 			chargeSums[4].y = -1;
 			chargeSums[4].chargeSum = chargeSum;
 			
 			// ---------------------------------------- 1, -1 ----------------------------------------
-			chargeSum = GetEffectOnAgentAt(vec2(gInput[index].position_unitType.x + 1, gInput[index].position_unitType.z - 1),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
+			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 1, offsetPos.z - 1),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
 			chargeSums[5].x = 1;
 			chargeSums[5].y = -1;
 			chargeSums[5].chargeSum = chargeSum;
 			
 			// ---------------------------------------- -1, 1 ----------------------------------------
-			chargeSum = GetEffectOnAgentAt(vec2(gInput[index].position_unitType.x - 1, gInput[index].position_unitType.z + 1),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
+			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x - 1, offsetPos.z + 1),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
 			chargeSums[6].x = -1;
 			chargeSums[6].y = 1;
 			chargeSums[6].chargeSum = chargeSum;
 			
 			// ---------------------------------------- 1, 1 ----------------------------------------
-			chargeSum = GetEffectOnAgentAt(vec2(gInput[index].position_unitType.x + 1, gInput[index].position_unitType.z + 1),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
+			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 1, offsetPos.z + 1),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
 			chargeSums[7].x = 1;
 			chargeSums[7].y = 1;
 			chargeSums[7].chargeSum = chargeSum;
@@ -283,7 +290,7 @@ void main()
 			FFDirection.z * FF_FACTOR + pfVector.z * PF_FACTOR);
 			
 			//barrier();
-			if (length(newDir) > 0)
+			if (length(newDir) > 0.1f)
 				newDir = normalize(newDir);
 
 			gOutput[index].newDirection_speed = vec4(newDir, gInput[index].newDirection_speed.w);
