@@ -28,7 +28,6 @@ end
 function core.init() 
     print( "Program starting in lua" )
     logo = image( 10,10, "assets/material/ui/test.material", false )
-    toggleMenu()
     --openscenario( "test" )    
 end
 

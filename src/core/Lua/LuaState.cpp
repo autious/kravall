@@ -31,6 +31,7 @@
 #include <Lua/Bridges/LuaNameSystemBridge.hpp>
 #include <Lua/Bridges/LuaAreaSystemBridge.hpp>
 #include <Lua/Bridges/LuaDrawBridge.hpp>
+#include <Lua/Bridges/LuaPickingBridge.hpp>
 
 namespace Core
 {
@@ -54,7 +55,8 @@ namespace Core
 		llhb(L),
         lnsb(L),
         lasb(L),
-        ldb(L)
+        ldb(L),
+        lpib(L)
         {}
             
         LuaBitmask lb;
@@ -75,6 +77,7 @@ namespace Core
 		LuaLevelHeapBridge llhb;
         LuaAreaSystemBridge lasb;
         LuaDrawBridge ldb;
+        LuaPickingBridge lpib;
     };
 }
 
@@ -217,10 +220,23 @@ int Core::LuaState::DoBlock( const char * block, int args, int rargs )
 
 bool Core::LuaState::Init( )
 {
+
+    lua_getglobal( m_state, "errorHandler" );
+    int error;
+    int errorHandler = lua_gettop( m_state );
+
     lua_getglobal( m_state, "core" );
     lua_getfield( m_state, -1, "init" );
 
-    int error = lua_pcall( m_state, 0,0,0 );
+
+    if( lua_isfunction( m_state, errorHandler ) )
+    {
+         error = lua_pcall( m_state, 0,0, errorHandler );
+    }
+    else
+    {
+         error = lua_pcall( m_state, 0,0,0 );
+    }
 
     if( error )
     {
@@ -228,7 +244,7 @@ bool Core::LuaState::Init( )
         lua_pop( m_state, 1 );
     }
 
-    lua_pop( m_state, 1 );
+    lua_pop( m_state, 2 );
 
     return error == 0;
 }

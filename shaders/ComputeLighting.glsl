@@ -128,8 +128,8 @@ vec4 CalculatePointlight( LightData light, SurfaceData surface, vec3 wPos, vec3 
 	
 	// Calculate attenuation
 	float dist = length( lightDir );
-	//float att = (pow(clamp( 1 - pow(dist / light.radius_length, 4.0f), 0.0f, 1.0f), 2.0f)) / (pow(dist, 2.0f) + 1);// More attenuations to chose from at the bottom of this file
-	float att = 1.0f / dist - 1.0f / light.radius_length;
+	float att = (pow(clamp( 1 - pow(dist / light.radius_length, 4.0f), 0.0f, 1.0f), 2.0f)) / (pow(dist, 2.0f) + 1);// More attenuations to chose from at the bottom of this file
+	//float att = 1.0f / dist - 1.0f / light.radius_length;
 
 	vec3 eyeDir = normalize(eyePosition - wPos);
 	return vec4(BlinnPhong(light, surface, eyeDir, lightDir, att, occlusion), 0.0f);
@@ -382,7 +382,7 @@ void main()
 		}
 
 		//Add occlusion
-		color.xyz *= sumOcclusion;
+		//color.xyz *= sumOcclusion;
 
 		//Tone map
 		color.xyz = Uncharted2Tonemap(color.xyz * gExposure) / Uncharted2Tonemap(gWhitePoint);

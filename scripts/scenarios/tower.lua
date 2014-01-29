@@ -71,7 +71,7 @@ asm:loadAssembly(
 		data =  { 
 					color = { 1, 1, 1 },
 					speccolor = { 1, 1, 1 },
-					intensity = 100000.0,
+					intensity = 100.0,
 					spotangle = 3.14/4.0,
 					spotpenumbra = 0.03,
 					type = core.gfx.objectTypes.Light,
