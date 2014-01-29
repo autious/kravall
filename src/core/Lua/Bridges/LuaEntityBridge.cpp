@@ -1,6 +1,7 @@
 #include "LuaEntityBridge.hpp"
 
 #include <logger/Logger.hpp>
+#include <World.hpp>
 
 #include <Lua/Bridges/ComponentBind/WorldPositionComponentBinding.hpp>
 #include <Lua/Bridges/ComponentBind/GraphicsComponentBinding.hpp>
@@ -17,6 +18,9 @@
 #include <Lua/Bridges/ComponentBind/AnimationComponentBinding.hpp>
 
 #include <cassert>
+
+#include <Lua/LuaUtility.hpp>
+#include <Lua/LuaMetatableTypes.hpp>
 
 namespace Core
 {
@@ -99,6 +103,23 @@ extern "C"
     {
         return entityBridge.ComponentTypeToString( L ); 
     }
+
+    static int LuaGenerateAspect( lua_State * L )
+    {
+        Core::Aspect asp = 0ULL;
+        LuaAspect* luaAsp = Core::LuaUNewAspect(L);
+
+        int params = lua_gettop(L);
+        
+        for(int i=1; i <= params; ++i)
+        {
+            asp |= Core::EntityHandler::GenerateAspect( luau_checkcomponent(L, i));
+        }
+
+        luaAsp->aspect = asp;
+
+        return 1;
+    }
 }
 
 Core::LuaEntityBridge::LuaEntityBridge( lua_State * L  )
@@ -131,6 +152,7 @@ Core::LuaEntityBridge::LuaEntityBridge( lua_State * L  )
             
             luau_setfunction( L, "isValid", LuaEntityIsValid );
             luau_setfunction( L, "isSameEntity", LuaEntityIsSameEntity );
+            luau_setfunction( L, "generateAspect", LuaGenerateAspect );
         lua_settable( L, -3 );
 
         if( luaL_newmetatable( L, ENTITY_META_TYPE ) == 0 )

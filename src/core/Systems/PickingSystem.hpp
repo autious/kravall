@@ -24,9 +24,9 @@ namespace Core
 			Will check a ray from the game camera via cursor to far-plane vs. eligable enteties.
 			The recorded hit will be the closest from origin.
 			Will also set the entity as selected and gettable via the GetLastHitEntity() function.
-			If no hit entity max is returned.
+			If no entity is hit INVALID_ENTITY is returned.
 		*/
-		Entity GetHitEntity(int mouseX, int mouseY, char entityTypeMask = -1);
+		Entity GetHitEntity(int mouseX, int mouseY, Core::Aspect aspectMask = Core::EntityHandler::GenerateAspect());
 
 		/*!
 			Will check a ray from the game camera via cursor to far-plane vs. the XZ plane.
@@ -45,23 +45,17 @@ namespace Core
 		glm::vec3 GetRayFromCamera( int mouseX, int mouseY );
 
 		/*!
-			Returns the selected entity, if any. Otherwise, entity max is returned.
+			Returns the selected entity, if any. Otherwise INVALID_ENTITY is returned.
 		*/
-		Entity GetLastHitEntity();
+		inline Entity GetLastHitEntity()
+        {
+            return m_lastSelectedEntity;
+        }
 
 	private:
-		enum Priority
-		{
-			Rioter = 0,
-			Police = 1
-		};
 
 		Entity m_lastSelectedEntity;
 		glm::vec3 m_currentGroundHit;
-
-		char m_entityTypeMask;
-
-		char GetEntityMask(UnitType type);
     };
 }
 
