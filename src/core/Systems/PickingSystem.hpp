@@ -26,7 +26,7 @@ namespace Core
 			Will also set the entity as selected and gettable via the GetLastHitEntity() function.
 			If no entity is hit INVALID_ENTITY is returned.
 		*/
-		Entity GetHitEntity(int mouseX, int mouseY, Core::Aspect aspectMask = Core::EntityHandler::GenerateAspect());
+		Entity GetHitEntity(int mouseX, int mouseY, Core::Aspect aspectMask = 0ULL);
 
 		/*!
 			Will check a ray from the game camera via cursor to far-plane vs. the XZ plane.
