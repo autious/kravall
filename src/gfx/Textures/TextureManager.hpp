@@ -5,6 +5,7 @@
 #include <GL/glew.h>
 #include <vector>
 #include <limits>
+#include <string> 
 
 #include "stb_image.cpp"
 #include "TextureData.hpp"
