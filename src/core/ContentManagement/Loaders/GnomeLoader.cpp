@@ -5,6 +5,7 @@
 #include <fstream>
 #include <gfx/GFXInterface.hpp>
 #include <logger/Logger.hpp>
+#include <Animation/AnimationManager.hpp>
 
 namespace Core
 {
@@ -34,7 +35,8 @@ namespace Core
 
             GFX::Content::LoadMesh(modelData->meshID, gnome->numberOfVertices, gnome->numberOfIndices, gnome->vertices, gnome->indices);
 
-            m_modelData.push_back(modelData);            
+            m_modelData.push_back(modelData);   
+			LOG_ERROR << "NO ASYNC ANIMATION LOADING YET, PLEASE IMPLEMENT THIS! BLAME JAOEL /Jaoel";
 
             //delete[] gnome->materials;
             delete[] gnome->indices;
@@ -70,7 +72,44 @@ namespace Core
         if(gnome != nullptr)
         {
             GFX::Content::LoadMesh(modelData->meshID, gnome->numberOfVertices, gnome->numberOfIndices, gnome->vertices, gnome->indices);
-			
+
+
+			// Load the animations for this mesh
+			if (GFX::Content::CreateSkeleton(modelData->skeletonID) == GFX_SUCCESS)
+			{
+				if (gnome->numberOfBones)
+				{
+					for (int i = 0; i < gnome->numberOfAnimations; ++i)
+					{
+						LOG_INFO << "Loading animation \'" << gnome->animations[i].name << "\'";
+
+						std::vector<glm::mat4x4> frames;
+
+						for (int e = 0; e < gnome->numberOfBones; e++)
+						{
+							//gnome->animations[i].boneAnim[e].Keyframes[0].position;
+							//float (&m)[4][4] = gnome->bones[e].offsetMatrix;
+							float m[4][4] = {	{1.0f, 0.0f, 0.0f, 0.0f},
+												{0.0f, 1.0f, 0.0f, 0.0f},
+												{0.0f, 0.0f, 1.0f, 0.0f},
+												{0.0f, 0.0f, 0.0f, 1.0f} };
+							glm::mat4 matrix = glm::mat4(	m[0][0],m[1][0],m[2][0],m[3][0],
+															m[0][1],m[1][1],m[2][1],m[3][1],
+															m[0][2],m[1][2],m[2][2],m[3][2],
+															m[0][3],m[1][3],m[2][3],m[3][3]);
+							frames.push_back(matrix);
+						}
+
+						int result = GFX::Content::AddAnimationToSkeleton(modelData->skeletonID, frames.data(), 1, gnome->numberOfBones);
+
+						if (result == GFX_INVALID_ANIMATION)
+							LOG_ERROR << "Could not add animation \'" << gnome->animations[i].name << "\' Animation is invalid.";
+						else if (result == GFX_INVALID_SKELETON)
+							LOG_ERROR << "Could not add animation. Skeleton with ID " << modelData->skeletonID << " does not exist.";
+					}
+				}
+
+			}
 
             m_modelData.push_back(modelData);
             
@@ -140,7 +179,7 @@ namespace Core
 
 		m_file.open(fileName, std::ios::in | std::ios::binary);
 		m_animationFile.open(GetFileNameAndPath(fileName,".") + ".bagnome", std::ios::in | std::ios::binary);
-        if (m_file)
+        if (m_file.good())
         {
             Core::GnomeLoader::Header header;
 			Core::GnomeLoader::AnimationHeader animationHeader;

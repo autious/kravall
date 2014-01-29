@@ -106,7 +106,6 @@ void Core::FlowfieldSystem::Update( float delta )
 			}
 			else
 				MovementComponent::SetDirection( mvmc, 0.0f, 0.0f, 0.0f );
-
 		}
 	}
 }

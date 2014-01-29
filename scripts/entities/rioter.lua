@@ -3,7 +3,7 @@ return function(asm, posX, posY, posZ, group)
 		{
 			{
 				type = core.componentType.GraphicsComponent,
-				data = { mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry },
+				data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry },
 				load = { 
 							mesh = { core.loaders.GnomeLoader, "assets/model/animated/police/cop/cop-light_00.bgnome" },
 							material = { core.loaders.MaterialLoader, "assets/material/rioter.material" }
@@ -29,11 +29,14 @@ return function(asm, posX, posY, posZ, group)
 				type = core.componentType.MovementComponent,
 				data = { direction = { 0, 0, 0 }, newDirection = { 0, 0, 0 }, speed = 1.5, 
 				desiredSpeed = 1.5, goal = false }
+                ,ignoreHard = true
 			},
 			{
 				type = core.componentType.AttributeComponent,
 				data = { health = 0, stamina = 0, morale = 0, 
 					   alignment = core.RioterAlignment.Anarchist, rage = 0, pressure = 0, groupID = group }
+                ,
+                ignoreHard = true
 			},
 			{
 				type = core.componentType.BoundingVolumeComponent,

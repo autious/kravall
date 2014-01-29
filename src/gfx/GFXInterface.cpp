@@ -87,6 +87,8 @@ namespace GFX
 		glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
 		glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
 
+		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
 		glCullFace(GL_BACK);
 		err = glGetError();
         if( err )
@@ -257,6 +259,49 @@ namespace GFX
 			return Renderer().GetAnimationFrameCount(skeletonID, animationID, out_frameCount);
 		}
 
+		void ReloadLUT()
+		{
+			Renderer().ReloadLUT();
+		}
+	}
+}
+
+namespace GFX
+{
+	namespace Settings
+	{
+		void SetGamma(float gamma)
+		{
+			Renderer().SetGamma(gamma);
+		}
+
+		unsigned int GetAnimationFramerate()
+		{
+			return Renderer().GetAnimationFramerate();
+		}
+
+		void SetAnimationFramerate(unsigned int framerate)
+		{
+			Renderer().SetAnimationFramerate(framerate);
+		}
+	}
+
+	namespace ColorSettings
+	{
+		void SetLUT(const char* LUT)
+		{
+			Renderer().SetLUT(std::string(LUT));
+		}
+
+		void SetWhitePoint(GFXVec3 whitePoint)
+		{
+
+		}
+
+		void SetExposure(float exposure)
+		{
+			Renderer().SetExposure(exposure);
+		}
 	}
 }
 

@@ -1,5 +1,6 @@
 #include "MeshManager.hpp"
 
+#include <iostream>
 namespace GFX
 {
 	MeshManager::MeshManager()
@@ -40,7 +41,6 @@ namespace GFX
 		}
 	
 	}
-
 
     void MeshManager::LoadMesh(unsigned int& meshID, const int& sizeVerts, const int& sizeIndices, GFX::Vertex* verts, int* indices)
 	{

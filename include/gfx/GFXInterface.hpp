@@ -178,7 +178,7 @@ namespace GFX
 		\return Returns the animation ID if successful, else returns #GFX_INVALID_ANIMATION or #GFX_INVALID_SKELETON
 		*/
 		DLL_API int AddAnimationToSkeleton(const unsigned int& skeletonID, GFXMat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame);
-
+		
 		/*!
 		Gets the number of frames in a particular animation.
 		\param skeletonID The id of the skeleton
@@ -187,7 +187,7 @@ namespace GFX
 		\return Returns #GFX_SUCCESS if successful, else returns #GFX_INVALID_ANIMATION or #GFX_INVALID_SKELETON
 		*/
 		DLL_API int GetAnimationFrameCount(const unsigned int& skeletonID, const unsigned int& animationID, unsigned int& out_frameCount);
-
+		
 		/*!
 		Deletes a mesh
 		\param meshID The id of the mesh to delete
@@ -237,7 +237,7 @@ namespace GFX
 		*/
 		DLL_API int AttachShaderToMaterial(const unsigned long long int& materialID, const unsigned int& shaderID);
 
-
+		DLL_API void ReloadLUT();
 	}
 
 	namespace Debug
@@ -445,7 +445,45 @@ namespace GFX
 		*/
 		DLL_API void SetDoF(bool enabled);
 
+		/*!
+		Sets gamma
+		\param gamma
+		*/
+		DLL_API void SetGamma(float gamma);
+
+
+
+		/*!
+		Gets the animation play framerate.
+		\return Returns animation play framerate
+		*/
+		DLL_API unsigned int GetAnimationFramerate();
+
+		/*!
+		Sets the animation play framerate.
+		\param framerate The target framerate for animations (clamped between 12 and 48 fps)
+		*/
+		DLL_API void SetAnimationFramerate(unsigned int framerate);
+
+
 	} // namespace Settings
+
+	namespace ColorSettings
+	{
+		/*!
+		Sets the white point which means a pixel should be full-brighted
+		\param whitePoint
+		*/
+		DLL_API void SetWhitePoint(GFXVec3 whitePoint);
+
+		/*!
+		Sets exposure
+		\param exposure
+		*/
+		DLL_API void SetExposure(float exposure);
+
+		DLL_API void SetLUT(const char* LUT);
+	}
 
 } // namespace GFX
 

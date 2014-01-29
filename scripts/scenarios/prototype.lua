@@ -9,8 +9,8 @@ local ambient = ent.get "ambientLight"
 local directional = ent.get "directionalLight"
 local street_light = ent.get "streetLight"
 local street_light_intensity = 2.0
-ambient(asm, 1.0, 1.0, 1.0, 0.1)
-directional(asm, -1, -1, 0.5)
+ambient(asm, 1.0, 1.0, 1.0, 0.01)
+--directional(asm, -1, -1, 0.5)
 
 --camera:lookAt( core.glm.vec3.new( -20, 35, 20 ), core.glm.vec3.new( 0, 0, 20 ) )
 camera:lookAt( core.glm.vec3.new( -20, 35, 0 ), core.glm.vec3.new( 0, 0, 30 ) )
@@ -188,4 +188,5 @@ building(asm, 28, 17)
 building(asm, 36, 20)
 building(asm, 45, 19)
 building(asm, 56, 19)
+
 return asm;
