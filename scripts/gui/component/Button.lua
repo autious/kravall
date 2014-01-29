@@ -22,7 +22,7 @@ function Button:new(o)
     o.width = o.pressedImg.width
     o.height = o.pressedImg.height
 
-    o.onClick = o.onClick or function() print "click" end
+    o.onClick = o.onClick or function()  end
 
     o.GUIComponent = GUIComponent:new
                                         {
@@ -67,6 +67,13 @@ function Button:onExit()
     self.pressedImg.ent:set( core.componentType.GraphicsComponent, { render = false }, true )
     self.releasedImg.ent:set( core.componentType.GraphicsComponent, { render = true }, true )
     self.hoverImg.ent:set( core.componentType.GraphicsComponent, { render = false }, true )
+end
+
+function Button:destroy()
+    self.pressedImg:destroy()
+    self.releasedImg:destroy()
+    self.hoverImg:destroy()
+    self.GUIComponent:destroy()
 end
 
 return Button

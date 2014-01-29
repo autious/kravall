@@ -62,23 +62,23 @@ end
 
 --Virtual functions to be overloaded.
 function GUIComponent.onEnter()
-    print( "enter" )
+    --print( "enter" )
 end
 
 function GUIComponent.onExit()
-    print( "exit" )
+    --print( "exit" )
 end
 
 function GUIComponent.onPress()
-    print( "press" )
+    --print( "press" )
 end
 
 function GUIComponent.onRelease()
-    print( "release" )
+   --print( "release" )
 end
 
 function GUIComponent.onDrag(x,y)
-    print( "drag" )
+    --print( "drag" )
 end
 
 function GUIComponent:setPosition(x,y)
@@ -87,9 +87,6 @@ function GUIComponent:setPosition(x,y)
 end
 
 function GUIComponent:destroy()
-    self.mesh:free()
-    self.material:free()
-    self.ent:destroy()
     input.deregisterOnButton(self.callbacks.onButton)
     input.deregisterOnPosition(self.callbacks.onPosition)
 end

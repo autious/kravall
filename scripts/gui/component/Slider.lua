@@ -28,7 +28,7 @@ function Slider:new(o)
     o.bgWidth = o.bg.width
     o.bgHeight = o.bg.height
 
-    o.onChange = o.onChange or function( value ) print ("knob: " .. value) end
+    o.onChange  = o.onChange or function() end
 
     o.GUIComponent = GUIComponent:new
                                         {
@@ -36,7 +36,7 @@ function Slider:new(o)
                                             y=o.y,
                                             width=o.knobWidth,
                                             height=o.knobHeight,
-                                            onDrag = function(x,y) print( "hej" ); o:onDrag(x,y) end,
+                                            onDrag = function(x,y) o:onDrag(x,y) end,
                                             onPress = function()  o:onPress() end,
                                             onRelease = function() o:onRelease() end,
                                             onEnter = function() o:onEnter() end,
@@ -62,10 +62,11 @@ function Slider:onDrag( x, y )
         fact = 0
     end
 
+    self.a = fact
+
     self.onChange( fact ) 
     
     local newXPos = fact * self.bgWidth + self.x - self.knobWidth/2
-    print( newXPos )
 
     self.GUIComponent.x = newXPos
     self.pressedKnob.ent:set( core.componentType.WorldPositionComponent, { position = { newXPos , -self.y, 0 } }, true )
@@ -97,6 +98,14 @@ function Slider:onExit()
     self.pressedKnob.ent:set( core.componentType.GraphicsComponent, { render = false }, true )
     self.releasedKnob.ent:set( core.componentType.GraphicsComponent, { render = true }, true )
     self.hoverKnob.ent:set( core.componentType.GraphicsComponent, { render = false }, true )
+end
+
+function Slider:destroy()
+    self.pressedKnob:destroy()
+    self.releasedKnob:destroy()
+    self.hoverKnob:destroy()
+    self.bg:destroy()
+    self.GUIComponent:destroy()
 end
 
 return Slider
