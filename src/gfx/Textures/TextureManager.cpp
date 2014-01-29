@@ -121,12 +121,12 @@ namespace GFX
 		id = texture.id;
 	}
 
-	void TextureManager::Load3DTexture(unsigned int& id, int width, int height, int depth, std::string filepath)
+	void TextureManager::Load3DTexture(unsigned int& id, int width, int height, int depth, char* filepath)
 	{
 		unsigned char* data;
 		int w;
 		int h;
-		data = stbi_load(filepath.c_str(), &w, &h, 0, 0);
+		data = stbi_load(filepath, &w, &h, 0, 0);
 		Load3DTexture(id, width, height, depth, data);
 	}
 

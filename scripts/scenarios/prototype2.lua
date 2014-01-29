@@ -61,6 +61,8 @@ for i = 0, 1023 do
                         type = core.gfx.objectTypes.Light,
                         lighttype = core.gfx.lightTypes.Point
                     }
+                    ,
+                    ignoreHard = true
         },
         {
             type = core.componentType.WorldPositionComponent,
