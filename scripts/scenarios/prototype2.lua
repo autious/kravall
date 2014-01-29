@@ -63,6 +63,8 @@ for i = 0, 1023 do
 						spotangle = 0,
 						spotpenumbra = 0
                     }
+                    ,
+                    ignoreHard = true
         },
         {
             type = core.componentType.WorldPositionComponent,

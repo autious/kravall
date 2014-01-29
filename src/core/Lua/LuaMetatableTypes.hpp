@@ -4,6 +4,7 @@
 #define COMPONENT_META_TYPE "metatype_core_component"
 #define ENTITY_META_TYPE "metatype_core_entity"
 #define BITMASK_META_TYPE "metatype_bitmask"
+#define ASPECT_META_TYPE "metatype_aspect"
 #define GLMVEC2_META_TYPE "metatype_glm_vec2"
 #define GLMVEC3_META_TYPE "metatype_glm_vec3"
 #define GLMVEC4_META_TYPE "metatype_glm_vec4"
@@ -22,12 +23,18 @@
 #include <lualib.h>
 
 #include <ComponentFramework/SystemHandlerTemplate.hpp>
+#include <ComponentFramework/SystemTypes.hpp>
 #include <Camera/Camera.hpp>
 
 struct LuaEntity
 {
     Core::Entity entity;
     bool light;
+};
+
+struct LuaAspect
+{
+    Core::Aspect aspect;
 };
 
 inline glm::vec2* luau_checkglmvec2( lua_State* state, int pos ) { return static_cast<glm::vec2*>(luaL_checkudata( state, pos, GLMVEC2_META_TYPE )); }
@@ -37,11 +44,15 @@ inline glm::mat4* luau_checkglmmat4( lua_State* state, int pos ) { return static
 inline glm::quat* luau_checkglmquat( lua_State* state, int pos ) { return static_cast<glm::quat*>(luaL_checkudata( state, pos, GLMQUAT_META_TYPE )); }
 inline Core::Camera** luau_checkcamera( lua_State* state, int pos ) { return static_cast<Core::Camera**>(luaL_checkudata( state, pos, CAMERA_META_TYPE )); }
 inline LuaEntity* luau_checkentity( lua_State* state, int pos ) { return static_cast<LuaEntity*>(luaL_checkudata( state, pos, ENTITY_META_TYPE ) ); }
+inline LuaAspect* luau_checkaspect( lua_State* state, int pos ) { return static_cast<LuaAspect*>(luaL_checkudata( state, pos, ASPECT_META_TYPE) ) ; }
+inline Core::ComponentType luau_checkcomponent( lua_State * state, int pos ) { return *static_cast<Core::ComponentType*>(luaL_checkudata( state, pos, COMPONENT_META_TYPE) ); } 
 
 namespace Core
 {
     LuaEntity* LuaUNewEntity( lua_State * L );
     LuaEntity* LuaUNewLightEntity( lua_State * L );
+
+    LuaAspect* LuaUNewAspect( lua_State * L );
 
     uint64_t* LuaUNewBitmask( lua_State * L );
 
