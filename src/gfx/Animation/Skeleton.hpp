@@ -35,9 +35,10 @@ public:
 	Gets the number of frames in a particular animation.
 	\param animationID The id of the animation
 	\param out_frameCount The number of frames in this animation
+	\param out_bonesPerFrame The number of bones per frame
 	\return Returns #GFX_SUCCESS if successful, else returns #GFX_INVALID_ANIMATION
 	*/
-	int GetFrameCount( const int& animationID, unsigned int& out_frameCount );
+	int GetInfo(const int& animationID, unsigned int& out_frameCount, unsigned int& out_bonesPerFrame);
 
 	/*!
 	Gets the number of animations in the skeleton.

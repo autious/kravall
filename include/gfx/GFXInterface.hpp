@@ -160,14 +160,27 @@ namespace GFX
 		\param out_skeletonID Reference returning the id created for the skeleton
 		\return Returns #GFX_FAIL if unable to create skeleton, else returns #GFX_SUCCESS
 		*/
-		DLL_API int CreateSkeleton(unsigned int& out_skeletonID);
+		DLL_API int CreateSkeleton(int& out_skeletonID);
 
 		/*!
 		Deletes a skeleton, removing its animations
 		\param skeletonID The id of the skeleton to delete
 		\return Returns #GFX_FAIL if unable to remove skeleton, else returns #GFX_SUCCESS
 		*/
-		DLL_API int DeleteSkeleton(const unsigned int& skeletonID);
+		DLL_API int DeleteSkeleton(const int& skeletonID);
+
+		/*!
+		Binds a skeleton to a mesh
+		\param meshID The mesh to bind the skeleton to
+		\param skeletonID The id of the skeleton which to bind to the mesh
+		\return Returns #GFX_FAIL if unable bind skeleton to mesh, else returns #GFX_SUCCESS
+		*/
+		DLL_API int BindSkeletonToMesh(const unsigned int& meshID, const int& skeletonID);
+
+		/*!
+		Gets the skeleton ID linked to the mesh
+		*/
+		DLL_API int GetSkeletonID(const unsigned int& meshID);
 
 		/*!
 		Adds an animation to a skeleton. The data must contain the same number of bones for all frames
@@ -177,16 +190,16 @@ namespace GFX
 		\param numBonesPerFrame Number of bone matrices per frame
 		\return Returns the animation ID if successful, else returns #GFX_INVALID_ANIMATION or #GFX_INVALID_SKELETON
 		*/
-		DLL_API int AddAnimationToSkeleton(const unsigned int& skeletonID, GFXMat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame);
+		DLL_API int AddAnimationToSkeleton(const int& skeletonID, GFXMat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame);
 		
 		/*!
-		Gets the number of frames in a particular animation.
+		Gets the info for a particular animation.
 		\param skeletonID The id of the skeleton
 		\param animationID The id of the animation
 		\param out_frameCount The number of frames in this animation
 		\return Returns #GFX_SUCCESS if successful, else returns #GFX_INVALID_ANIMATION or #GFX_INVALID_SKELETON
 		*/
-		DLL_API int GetAnimationFrameCount(const unsigned int& skeletonID, const unsigned int& animationID, unsigned int& out_frameCount);
+		DLL_API int GetAnimationInfo(const int& skeletonID, const int& animationID, unsigned int& out_frameCount, unsigned int& out_bonesPerFrame);
 		
 		/*!
 		Deletes a mesh

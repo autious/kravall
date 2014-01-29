@@ -11,15 +11,6 @@ Core::ComponentGetters Core::AnimationComponentBinding::GetGetters()
 {
     ComponentGetters getters; 
 	
-    getters["skeletonID"] = []( Core::Entity entity, lua_State * L )
-    {
-        AnimationComponent *ac = WGETC<AnimationComponent>( entity );
-
-		lua_pushinteger( L, ac->skeletonID );
-        
-        return 1;
-    };
-	
     getters["animationID"] = []( Core::Entity entity, lua_State * L )
     {
         AnimationComponent *ac = WGETC<AnimationComponent>( entity );
@@ -80,20 +71,6 @@ Core::ComponentSetters Core::AnimationComponentBinding::GetSetters()
 {
     ComponentSetters setters;
 
-    setters["skeletonID"] = [](Core::Entity entity, lua_State * L, int valueindex )
-    {
-        AnimationComponent *ac = WGETC<AnimationComponent>( entity );
-            
-        if( lua_isnumber( L, valueindex ) )
-        {
-            ac->skeletonID = static_cast<int>(lua_tointeger( L, valueindex ));
-        }  
-        else
-        {
-            luaL_error( L, "Unable to set skeletonID, given parameter is not number value" );
-        }
-    };
-
     setters["animationID"] = [](Core::Entity entity, lua_State * L, int valueindex )
     {
         AnimationComponent *ac = WGETC<AnimationComponent>( entity );
@@ -133,6 +110,20 @@ Core::ComponentSetters Core::AnimationComponentBinding::GetSetters()
         else
         {
             luaL_error( L, "Unable to set currentTime, given parameter is not number value" );
+        }
+    };
+
+    setters["speed"] = [](Core::Entity entity, lua_State * L, int valueindex )
+    {
+        AnimationComponent *ac = WGETC<AnimationComponent>( entity );
+            
+        if( lua_isnumber( L, valueindex ) )
+        {
+            ac->speed = static_cast<float>(lua_tonumber( L, valueindex ));
+        }  
+        else
+        {
+            luaL_error( L, "Unable to set speed, given parameter is not number value" );
         }
     };
 

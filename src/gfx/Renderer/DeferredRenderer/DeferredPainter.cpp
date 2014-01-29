@@ -86,7 +86,7 @@ namespace GFX
 	}
 #ifdef INSTANCED_DRAWING
 
-	void DeferredPainter::Render(const AnimationManager* animationManager, unsigned int& renderIndex, 
+	void DeferredPainter::Render(AnimationManager* animationManager, unsigned int& renderIndex, 
 	FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix, const float& gamma)
 	{
 		BasePainter::Render();
@@ -171,6 +171,7 @@ namespace GFX
 					glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
 					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IBO);
+
 					glDrawElementsInstanced(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0, instanceCount);
 
 					instanceCount = 0;
@@ -225,6 +226,10 @@ namespace GFX
 				{
 					mesh = m_meshManager->GetMesh(meshID);
 					currentMesh = meshID;
+					
+					
+					if (mesh.skeletonID >= 0)
+						animationManager->BindSkeleton(mesh.skeletonID);
 
 					glBindVertexArray(mesh.VAO);
 					error = glGetError();

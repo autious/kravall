@@ -43,6 +43,7 @@ out vec2 uvFS;
 mat4x4 GetBoneMatrix(InstanceData instanceData, int boneIndex)
 {
 	return gBones[instanceData.animationIndex + instanceData.frameOffset + boneIndex];
+	//return mat4x4(1.0f);
 }
 
 void main()

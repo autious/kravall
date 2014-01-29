@@ -25,7 +25,9 @@ namespace GFX
 		unsigned int id;
 		GLuint VAO;
 		GLuint IBO;
-		unsigned indexCount;
+		unsigned int indexCount;
+		int skeletonID = -1;
+
 	};
 }
 

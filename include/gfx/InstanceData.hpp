@@ -9,10 +9,10 @@ namespace GFX
 	struct InstanceData
 	{
 		glm::mat4 modelMatrix;
-		unsigned int animationIndex;
+		int animationIndex;
 		unsigned int frameOffset;
 		unsigned int rnd_seed;
-		int skeletonID;
+		int pad;
 	};
 
 	//struct StaticMeshInstanceData
