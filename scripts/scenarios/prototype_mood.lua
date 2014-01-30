@@ -83,7 +83,7 @@ local policeGroup = core.system.groups.createGroup();
 local centerPoint = { -4, 0, -21}
 for i = -4, 3 do
 	j= 0 --for j = -1, 1 do
-		--police(scen, i * dist + centerPoint[1], 0 + centerPoint[2], j * dist + centerPoint[3], policeGroup)
+		police(scen, i * dist + centerPoint[1], 0 + centerPoint[2], j * dist + centerPoint[3], policeGroup)
 	--end
 end
 
@@ -114,13 +114,18 @@ core.system.groups.setGroupGoal(rioterGroup, -21, 0, 36)
 
 
 function Update(dt)
-
-	for i,v in ipairs(rioters) do
-		local atc = v.instance:get(core.componentType.AttributeComponent)
-		print (atc.morale)
+	--local rm = {}
+	
+	local i = 1
+	while i <= #rioters do
+		local atc = rioters[i].instance:get(core.componentType.AttributeComponent)
+		print(atc.pressure)
+		
 		if atc.morale <= 0.0 then
-			v.instance:destroy()
-			rioters[i] = nil
+			rioters[i].instance:destroy()
+			table.remove(rioters, i)
+		else
+			i = i + 1
 		end
 	end
 end
