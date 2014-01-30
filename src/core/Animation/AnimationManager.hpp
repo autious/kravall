@@ -15,9 +15,10 @@ namespace Core
 		static void LoopAnimation(const Entity& entity, const std::string& animationName);
 		static void HaltAnimation(const Entity& entity);
 		static void SetAnimationSpeed(const Entity& entity, float speed);
+		static int GetAnimationID(int meshID, const std::string& animationName);
+		static int StoreAnimationID(int meshID, int animationID, const std::string& animationName);
 
 	private:
-		static int GetAnimationID(int skeletonID, std::string animationName);
 
 		static std::vector<std::map<std::string, int> > m_skeletons;
 	};
