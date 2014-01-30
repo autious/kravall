@@ -39,6 +39,11 @@ return function(asm, posX, posY, posZ, group)
                 ignoreHard = true
 			},
 			{
+				type = core.componentType.TargetingComponent,
+				data = { },
+				ignoreHard = true
+			},
+			{
 				type = core.componentType.BoundingVolumeComponent,
 				data = { sphereOffset = { 0, 0, 0 }, sphereRadius = 0.7, 
 						collisionModel = core.BoundingVolumeCollisionModel.DynamicResolution, 
