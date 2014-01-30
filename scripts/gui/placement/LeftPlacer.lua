@@ -1,6 +1,6 @@
-local CenterPlacer = { padding = 10 }
+local LeftPlacer = {leftOffset = 20, padding = 10}
 
-function CenterPlacer:new(o)
+function LeftPlacer:new(o)
     o = o or {}
 
     setmetatable( o, self )
@@ -9,17 +9,17 @@ function CenterPlacer:new(o)
     return o
 end
 
-function CenterPlacer:constrict( components, winWidth, winHeight )
+function LeftPlacer:constrict( components, winWidth, winHeight )
     local tw,th = self:getTotalDim( components )
-    local startx = winWidth/2
+    local startx = self.leftOffset
     local starty = (winHeight - th)/2
     for _,c in pairs( components ) do 
-        c:setPosition( startx - c.width/2, starty )
+        c:setPosition( startx, starty )
         starty = starty + c.height + self.padding
     end 
 end
 
-function CenterPlacer:getTotalDim( components )
+function LeftPlacer:getTotalDim( components )
     local tw = 0
     local th = 0
     for _,c in pairs( components ) do     
@@ -32,4 +32,4 @@ function CenterPlacer:getTotalDim( components )
     return tw, th
 end
 
-return CenterPlacer
+return LeftPlacer
