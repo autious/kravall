@@ -12,7 +12,7 @@ local street_light = ent.get "streetLight"
 local street_light_intensity = 2.0
 
 -- SCRIPTS \/
-scen.gamemode =  require"gamemodes/normal":new()
+scen.gamemode =  require "gamemodes/normal":new()
 
 local DONT_DIE_MSG = "Don't let the anarchists die" 
 local objDontDie = objective.new( DONT_DIE_MSG ) 
@@ -222,6 +222,8 @@ local Button = require "gui/component/Button"
 local Slider = require "gui/component/Slider"
 local Checkbox = require "gui/component/Checkbox"
 
+local CenterPlacer = require "gui/placement/CenterPlacer"
+
 local gui = GUI:new()
 
 scen.lastCreated = rioter( scen, 25, 0, 0, groupOneGroupId)
@@ -244,6 +246,8 @@ end
 gui:addComponent(button)
 gui:addComponent(slider)
 gui:addComponent(checkbox)
+
+gui:addPlacementHandler( CenterPlacer:new() )
 
 scen.gui = gui
 scen:registerDestroyCallback( function() scen.gui:destroy() end )

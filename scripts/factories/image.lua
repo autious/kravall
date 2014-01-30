@@ -1,13 +1,28 @@
+local Image = {}
+
+function Image:destroy()
+    self.ent:destroy()
+    self.mesh:free()
+    self.material:free()
+end
+
+function Image:setPosition( x,y)
+    local pos = self.ent:get( core.componentType.WorldPositionComponent )
+    pos.position[1] = x
+    pos.position[2] = -y
+    --self.ent:set( core.componentType.WorldPositionComponent,pos )
+end
+
+function Image:show( value )
+    self.ent:set( core.componentType.GraphicsComponent, { render = value }, true )
+end
+
+Image.__index = Image
+
 return function( x,y, material, c )  
     c = c or false
     local self = {}
-    setmetatable( self,{ __index = { destroy = function(self)
-                self.ent:destroy()
-                self.mesh:free()
-                self.material:free()
-            end
-        }
-    })
+    setmetatable( self, Image )
 
     self.ent = core.entity.create( core.componentType.GraphicsComponent,
                               core.componentType.WorldPositionComponent,
