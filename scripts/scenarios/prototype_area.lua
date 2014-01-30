@@ -2,29 +2,29 @@ local ent = require "entities"
 local scenario = require "scenario"
 local objective = require "objective" 
 local scen = scenario.new()
-local gamemode = setgamemode( "normal" )
 
 scen.asm:specific_content( core.contentmanager.load( 
 		core.loaders.NavigationMeshLoader, "prototypeLevel.txt", function( value ) end, false ) )
-
 
 local ambient = ent.get "ambientLight"
 local directional = ent.get "directionalLight"
 local street_light = ent.get "streetLight"
 local street_light_intensity = 2.0
 
-
-
 -- SCRIPTS \/
-local DONT_DIE_MSG = "Don't let the anarachists die" 
+scen.gamemode =  require "gamemodes/normal":new()
+
+local DONT_DIE_MSG = "Don't let the anarchists die" 
 local objDontDie = objective.new( DONT_DIE_MSG ) 
 
 local ESCORT_MSG = "Escort atleast 5 anarchists to their home."
 local objLeadThrough = objective.new( ESCORT_MSG )
 
-gamemode.objectiveHandler:addObjective( objDontDie )
-gamemode.objectiveHandler:addObjective( objLeadThrough )
+scen.gamemode.objectiveHandler:addObjective( objDontDie )
+scen.gamemode.objectiveHandler:addObjective( objLeadThrough )
 
+scen:registerUpdateCallback( function() scen.gamemode:update() end )
+scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
 
 function printCount( ent )
 --    print( core.system.area.getAreaRioterCount( ent ) ) 
@@ -216,5 +216,40 @@ local area = ent.get "area"
 
 area( scen, {2,0,0}, { 5,-5, 5,5, -5,5, -5,-5 }, "test_area", nil, printCount )
 area( scen, {-21,0,36}, { 5,-5, 5,5, -5,5, -5,-5 }, "test_area", nil, checkObjCount )
+
+local GUI = require "gui/GUI"
+local Button = require "gui/component/Button"
+local Slider = require "gui/component/Slider"
+local Checkbox = require "gui/component/Checkbox"
+
+local CenterPlacer = require "gui/placement/CenterPlacer"
+
+local gui = GUI:new()
+
+scen.lastCreated = rioter( scen, 25, 0, 0, groupOneGroupId)
+local button = Button:new({x=100,y=100})
+function button.onClick()
+		scen.lastCreated = rioter( scen, 25, 0, 0, groupOneGroupId)
+end
+
+local slider = Slider:new({x=100,y=300}) 
+function slider.onChange( value )
+    local s = 1+value*10
+    scen.lastCreated:set( core.componentType.ScaleComponent, {scale = {s,s,s}}, true )
+end
+
+local checkbox = Checkbox:new({x=100,y=400,checked=true})
+function checkbox.onChange( value )
+    print( value )
+    core.config.debugRenderAreas = value
+end
+gui:addComponent(button)
+gui:addComponent(slider)
+gui:addComponent(checkbox)
+
+gui:addPlacementHandler( CenterPlacer:new() )
+
+scen.gui = gui
+scen:registerDestroyCallback( function() scen.gui:destroy() end )
 
 return scen;

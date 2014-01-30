@@ -88,5 +88,5 @@ void main()
 	gNormalDepthRT = vec4(normalize(normalFS.xyz), posFS.z / posFS.w);
 	gDiffuseRT = result;
 	gSpecularRT = specColor;
-	gGlowMatIDRT = result;
+	gGlowMatIDRT = glowColor;
 }

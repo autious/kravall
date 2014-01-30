@@ -75,9 +75,10 @@ namespace Core
 
 
 			// Load the animations for this mesh
-			if (GFX::Content::CreateSkeleton(modelData->skeletonID) == GFX_SUCCESS)
+			if (gnome->numberOfBones)
 			{
-				if (gnome->numberOfBones)
+				if (GFX::Content::CreateSkeleton(modelData->skeletonID) == GFX_SUCCESS 
+					&& GFX::Content::BindSkeletonToMesh(modelData->meshID, modelData->skeletonID) == GFX_SUCCESS)
 				{
 					for (int i = 0; i < gnome->numberOfAnimations; ++i)
 					{
@@ -85,22 +86,23 @@ namespace Core
 
 						std::vector<glm::mat4x4> frames;
 
-						for (int e = 0; e < gnome->numberOfBones; e++)
+						for (int e = 0; e < gnome->numberOfBones*150; e++)
 						{
-							//gnome->animations[i].boneAnim[e].Keyframes[0].position;
-							//float (&m)[4][4] = gnome->bones[e].offsetMatrix;
-							float m[4][4] = {	{1.0f, 0.0f, 0.0f, 0.0f},
-												{0.0f, 1.0f, 0.0f, 0.0f},
-												{0.0f, 0.0f, 1.0f, 0.0f},
-												{0.0f, 0.0f, 0.0f, 1.0f} };
+							int frame = e/gnome->numberOfBones;
+							gnome->animations[i].boneAnim[e%19].Keyframes[0].position;
+							float (&m)[4][4] = gnome->bones[e%19].offsetMatrix;
+							//float m[4][4] = {	{1.0f, 0.0f, 0.0f, 0.0f},
+							//					{0.0f, 1.0f, 0.0f, 0.0f},
+							//					{0.0f, 0.0f, 1.0f, 0.0f},
+							//					{0.0f, 0.0f, 0.0f, 1.0f} };
 							glm::mat4 matrix = glm::mat4(	m[0][0],m[1][0],m[2][0],m[3][0],
 															m[0][1],m[1][1],m[2][1],m[3][1],
 															m[0][2],m[1][2],m[2][2],m[3][2],
-															m[0][3],m[1][3],m[2][3],m[3][3]);
+															m[0][3],m[1][3] + frame,m[2][3],m[3][3]);
 							frames.push_back(matrix);
 						}
 
-						int result = GFX::Content::AddAnimationToSkeleton(modelData->skeletonID, frames.data(), 1, gnome->numberOfBones);
+						int result = GFX::Content::AddAnimationToSkeleton(modelData->skeletonID, frames.data(), 150, gnome->numberOfBones);
 
 						if (result == GFX_INVALID_ANIMATION)
 							LOG_ERROR << "Could not add animation \'" << gnome->animations[i].name << "\' Animation is invalid.";

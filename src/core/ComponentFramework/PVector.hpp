@@ -46,7 +46,7 @@ namespace Core
 
             \param source data to copy into index 
         */
-        int Alloc( );
+        int Alloc(void *def);
 
         /*!
             Releses a component from the array, making it available 

@@ -44,6 +44,10 @@ function currentscenario()
     print( core.config.current_scenario_name )
 end
 
+function shh()
+    core.config.consoleOutputLevel = "fatal"
+end
+
 function getCompleteTable( table, prefix, input_table )
     input_table = input_table or {}
 

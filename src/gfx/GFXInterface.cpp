@@ -239,24 +239,34 @@ namespace GFX
 			return Renderer().SetShaderToMaterial(materialID, shaderID);
 		}
 
-		int CreateSkeleton(unsigned int& out_skeletonID)
+		int CreateSkeleton(int& out_skeletonID)
 		{
 			return Renderer().CreateSkeleton(out_skeletonID);
 		}
 
-		int DeleteSkeleton(const unsigned int& skeletonID)
+		int DeleteSkeleton(const int& skeletonID)
 		{
 			return Renderer().DeleteSkeleton(skeletonID);
 		}
 
-		int AddAnimationToSkeleton(const unsigned int& skeletonID, GFXMat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame)
+		int GetSkeletonID(const unsigned int& meshID)
+		{
+			return Renderer().GetSkeletonID(meshID);
+		}
+
+		int BindSkeletonToMesh(const unsigned int& meshID, const int& skeletonID)
+		{
+			return Renderer().BindSkeletonToMesh(meshID, skeletonID);
+		}
+
+		int AddAnimationToSkeleton(const int& skeletonID, GFXMat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame)
 		{
 			return Renderer().AddAnimationToSkeleton(skeletonID, frames, numFrames, numBonesPerFrame);
 		}
 
-		int GetAnimationFrameCount(const unsigned int& skeletonID, const unsigned int& animationID, unsigned int& out_frameCount)
+		int GetAnimationInfo(const int& skeletonID, const int& animationID, unsigned int& out_frameCount, unsigned int& out_bonesPerFrame)
 		{
-			return Renderer().GetAnimationFrameCount(skeletonID, animationID, out_frameCount);
+			return Renderer().GetAnimationInfo(skeletonID, animationID, out_frameCount, out_bonesPerFrame);
 		}
 
 		void ReloadLUT()

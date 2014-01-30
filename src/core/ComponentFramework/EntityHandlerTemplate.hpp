@@ -26,8 +26,10 @@ namespace Core
     private:
         static const int COMPONENT_COUNT = sizeof...(Components);
 
+        std::array<void*,sizeof...(Components)> m_compDefaults = {{new Components()...}};
 
         EntityVector<1024,64,Components...> m_entities;
+
         std::array<PVector*,sizeof...(Components)> m_components = {{new PVector(1024,64,sizeof(Components))...}};
         SystemHandlerT *m_systemHandler;
     public:
@@ -40,7 +42,6 @@ namespace Core
 
         EntityHandlerTemplate( SystemHandlerT *systemHandler)
         {
-
             m_systemHandler = systemHandler;
         }
 
@@ -304,7 +305,7 @@ namespace Core
                 m_components[componentType]->Release( componentId );
             }
 
-            int compId = m_components[componentType]->Alloc();
+            int compId = m_components[componentType]->Alloc( m_compDefaults[componentType] );
 
             m_entities.SetComponentId( ent, compId, componentType );
 

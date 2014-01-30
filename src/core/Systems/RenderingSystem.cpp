@@ -31,20 +31,18 @@ namespace Core
                 rotationMatrix = glm::toMat4(rot);
                 translationMatrix = glm::translate(glm::mat4(1.0f), WorldPositionComponent::GetVec3(*wpc));
                 scaleMatrix = glm::scale(sc->scale[0], sc->scale[1], sc->scale[2]);
-
+				
                 //Send the data through a drawcall to GFX
                 GFX::InstanceData* instanceData = Core::world.m_frameHeap.NewObject<GFX::InstanceData>();
                 instanceData->modelMatrix = translationMatrix * rotationMatrix * scaleMatrix;
                 instanceData->rnd_seed = *it;
-                instanceData->animationIndex = 0;
                 instanceData->frameOffset = 0;
-                instanceData->skeletonID = -1;
+                instanceData->animationIndex = -1;
 
                 if (ac != nullptr)
                 {
                     instanceData->animationIndex = ac->animationID;
                     instanceData->frameOffset = ac->currentFrame;
-                    instanceData->skeletonID = ac->skeletonID;
                 }
                 
                 GFX::Draw(gc->bitmask, (void*)instanceData);

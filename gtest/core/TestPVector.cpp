@@ -22,7 +22,7 @@ namespace Core
 
         for( int i = 0; i < 65; i++ )
         {
-            pvec.Alloc();
+            pvec.Alloc(nullptr);
         }
 
         ASSERT_EQ( 64+16, pvec.GetAllocation() );
@@ -36,18 +36,18 @@ namespace Core
 
         for( int i = 0; i < 40; i++ )
         {
-            pvec.Alloc();
+            pvec.Alloc(nullptr);
         }
 
         for( int i = 0; i < 30; i++ )
         {
-            pvec.Release(pvec.Alloc());
+            pvec.Release(pvec.Alloc(nullptr));
         }
 
         int last = 0;
         for( int i = 0; i < 25; i++ )
         {
-            last = pvec.Alloc();
+            last = pvec.Alloc(nullptr);
         }
 
         pvec.Release(last); 
@@ -63,16 +63,16 @@ namespace Core
         
         for( int i = 0; i < 10; i++ )
         {
-            pvec.GetT<DataType>(pvec.Alloc())->data = i;
+            pvec.GetT<DataType>(pvec.Alloc(nullptr))->data = i;
         }
     
-        int index = pvec.Alloc(); 
+        int index = pvec.Alloc(nullptr); 
         DataType* d = pvec.GetT<DataType>(index);
         d->data = 30;
 
         for( int i = 0; i < 10; i++ )
         {
-            pvec.GetT<DataType>(pvec.Alloc())->data = i;
+            pvec.GetT<DataType>(pvec.Alloc(nullptr))->data = i;
         }
 
         d = pvec.GetT<DataType>(index);
