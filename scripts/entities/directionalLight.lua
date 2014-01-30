@@ -3,7 +3,7 @@ return function(asm, dirX, dirY, dirZ, r, g, b, intens)
 	g = g or 1
 	b = b or 1
 	intens = intens or 1
-	asm:loadAssembly( 
+	asm:loadAssembly(
 		{
 			{
 				type = core.componentType.LightComponent,
@@ -12,14 +12,9 @@ return function(asm, dirX, dirY, dirZ, r, g, b, intens)
 							intensity = intens,
 							type = core.gfx.objectTypes.Light,
 							lighttype = core.gfx.lightTypes.Dir,
-<<<<<<< HEAD
-                            speccolor = { r, g, b }
-						}
-=======
-                            speccolor = { 0.1,0.1,0.1 }
+							speccolor = { r, g, b }
 						},
-                ignoreHard = true
->>>>>>> 06388fa32f916d027330bcd35cc83002c2adee7a
+						ignoreHard = true
 			},
 			{
 				type = core.componentType.WorldPositionComponent,

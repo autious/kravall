@@ -9,7 +9,8 @@ return function(scen, x, y, z, rx, ry, rz, r, g, b, radius, intens)
 							type = core.gfx.objectTypes.Light,
 							lighttype = core.gfx.lightTypes.Point,
                             speccolor = { r, g, b }
-						}
+						},
+						ignoreHard = true
 			},
 			{
 				type = core.componentType.WorldPositionComponent,

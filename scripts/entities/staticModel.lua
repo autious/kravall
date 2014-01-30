@@ -1,4 +1,5 @@
-return function(asm,x,y,z,qx,qy,qz,qw,scale,model,material,radius,name)
+return function(asm,x,y,z,qx,qy,qz,qw,scale,model,material,radius,inputName)
+
     local components = {
         {
             type = core.componentType.WorldPositionComponent,
@@ -20,12 +21,17 @@ return function(asm,x,y,z,qx,qy,qz,qw,scale,model,material,radius,name)
         {
             type = core.componentType.RotationComponent,
             data = { rotation = { qx,qy,qz,qw } }
-        },
-        {
-            type = core.componentType.NameComponent,
-            data = { name = name }
         }
     }
+    
+    if inputName then
+        components[#components + 1] =
+        {
+            type = core.componentType.NameComponent,
+            data = { name = inputName }
+        }
+    end
+
     radius = 1
     print(#components)
     if radius then
