@@ -10,7 +10,7 @@ function Image:setPosition( x,y)
     local pos = self.ent:get( core.componentType.WorldPositionComponent )
     pos.position[1] = x
     pos.position[2] = -y
-    --self.ent:set( core.componentType.WorldPositionComponent,pos )
+    self.ent:set( core.componentType.WorldPositionComponent,pos )
 end
 
 function Image:show( value )

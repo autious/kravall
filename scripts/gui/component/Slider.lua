@@ -29,6 +29,8 @@ function Slider:new(o)
     o.knobHeight = o.releasedKnob.height
     o.bgWidth = o.bg.width
     o.bgHeight = o.bg.height
+    o.width = o.bg.width
+    o.height = o.bg.height
 
     o.onChange  = o.onChange or function() end
 
@@ -58,7 +60,7 @@ function Slider:setPosition(x,y)
     self.y = y
 
     local newXPos = self.a * self.bgWidth + self.x - self.knobWidth/2
-    self.GUIComponent.x = newXPos
+    self.GUIComponent:setPosition(newXPos,y)
     self.pressedKnob:setPosition( newXPos, self.y )
     self.releasedKnob:setPosition(newXPos , self.y )
     self.hoverKnob:setPosition( newXPos , self.y )
