@@ -59,6 +59,17 @@ namespace Core
                     m_groupMemberCounts[atrbc->rioter.groupID]++;
                 }
             }
+            else if(utc->type == Core::UnitType::Police)
+            {
+                Core::AttributeComponent* atrbc = WGETC<Core::AttributeComponent>(*it);
+                Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(*it);
+
+                if(atrbc->police.squadID >= 0 && atrbc->police.squadID <= m_nAllocatedGroups)
+                {
+                    m_medianPositions[atrbc->police.squadID] += Core::WorldPositionComponent::GetVec3(*wpc);
+                    m_groupMemberCounts[atrbc->police.squadID]++;
+                }
+            }
         }
 
         for(int i=0; i < m_nAllocatedGroups; ++i)
@@ -90,6 +101,15 @@ namespace Core
                 if( atrbc->rioter.groupID >= 0 && atrbc->rioter.groupID <= m_nAllocatedGroups)
                 {
                     m_membersInGroups[atrbc->rioter.groupID].push_back(*it);
+                }
+            }
+            else if(utc->type == Core::UnitType::Police)
+            {
+                Core::AttributeComponent* atrbc = WGETC<Core::AttributeComponent>(*it);
+
+                if( atrbc->police.squadID >= 0 && atrbc->police.squadID <= m_nAllocatedGroups)
+                {
+                    m_membersInGroups[atrbc->police.squadID].push_back(*it);
                 }
             }
         }

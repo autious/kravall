@@ -15,6 +15,8 @@
 #include "TextRenderer/TextPainter.hpp"
 #include "SplashRenderer/SplashPainter.hpp"
 #include "FBORenderer/FBOPainter.hpp"
+#include "PostProcessing/PostProcessingPainter.hpp"
+#include "GlobalIlluminationRenderer/GIPainter.hpp"
 
 #include "TextRenderer/TextManager.hpp"
 #include "DebugRenderer/DebugManager.hpp"
@@ -120,6 +122,12 @@ namespace GFX
 
 		void AddRenderJob(GFXBitmask bitmask, void* value);
 
+		void SetLUT(std::string LUT);
+		void ReloadLUT();
+
+		void SetExposure(float exposure);
+		void SetGamma(float gamma);
+
 		void DeleteMesh(unsigned long long id);
 		void LoadMesh(unsigned int& meshID, int& sizeVerts, int& sizeIndices, GFX::Vertex* verts, int* indices);
 
@@ -132,10 +140,12 @@ namespace GFX
 		void RemoveTextureFromMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID);
         int GetShaderId(unsigned int& shaderId, const char* shaderName);
 		int SetShaderToMaterial(const unsigned long long int& materialID, const unsigned int& shaderID);
-		int CreateSkeleton(unsigned int& out_skeletonID);
-		int DeleteSkeleton(const unsigned int& skeletonID);
-		int AddAnimationToSkeleton(const unsigned int& skeletonID, glm::mat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame);
-		int GetAnimationFrameCount(const unsigned int& skeletonID, const unsigned int& animationID, unsigned int& out_frameCount);
+		int CreateSkeleton(int& out_skeletonID);
+		int DeleteSkeleton(const int& skeletonID);
+		int GetSkeletonID(const unsigned int& meshID);
+		int BindSkeletonToMesh(const unsigned int& meshID, const int& skeletonID);
+		int AddAnimationToSkeleton(const int& skeletonID, glm::mat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame);
+		int GetAnimationInfo(const int& skeletonID, const int& animationID, unsigned int& out_frameCount, unsigned int& out_bonesPerFrame);
 
         /*!
         Sets the font used for rendering SubSystem statistics.
@@ -144,6 +154,10 @@ namespace GFX
         inline void SetStatisticsFont(GFX::FontData* font) { m_font = font; }
 		inline void ShowStatistics(bool enabled){ m_showStatistics = enabled; }
 		inline void ShowFBO(int which){ m_showFBO = ( which >= 0 && which <= 5 ) ? which : 0; }
+		
+		void SetAnimationFramerate(unsigned int framerate);
+		inline unsigned int GetAnimationFramerate(){ return m_animationFramerate; }
+
 	private:
 		RenderCore();
 		~RenderCore();
@@ -161,6 +175,8 @@ namespace GFX
 		Resize all textures bound to the GBuffer
 		*/
 		void ResizeGBuffer();
+
+		void LoadGPUPF();
 
 
 		int m_windowWidth;
@@ -193,7 +209,9 @@ namespace GFX
 		SplashPainter* m_splashPainter;
 		FBOPainter* m_fboPainter;
         OverlayPainter* m_overlayPainter;
-		
+		PostProcessingPainter* m_postProcessingPainter;
+		GIPainter* m_GIPainter;
+
 		void SubSystemTimeRender();
         std::vector<std::pair<const char*, std::chrono::microseconds>> m_subsystemTimes;
 		unsigned long long m_lastUpdateTime;
@@ -210,6 +228,15 @@ namespace GFX
         glm::mat4 m_overlayProjMatrix;
 
 		bool m_playSplash;
+
+		float m_gamma;
+		float m_exposure;
+		glm::vec3 m_whitePoint;
+
+		GLuint m_toneMappedTexture;
+		std::string m_currentLUT;
+
+		unsigned int m_animationFramerate;
 
 	};
 

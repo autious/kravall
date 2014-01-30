@@ -1,20 +1,26 @@
-local MainMenu = {}
+local GUI = require "gui/GUI"
+local Button = require "gui/component/Button"
+local Slider = require "gui/component/Slider"
+local Checkbox = require "gui/component/Checkbox"
 
-local GUIBase = require "gui/component/GUIBase"
-local viewport = require "gui/viewport"
+MainMenu = {}
+
+function MainMenu:new(o)
+    o = o or {}
+
+    o.gui = GUI:new()
+
+    o.gui:addComponent(Button:new({x=100,y=100}))
+    o.gui:addComponent(Slider:new({x=100,y=300}))
+    o.gui:addComponent(Checkbox:new({x=100,y=400}))
+
+    setmetatable( o, self )
+    self.__index = self
+    return o
+end
 
 function MainMenu:destroy()
-    self.t:destroy()
+    self.gui:destroy() 
 end
-
-function MainMenu.new()
-    local self = {}
-    self.t = GUIBase.new()
-
-    setmetatable( self,  { __index = MainMenu } )
-
-    return self
-end
-
 
 return MainMenu

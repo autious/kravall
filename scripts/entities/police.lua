@@ -7,7 +7,7 @@ return function(asm, posX, posY, posZ, groupID)
 			},
 			{
 				type = core.componentType.GraphicsComponent,
-				data = { mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry },
+				data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry },
 				load = { 
 							mesh = { core.loaders.GnomeLoader, "assets/model/animated/police/cop/cop-light_00.bgnome" },
 							material = { core.loaders.MaterialLoader, "assets/material/cop.material" }
@@ -28,12 +28,19 @@ return function(asm, posX, posY, posZ, groupID)
 			{
 				type = core.componentType.MovementComponent,
 				data = { direction = { 0, 0, 0 }, newDirection = { 0, 0, 0 }, speed = 5.8, 
-						desiredSpeed = 5.8, goal = false }
+			    desiredSpeed = 5.8, goal = false },
+                ignoreHard = true 
 			},
 			{
 				type = core.componentType.AttributeComponent,
 				data = { health = 0, stamina = 0, morale = 0, 
-					   stance = core.PoliceStance.Passive, defense = 0, mobility = 0, squadID = groupID }
+					   stance = core.PoliceStance.Passive, defense = 0, mobility = 0, squadID = groupID },
+                ignoreHard = true
+			},
+			{
+				type = core.componentType.TargetingComponent,
+				data = { },
+				ignoreHard = true
 			},
 			{
 				type = core.componentType.BoundingVolumeComponent,

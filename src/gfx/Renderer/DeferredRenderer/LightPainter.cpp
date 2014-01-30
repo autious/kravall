@@ -37,7 +37,9 @@ namespace GFX
 
 		m_eyePosUniform = m_shaderManager->GetUniformLocation("ComputeLighting", "eyePos");
 
-
+		m_gammaUniform = m_shaderManager->GetUniformLocation("ComputeLighting", "gGamma");
+		m_exposureUniform = m_shaderManager->GetUniformLocation("ComputeLighting", "gExposure");
+		m_whitePointUniform = m_shaderManager->GetUniformLocation("ComputeLighting", "gWhitePoint");
 
 		numActiveLightsUniform = m_shaderManager->GetUniformLocation("ComputeLighting", "numActiveLights");
 
@@ -80,7 +82,8 @@ namespace GFX
 
 
 
-	void LightPainter::Render(unsigned int& renderIndex, FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix)
+	void LightPainter::Render(unsigned int& renderIndex, FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, FBOTexture* SSDOTexture,
+		glm::mat4 viewMatrix, glm::mat4 projMatrix, float exposure, float gamma, glm::vec3 whitePoint, GLuint& toneMappedTexture)
 	{
 		m_shaderManager->UseProgram("ComputeLighting");
 
@@ -93,6 +96,9 @@ namespace GFX
 		m_shaderManager->SetUniform(1, viewMatrix, m_viewUniform);
 		m_shaderManager->SetUniform(1, invProjView, m_invProjViewUniform);
 
+		m_shaderManager->SetUniform(exposure, m_exposureUniform);
+		m_shaderManager->SetUniform(gamma, m_gammaUniform);
+		m_shaderManager->SetUniform(1, whitePoint, m_whitePointUniform);
 
 		std::vector<RenderJobManager::RenderJob> renderJobs = m_renderJobManager->GetJobs();
 
@@ -182,7 +188,7 @@ namespace GFX
 		glBindImageTexture(2, diffuse->GetTextureHandle(), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
 		glBindImageTexture(3, specular->GetTextureHandle(), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
 		glBindImageTexture(4, glowMatID->GetTextureHandle(), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
-
+		glBindImageTexture(5, SSDOTexture->GetTextureHandle(), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
 
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_pointLightBuffer);
 		LightData* pData = (LightData*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, MAXIMUM_LIGHTS * sizeof(LightData), 
@@ -193,29 +199,33 @@ namespace GFX
 		glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
 		glDispatchCompute(GLuint((m_screenWidth + WORK_GROUP_SIZE - 1) / float(WORK_GROUP_SIZE)), GLuint((m_screenHeight + WORK_GROUP_SIZE - 1) / float(WORK_GROUP_SIZE)), 1);
+		
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 
-		m_shaderManager->UseProgram("TQ");
-
-		glDisable(GL_DEPTH_TEST);
-		glDisable(GL_BLEND);
-		glDepthMask(GL_FALSE);
-
-		m_shaderManager->SetUniform(1.0f, alphaUniform);
-
-		TextureManager::BindTexture(m_textureHandle, textureUniform, 0, GL_TEXTURE_2D);
-
-		glBindVertexArray(m_dummyVAO);
-		glDrawArrays(GL_POINTS, 0, 1);
-
-		m_shaderManager->ResetProgram();
-
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_BLEND);
-		glDepthMask(GL_TRUE);
+		//m_shaderManager->UseProgram("TQ");
+		//
+		//glDisable(GL_DEPTH_TEST);
+		//glDisable(GL_BLEND);
+		//glDepthMask(GL_FALSE);
+		//
+		//m_shaderManager->SetUniform(1.0f, alphaUniform);
+		//
+		//TextureManager::BindTexture(m_textureHandle, textureUniform, 0, GL_TEXTURE_2D);
+		//
+		//glBindVertexArray(m_dummyVAO);
+		//glDrawArrays(GL_POINTS, 0, 1);
+		//
+		//m_shaderManager->ResetProgram();
+		//
+		//glEnable(GL_DEPTH_TEST);
+		//glEnable(GL_BLEND);
+		//glDepthMask(GL_TRUE);
 
 		BasePainter::ClearFBO();
 
 		TextureManager::UnbindTexture();
+
+		toneMappedTexture = m_textureHandle;
 		renderIndex = 0;
 	}
 }

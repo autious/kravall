@@ -32,6 +32,7 @@ struct SurfaceData
 	vec4 diffuse;
 	vec4 specular;
 	vec4 glow;
+	vec4 occlusion;
 };
 
 struct Tile
@@ -45,6 +46,7 @@ layout (binding = 1, rgba32f) uniform readonly image2D normalDepth;
 layout (binding = 2, rgba32f) uniform readonly image2D diffuse;
 layout (binding = 3, rgba32f) uniform readonly image2D specular;
 layout (binding = 4, rgba32f) uniform readonly image2D glowMatID;
+layout (binding = 5, rgba32f) uniform readonly image2D occlusion;
 
 layout (std430, binding = 5) readonly buffer BufferObject
 {
@@ -64,14 +66,18 @@ uniform uint numSpotLights;
 uniform uint numDirLights;
 uniform uint numAmbientLights;
 
-shared uint minDepth = 0xFFFFFFFF;
-shared uint maxDepth = 0;
+uniform vec3 gWhitePoint;
+uniform float gExposure;
+uniform float gGamma;
+
+shared uint minDepth;
+shared uint maxDepth;
 
 shared uint pointLightIndex[MAX_LIGHTS];
-shared uint pointLightCount = 0;
+shared uint pointLightCount;
 
 shared uint spotLightIndex[MAX_LIGHTS];
-shared uint spotLightCount = 0;
+shared uint spotLightCount;
 
 vec4 reconstruct_pos(float z, vec2 uv_f)
 {
@@ -80,7 +86,7 @@ vec4 reconstruct_pos(float z, vec2 uv_f)
     return vec4((sPos.xyz / sPos.w ), sPos.w);
 }
 
-vec3 BlinnPhong( LightData light, SurfaceData surface, vec3 eyeDirection, vec3 lightDirection, float attenuation )
+vec3 BlinnPhong( LightData light, SurfaceData surface, vec3 eyeDirection, vec3 lightDirection, float attenuation, inout float occlusion)
 {
 	lightDirection = normalize(lightDirection);
 
@@ -90,6 +96,9 @@ vec3 BlinnPhong( LightData light, SurfaceData surface, vec3 eyeDirection, vec3 l
 	vec3 diffuseColor = vec3(0.0f, 0.0f, 0.0f);
 	float df =  max( 0.0f, dot(surface.normalDepth.xyz, lightDirection));
 	intensity = df;
+
+	occlusion = 1 - clamp(dot(vec4(lightDirection , 1.0f), surface.occlusion), 0.0f, 1.0f);
+	occlusion *= attenuation;
 
 	diffuseColor = surface.diffuse.xyz * intensity * light.color * light.intensity * attenuation;
 
@@ -103,13 +112,14 @@ vec3 BlinnPhong( LightData light, SurfaceData surface, vec3 eyeDirection, vec3 l
 	
 		// Temp vars, need materials with these channels
 
-
 		specColor = surface.specular.xyz * intensity * light.spec_color * light.intensity * attenuation;
 	}
+
+
 	return diffuseColor + specColor;
 }
 
-vec4 CalculatePointlight( LightData light, SurfaceData surface, vec3 wPos, vec3 eyePosition)
+vec4 CalculatePointlight( LightData light, SurfaceData surface, vec3 wPos, vec3 eyePosition, inout float occlusion)
 {
 	vec3 lightDir = light.position - wPos;
 	
@@ -118,13 +128,14 @@ vec4 CalculatePointlight( LightData light, SurfaceData surface, vec3 wPos, vec3 
 	
 	// Calculate attenuation
 	float dist = length( lightDir );
-	float att = 1.0f / dist - 1.0f / light.radius_length;// More attenuations to chose from at the bottom of this file
+	float att = (pow(clamp( 1 - pow(dist / light.radius_length, 4.0f), 0.0f, 1.0f), 2.0f)) / (pow(dist, 2.0f) + 1);// More attenuations to chose from at the bottom of this file
+	//float att = 1.0f / dist - 1.0f / light.radius_length;
 
 	vec3 eyeDir = normalize(eyePosition - wPos);
-	return vec4(BlinnPhong(light, surface, eyeDir, lightDir, att), 0.0f);
+	return vec4(BlinnPhong(light, surface, eyeDir, lightDir, att, occlusion), 0.0f);
 }
 
-vec4 CalculateSpotlight( LightData light, SurfaceData surface, vec3 wPos, vec3 eyePosition)
+vec4 CalculateSpotlight( LightData light, SurfaceData surface, vec3 wPos, vec3 eyePosition, inout float occlusion)
 {
 	vec3 lightDir = light.position - wPos;
 	
@@ -139,22 +150,35 @@ vec4 CalculateSpotlight( LightData light, SurfaceData surface, vec3 wPos, vec3 e
 	{
 		// Calculate attenuation
 		float dist = length( lightDir );
-		float att = spot * (1.0f / dist - 1.0f / light.radius_length);// More attenuations to chose from at the bottom of this file
+		float att = spot * ((pow(clamp( 1 - pow(dist / light.radius_length, 4.0f), 0.0f, 1.0f), 2.0f)) / (pow(dist, 2.0f) + 1));// More attenuations to chose from at the bottom of this file
+		//float att =  spot * (1.0f / dist - 1.0f / light.radius_length);
 
 		vec3 eyeDir = normalize(eyePosition - wPos);
-		return vec4(BlinnPhong(light, surface, eyeDir, lightDir, att), 0.0f);
+		return vec4(BlinnPhong(light, surface, eyeDir, lightDir, att, occlusion), 0.0f);
 	}
 	else
 		return vec4(0.0f, 0.0f, 0.0f, 0.0f);
 	
 }
 
-vec4 CalculateDirlight( LightData light, SurfaceData surface, vec3 wPos, vec3 eyePosition)
+vec4 CalculateDirlight( LightData light, SurfaceData surface, vec3 wPos, vec3 eyePosition, inout float occlusion)
 {
 	vec3 lightDir = normalize(-light.orientation.xyz);
 	vec3 eyeDir = normalize(eyePosition - wPos);
 	float df =  max( 0.0f, dot(surface.normalDepth.xyz, lightDir));
-	return vec4(BlinnPhong(light, surface, eyeDir, lightDir, 1.0f), 0.0f);
+	return vec4(BlinnPhong(light, surface, eyeDir, lightDir, 1.0f, occlusion), 0.0f);
+}
+
+vec3 Uncharted2Tonemap(vec3 x)
+{
+	float A = 0.15;
+	float B = 0.50;
+	float C = 0.10;
+	float D = 0.20;
+	float E = 0.02;
+	float F = 0.30;
+
+    return ((x*(A*x+C*B)+D*E)/(x*(A*x+B)+D*F))-E/F;
 }
 
 void main()
@@ -315,40 +339,57 @@ void main()
 		surface.diffuse = imageLoad(diffuse, pixel);
 		surface.specular = imageLoad(specular, pixel);
 		surface.glow = imageLoad(glowMatID, pixel);
-		
-		
+		surface.occlusion = imageLoad(occlusion, pixel) * 2.0f - 1.0f;
+
 		vec4 color = vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
+		float sumOcclusion = 0.0f;
 
 		//point lights
 		uint i;
 		for(i = 0; i < pointLightCount; i++)
 		{
-			color += CalculatePointlight(lights[pointLightIndex[i]], surface, wPos.xyz, eyePos);
+			float localOcclusion = 0.0f;
+			color += CalculatePointlight(lights[pointLightIndex[i]], surface, wPos.xyz, eyePos, localOcclusion);
+			sumOcclusion += localOcclusion;
 		}
 		
 		//spot lights
 		for(i = 0; i < spotLightCount; i++)
 		{
-			color += CalculateSpotlight(lights[spotLightIndex[i]], surface, wPos.xyz, eyePos);
+			float localOcclusion = 0.0f;
+			color += CalculateSpotlight(lights[spotLightIndex[i]], surface, wPos.xyz, eyePos, localOcclusion);
+			sumOcclusion += localOcclusion;
 		}
 		uint ofst;
 		//Directional lights
 		ofst = numPointLights + numSpotLights;
 		for(i = ofst; i < numDirLights + ofst; i++)
 		{
-			color += CalculateDirlight(lights[i], surface, wPos.xyz, eyePos);
+			float localOcclusion = 0.0f;
+			color += CalculateDirlight(lights[i], surface, wPos.xyz, eyePos, localOcclusion);
+			sumOcclusion += localOcclusion;
 		}
 		
 		ofst = numPointLights + numSpotLights + numDirLights;
+
+		//float light_occlusion = 1 - clamp(dot(vec4(lightDirection , 1.0f), surface.occlusion), 0.0f, 1.0f);
+
 		// Ambient lights
 		for(i = ofst; i < numAmbientLights + ofst; i++)
 		{
 			color += vec4(lights[i].color*lights[i].intensity, 0.0f) * surface.diffuse;
 		}
 
+		//Add occlusion
+		//color.xyz *= sumOcclusion;
+
+		//Tone map
+		color.xyz = Uncharted2Tonemap(color.xyz * gExposure) / Uncharted2Tonemap(gWhitePoint);
+
+		//Gamma correct
+		color.xyz = pow(color.xyz, vec3(1.0f / gGamma));
 		color += surface.glow;
-		
 		
 		//if (gl_LocalInvocationID.x == 0 || gl_LocalInvocationID.y == 0)
 		//{
@@ -363,6 +404,7 @@ void main()
 			//color = vec4(0.0f, (viewDepth), 0.0f, 0.0f);
 			//color += vec4(float(minDepthZ<(2*d-1.0 + 0.00001f) && minDepthZ>(2*d-1.0 - 0.00001f))*0.5f, 0.0f, 0.0f, 0.0f);
 			imageStore(outTexture, pixel, color);
+			//imageStore(outTexture, pixel, vec4(surface.occlusion.xyz,1.0f));
 			//imageStore(outTexture, pixel, vec4(minDepthZ));
 			//imageStore(outTexture, pixel, vec4(pointLightCount / 25.0f));
 			//imageStore(outTexture, pixel, vec4(vec2(tilePos.xy), 0.0f, 1.0f));
@@ -384,3 +426,6 @@ void main()
 //float linearAttenuation = 0.12;
 //float quadraticAttenuation = 0.10;
 //float att = constantAttenuation / ((1+linearAttenuation*dist)*(1+quadraticAttenuation*dist*dist));
+
+//Unreal Engine 4 attenuation
+//float att = (pow(clamp( 1 - pow(dist / light.radius_length, 4.0f), 0.0f, 1.0f), 2.0f)) / (pow(dist, 2.0f) + 1);

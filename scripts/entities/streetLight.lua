@@ -15,7 +15,9 @@ return function(asm, posX, posZ, strength)
 							type = core.gfx.objectTypes.Light,
 							lighttype = core.gfx.lightTypes.Point,
                             speccolor = { r,g,b }
-						}
+						},
+                ignoreHard = true
+                
 			},
 			{
 				type = core.componentType.WorldPositionComponent,

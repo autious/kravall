@@ -10,14 +10,14 @@ AnimationManager::~AnimationManager()
 
 }
 
-int AnimationManager::CreateSkeleton(unsigned int& out_skeletonID)
+int AnimationManager::CreateSkeleton(int& out_skeletonID)
 {
 	out_skeletonID = m_idCounter++;
 	m_skeletons[out_skeletonID] = new Skeleton();
 	return GFX_SUCCESS;
 }
 
-int AnimationManager::DeleteSkeleton(const unsigned int& skeletonID)
+int AnimationManager::DeleteSkeleton(const int& skeletonID)
 {
 	if (m_skeletons.find(skeletonID) != m_skeletons.end())
 	{
@@ -29,7 +29,7 @@ int AnimationManager::DeleteSkeleton(const unsigned int& skeletonID)
 		return GFX_FAIL;
 }
 
-int AnimationManager::AddAnimationToSkeleton(const unsigned int& skeletonID, glm::mat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame)
+int AnimationManager::AddAnimationToSkeleton(const int& skeletonID, glm::mat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame)
 {
 	if (m_skeletons.find(skeletonID) != m_skeletons.end())
 	{
@@ -39,11 +39,20 @@ int AnimationManager::AddAnimationToSkeleton(const unsigned int& skeletonID, glm
 		return GFX_INVALID_SKELETON;
 }
 
-int AnimationManager::GetFrameCount(const unsigned int& skeletonID, const unsigned int& animationID, unsigned int& out_frameCount)
+int AnimationManager::GetFrameInfo(const int& skeletonID, const int& animationID, unsigned int& out_frameCount, unsigned int& out_bonesPerFrame)
 {
 	if (m_skeletons.find(skeletonID) != m_skeletons.end())
 	{
-		return m_skeletons[skeletonID]->GetFrameCount(animationID, out_frameCount);
+		return m_skeletons[skeletonID]->GetInfo(animationID, out_frameCount, out_bonesPerFrame);
 	}
 	return GFX_INVALID_SKELETON;
+}
+
+
+void AnimationManager::BindSkeleton(const int& skeletonID)
+{
+	if (m_skeletons.find(skeletonID) != m_skeletons.end())
+	{
+		m_skeletons[skeletonID]->BindBuffers();
+	}
 }

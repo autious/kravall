@@ -4,12 +4,15 @@ local fac_image = require "factories/image"
 local window = require "window"
 local T = {}
 
-function T.new()
-    local self = {}
+function T:new(o)
+    o = o or {}
 
-    self.objectiveHandler = objective_handler.new()
-    setmetatable( self, { __index = T } )
-    return self
+    o.objectiveHandler = objective_handler:new()
+
+    setmetatable( o, self )
+    self.__index = self
+
+    return o
 end
 
 function T:update( delta )

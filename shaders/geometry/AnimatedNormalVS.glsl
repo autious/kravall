@@ -43,11 +43,11 @@ out vec2 uvFS;
 mat4x4 GetBoneMatrix(InstanceData instanceData, int boneIndex)
 {
 	return gBones[instanceData.animationIndex + instanceData.frameOffset + boneIndex];
+	//return mat4x4(1.0f);
 }
 
 void main()
 {
-	// FUCK WESTAWAY
 	InstanceData instance = gInstances[gl_InstanceID];
 	// Apply animations
 	vec4 posA = vec4(0.0f);

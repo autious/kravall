@@ -41,6 +41,15 @@ Core::ComponentGetters Core::GraphicsComponentBinding::GetGetters()
         return 1;
     };
 
+    getters["render"] = []( Core::Entity entity, lua_State *L )
+    {
+        GraphicsComponent *gc = WGETC<GraphicsComponent>( entity );
+        
+        lua_pushboolean( L, gc->render ); 
+
+        return 1;
+    };
+
     return getters;
 }
 
@@ -83,6 +92,13 @@ Core::ComponentSetters Core::GraphicsComponentBinding::GetSetters()
         GFXObjectType * gfxot = (GFXObjectType*)luaL_checkudata( L, valueindex, GFX_OBJECT_TYPE_META );
 
         GFX::SetBitmaskValue( gc->bitmask, GFX::BITMASK::TYPE, *gfxot );
+    };
+
+    setters["render"] = [](Core::Entity entity, lua_State * L, int valueindex )
+    {
+        GraphicsComponent *gc = WGETC<GraphicsComponent>( entity );
+
+        gc->render = lua_toboolean( L, valueindex );
     };
 
     return setters;

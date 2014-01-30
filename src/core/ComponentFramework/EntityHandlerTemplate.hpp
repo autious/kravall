@@ -26,8 +26,10 @@ namespace Core
     private:
         static const int COMPONENT_COUNT = sizeof...(Components);
 
+        std::array<void*,sizeof...(Components)> m_compDefaults = {{new Components()...}};
 
         EntityVector<1024,64,Components...> m_entities;
+
         std::array<PVector*,sizeof...(Components)> m_components = {{new PVector(1024,64,sizeof(Components))...}};
         SystemHandlerT *m_systemHandler;
     public:
@@ -40,7 +42,6 @@ namespace Core
 
         EntityHandlerTemplate( SystemHandlerT *systemHandler)
         {
-
             m_systemHandler = systemHandler;
         }
 
@@ -187,17 +188,23 @@ namespace Core
             does not trigger any of these.
         */
         template<typename Component>
-        Component* GetComponentTmpPointer( Entity entity )
-        {
-            static_assert( Match<Component,Components...>::exists, SA_COMPONENT_USE );
+		Component* GetComponentTmpPointer(Entity entity)
+		{
+			static_assert(Match<Component, Components...>::exists, SA_COMPONENT_USE);
 
-            static const int componentType = GetComponentType<Component>();
+			static const int componentType = GetComponentType<Component>();
 
-            int componentId = m_entities.GetComponentId( entity, componentType );
-            
-            assert( componentId >= 0 );
+			int componentId = m_entities.GetComponentId(entity, componentType);
 
-            return (Component*)m_components[componentType]->Get( componentId );
+
+			if (componentId >= 0)
+			{
+				return (Component*)m_components[componentType]->Get(componentId);
+			}
+			else
+			{
+				return nullptr;
+			}
         }
 
         /*!
@@ -298,7 +305,7 @@ namespace Core
                 m_components[componentType]->Release( componentId );
             }
 
-            int compId = m_components[componentType]->Alloc();
+            int compId = m_components[componentType]->Alloc( m_compDefaults[componentType] );
 
             m_entities.SetComponentId( ent, compId, componentType );
 

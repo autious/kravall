@@ -87,6 +87,8 @@ namespace GFX
 		glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
 		glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
 
+		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
 		glCullFace(GL_BACK);
 		err = glGetError();
         if( err )
@@ -237,26 +239,79 @@ namespace GFX
 			return Renderer().SetShaderToMaterial(materialID, shaderID);
 		}
 
-		int CreateSkeleton(unsigned int& out_skeletonID)
+		int CreateSkeleton(int& out_skeletonID)
 		{
 			return Renderer().CreateSkeleton(out_skeletonID);
 		}
 
-		int DeleteSkeleton(const unsigned int& skeletonID)
+		int DeleteSkeleton(const int& skeletonID)
 		{
 			return Renderer().DeleteSkeleton(skeletonID);
 		}
 
-		int AddAnimationToSkeleton(const unsigned int& skeletonID, GFXMat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame)
+		int GetSkeletonID(const unsigned int& meshID)
+		{
+			return Renderer().GetSkeletonID(meshID);
+		}
+
+		int BindSkeletonToMesh(const unsigned int& meshID, const int& skeletonID)
+		{
+			return Renderer().BindSkeletonToMesh(meshID, skeletonID);
+		}
+
+		int AddAnimationToSkeleton(const int& skeletonID, GFXMat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame)
 		{
 			return Renderer().AddAnimationToSkeleton(skeletonID, frames, numFrames, numBonesPerFrame);
 		}
 
-		int GetAnimationFrameCount(const unsigned int& skeletonID, const unsigned int& animationID, unsigned int& out_frameCount)
+		int GetAnimationInfo(const int& skeletonID, const int& animationID, unsigned int& out_frameCount, unsigned int& out_bonesPerFrame)
 		{
-			return Renderer().GetAnimationFrameCount(skeletonID, animationID, out_frameCount);
+			return Renderer().GetAnimationInfo(skeletonID, animationID, out_frameCount, out_bonesPerFrame);
 		}
 
+		void ReloadLUT()
+		{
+			Renderer().ReloadLUT();
+		}
+	}
+}
+
+namespace GFX
+{
+	namespace Settings
+	{
+		void SetGamma(float gamma)
+		{
+			Renderer().SetGamma(gamma);
+		}
+
+		unsigned int GetAnimationFramerate()
+		{
+			return Renderer().GetAnimationFramerate();
+		}
+
+		void SetAnimationFramerate(unsigned int framerate)
+		{
+			Renderer().SetAnimationFramerate(framerate);
+		}
+	}
+
+	namespace ColorSettings
+	{
+		void SetLUT(const char* LUT)
+		{
+			Renderer().SetLUT(std::string(LUT));
+		}
+
+		void SetWhitePoint(GFXVec3 whitePoint)
+		{
+
+		}
+
+		void SetExposure(float exposure)
+		{
+			Renderer().SetExposure(exposure);
+		}
 	}
 }
 

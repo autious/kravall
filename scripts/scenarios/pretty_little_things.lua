@@ -11,7 +11,7 @@ asm:loadAssembly(
 	},
 	{
 		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry },
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/plane.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
@@ -28,31 +28,31 @@ asm:loadAssembly(
 }
 )
 --Cube
-asm:loadAssembly( 
-{
-	{
-		type = core.componentType.WorldPositionComponent,
-		data = { position = { 200, 10, 0 } }
-	},
-	{
-		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry },
-		load = { 
-					mesh = { core.loaders.GnomeLoader, "assets/cube.bgnome", false },
-					material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
-			   }
-	},
-	{
-		type = core.componentType.ScaleComponent,
-		data = { scale = 10.0 }
-	},
-	{
-		type = core.componentType.RotationComponent,
-		--data = { rotation = { 0,0, math.sin( 3.14 ), math.cos(3.14/2.0) } }
-		data = { rotation = { 1*math.sin( -3.14/4 ), 0, 0, math.cos( -3.14/4 ) } }
-	}
-}
-)
+--asm:loadAssembly( 
+--{
+--	{
+--		type = core.componentType.WorldPositionComponent,
+--		data = { position = { 200, 10, 0 } }
+--	},
+--	{
+--		type = core.componentType.GraphicsComponent,
+--		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry },
+--		load = { 
+--					mesh = { core.loaders.GnomeLoader, "assets/cube.bgnome", false },
+--					material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
+--			   }
+--	},
+--	{
+--		type = core.componentType.ScaleComponent,
+--		data = { scale = 10.0 }
+--	},
+--	{
+--		type = core.componentType.RotationComponent,
+--		--data = { rotation = { 0,0, math.sin( 3.14 ), math.cos(3.14/2.0) } }
+--		data = { rotation = { 1*math.sin( -3.14/4 ), 0, 0, math.cos( -3.14/4 ) } }
+--	}
+--}
+--)
 --Teapot
 asm:loadAssembly( 
 {
@@ -62,7 +62,7 @@ asm:loadAssembly(
 	},
 	{
 		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry },
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/teapot.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
@@ -88,7 +88,7 @@ asm:loadAssembly(
 	},
 	{
 		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry },
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/torus.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
@@ -114,7 +114,7 @@ asm:loadAssembly(
 	},
 	{
 		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry },
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/sphere.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
@@ -140,7 +140,7 @@ asm:loadAssembly(
 	},
 	{
 		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry },
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/cone.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
@@ -166,7 +166,7 @@ asm:loadAssembly(
 	},
 	{
 		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry },
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/pyramid.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
@@ -192,7 +192,7 @@ asm:loadAssembly(
 	},
 	{
 		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry },
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/knot.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
@@ -220,7 +220,8 @@ asm:loadAssembly(
                         intensity = 1.0,
                         type = core.gfx.objectTypes.Light,
                         lighttype = core.gfx.lightTypes.Point
-                    }
+                    },
+			ignoreHard = true
         },
         {
             type = core.componentType.WorldPositionComponent,
@@ -250,6 +251,7 @@ for i = 0, 255 do
                         type = core.gfx.objectTypes.Light,
                         lighttype = core.gfx.lightTypes.Point
                     }
+			, ignoreHard = true
         },
         {
             type = core.componentType.WorldPositionComponent,
@@ -396,7 +398,8 @@ asm:loadAssembly(
 					intensity = 0.05,
 					type = core.gfx.objectTypes.Light,
 					lighttype = core.gfx.lightTypes.Dir
-				}
+				},
+		ignoreHard = true
 	},
 	{
 		type = core.componentType.WorldPositionComponent,
@@ -422,7 +425,8 @@ asm:loadAssembly(
 					intensity = 0.01,
 					type = core.gfx.objectTypes.Light,
 					lighttype = core.gfx.lightTypes.Ambient
-				}
+				},
+		ignoreHard = true
 	},
 	{
 		type = core.componentType.WorldPositionComponent,

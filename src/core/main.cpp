@@ -150,8 +150,15 @@ void run( GLFWwindow * window )
     double fpsCounters[FPS_COUNTERS_SIZE];
     int fpsCounterIndex = 0;
 
+    
+    LOG_WARNING << "Startup complete, setting output to \"" << CONF.GetString( "consoleOutputLevel", "debug" ) << "\" level (to change this do lua core.config.consoleOutputLevel=\"debug\" or change the setting in scripts/config.lua" << std::endl;
+
 	while (!glfwWindowShouldClose(window) && killProgram == false)
 	{
+        //Set the output filtering level for the console.
+        std::string consoleOutputLevel = CONF.GetString( "consoleOutputLevel", "debug" );
+        SetCLOPLevel( consoleOutputLevel.c_str() );
+
 		// calc delta time
 		thisFrame = timer.GetTotal();
 		double delta = (thisFrame - lastFrameTime) / 1000.0;

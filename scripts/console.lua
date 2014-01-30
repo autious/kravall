@@ -44,6 +44,10 @@ function currentscenario()
     print( core.config.current_scenario_name )
 end
 
+function shh()
+    core.config.consoleOutputLevel = "fatal"
+end
+
 function getCompleteTable( table, prefix, input_table )
     input_table = input_table or {}
 
@@ -97,4 +101,8 @@ function print_loaded()
     for k,v in pairs( package.loaded ) do
         print( k )
     end
+end
+
+function errorHandler( errorMessage )
+    return errorMessage .. "\n"  .. debug.traceback()
 end
