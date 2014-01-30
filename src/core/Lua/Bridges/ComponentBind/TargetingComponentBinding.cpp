@@ -100,6 +100,8 @@ Core::ComponentSetters Core::TargetingComponentBinding::GetSetters()
 			luaL_error(L, "Unable to set target for ent %d, value is not number", entity);
 		}
 	};
+
+	return setters;
 }
 
 
