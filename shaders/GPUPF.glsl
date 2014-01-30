@@ -289,16 +289,141 @@ void main()
 			}
 		}
 
-		//passive police vs rioter
-		gMoodCurves[0][0].range = 10.0f;
+		/************************************************************************************/
+		//passive police vs normal rioter
+		gMoodCurves[0][0].range = 5.0f;
 		gMoodCurves[0][0].moraleFactor = -0.001f;
 		gMoodCurves[0][0].pressureFactor = 0.01f;
 		gMoodCurves[0][0].rageFactor = 0.01f;
 
+		//defensive police vs normal rioter
+		gMoodCurves[0][1].range = 5.0f;
+		gMoodCurves[0][1].moraleFactor = 0.0f;
+		gMoodCurves[0][1].pressureFactor = 0.0f;
+		gMoodCurves[0][1].rageFactor = 0.01f;
+
+		//agggresive police vs normal rioter
+		gMoodCurves[0][2].range = 15.0f;
+		gMoodCurves[0][2].moraleFactor = 0.0f;
+		gMoodCurves[0][2].pressureFactor = 0.5f;
+		gMoodCurves[0][2].rageFactor = 0.1f;
+
+		//Attacking police vs normal rioter
+		gMoodCurves[0][3].range = 15.0f; //Attacking state doesn't actually exist yet, fix this
+		gMoodCurves[0][3].moraleFactor = -0.5f;
+		gMoodCurves[0][3].pressureFactor = 5000.0f;
+		gMoodCurves[0][3].rageFactor = 5000.0f;
+
+		/************************************************************************************/
+		//passive police vs agitated rioter
+		gMoodCurves[1][0].range = 5.0f;
+		gMoodCurves[1][0].moraleFactor = 0.0f;
+		gMoodCurves[1][0].pressureFactor = 0.01f;
+		gMoodCurves[1][0].rageFactor = 0.1f;
+
+		//defensive police vs agitated rioter
+		gMoodCurves[1][1].range = 5.0f;
+		gMoodCurves[1][1].moraleFactor = 0.0f;
+		gMoodCurves[1][1].pressureFactor = 0.0f;
+		gMoodCurves[1][1].rageFactor = 0.1f;
+
+		//agggresive police vs agitated rioter
+		gMoodCurves[1][2].range = 15.0f;
+		gMoodCurves[1][2].moraleFactor = 0.0f;
+		gMoodCurves[1][2].pressureFactor = 0.5f;
+		gMoodCurves[1][2].rageFactor = 0.1f;
+
+		/************************************************************************************/
+
+		//passive police vs attacking rioter
+		gMoodCurves[2][0].range = 5.0f;
+		gMoodCurves[2][0].moraleFactor = 0.0f;
+		gMoodCurves[2][0].pressureFactor = 0.01f;
+		gMoodCurves[2][0].rageFactor = 0.1f;
+
+		//defensive police vs attacking rioter
+		gMoodCurves[2][1].range = 5.0f;
+		gMoodCurves[2][1].moraleFactor = 0.0f;
+		gMoodCurves[2][1].pressureFactor = 0.0f;
+		gMoodCurves[2][1].rageFactor = 0.1f;
+
+		//agggresive police vs attacking rioter
+		gMoodCurves[2][2].range = 15.0f;
+		gMoodCurves[2][2].moraleFactor = 0.0f;
+		gMoodCurves[2][2].pressureFactor = 0.5f;
+		gMoodCurves[2][2].rageFactor = 0.1f;
+
+		/************************************************************************************/
+
+		//passive police vs retreating rioter
+		gMoodCurves[3][0].range = 5.0f;
+		gMoodCurves[3][0].moraleFactor = 0.0f;
+		gMoodCurves[3][0].pressureFactor = 0.01f;
+		gMoodCurves[3][0].rageFactor = 0.1f;
+
+		//defensive police vs retreating rioter
+		gMoodCurves[3][1].range = 5.0f;
+		gMoodCurves[3][1].moraleFactor = 0.0f;
+		gMoodCurves[3][1].pressureFactor = 0.0f;
+		gMoodCurves[3][1].rageFactor = 0.1f;
+
+		//agggresive police vs retreating rioter
+		gMoodCurves[3][2].range = 15.0f;
+		gMoodCurves[3][2].moraleFactor = 0.0f;
+		gMoodCurves[3][2].pressureFactor = 0.5f;
+		gMoodCurves[3][2].rageFactor = 0.1f;
+		
+		/************************************************************************************/
+
+		//passive police vs civilian rioter
+		gMoodCurves[4][0].range = 0.0f;
+		gMoodCurves[4][0].moraleFactor = 0.0f;
+		gMoodCurves[4][0].pressureFactor = 0.0f;
+		gMoodCurves[4][0].rageFactor = 0.0f;
+
+		//defensive police vs civilian rioter
+		gMoodCurves[4][1].range = 0.0f;
+		gMoodCurves[4][1].moraleFactor = 0.0f;
+		gMoodCurves[4][1].pressureFactor = 0.0f;
+		gMoodCurves[4][1].rageFactor = 0.0f;
+
+		//agggresive police vs civilian rioter
+		gMoodCurves[4][2].range = 15.0f;
+		gMoodCurves[4][2].moraleFactor = 0.0f;
+		gMoodCurves[4][2].pressureFactor = 0.5f;
+		gMoodCurves[4][2].rageFactor = 0.1f;
+
+		/************************************************************************************/
+
+		//rioter neut vs police
 		gMoodCurves[5][6].range = 1;
 		gMoodCurves[5][6].moraleFactor = 0;
 		gMoodCurves[5][6].pressureFactor = 0;
 		gMoodCurves[5][6].rageFactor = 0;
+
+		//rioter agi vs police
+		gMoodCurves[5][7].range = 1;
+		gMoodCurves[5][7].moraleFactor = -0.0001;
+		gMoodCurves[5][7].pressureFactor = 0;
+		gMoodCurves[5][7].rageFactor = 0;
+
+		//rioter att vs police
+		gMoodCurves[5][8].range = 15;
+		gMoodCurves[5][8].moraleFactor = -0.001f;
+		gMoodCurves[5][8].pressureFactor = 0;
+		gMoodCurves[5][8].rageFactor = 0;
+
+		//rioter ret vs police
+		gMoodCurves[5][9].range = 15;
+		gMoodCurves[5][9].moraleFactor = 0.1f;
+		gMoodCurves[5][9].pressureFactor = 0;
+		gMoodCurves[5][9].rageFactor = 0;
+
+		//rioter civ vs pol
+		gMoodCurves[5][10].range = 1;
+		gMoodCurves[5][10].moraleFactor = 0;
+		gMoodCurves[5][10].pressureFactor = 0;
+		gMoodCurves[5][10].rageFactor = 0;
 
 	}
 	

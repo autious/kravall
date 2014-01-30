@@ -114,13 +114,12 @@ core.system.groups.setGroupGoal(rioterGroup, -21, 0, 36)
 
 
 function Update(dt)
-	--local rm = {}
-	
 	local i = 1
 	while i <= #rioters do
 		local atc = rioters[i].instance:get(core.componentType.AttributeComponent)
-		print(atc.pressure)
-		
+
+		print(atc.rage)
+
 		if atc.morale <= 0.0 then
 			rioters[i].instance:destroy()
 			table.remove(rioters, i)
