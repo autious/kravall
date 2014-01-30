@@ -17,7 +17,7 @@ Core::PVector::~PVector( )
     free( m_data );
 }
 
-int Core::PVector::Alloc( )
+int Core::PVector::Alloc( void *def )
 {
     int id = -1;
     if( m_count >= m_size )
@@ -39,6 +39,11 @@ int Core::PVector::Alloc( )
     }
 
     m_count++;
+
+    if( def != nullptr )
+    {
+        Set( id, def );
+    }
 
     return id;
 }

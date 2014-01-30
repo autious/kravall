@@ -1,16 +1,20 @@
-return function(asm, dirX, dirY, dirZ)
-	asm:loadAssembly( 
+return function(asm, dirX, dirY, dirZ, r, g, b, intens)
+	r = r or 1
+	g = g or 1
+	b = b or 1
+	intens = intens or 0.1
+	asm:loadAssembly(
 		{
 			{
 				type = core.componentType.LightComponent,
 				data =  { 
-							color = { 0.5, 0.5, 0.5},
-							intensity = 0.5,
+							color = { r, g, b },
+							intensity = intens,
 							type = core.gfx.objectTypes.Light,
 							lighttype = core.gfx.lightTypes.Dir,
-                            speccolor = { 0.1,0.1,0.1 }
+							speccolor = { r, g, b }
 						},
-                ignoreHard = true
+						ignoreHard = true
 			},
 			{
 				type = core.componentType.WorldPositionComponent,

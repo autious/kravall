@@ -9,6 +9,7 @@ function MainMenu:new(o)
     o = o or {}
 
     o.gui = GUI:new()
+
     o.gui:addComponent(Button:new({x=100,y=100}))
     o.gui:addComponent(Slider:new({x=100,y=300}))
     o.gui:addComponent(Checkbox:new({x=100,y=400}))

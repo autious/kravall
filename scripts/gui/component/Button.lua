@@ -5,6 +5,8 @@ local Button =
                 {
                     x=0,
                     y=0,
+                    width=0,
+                    height=0,
                     matReleased = "assets/material/ui/button.material",
                     matPressed = "assets/material/ui/button_pressed.material",
                     matHover = "assets/material/ui/button_hover.material"
@@ -36,37 +38,44 @@ function Button:new(o)
                                             onExit = function() o:onExit() end
                                         }
 
-    o.pressedImg.ent:set( core.componentType.GraphicsComponent, { render = false }, true )
-    o.releasedImg.ent:set( core.componentType.GraphicsComponent, { render = true }, true )
-    o.hoverImg.ent:set( core.componentType.GraphicsComponent, { render = false }, true )
+    o.pressedImg:show(false)
+    o.releasedImg:show(true)
+    o.hoverImg:show(false)
 
     return o
 end
 
+function Button:setPosition(x,y)
+    self.GUIComponent:setPosition(x,y)
+    self.pressedImg:setPosition(x,y)
+    self.releasedImg:setPosition(x,y)
+    self.hoverImg:setPosition(x,y)
+end
+
 function Button:onPress() 
-    self.pressedImg.ent:set( core.componentType.GraphicsComponent, { render = true }, true )
-    self.releasedImg.ent:set( core.componentType.GraphicsComponent, { render = false }, true )
-    self.hoverImg.ent:set( core.componentType.GraphicsComponent, { render = false }, true )
+    self.pressedImg:show(true)
+    self.releasedImg:show(false)
+    self.hoverImg:show(false)
 
     self.onClick() 
 end
 
 function Button:onRelease()
-    self.pressedImg.ent:set( core.componentType.GraphicsComponent, { render = false }, true )
-    self.releasedImg.ent:set( core.componentType.GraphicsComponent, { render = false }, true )
-    self.hoverImg.ent:set( core.componentType.GraphicsComponent, { render = true }, true )
+    self.pressedImg:show(false)
+    self.releasedImg:show(false)
+    self.hoverImg:show(true)
 end
 
 function Button:onEnter()
-    self.pressedImg.ent:set( core.componentType.GraphicsComponent, { render = false }, true )
-    self.releasedImg.ent:set( core.componentType.GraphicsComponent, { render = false }, true )
-    self.hoverImg.ent:set( core.componentType.GraphicsComponent, { render = true }, true )
+    self.pressedImg:show( false )
+    self.releasedImg:show( false )
+    self.hoverImg:show( true )
 end
 
 function Button:onExit()
-    self.pressedImg.ent:set( core.componentType.GraphicsComponent, { render = false }, true )
-    self.releasedImg.ent:set( core.componentType.GraphicsComponent, { render = true }, true )
-    self.hoverImg.ent:set( core.componentType.GraphicsComponent, { render = false }, true )
+    self.pressedImg:show(false)
+    self.releasedImg:show(true)
+    self.hoverImg:show(false)
 end
 
 function Button:destroy()
