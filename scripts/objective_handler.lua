@@ -1,11 +1,12 @@
 local O = {}
 
-function O.new()
-    local self = {}
-    self.objectives = {}
-    self.state = ""
-    setmetatable( self, { __index = O } )
-    return self
+function O:new(o)
+    local o = o or {}
+    o.objectives = {}
+    o.state = ""
+    setmetatable( o, self )
+    self.__index = self
+    return o
 end
 
 function O:isWin()

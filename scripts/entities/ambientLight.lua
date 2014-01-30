@@ -1,15 +1,19 @@
 return function(asm, r, g, b, intensity)
+	r = r or 1
+	g = g or 1
+	b = b or 1
+	intensity = intensity or 0.5
 	return asm:loadAssembly( 
 		{
 			{
 				type = core.componentType.LightComponent,
 				data =  { 
-							color = { r, g, b },
-							intensity = intensity,
-							type = core.gfx.objectTypes.Light,
-							lighttype = core.gfx.lightTypes.Ambient
-						},
-                ignoreHard = true
+					color = { r, g, b },
+					intensity = intensity,
+					type = core.gfx.objectTypes.Light,
+					lighttype = core.gfx.lightTypes.Ambient
+				},
+				ignoreHard = true
 			},
 			{
 				type = core.componentType.WorldPositionComponent,
