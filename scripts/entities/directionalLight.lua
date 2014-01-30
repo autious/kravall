@@ -2,7 +2,7 @@ return function(asm, dirX, dirY, dirZ, r, g, b, intens)
 	r = r or 1
 	g = g or 1
 	b = b or 1
-	intens = intens or 1
+	intens = intens or 0.1
 	asm:loadAssembly(
 		{
 			{
