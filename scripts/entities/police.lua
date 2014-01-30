@@ -33,8 +33,8 @@ return function(asm, posX, posY, posZ, groupID)
 			},
 			{
 				type = core.componentType.AttributeComponent,
-				data = { health = 0, stamina = 0, morale = 0, 
-					   stance = core.PoliceStance.Passive, defense = 0, mobility = 0, squadID = groupID },
+				data = { health = 0, stamina = 0, morale = 2.0, 
+					   stancePolice = core.PoliceStance.Passive, defense = 0, mobility = 0, squadID = groupID },
                 ignoreHard = true
 			},
 			{

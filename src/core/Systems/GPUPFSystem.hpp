@@ -45,6 +45,7 @@ namespace Core
 		struct DataOUT
 		{
 			glm::vec4 newDirection_speed;
+			glm::vec4 morale_rage_pressure_empty;
 		};
 
 		GLuint m_shaderID;

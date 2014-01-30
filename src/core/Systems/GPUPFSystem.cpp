@@ -64,8 +64,12 @@ namespace Core
 			
 					in[i].position_unitType = glm::vec4(wpc->position[0], wpc->position[1], wpc->position[2], utc->type);
 					in[i].newDirection_empty = glm::vec4(mc->newDirection[0], mc->newDirection[1], mc->newDirection[2], mc->speed);
-					in[i].health_stamina_morale_stancealignment = glm::vec4(ac->health, ac->stamina, ac->morale, ac->rioter.alignment);
-					in[i].groupSquadID_defenseRage_mobilityPressure_empty = glm::vec4(ac->rioter.groupID, ac->rioter.rage, ac->rioter.pressure, 0);
+					in[i].health_stamina_morale_stancealignment = glm::vec4(ac->health, ac->stamina, ac->morale, ac->rioter.stance);
+
+					if (utc->type == UnitType::Rioter)
+						in[i].groupSquadID_defenseRage_mobilityPressure_empty = glm::vec4(ac->rioter.groupID, ac->rioter.rage, ac->rioter.pressure, 0);
+					else if (utc->type == UnitType::Police)
+						in[i].groupSquadID_defenseRage_mobilityPressure_empty = glm::vec4(ac->rioter.groupID, 1, 1, 0);
 					i++;
 				}
 				glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
@@ -90,11 +94,22 @@ namespace Core
 				for (std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); it++)
 				{
 					MovementComponent* mc = WGETC<MovementComponent>(*it);
+					AttributeComponent* ac = WGETC<AttributeComponent>(*it);
+					UnitTypeComponent* utc = WGETC<UnitTypeComponent>(*it);
 
 					mc->newDirection[0] = out[i].newDirection_speed.x;
 					mc->newDirection[1] = out[i].newDirection_speed.y;
 					mc->newDirection[2] = out[i].newDirection_speed.z;
 					mc->speed = out[i].newDirection_speed.w;
+
+					ac->morale = out[i].morale_rage_pressure_empty.x;
+					
+					if (utc->type == UnitType::Rioter)
+					{
+						ac->rioter.rage = out[i].morale_rage_pressure_empty.y;
+						ac->rioter.pressure = out[i].morale_rage_pressure_empty.z;
+					}
+				
 					i++;
 				}
 				glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);

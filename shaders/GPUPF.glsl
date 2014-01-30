@@ -49,13 +49,14 @@ struct DataIN
 {
 	vec4 position_unitType;
 	vec4 newDirection_speed;
-	vec4 health_stamina_morale_stancealignment;
+	vec4 health_stamina_morale_stance;
 	vec4 groupSquadID_defenseRage_mobilityPressure_empty;
 };
 
 struct DataOUT
 {
 	vec4 newDirection_speed;
+	vec4 morale_rage_pressure_empty;
 };
 
 layout(std430, binding = 0) restrict readonly buffer InputBuffer
@@ -103,17 +104,17 @@ in float sMorale, in float sPressure, in float sRage, in int sType, in int sStat
 	int senderIndex = gMoodSenderIndices[sType][sState];
 	int receieverIndex = gMoodReceiverIndices[rType][rState];
 
-	MoodCurve moodCurve = gMoodCurves[receieverIndex][senderIndex];
+	//MoodCurve moodCurve = gMoodCurves[receieverIndex][senderIndex];
+	MoodCurve moodCurve = gMoodCurves[0][0];
 
-	float attenuation = 1.0f / dist - 1.0f / moodCurve.range;
+	if (dist > moodCurve.range)
+		return;
+	
+	float attenuation = 1.0f / (dist * dist) - 1.0f / (moodCurve.range * moodCurve.range); 
 
-	//float moraleFactor;
-	//float pressureFactor;
-	//float rageFactor;
-
-	rMorale += moodCurve.moraleFactor * attenuation * sMorale;
-	rPressure += moodCurve.pressureFactor * attenuation * sPressure;
-	rRage += moodCurve.rageFactor * attenuation * sRage;
+	rMorale = -1.0f; //moodCurve.moraleFactor;// * -attenuation;// * sMorale;
+	//rPressure += moodCurve.pressureFactor * attenuation;// * sPressure;
+	//rRage += moodCurve.rageFactor * attenuation;// * sRage;
 }
 
 float GetAgentChargeAt(int unitType, float distSqr)
@@ -125,7 +126,7 @@ float GetAgentChargeAt(int unitType, float distSqr)
 }
 
 
-float GetEffectOnAgentAt(vec2 queryPosition, int groupID, int index)
+float GetEffectOnAgentAt(vec2 queryPosition, int groupID)
 {
 	float positiveSum = 0.0f;
 	float negativeSum = 0.0f;
@@ -139,13 +140,6 @@ float GetEffectOnAgentAt(vec2 queryPosition, int groupID, int index)
 		float dx = gInput[i].position_unitType.x - queryPosition.x;
 		float dz = gInput[i].position_unitType.z - queryPosition.y;
 		float distSqr = dx * dx + dz * dz;
-
-		float murre = 0;
-		float ragge = 0;
-		float presse = 0;
-
-		if (index > 0)
-			MoodProp(murre, ragge, presse, 0, 0, 0, 0, 0, 0, 0, 0);
 	
 		int matchID = -1;
 	
@@ -167,6 +161,46 @@ float GetEffectOnAgentAt(vec2 queryPosition, int groupID, int index)
 	}
 
 	return positiveSum + negativeSum;
+}
+
+void GetMoodOnAgent(vec2 queryPosition, int groupID, int index, inout float morale, inout float rage, inout float pressure )
+{
+	for (int i = 0; i < gInput.length(); ++i)
+	{
+		if (i > gEntityCount)
+			break;
+
+		if (i == index)
+			continue;
+		
+		float dist = distance(gInput[i].position_unitType.xyz, vec3(queryPosition.x, 0, queryPosition.y));
+
+		float rMorale = gInput[index].health_stamina_morale_stance.z;
+		float rRage = gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.y;
+		float rPressure = gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.z;
+		int rType = int(gInput[index].position_unitType.w);
+		int rState = int(gInput[index].health_stamina_morale_stance.w);
+
+		float sMorale = gInput[i].health_stamina_morale_stance.z;
+		float sRage = gInput[i].groupSquadID_defenseRage_mobilityPressure_empty.y;
+		float sPressure = gInput[i].groupSquadID_defenseRage_mobilityPressure_empty.z;
+		int sType = int(gInput[i].position_unitType.w);
+		int sState = int(gInput[i].health_stamina_morale_stance.w);
+
+		//void MoodProp(inout float rMorale, inout float rPressure, inout float rRage, in int rType, in int rState, 
+		//	in float sMorale, in float sPressure, in float sRage, in int sType, in int sState, in float dist)
+
+
+		//if (gInput[i].position_unitType.w == RIOTER_TYPE)
+		MoodProp(rMorale, rPressure, rRage, rType, rState, sMorale, sPressure, sRage, sType, sState, dist);
+		//else if (gInput[i].position_unitType.w == POLICE_TYPE)
+		//	MoodProp(rMorale, rPressure, rRage, rType, rState, sMorale, 1, 1, sType, sState, dist);
+		rMorale = -1.0f;
+		
+		morale += rMorale;
+		rage += rRage;
+		pressure += rPressure;
+	}
 }
 
 void main()
@@ -229,20 +263,37 @@ void main()
 		gMoodSenderIndices[POLICE_TYPE][3] = 3;
 		gMoodReceiverIndices[POLICE_TYPE][3] = 5;
 
-		//Police all states vs x
-		
-		//gMoodCurves[5][x]
-
-
-		//curve index array
-		//muhIndex[unitType][unitStance] = colIndex
-
-
 		//Mood curve factors
 		//float range;
 		//float moraleFactor;
 		//float pressureFactor;
 		//float rageFactor;
+
+		//receiver first, sender second
+		//normal rioter vs passive police
+		
+
+		//passive police vs normal rioter
+		for (int i = 0; i < 6; i++)
+		{
+			for(int j = 0; j < 13; j++)
+			{
+				gMoodCurves[i][j].range = 1;
+				gMoodCurves[i][j].moraleFactor = 1;
+				gMoodCurves[i][j].pressureFactor = 1;
+				gMoodCurves[i][j].rageFactor = 1;
+			}
+		}
+
+		gMoodCurves[0][0].range = 1;
+		gMoodCurves[0][0].moraleFactor = -0.0f;
+		gMoodCurves[0][0].pressureFactor = -1.0f;
+		gMoodCurves[0][0].rageFactor = -1.0f;
+
+		gMoodCurves[5][6].range = 1;
+		gMoodCurves[5][6].moraleFactor = 1;
+		gMoodCurves[5][6].pressureFactor = 1;
+		gMoodCurves[5][6].rageFactor = 1;
 
 	}
 	
@@ -259,7 +310,7 @@ void main()
 			break;
 
 		gOutput[index].newDirection_speed = gInput[index].newDirection_speed;
-
+		
 		if (int(gInput[index].position_unitType.w) == RIOTER_TYPE)
 		{
 			vec2 bestIndex = vec2(0.0f, 0.0f);
@@ -269,7 +320,7 @@ void main()
 			gInput[index].position_unitType.y + 0 * gInput[index].newDirection_speed.y / 2.0f, 
 			gInput[index].position_unitType.z + 0 * gInput[index].newDirection_speed.z / 2.0f);
 		
-			float highestSum = GetEffectOnAgentAt(vec2(offsetPos.x, offsetPos.z), int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x), int(index));
+			float highestSum = GetEffectOnAgentAt(vec2(offsetPos.x, offsetPos.z), int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
 			float staySum = highestSum;
 
 			CalculatedCharge chargeSums[8];
@@ -277,49 +328,49 @@ void main()
 			float chargeSum = 0;
 
 			// ---------------------------------------- -1, 0 ----------------------------------------
-			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x - 1, offsetPos.z + 0),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x), -1);
+			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x - 1, offsetPos.z + 0),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
 			chargeSums[0].x = -1;
 			chargeSums[0].y = 0;
 			chargeSums[0].chargeSum = chargeSum;
 
 			// ---------------------------------------- 1, 0 ----------------------------------------
-			 chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 1, offsetPos.z + 0),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x), -1);
+			 chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 1, offsetPos.z + 0),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
 			chargeSums[1].x = 1;
 			chargeSums[1].y = 0;
 			chargeSums[1].chargeSum = chargeSum;
 			
 			// ---------------------------------------- 0, -1 ----------------------------------------
-			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 0, offsetPos.z - 1),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x), -1);
+			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 0, offsetPos.z - 1),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
 			chargeSums[2].x = 0;
 			chargeSums[2].y = -1;
 			chargeSums[2].chargeSum = chargeSum;
 			
 			// ---------------------------------------- 0, 1 ----------------------------------------
-			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 0, offsetPos.z + 1),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x), -1);
+			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 0, offsetPos.z + 1),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
 			chargeSums[3].x = 0;
 			chargeSums[3].y = 1;
 			chargeSums[3].chargeSum = chargeSum;
 			
 			// ---------------------------------------- -1, -1 ----------------------------------------
-			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x - 1, offsetPos.z - 1),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x), -1);
+			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x - 1, offsetPos.z - 1),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
 			chargeSums[4].x = -1;
 			chargeSums[4].y = -1;
 			chargeSums[4].chargeSum = chargeSum;
 			
 			// ---------------------------------------- 1, -1 ----------------------------------------
-			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 1, offsetPos.z - 1),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x), -1);
+			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 1, offsetPos.z - 1),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
 			chargeSums[5].x = 1;
 			chargeSums[5].y = -1;
 			chargeSums[5].chargeSum = chargeSum;
 			
 			// ---------------------------------------- -1, 1 ----------------------------------------
-			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x - 1, offsetPos.z + 1),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x), -1);
+			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x - 1, offsetPos.z + 1),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
 			chargeSums[6].x = -1;
 			chargeSums[6].y = 1;
 			chargeSums[6].chargeSum = chargeSum;
 			
 			// ---------------------------------------- 1, 1 ----------------------------------------
-			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 1, offsetPos.z + 1),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x), -1);
+			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 1, offsetPos.z + 1),  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
 			chargeSums[7].x = 1;
 			chargeSums[7].y = 1;
 			chargeSums[7].chargeSum = chargeSum;
@@ -372,6 +423,25 @@ void main()
 		}											
 	}												
 	
+	barrier();
+
+	for (uint passIt = 0; passIt < passCount; passIt++)
+	{
+		uint index = passIt * WORK_GROUP_SIZE + gl_LocalInvocationIndex;
+		
+		if (index > gEntityCount)
+			break;
+
+		float morale = 0;
+		float pressure = 0;
+		float rage = 0;
+
+		GetMoodOnAgent(vec2(gInput[index].position_unitType.x, gInput[index].position_unitType.z), int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x), int(index), morale, rage, pressure);
+			
+		gOutput[index].morale_rage_pressure_empty = vec4(morale, rage, pressure, 0);
+
+	}
+
 	//barrier();
 }
 

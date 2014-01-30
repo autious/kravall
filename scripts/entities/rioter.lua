@@ -33,8 +33,8 @@ return function(asm, posX, posY, posZ, group)
 			},
 			{
 				type = core.componentType.AttributeComponent,
-				data = { health = 0, stamina = 0, morale = 0, 
-					   alignment = core.RioterAlignment.Anarchist, rage = 0, pressure = 0, groupID = group }
+				data = { health = 0, stamina = 0, morale = 2.0, 
+					   alignment = core.RioterAlignment.Anarchist, rage = 0, pressure = 0, groupID = group, stanceRioter = core.RioterStance.Normal}
                 ,
                 ignoreHard = true
 			},
