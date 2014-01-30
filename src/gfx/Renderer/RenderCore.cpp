@@ -1,5 +1,6 @@
 #include "RenderCore.hpp"
 #include <sstream>
+#include <algorithm>
 #include <iomanip>
 #include <utility/Colors.hpp>
 #include <GFXDefines.hpp>
@@ -20,6 +21,7 @@ namespace GFX
 		m_showStatistics = false;
         m_font = nullptr;
 		m_showFBO = 0;
+		m_animationFramerate = 24;
 	}
 
 	RenderCore::~RenderCore()
@@ -71,9 +73,13 @@ namespace GFX
 		m_animationManager = new AnimationManager();
 
 		m_deferredPainter = new DeferredPainter(m_shaderManager, m_uniformBufferManager, 
-			m_renderJobManager, m_meshManager, m_textureManager, m_materialManager);
+		m_renderJobManager, m_meshManager, m_textureManager, m_materialManager);
 
 		m_lightPainter = new LightPainter(m_shaderManager, m_uniformBufferManager, m_renderJobManager);
+
+		m_postProcessingPainter = new PostProcessingPainter(m_shaderManager, m_uniformBufferManager, m_textureManager);
+
+		m_GIPainter = new GIPainter(m_shaderManager, m_uniformBufferManager, m_renderJobManager);
 
 		m_debugPainter = new DebugPainter(m_shaderManager, m_uniformBufferManager);
 		m_textPainter = new TextPainter(m_shaderManager, m_uniformBufferManager);
@@ -81,7 +87,7 @@ namespace GFX
 		m_splashPainter = new SplashPainter(m_shaderManager, m_uniformBufferManager);
 		m_fboPainter = new FBOPainter(m_shaderManager, m_uniformBufferManager);
 		m_overlayPainter = new OverlayPainter(m_shaderManager, m_uniformBufferManager, 
-			m_renderJobManager, m_meshManager, m_textureManager, m_materialManager);
+		m_renderJobManager, m_meshManager, m_textureManager, m_materialManager);
 		m_playSplash = false;
 
 
@@ -100,9 +106,27 @@ namespace GFX
 		m_splashPainter->Initialize(m_FBO, m_dummyVAO);
 		m_fboPainter->Initialize(m_FBO, m_dummyVAO);
         m_overlayPainter->Initialize(m_FBO, m_dummyVAO);
+		m_postProcessingPainter->Initialize(m_FBO, m_dummyVAO, m_windowWidth, m_windowHeight);
+		m_GIPainter->Initialize(m_FBO, m_dummyVAO, m_windowWidth, m_windowHeight);
 
 		// Set console width
 		m_consolePainter->SetConsoleHeight(m_windowHeight);
+
+		LoadGPUPF();
+
+		m_gamma = 2.2f;
+		m_exposure = 1.0f;
+		m_whitePoint = glm::vec3(1.0f);
+
+		m_currentLUT = "identity";
+	}
+
+	void RenderCore::LoadGPUPF()
+	{
+		m_shaderManager->CreateProgram("GPUPFCompute");
+		m_shaderManager->LoadShader("shaders/GPUPF.glsl", "GPUPF", GL_COMPUTE_SHADER);
+		m_shaderManager->AttachShader("GPUPF", "GPUPFCompute");
+		m_shaderManager->LinkProgram("GPUPFCompute");
 	}
 
 	void RenderCore::Resize(int width, int height)
@@ -113,10 +137,34 @@ namespace GFX
 		glViewport(0, 0, m_windowWidth, m_windowHeight);
 		ResizeGBuffer();
 		m_lightPainter->Resize(width, height);
+
 		// Set console width
 		m_consolePainter->SetConsoleHeight(m_windowHeight);
 	}
 
+	void RenderCore::SetLUT(std::string LUT)
+	{
+		m_currentLUT = LUT;
+	}
+
+	void RenderCore::SetExposure(float exposure)
+	{
+		m_exposure = exposure;
+	}
+
+	void RenderCore::SetGamma(float gamma)
+	{
+		m_gamma = gamma;
+	}
+
+	void RenderCore::ReloadLUT()
+	{
+		m_postProcessingPainter->ReloadLUT();
+	}
+	void RenderCore::SetAnimationFramerate(unsigned int framerate)
+	{
+		m_animationFramerate = std::max(std::min(framerate, 48U), 12U);
+	}
 	
 	void RenderCore::AddRenderJob(GFXBitmask bitmask, void* value)
 	{
@@ -226,14 +274,21 @@ namespace GFX
 			GFX_CHECKTIME(glFinish(), "glFinish");
 
 			GFX_CHECKTIME(m_renderJobManager->Sort(), "Sorting");
+
+			GFX_CHECKTIME(m_deferredPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix, m_gamma), "Geometry");
 			
-			GFX_CHECKTIME(m_deferredPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix), "Geometry");
-			GFX_CHECKTIME(m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix), "Lighting");
+			GFX_CHECKTIME(m_GIPainter->Render(delta, m_normalDepth, m_diffuse, m_viewMatrix, m_projMatrix), "GI");
+
+			GFX_CHECKTIME(m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_GIPainter->m_SSDOTexture,
+				m_viewMatrix, m_projMatrix, m_exposure, m_gamma, m_whitePoint, m_toneMappedTexture), "Lighting");
+
+			GFX_CHECKTIME(m_postProcessingPainter->Render(delta, m_toneMappedTexture, m_currentLUT), "PostProcessing");
 
 			GFX_CHECKTIME( m_overlayPainter->Render( renderJobIndex, m_overlayViewMatrix, m_overlayProjMatrix ), "Console");
 			//Render FBO
+			
 			if (m_showFBO != 0)
-				GFX_CHECKTIME(m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, m_showFBO), "FBO");
+				GFX_CHECKTIME(m_fboPainter->Render(m_normalDepth, m_diffuse, m_GIPainter->m_SSDOTexture, m_glowMatID, m_windowWidth, m_windowHeight, m_showFBO), "FBO");
 
 
 			GFX_CHECKTIME(m_debugPainter->Render(m_depthBuffer, m_normalDepth, m_viewMatrix, m_projMatrix), "Debug");
@@ -245,13 +300,21 @@ namespace GFX
 		else
 		{
 			m_renderJobManager->Sort();
-			m_deferredPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
-			m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix);
+
+			m_deferredPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix, m_gamma);
+
+			m_GIPainter->Render(delta, m_normalDepth, m_diffuse, m_viewMatrix, m_projMatrix);
+
+			m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_GIPainter->m_SSDOTexture,
+				m_viewMatrix, m_projMatrix, m_exposure, m_gamma, m_whitePoint, m_toneMappedTexture);
+
+			m_postProcessingPainter->Render(delta, m_toneMappedTexture, m_currentLUT);
 			
 			m_overlayPainter->Render( renderJobIndex, m_overlayViewMatrix, m_overlayProjMatrix );
 			//Render FBO
+			
 			if (m_showFBO != 0)
-				m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, m_showFBO);
+				m_fboPainter->Render(m_normalDepth, m_diffuse, m_GIPainter->m_SSDOTexture, m_glowMatID, m_windowWidth, m_windowHeight, m_showFBO);
 
 			m_debugPainter->Render(m_depthBuffer, m_normalDepth, m_viewMatrix, m_projMatrix);
 
@@ -295,6 +358,7 @@ namespace GFX
 
 		}
 	}
+
 	void RenderCore::InitializeGBuffer()
 	{
 		//Generate the FBO
@@ -302,15 +366,22 @@ namespace GFX
 		glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 
 		//Initialize GBuffer textures, second to last parameter should be configurable through settings
-		m_depthBuffer->Initialize(GL_TEXTURE_2D, GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT);
+		m_depthBuffer->Initialize(GL_TEXTURE_2D, GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL);
+
 		m_normalDepth->Initialize(GL_TEXTURE_2D, GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, GL_RGBA32F, GL_RGBA);
+
+
 		m_diffuse->Initialize(GL_TEXTURE_2D, GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, GL_RGBA32F, GL_RGBA);
+
 		m_specular->Initialize(GL_TEXTURE_2D, GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, GL_RGBA32F, GL_RGBA);
+
+
 		m_glowMatID->Initialize(GL_TEXTURE_2D, GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, GL_RGBA32F, GL_RGBA);
+
 
 		ResizeGBuffer();
 
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthBuffer->GetTextureHandle(), 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_depthBuffer->GetTextureHandle(), 0);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_normalDepth->GetTextureHandle(), 0);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, m_diffuse->GetTextureHandle(), 0);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, m_specular->GetTextureHandle(), 0);
@@ -385,28 +456,39 @@ namespace GFX
 	{
 		m_consolePainter->SetConsoleVisible(visible);
 	}
+
 	void RenderCore::SetSplash(bool splash)
 	{
 		m_playSplash = splash;
 	}
 
-	int RenderCore::CreateSkeleton(unsigned int& out_skeletonID)
+	int RenderCore::CreateSkeleton(int& out_skeletonID)
 	{
 		return m_animationManager->CreateSkeleton(out_skeletonID);
 	}
 
-	int RenderCore::DeleteSkeleton(const unsigned int& skeletonID)
+	int RenderCore::DeleteSkeleton(const int& skeletonID)
 	{
 		return m_animationManager->DeleteSkeleton(skeletonID);
 	}
 
-	int RenderCore::AddAnimationToSkeleton(const unsigned int& skeletonID, glm::mat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame)
+	int RenderCore::GetSkeletonID(const unsigned int& meshID)
+	{
+		return m_meshManager->GetSkeletonID(meshID);
+	}
+
+	int RenderCore::BindSkeletonToMesh(const unsigned int& meshID, const int& skeletonID)
+	{
+		return m_meshManager->BindSkeletonToMesh(meshID, skeletonID);
+	}
+
+	int RenderCore::AddAnimationToSkeleton(const int& skeletonID, glm::mat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame)
 	{
 		return m_animationManager->AddAnimationToSkeleton(skeletonID, frames, numFrames, numBonesPerFrame);
 	}
 
-	int RenderCore::GetAnimationFrameCount(const unsigned int& skeletonID, const unsigned int& animationID, unsigned int& out_frameCount)
+	int RenderCore::GetAnimationInfo(const int& skeletonID, const int& animationID, unsigned int& out_frameCount, unsigned int& out_bonesPerFrame)
 	{
-		return m_animationManager->GetFrameCount(skeletonID, animationID, out_frameCount);
+		return m_animationManager->GetFrameInfo(skeletonID, animationID, out_frameCount, out_bonesPerFrame);
 	}
 }

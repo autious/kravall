@@ -35,11 +35,11 @@ function core.input.keyboard.onkey( key, scancode, action )
     end 
 end
 
-function input.registerOnposition( func )
+function input.registerOnPosition( func )
     onpositions[func] = true
 end
 
-function input.deregisterOnposition( func )
+function input.deregisterOnPosition( func )
     onpositions[func] = nil
 end
 

@@ -64,8 +64,6 @@ namespace GFX
 		unsigned int material = std::numeric_limits<decltype(material)>::max();
 		unsigned int depth = std::numeric_limits<decltype(depth)>::max();
 
-		GLenum error;
-
 		Material mat;
 		Mesh mesh;
 		GFXBitmask bitmask;
@@ -120,5 +118,7 @@ namespace GFX
 		}
 
 		m_shaderManager->ResetProgram();
+		glEnable(GL_DEPTH_TEST);
+		glDisable(GL_BLEND);
     }
 }

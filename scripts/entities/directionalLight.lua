@@ -12,8 +12,14 @@ return function(asm, dirX, dirY, dirZ, r, g, b, intens)
 							intensity = intens,
 							type = core.gfx.objectTypes.Light,
 							lighttype = core.gfx.lightTypes.Dir,
+<<<<<<< HEAD
                             speccolor = { r, g, b }
 						}
+=======
+                            speccolor = { 0.1,0.1,0.1 }
+						},
+                ignoreHard = true
+>>>>>>> 06388fa32f916d027330bcd35cc83002c2adee7a
 			},
 			{
 				type = core.componentType.WorldPositionComponent,

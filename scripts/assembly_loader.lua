@@ -47,7 +47,7 @@ function ASM:loadAssembly( asmtable )
                 entity = core.entity.create( unpack( componentTypes ) )
 
                 for k,v in ipairs( asmtable ) do 
-                    entity:set( v.type, v.data ) 
+                    entity:set( v.type, v.data, v.ignoreHard ) 
                 end
 
                 self.entities[entity] = assets

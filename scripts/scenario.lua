@@ -19,7 +19,7 @@ function S.new( )
     self.asm = assembly_loader.loadPack({})
 
 
-    setmetatable( self, {__index = S, __newindex = function() error "NO" end, __gc = S.destroy } )
+    setmetatable( self, {__index = S, __gc = S.destroy } )
 
     return self
 end

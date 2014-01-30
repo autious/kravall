@@ -12,7 +12,8 @@ return function(asm, r, g, b, intensity)
 					intensity = intensity,
 					type = core.gfx.objectTypes.Light,
 					lighttype = core.gfx.lightTypes.Ambient
-				}
+				},
+				ignoreHard = true
 			},
 			{
 				type = core.componentType.WorldPositionComponent,

@@ -23,11 +23,13 @@
 #include <Systems/NameSystem.hpp>
 #include <Systems/AreaSystem.hpp>
 #include <Systems/GroupDataSystem.hpp>
+#include <Systems/AnimationSystem.hpp>
 
 namespace Core
 {
 	class MovementSystem;
 	class FieldReactionSystem;
+	class GPUPFSystem;
 	class PickingSystem;
 	class AIDebugSystem;
 	class LightSystem;
@@ -38,9 +40,9 @@ namespace Core
 	class FlowfieldPositioningSystem;
 	class PoliceGoalSystem;
 	
-    typedef SystemHandlerTemplate<RenderingSystem, LightSystem, PoliceGoalSystem, FlowfieldPositioningSystem, NavMeshCollisionSystem, 
-		CollisionSystem2D, PickingSystem, AIDebugSystem, FlowfieldSystem, FieldReactionSystem, 
-		MovementSystem, NameSystem, GroupDataSystem, AreaSystem> SystemHandler;
+    typedef SystemHandlerTemplate<LightSystem, PoliceGoalSystem, FlowfieldPositioningSystem, NavMeshCollisionSystem, 
+	CollisionSystem2D, PickingSystem, AIDebugSystem, FlowfieldSystem, /*FieldReactionSystem,*/ GPUPFSystem,
+		MovementSystem, NameSystem, GroupDataSystem, AreaSystem, AnimationSystem, RenderingSystem> SystemHandler;
 
     typedef EntityHandlerTemplate<SystemHandler, WorldPositionComponent, RotationComponent, ScaleComponent, 
 		GraphicsComponent, LightComponent, MovementComponent, UnitTypeComponent, AttributeComponent,
@@ -50,6 +52,7 @@ namespace Core
 /**********All systems after this line************/
 #include <Systems/MovementSystem.hpp>
 #include <Systems/FieldReactionSystem.hpp>
+#include <Systems/GPUPFSystem.hpp>
 #include <Systems/PickingSystem.hpp>
 #include <Systems/AIDebugSystem.hpp>
 #include <Systems/LightSystem.hpp>

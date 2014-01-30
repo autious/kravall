@@ -187,17 +187,23 @@ namespace Core
             does not trigger any of these.
         */
         template<typename Component>
-        Component* GetComponentTmpPointer( Entity entity )
-        {
-            static_assert( Match<Component,Components...>::exists, SA_COMPONENT_USE );
+		Component* GetComponentTmpPointer(Entity entity)
+		{
+			static_assert(Match<Component, Components...>::exists, SA_COMPONENT_USE);
 
-            static const int componentType = GetComponentType<Component>();
+			static const int componentType = GetComponentType<Component>();
 
-            int componentId = m_entities.GetComponentId( entity, componentType );
-            
-            assert( componentId >= 0 );
+			int componentId = m_entities.GetComponentId(entity, componentType);
 
-            return (Component*)m_components[componentType]->Get( componentId );
+
+			if (componentId >= 0)
+			{
+				return (Component*)m_components[componentType]->Get(componentId);
+			}
+			else
+			{
+				return nullptr;
+			}
         }
 
         /*!
