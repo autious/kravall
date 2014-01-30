@@ -1,7 +1,5 @@
-return function(asm,x,y,z,qx,qy,qz,qw,scale,model,material)
-
-    return asm:loadAssembly( 
-    {
+return function(asm,x,y,z,qx,qy,qz,qw,scale,model,material,radius,name)
+    local components = {
         {
             type = core.componentType.WorldPositionComponent,
             data = { position = { x,y,z } }
@@ -22,8 +20,24 @@ return function(asm,x,y,z,qx,qy,qz,qw,scale,model,material)
         {
             type = core.componentType.RotationComponent,
             data = { rotation = { qx,qy,qz,qw } }
+        },
+        {
+            type = core.componentType.NameComponent,
+            data = { name = name }
         }
-    } 
-    )
+    }
+    radius = 1
+    print(#components)
+    if radius then
+        components[#components + 1] = {
+            type = core.componentType.BoundingVolumeComponent,
+            data = { sphereOffset = { 0, 0, 0 }, sphereRadius = radius, 
+                    collisionModel = core.BoundingVolumeCollisionModel.StaticResolution, 
+                    type = core.BoundingVolumeType.SphereBoundingType }
+        }
+    end
+    print(#components)
+
+    return asm:loadAssembly( components )
 
 end
