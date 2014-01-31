@@ -16,6 +16,7 @@
 #include <Lua/Bridges/ComponentBind/AreaComponentBinding.hpp>
 #include <Lua/Bridges/ComponentBind/NameComponentBinding.hpp>
 #include <Lua/Bridges/ComponentBind/AnimationComponentBinding.hpp>
+#include <Lua/Bridges/ComponentBind/TargetingComponentBinding.hpp>
 
 #include <cassert>
 
@@ -37,7 +38,8 @@ namespace Core
 	 FlowfieldComponentBinding,
      AreaComponentBinding,
      NameComponentBinding,
-	 AnimationComponentBinding> EntityBridge;
+	 AnimationComponentBinding,
+	 TargetingComponentBinding> EntityBridge;
 }
 
 /*************/

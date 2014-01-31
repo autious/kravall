@@ -56,20 +56,20 @@ namespace Core
 			} police;
 			struct
 			{
-				/*! The rioter's alignment represented by the RioterAlignment enum. */
-				RioterAlignment alignment;
+				/*! The rioter's stance represented by the RioterStance enum. */
+				RioterStance stance;
 
 				/*! The rioter's conceptual group ID. Used for determining which flow field to use.*/
 				int groupID;
 
-				/*! The rioter's rage represented by an integer with range [0, 100]. */
-				int rage;
+				/*! The rioter's rage represented by an floating point value with range [0, 100]. */
+				float rage;
 
-				/*! The rioter's pressure represented by an integer with range [0, 100]. */
-				int pressure;
+				/*! The rioter's pressure represented by an floating point value with range [0, 100]. */
+				float pressure;
 
-				/*! The rioter's stance represented by the RioterStance enum. */
-				RioterStance stance;
+				/*! The rioter's alignment represented by the RioterAlignment enum. */
+				RioterAlignment alignment;
 			} rioter;
 		};
 

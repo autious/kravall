@@ -25,7 +25,7 @@ namespace Core
 	}
 
 
-	bool NavigationMesh::CalculateFlowfieldForGroup( glm::vec3 point, int group )
+	bool NavigationMesh::CalculateFlowfieldForGroup(const glm::vec3& point, int group )
 	{
 		if( group >= maxFlowfields )
 		{

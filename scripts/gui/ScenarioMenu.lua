@@ -4,16 +4,15 @@ local Slider = require "gui/component/Slider"
 local Checkbox = require "gui/component/Checkbox"
 local CenterPlacer = require "gui/placement/CenterPlacer"
 
-MainMenu = {}
+ScenarioMenu = {}
 
-function MainMenu:new(o,menuState)
+function ScenarioMenu:new(o,menuState)
     o = o or {}
 
     o.gui = GUI:new()
-    
-    o.gui:addComponent(Button:new({xoffset=10,yoffset=10,onClick = function() openscenario( "prototype_area") end}))
-    o.gui:addComponent(Button:new({xoffset=10,yoffset=10,onClick = menuState.goScenario }))
-    o.gui:addComponent(Button:new({xoffset=10,yoffset=10}))
+
+    o.gui:addComponent(Button:new({xoffset=10,yoffset=10,onClick = menuState.goMain }))
+    o.gui:addComponent(Checkbox:new())
 
     o.gui:addPlacementHandler( CenterPlacer:new() )
 
@@ -22,8 +21,8 @@ function MainMenu:new(o,menuState)
     return o
 end
 
-function MainMenu:destroy()
+function ScenarioMenu:destroy()
     self.gui:destroy() 
 end
 
-return MainMenu
+return ScenarioMenu

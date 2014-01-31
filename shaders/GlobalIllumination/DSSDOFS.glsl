@@ -71,7 +71,7 @@ void main()
         vec3( 0.534f,  0.157f, -0.250f)
     );
 
-	const int num_samples = 32;
+	const int num_samples = 0;
 
 	vec2 noiseTextureSize = vec2(4,4);
 	vec4 normals_depth = texture2D(gNormals_depth, uv);

@@ -5,6 +5,8 @@ local Checkbox =
                 {
                     x=0,
                     y=0,
+                    width=0,
+                    height=0,
                     checked = false,
                     matOpen = "assets/material/ui/checkbox_open.material",
                     matSelected = "assets/material/ui/checkbox_selected.material",
@@ -12,15 +14,12 @@ local Checkbox =
                     matHoverSelected = "assets/material/ui/checkbox_hover_selected.material"
                 }
 
-local function show( img, flag )
-    img.ent:set( core.componentType.GraphicsComponent, { render = flag }, true )
-end
 
-local function active( o, img )
-    show( o.openImg, img == o.openImg ) 
-    show( o.selectedImg, img == o.selectedImg )
-    show( o.hoverOpenImg, img == o.hoverOpenImg )
-    show( o.hoverSelectedImg, img == o.hoverSelectedImg )
+function Checkbox:active(  img )
+    self.openImg:show( img == self.openImg )
+    self.selectedImg:show( img == self.selectedImg )
+    self.hoverOpenImg:show( img == self.hoverOpenImg )
+    self.hoverSelectedImg:show( img == self.hoverSelectedImg )
 end
 
 function Checkbox:new(o)
@@ -51,15 +50,22 @@ function Checkbox:new(o)
                                         }
 
     if o.checked then
-        active( o,o.selectedImg )
+        o:active( o.selectedImg )
     else
-        active( o,o.openImg )  
+        o:active( o.openImg )  
     end
 
     o.openImg.ent:set( core.componentType.GraphicsComponent, { render = true }, true )
     return o
 end
 
+function Checkbox:setPosition( x,y )
+    self.GUIComponent:setPosition( x,y )
+    self.openImg:setPosition( x, y )
+    self.selectedImg:setPosition( x,y )
+    self.hoverOpenImg:setPosition( x,y )
+    self.hoverSelectedImg:setPosition( x,y )
+end
 
 function Checkbox:onPress() 
 end
@@ -67,10 +73,10 @@ end
 function Checkbox:onRelease()
     if self.checked then
         self.checked = false
-        active( self, self.hoverOpenImg )
+        self:active( self.hoverOpenImg )
     else
         self.checked = true
-        active( self, self.hoverSelectedImg )
+        self:active( self.hoverSelectedImg )
     end
 
     self.onChange( self.checked )
@@ -78,17 +84,17 @@ end
 
 function Checkbox:onEnter()
     if self.checked then
-        active( self, self.hoverSelectedImg )
+        self:active( self.hoverSelectedImg )
     else
-        active( self, self.hoverOpenImg )
+        self:active( self.hoverOpenImg )
     end
 end
 
 function Checkbox:onExit()
     if self.checked then
-        active( self, self.selectedImg )
+        self:active(self.selectedImg )
     else
-        active( self, self.openImg )
+        self:active( self.openImg )
     end
 end
 

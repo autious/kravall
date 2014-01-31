@@ -37,7 +37,6 @@ namespace Core
 		struct DataIN
 		{
 			glm::vec4 position_unitType;
-			glm::vec4 direction_speed;
 			glm::vec4 newDirection_empty;
 			glm::vec4 health_stamina_morale_stancealignment;
 			glm::vec4 groupSquadID_defenseRage_mobilityPressure_empty;
@@ -46,6 +45,7 @@ namespace Core
 		struct DataOUT
 		{
 			glm::vec4 newDirection_speed;
+			glm::vec4 morale_rage_pressure_empty;
 		};
 
 		GLuint m_shaderID;
@@ -60,6 +60,7 @@ namespace Core
 
 		bool m_foundShader;
 		bool m_readBack;
+
 	};
 }
 

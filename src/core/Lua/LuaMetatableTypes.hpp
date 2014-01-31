@@ -11,6 +11,7 @@
 #define GLMMAT4_META_TYPE "metatype_glm_mat4"
 #define GLMQUAT_META_TYPE "metatype_glm_quat"
 #define CAMERA_META_TYPE "metatype_camera"
+#define UNIT_TYPE_OBJECT_TYPE_META "unit_type_object_type_meta"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
@@ -24,6 +25,7 @@
 
 #include <ComponentFramework/SystemHandlerTemplate.hpp>
 #include <ComponentFramework/SystemTypes.hpp>
+#include <Components/UnitTypeComponent.hpp>
 #include <Camera/Camera.hpp>
 
 struct LuaEntity
@@ -45,7 +47,8 @@ inline glm::quat* luau_checkglmquat( lua_State* state, int pos ) { return static
 inline Core::Camera** luau_checkcamera( lua_State* state, int pos ) { return static_cast<Core::Camera**>(luaL_checkudata( state, pos, CAMERA_META_TYPE )); }
 inline LuaEntity* luau_checkentity( lua_State* state, int pos ) { return static_cast<LuaEntity*>(luaL_checkudata( state, pos, ENTITY_META_TYPE ) ); }
 inline LuaAspect* luau_checkaspect( lua_State* state, int pos ) { return static_cast<LuaAspect*>(luaL_checkudata( state, pos, ASPECT_META_TYPE) ) ; }
-inline Core::ComponentType luau_checkcomponent( lua_State * state, int pos ) { return *static_cast<Core::ComponentType*>(luaL_checkudata( state, pos, COMPONENT_META_TYPE) ); } 
+inline Core::ComponentType luau_checkcomponent( lua_State * state, int pos ) { return *static_cast<Core::ComponentType*>(luaL_checkudata( state, pos, COMPONENT_META_TYPE) ); }
+inline Core::UnitType* luau_checkunittype( lua_State * state, int pos) { return static_cast<Core::UnitType*>(luaL_checkudata(state, pos, UNIT_TYPE_OBJECT_TYPE_META) ); }
 
 namespace Core
 {
