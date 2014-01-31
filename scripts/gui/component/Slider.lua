@@ -6,6 +6,8 @@ local Slider =
                     x=0,
                     y=0,
                     a=0,
+                    width =0,
+                    height = 0,
                     matReleased = "assets/material/ui/slider_knob_release.material",
                     matPressed = "assets/material/ui/slider_knob_pressed.material",
                     matHover = "assets/material/ui/slider_knob_hover.material",
@@ -27,6 +29,8 @@ function Slider:new(o)
     o.knobHeight = o.releasedKnob.height
     o.bgWidth = o.bg.width
     o.bgHeight = o.bg.height
+    o.width = o.bg.width
+    o.height = o.bg.height
 
     o.onChange  = o.onChange or function() end
 
@@ -43,12 +47,24 @@ function Slider:new(o)
                                             onExit = function() o:onExit() end
                                         }
 
-    o.pressedKnob.ent:set( core.componentType.GraphicsComponent, { render = false }, true )
-    o.releasedKnob.ent:set( core.componentType.GraphicsComponent, { render = true }, true )
-    o.hoverKnob.ent:set( core.componentType.GraphicsComponent, { render = false }, true )
-    o.bg.ent:set( core.componentType.GraphicsComponent, { render = true }, true )
+    o.pressedKnob:show( false )
+    o.releasedKnob:show( true )
+    o.hoverKnob:show( false )
+    o.bg:show( true )
 
     return o
+end
+
+function Slider:setPosition(x,y)
+    self.x = x
+    self.y = y
+
+    local newXPos = self.a * self.bgWidth + self.x - self.knobWidth/2
+    self.GUIComponent:setPosition(newXPos,y)
+    self.pressedKnob:setPosition( newXPos, self.y )
+    self.releasedKnob:setPosition(newXPos , self.y )
+    self.hoverKnob:setPosition( newXPos , self.y )
+    self.bg:setPosition( self.x, self.y )
 end
 
 function Slider:onDrag( x, y )
@@ -65,39 +81,33 @@ function Slider:onDrag( x, y )
     self.a = fact
 
     self.onChange( fact ) 
-    
-    local newXPos = fact * self.bgWidth + self.x - self.knobWidth/2
 
-    self.GUIComponent.x = newXPos
-    self.pressedKnob.ent:set( core.componentType.WorldPositionComponent, { position = { newXPos , -self.y, 0 } }, true )
-    self.releasedKnob.ent:set( core.componentType.WorldPositionComponent, { position = { newXPos , -self.y, 0 } }, true )
-    self.hoverKnob.ent:set( core.componentType.WorldPositionComponent, { position = { newXPos , -self.y, 0 } }, true )
-
+    self:setPosition(self.x,self.y)
 end
 
 function Slider:onPress() 
-    self.pressedKnob.ent:set( core.componentType.GraphicsComponent, { render = true }, true )
-    self.releasedKnob.ent:set( core.componentType.GraphicsComponent, { render = false }, true )
-    self.hoverKnob.ent:set( core.componentType.GraphicsComponent, { render = false }, true )
+    self.pressedKnob:show(true)
+    self.releasedKnob:show(false)
+    self.hoverKnob:show(false)
 
 end
 
 function Slider:onRelease()
-    self.pressedKnob.ent:set( core.componentType.GraphicsComponent, { render = false }, true )
-    self.releasedKnob.ent:set( core.componentType.GraphicsComponent, { render = false }, true )
-    self.hoverKnob.ent:set( core.componentType.GraphicsComponent, { render = true }, true )
+    self.pressedKnob:show(false)
+    self.releasedKnob:show(false)
+    self.hoverKnob:show(true)
 end
 
 function Slider:onEnter()
-    self.pressedKnob.ent:set( core.componentType.GraphicsComponent, { render = false }, true )
-    self.releasedKnob.ent:set( core.componentType.GraphicsComponent, { render = false }, true )
-    self.hoverKnob.ent:set( core.componentType.GraphicsComponent, { render = true }, true )
+    self.pressedKnob:show(false)
+    self.releasedKnob:show(false)
+    self.hoverKnob:show(true)
 end
 
 function Slider:onExit()
-    self.pressedKnob.ent:set( core.componentType.GraphicsComponent, { render = false }, true )
-    self.releasedKnob.ent:set( core.componentType.GraphicsComponent, { render = true }, true )
-    self.hoverKnob.ent:set( core.componentType.GraphicsComponent, { render = false }, true )
+    self.pressedKnob:show(false)
+    self.releasedKnob:show(true)
+    self.hoverKnob:show(false)
 end
 
 function Slider:destroy()
