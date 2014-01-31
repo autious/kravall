@@ -10,7 +10,7 @@ asm:loadAssembly(
 	},
 	{
 		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry },
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/plane.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
@@ -32,11 +32,11 @@ asm:loadAssembly(
 {
 	{
 		type = core.componentType.WorldPositionComponent,
-		data = { position = { 0, 11.5, 0 } }
+		data = { position = { 0, 11.65, 0 } }
 	},
 	{
 		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry },
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/flamingo.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/animated.material", false }
@@ -44,14 +44,14 @@ asm:loadAssembly(
 	},
 	{
 		type = core.componentType.AnimationComponent,
-		data = { 	skeletonID = -1, 
-					animationID = -1, 
-					currentTime = 0.0,
-					currentFrame = 0,
-					speed = 1.0,
-					loop = false,
-					playing = false
-					},
+		data = { 
+			animationID = 0,
+			currentTime = 0.0,
+			loop = true,
+			playing = true,
+			speed = 1.0,
+			currentFrame = 0
+		}
 	},
 	{
 		type = core.componentType.ScaleComponent,
@@ -71,7 +71,7 @@ asm:loadAssembly(
 		data =  { 
 					color = { 1, 1, 1 },
 					speccolor = { 1, 1, 1 },
-					intensity = 10.0,
+					intensity = 100.0,
 					spotangle = 3.14/4.0,
 					spotpenumbra = 0.03,
 					type = core.gfx.objectTypes.Light,

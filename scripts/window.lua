@@ -19,18 +19,22 @@ function core.window.windowFocusCallback( focus )
 end
 
 function window.registerWindowFocusCallback( func )
+    assert( func ~= nil )
     windowFocusCallback[func] = true
 end
 
 function window.deregisterWindowFocusCallback( func )
+    assert( func ~= nil )
     windowFocusCallback[func] = nil
 end
 
 function window.registerWindowSizeCallback( func )
+    assert( func ~= nil )
     windowSizeCallback[func] = true
 end
 
 function window.deregisterWindowSizeCallback( func )
+    assert( func ~= nil )
     windowSizeCallback[func] = nil
 end
 

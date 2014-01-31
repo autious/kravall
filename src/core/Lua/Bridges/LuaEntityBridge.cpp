@@ -16,6 +16,7 @@
 #include <Lua/Bridges/ComponentBind/AreaComponentBinding.hpp>
 #include <Lua/Bridges/ComponentBind/NameComponentBinding.hpp>
 #include <Lua/Bridges/ComponentBind/AnimationComponentBinding.hpp>
+#include <Lua/Bridges/ComponentBind/TargetingComponentBinding.hpp>
 
 #include <cassert>
 
@@ -37,7 +38,8 @@ namespace Core
 	 FlowfieldComponentBinding,
      AreaComponentBinding,
      NameComponentBinding,
-	 AnimationComponentBinding> EntityBridge;
+	 AnimationComponentBinding,
+	 TargetingComponentBinding> EntityBridge;
 }
 
 /*************/
@@ -48,12 +50,21 @@ extern "C"
 {
     static int LuaEntitySet( lua_State * L )
     {
-        return entityBridge.Set( L );    
+        LuaEntity * ent = luau_checkentity( L, 1 );
+        if( ent->entity == INVALID_ENTITY )
+            return luaL_error( L, "entity set on invalid entity" );
+        else
+            return entityBridge.Set( L );    
     }
     
     static int LuaEntityGet( lua_State * L )
     {
-        return entityBridge.Get( L );
+
+        LuaEntity * ent = luau_checkentity( L, 1 );
+        if( ent->entity == INVALID_ENTITY )
+            return luaL_error( L, "entity get on invalid entity" );
+        else
+            return entityBridge.Get( L );
     }
 
     static int LuaEntityCreate( lua_State * L )

@@ -21,12 +21,21 @@ function GUIComponent:new(o)
                 o.onEnter()  
             end
             o.inside = true
+
+            if o.press then
+                o.drag = true
+            end
         else
             if o.inside then 
                 o.onExit()
             end
             o.inside = false
         end
+
+        if o.drag then
+            o.onDrag( x,y )
+        end
+    
     end
     function o.callbacks.onButton( button, action, mods )
         if button == mouse.button.Left then
@@ -36,8 +45,11 @@ function GUIComponent:new(o)
                     o.press = true
                 end
             elseif action == core.input.action.Release then
-                o.onRelease()         
+                if o.inside == true then
+                    o.onRelease()         
+                end
                 o.press = false
+                o.drag = false
             end 
         end
     end
@@ -50,30 +62,31 @@ end
 
 --Virtual functions to be overloaded.
 function GUIComponent.onEnter()
-    print( "enter" )
+    --print( "enter" )
 end
 
 function GUIComponent.onExit()
-    print( "exit" )
+    --print( "exit" )
 end
 
 function GUIComponent.onPress()
-    print( "press" )
+    --print( "press" )
 end
 
 function GUIComponent.onRelease()
-    print( "release" )
+   --print( "release" )
+end
+
+function GUIComponent.onDrag(x,y)
+    --print( "drag" )
 end
 
 function GUIComponent:setPosition(x,y)
     self.x = x
-    self.y  = y
+    self.y = y
 end
 
 function GUIComponent:destroy()
-    self.mesh:free()
-    self.material:free()
-    self.ent:destroy()
     input.deregisterOnButton(self.callbacks.onButton)
     input.deregisterOnPosition(self.callbacks.onPosition)
 end

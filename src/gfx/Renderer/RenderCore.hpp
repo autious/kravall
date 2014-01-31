@@ -140,10 +140,12 @@ namespace GFX
 		void RemoveTextureFromMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID);
         int GetShaderId(unsigned int& shaderId, const char* shaderName);
 		int SetShaderToMaterial(const unsigned long long int& materialID, const unsigned int& shaderID);
-		int CreateSkeleton(unsigned int& out_skeletonID);
-		int DeleteSkeleton(const unsigned int& skeletonID);
-		int AddAnimationToSkeleton(const unsigned int& skeletonID, glm::mat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame);
-		int GetAnimationFrameCount(const unsigned int& skeletonID, const unsigned int& animationID, unsigned int& out_frameCount);
+		int CreateSkeleton(int& out_skeletonID);
+		int DeleteSkeleton(const int& skeletonID);
+		int GetSkeletonID(const unsigned int& meshID);
+		int BindSkeletonToMesh(const unsigned int& meshID, const int& skeletonID);
+		int AddAnimationToSkeleton(const int& skeletonID, glm::mat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame);
+		int GetAnimationInfo(const int& skeletonID, const int& animationID, unsigned int& out_frameCount, unsigned int& out_bonesPerFrame);
 
         /*!
         Sets the font used for rendering SubSystem statistics.
