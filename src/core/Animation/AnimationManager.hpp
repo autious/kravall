@@ -20,7 +20,7 @@ namespace Core
 
 	private:
 
-		static std::vector<std::map<std::string, int> > m_skeletons;
+		static std::map<int, std::map<std::string, int> > m_skeletons;
 	};
 }
 #endif

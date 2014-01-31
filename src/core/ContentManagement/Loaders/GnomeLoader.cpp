@@ -243,13 +243,13 @@ namespace Core
 						duration = std::max(duration, gnome->animations[a].boneAnim[e].Keyframes[k].time);
 					}
 				}
-				int numFrames = 1 + duration * GFX::Settings::GetAnimationFramerate();
-				numFrames *= 1;
+				int numFrames = duration * GFX::Settings::GetAnimationFramerate();
+				//numFrames *= 1;
 
 				// Create frames
 				for (int f = 0; f < numFrames; f++)
 				{
-					float time = duration * (f/float(numFrames-1));
+					float time = duration * (f/float(numFrames));
 					std::vector<glm::mat4x4> transforms;
 					GetFinalTransforms(a, gnome, time, transforms);
 					for (int t = 0; t < transforms.size(); t++)
@@ -265,7 +265,7 @@ namespace Core
 				else if (result == GFX_INVALID_SKELETON)
 					LOG_ERROR << "Could not add animation \'" << gnome->animations[a].name << "\' Skeleton with ID " << skeletonID << " does not exist.";
 				else
-					AnimationManager::StoreAnimationID(meshID, result, gnome->animations[a].name);
+					AnimationManager::StoreAnimationID(skeletonID, result, gnome->animations[a].name);
 			}
 		}
 	}

@@ -39,11 +39,11 @@ int AnimationManager::AddAnimationToSkeleton(const int& skeletonID, glm::mat4x4*
 		return GFX_INVALID_SKELETON;
 }
 
-int AnimationManager::GetFrameInfo(const int& skeletonID, const int& animationID, unsigned int& out_frameCount, unsigned int& out_bonesPerFrame)
+int AnimationManager::GetFrameInfo(const int& skeletonID, const int& animationID, unsigned int& out_frameCount, unsigned int& out_bonesPerFrame, unsigned int& out_animationOffset)
 {
 	if (m_skeletons.find(skeletonID) != m_skeletons.end())
 	{
-		return m_skeletons[skeletonID]->GetInfo(animationID, out_frameCount, out_bonesPerFrame);
+		return m_skeletons[skeletonID]->GetInfo(animationID, out_frameCount, out_bonesPerFrame, out_animationOffset);
 	}
 	return GFX_INVALID_SKELETON;
 }

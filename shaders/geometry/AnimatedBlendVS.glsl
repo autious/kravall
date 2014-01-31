@@ -43,7 +43,7 @@ flat out uint rnd_seed;
 
 mat4x4 GetBoneMatrix(InstanceData instanceData, int boneIndex)
 {
-	return gBones[instanceData.animationIndex + instanceData.frameOffset + boneIndex];
+	return gBones[instanceData.frameOffset + boneIndex];
 	//return mat4x4(1.0f);
 }
 

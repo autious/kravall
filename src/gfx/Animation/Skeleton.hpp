@@ -38,7 +38,7 @@ public:
 	\param out_bonesPerFrame The number of bones per frame
 	\return Returns #GFX_SUCCESS if successful, else returns #GFX_INVALID_ANIMATION
 	*/
-	int GetInfo(const int& animationID, unsigned int& out_frameCount, unsigned int& out_bonesPerFrame);
+	int GetInfo(const int& animationID, unsigned int& out_frameCount, unsigned int& out_bonesPerFrame, unsigned int& out_animationOffset);
 
 	/*!
 	Gets the number of animations in the skeleton.

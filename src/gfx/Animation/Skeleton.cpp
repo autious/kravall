@@ -24,7 +24,14 @@ int Skeleton::AddAnimation(glm::mat4x4* frames, const unsigned int& numFrames, c
 	if (numFrames > 0 && numBonesPerFrame > 0 && m_numFrames < MAX_FRAMES)
 	{
 		AnimationInfo info;
-		info.offset = m_animations.size();
+		info.offset = 0;
+
+		// Loop through all animations currently bound to this skeleton to find the frame offset
+		for (unsigned int i = 0; i < m_numAnimations; i++)
+		{
+			info.offset = m_animationInfo[i].numFrames * m_animationInfo[i].numBonesPerFrame + m_animationInfo[i].offset;
+		}
+
 		info.numFrames = numFrames;
 		info.numBonesPerFrame = numBonesPerFrame;
 
@@ -45,12 +52,14 @@ int Skeleton::AddAnimation(glm::mat4x4* frames, const unsigned int& numFrames, c
 	}
 }
 
-int Skeleton::GetInfo(const int& animationID, unsigned int& out_frameCount, unsigned int& out_bonesPerFrame)
+int Skeleton::GetInfo(const int& animationID, unsigned int& out_frameCount, unsigned int& out_bonesPerFrame, unsigned int& out_animationOffset)
 {
 	if (animationID >= 0 && animationID < m_animationInfo.size())
 	{
 		out_frameCount = m_animationInfo[animationID].numFrames;
 		out_bonesPerFrame = m_animationInfo[animationID].numBonesPerFrame;
+		out_animationOffset = m_animationInfo[animationID].offset;
+		
 		return GFX_SUCCESS;
 	}
 	else

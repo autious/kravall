@@ -5,7 +5,7 @@
 
 namespace Core
 {
-	std::vector< std::map<std::string, int> > AnimationManager::m_skeletons;
+	std::map<int, std::map<std::string, int> > AnimationManager::m_skeletons;
 
 	void AnimationManager::PlayAnimation(const Entity& entity, const std::string& animationName)
 	{
@@ -82,18 +82,15 @@ namespace Core
 
 	int AnimationManager::StoreAnimationID(int meshID, int animationID, const std::string& animationName)
 	{
-		if (meshID >= 0 && meshID < m_skeletons.size())
+		if (m_skeletons[meshID].find(animationName) == m_skeletons[meshID].end())
 		{
-			if (m_skeletons[meshID].find(animationName) == m_skeletons[meshID].end())
-			{
-				m_skeletons[meshID][animationName] = animationID;
-				return 0;
-			}
-			else
-			{
-				LOG_WARNING << "Animation with name \'" << animationName << "\' already exists in mesh " << meshID;
-				return -1;
-			}
+			m_skeletons[meshID][animationName] = animationID;
+			return 0;
+		}
+		else
+		{
+			LOG_WARNING << "Animation with name \'" << animationName << "\' already exists in mesh " << meshID;
+			return -1;
 		}
 		return -1;
 	}
