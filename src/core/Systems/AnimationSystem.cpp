@@ -48,8 +48,8 @@ namespace Core
 					}
 					ac->currentFrame = static_cast<unsigned int>(ac->currentTime * static_cast<float>(animationFramerate));
 					ac->animationID = ac->animationID * animationFrameCount;
-					if (ac->currentFrame%10 == 0)
-						std::cout << "Frame: " << ac->currentFrame + 1 << "/" << animationFrameCount << "\n";
+					//if (ac->currentFrame%10 == 0)
+					//	std::cout << "Frame: " << ac->currentFrame + 1 << "/" << animationFrameCount << "\n";
 					ac->currentFrame = ac->currentFrame * bonesPerFrame;
 				}
 			}
