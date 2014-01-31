@@ -49,11 +49,13 @@ function C:getView()
     return self.viewMatrix
 end
 
-function C:update( dt )
-    local delta = dt * 1
+function C:setView( view )
+    self.viewMatrix = view
+end
 
+function C:update( dt )
     if self.viewGoal ~= nil then
-        self.interpolatePosition = self.interpolatePosition + delta
+        self.interpolatePosition = self.interpolatePosition + dt * self.interpolateSpeed
         if self.interpolatePosition > 1 then
             self.interpolatePosition = 1
         end
@@ -71,9 +73,15 @@ function C:update( dt )
     camera:setView( view )
 end
 
-function C:setGoal( goalViewMatrix )
+function C:setGoal( goalViewMatrix, speed )
     self.viewSource = self:getView()
     self.viewGoal = goalViewMatrix
+    local from = self.viewSource * core.glm.vec4.new(0,0,0,1) 
+    local to = self.viewGoal * core.glm.vec4.new(0,0,0,1)
+
+    local dist = (to-from):xyz():length()
+
+    self.interpolateSpeed = speed / dist
     self.interpolatePosition = 0
 end
     

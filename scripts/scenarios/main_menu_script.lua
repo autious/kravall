@@ -1,20 +1,24 @@
 local input = require "input" 
 
-return function( scen )
+local MenuScrollSpeed = 500
 
+return function( scen )
     local function onKey( key, scancode, action )
         if key == core.input.keyboard.key.A and action == core.input.action.Release then
-            scen.gamemode.camera:setGoal( scen.cameras.main.view )
+            scen.gamemode.camera:setGoal( scen.cameras.main.view, MenuScrollSpeed )
         end  
 
         if key == core.input.keyboard.key.B and action == core.input.action.Release then
-            scen.gamemode.camera:setGoal( scen.cameras.setup.view )
+            scen.gamemode.camera:setGoal( scen.cameras.scen.view, MenuScrollSpeed )
+        end  
+
+        if key == core.input.keyboard.key.C and action == core.input.action.Release then
+            scen.gamemode.camera:setGoal( scen.cameras.setup.view, MenuScrollSpeed )
         end  
     end
 
-    
-
     local function init()
+        scen.gamemode.camera:setView( scen.cameras.main.view ) 
         input.registerOnKey( onKey )
     end
 
