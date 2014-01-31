@@ -12,7 +12,7 @@ local street_light = ent.get "streetLight"
 local street_light_intensity = 2.0
 
 -- SCRIPTS \/
-scen.gamemode =  require "gamemodes/normal":new()
+scen.gamemode =  require "gamemodes/kravall":new()
 
 local DONT_DIE_MSG = "Don't let the anarchists die" 
 local objDontDie = objective.new( DONT_DIE_MSG ) 
