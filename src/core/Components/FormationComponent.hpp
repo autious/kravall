@@ -1,11 +1,13 @@
 #ifndef CORE_COMPONENTS_FORMATION_COMPONENT_HPP
 #define CORE_COMPONENTS_FORMATION_COMPONENT_HPP
 
+#include <array>
+
 namespace Core
 {
     struct FormationComponent    
     {
-        float relativePosition[2] = {0.0f, 0.0f};
+		std::array<float, 2> relativePosition = { { 0.0f, 0.0f } };
         bool isStraggler = false;
 
         FormationComponent()
