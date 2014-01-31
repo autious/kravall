@@ -11,7 +11,7 @@
 namespace Core
 {
     GroupDataSystem::GroupDataSystem() : BaseSystem(EntityHandler::GenerateAspect<
-            Core::WorldPositionComponent, UnitTypeComponent, AttributeComponent>(), 0ULL)
+            Core::WorldPositionComponent, Core::UnitTypeComponent, Core::AttributeComponent, Core::FlowfieldComponent>(), 0ULL)
     {
         m_nAllocatedGroups = 0;
         m_medianPositions = nullptr;

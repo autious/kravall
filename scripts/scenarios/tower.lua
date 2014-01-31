@@ -1,10 +1,15 @@
 local ASML = require "assembly_loader" 
-local asm = ASML.loadPack( {} )
+local scen = require "scenario":new()
 
-camera:lookAt( core.glm.vec3.new( 0, 30, 60 ), core.glm.vec3.new( 0, 20, 0 ) )
+scen.gamemode = require "gamemodes/kravall":new()
+
+scen:registerUpdateCallback( function(delta) scen.gamemode:update(delta) end )
+scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
+
+scen.gamemode.camera:lookAt( core.glm.vec3.new( 0, 30, 60 ), core.glm.vec3.new( 0, 20, 0 ) )
 
 --Plane
-asm:loadAssembly( 
+scen.asm:loadAssembly( 
 {
 	{
 		type = core.componentType.WorldPositionComponent,
@@ -42,7 +47,7 @@ asm:loadAssembly(
 --				r0[w]*r1[x] + r0[x]*r1[w] + r0[y]*r1[z] - r0[z]*r1[y],
 --				r0[w]*r1[y] + r0[y]*r1[w] + r0[z]*r1[x] - r0[x]*r1[z],
 --				r0[w]*r1[z] + r0[z]*r1[w] + r0[x]*r1[y] - r0[y]*r1[x] }
---asm:loadAssembly( 
+--scen.asm:loadAssembly( 
 --{
 --	{
 --		type = core.componentType.WorldPositionComponent,
@@ -81,7 +86,7 @@ asm:loadAssembly(
 --}
 --)
 --end
-asm:loadAssembly( 
+scen.asm:loadAssembly( 
 {
 	{
 		type = core.componentType.WorldPositionComponent,
@@ -116,7 +121,7 @@ asm:loadAssembly(
 	}
 }
 )
-asm:loadAssembly( 
+scen.asm:loadAssembly( 
 {
 	{
 		type = core.componentType.WorldPositionComponent,
@@ -151,7 +156,7 @@ asm:loadAssembly(
 	}
 }
 )
-asm:loadAssembly( 
+scen.asm:loadAssembly( 
 {
 	{
 		type = core.componentType.WorldPositionComponent,
@@ -161,7 +166,7 @@ asm:loadAssembly(
 		type = core.componentType.GraphicsComponent,
 		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
 		load = { 
-					mesh = { core.loaders.GnomeLoader, "assets/flamingo4.bgnome", false },
+					mesh = { core.loaders.GnomeLoader, "assets/flamingo.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/animated.material", false }
 			   }
 	},
@@ -178,16 +183,16 @@ asm:loadAssembly(
 	},
 	{
 		type = core.componentType.ScaleComponent,
-		data = { scale = 0.01 }
+		data = { scale = 0.1 }
 	},
 	{
 		type = core.componentType.RotationComponent,
-		data = { rotation = { 0,0,0,1 }}
+		data = { rotation = { -math.sin(math.pi/4.0), 0, 0, math.cos(math.pi/4.0) }}
 	}
 }
 )
 
---asm:loadAssembly( 
+--scen.asm:loadAssembly( 
 --{
 --	{
 --		type = core.componentType.WorldPositionComponent,
@@ -212,7 +217,7 @@ asm:loadAssembly(
 --}
 --)
 -- Spotlight
-asm:loadAssembly( 
+scen.asm:loadAssembly( 
 {
 	{
 		type = core.componentType.LightComponent,
@@ -240,7 +245,7 @@ asm:loadAssembly(
 	}
 } 
 )
-asm:loadAssembly( 
+scen.asm:loadAssembly( 
 {
 	{
 		type = core.componentType.LightComponent,
@@ -267,4 +272,4 @@ asm:loadAssembly(
 	}
 } 
 )
-return asm;
+return scen;

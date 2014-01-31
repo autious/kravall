@@ -5,7 +5,6 @@ local image = require "factories/image"
 local viewport = require "gui/viewport" 
 require "console"
 
-
 local current_scenario = nil
 local current_scenario_name = ""
 
@@ -13,7 +12,10 @@ local current_scenario_name = ""
 camera = Camera.new()
 
 function core.update( delta )
-    camera:update( delta )
+    if camera ~= nil then
+        camera:update( delta )
+    end
+    camera = nil
     if current_scenario ~= nil then
         current_scenario:update( delta )
     end 

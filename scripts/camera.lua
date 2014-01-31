@@ -60,28 +60,28 @@ function C:update( dt )
 
     if core.console.isVisible() == false then
     
-        if keyboard.iskeydown( key.W ) then
+        if keyboard.isKeyDown( key.W ) then
             self.position = self.position + camera:getForward() * delta
         end
-        if keyboard.iskeydown( key.S ) then
+        if keyboard.isKeyDown( key.S ) then
             self.position = self.position - camera:getForward() * delta
         end
-        if keyboard.iskeydown( key.A ) then
+        if keyboard.isKeyDown( key.A ) then
             self.position = self.position - camera:getRight() * delta
         end
-        if keyboard.iskeydown( key.D ) then
+        if keyboard.isKeyDown( key.D ) then
             self.position = self.position + camera:getRight() * delta
         end
-        if keyboard.iskeydown( key.Space ) then
+        if keyboard.isKeyDown( key.Space ) then
             self.position = self.position + camera:getUp() * delta
         end
-        if keyboard.iskeydown( key.Left_control ) then
+        if keyboard.isKeyDown( key.Left_control ) then
             self.position = self.position - camera:getUp() * delta
         end
         
         local x,y = mouse.getPosition()
 
-        if mouse.isbuttondown( mouse.button.Left ) then
+        if mouse.isButtonDown( mouse.button.Left ) then
             self.pitch = self.pitch + (y-self.py) * 0.3
             self.yaw = self.yaw + (x-self.px) * 0.3
         end
