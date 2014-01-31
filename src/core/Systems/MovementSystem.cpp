@@ -9,8 +9,7 @@ const float Core::MovementSystem::TURN_FACTOR = 7.5f;
 
 void Core::MovementSystem::Update(float delta)
 {
-	// get metadata...
-	const Core::MovementData walking = Core::GameData::GetWalkingSpeed();
+
 
 	for (std::vector<Entity>::iterator it = m_entities.begin();
 		it != m_entities.end();
@@ -20,7 +19,8 @@ void Core::MovementSystem::Update(float delta)
 		MovementComponent* mc = WGETC<MovementComponent>(*it);
 
 		// process speed...
-		float mod = mc->desiredSpeed > mc->speed ? walking.acceleration : walking.deceleration;
+		const Core::MovementData& movementData = Core::GameData::GetMovementDataWithState( Core::MovementState::Walking );
+		float mod = mc->desiredSpeed > mc->speed ? movementData.acceleration : movementData.deceleration;
 		
 		mc->speed += mod * delta;
 		

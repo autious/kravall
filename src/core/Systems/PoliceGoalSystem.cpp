@@ -36,7 +36,7 @@ void Core::PoliceGoalSystem::Update( float delta )
 		if( groupId < 0 )
 			continue;
 
-		if( instance->flowfields[ groupId ].goal[0] == FLT_MAX )
+		if( instance->flowfields[ groupId ].goal[0] == std::numeric_limits<float>::max() )
 			continue;
 
 		Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(*it);
@@ -77,7 +77,7 @@ void Core::PoliceGoalSystem::Update( float delta )
 		}
 		else
 		{
-			mvmc->goal[0] = FLT_MAX;
+			mvmc->goal[0] = std::numeric_limits<float>::max();
 
 			#ifdef SHOW_POLICE_CAN_SEE_GOAL
 			GFX::Debug::DrawSphere( wpc->GetVec3(*wpc), 5.0f, GFXColor( 1.0f, 0.0f, 0.0f, 1.0f ), false );
@@ -87,7 +87,7 @@ void Core::PoliceGoalSystem::Update( float delta )
 		if( walk )
 		{
 			// set speed according to state...
-			mvmc->desiredSpeed = GameData::GetWalkingSpeed().speedToDesire;
+			mvmc->desiredSpeed = GameData::GetMovementDataWithState( MovementState::Walking ).speedToDesire;
 
 
 		}
