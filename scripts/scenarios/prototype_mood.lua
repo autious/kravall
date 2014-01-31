@@ -12,7 +12,10 @@ local street_light_intensity = 2.0
 ambient(scen, 1.0, 1.0, 1.0, 0.01)
 directional(scen, -1, -1, 0.5)
 
-camera:lookAt( core.glm.vec3.new( -20, 35, 0 ), core.glm.vec3.new( 0, 0, 30 ) )
+scen.gamemode =  require "gamemodes/normal":new()
+scen:registerUpdateCallback( function( delta ) scen.gamemode:update(delta) end )
+scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
+scen.gamemode.camera:lookAt( core.glm.vec3.new( -20, 35, 0 ), core.glm.vec3.new( 0, 0, 30 ) )
 
 -- Group 0 start to end, top row (left side)
 street_light(scen, -50, -0.5, street_light_intensity)
