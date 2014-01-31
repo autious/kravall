@@ -162,13 +162,12 @@ namespace Core
 					}
 				}
 			}
-
-			glm::mat4x4 rotMatrix = glm::toMat4(Q);
+			
+			glm::mat4x4 rotMatrix = glm::toMat4(glm::quat(Q.w, Q.x, Q.y, Q.z));
 			glm::mat4x4 transMatrix =  glm::translate(glm::mat4x4(1.0f), P);
 			glm::mat4x4 scaleMatrix =	glm::scale(glm::mat4x4(1.0f), S);
 			
 			M = transMatrix * rotMatrix * scaleMatrix;
-			//M = rotMatrix;
 		}
 	}
 	void Core::GnomeLoader::GetFinalTransforms(int animationIndex, const Core::GnomeLoader::Gnome* gnome, float time, std::vector<glm::mat4x4>& finalTransforms)
@@ -194,7 +193,7 @@ namespace Core
 			{
 				glm::mat4x4 parentToRoot = toRootTransforms[parentIndex];
 
-				glm::mat4x4 toRoot = toParent * parentToRoot;
+				glm::mat4x4 toRoot = parentToRoot * toParent;
 
 				toRootTransforms[i] = toRoot;
 			}
@@ -217,7 +216,7 @@ namespace Core
 							gnome->bones[i].offsetMatrix[0][3], gnome->bones[i].offsetMatrix[1][3], gnome->bones[i].offsetMatrix[2][3], gnome->bones[i].offsetMatrix[3][3]
 							);
 			glm::mat4x4 toRoot = toRootTransforms[i];
-			finalTransforms[i] = offset * toRoot;
+			finalTransforms[i] = toRoot * offset;
 		}
 
 	}

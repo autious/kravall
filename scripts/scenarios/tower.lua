@@ -12,7 +12,7 @@ asm:loadAssembly(
 	},
 	{
 		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = false },
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/plane.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
@@ -40,7 +40,7 @@ asm:loadAssembly(
 		type = core.componentType.GraphicsComponent,
 		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
 		load = { 
-					mesh = { core.loaders.GnomeLoader, "assets/teapole4.bgnome", false },
+					mesh = { core.loaders.GnomeLoader, "assets/flamingo.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/animated.material", false }
 			   }
 	},
@@ -57,11 +57,11 @@ asm:loadAssembly(
 	},
 	{
 		type = core.componentType.ScaleComponent,
-		data = { scale = 1.0 }
+		data = { scale = 0.1 }
 	},
 	{
 		type = core.componentType.RotationComponent,
-		data = { rotation = { 0, 0, 0, 0 } }
+		data = { rotation = { -math.sin(math.pi/4.0), 0, 0, math.cos(math.pi/4.0) } }
 	}
 }
 )
