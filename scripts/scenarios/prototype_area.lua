@@ -13,6 +13,8 @@ local street_light_intensity = 2.0
 
 -- SCRIPTS \/
 scen.gamemode =  require "gamemodes/normal":new()
+scen:registerUpdateCallback( function(delta) scen.gamemode:update(delta) end )
+scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
 
 local DONT_DIE_MSG = "Don't let the anarchists die" 
 local objDontDie = objective.new( DONT_DIE_MSG ) 
@@ -23,8 +25,6 @@ local objLeadThrough = objective.new( ESCORT_MSG )
 scen.gamemode.objectiveHandler:addObjective( objDontDie )
 scen.gamemode.objectiveHandler:addObjective( objLeadThrough )
 
-scen:registerUpdateCallback( function() scen.gamemode:update() end )
-scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
 
 function printCount( ent )
 --    print( core.system.area.getAreaRioterCount( ent ) ) 
@@ -55,7 +55,7 @@ end
 ambient(scen, 1.0, 1.0, 1.0, 0.1)
 directional(scen, -1, -1, 0.5)
 
-camera:lookAt( core.glm.vec3.new( -20, 35, 20 ), core.glm.vec3.new( 0, 0, 20 ) )
+scen.gamemode.camera:lookAt( core.glm.vec3.new( -20, 35, 20 ), core.glm.vec3.new( 0, 0, 20 ) )
 print( "LOL" )
 
 -- Group 0 start to end, top row (left side)
