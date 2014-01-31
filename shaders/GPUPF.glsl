@@ -74,17 +74,21 @@ layout (std430, binding = 1) restrict writeonly buffer OutputBuffer
 uniform uint gEntityCount;
 
 shared ChargeCurve gChargeCurves[1][2];
-uniform vec4 gMoodCurves[6][13] = {{ vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f) },
+uniform vec4 gMoodCurves[6][13] = {{ vec4(5, -0.001f, 0.01f, 0.01f), vec4(5, 0.0f, 0.0f, 0.01f),vec4(15, 0.0f, 0.5f, 0.1f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(3, 0.0f, 0.0001f, 0.00001f),vec4(5, 0.0f, 0.0002f, 0.0002f),vec4(3, -0.0001f, 0.0001f, 0.0001f),vec4(0.0f),vec4(0.0f),vec4(0.0f) },
+
+								   { vec4(5, 0.0f, 0.01f, 0.1f),vec4(5, 0.0f, 0.01f, 0.1f),vec4(15, 0.0f, 0.5f, 0.1f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(15, 0.0f, 0.5f, 0.1f),vec4(15, 0.0f, 0.005f, 0.1f), vec4(5, 0.0f, 0.0001f, 0.0002f),vec4(3, -0.0001f, 0.0001f, 0.0002f),vec4(0.0f),vec4(0.0f),vec4(0.0f) },
+
+								   { vec4(5, 0.0f, 0.01f, 0.1f), vec4(5, 0.0, 0.0, 0.1f),vec4(15, 0.0f, 0.5f, 0.1f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(5, 0.0001f, 0.0001f, 0.0002f), vec4(3, -0.0001f, 0.0001f, 0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f) },
+
 								   { vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f) },
-								   { vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f) },
-								   { vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f) },
-								   { vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f) },
-								   { vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f) }};
+
+								   { vec4(0.0f),vec4(0.0f),vec4(15, 0.0f, 0.5f, 0.1f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(5, 0.0f, 0.005f, 0.001f),vec4(5, 0.0f, 0.001f, 0.002f), vec4(3, -0.0001f, 0.0f, 0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f) },
+
+								   { vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(1, -0.0001f, 0.0f, 0.0f),vec4(15, -0.001f, 0.0f, 0.0f),vec4(15, -0.001f, 0.0f, 0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f) }};
+
 //shared MoodCurve gMoodCurves[6][13];
 int gMoodSenderIndices[2][6];
 int gMoodReceiverIndices[2][6];
-
-
 
 float GetAgentChargeAt(int unitType, float distSqr)
 {
@@ -236,14 +240,14 @@ void main()
 	gMoodReceiverIndices[POLICE_TYPE][3] = 5;
 
 	barrier();
-	/*
+	
 	if (gl_LocalInvocationIndex == 0)
 	{
 		gChargeCurves[0][0].ch_cu_re_dec = vec4(0.0f, 5.0f, 0.3f, 0.0f / (5.0f)); //0.3 makes them stick into a huge blob
 		gChargeCurves[0][1].ch_cu_re_dec = vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f));
 
 		//MOOD CURVE INDICES/PLACEMENT CAN BE FOUND AT THE BOTTOM OF THIS DOCUMENT
-
+		/*
 		//Init all curves to no effect
 		for (int i = 0; i < 6; i++)
 		{
@@ -376,11 +380,11 @@ void main()
 
 		//pol vs rioter civ
 		//No effect
-
+		*/
 	}
 	
 	barrier();
-	*/
+	
 	uint passCount = 0;
 	passCount = ( gEntityCount + WORK_GROUP_SIZE - 1) / WORK_GROUP_SIZE;
 	

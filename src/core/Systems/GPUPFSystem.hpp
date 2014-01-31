@@ -48,15 +48,9 @@ namespace Core
 			glm::vec4 morale_rage_pressure_empty;
 		};
 
-		struct MoodCurve
-		{
-			glm::vec4 range_mo_pre_rage;
-		};
-
 		GLuint m_shaderID;
 		GLuint m_inDataBuffer;
 		GLuint m_outDataBuffer;
-		GLuint m_moodCurveBuffer;
 
 		const unsigned int MAXIMUM_ENTITIES = 2048;
 
@@ -67,7 +61,6 @@ namespace Core
 		bool m_foundShader;
 		bool m_readBack;
 
-		MoodCurve m_moodCurves[6][13];
 	};
 }
 
