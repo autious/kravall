@@ -5,7 +5,6 @@ local image = require "factories/image"
 local viewport = require "gui/viewport" 
 require "console"
 
-
 local current_scenario = nil
 local current_scenario_name = ""
 
