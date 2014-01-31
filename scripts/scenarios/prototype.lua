@@ -1,13 +1,13 @@
 local ent = require "entities"
 local scen = require "scenario":new()
 
-scen.asm:specific_content( core.contentmanager.load( 
+scen.asm:specific_content( core.contentmanager.load(
 		core.loaders.NavigationMeshLoader, "prototypeLevel.txt", function( value ) end, false ) )
 
 
 scen.gamemode = require "gamemodes/kravall":new()
 
-scen:registerUpdateCallback( function() scen.gamemode:update() end )
+scen:registerUpdateCallback( function(delta) scen.gamemode:update(delta) end )
 scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
 
 local ambient = ent.get "ambientLight"
@@ -17,8 +17,12 @@ local street_light_intensity = 2.0
 ambient(scen, 1.0, 1.0, 1.0, 0.01)
 directional(scen, -1, -1, 0.5)
 
+
+scen:registerUpdateCallback( function( delta ) scen.gamemode:update(delta) end )
+scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
+
 --camera:lookAt( core.glm.vec3.new( -20, 35, 20 ), core.glm.vec3.new( 0, 0, 20 ) )
-camera:lookAt( core.glm.vec3.new( -20, 35, 0 ), core.glm.vec3.new( 0, 0, 30 ) )
+scen.gamemode.camera:lookAt( core.glm.vec3.new( -20, 35, 0 ), core.glm.vec3.new( 0, 0, 30 ) )
 
 -- Group 0 start to end, top row (left side)
 street_light(scen, -50, -0.5, street_light_intensity)

@@ -2,6 +2,7 @@ local objective_handler = require "objective_handler"
 local objective = require "objective"
 local fac_image = require "factories/image"
 local window = require "window"
+local Camera = require "rts_camera"
 local T = {}
 
 local selectedSquad = nil
@@ -10,6 +11,7 @@ function T:new(o)
     o = o or {}
 
     o.objectiveHandler = objective_handler:new()
+    o.camera = Camera.new()
 
     setmetatable( o, self )
     self.__index = self
@@ -48,6 +50,7 @@ function T:update( delta )
             self.popup = fac_image( window.width/2,window.height/2, "assets/material/ui/loss.material",true ) 
         end
     end
+    self.camera:update( delta )
 end
 
 function T:destroy()

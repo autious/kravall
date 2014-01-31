@@ -696,6 +696,19 @@ extern "C"
         return 1;
     }
 
+    static int LuaMat4Interpolate( lua_State * L )
+    {
+        glm::mat4 * mat4_first = luau_checkglmmat4( L, 1 );
+        glm::mat4 * mat4_second = luau_checkglmmat4( L, 2 );
+        float delta = luau_checkfloat( L, 3 );
+
+        glm::mat4 * mat4_ret = Core::LuaUNewGLMMat4( L );
+
+        *mat4_ret = glm::interpolate( *mat4_first, *mat4_second, delta );
+
+        return 1;
+    }
+
     static int LuaQuatNewindex( lua_State * L )
     {
         return luaL_error( L, "Read only" );
@@ -964,6 +977,7 @@ namespace Core
                     luau_setfunction( L, "scale", LuaMat4Scale );
                     luau_setfunction( L, "translate", LuaMat4Translate );
                     luau_setfunction( L, "unproject", LuaMat4UnProject );
+                    luau_setfunction( L, "interpolate", LuaMat4Interpolate );
 
                     luaL_newmetatable( L, GLMMAT4_META_TYPE );
                         lua_pushvalue( L, mat4_table );
