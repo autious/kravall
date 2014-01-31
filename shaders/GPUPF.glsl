@@ -40,10 +40,6 @@ struct ChargeCurve
 struct MoodCurve
 {
 	vec4 range_mo_pre_rage;
-	float range;
-	float moraleFactor;
-	float pressureFactor;
-	float rageFactor;
 };
 
 struct DataIN
@@ -70,14 +66,29 @@ layout (std430, binding = 1) restrict writeonly buffer OutputBuffer
 	DataOUT gOutput[];
 };
 
+//layout (std430, binding = 2) restrict readonly buffer MoodCurveBuffer
+//{
+//	MoodCurve gMoodCurves[];
+//}
+
 uniform uint gEntityCount;
 
 shared ChargeCurve gChargeCurves[1][2];
-shared MoodCurve gMoodCurves[6][13];
+uniform vec4 gMoodCurves[6][13] = {{ vec4(5, -0.001f, 0.01f, 0.01f), vec4(5, 0.0f, 0.0f, 0.01f),vec4(15, 0.0f, 0.5f, 0.1f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(3, 0.0f, 0.0001f, 0.00001f),vec4(5, 0.0f, 0.0002f, 0.0002f),vec4(3, -0.0001f, 0.0001f, 0.0001f),vec4(0.0f),vec4(0.0f),vec4(0.0f) },
+
+								   { vec4(5, 0.0f, 0.01f, 0.1f),vec4(5, 0.0f, 0.01f, 0.1f),vec4(15, 0.0f, 0.5f, 0.1f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(15, 0.0f, 0.5f, 0.1f),vec4(15, 0.0f, 0.005f, 0.1f), vec4(5, 0.0f, 0.0001f, 0.0002f),vec4(3, -0.0001f, 0.0001f, 0.0002f),vec4(0.0f),vec4(0.0f),vec4(0.0f) },
+
+								   { vec4(5, 0.0f, 0.01f, 0.1f), vec4(5, 0.0, 0.0, 0.1f),vec4(15, 0.0f, 0.5f, 0.1f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(5, 0.0001f, 0.0001f, 0.0002f), vec4(3, -0.0001f, 0.0001f, 0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f) },
+
+								   { vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f) },
+
+								   { vec4(0.0f),vec4(0.0f),vec4(15, 0.0f, 0.5f, 0.1f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(5, 0.0f, 0.005f, 0.001f),vec4(5, 0.0f, 0.001f, 0.002f), vec4(3, -0.0001f, 0.0f, 0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f) },
+
+								   { vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(1, -0.0001f, 0.0f, 0.0f),vec4(15, -0.001f, 0.0f, 0.0f),vec4(15, -0.001f, 0.0f, 0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f) }};
+
+//shared MoodCurve gMoodCurves[6][13];
 int gMoodSenderIndices[2][6];
 int gMoodReceiverIndices[2][6];
-
-
 
 float GetAgentChargeAt(int unitType, float distSqr)
 {
@@ -132,21 +143,21 @@ vec3 MoodProp(int rType, int rState, float sMorale, float sPressure, float sRage
 	int senderIndex = gMoodSenderIndices[sType][sState];
 	int receieverIndex = gMoodReceiverIndices[rType][rState];
 
-	MoodCurve moodCurve = gMoodCurves[receieverIndex][senderIndex];
+	vec4 moodCurve = gMoodCurves[receieverIndex][senderIndex];
 
 	float rMorale = 0;
 	float rPressure = 0;
 	float rRage = 0;
 
 	
-	if (dist > moodCurve.range_mo_pre_rage.x)
+	if (dist > moodCurve.x)
 		return vec3(0, 0, 0);
 	
-	float attenuation = 1.0f / (dist * dist) - 1.0f / (moodCurve.range_mo_pre_rage.x * moodCurve.range_mo_pre_rage.x); 
+	float attenuation = 1.0f / (dist * dist) - 1.0f / (moodCurve.x * moodCurve.x); 
 	
-	rMorale = moodCurve.range_mo_pre_rage.y * attenuation * sMorale;
-	rPressure = moodCurve.range_mo_pre_rage.z * attenuation * sPressure;
-	rRage = moodCurve.range_mo_pre_rage.w * attenuation * sRage;
+	rMorale = moodCurve.y * attenuation * sMorale;
+	rPressure = moodCurve.z * attenuation * sPressure;
+	rRage = moodCurve.w * attenuation * sRage;
 
 	return vec3(rMorale, rRage, rPressure);
 }
@@ -229,14 +240,14 @@ void main()
 	gMoodReceiverIndices[POLICE_TYPE][3] = 5;
 
 	barrier();
-
+	
 	if (gl_LocalInvocationIndex == 0)
 	{
 		gChargeCurves[0][0].ch_cu_re_dec = vec4(0.0f, 5.0f, 0.3f, 0.0f / (5.0f)); //0.3 makes them stick into a huge blob
 		gChargeCurves[0][1].ch_cu_re_dec = vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f));
 
 		//MOOD CURVE INDICES/PLACEMENT CAN BE FOUND AT THE BOTTOM OF THIS DOCUMENT
-
+		/*
 		//Init all curves to no effect
 		for (int i = 0; i < 6; i++)
 		{
@@ -245,10 +256,8 @@ void main()
 				gMoodCurves[i][j].range_mo_pre_rage = vec4(0);
 			}
 		}
-		/*
+
 		//barrier();
-
-
 		//normal rioter vs passive police
 		gMoodCurves[0][0].range_mo_pre_rage = vec4(5, -0.001f, 0.01f, 0.01f);
 
@@ -356,7 +365,6 @@ void main()
 		//civilian rioter vs rioter civilian
 		//No effect
 
-		
 
 		//police vs rioter neut 
 		//No effect
@@ -373,7 +381,6 @@ void main()
 		//pol vs rioter civ
 		//No effect
 		*/
-
 	}
 	
 	barrier();

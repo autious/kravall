@@ -60,6 +60,7 @@ namespace Core
 
 		bool m_foundShader;
 		bool m_readBack;
+
 	};
 }
 
