@@ -104,8 +104,11 @@ void TestPathFinding()
 		//GFX::Debug::DrawLine( temp, temp2, GFXColor( 1, 1, 0, 1 ), false );
 	}
 
+	//if( Core::GetNavigationMesh() )
+	//	Core::GetNavigationMesh()->CalculateFlowfieldForGroup( glm::vec3( 0,0,350 ), 1 );
+
 	if( Core::GetNavigationMesh() )
-		Core::GetNavigationMesh()->CalculateFlowfieldForGroup( glm::vec3( 0,0,350 ), 1 );
+		;//Core::GetNavigationMesh()->CalculatedShortPath( 0, glm::vec3( 0, 0, 0 ), 8, glm::vec3( -73,0,2 ) );
 
 
 }
@@ -124,6 +127,7 @@ void Core::AIDebugSystem::Update( float delta )
 
 	GetPlanePoint();
 
+	//return;
 
 	if( Core::GetNavigationMesh() )
 	{
@@ -133,6 +137,9 @@ void Core::AIDebugSystem::Update( float delta )
 		{
 			for( int p = 0; p < 4; p++ )
 			{
+				if( instance->nodes[i].corners[p].linksTo < -0.5f )
+					continue;
+
 				int ii = p * 2;
 				int oo = (ii + 2) % 8;
 				float* points = instance->nodes[i].points;
@@ -144,6 +151,21 @@ void Core::AIDebugSystem::Update( float delta )
 				{
 					//GFX::Debug::DrawSphere( lineStart + (lineEnd - lineStart) * 0.5f, 1.3f, GFXColor( 1, 0, 0, 1 ), false );
 				}
+
+				float delta = 3.0f;
+
+				glm::vec3 normal = glm::normalize( glm::cross( (lineEnd - lineStart), glm::vec3( 0.0f, 1.0f, 0.0f ) ) );
+
+				//GFX::Debug::DrawSphere( lineStart + glm::normalize( lineEnd - lineStart ) * delta, 1.3f, GFXColor( 1, 0, 0, 1 ), false );
+				//GFX::Debug::DrawLine( lineStart, lineStart + glm::normalize( lineEnd - lineStart ) * delta, GFXColor( 0, 0, 1, 1 ), false  );
+				
+				//GFX::Debug::DrawSphere( lineStart + glm::normalize( lineEnd - lineStart ) * delta, 1.3f, GFXColor( 1, 0, 0, 1 ), false );
+				//GFX::Debug::DrawLine( lineEnd, lineStart + glm::normalize( lineEnd - lineStart ) * delta, GFXColor( 0, 0, 1, 1 ), false  );
+
+				//positions[0] = lineStart + glm::normalize( lineEnd - lineStart ) * 1.0f;
+				//positions[1] = ownMidLine;
+				//positions[2] = lineEnd + glm::normalize( lineStart - lineEnd ) * 1.0f;
+
 				
 				//glm::vec3 cross = glm::normalize( glm::cross( (lineEnd - lineStart), glm::vec3( 0.0f, 1.0f, 0.0f ) ) );
 				//GFX::Debug::DrawLine( lineStart + (lineEnd - lineStart) * 0.5f, lineStart + (lineEnd - lineStart) * 0.5f + cross, GFXColor( 0, 0, 1, 1 ), false  );

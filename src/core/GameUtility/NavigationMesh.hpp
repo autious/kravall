@@ -15,6 +15,17 @@ namespace Core
 {
 	struct NavigationMesh;
 
+	struct PathData
+	{
+		PathData() { node = -1; }
+		PathData( int node, int entryEdge, glm::vec3 point )
+		: node(node), entryEdge(entryEdge), point(point) {}
+
+		int node;
+		int entryEdge;
+		glm::vec3 point;
+	};
+
 	/*!
 		Get a pointer to the current instance of the navigaion mesh. Will return nullprt if no mesh is loaded.
 	*/
@@ -149,6 +160,18 @@ namespace Core
 		*/
 		bool CalculateFlowfieldForGroup( glm::vec3 point, int group );
 
+
+		/*!
+			Will allocate frame memory for Astar algorithm. Must be run before use of CalculateShortPath function.
+			Will reserve memory according to the currently loaded navigation mesh and will return false if heap allocation fails.
+		*/
+		bool AllocateFrameMemoryForAstar();
+
+		/*!
+			Used for single unit pathfinding. AllocateFrameMemoryForAstar() must be run once before any calls to this function. 
+		*/
+		PathData CalculateShortPath( int ownNode, glm::vec3 ownPosition, int otherNode, glm::vec3 otherPosition );
+
 		/*!
 			Uses the GFX debug system to draw the outlines of the navigation mesh.
 		*/
@@ -178,6 +201,13 @@ namespace Core
 			current number of nodes reciding under the nodes-pointer.
 		*/
 		int nrNodes;
+
+		private : 
+
+			Flowfield tempField;
+			bool* visited;
+			float* distances;
+			glm::vec3* points;
 	};
 }
 

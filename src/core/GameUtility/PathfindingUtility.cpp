@@ -5,8 +5,6 @@
 #include <algorithm>
 #include <logger/Logger.hpp>
 
-#define NO_LINE_COLLISION -0.5f
-#define NO_LINE_COLLISION_VALUE -1.0f
 
 namespace Core
 {
@@ -17,12 +15,13 @@ namespace Core
 		float t;
 	};
 
+
 	
 	void CheckLineWithCornerCheck( glm::vec3 start, glm::vec3 goal, float radius, Core::NavigationMesh* instance, int startNode, LineCheckReturnStruct& result )
 	{
 		result.t = NO_LINE_COLLISION_VALUE;
 		result.node = startNode;
-		
+
 		bool* visited = Core::world.m_frameHeap.NewPODArray<bool>( instance->nrNodes );
 		std::memset( visited, false, sizeof(bool) * instance->nrNodes );
 
@@ -155,15 +154,10 @@ namespace Core
 		if( !instance || startNode < 0 )
 			return false;
 
-		if( instance->CheckPointInsideNode( from, startNode ) )
-		{
-			LineCheckReturnStruct result;
-			CheckLineWithCornerCheck( from, to, cornerRadius, instance, startNode, result );
-			if( result.t < NO_LINE_COLLISION )
-				return true;
-		}
-
-
+		LineCheckReturnStruct result;
+		CheckLineWithCornerCheck( from, to, cornerRadius, instance, startNode, result );
+		if( result.t < NO_LINE_COLLISION )
+			return true;
 		return false;
 	}
 
