@@ -5,12 +5,13 @@ namespace Core
 {
     struct FormationComponent    
     {
-        float relativePosition[2] = {0.0f, 0.0f};
+        float relativePosition[2];
         bool isStraggler = false;
 
         FormationComponent()
         {
-
+			relativePosition[0] = 0.0f;
+			relativePosition[1] = 0.0f;
         }
 
         FormationComponent(float relativeX, float relativeY)
