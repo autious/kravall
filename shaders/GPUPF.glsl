@@ -148,15 +148,6 @@ vec3 MoodProp(int rType, int rState, float sMorale, float sPressure, float sRage
 	rPressure = moodCurve.range_mo_pre_rage.z * attenuation * sPressure;
 	rRage = moodCurve.range_mo_pre_rage.w * attenuation * sRage;
 
-	//if (dist > moodCurve.range)
-	//	return vec3(0, 0, 0);
-	//
-	//float attenuation = 1.0f / (dist * dist) - 1.0f / (moodCurve.range * moodCurve.range); 
-	//
-	//rMorale = moodCurve.moraleFactor * attenuation * sMorale;
-	//rPressure = moodCurve.pressureFactor * attenuation * sPressure;
-	//rRage = moodCurve.rageFactor * attenuation * sRage;
-
 	return vec3(rMorale, rRage, rPressure);
 }
 
@@ -254,8 +245,10 @@ void main()
 				gMoodCurves[i][j].range_mo_pre_rage = vec4(0);
 			}
 		}
+		/*
 		//barrier();
-		/************************************************************************************/
+
+
 		//normal rioter vs passive police
 		gMoodCurves[0][0].range_mo_pre_rage = vec4(5, -0.001f, 0.01f, 0.01f);
 
@@ -283,7 +276,6 @@ void main()
 		//normal rioter vs rioter civilian
 		//No effect
 
-		/************************************************************************************/
 		//agitated rioter vs passive police
 		gMoodCurves[1][0].range_mo_pre_rage = vec4(5, 0.0f, 0.01f, 0.1f);
 
@@ -309,7 +301,6 @@ void main()
 		//No effect
 		
 		//barrier();
-		/************************************************************************************/
 
 		//attacking rioter vs passive police
 		gMoodCurves[2][0].range_mo_pre_rage = vec4(5, 0.0f, 0.01f, 0.1f);
@@ -336,12 +327,10 @@ void main()
 		//No effect
 
 		//barrier();
-		/************************************************************************************/
 
 		//retreating rioter
 		//No effects
 
-		/************************************************************************************/
 
 		//civilian rioter vs passive police
 		//No effect
@@ -367,7 +356,7 @@ void main()
 		//civilian rioter vs rioter civilian
 		//No effect
 
-		/************************************************************************************/
+		
 
 		//police vs rioter neut 
 		//No effect
@@ -383,6 +372,7 @@ void main()
 
 		//pol vs rioter civ
 		//No effect
+		*/
 
 	}
 	
