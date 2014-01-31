@@ -49,6 +49,14 @@ int AnimationManager::GetFrameInfo(const int& skeletonID, const int& animationID
 }
 
 
+void AnimationManager::BindSkeletonData(const int& skeletonID)
+{
+	if (m_skeletons.find(skeletonID) != m_skeletons.end())
+	{
+		m_skeletons[skeletonID]->BindBuffersData();
+	}
+}
+
 void AnimationManager::BindSkeleton(const int& skeletonID)
 {
 	if (m_skeletons.find(skeletonID) != m_skeletons.end())

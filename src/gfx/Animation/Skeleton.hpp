@@ -51,7 +51,8 @@ public:
 	\return Returns the number of frames connected to the skeleton
 	*/
 	inline int GetTotalFrames(){ return m_numFrames; }
-
+	
+	void BindBuffersData();
 	void BindBuffers();
 
 private:

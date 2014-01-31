@@ -26,7 +26,8 @@ namespace Core
 				// Get the number of frames in the current animation
 				unsigned int animationFrameCount;
 				unsigned int bonesPerFrame;
-				if (GFX::Content::GetAnimationInfo(GFX::Content::GetSkeletonID(meshID), ac->animationID, animationFrameCount, bonesPerFrame) == GFX_SUCCESS)
+				int skeletonID = GFX::Content::GetSkeletonID(meshID);
+				if (GFX::Content::GetAnimationInfo(skeletonID, ac->animationID, animationFrameCount, bonesPerFrame) == GFX_SUCCESS)
 				{
 
 					// Get the time animation duration in seconds

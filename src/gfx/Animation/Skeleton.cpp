@@ -57,9 +57,9 @@ int Skeleton::GetInfo(const int& animationID, unsigned int& out_frameCount, unsi
 		return GFX_INVALID_ANIMATION;
 }
 
-void Skeleton::BindBuffers()
+void Skeleton::BindBuffersData()
 {
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_animationBuffer);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 6, m_animationBuffer);
 
 	glm::mat4x4* pData = (glm::mat4x4*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, MAX_FRAMES * sizeof(glm::mat4x4), 
 		GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
@@ -67,4 +67,10 @@ void Skeleton::BindBuffers()
 	memcpy(pData, m_animations.data(), m_animations.size() * sizeof(glm::mat4x4));
 
 	glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+
+}
+
+void Skeleton::BindBuffers()
+{
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 6, m_animationBuffer);
 }

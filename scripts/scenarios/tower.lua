@@ -85,6 +85,76 @@ asm:loadAssembly(
 {
 	{
 		type = core.componentType.WorldPositionComponent,
+		data = { position = { 5, 0, 0 } }
+	},
+	{
+		type = core.componentType.GraphicsComponent,
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+		load = { 
+					mesh = { core.loaders.GnomeLoader, "assets/rioter-female_00.bgnome", false },
+					material = { core.loaders.MaterialLoader, "assets/material/animated.material", false }
+			   }
+	},
+	{
+		type = core.componentType.AnimationComponent,
+		data = { 
+			animationID = 0,
+			currentTime = 0.0,
+			loop = true,
+			playing = true,
+			speed = 1.0,
+			currentFrame = 0
+		}
+	},
+	{
+		type = core.componentType.ScaleComponent,
+		data = { scale = 6.0 }
+	},
+	{
+		type = core.componentType.RotationComponent,
+		data = { rotation = { 0,0,0,1 }}
+	}
+}
+)
+asm:loadAssembly( 
+{
+	{
+		type = core.componentType.WorldPositionComponent,
+		data = { position = { -5, 0, 0 } }
+	},
+	{
+		type = core.componentType.GraphicsComponent,
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+		load = { 
+					mesh = { core.loaders.GnomeLoader, "assets/rioter-male_00.bgnome", false },
+					material = { core.loaders.MaterialLoader, "assets/material/animated.material", false }
+			   }
+	},
+	{
+		type = core.componentType.AnimationComponent,
+		data = { 
+			animationID = 0,
+			currentTime = 0.0,
+			loop = true,
+			playing = true,
+			speed = 1.0,
+			currentFrame = 0
+		}
+	},
+	{
+		type = core.componentType.ScaleComponent,
+		data = { scale = 6.0 }
+	},
+	{
+		type = core.componentType.RotationComponent,
+		data = { rotation = { 0,0,0,1 }}
+	}
+}
+)
+asm:loadAssembly( 
+{
+	{
+		type = core.componentType.WorldPositionComponent,
 		data = { position = { 0, 0, 0 } }
 	},
 	{
@@ -108,7 +178,7 @@ asm:loadAssembly(
 	},
 	{
 		type = core.componentType.ScaleComponent,
-		data = { scale = 0.1 }
+		data = { scale = 0.01 }
 	},
 	{
 		type = core.componentType.RotationComponent,
@@ -116,7 +186,7 @@ asm:loadAssembly(
 	}
 }
 )
---
+
 --asm:loadAssembly( 
 --{
 --	{
