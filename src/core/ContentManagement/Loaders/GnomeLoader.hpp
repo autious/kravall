@@ -104,6 +104,10 @@ namespace Core
         };
 
         Core::GnomeLoader::Gnome* LoadGnomeFromFile(const char* fileName);
+
+		void InterpolateBoneAnimation(int animationIndex, const Core::GnomeLoader::Gnome* gnome, float time, std::vector<glm::mat4x4>& boneTransforms);
+		void GetFinalTransforms(int animationIndex, const Core::GnomeLoader::Gnome* gnome, float time, std::vector<glm::mat4x4>& finalTransforms);
+		void LoadAnimations(const Core::GnomeLoader::Gnome* gnome, const unsigned int& meshID);
 	};
 }
 

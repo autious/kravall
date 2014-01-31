@@ -37,7 +37,8 @@ public:
 	int AddAnimationToSkeleton(const int& skeletonID, glm::mat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame);
 
 	int GetFrameInfo(const int& skeletonID, const int& animationID, unsigned int& out_frameCount, unsigned int& out_bonesPerFrame);
-
+	
+	void BindSkeletonData(const int& skeletonID);
 	void BindSkeleton(const int& skeletonID);
 
 private:

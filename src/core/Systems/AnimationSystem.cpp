@@ -26,7 +26,8 @@ namespace Core
 				// Get the number of frames in the current animation
 				unsigned int animationFrameCount;
 				unsigned int bonesPerFrame;
-				if (GFX::Content::GetAnimationInfo(GFX::Content::GetSkeletonID(meshID), ac->animationID, animationFrameCount, bonesPerFrame) == GFX_SUCCESS)
+				int skeletonID = GFX::Content::GetSkeletonID(meshID);
+				if (GFX::Content::GetAnimationInfo(skeletonID, ac->animationID, animationFrameCount, bonesPerFrame) == GFX_SUCCESS)
 				{
 
 					// Get the time animation duration in seconds
@@ -48,7 +49,8 @@ namespace Core
 					}
 					ac->currentFrame = static_cast<unsigned int>(ac->currentTime * static_cast<float>(animationFramerate));
 					ac->animationID = ac->animationID * animationFrameCount;
-					std::cout << "Frame: " << ac->currentFrame + 1 << "/" << animationFrameCount << "\n";
+					//if (ac->currentFrame%10 == 0)
+					//	std::cout << "Frame: " << ac->currentFrame + 1 << "/" << animationFrameCount << "\n";
 					ac->currentFrame = ac->currentFrame * bonesPerFrame;
 				}
 			}
