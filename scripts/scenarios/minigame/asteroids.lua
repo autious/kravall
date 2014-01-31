@@ -413,13 +413,13 @@ local function Move(delta)
 	t = (t + delta * 0.5)
 	
 	-- Thrusting
-	local thrusting = keyboard.iskeydown( key.Up )
-	local leftTurn = keyboard.iskeydown( key.Left )
-	local rightTurn = keyboard.iskeydown( key.Right )
-	local shooting = keyboard.iskeydown( key.Left_shift )
+	local thrusting = keyboard.isKeyDown( key.Up )
+	local leftTurn = keyboard.isKeyDown( key.Left )
+	local rightTurn = keyboard.isKeyDown( key.Right )
+	local shooting = keyboard.isKeyDown( key.Left_shift )
 	
 	local enterIsDown = false
-	if keyboard.iskeydown( key.Enter ) then
+	if keyboard.isKeyDown( key.Enter ) then
 		if not enterWasDown then
 			enterIsDown = true
 		end

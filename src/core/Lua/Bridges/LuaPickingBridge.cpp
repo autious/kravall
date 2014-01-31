@@ -19,17 +19,13 @@ extern "C"
         {
             LuaEntity* luaEnt = Core::LuaUNewLightEntity(L);    
             luaEnt->entity = ent;  
-
-            lua_pushboolean(L, true);        
         }
         else
         {
             lua_pushnil(L);
-
-            lua_pushboolean(L, false);
         }
 
-        return 2;
+        return 1;
     }
 
     static int LuaGetHitEntity(lua_State * L)
@@ -47,19 +43,35 @@ extern "C"
             {
                 LuaEntity* luaEnt = Core::LuaUNewLightEntity(L);
                 luaEnt->entity = ent;
-
-                lua_pushboolean(L, true);
             }
             else
             {
                 lua_pushnil(L);
-
-                lua_pushboolean(L, false);
             }
-            return 2;
+            return 1;
         }
             
-        return luaL_error(L, "GetHitEntity(mouseX, mouseY, Aspect), requires 3 arguments");
+        return luaL_error(L, "getHitEntity(mouseX, mouseY, Aspect), requires 3 arguments");
+    }
+
+    static int LuaGetGroundHit(lua_State * L)
+    {
+        Core::PickingSystem* pickingSystem = Core::world.m_systemHandler.GetSystem<Core::PickingSystem>();
+
+        if(lua_gettop(L) == 2)
+        {
+            int mouseX = luaL_checkint(L, 1);
+            int mouseY = luaL_checkint(L, 2);
+
+            glm::vec3 pos = pickingSystem->GetGroundHit(mouseX, mouseY);        
+            lua_pushnumber(L, pos.x);
+            lua_pushnumber(L, pos.y);
+            lua_pushnumber(L, pos.z);
+
+            return 3;
+        }
+            
+        return luaL_error(L, "getGroundHit(mouseX, mouseY), requires 2 arguments");
     }
 }
 
@@ -73,6 +85,7 @@ namespace Core
                 lua_newtable(L);
                     luau_setfunction(L, "getLastHitEntity", LuaGetLastHitEntity);
                     luau_setfunction(L, "getHitEntity", LuaGetHitEntity);
+                    luau_setfunction(L, "getGroundHit", LuaGetGroundHit);
 
                 lua_setfield(L, -2, "picking" );
             lua_pop( L, 2 );

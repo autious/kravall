@@ -17,6 +17,8 @@
 #include <Components/AreaComponent.hpp>
 #include <Components/NameComponent.hpp>
 #include <Components/AnimationComponent.hpp>
+#include <Components/SquadComponent.hpp>
+#include <Components/FormationComponent.hpp>
 #include <Components/TargetingComponent.hpp>
 
 /* TODO: Put your system up here instead of the end of the header. noobs */
@@ -25,6 +27,7 @@
 #include <Systems/AreaSystem.hpp>
 #include <Systems/GroupDataSystem.hpp>
 #include <Systems/AnimationSystem.hpp>
+#include <Systems/SquadSystem.hpp>
 #include <Systems/TargetingSystem.hpp>
 
 namespace Core
@@ -44,12 +47,12 @@ namespace Core
 	
     typedef SystemHandlerTemplate<LightSystem, PoliceGoalSystem, FlowfieldPositioningSystem, NavMeshCollisionSystem, 
 	CollisionSystem2D, PickingSystem, TargetingSystem, AIDebugSystem, FlowfieldSystem, /*FieldReactionSystem,*/ GPUPFSystem,
-		MovementSystem, NameSystem, GroupDataSystem, AreaSystem, AnimationSystem, RenderingSystem> SystemHandler;
+		MovementSystem, NameSystem, GroupDataSystem, AreaSystem, AnimationSystem, SquadSystem, RenderingSystem> SystemHandler;
 
     typedef EntityHandlerTemplate<SystemHandler, WorldPositionComponent, RotationComponent, ScaleComponent, 
 		GraphicsComponent, LightComponent, MovementComponent, UnitTypeComponent, AttributeComponent,
-		BoundingVolumeComponent, FlowfieldComponent, AreaComponent, NameComponent, AnimationComponent, 
-		TargetingComponent> EntityHandler;
+		BoundingVolumeComponent, FlowfieldComponent, AreaComponent,NameComponent, AnimationComponent,
+        SquadComponent, FormationComponent, TargetingComponent> EntityHandler;
 }
 
 /**********All systems after this line************/

@@ -129,20 +129,30 @@ namespace Core
 		/*!
 			Returns true if point is inside node.
 		*/
-		bool CheckPointInsideNode( glm::vec3 point, int node );
+		bool CheckPointInsideNode( const glm::vec3& point, int node );
+
+        /*!
+            Gets the closest point on the navmesh on the line between origin and point. The origin has to be inside the node 
+            pointed to by the node paramter.
+            \param point InOut parameter, will be changed to the closest point inside the navmesh.
+            \param origin The start point from where the nearest point will be found.
+            \param node The index of the node that origin is inside of.
+            \return True if a new closest point is found. False if origin is not inside the node pointer to by the parameter node or if a closer point was not found.
+        */
+        bool GetClosestPointInsideMesh( glm::vec3& point, const glm::vec3& origin, int node ); 
 
         /*!
             Function for checking if a point is on the navigation mesh.
             \param point The point to check if inside the navigation mesh.
             \return Returns true if the given point is inside the navigation mesh, otherwise returns false.    
         */
-        bool CheckPointInsideNavigationMesh( glm::vec3 point );
+        bool CheckPointInsideNavigationMesh( const glm::vec3& point );
 
 		/*!
 			If point is inside a node the flowfield to get to that node will be calculated for the respective group.
 			Returns false if no field is calculated.
 		*/
-		bool CalculateFlowfieldForGroup( glm::vec3 point, int group );
+		bool CalculateFlowfieldForGroup(const glm::vec3& point, int group );
 
 		/*!
 			Uses the GFX debug system to draw the outlines of the navigation mesh.

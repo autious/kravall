@@ -168,16 +168,16 @@ function ControlPlayer(dt)
 	
 	local wpc = spaceship:get(core.componentType.WorldPositionComponent)
 	
-	if keyboard.iskeydown( key.Left ) and wpc.position[1] > -70 then
+	if keyboard.isKeyDown( key.Left ) and wpc.position[1] > -70 then
 		wpc.position[1] =  wpc.position[1] - player.speed  * dt
-	elseif keyboard.iskeydown( key.Right ) and wpc.position[1] < 70 then
+	elseif keyboard.isKeyDown( key.Right ) and wpc.position[1] < 70 then
 		wpc.position[1] =  wpc.position[1] + player.speed  * dt
 	end
 	
-	if keyboard.iskeydown (key.L) and not shotLastFrame then
+	if keyboard.isKeyDown (key.L) and not shotLastFrame then
 		Shoot(wpc)
 		shotLastFrame = true
-	elseif not keyboard.iskeydown (key.L) then
+	elseif not keyboard.isKeyDown (key.L) then
 		shotLastFrame = false
 	end
 
