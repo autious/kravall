@@ -84,6 +84,7 @@ function Update(dt)
 
 	mything:set(core.componentType.WorldPositionComponent, mythingPos)
 
+	camera:update(dt)
 end
 
 scen:registerUpdateCallback( Update )
