@@ -12,7 +12,7 @@ local street_light = ent.get "streetLight"
 local street_light_intensity = 2.0
 
 -- SCRIPTS \/
-scen.gamemode =  require "gamemodes/normal":new()
+scen.gamemode =  require "gamemodes/kravall":new()
 scen:registerUpdateCallback( function(delta) scen.gamemode:update(delta) end )
 scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
 

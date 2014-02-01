@@ -6,6 +6,10 @@ local scen = scenario.new()
 local mouse = core.input.mouse
 local keyboard = core.input.keyboard
 local key = keyboard.key
+local camera = require "rts_camera".new()
+camera:lookAt( core.glm.vec3.new( 0, 200, 0 ), core.glm.vec3.new( 0, 0, 0 ) )
+core.camera.gameCamera:setView( camera:getView( ) )
+core.camera.gameCamera:setProjection( camera:getProjection( ) )
 
 
 --Spaceship
@@ -225,7 +229,7 @@ local function CreateAsteroid(scale, position)
 	)
 end
 
-camera:lookAt( core.glm.vec3.new( 0, 200, 0 ), core.glm.vec3.new( 0, 0, 0 ) )
+
 
 local showTutorial = true
 local enterWasDown = true
@@ -409,13 +413,13 @@ local function Move(delta)
 	t = (t + delta * 0.5)
 	
 	-- Thrusting
-	local thrusting = keyboard.iskeydown( key.Up )
-	local leftTurn = keyboard.iskeydown( key.Left )
-	local rightTurn = keyboard.iskeydown( key.Right )
-	local shooting = keyboard.iskeydown( key.Left_shift )
+	local thrusting = keyboard.isKeyDown( key.Up )
+	local leftTurn = keyboard.isKeyDown( key.Left )
+	local rightTurn = keyboard.isKeyDown( key.Right )
+	local shooting = keyboard.isKeyDown( key.Left_shift )
 	
 	local enterIsDown = false
-	if keyboard.iskeydown( key.Enter ) then
+	if keyboard.isKeyDown( key.Enter ) then
 		if not enterWasDown then
 			enterIsDown = true
 		end

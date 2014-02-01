@@ -162,7 +162,7 @@ namespace GFX
 			{
 				if (i > 0)
 				{
-					glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_instanceBuffer);
+					glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_instanceBuffer);
 					InstanceData* pData = (InstanceData*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, MAX_INSTANCES * sizeof(InstanceData), 
 
 						GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
@@ -171,9 +171,12 @@ namespace GFX
 					glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
 					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IBO);
+					
+					if (mesh.skeletonID >= 0)
+						animationManager->BindSkeleton(mesh.skeletonID);
 
 					glDrawElementsInstanced(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0, instanceCount);
-
+					
 					instanceCount = 0;
 
 				}
@@ -226,13 +229,13 @@ namespace GFX
 				{
 					mesh = m_meshManager->GetMesh(meshID);
 					currentMesh = meshID;
-					
-					
-					if (mesh.skeletonID >= 0)
-						animationManager->BindSkeleton(mesh.skeletonID);
 
 					glBindVertexArray(mesh.VAO);
 					error = glGetError();
+					
+					
+					if (mesh.skeletonID >= 0)
+						animationManager->BindSkeletonData(mesh.skeletonID);
 				}
 					 
 				InstanceData smid = *(InstanceData*)renderJobs.at(i).value;

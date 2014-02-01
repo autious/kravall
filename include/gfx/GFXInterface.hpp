@@ -199,7 +199,7 @@ namespace GFX
 		\param out_frameCount The number of frames in this animation
 		\return Returns #GFX_SUCCESS if successful, else returns #GFX_INVALID_ANIMATION or #GFX_INVALID_SKELETON
 		*/
-		DLL_API int GetAnimationInfo(const int& skeletonID, const int& animationID, unsigned int& out_frameCount, unsigned int& out_bonesPerFrame);
+		DLL_API int GetAnimationInfo(const int& skeletonID, const int& animationID, unsigned int& out_frameCount, unsigned int& out_bonesPerFrame, unsigned int& out_animationOffset);
 		
 		/*!
 		Deletes a mesh
