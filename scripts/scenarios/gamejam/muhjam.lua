@@ -1,0 +1,1025 @@
+local entities = require "entities"
+local scenario = require "scenario"
+local input = require "input" 
+local scen = scenario.new()
+
+local mouse = core.input.mouse
+local keyboard = core.input.keyboard
+local key = keyboard.key
+
+local camera = require "rts_camera".new()
+camera:lookAt( core.glm.vec3.new( 0, 200, 0 ), core.glm.vec3.new( 0, 0, 0 ) )
+core.camera.gameCamera:setView( camera:getView( ) )
+core.camera.gameCamera:setProjection( camera:getProjection( ) )
+
+local floorGrid = {}
+local wallGrid = {}
+local player = {}
+local treasure = {}
+local traps = {}
+local goal = {}
+local restartMap = false
+local treasureMax
+local trapMax
+local gSizeX
+local gSizeY
+local start = true
+local dead = false
+local gSeed = 0
+local shotLastFrame = false
+local highScore = 0
+
+function CreateShot(x, y, z)
+	local outVal = {}
+
+	outVal.pointlight = CreatePointlightFOO(x, y, z, 0.0, 0.5, 0.0, 1.0, 20.0)
+	outVal.entity = scen:loadAssembly(
+		{
+			{
+				type = core.componentType.WorldPositionComponent,
+				data = { position = { x, y, z}}
+			},
+			{
+				type = core.componentType.GraphicsComponent,
+				data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+				load = { 
+					mesh = { core.loaders.GnomeLoader, "assets/sphere.bgnome", false },
+					material = { core.loaders.MaterialLoader, "assets/material/gamejam/greenpixel.material", false }
+					}
+			},
+			{
+				type = core.componentType.ScaleComponent,
+				data = { scale = 1.0 }
+			},
+			{
+				type = core.componentType.RotationComponent,
+				data = { rotation = { 0, 0, 0, 1 } }
+			}
+		})
+	outVal.speed = 50
+	outVal.hit = false
+	return outVal
+end
+
+function CreateTreasure(x, y, z)
+	local outVal = {}
+	outVal.value = math.random(1000, 2000)
+	outVal.treasure = scen:loadAssembly(
+		{
+			{
+				type = core.componentType.WorldPositionComponent,
+				data = { position = { x, y, z}}
+			},
+			{
+				type = core.componentType.GraphicsComponent,
+				data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+				load = { 
+					mesh = { core.loaders.GnomeLoader, "assets/minecart.bgnome", false },
+					material = { core.loaders.MaterialLoader, "assets/material/minecart.material", false }
+					}
+			},
+			{
+				type = core.componentType.ScaleComponent,
+				data = { scale = 5.0}
+			},
+			{
+				type = core.componentType.RotationComponent,
+				data = { rotation = { 0, 0, 0, 1 } }
+			}
+		})
+		
+	outVal.pointlight = CreatePointlightFOO(x, y + 10, z, 0.5, 0.5, 0.0, 1.0, 20.0)
+	
+	return outVal
+end
+
+function CreateGoal(sizeX, sizeY)
+	
+	local found = false
+	local posX = 0
+	local posY = 0
+	while not found do
+		posX = math.random(1, sizeX)
+		posY = math.random(1, sizeY)
+
+		if not wallGrid[posX][posY] then
+			found = true
+		end
+	end
+
+	local outVal = CreatePointlightFOO(posX * 10, 10, posY * 10, 0, 0, 1, 10, 50)
+	return outVal
+end
+
+function CreateTrap(x, y, z)
+	local outVal = {}
+	
+	local hurfdurf = math.random(1, 2)
+	local intensity = 0
+	if hurfdurf < 2 then
+		outVal.active = false
+	else
+		outVal.active = true
+		intensity = 1
+	end
+
+	outVal.trap = CreatePointlightFOO(x, y, z, 1, 0, 0, intensity, 20)
+	outVal.timer = math.random(4, 12) / 4
+	outVal.counter = 0
+	return outVal
+end
+
+function CreateSpotLight(x, y, z)
+	local spot = scen:loadAssembly( 
+	{
+		{
+			type = core.componentType.LightComponent,
+			data =  { 
+						color = { 0.2, 0.7, 0.8 },
+						speccolor = { 0.2, 0.7, 0.8 },
+						intensity = 15.0,
+						spotangle = 3.14/3.0,
+						spotpenumbra = 0.5,
+						type = core.gfx.objectTypes.Light,
+						lighttype = core.gfx.lightTypes.Spot
+					}
+		},
+		{
+			type = core.componentType.WorldPositionComponent,
+			data = { position = { x, y, z } }
+		},
+		{
+			type = core.componentType.ScaleComponent,
+			data = { scale = 40.0 }
+		},
+		{
+			type = core.componentType.RotationComponent,
+			data = { rotation = { 1,0,0,0 } }
+		}
+	} 
+	)
+
+	return spot
+end
+
+function CreatePointlight(x, y, z)
+	local spot = scen:loadAssembly( 
+	{
+		{
+			type = core.componentType.LightComponent,
+			data =  { 
+						color = { 0.2, 0.7, 0.8 },
+						speccolor = { 0.2, 0.7, 0.8 },
+						intensity = 2.0,
+						spotangle = 3.14/4.0,
+						spotpenumbra = 0.1,
+						type = core.gfx.objectTypes.Light,
+						lighttype = core.gfx.lightTypes.Point
+					}
+		},
+		{
+			type = core.componentType.WorldPositionComponent,
+			data = { position = { x, y, z } }
+		},
+		{
+			type = core.componentType.ScaleComponent,
+			data = { scale = 30.0 }
+		},
+		{
+			type = core.componentType.RotationComponent,
+			data = { rotation = { 1,0,0,0 } }
+		}
+	} 
+	)
+
+	return spot
+end
+
+function CreatePointlightFOO(x, y, z, cx, cy, cz, intasdasd, asdasfasdasd)
+	local spot = scen:loadAssembly( 
+	{
+		{
+			type = core.componentType.LightComponent,
+			data =  { 
+						color = { cx, cy, cz },
+						speccolor = { cx, cy, cz },
+						intensity = intasdasd,
+						spotangle = 3.14/4.0,
+						spotpenumbra = 0.1,
+						type = core.gfx.objectTypes.Light,
+						lighttype = core.gfx.lightTypes.Point
+					}
+		},
+		{
+			type = core.componentType.WorldPositionComponent,
+			data = { position = { x, y, z } }
+		},
+		{
+			type = core.componentType.ScaleComponent,
+			data = { scale = asdasfasdasd }
+		},
+		{
+			type = core.componentType.RotationComponent,
+			data = { rotation = { 1,0,0,0 } }
+		}
+	} 
+	)
+
+	return spot
+end
+
+function CreatePlayer(sizeX, sizeY)
+	
+	local found = false
+	local posX = 0
+	local posY = 0
+	while not found do
+		posX = math.random(1, sizeX)
+		posY = math.random(1, sizeY)
+
+		if not wallGrid[posX][posY] then
+			found = true
+		end
+	end
+
+	local outVal = scen:loadAssembly(
+		{
+			{
+				type = core.componentType.WorldPositionComponent,
+				data = { position = { posX * 10, 10, posY * 10}}
+			},
+			{
+				type = core.componentType.GraphicsComponent,
+				data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+				load = { 
+					mesh = { core.loaders.GnomeLoader, "assets/cube.bgnome", false },
+					material = { core.loaders.MaterialLoader, "assets/material/blackPixel.material", false }
+					}
+			},
+			{
+				type = core.componentType.ScaleComponent,
+				data = { scale = 2.0 }
+			},
+			{
+				type = core.componentType.RotationComponent,
+				data = { rotation = { 0, 0, 0, 1 } }
+			}
+		})
+	return outVal
+end
+
+function CreateTile(x, y, z, lives)
+	local tile = {}
+
+	if lives == 3 then
+	tile.entity = scen:loadAssembly(
+		{
+			{
+				type = core.componentType.WorldPositionComponent,
+				data = { position = { x, y, z}}
+			},
+			{
+				
+				type = core.componentType.GraphicsComponent,
+				data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+				load = { 
+					mesh = { core.loaders.GnomeLoader, "assets/cube.bgnome", false },
+					material = { core.loaders.MaterialLoader, "assets/material/gamejam/whitePixel.material", false }
+					}
+			},
+			{
+				type = core.componentType.ScaleComponent,
+				data = { scale = 10.0 }
+			},
+			{
+				type = core.componentType.RotationComponent,
+				data = { rotation = { 0, 0, 0, 1 } }
+			}
+		})
+	end
+
+	if lives == 2 then
+	tile.entity = scen:loadAssembly(
+		{
+			{
+				type = core.componentType.WorldPositionComponent,
+				data = { position = { x, y, z}}
+			},
+			{
+				
+				type = core.componentType.GraphicsComponent,
+				data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+				load = { 
+					mesh = { core.loaders.GnomeLoader, "assets/cube.bgnome", false },
+					material = { core.loaders.MaterialLoader, "assets/material/gamejam/greenPixel.material", false }
+					}
+			},
+			{
+				type = core.componentType.ScaleComponent,
+				data = { scale = 10.0 }
+			},
+			{
+				type = core.componentType.RotationComponent,
+				data = { rotation = { 0, 0, 0, 1 } }
+			}
+		})
+	end
+
+	if lives == 1 then
+	tile.entity = scen:loadAssembly(
+		{
+			{
+				type = core.componentType.WorldPositionComponent,
+				data = { position = { x, y, z}}
+			},
+			{
+				
+				type = core.componentType.GraphicsComponent,
+				data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+				load = { 
+					mesh = { core.loaders.GnomeLoader, "assets/cube.bgnome", false },
+					material = { core.loaders.MaterialLoader, "assets/material/gamejam/redPixel.material", false }
+					}
+			},
+			{
+				type = core.componentType.ScaleComponent,
+				data = { scale = 10.0 }
+			},
+			{
+				type = core.componentType.RotationComponent,
+				data = { rotation = { 0, 0, 0, 1 } }
+			}
+		})
+	end
+
+
+
+	tile.lives = lives
+	return tile
+end
+
+
+function SetWall(percent)
+	local random = math.random(0, 100)
+
+	if random < percent then
+		return 1
+	end
+	return 0
+end
+
+function AdjacentWallCount(x, y, scopeX, scopeY, sizeX, sizeY)
+	local wallCount = 0
+
+	local startX = x - scopeX;
+	local startY = y - scopeY;
+	local endX = x + scopeX;
+	local endY = y + scopeY;
+
+
+	if x == sizeX then
+		return 8
+	elseif x == 1 then
+		return 8
+	end
+
+	if y == sizeY then
+		return 8
+	elseif y == 1 then
+		return 8
+	end
+ 
+	local iX = startX;
+	local iY = startY;
+
+ 
+	for iY = startY, endY do
+		for iX = startX,endX do
+			if not (iX == x and iY==y) then
+				if wallGrid[iX][iY] then
+					wallCount = wallCount + 1;
+				end
+			end
+		end
+	end
+
+	return wallCount
+end
+
+function RandomFill(sizeX, sizeY, percent)
+	for x = 1, sizeX do
+			wallGrid[x] = {}
+			for y = 1, sizeY do
+				wallGrid[x][y] = nil
+				if x == 1 then
+					wallGrid[x][y] = CreateTile(x * 10, 10, y * 10, 3)
+				elseif x == sizeX then
+					wallGrid[x][y] = CreateTile(x * 10, 10, y * 10, 3)
+				elseif y == 1 then
+					wallGrid[x][y] = CreateTile(x * 10, 10, y * 10, 3)
+				elseif y == sizeY then
+					wallGrid[x][y] = CreateTile(x * 10, 10, y * 10, 3)
+				else
+					local halfHeight = sizeY / 2
+					if y == halfHeight then
+						wallGrid[x][y] = nil
+					else
+						local isWall = SetWall(percent)
+						if isWall == 1 then
+							wallGrid[x][y] = CreateTile(x * 10, 10, y * 10, 3)
+						else
+							wallGrid[x][y] = nil
+						end
+					end
+				end
+		end
+	end
+end
+
+function CellularAutomata(sizeX, sizeY)
+
+	for x = 1, sizeX do
+		for y = 1, sizeY do
+			local wallCount = AdjacentWallCount(x, y, 1, 1, sizeX, sizeY)
+
+			if wallGrid[x][y] then
+				if wallCount >= 4 then
+					--do nothing
+				elseif wallCount < 2 then
+					wallGrid[x][y].entity:destroy()
+					wallGrid[x][y] = nil
+				end
+			else
+				if wallCount >=5 then
+					wallGrid[x][y] = CreateTile(x * 10, 10, y * 10, 3)
+				end
+			end
+		end
+	end
+	
+end
+
+function GenerateWalls(sizeX, sizeY, percent)
+	
+	RandomFill(sizeX, sizeY, percent)
+	CellularAutomata(sizeX, sizeY)
+end
+
+function InitMap(sizeX, sizeY, percent)
+
+	--init floor
+	for x = 1, sizeX do
+		floorGrid[x] = {}
+		for y = 1, sizeY do
+			floorGrid[x][y] = CreateTile(x * 10, 0, y * 10, 3)
+		end
+	end
+
+	GenerateWalls(sizeX, sizeY, percent)
+
+end
+
+function PositionToCell(x, y)
+	local cellPos = {}
+
+	local valX = x / 10
+	local valY = y / 10
+
+	cellPos.x = math.floor(valX)
+	cellPos.y = math.floor(valY)
+
+	return cellPos
+end
+
+
+function PositionToCellSHOT(x, y)
+	local cellPos = {}
+
+	local valX = x / 10
+	local valY = y / 10
+
+	cellPos.x = math.floor(valX)
+	cellPos.y = math.floor(valY)
+
+	return cellPos
+end
+
+function CheckCollision(x1,y1,w1,h1, x2,y2,w2,h2)
+  return x1 < x2+w2 and
+         x2 < x1+w1 and
+         y1 < y2+h2 and
+         y2 < y1+h1
+end
+
+function CollidePlayer(cellPos, dir, wpc)
+
+	if dir.x > 0 then
+		
+		if wallGrid[cellPos.x + 1][cellPos.y] then
+			local tempCP = {}
+			tempCP = PositionToCell(wpc.position[1] + 5, wpc.position[3])
+
+			if wallGrid[tempCP.x][tempCP.y] then
+				dir.x = 0
+			end
+		end
+	elseif dir.x < 0 then
+		
+		if wallGrid[cellPos.x][cellPos.y] then
+			local tempCP = {}
+			tempCP = PositionToCell(wpc.position[1] + 5, wpc.position[3])
+			if wallGrid[tempCP.x][tempCP.y] then
+				dir.x = 0
+			end
+		end
+	end
+	if dir.y > 0 then
+		local tempCP = {}
+		tempCP = PositionToCell(wpc.position[1] + 5, wpc.position[3] + 5)
+		
+		if wallGrid[tempCP.x][tempCP.y] then
+			dir.y = 0
+		end
+	elseif dir.y < 0 then
+
+		local tempCP = {}
+		tempCP = PositionToCell(wpc.position[1] + 5, wpc.position[3] - 5)
+		if wallGrid[tempCP.x][tempCP.y] then
+			dir.y = 0
+		end
+	end
+end
+
+function CollideShot(cellPos, dir, wpc, shot)
+
+	if dir.x > 0 then
+			local tempCP = {}
+			tempCP = PositionToCellSHOT(wpc.position[1], wpc.position[3])
+			if tempCP.x >= gSizeX then
+				shot.hit = true
+				return
+			end
+			if wallGrid[tempCP.x][tempCP.y] then
+				if CheckCollision(wpc.position[1], wpc.position[3], 4, 4, tempCP.x * 10, tempCP.y * 10,10,10) then
+					wallGrid[tempCP.x][tempCP.y].lives = wallGrid[tempCP.x][tempCP.y].lives - 1
+
+					if wallGrid[tempCP.x][tempCP.y].lives <= 0 then
+						wallGrid[tempCP.x][tempCP.y].entity:destroy()
+						wallGrid[tempCP.x][tempCP.y] = nil
+					else
+						local lives = wallGrid[tempCP.x][tempCP.y].lives
+						wallGrid[tempCP.x][tempCP.y].entity:destroy()
+						wallGrid[tempCP.x][tempCP.y] = nil
+						wallGrid[tempCP.x][tempCP.y]  = CreateTile(tempCP.x * 10, 10, tempCP.y * 10, lives)
+					end
+
+					shot.hit = true
+				end
+			end
+		--end
+	elseif dir.x < 0 then
+		local tempCP = {}
+		tempCP = PositionToCellSHOT(wpc.position[1], wpc.position[3])
+		if tempCP.x <= 1 then
+			shot.hit = true
+			return
+		end
+
+		if wallGrid[tempCP.x][tempCP.y] then
+			if CheckCollision(wpc.position[1], wpc.position[3], 4, 4, tempCP.x * 10, tempCP.y * 10,10,10) then
+				wallGrid[tempCP.x][tempCP.y].lives = wallGrid[tempCP.x][tempCP.y].lives - 1
+
+					if wallGrid[tempCP.x][tempCP.y].lives <= 0 then
+						wallGrid[tempCP.x][tempCP.y].entity:destroy()
+						wallGrid[tempCP.x][tempCP.y] = nil
+					else
+						local lives = wallGrid[tempCP.x][tempCP.y].lives
+						wallGrid[tempCP.x][tempCP.y].entity:destroy()
+						wallGrid[tempCP.x][tempCP.y] = nil
+						wallGrid[tempCP.x][tempCP.y]  = CreateTile(tempCP.x * 10, 10, tempCP.y * 10, lives)
+					end
+
+					shot.hit = true
+			end
+		end
+	elseif dir.y > 0 then
+		local tempCP = {}
+		tempCP = PositionToCellSHOT(wpc.position[1] + 5, wpc.position[3])
+		if tempCP.y >= gSizeY then
+			shot.hit = true
+			return
+		end
+
+		if wallGrid[tempCP.x][tempCP.y] then
+			if CheckCollision(wpc.position[1], wpc.position[3], 4, 4, tempCP.x * 10, tempCP.y * 10,10,10) then
+				
+				wallGrid[tempCP.x][tempCP.y].lives = wallGrid[tempCP.x][tempCP.y].lives - 1
+
+					if wallGrid[tempCP.x][tempCP.y].lives <= 0 then
+						wallGrid[tempCP.x][tempCP.y].entity:destroy()
+						wallGrid[tempCP.x][tempCP.y] = nil
+					else
+						local lives = wallGrid[tempCP.x][tempCP.y].lives
+						wallGrid[tempCP.x][tempCP.y].entity:destroy()
+						wallGrid[tempCP.x][tempCP.y] = nil
+						wallGrid[tempCP.x][tempCP.y]  = CreateTile(tempCP.x * 10, 10, tempCP.y * 10, lives)
+					end
+
+					shot.hit = true
+			end
+		end
+	elseif dir.y < 0 then
+		local tempCP = {}
+		tempCP = PositionToCellSHOT(wpc.position[1] + 5, wpc.position[3])
+		if tempCP.y <= 1 then
+			shot.hit = true
+			return
+		end
+		if wallGrid[tempCP.x][tempCP.y] then
+			if CheckCollision(wpc.position[1], wpc.position[3], 4, 4, tempCP.x * 10, tempCP.y * 10,10,10) then
+				wallGrid[tempCP.x][tempCP.y].lives = wallGrid[tempCP.x][tempCP.y].lives - 1
+
+					if wallGrid[tempCP.x][tempCP.y].lives <= 0 then
+						wallGrid[tempCP.x][tempCP.y].entity:destroy()
+						wallGrid[tempCP.x][tempCP.y] = nil
+					else
+						local lives = wallGrid[tempCP.x][tempCP.y].lives
+						wallGrid[tempCP.x][tempCP.y].entity:destroy()
+						wallGrid[tempCP.x][tempCP.y] = nil
+						wallGrid[tempCP.x][tempCP.y]  = CreateTile(tempCP.x * 10, 10, tempCP.y * 10, lives)
+					end
+
+					shot.hit = true
+			end
+		end
+	end
+end
+
+function Populate(treasureCount, trapCount)
+
+	--Generate some treasure
+	while #treasure < treasureCount do
+		local foundPos = false
+		local x 
+		local y
+
+		while not foundPos do
+			x = math.random(1, gSizeX)
+			y = math.random(1, gSizeY)
+
+			if not wallGrid[x][y] then
+				foundPos = true
+			end
+		end
+
+		table.insert(treasure, CreateTreasure(x * 10, 10, y * 10 + 10))
+	end
+
+	while #traps < trapCount do
+		local foundPos = false
+		local x 
+		local y
+
+		while not foundPos do
+			x = math.random(1, gSizeX)
+			y = math.random(1, gSizeY)
+
+			if not wallGrid[x][y] then
+				foundPos = true
+			end
+		end
+
+		table.insert(traps, CreateTrap(x * 10, 10, y * 10))
+	end
+	
+	
+	--Generate some traps
+	--win gamejam
+end
+
+function ControlPlayer(dt)
+	--get player position
+	local wpc
+	local oldPos
+	wpc = player.entity:get(core.componentType.WorldPositionComponent)
+
+	oldPos = wpc
+
+	local dir = {}
+	dir.x = 0
+	dir.y = 0
+
+	if keyboard.isKeyDown( key.Left ) then
+		dir.x = -1
+		player.dir = dir
+	elseif keyboard.isKeyDown( key.Right ) then
+		dir.x = 1
+		player.dir = dir
+	elseif keyboard.isKeyDown (key.Up) then
+		dir.y = -1
+		player.dir = dir
+	elseif keyboard.isKeyDown (key.Down) then
+		dir.y = 1
+		player.dir = dir
+	end
+
+	local cellPos = PositionToCell(wpc.position[1], wpc.position[3])
+
+	CollidePlayer(cellPos, dir, wpc)
+	
+	--set the camera
+	camera:lookAt( core.glm.vec3.new( wpc.position[1], wpc.position[2] + 100, wpc.position[3] + 40), core.glm.vec3.new( wpc.position[1], wpc.position[2], wpc.position[3] ) )
+	player.y = player.y + 5 * dt
+	--set  the position
+	wpc.position[1] =  wpc.position[1] + dir.x *  player.speed  * dt
+	wpc.position[2] = wpc.position[2] + 0.05 * math.sin(player.y)
+	wpc.position[3] =  wpc.position[3] + dir.y * player.speed  * dt
+
+	local spotWPC
+	spotWPC = wpc
+
+	player.entity:set(core.componentType.WorldPositionComponent, wpc)
+	player.point:set(core.componentType.WorldPositionComponent, wpc)
+
+	local spotRot
+	spotRot = player.spot:get(core.componentType.RotationComponent, spotRot)
+	
+	if dir.x > 0 then
+		spotRot.rotation[1] = 1
+		spotRot.rotation[2] = 0
+		spotRot.rotation[3] = 0
+		spotRot.rotation[4] = 0
+		spotWPC.position[1] = spotWPC.position[1] - 2
+		
+		player.spot:set(core.componentType.WorldPositionComponent, spotWPC)
+	elseif dir.x < 0 then
+		spotRot.rotation[1] = math.cos(math.pi)
+		spotRot.rotation[2] = 0
+		spotRot.rotation[3] = math.sin(math.pi)
+		spotRot.rotation[4] = 0
+		spotWPC.position[1] = spotWPC.position[1] + 2
+		
+		player.spot:set(core.componentType.WorldPositionComponent, spotWPC)
+		
+	elseif dir.y > 0 then
+		spotRot.rotation[1] = math.cos(math.pi / 2)
+		spotRot.rotation[2] = 0
+		spotRot.rotation[3] = math.sin(math.pi / 2)
+		spotRot.rotation[4] = 0
+		spotWPC.position[3] = spotWPC.position[3] - 2
+		
+		player.spot:set(core.componentType.WorldPositionComponent, spotWPC)
+	elseif dir.y < 0 then
+		spotRot.rotation[1] = math.cos(math.pi / -2)
+		spotRot.rotation[2] = 0
+		spotRot.rotation[3] = math.sin(math.pi / -2)
+		spotRot.rotation[4] = 0
+		spotWPC.position[3] = spotWPC.position[3] + 2
+		
+		player.spot:set(core.componentType.WorldPositionComponent, spotWPC)
+	end
+
+	player.spot:set(core.componentType.RotationComponent, spotRot)
+
+
+	Shoot(dt)
+end
+
+function TreasureHandling(dt)
+	
+	local i = 1
+	local playerWPC = player.entity:get(core.componentType.WorldPositionComponent)
+
+	while i <= #treasure do
+		
+		local tWPC = treasure[i].treasure:get(core.componentType.WorldPositionComponent)
+
+		if (CheckCollision(playerWPC.position[1], playerWPC.position[3], 4, 4, tWPC.position[1],tWPC.position[3],10,10)) then
+			player.score = player.score + treasure[i].value
+			player.treasureCount = player.treasureCount + 1
+			treasure[i].treasure:destroy()
+			treasure[i].pointlight:destroy()
+			table.remove(treasure, i)
+		else
+			i = i + 1
+		end
+	end
+
+	core.draw.drawText( 1050, 20, "TREASURE FOUND: " ..  player.treasureCount .. " / " .. treasureMax)
+	core.draw.drawText( 1050, 40, "TREASURE VALUE: " .. player.score )
+	core.draw.drawText( 1050, 60, "TREASURE DESTROYED: " .. treasureMax -  player.treasureCount  -  #treasure)
+	core.draw.drawText( 1050, 80, "TREASURE LEFT: " .. #treasure)
+end
+
+function TrapHandler(dt)
+	local playerWPC = player.entity:get(core.componentType.WorldPositionComponent)
+	for i,v in ipairs(traps) do
+		v.counter = v.counter + dt
+		
+		local trapPos = v.trap:get(core.componentType.WorldPositionComponent)
+		if (v.active and CheckCollision(playerWPC.position[1], playerWPC.position[3], 4, 4, trapPos.position[1], trapPos.position[3],10,10)) then
+			dead = true
+		end
+
+		if v.counter > v.timer then
+			v.active = not v.active
+			v.counter = 0
+
+			local lc = v.trap:get(core.componentType.LightComponent)
+
+			if v.active then
+				lc.intensity = 1
+			else
+				lc.intensity = 0
+			end
+			v.trap:set(core.componentType.LightComponent, lc)
+		end
+	end
+end
+
+function Shoot(dt)
+
+	local wpc
+	wpc = player.entity:get(core.componentType.WorldPositionComponent)
+
+	if keyboard.isKeyDown( key.Space ) and not shotLastFrame and not (player.dir.x == 0 and player.dir.y == 0) then
+		table.insert(player.shots, CreateShot(wpc.position[1], wpc.position[2], wpc.position[3]))
+		player.shots[#player.shots].dir = player.dir
+		shotLastFrame = true
+	elseif not keyboard.isKeyDown (key.Space) then
+		shotLastFrame = false
+	end
+	
+end
+
+function UpdateShots(dt)
+	
+	local i = 1
+	while i <= #player.shots do
+		local shotWPC
+		shotWPC = player.shots[i].pointlight:get(core.componentType.WorldPositionComponent)
+
+		shotWPC.position[1] = shotWPC.position[1] + player.shots[i].speed * player.shots[i].dir.x * dt
+		shotWPC.position[3] = shotWPC.position[3] + player.shots[i].speed * player.shots[i].dir.y * dt
+		
+		player.shots[i].pointlight:set(core.componentType.WorldPositionComponent, shotWPC)
+		player.shots[i].entity:set(core.componentType.WorldPositionComponent, shotWPC)
+		local cellPos = PositionToCell(shotWPC.position[1], shotWPC.position[3])
+
+		CollideShot(cellPos, player.shots[i].dir, shotWPC, player.shots[i])
+
+		local j = 1
+		while j <= #treasure do
+
+			local tWPC = treasure[j].treasure:get(core.componentType.WorldPositionComponent)
+			if CheckCollision(shotWPC.position[1], shotWPC.position[3], 4, 4, tWPC.position[1], tWPC.position[3],10,10) then
+				treasure[j].treasure:destroy()
+				treasure[j].pointlight:destroy()
+				table.remove(treasure, j)
+				player.shots[i].hit = true
+			else
+				j = j + 1
+			end
+		end
+
+		
+
+		if player.shots[i].hit then
+			player.shots[i].pointlight:destroy()
+			player.shots[i].entity:destroy()
+			table.remove(player.shots, i)
+		else
+			i = i + 1
+		end
+	end
+end
+
+function ReloadMap()
+	for i = 1, gSizeX do
+		for j = 1, gSizeY do
+			if wallGrid[i][j] then
+				wallGrid[i][j].entity:destroy()
+				wallGrid[i][j] = nil
+			end
+
+			floorGrid[i][j].entity:destroy()
+		end
+	end
+
+	player.entity:destroy()
+	player.spot:destroy()
+	player.point:destroy()
+
+	local i = 1
+	while i <= #treasure do
+		treasure[i].treasure:destroy()
+		treasure[i].pointlight:destroy()
+		table.remove(treasure, i)
+	end
+	 
+	i = 1
+	while i <= #traps do
+		traps[i].trap:destroy()
+		table.remove(traps, i)
+	end
+
+	start = true
+
+	if dead then
+		restartMap = true
+	else
+		restartMap = false
+	end
+
+	dead = false
+end
+
+function GoalHandler(dt)
+	local pWPC = player.entity:get(core.componentType.WorldPositionComponent)
+	local gWPC = goal.pointlight:get(core.componentType.WorldPositionComponent)
+	
+	if #treasure <= 0 then 
+		if CheckCollision(pWPC.position[1], pWPC.position[3], 4, 4, gWPC.position[1], gWPC.position[3],	20,20) then
+			goal.found = true
+		end
+	end
+end
+
+function LoadLevel(seed)
+	gSeed = gSeed + seed
+	math.randomseed(gSeed)
+
+	gSizeX = math.random(20, 100)
+	gSizeY = math.random(20, 100)
+
+	InitMap(gSizeX, gSizeY, math.random(20, 45))
+	player.entity = CreatePlayer(gSizeX, gSizeY)
+
+	local wpc
+	wpc = player.entity:get(core.componentType.WorldPositionComponent)
+
+	player.spot = CreateSpotLight(wpc.position[1], wpc.position[2], wpc.position[3])
+	player.point = CreatePointlight(wpc.position[1], wpc.position[2], wpc.position[3])
+	player.speed = 35
+
+	if goal.found then
+		highScore = highScore + player.score
+	end
+
+	player.score = 0
+	player.treasureCount = 0
+	player.y = 0
+	local dir = {}
+	dir.x = 0
+	dir.y = 0
+	player.dir = dir
+	player.shots = {}
+	start = false
+
+	goal.entity = CreateGoal(gSizeX, gSizeY)
+	goal.found = false
+	treasureMax = math.random(10, gSizeX)
+	trapMax = math.random(10, gSizeY)
+	Populate(treasureMax, trapMax)
+end
+
+function Update(dt)
+	
+	if start then
+		if keyboard.isKeyDown( key.Enter ) and not restartMap then
+			LoadLevel(1)
+		elseif keyboard.isKeyDown( key.Enter ) and restartMap then
+			LoadLevel(0)
+		end
+
+		if not goal.found then
+			core.draw.drawText( 510, 260, "QUANTITY BEFORE QUALITY")
+			core.draw.drawText( 540, 280, "PRES BUTAN TO ENTER")
+		end
+	end
+
+	if dead then
+		core.draw.drawText( 580, 360, "U DED NIGGA")
+		core.draw.drawText(540, 380, "PRES BUTAN TO RETRY")
+		if keyboard.isKeyDown( key.Enter ) then
+			ReloadMap()
+		end
+	elseif goal.found then
+		core.draw.drawText( 580, 360, "U WIN NIGGA")
+		core.draw.drawText(540, 380, "PRES BUTAN TO CONTINUE")
+		if keyboard.isKeyDown( key.Enter ) then
+			ReloadMap()
+		end
+	elseif not dead  and not start then
+		ControlPlayer(dt)
+		TreasureHandling(dt)
+		TrapHandler(dt)
+		UpdateShots(dt)
+		core.draw.drawText( 540, 20, "HIGHSCORE: " .. highScore)
+	end
+	--camera:update(dt)
+end
+
+scen:registerUpdateCallback( Update )
+
+return scen;
