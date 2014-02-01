@@ -16,10 +16,14 @@ function S.new( )
     self.ucindex = 0
     self.uccount = 0
 
+    self.destroyCallbacks = {}
+    self.dcindex = 0
+    self.dccount = 0
+
     self.asm = assembly_loader.loadPack({})
 
 
-    setmetatable( self, {__index = S, __newindex = function() error "NO" end, __gc = S.destroy } )
+    setmetatable( self, {__index = S, __gc = S.destroy } )
 
     return self
 end
@@ -56,6 +60,14 @@ function S:registerUpdateCallback( func )
     self.uccount = #(self.updateCallbacks)
 end
 
+function S:registerDestroyCallback( func )
+    if type( func ) ~= "function" then
+        error( "Destroy callback given is not a function" )
+    end
+    self.destroyCallbacks[#(self.destroyCallbacks)+1] = func
+    self.dccount = #(self.destroyCallbacks)
+end
+
 function S:update( delta )
     -- If we finish loading all assets, run the init functions.
     if self.asm:isLoading() == false and self.ranInit == false then
@@ -83,6 +95,15 @@ function S:update( delta )
 end
 
 function S:destroy()
+    for _,v in pairs(self.destroyCallbacks) do
+        v()
+    end 
+
+    self.tickCallbacks = nil
+    self.initCallbacks = nil
+    self.updateCallbacks = nil
+    self.destroyCallbacks = nil
+
     self.asm:destroy()
     self.asm = nil
 end

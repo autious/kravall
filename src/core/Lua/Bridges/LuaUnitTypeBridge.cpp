@@ -8,10 +8,19 @@
 
 #include <logger/Logger.hpp>
 #include <cassert>
+#include <Lua/LuaUtility.hpp>
+#include <Lua/LuaMetatableTypes.hpp>
 
 extern "C"
 {
+    static int LuaEq( lua_State * L )
+    {
+        Core::UnitType* lhs = luau_checkunittype(L, 1);
+        Core::UnitType* rhs = luau_checkunittype(L, 2);
 
+        lua_pushboolean(L, *lhs == *rhs);        
+        return 1;      
+    }
 }
 
 static void PushObjectType( lua_State * L, const unsigned int value, const char * name, int table )
@@ -21,6 +30,7 @@ static void PushObjectType( lua_State * L, const unsigned int value, const char 
         *uvalue = value;
 
             luaL_newmetatable( L, UNIT_TYPE_OBJECT_TYPE_META );
+                luau_setfunction( L, "__eq", LuaEq ); 
             lua_setmetatable( L, -2 );
         lua_settable( L, table );
 }

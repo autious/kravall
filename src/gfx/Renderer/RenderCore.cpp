@@ -21,7 +21,7 @@ namespace GFX
 		m_showStatistics = false;
         m_font = nullptr;
 		m_showFBO = 0;
-		m_animationFramerate = 12;
+		m_animationFramerate = 24;
 	}
 
 	RenderCore::~RenderCore()
@@ -462,23 +462,33 @@ namespace GFX
 		m_playSplash = splash;
 	}
 
-	int RenderCore::CreateSkeleton(unsigned int& out_skeletonID)
+	int RenderCore::CreateSkeleton(int& out_skeletonID)
 	{
 		return m_animationManager->CreateSkeleton(out_skeletonID);
 	}
 
-	int RenderCore::DeleteSkeleton(const unsigned int& skeletonID)
+	int RenderCore::DeleteSkeleton(const int& skeletonID)
 	{
 		return m_animationManager->DeleteSkeleton(skeletonID);
 	}
 
-	int RenderCore::AddAnimationToSkeleton(const unsigned int& skeletonID, glm::mat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame)
+	int RenderCore::GetSkeletonID(const unsigned int& meshID)
+	{
+		return m_meshManager->GetSkeletonID(meshID);
+	}
+
+	int RenderCore::BindSkeletonToMesh(const unsigned int& meshID, const int& skeletonID)
+	{
+		return m_meshManager->BindSkeletonToMesh(meshID, skeletonID);
+	}
+
+	int RenderCore::AddAnimationToSkeleton(const int& skeletonID, glm::mat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame)
 	{
 		return m_animationManager->AddAnimationToSkeleton(skeletonID, frames, numFrames, numBonesPerFrame);
 	}
 
-	int RenderCore::GetAnimationFrameCount(const unsigned int& skeletonID, const unsigned int& animationID, unsigned int& out_frameCount)
+	int RenderCore::GetAnimationInfo(const int& skeletonID, const int& animationID, unsigned int& out_frameCount, unsigned int& out_bonesPerFrame)
 	{
-		return m_animationManager->GetFrameCount(skeletonID, animationID, out_frameCount);
+		return m_animationManager->GetFrameInfo(skeletonID, animationID, out_frameCount, out_bonesPerFrame);
 	}
 }

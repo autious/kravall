@@ -5,30 +5,26 @@ local image = require "factories/image"
 local viewport = require "gui/viewport" 
 require "console"
 
-
 local current_scenario = nil
 local current_scenario_name = ""
-local current_gamemode = nil
 
 -- Called on each frame
 camera = Camera.new()
 
 function core.update( delta )
-    camera:update( delta )
+    if camera ~= nil then
+        camera:update( delta )
+    end
+    camera = nil
     if current_scenario ~= nil then
         current_scenario:update( delta )
     end 
-
-    if current_gamemode ~= nil then
-        current_gamemode:update( delta )
-    end
 end
 
 -- Called when program starts
 function core.init() 
     print( "Program starting in lua" )
     logo = image( 10,10, "assets/material/ui/test.material", false )
-    toggleMenu()
     --openscenario( "test" )    
 end
 
@@ -46,23 +42,6 @@ end
 function core.stop()
     print "Program stopping in lua" 
     closescenario()
-end
-
-function setgamemode( name )
-    closegamemode()
-    current_gamemode = require("gamemodes/" .. name).new()
-    return current_gamemode
-end
-
-function getgamemode()
-    return current_gamemode
-end
-
-function closegamemode( )
-    if current_gamemode ~= nil then
-        current_gamemode:destroy()
-        current_gamemode = nil
-    end
 end
 
 function openscenario( name )

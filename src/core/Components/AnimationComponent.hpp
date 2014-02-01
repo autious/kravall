@@ -7,7 +7,6 @@ namespace Core
 {
 	struct AnimationComponent
 	{
-		int skeletonID;
 		int animationID;
 
 		float currentTime;
@@ -18,7 +17,6 @@ namespace Core
 
 		AnimationComponent()
 		{
-			skeletonID	= -1;
 			animationID = -1;
 			currentTime = 0.0f;
 			loop = false;

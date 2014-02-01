@@ -37,6 +37,9 @@ namespace GFX
 			return m;
 		}
 
+		int BindSkeletonToMesh(const unsigned int& meshID, const int& skeletonID);
+		int GetSkeletonID(const unsigned int& meshID);
+
 	private:
 		std::vector<Mesh> m_meshes;
 		unsigned long long int m_idCounter;

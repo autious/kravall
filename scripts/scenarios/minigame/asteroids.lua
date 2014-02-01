@@ -17,7 +17,7 @@ local spaceship = scen:loadAssembly(
 	},
 	{
 		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry },
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/asteroidship.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/asteroids/roids_white.material", false }
@@ -96,7 +96,7 @@ scen:loadAssembly(
 	},
 	{
 		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry },
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/plane.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/asteroids/roids_black.material", false }
@@ -120,7 +120,7 @@ scen:loadAssembly(
 	},
 	{
 		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry },
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/plane.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/asteroids/roids_white.material", false }
@@ -175,6 +175,8 @@ local function CreateBullet()
 						color = {0.3 + math.random()*0.7, 0.3 + math.random()*0.7,  0.3 + math.random()*0.7},
 						speccolor = {0.3 + math.random()*0.7, 0.3 + math.random()*0.7,  0.3 + math.random()*0.7},
 						intensity = 0.5,
+						spotangle = 0.0,
+						spotpenumbra = 0.0,
 						type = core.gfx.objectTypes.Light,
 						lighttype = core.gfx.lightTypes.Point
 					}
@@ -204,7 +206,7 @@ local function CreateAsteroid(scale, position)
 		},
 		{
 			type = core.componentType.GraphicsComponent,
-			data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry },
+			data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
 			load = { 
 						mesh = { core.loaders.GnomeLoader, "assets/sphere.bgnome", false },
 						material = { core.loaders.MaterialLoader, "assets/material/asteroids/roids_white.material", false }
@@ -407,13 +409,13 @@ local function Move(delta)
 	t = (t + delta * 0.5)
 	
 	-- Thrusting
-	local thrusting = keyboard.iskeydown( key.Up )
-	local leftTurn = keyboard.iskeydown( key.Left )
-	local rightTurn = keyboard.iskeydown( key.Right )
-	local shooting = keyboard.iskeydown( key.Left_shift )
+	local thrusting = keyboard.isKeyDown( key.Up )
+	local leftTurn = keyboard.isKeyDown( key.Left )
+	local rightTurn = keyboard.isKeyDown( key.Right )
+	local shooting = keyboard.isKeyDown( key.Left_shift )
 	
 	local enterIsDown = false
-	if keyboard.iskeydown( key.Enter ) then
+	if keyboard.isKeyDown( key.Enter ) then
 		if not enterWasDown then
 			enterIsDown = true
 		end

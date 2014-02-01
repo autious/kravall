@@ -1,9 +1,15 @@
 local ent = require "entities"
-local ASML = require "assembly_loader" 
-local asm = ASML.loadPack( {} )
+local scenario = require "scenario"
 
-asm:specific_content( core.contentmanager.load( 
+local asm = scenario.new()
+
+asm.asm:specific_content( core.contentmanager.load( 
 		core.loaders.NavigationMeshLoader, "extremeScenario.txt", function( value ) end, false ) )
+
+asm.gamemode =  require "gamemodes/normal":new()
+
+asm:registerUpdateCallback( function( delta ) asm.gamemode:update(delta) end )
+asm:registerDestroyCallback( function() asm.gamemode:destroy() end )
 
 
 --local ambient = ent.get "ambientLight"
@@ -60,8 +66,12 @@ for i = 0, 1023 do
                         speccolor = color,
                         intensity = 1.0,
                         type = core.gfx.objectTypes.Light,
-                        lighttype = core.gfx.lightTypes.Point
+                        lighttype = core.gfx.lightTypes.Point,
+						spotangle = 0,
+						spotpenumbra = 0
                     }
+                    ,
+                    ignoreHard = true
         },
         {
             type = core.componentType.WorldPositionComponent,
@@ -82,10 +92,7 @@ end
 rioter( asm, 0, 0, 0, 0 )
 core.system.groups.setGroupGoal(gOne, -30, 0, 0)
 
-camera:lookAt( core.glm.vec3.new( 65, 65, 65 ), core.glm.vec3.new( 0, 0, 0 ) )
-
-
-
+asm.gamemode.camera:lookAt( core.glm.vec3.new( 65, 65, 65 ), core.glm.vec3.new( 0, 0, 0 ) )
 
 return asm;
 
