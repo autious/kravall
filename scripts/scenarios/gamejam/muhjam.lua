@@ -3,6 +3,24 @@ local scenario = require "scenario"
 local input = require "input" 
 local scen = scenario.new()
 
+local GUI = require "gui/GUI"
+local OneButton = require "scenarios/gamejam/cs_one"
+local TwoButton = require "scenarios/gamejam/cs_two"
+local ThreeButton = require "scenarios/gamejam/cs_three"
+local FourButton = require "scenarios/gamejam/cs_four"
+local gui = GUI:new()
+local cs_oneButton = OneButton:new({x=0,y=0})
+
+local cs_twoButton = TwoButton:new({x = 0, y = 0})
+local cs_threeButton = ThreeButton:new({x = 0, y = 0})
+local cs_fourButton = FourButton:new({x = 0, y = 0})
+
+
+gui:addComponent(cs_oneButton)
+
+scen.gui = gui
+scen:registerDestroyCallback( function() scen.gui:destroy() end )
+
 local mouse = core.input.mouse
 local keyboard = core.input.keyboard
 local key = keyboard.key
@@ -32,6 +50,12 @@ local shotLastFrame = false
 local highScore = 0
 
 local roamingShots = {}
+
+local cutScene = true
+local frameOne = true
+local frameTwo = false
+local frameThree = false
+local frameFour = false
 
 function randomFloat(lower, greater)
     return lower + math.random()  * (greater - lower);
@@ -179,7 +203,7 @@ function CreateTreasure(x, y, z)
 			}
 		})
 		
-	outVal.pointlight = CreatePointlightFOO(x, y + 10, z, 0.5, 0.5, 0.0, 1.0, 20.0)
+	outVal.pointlight = CreatePointlightFOO(x, y + 5, z, 0.5, 0.5, 0.0, 1.0, 10.0)
 	
 	return outVal
 end
@@ -795,7 +819,7 @@ function Populate(treasureCount, trapCount, enemyCount)
 			end
 		end
 
-		table.insert(treasure, CreateTreasure(x * 10, 10, y * 10 + 10))
+		table.insert(treasure, CreateTreasure(x * 10, 5, y * 10 + 10))
 	end
 
 	--Generate some traps
@@ -1401,44 +1425,106 @@ function LoadLevel(seed)
 	Populate(treasureMax, trapMax, enemyMax)
 end
 
+local prevFrame = false
+local timer = 0
+local tOne = 5
+local tTwo = 5
+local tThree = 5
+local tFour = 5
+
+
 function Update(dt)
 	
-	if start then
-		if keyboard.isKeyDown( key.Enter ) and not restartMap then
-			LoadLevel(1)
-		elseif keyboard.isKeyDown( key.Enter ) and restartMap then
-			LoadLevel(0)
+	if cutScene then
+
+		if frameOne then
+			timer = timer + dt
+
+			if timer > tOne then
+				cs_oneButton:destroy()
+				gui:addComponent(cs_twoButton)
+				frameTwo = true
+				frameOne = false
+				timer = 0
+			end
+
+		elseif frameTwo then
+
+			timer = timer + dt
+
+			if timer > tTwo then
+				cs_twoButton:destroy()
+				gui:addComponent(cs_threeButton)
+				frameTwo = false
+				frameThree = true
+				timer = 0
+			end
+
+		elseif frameThree then
+
+			timer = timer + dt
+
+			if timer > tThree then
+				cs_threeButton:destroy()
+				gui:addComponent(cs_fourButton)
+				frameThree = false
+				frameFour = true
+				timer = 0
+			end
+		elseif frameFour then
+			timer = timer + dt
+
+			if timer > tFour then
+				cs_fourButton:destroy()
+				frameFour = false
+				cutScene = false
+			end
+
 		end
 
-		if not goal.found then
-			core.draw.drawText( 510, 260, "QUANTITY BEFORE QUALITY")
-			core.draw.drawText( 540, 280, "PRES BUTAN TO ENTER")
+		if core.input.mouse.isButtonUp(core.input.mouse.button.Left) then
+			prevFrame = false
 		end
-	end
+	else
+		if start then
+			if keyboard.isKeyDown( key.Enter ) and not restartMap then
+				LoadLevel(1)
+			elseif keyboard.isKeyDown( key.Enter ) and restartMap then
+				LoadLevel(0)
+			end
 
-	if dead then
-		core.draw.drawText( 580, 360, "U DED NIGGA")
-		core.draw.drawText(540, 380, "PRES BUTAN TO RETRY")
-		if keyboard.isKeyDown( key.Enter ) then
-			ReloadMap()
+			if not goal.found then
+				core.draw.drawText( 520, 260, "QUANTITY BEFORE QUALITY")
+				core.draw.drawText( 540, 280, "PRES BUTAN TO ENTER")
+			end
 		end
-	elseif goal.found then
-		core.draw.drawText( 580, 360, "U WIN NIGGA")
-		core.draw.drawText(540, 380, "PRES BUTAN TO CONTINUE")
-		if keyboard.isKeyDown( key.Enter ) then
-			ReloadMap()
+
+		if dead then
+			core.draw.drawText( 580, 360, "U DED NIGGA")
+			core.draw.drawText(540, 380, "PRES BUTAN TO RETRY")
+			if keyboard.isKeyDown( key.Enter ) then
+				ReloadMap()
+			end
+		elseif goal.found then
+			core.draw.drawText( 580, 360, "U WIN NIGGA")
+			core.draw.drawText(540, 380, "PRES BUTAN TO CONTINUE")
+			if keyboard.isKeyDown( key.Enter ) then
+				ReloadMap()
+			end
+		elseif not dead  and not start then
+			ControlPlayer(dt)
+			TreasureHandling(dt)
+			TrapHandler(dt)
+			UpdateShots(dt)
+			UpdateEnemies(dt)
+			GoalHandler(dt)
+			RoamingShots(dt)
+			core.draw.drawText( 540, 20, "HIGHSCORE: " .. highScore)
 		end
-	elseif not dead  and not start then
-		ControlPlayer(dt)
-		TreasureHandling(dt)
-		TrapHandler(dt)
-		UpdateShots(dt)
-		UpdateEnemies(dt)
-		GoalHandler(dt)
-		RoamingShots(dt)
-		core.draw.drawText( 540, 20, "HIGHSCORE: " .. highScore)
-	end
 	--camera:update(dt)
+	end
+
+
 end
 
 scen:registerUpdateCallback( Update )
