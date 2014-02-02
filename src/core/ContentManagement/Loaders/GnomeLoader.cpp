@@ -56,7 +56,7 @@ namespace Core
                 }
             }
             delete[] gnome->bones;
-            delete[] gnome->animations;            
+            //delete[] gnome->animations;            
 
             delete static_cast<Core::GnomeLoader::Gnome*>(handle);
             handle = reinterpret_cast<AssetHandle>(modelData);
