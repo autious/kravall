@@ -87,8 +87,15 @@ uniform vec4 gMoodCurves[6][13] = {{ vec4(5, -0.001f, 0.01f, 0.01f), vec4(5, 0.0
 								   { vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(1, -0.0001f, 0.0f, 0.0f),vec4(15, -0.001f, 0.0f, 0.0f),vec4(15, -0.001f, 0.0f, 0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f) }};
 
 //shared MoodCurve gMoodCurves[6][13];
-int gMoodSenderIndices[2][6];
-int gMoodReceiverIndices[2][6];
+//int gMoodSenderIndices[2][6];
+//int gMoodReceiverIndices[2][6];
+
+uniform int gMoodSenderIndices[2][6] = {{ 6, 7, 8, 9, 10, 0 },
+								{ 0, 1, 2, 3, 0, 0	}};
+
+uniform int gMoodReceiverIndices[2][6] = {{ 0, 1, 2, 3, 4, 5 },
+										  {	5, 5, 5, 5, 0, 0 }};
+
 
 float GetAgentChargeAt(int unitType, float distSqr)
 {
@@ -229,6 +236,7 @@ vec3 GetMoodOnAgent(vec2 queryPosition, int groupID, int index)
 
 void main()
 {
+/*
 	//normal
 	gMoodSenderIndices[0][0] = 6;
 	gMoodReceiverIndices[RIOTER_TYPE][0] = 0;
@@ -264,7 +272,7 @@ void main()
 	//attacking
 	gMoodSenderIndices[POLICE_TYPE][3] = 3;
 	gMoodReceiverIndices[POLICE_TYPE][3] = 5;
-
+	*/
 	//barrier();
 	
 	if (gl_LocalInvocationIndex == 0)
