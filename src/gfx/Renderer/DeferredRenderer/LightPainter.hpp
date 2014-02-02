@@ -75,7 +75,7 @@ namespace GFX
 
 		GLuint m_pointLightBuffer;
 
-		const unsigned int MAXIMUM_LIGHTS = 4096;
+		const unsigned int MAXIMUM_LIGHTS = 1024;
 		const unsigned int WORK_GROUP_SIZE = 16;
 		LightData* m_lights;
 

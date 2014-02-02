@@ -983,7 +983,7 @@ function TrapHandler(dt)
 		v.counter = v.counter + dt
 		
 		local trapPos = v.trap:get(core.componentType.WorldPositionComponent)
-		if (v.active and CheckCollision(playerWPC.position[1], playerWPC.position[3], 4, 4, trapPos.position[1], trapPos.position[3],10,10)) then
+		if (v.active and CheckCollision(playerWPC.position[1], playerWPC.position[3], 4, 4, trapPos.position[1], trapPos.position[3],5,5)) then
 			dead = true
 		end
 
@@ -1317,11 +1317,18 @@ function ReloadMap()
 		end
 	end
 
+	local i = 1
+	while i <= #player.shots do
+		player.shots[i].entity:destroy()
+		player.shots[i].pointlight:destroy()
+		table.remove(player.shots, i)
+	end
+
 	player.entity:destroy()
 	player.spot:destroy()
 	player.point:destroy()
 
-	local i = 1
+	i = 1
 	while i <= #treasure do
 		treasure[i].treasure:destroy()
 		treasure[i].pointlight:destroy()
