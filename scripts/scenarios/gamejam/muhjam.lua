@@ -75,6 +75,7 @@ function CreateEnemy(x, y, z)
 	outVal.shot = false
 	outVal.shotLimit = randomFloat(1, 3)
 	outVal.posY = math.random(0, 100)
+	outVal.dead = false
 	return outVal
 
 end
@@ -1001,7 +1002,7 @@ function UpdateEnemies(dt)
 
 	local playerWPC = player.entity:get(core.componentType.WorldPositionComponent)
 
-
+	local rmIndex = {}
 	local i = 1
 	while i <= #enemies do
 		
@@ -1061,7 +1062,7 @@ function UpdateEnemies(dt)
 				enemies[i].shots[#enemies[i].shots].dir.y = -y
 			end
 		end
-
+		
 		local j = 1
 		while j < #enemies[i].shots do
 			local tWPC = enemies[i].shots[j].entity:get(core.componentType.WorldPositionComponent)
@@ -1078,10 +1079,40 @@ function UpdateEnemies(dt)
 			end
 
 
-
 			local cellPos = PositionToCell(tWPC.position[1], tWPC.position[3])
 
 			CollideShot(cellPos, enemies[i].shots[j].dir, tWPC, enemies[i].shots[j])
+
+			
+			local asdf = 1
+			while asdf <= #treasure do
+				local woopeecee = treasure[asdf].treasure:get(core.componentType.WorldPositionComponent)
+				if CheckCollision(tWPC.position[1], tWPC.position[3], 4, 4, woopeecee.position[1], woopeecee.position[3],10,10) then
+					treasure[asdf].treasure:destroy()
+					treasure[asdf].pointlight:destroy()
+					table.remove(treasure, asdf)
+					enemies[i].shots[j].hit = true
+				else
+					asdf = asdf + 1
+				end
+			end
+
+			local erferferf = 1
+			while erferferf <= #enemies do
+				local woopeecee = enemies[erferferf].entity:get(core.componentType.WorldPositionComponent)
+			
+				if erferferf == i then
+					erferferf = erferferf + 1
+				elseif CheckCollision(tWPC.position[1], tWPC.position[3], 2, 2, woopeecee.position[1], woopeecee.position[3],2,2) then
+					enemies[i].shots[j].hit = true
+					enemies[erferferf].dead = true
+					erferferf = erferferf + 1
+				else
+					erferferf = erferferf + 1
+				end
+				
+			end
+
 
 			if CheckCollision(tWPC.position[1], tWPC.position[3], 2, 2, playerWPC.position[1], playerWPC.position[3],2,2) then
 				enemies[i].shots[j].entity:destroy()
@@ -1095,12 +1126,24 @@ function UpdateEnemies(dt)
 			else
 				j = j + 1
 			end
-			
 		end
-
 		i = i + 1
 	end
 
+	local hurr = 1
+	while hurr <= #enemies do
+
+		if enemies[hurr].dead then	
+			enemies[hurr].entity:destroy()
+			enemies[hurr].point:destroy()
+			enemies[hurr].spot:destroy()
+			table.insert(roamingShots, enemies[hurr].shots)
+			table.remove(enemies, hurr)
+		else
+			hurr = hurr + 1
+		end
+		
+	end
 end
 
 function RoamingShots(dt)
@@ -1123,6 +1166,35 @@ function RoamingShots(dt)
 
 				if roamingShots[i][j].timer >  roamingShots[i][j].duration then
 					roamingShots[i][j].hit = true
+				end
+
+				local asdf = 1
+				while asdf <= #treasure do
+					local woopeecee = treasure[asdf].treasure:get(core.componentType.WorldPositionComponent)
+					if CheckCollision(tWPC.position[1], tWPC.position[3], 4, 4, woopeecee.position[1], woopeecee.position[3],10,10) then
+						treasure[asdf].treasure:destroy()
+						treasure[asdf].pointlight:destroy()
+						table.remove(treasure, asdf)
+						roamingShots[i][j].hit = true
+					else
+						asdf = asdf + 1
+					end
+				end
+
+				asdf = 1
+				while asdf <= #enemies do
+				
+					local woopeecee = enemies[asdf].entity:get(core.componentType.WorldPositionComponent)
+					if CheckCollision(tWPC.position[1], tWPC.position[3], 2, 2, woopeecee.position[1], woopeecee.position[3],2,2) then
+						enemies[asdf].entity:destroy()
+						enemies[asdf].point:destroy()
+						enemies[asdf].spot:destroy()
+						roamingShots[i][j].hit = true
+						table.insert(roamingShots, enemies[asdf].shots)
+						table.remove(enemies, asdf)
+					else
+						asdf = asdf + 1
+					end
 				end
 
 				CollideShot(cellPos, roamingShots[i][j].dir, tWPC, roamingShots[i][j])
@@ -1281,7 +1353,7 @@ end
 
 function GoalHandler(dt)
 	local pWPC = player.entity:get(core.componentType.WorldPositionComponent)
-	local gWPC = goal.pointlight:get(core.componentType.WorldPositionComponent)
+	local gWPC = goal.entity:get(core.componentType.WorldPositionComponent)
 	
 	if #treasure <= 0 then 
 		if CheckCollision(pWPC.position[1], pWPC.position[3], 4, 4, gWPC.position[1], gWPC.position[3],	20,20) then
@@ -1362,6 +1434,7 @@ function Update(dt)
 		TrapHandler(dt)
 		UpdateShots(dt)
 		UpdateEnemies(dt)
+		GoalHandler(dt)
 		RoamingShots(dt)
 		core.draw.drawText( 540, 20, "HIGHSCORE: " .. highScore)
 	end
