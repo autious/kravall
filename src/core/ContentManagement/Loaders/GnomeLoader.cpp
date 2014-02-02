@@ -282,7 +282,7 @@ namespace Core
 
 
 			// Load the animations for this mesh
-			if (gnome->numberOfBones)
+			if (gnome->numberOfBones > 1)
 				LoadAnimations(gnome, modelData->meshID);
 
             m_modelData.push_back(modelData);
@@ -301,7 +301,7 @@ namespace Core
                 }
             }
             delete[] gnome->bones;
-            delete[] gnome->animations;            
+            //delete[] gnome->animations;            
 
             delete gnome;
             return modelData;
