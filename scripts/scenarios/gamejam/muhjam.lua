@@ -16,11 +16,13 @@ local floorGrid = {}
 local wallGrid = {}
 local player = {}
 local treasure = {}
+local enemies = {}
 local traps = {}
 local goal = {}
 local restartMap = false
 local treasureMax
 local trapMax
+local enemyMax
 local gSizeX
 local gSizeY
 local start = true
@@ -28,6 +30,92 @@ local dead = false
 local gSeed = 0
 local shotLastFrame = false
 local highScore = 0
+
+local roamingShots = {}
+
+function randomFloat(lower, greater)
+    return lower + math.random()  * (greater - lower);
+end
+
+function CreateEnemy(x, y, z)
+
+	local outVal = {}
+	outVal.entity = scen:loadAssembly(
+		{
+			{
+				type = core.componentType.WorldPositionComponent,
+				data = { position = { x, y, z}}
+			},
+			{
+				type = core.componentType.GraphicsComponent,
+				data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+				load = { 
+					mesh = { core.loaders.GnomeLoader, "assets/cube.bgnome", false },
+					material = { core.loaders.MaterialLoader, "assets/material/gamejam/redpixel.material", false }
+					}
+			},
+			{
+				type = core.componentType.ScaleComponent,
+				data = { scale = 2.0 }
+			},
+			{
+				type = core.componentType.RotationComponent,
+				data = { rotation = { 0, 0, 0, 1 } }
+			}
+		})
+
+	outVal.spot = CreateSpotLightFOO(x - 9, y, z, 0.5, 0, 0.5, 15, 3.14/6.0, 0.1 , 20)
+	outVal.point = CreatePointlightFOO(x, 5, z, 0.5, 0, 0.5, 5, 2)
+	outVal.speed = 10
+	outVal.dir = {}
+	outVal.dir.x = 0
+	outVal.dir.y = 0
+	outVal.shots = {}
+	outVal.shotTimer = 0
+	outVal.shot = false
+	outVal.shotLimit = randomFloat(1, 3)
+	outVal.posY = math.random(0, 100)
+	return outVal
+
+end
+
+function CreateEnemyShot(x, y, z)
+	local outVal = {}
+
+	outVal.pointlight = CreatePointlightFOO(x, y, z, 0.5, 0.0, 0.5, 1.0, 20.0)
+	outVal.entity = scen:loadAssembly(
+		{
+			{
+				type = core.componentType.WorldPositionComponent,
+				data = { position = { x, y, z}}
+			},
+			{
+				type = core.componentType.GraphicsComponent,
+				data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+				load = { 
+					mesh = { core.loaders.GnomeLoader, "assets/sphere.bgnome", false },
+					material = { core.loaders.MaterialLoader, "assets/material/gamejam/whitePixel.material", false }
+					}
+			},
+			{
+				type = core.componentType.ScaleComponent,
+				data = { scale = 1.0 }
+			},
+			{
+				type = core.componentType.RotationComponent,
+				data = { rotation = { 0, 0, 0, 1 } }
+			}
+		})
+	outVal.speed = 10
+	outVal.duration = 4
+	outVal.timer = 0
+	outVal.dir = {}
+	outVal.dir.x = 0
+	outVal.dir.y = 0
+	outVal.hit = false
+	return outVal
+
+end
 
 function CreateShot(x, y, z)
 	local outVal = {}
@@ -57,6 +145,8 @@ function CreateShot(x, y, z)
 			}
 		})
 	outVal.speed = 50
+	outVal.duration = 1
+	outVal.timer = 0
 	outVal.hit = false
 	return outVal
 end
@@ -151,6 +241,40 @@ function CreateSpotLight(x, y, z)
 		{
 			type = core.componentType.ScaleComponent,
 			data = { scale = 40.0 }
+		},
+		{
+			type = core.componentType.RotationComponent,
+			data = { rotation = { 1,0,0,0 } }
+		}
+	} 
+	)
+
+	return spot
+end
+
+function CreateSpotLightFOO(x, y, z, cx, cy, cz, intens, spota, spotp, radis)
+	
+	local spot = scen:loadAssembly( 
+	{
+		{
+			type = core.componentType.LightComponent,
+			data =  { 
+						color = { cx, cy, cz },
+						speccolor = { cx, cy, cz },
+						intensity = intens,
+						spotangle = spota,
+						spotpenumbra = spotp,
+						type = core.gfx.objectTypes.Light,
+						lighttype = core.gfx.lightTypes.Spot
+					}
+		},
+		{
+			type = core.componentType.WorldPositionComponent,
+			data = { position = { x, y, z } }
+		},
+		{
+			type = core.componentType.ScaleComponent,
+			data = { scale = radis }
 		},
 		{
 			type = core.componentType.RotationComponent,
@@ -358,7 +482,6 @@ function CreateTile(x, y, z, lives)
 	return tile
 end
 
-
 function SetWall(percent)
 	local random = math.random(0, 100)
 
@@ -490,7 +613,6 @@ function PositionToCell(x, y)
 
 	return cellPos
 end
-
 
 function PositionToCellSHOT(x, y)
 	local cellPos = {}
@@ -655,7 +777,7 @@ function CollideShot(cellPos, dir, wpc, shot)
 	end
 end
 
-function Populate(treasureCount, trapCount)
+function Populate(treasureCount, trapCount, enemyCount)
 
 	--Generate some treasure
 	while #treasure < treasureCount do
@@ -675,6 +797,7 @@ function Populate(treasureCount, trapCount)
 		table.insert(treasure, CreateTreasure(x * 10, 10, y * 10 + 10))
 	end
 
+	--Generate some traps
 	while #traps < trapCount do
 		local foundPos = false
 		local x 
@@ -692,8 +815,26 @@ function Populate(treasureCount, trapCount)
 		table.insert(traps, CreateTrap(x * 10, 10, y * 10))
 	end
 	
+	--generate some enemies
+	while #enemies < enemyCount do
+		local foundPos = false
+		local x 
+		local y
+
+		while not foundPos do
+			x = math.random(1, gSizeX)
+			y = math.random(1, gSizeY)
+
+			if not wallGrid[x][y] then
+				foundPos = true
+			end
+		end
+
+		table.insert(enemies, CreateEnemy(x * 10, 10, y * 10))
+	end
 	
-	--Generate some traps
+	
+	
 	--win gamejam
 end
 
@@ -852,6 +993,158 @@ function Shoot(dt)
 	
 end
 
+function distance(x1, y1, x2, y2)
+	return math.sqrt(math.pow((x2 - x1), 2) + math.pow((y2 - y1), 2))
+end
+
+function UpdateEnemies(dt)
+
+	local playerWPC = player.entity:get(core.componentType.WorldPositionComponent)
+
+
+	local i = 1
+	while i <= #enemies do
+		
+		local eWPC = enemies[i].entity:get(core.componentType.WorldPositionComponent)
+		local eROT = enemies[i].entity:get(core.componentType.RotationComponent)
+
+		enemies[i].posY = enemies[i].posY + 5 * dt
+		--set  the position
+		eWPC.position[2] = eWPC.position[2] + 0.05 * math.sin(enemies[i].posY)
+		enemies[i].entity:set(core.componentType.WorldPositionComponent, eWPC)
+
+		local sWPC = enemies[i].spot:get(core.componentType.WorldPositionComponent)
+		sWPC.position[2] = eWPC.position[2]
+
+		local pWPC =  enemies[i].point:get(core.componentType.WorldPositionComponent)
+		pWPC = eWPC
+		pWPC.position[2] = pWPC.position[2] - 3
+		
+		enemies[i].point:set(core.componentType.WorldPositionComponent, pWPC)
+
+		if enemies[i].shot then
+			enemies[i].shotTimer = 	enemies[i].shotTimer + dt
+
+			if enemies[i].shotTimer > enemies[i].shotLimit then
+				enemies[i].shot = false
+			end
+
+		end
+
+		local length = distance(playerWPC.position[1], playerWPC.position[3], eWPC.position[1], eWPC.position[3])
+	
+		if length < 35  and length > 1 then
+			
+
+			local x = (eWPC.position[1] - playerWPC.position[1] ) / length
+			local y = (eWPC.position[3] - playerWPC.position[3]) / length
+			local angle = math.atan2(x, y)
+
+			eROT.rotation[1] = math.cos(-angle - 3.141592 * 0.5)
+			eROT.rotation[2] = 0
+			eROT.rotation[3] = math.sin(-angle - 3.141592 * 0.5)
+			eROT.rotation[4] = 0
+
+			enemies[i].entity:set(core.componentType.RotationComponent, eROT)
+			enemies[i].spot:set(core.componentType.RotationComponent, eROT)
+
+			sWPC.position[3] = sWPC.position[3]
+			sWPC.position[1] = sWPC.position[1]
+
+			enemies[i].spot:set(core.componentType.WorldPositionComponent, eWPC)
+
+			if not enemies[i].shot then 
+				enemies[i].shot = true
+				enemies[i].shotTimer = 0
+				table.insert(enemies[i].shots, CreateEnemyShot(eWPC.position[1], eWPC.position[2], eWPC.position[3]))
+				enemies[i].shots[#enemies[i].shots].dir.x = -x
+				enemies[i].shots[#enemies[i].shots].dir.y = -y
+			end
+		end
+
+		local j = 1
+		while j < #enemies[i].shots do
+			local tWPC = enemies[i].shots[j].entity:get(core.componentType.WorldPositionComponent)
+
+			tWPC.position[1] = tWPC.position[1] + enemies[i].shots[j].speed * dt *  enemies[i].shots[j].dir.x
+			tWPC.position[3] = tWPC.position[3] + enemies[i].shots[j].speed * dt * enemies[i].shots[j].dir.y
+			enemies[i].shots[j].entity:set(core.componentType.WorldPositionComponent, tWPC)
+			enemies[i].shots[j].pointlight:set(core.componentType.WorldPositionComponent, tWPC)
+
+			enemies[i].shots[j].timer = enemies[i].shots[j].timer + dt
+
+			if enemies[i].shots[j].timer >  enemies[i].shots[j].duration then
+				enemies[i].shots[j].hit = true
+			end
+
+
+
+			local cellPos = PositionToCell(tWPC.position[1], tWPC.position[3])
+
+			CollideShot(cellPos, enemies[i].shots[j].dir, tWPC, enemies[i].shots[j])
+
+			if CheckCollision(tWPC.position[1], tWPC.position[3], 2, 2, playerWPC.position[1], playerWPC.position[3],2,2) then
+				enemies[i].shots[j].entity:destroy()
+				enemies[i].shots[j].pointlight:destroy()
+				table.remove(enemies[i].shots, j)
+				dead = true
+			elseif enemies[i].shots[j].hit then
+				enemies[i].shots[j].entity:destroy()
+				enemies[i].shots[j].pointlight:destroy()
+				table.remove(enemies[i].shots, j)
+			else
+				j = j + 1
+			end
+			
+		end
+
+		i = i + 1
+	end
+
+end
+
+function RoamingShots(dt)
+	local playerWPC = player.entity:get(core.componentType.WorldPositionComponent)
+	local i = 1
+	if roamingShots then
+		while i <= #roamingShots do
+			local j = 1
+			while j <= #roamingShots[i] do
+				local tWPC = roamingShots[i][j].entity:get(core.componentType.WorldPositionComponent)
+			
+				tWPC.position[1] = tWPC.position[1] + roamingShots[i][j].speed * dt *  roamingShots[i][j].dir.x
+				tWPC.position[3] = tWPC.position[3] + roamingShots[i][j].speed * dt * roamingShots[i][j].dir.y
+				roamingShots[i][j].entity:set(core.componentType.WorldPositionComponent, tWPC)
+				roamingShots[i][j].pointlight:set(core.componentType.WorldPositionComponent, tWPC)
+
+				local cellPos = PositionToCell(tWPC.position[1], tWPC.position[3])
+
+				roamingShots[i][j].timer = roamingShots[i][j].timer + dt
+
+				if roamingShots[i][j].timer >  roamingShots[i][j].duration then
+					roamingShots[i][j].hit = true
+				end
+
+				CollideShot(cellPos, roamingShots[i][j].dir, tWPC, roamingShots[i][j])
+				
+				if CheckCollision(tWPC.position[1], tWPC.position[3], 2, 2, playerWPC.position[1], playerWPC.position[3],2,2) then
+					roamingShots[i][j].entity:destroy()
+					roamingShots[i][j].pointlight:destroy()
+					table.remove(roamingShots[i], j)
+					dead = true
+				elseif roamingShots[i][j].hit then
+					roamingShots[i][j].entity:destroy()
+					roamingShots[i][j].pointlight:destroy()
+					table.remove(roamingShots[i], j)
+				else
+					j = j + 1
+				end
+			end
+			i = i +1
+		end
+	end
+end
+
 function UpdateShots(dt)
 	
 	local i = 1
@@ -868,6 +1161,12 @@ function UpdateShots(dt)
 
 		CollideShot(cellPos, player.shots[i].dir, shotWPC, player.shots[i])
 
+		player.shots[i].timer = player.shots[i].timer + dt
+
+		if player.shots[i].timer >  player.shots[i].duration then
+			player.shots[i].hit = true
+		end
+
 		local j = 1
 		while j <= #treasure do
 
@@ -882,7 +1181,23 @@ function UpdateShots(dt)
 			end
 		end
 
-		
+		j = 1
+		while j <= #enemies do
+
+			local tWPC = enemies[j].entity:get(core.componentType.WorldPositionComponent)
+			if CheckCollision(shotWPC.position[1], shotWPC.position[3], 2, 2, tWPC.position[1], tWPC.position[3],2,2) then
+				enemies[j].entity:destroy()
+				enemies[j].point:destroy()
+				enemies[j].spot:destroy()
+
+				table.insert(roamingShots, enemies[j].shots)
+				player.score = player.score + 1000
+				table.remove(enemies, j)
+				player.shots[i].hit = true
+			else
+				j = j + 1
+			end
+		end
 
 		if player.shots[i].hit then
 			player.shots[i].pointlight:destroy()
@@ -922,6 +1237,36 @@ function ReloadMap()
 		traps[i].trap:destroy()
 		table.remove(traps, i)
 	end
+
+	i = 1
+	while i <= #enemies do
+		enemies[i].entity:destroy()
+		enemies[i].point:destroy()
+		enemies[i].spot:destroy()
+
+		local asdf = 1
+		while asdf <= #enemies[i].shots do
+			enemies[i].shots[asdf].entity:destroy()
+			enemies[i].shots[asdf].pointlight:destroy()
+			table.remove(enemies[i].shots, asdf)
+		end
+
+
+		table.remove(enemies, i)
+	end
+
+	i = 1
+	while i <= #roamingShots do
+		local j = 1
+		while j <= #roamingShots[i] do
+			roamingShots[i][j].entity:destroy()
+			roamingShots[i][j].pointlight:destroy()
+			table.remove(roamingShots[i], j)
+		end
+		table.remove(roamingShots, i)
+	end
+
+
 
 	start = true
 
@@ -978,9 +1323,10 @@ function LoadLevel(seed)
 
 	goal.entity = CreateGoal(gSizeX, gSizeY)
 	goal.found = false
+	enemyMax = math.random(10, gSizeX)
 	treasureMax = math.random(10, gSizeX)
 	trapMax = math.random(10, gSizeY)
-	Populate(treasureMax, trapMax)
+	Populate(treasureMax, trapMax, enemyMax)
 end
 
 function Update(dt)
@@ -1015,6 +1361,8 @@ function Update(dt)
 		TreasureHandling(dt)
 		TrapHandler(dt)
 		UpdateShots(dt)
+		UpdateEnemies(dt)
+		RoamingShots(dt)
 		core.draw.drawText( 540, 20, "HIGHSCORE: " .. highScore)
 	end
 	--camera:update(dt)
