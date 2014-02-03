@@ -249,7 +249,7 @@ namespace Core
 				// Create frames
 				for (int f = 0; f < numFrames; f++)
 				{
-					float time = duration * (f/float(numFrames));
+					float time = duration * (f/float(numFrames-1));
 					std::vector<glm::mat4x4> transforms;
 					GetFinalTransforms(a, gnome, time, transforms);
 					for (int t = 0; t < transforms.size(); t++)

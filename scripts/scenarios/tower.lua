@@ -53,6 +53,7 @@ local dude = scen.asm:loadAssembly(
 		type = core.componentType.AnimationComponent,
 		data = { 
 			animationID = 0,
+			queuedAnimationID = 0,
 			currentTime = 0.0,
 			loop = false,
 			playing = false,
@@ -88,6 +89,7 @@ local dude2 = scen.asm:loadAssembly(
 		type = core.componentType.AnimationComponent,
 		data = { 
 			animationID = 0,
+			queuedAnimationID = 0,
 			currentTime = 0.0,
 			loop = false,
 			playing = false,
@@ -165,12 +167,24 @@ scen.asm:loadAssembly(
 
 local function Update(delta)
 	if keyboard.isKeyDown( key.Left ) then
-		core.animations.play(dude, "rioter-walk_00")
+		core.animations.loop(dude, "rioter-walk_00")
 		core.animations.loop(dude2, "rioter-walk_00")
 	end
 	if keyboard.isKeyDown( key.Right ) then
-		core.animations.play(dude, "rioter-male-wave-walk_00")
+		core.animations.loop(dude, "rioter-male-wave-walk_00")
 		core.animations.loop(dude2, "rioter-male-wave-walk_00")
+	end
+	if keyboard.isKeyDown( key.Down ) then
+		core.animations.setSpeed(dude, 1)
+		core.animations.setSpeed(dude2, 1)
+	end
+	if keyboard.isKeyDown( key.Up ) then
+		--core.animations.setSpeed(dude, 0.5)
+		core.animations.setTime(dude2, 0.6)
+	end
+	if keyboard.isKeyDown( key.Q ) then
+		core.animations.queue(dude, "rioter-male-wave-walk_00", true)
+		core.animations.queue(dude2, "rioter-male-wave-walk_00", false)
 	end
 end
 

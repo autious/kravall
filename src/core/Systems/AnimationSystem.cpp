@@ -27,25 +27,39 @@ namespace Core
 				unsigned int animationFrameCount;
 				unsigned int bonesPerFrame;
 				unsigned int offset;
+
 				int skeletonID = GFX::Content::GetSkeletonID(meshID);
 				if (GFX::Content::GetAnimationInfo(skeletonID, ac->animationID, animationFrameCount, bonesPerFrame, offset) == GFX_SUCCESS)
 				{
 
 					// Get the time animation duration in seconds
-					float animationDuration = (animationFrameCount) / static_cast<float>(animationFramerate);
+					float animationDuration = (animationFrameCount-1) / static_cast<float>(animationFramerate);
 
 					// Step forward the animation
 					ac->currentTime += delta * ac->speed;
 					if (ac->currentTime > animationDuration)
 					{
-						if (ac->loop)
+						
+						if (ac->queuedAnimationID > 0 && 
+							GFX::Content::GetAnimationInfo(skeletonID, ac->queuedAnimationID, animationFrameCount, bonesPerFrame, offset) == GFX_SUCCESS)
 						{
+							animationDuration = (animationFrameCount-1) / static_cast<float>(animationFramerate);
 							ac->currentTime = fmod(ac->currentTime, animationDuration);
+							ac->animationID = ac->queuedAnimationID;
+							ac->queuedAnimationID = -1;
+							ac->playing = true;
 						}
 						else
 						{
-							ac->currentTime = 0.0f;
-							ac->playing = false;
+							if (ac->loop)
+							{
+								ac->currentTime = fmod(ac->currentTime, animationDuration);
+							}
+							else
+							{
+								ac->currentTime = animationDuration;
+								ac->playing = false;
+							}
 						}
 					}
 					ac->currentFrame = static_cast<unsigned int>(ac->currentTime * static_cast<float>(animationFramerate));

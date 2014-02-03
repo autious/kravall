@@ -178,7 +178,11 @@ local function UpdateCave(delta)
 	for i=1,#cave do
 		local position = util.GetPosition(cave[i].entity)
 		cave[i].offset = cave[i].offset + delta * cartSpeed
-		if cave[i].offset > caveSegLength then cave[i].offset = cave[i].offset -numCaveSegs * caveSegLength end
+		if cave[i].offset > caveSegLength then 
+			cave[i].offset = cave[i].offset -numCaveSegs * caveSegLength 
+			cave[i].entity:destroy()
+			cave[i].entity = entities.CreateCavePiece({0, 0, caveSegLength-i*caveSegLength}, math.floor(math.random()*4)+1, scen)
+		end
 		position[3] = cave[i].offset
 		util.SetPosition(position, cave[i].entity)
 	end
@@ -298,7 +302,7 @@ local function Update(delta)
 		core.draw.drawText( 300, 35, "METERS TRAVELLED: "..math.floor(score) )
 		
 		
-		if IsKillzoned() and invincitime < 0 then 
+		if IsKillzoned() and invincitime < 0 and pendingLane == currentLane then 
 			util.SetLightIntensity(100, dblight) 
 			alive = false
 		else 
@@ -344,6 +348,7 @@ local function Update(delta)
 			cartSpeed = 75.0
 			score = 0
 			currentLane = 2
+			pendingLane = 2
 			minecart.position[1] = lanePos[currentLane]
 			minecart.position[2] = 0
 			util.SetRotationZ(0, minecart.cart)
