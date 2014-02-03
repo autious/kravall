@@ -251,7 +251,7 @@ local function Update(delta)
 	if alive == true then
 	
 		-- Logic for switching lanes and setting minecart position
-		if keysPressed[2] == true and switchingLane == false then 
+		if keyboard.isKeyDown( key.Left ) == true and switchingLane == false then 
 			pendingLane = currentLane - 1 
 			if pendingLane < 1 then 
 				pendingLane = 1 
@@ -260,7 +260,7 @@ local function Update(delta)
 				switchingTime = switchingTimeConstant
 			end
 		end
-		if keysPressed[3] == true and switchingLane == false then 
+		if keyboard.isKeyDown( key.Right ) == true and switchingLane == false then 
 			pendingLane = currentLane + 1 
 			if pendingLane > 3 then 
 				pendingLane = 3 

@@ -265,7 +265,7 @@ namespace Core
 				else if (result == GFX_INVALID_SKELETON)
 					LOG_ERROR << "Could not add animation \'" << gnome->animations[a].name << "\' Skeleton with ID " << skeletonID << " does not exist.";
 				else
-					AnimationManager::StoreAnimationID(skeletonID, result, gnome->animations[a].name);
+					AnimationManager::StoreAnimationID(meshID, result, gnome->animations[a].name);
 			}
 		}
 	}
@@ -282,7 +282,7 @@ namespace Core
 
 
 			// Load the animations for this mesh
-			if (gnome->numberOfBones > 1)
+			if (gnome->numberOfAnimations)
 				LoadAnimations(gnome, modelData->meshID);
 
             m_modelData.push_back(modelData);

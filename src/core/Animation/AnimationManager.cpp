@@ -85,6 +85,7 @@ namespace Core
 		if (m_skeletons[meshID].find(animationName) == m_skeletons[meshID].end())
 		{
 			m_skeletons[meshID][animationName] = animationID;
+			std::cout << "Stored animation \'" << animationName << "\' for mesh with id " << meshID << "\n";
 			return 0;
 		}
 		else
