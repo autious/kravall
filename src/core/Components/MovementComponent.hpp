@@ -9,6 +9,17 @@
 namespace Core
 {
 	/*!
+		State used to set the respective movement properties.
+	*/
+	enum MovementState
+	{
+		Idle,
+		Walking,
+		Sprinting,
+		COUNT,
+	};
+
+	/*!
 	Component holding a moving object's speed, maximum speed and direction of movement.
 	*/
 	struct MovementComponent
@@ -39,6 +50,11 @@ namespace Core
 		*/
 		int NavMeshGoalNodeIndex;
 
+		/*!
+			State used when resetting movement data, eg. when changing states. 
+		*/
+		MovementState state;
+
 		/*! Default constructor. Initialising all members to 0. */
 		MovementComponent() : speed(0.0f), desiredSpeed(0.0f)
 		{
@@ -55,6 +71,8 @@ namespace Core
 			goal[2] = 0.0f;
 
 			NavMeshGoalNodeIndex = -1;
+
+			state = MovementState::Walking;
 		}
 
 		/*!
@@ -78,6 +96,8 @@ namespace Core
 			goal[0] = FLT_MAX;
 			goal[1] = 0.0f;
 			goal[2] = 0.0f;
+
+			state = MovementState::Walking;
 		}
 
 		inline static const char* GetName()
