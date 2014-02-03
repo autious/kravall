@@ -61,7 +61,7 @@ namespace Core
 				// ray is inside the sphere, ignore...
 				// sphere is behind the ray and ray is not inside it, ignore...
 				// the sphere is too far from the line, ignore...
-				if( glm::dot( goal - glm::vec3( current->points[ii], 0.0f, current->points[ii+1] ), goal - glm::vec3( current->points[ii], 0.0f, current->points[ii+1] ) ) > radius * radius )
+				if( abs( glm::dot( goal - glm::vec3( current->points[ii], 0.0f, current->points[ii+1] ), goal - glm::vec3( current->points[ii], 0.0f, current->points[ii+1] ) )) > radius * radius )
 				{
 					if( !(squareLength < radius * radius || projectedDistanceToSphere < 0 || squareLength - projectedDistanceToSphere * projectedDistanceToSphere > radius * radius) ) 
 					{
@@ -87,7 +87,7 @@ namespace Core
 			}
 		}
 
-		GFX::Debug::DrawLine( start, start + glm::normalize( goal - start ) * hitDistance, GFXColor( 1, 1, 0 , 1 ), false );
+		GFX::Debug::DrawLine( start, start + glm::normalize( goal - start ) * hitDistance, GFXColor( 1, 1, 0 , 1 ), true );
 
 
 		if( hitDistance < distanceToTarget )

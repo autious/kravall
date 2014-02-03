@@ -28,7 +28,6 @@
 #include <Systems/GroupDataSystem.hpp>
 #include <Systems/NavMeshBlockingSystem.hpp>
 #include <Systems/AnimationSystem.hpp>
-#include <Systems/GoalSystem.hpp>
 #include <Systems/SquadSystem.hpp>
 #include <Systems/TargetingSystem.hpp>
 
@@ -49,7 +48,7 @@ namespace Core
 	
 
     typedef SystemHandlerTemplate<LightSystem, FlowfieldPositioningSystem, PoliceGoalSystem, NavMeshCollisionSystem, 
-	CollisionSystem2D, GoalSystem, PickingSystem, TargetingSystem, AIDebugSystem, FlowfieldSystem, /*FieldReactionSystem,*/ GPUPFSystem,
+	CollisionSystem2D, PickingSystem, TargetingSystem, AIDebugSystem, FlowfieldSystem, /*FieldReactionSystem,*/ GPUPFSystem,
 		MovementSystem, NameSystem, GroupDataSystem, AreaSystem, NavMeshBlockingSystem, AnimationSystem, SquadSystem, RenderingSystem> SystemHandler;
 
 

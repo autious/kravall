@@ -168,6 +168,7 @@ void Core::PoliceGoalSystem::Update( float delta )
 		}
 		else
 		{
+			continue; // NOCOMMIT
 			Core::PathData path = instance->CalculateShortPath( ffc->node, position,  mvmc->NavMeshGoalNodeIndex, target );
 				
 			// project position onto target line...
