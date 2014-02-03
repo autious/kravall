@@ -9,7 +9,7 @@ local function CreateTrack(position, tracktype, scen)
 		killzone = {5*10, 8*10}
 	else 
 		path = "assets/minecart/track_regular.bgnome"
-		killzone = {-1, -1}
+		killzone = {10000, 10000}
 	end
 	return scen:loadAssembly( 
 	{
