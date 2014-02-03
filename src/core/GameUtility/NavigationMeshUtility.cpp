@@ -33,10 +33,13 @@ namespace Core
 	}
 
 
-    bool NavigationMesh::GetClosestPointInsideMesh(glm::vec3& point, const glm::vec3& origin, int node)
+    bool NavigationMesh::GetClosestPointInsideMesh( glm::vec3& point, const glm::vec3& origin, int node, int& goalNode )
     {
         if(!CheckPointInsideNode(origin, node))        
+		{
+			goalNode = -1;
             return false;
+		}
         
 
 		Core::NavigationMesh* instance = Core::GetNavigationMesh();
@@ -102,6 +105,8 @@ namespace Core
                 }
             }
         }
+
+		goalNode = node;
         return true;
     }
 

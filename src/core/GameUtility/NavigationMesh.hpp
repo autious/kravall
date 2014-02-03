@@ -153,9 +153,10 @@ namespace Core
             \param point InOut parameter, will be changed to the closest point inside the navmesh.
             \param origin The start point from where the nearest point will be found.
             \param node The index of the node that origin is inside of.
+			\param goalNode The index of the node that the origin is residing in. Only eligable if return val is true and will otherwise be set to -1.
             \return True if a new closest point is found. False if origin is not inside the node pointer to by the parameter node or if a closer point was not found.
         */
-        bool GetClosestPointInsideMesh( glm::vec3& point, const glm::vec3& origin, int node ); 
+        bool GetClosestPointInsideMesh( glm::vec3& point, const glm::vec3& origin, int node, int& goalNode ); 
 
         /*!
             Function for checking if a point is on the navigation mesh.

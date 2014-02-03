@@ -142,8 +142,8 @@ void Core::PoliceGoalSystem::Update( float delta )
 		Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>(*it);
 		Core::FlowfieldComponent* ffc = WGETC<Core::FlowfieldComponent>(*it);
 		
-		//if( mvmc->NavMeshGoalNodeIndex < 0 ) // NOCOMMIT
-		//	continue;
+		if( mvmc->NavMeshGoalNodeIndex < 0 )
+				continue;
 
 		glm::vec3 position = glm::vec3( wpc->position[0], 0.0f, wpc->position[2] );
 		glm::vec3 target = glm::vec3( mvmc->goal[0], 0.0f, mvmc->goal[1] );
@@ -158,7 +158,6 @@ void Core::PoliceGoalSystem::Update( float delta )
 			{
 				glm::vec3 direction = glm::normalize( target - position );
 				MovementComponent::SetDirection( mvmc, direction.x, 0.0f, direction.z );
-								
 			}
 			else
 			{
@@ -167,16 +166,7 @@ void Core::PoliceGoalSystem::Update( float delta )
 		}
 		else
 		{
-			// this should not be fixed here!
-			int tempTargetNode = -1;
-			for( int i = 0; i < instance->nrNodes && tempTargetNode < 0; i++ )
-				if( instance->CheckPointInsideNode( target, i ) )
-					tempTargetNode = i;
-
-			if( tempTargetNode < 0 )
-				continue;
-
-			Core::PathData path = instance->CalculateShortPath( ffc->node, position,  tempTargetNode, target );
+			Core::PathData path = instance->CalculateShortPath( ffc->node, position,  mvmc->NavMeshGoalNodeIndex, target );
 				
 			// project position onto target line...
 			int targetEdge = path.entryEdge;

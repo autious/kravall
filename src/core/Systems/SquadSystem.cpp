@@ -62,10 +62,11 @@ namespace Core
                     if(sqdc->squadMoveInFormation)
                     {
                         glm::vec3 formationPosition = leaderPosition + relativePosition;
+						int goalNode;
 
                         //If the formation position is outside the navigation mesh the formation position should be on
                         //    the point where the line from the leader to the formation position collides with the navmesh.
-                        bool hasMovedFormationPos = navMesh->GetClosestPointInsideMesh(formationPosition, leaderPosition, leader_ffc->node);
+                        bool hasMovedFormationPos = navMesh->GetClosestPointInsideMesh(formationPosition, leaderPosition, leader_ffc->node, goalNode );
                         if(!hasMovedFormationPos)
                         {
                             //If a entity is given a new position he can no longer be a straggler
@@ -74,17 +75,20 @@ namespace Core
                         }
                         mc->goal[0] = formationPosition.x;
                         mc->goal[1] = formationPosition.z;
+						mc->NavMeshGoalNodeIndex = goalNode;
                     }
                     else
                     {
                         glm::vec3 squadTargetPosition = glm::vec3(sqdc->squadGoal[0], sqdc->squadGoal[1], sqdc->squadGoal[2]);  
                         glm::vec3 formationPosition = squadTargetPosition + relativePosition;
+						int goalNode;
 
                         //If the formation position is outside the navigation mesh the formation position should be on
                         //    the point where the line from the target position to the formation position collides with the navmesh.
-                        navMesh->GetClosestPointInsideMesh(formationPosition, squadTargetPosition, sqdc->squadGoalNode);
+                        navMesh->GetClosestPointInsideMesh(formationPosition, squadTargetPosition, sqdc->squadGoalNode, goalNode);
                         mc->goal[0] = formationPosition.x;
                         mc->goal[1] = formationPosition.z;
+						mc->NavMeshGoalNodeIndex = goalNode;
                     }
                 }
             }
