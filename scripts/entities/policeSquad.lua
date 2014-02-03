@@ -27,6 +27,7 @@ return function(asm, posX, posY, posZ, rotation)
             local x_p = x*math.cos(rotation) - z*math.sin(rotation)
             local z_p = x*math.sin(rotation) + z*math.cos(rotation)
 
+
             members[i*3+k] = police(asm, posX + x_p, 0, posZ + z_p, x_p, z_p, groupId)
         end
     end

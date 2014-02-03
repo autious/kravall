@@ -67,7 +67,8 @@ namespace Core
 
             float cosVal = glm::cos(rotation);
             float sinVal = glm::sin(rotation);
-            glm::mat2 rotMat = glm::mat2(cosVal, -sinVal, sinVal, cosVal);
+//            glm::mat2 rotMat = glm::mat2(cosVal, -sinVal, sinVal, cosVal);
+            glm::mat2 rotMat = glm::mat2(1.0f, 0.0f, 0.0f, 1.0f);
 
             //Calculate individual goals depending on formation settings.
             for(std::vector<Entity>::iterator entity_it = squad.begin(); entity_it != squad.end(); ++entity_it)
@@ -94,7 +95,7 @@ namespace Core
                         bool hasMovedFormationPos = navMesh->GetClosestPointInsideMesh(formationPosition, leaderPosition);
                         if(!hasMovedFormationPos)
                         {
-                            //If a entity is given a new position he can no longer be a straggler
+                            //If an entity is given a new position it can no longer be a straggler
                             frmc->isStraggler = glm::distance(formationPosition, WorldPositionComponent::GetVec3(*wpc)) > static_cast<float>(Core::world.m_config.GetDouble("formationStraggleDistance", 0.5));  
                             sqdc->waitForStraggler = !sqdc->waitForStraggler ? frmc->isStraggler : true;                                                    
                         }
@@ -103,12 +104,14 @@ namespace Core
                     }
                     else
                     {
+                        
                         glm::vec3 squadTargetPosition = glm::vec3(sqdc->squadGoal[0], sqdc->squadGoal[1], sqdc->squadGoal[2]);  
                         glm::vec3 formationPosition = squadTargetPosition + relativePosition;
 
                         //If the formation position is outside the navigation mesh the formation position should be on
                         //    the point where the line from the target position to the formation position collides with the navmesh.
                         navMesh->GetClosestPointInsideMesh(formationPosition, squadTargetPosition);
+
                         mc->goal[0] = formationPosition.x;
                         mc->goal[1] = formationPosition.z;
                     }

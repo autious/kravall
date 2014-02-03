@@ -59,7 +59,7 @@ namespace Core
         lasb(L),
         ldb(L),
         lpib(L),
-        lsqdb(L)
+        lsqdb(L),
 		lanb(L)
         {}
             

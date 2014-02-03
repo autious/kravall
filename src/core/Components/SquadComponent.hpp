@@ -43,7 +43,6 @@ namespace Core
 		SquadComponent()
 		{
 			squadID = -1;
-			squadGoalNode = -1;
 
 			squadGoal[0] = 0.0f;
 			squadGoal[1] = 0.0f;
