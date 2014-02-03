@@ -50,6 +50,10 @@ namespace GFX
 		else
 			glTexImage2D(m_textureTarget, 0, m_internalFormat, width, height, 0, m_format, GL_UNSIGNED_BYTE, nullptr);
 
+
+		m_width = width;
+		m_height = height;
+
 		glGetError();
 	}
 

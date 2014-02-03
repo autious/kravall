@@ -1,4 +1,12 @@
 return function( scen )
+
+
+	scen:registerInitCallback( function()
+		core.camera.gameCamera:setView( scen.cameras["hej"].view )
+		local x,y,z = (scen.cameras["hej"].view * core.glm.vec4.new( 0,0,0,1 )):get()
+		print( x .. " " .. y .. " " .. z )
+	end)
+
     local T = {}
 	local entity = require "entities"
 	local rioter = entity.get "rioter"
@@ -52,5 +60,5 @@ return function( scen )
 		T.goal( ent, group1 )
 	end
 	
-	return T;
+	return T
 end

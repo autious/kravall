@@ -1,5 +1,4 @@
-return function(asm,x,y,z,qx,qy,qz,qw,scale,model,material,radius,inputName)
-
+return function(scen,x,y,z,qx,qy,qz,qw,scale,model,material,radius,name)
     local components = {
         {
             type = core.componentType.WorldPositionComponent,
@@ -23,17 +22,16 @@ return function(asm,x,y,z,qx,qy,qz,qw,scale,model,material,radius,inputName)
             data = { rotation = { qx,qy,qz,qw } }
         }
     }
-    
-    if inputName then
-        components[#components + 1] =
+
+    if name then
+        components[ #components + 1 ] =
         {
             type = core.componentType.NameComponent,
-            data = { name = inputName }
+            data = { name = name }
         }
     end
 
     radius = 1
-    print(#components)
     if radius then
         components[#components + 1] = {
             type = core.componentType.BoundingVolumeComponent,
@@ -42,8 +40,7 @@ return function(asm,x,y,z,qx,qy,qz,qw,scale,model,material,radius,inputName)
                     type = core.BoundingVolumeType.SphereBoundingType }
         }
     end
-    print(#components)
 
-    return asm:loadAssembly( components )
+    return scen:loadAssembly( components )
 
 end

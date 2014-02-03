@@ -19,6 +19,15 @@ Core::ComponentGetters Core::AnimationComponentBinding::GetGetters()
         
         return 1;
     };
+
+    getters["queuedAnimationID"] = []( Core::Entity entity, lua_State * L )
+    {
+        AnimationComponent *ac = WGETC<AnimationComponent>( entity );
+
+		lua_pushinteger( L, ac->queuedAnimationID );
+        
+        return 1;
+    };
 	
     getters["currentFrame"] = []( Core::Entity entity, lua_State * L )
     {
@@ -82,6 +91,20 @@ Core::ComponentSetters Core::AnimationComponentBinding::GetSetters()
         else
         {
             luaL_error( L, "Unable to set animationID, given parameter is not number value" );
+        }
+    };
+
+    setters["queuedAnimationID"] = [](Core::Entity entity, lua_State * L, int valueindex )
+    {
+        AnimationComponent *ac = WGETC<AnimationComponent>( entity );
+            
+        if( lua_isnumber( L, valueindex ) )
+        {
+            ac->queuedAnimationID = static_cast<int>(lua_tointeger( L, valueindex ));
+        }  
+        else
+        {
+            luaL_error( L, "Unable to set queuedAnimationID, given parameter is not number value" );
         }
     };
 

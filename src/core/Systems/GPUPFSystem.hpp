@@ -52,7 +52,7 @@ namespace Core
 		GLuint m_inDataBuffer;
 		GLuint m_outDataBuffer;
 
-		const unsigned int MAXIMUM_ENTITIES = 2048;
+		const unsigned int MAXIMUM_ENTITIES = 1280;
 
 		DataIN* m_inData;
 		DataOUT* m_outData;
@@ -60,7 +60,6 @@ namespace Core
 
 		bool m_foundShader;
 		bool m_readBack;
-
 	};
 }
 

@@ -17,6 +17,7 @@
 #include "FBORenderer/FBOPainter.hpp"
 #include "PostProcessing/PostProcessingPainter.hpp"
 #include "GlobalIlluminationRenderer/GIPainter.hpp"
+#include "PostProcessing/BlurPainter.hpp"
 
 #include "TextRenderer/TextManager.hpp"
 #include "DebugRenderer/DebugManager.hpp"
@@ -145,7 +146,7 @@ namespace GFX
 		int GetSkeletonID(const unsigned int& meshID);
 		int BindSkeletonToMesh(const unsigned int& meshID, const int& skeletonID);
 		int AddAnimationToSkeleton(const int& skeletonID, glm::mat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame);
-		int GetAnimationInfo(const int& skeletonID, const int& animationID, unsigned int& out_frameCount, unsigned int& out_bonesPerFrame);
+		int GetAnimationInfo(const int& skeletonID, const int& animationID, unsigned int& out_frameCount, unsigned int& out_bonesPerFrame, unsigned int& out_animationOffset);
 
         /*!
         Sets the font used for rendering SubSystem statistics.
@@ -211,6 +212,7 @@ namespace GFX
         OverlayPainter* m_overlayPainter;
 		PostProcessingPainter* m_postProcessingPainter;
 		GIPainter* m_GIPainter;
+		BlurPainter* m_blurPainter;
 
 		void SubSystemTimeRender();
         std::vector<std::pair<const char*, std::chrono::microseconds>> m_subsystemTimes;

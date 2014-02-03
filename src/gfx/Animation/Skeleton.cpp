@@ -24,7 +24,14 @@ int Skeleton::AddAnimation(glm::mat4x4* frames, const unsigned int& numFrames, c
 	if (numFrames > 0 && numBonesPerFrame > 0 && m_numFrames < MAX_FRAMES)
 	{
 		AnimationInfo info;
-		info.offset = m_animations.size();
+		info.offset = 0;
+
+		// Loop through all animations currently bound to this skeleton to find the frame offset
+		for (unsigned int i = 0; i < m_numAnimations; i++)
+		{
+			info.offset = m_animationInfo[i].numFrames * m_animationInfo[i].numBonesPerFrame + m_animationInfo[i].offset;
+		}
+
 		info.numFrames = numFrames;
 		info.numBonesPerFrame = numBonesPerFrame;
 
@@ -45,21 +52,23 @@ int Skeleton::AddAnimation(glm::mat4x4* frames, const unsigned int& numFrames, c
 	}
 }
 
-int Skeleton::GetInfo(const int& animationID, unsigned int& out_frameCount, unsigned int& out_bonesPerFrame)
+int Skeleton::GetInfo(const int& animationID, unsigned int& out_frameCount, unsigned int& out_bonesPerFrame, unsigned int& out_animationOffset)
 {
 	if (animationID >= 0 && animationID < m_animationInfo.size())
 	{
 		out_frameCount = m_animationInfo[animationID].numFrames;
 		out_bonesPerFrame = m_animationInfo[animationID].numBonesPerFrame;
+		out_animationOffset = m_animationInfo[animationID].offset;
+		
 		return GFX_SUCCESS;
 	}
 	else
 		return GFX_INVALID_ANIMATION;
 }
 
-void Skeleton::BindBuffers()
+void Skeleton::BindBuffersData()
 {
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_animationBuffer);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 6, m_animationBuffer);
 
 	glm::mat4x4* pData = (glm::mat4x4*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, MAX_FRAMES * sizeof(glm::mat4x4), 
 		GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
@@ -67,4 +76,10 @@ void Skeleton::BindBuffers()
 	memcpy(pData, m_animations.data(), m_animations.size() * sizeof(glm::mat4x4));
 
 	glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+
+}
+
+void Skeleton::BindBuffers()
+{
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 6, m_animationBuffer);
 }

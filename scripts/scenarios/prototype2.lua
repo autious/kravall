@@ -54,7 +54,7 @@ core.system.groups.setGroupGoal(gTwo, 70, 0, 40)
 
 
 
-for i = 0, 1023 do
+for i = 0, 100 do
 	local color = {1, 1, 1 }
     asm:loadAssembly( 
     {

@@ -119,5 +119,5 @@ void main()
         occlusion_sh2 += attenuation * sh2_weight * vec4(center_to_sample_normalized , 1);
 	}
 
-	resultColor = (1 * occlusion_sh2) * 0.5f + 0.5f;
+	resultColor = vec4((1 * occlusion_sh2).b * 0.5f + 0.5f, 0, 0, 1);
 }

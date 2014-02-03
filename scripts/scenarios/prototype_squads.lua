@@ -86,7 +86,7 @@ local squad = ent.get "policeSquad"
 local building = ent.get "building"
 
 
-local squadOne = squad(scen, -5, 0, 0, math.pi/3);
+local squadOne = squad(scen, -5, 0, 0, math.pi/2);
 --local squadTwo = squad(scen, -5, 0, -10, math.pi/2);
 --core.system.groups.setGroupGoal(policeGroup, -43, 0, 4)
    

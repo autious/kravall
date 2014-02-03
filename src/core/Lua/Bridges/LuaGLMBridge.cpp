@@ -409,6 +409,17 @@ extern "C"
         return 1;
     }
 
+    static int LuaVec4xyz( lua_State *L )
+    {
+        glm::vec4 * vec4_first = luau_checkglmvec4( L, 1 );
+        
+        glm::vec3 * vec3_ret = Core::LuaUNewGLMVec3( L );
+
+        *vec3_ret = glm::vec3( (*vec4_first)[0], (*vec4_first)[1], (*vec4_first)[2] );
+
+        return 1;
+    }
+
     static int LuaMat4Newindex( lua_State * L )
     {
         return luaL_error( L, "Read only" );
@@ -946,6 +957,7 @@ namespace Core
                     luau_setfunction( L, "add", LuaVec4Add );
                     luau_setfunction( L, "get", LuaVec4Get );
                     luau_setfunction( L, "multiply", LuaVec4Multiply );
+                    luau_setfunction( L, "xyz", LuaVec4xyz );
 
                     luaL_newmetatable( L, GLMVEC4_META_TYPE );
                         lua_pushvalue( L, vec4_table );

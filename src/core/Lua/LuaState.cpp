@@ -33,6 +33,7 @@
 #include <Lua/Bridges/LuaDrawBridge.hpp>
 #include <Lua/Bridges/LuaPickingBridge.hpp>
 #include <Lua/Bridges/LuaSquadBridge.hpp>
+#include <Lua/Bridges/LuaAnimationBridge.hpp>
 
 namespace Core
 {
@@ -59,6 +60,7 @@ namespace Core
         ldb(L),
         lpib(L),
         lsqdb(L)
+		lanb(L)
         {}
             
         LuaBitmask lb;
@@ -81,6 +83,7 @@ namespace Core
         LuaDrawBridge ldb;
         LuaPickingBridge lpib;
         LuaSquadBridge lsqdb;
+		LuaAnimationBridge lanb;
     };
 }
 
