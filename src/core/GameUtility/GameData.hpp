@@ -20,6 +20,9 @@ namespace Core
 	*/
 	struct MovementData
 	{
+		/*!
+			These values is the default ones. Use lua to change them.
+		*/
 		MovementData()
 		{
 			speedToDesire = 5.8f;
@@ -48,6 +51,11 @@ namespace Core
 			Will return the MovementData for the respective state.
 		*/
 		static const MovementData& GetMovementDataWithState( MovementState state );
+
+		/*!
+			Will set the MovementData for the respective state. Should not be used carelessly form C.
+		*/
+		static void SetMovementDataForState( MovementState state, float speedToDesire, float acceleration, float deceleration );
 
 	private:
 
