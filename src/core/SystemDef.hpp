@@ -48,7 +48,7 @@ namespace Core
 	class PoliceGoalSystem;
 	
 
-    typedef SystemHandlerTemplate<LightSystem, PoliceGoalSystem, FlowfieldPositioningSystem, NavMeshCollisionSystem, 
+    typedef SystemHandlerTemplate<LightSystem, FlowfieldPositioningSystem, PoliceGoalSystem, NavMeshCollisionSystem, 
 	CollisionSystem2D, GoalSystem, PickingSystem, TargetingSystem, AIDebugSystem, FlowfieldSystem, /*FieldReactionSystem,*/ GPUPFSystem,
 		MovementSystem, NameSystem, GroupDataSystem, AreaSystem, NavMeshBlockingSystem, AnimationSystem, SquadSystem, RenderingSystem> SystemHandler;
 

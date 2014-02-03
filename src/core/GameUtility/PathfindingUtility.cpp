@@ -18,14 +18,16 @@ namespace Core
 
 	bool CheckLineWithCornerCheck( glm::vec3 start, glm::vec3 goal, float radius, Core::NavigationMesh* instance, int startNode )
 	{
-		float totalDistance = 0;
+		float hitDistance = 0;
 		float distanceToTarget = glm::distance( start, goal );
 		int nextNode = startNode;
 		int entryEdge = -1;
-		while( totalDistance <= distanceToTarget )
+		while( hitDistance <= distanceToTarget && nextNode >= 0 )
 		{
 			Core::NavigationMesh::Node* current = &instance->nodes[ nextNode ];
 			int nrCorners =  current->corners[3].length < 0 ? 3 : 4;
+
+			nextNode = -1;
 
 			for( int i = 0; i < nrCorners; i++ )
 			{		
@@ -59,10 +61,13 @@ namespace Core
 				// ray is inside the sphere, ignore...
 				// sphere is behind the ray and ray is not inside it, ignore...
 				// the sphere is too far from the line, ignore...
-				if( !(squareLength < radius * radius || projectedDistanceToSphere < 0 || squareLength - projectedDistanceToSphere * projectedDistanceToSphere > radius * radius) ) 
+				if( glm::dot( goal - glm::vec3( current->points[ii], 0.0f, current->points[ii+1] ), goal - glm::vec3( current->points[ii], 0.0f, current->points[ii+1] ) ) > radius * radius )
 				{
-					float sphereIntersectionDelta = sqrt( radius * radius - (squareLength - projectedDistanceToSphere * projectedDistanceToSphere) );	
-					t = projectedDistanceToSphere - sphereIntersectionDelta;
+					if( !(squareLength < radius * radius || projectedDistanceToSphere < 0 || squareLength - projectedDistanceToSphere * projectedDistanceToSphere > radius * radius) ) 
+					{
+						float sphereIntersectionDelta = sqrt( radius * radius - (squareLength - projectedDistanceToSphere * projectedDistanceToSphere) );	
+						t = projectedDistanceToSphere - sphereIntersectionDelta;
+					}
 				}
 
 				if( alongLine > 0 && alongLine < current->corners[i].length )
@@ -73,18 +78,19 @@ namespace Core
 						t = line_t;
 				}
 
-				if( t > 0.001f && t != std::numeric_limits<float>::max() )
+				if( t > 0.001f && t != std::numeric_limits<float>::max() && t > hitDistance + 0.001 )
 				{
 					nextNode = current->corners[i].linksTo;
 					entryEdge = current->corners[i].linksToEdge;
-					totalDistance += t;
+					hitDistance = t;
 				}
-				else 
-					break;
 			}
 		}
 
-		if( totalDistance < distanceToTarget )
+		GFX::Debug::DrawLine( start, start + glm::normalize( goal - start ) * hitDistance, GFXColor( 1, 1, 0 , 1 ), false );
+
+
+		if( hitDistance < distanceToTarget )
 			return true;
 		return false;
 	}

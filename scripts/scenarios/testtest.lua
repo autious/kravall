@@ -93,7 +93,7 @@ local policeGroup = core.system.groups.createGroup();
 local centerPoint = { -4, 0, -21}
 for i = -4, 3 do
 	j= 0
-		police(scen, i * dist + centerPoint[1], 0 + centerPoint[2], j * dist + centerPoint[3], policeGroup)
+		--police(scen, i * dist + centerPoint[1], 0 + centerPoint[2], j * dist + centerPoint[3], policeGroup)
 end
    
 local policeGroupTwo = core.system.groups.createGroup();
@@ -103,6 +103,8 @@ for i = -4, 3 do
 		police(scen, j * dist + centerPoint[1], 0 + centerPoint[2], i * dist + centerPoint[3], policeGroupTwo)
 	--end
 end
+
+--police(scen, centerPoint[1], 0, centerPoint[3], policeGroupTwo)
 
 --police(scen, 1, 0, -22);
 --police(scen, 1, 0, -21);

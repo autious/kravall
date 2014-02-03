@@ -142,15 +142,17 @@ void Core::PoliceGoalSystem::Update( float delta )
 		Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>(*it);
 		Core::FlowfieldComponent* ffc = WGETC<Core::FlowfieldComponent>(*it);
 		
-		if( mvmc->NavMeshGoalNodeIndex < 0 )
-				continue;
+		if( mvmc->NavMeshGoalNodeIndex < 0 ) // NOCOMMIT should be here
+			continue;
 
 		glm::vec3 position = glm::vec3( wpc->position[0], 0.0f, wpc->position[2] );
 		glm::vec3 target = glm::vec3( mvmc->goal[0], 0.0f, mvmc->goal[1] );
 
+		target = glm::vec3( instance->flowfields[ groupId ].goal[0], 0.0f, instance->flowfields[ groupId ].goal[1] ); // NOCOMMIT
+
 		bool move = true;
 
-		if( PathFinder::CheckLineVsNavMesh( position, target, 3.0f, ffc->node ) ) 
+		if( !PathFinder::CheckLineVsNavMesh( position, target, 3.0f, ffc->node ) ) 
 		{
 			glm::vec2 deltaVector = glm::vec2(target.x, target.z ) - glm::vec2( wpc->position[0], wpc->position[2] );
 			float dot = glm::dot( deltaVector, deltaVector );
