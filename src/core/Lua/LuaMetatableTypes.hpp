@@ -1,6 +1,7 @@
 #ifndef SRC_CORE_LUA_LUAMETATABLETYPES_H
 #define SRC_CORE_LUA_LUAMETATABLETYPES_H
 
+
 #define COMPONENT_META_TYPE "metatype_core_component"
 #define ENTITY_META_TYPE "metatype_core_entity"
 #define BITMASK_META_TYPE "metatype_bitmask"
@@ -12,6 +13,7 @@
 #define GLMQUAT_META_TYPE "metatype_glm_quat"
 #define CAMERA_META_TYPE "metatype_camera"
 #define UNIT_TYPE_OBJECT_TYPE_META "unit_type_object_type_meta"
+#define SQUAD_FORMATION_META_TYPE "metatype_squad_formation"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
@@ -26,6 +28,7 @@
 #include <ComponentFramework/SystemHandlerTemplate.hpp>
 #include <ComponentFramework/SystemTypes.hpp>
 #include <Components/UnitTypeComponent.hpp>
+#include <Components/SquadComponent.hpp>
 #include <Camera/Camera.hpp>
 
 struct LuaEntity
@@ -49,6 +52,7 @@ inline LuaEntity* luau_checkentity( lua_State* state, int pos ) { return static_
 inline LuaAspect* luau_checkaspect( lua_State* state, int pos ) { return static_cast<LuaAspect*>(luaL_checkudata( state, pos, ASPECT_META_TYPE) ) ; }
 inline Core::ComponentType luau_checkcomponent( lua_State * state, int pos ) { return *static_cast<Core::ComponentType*>(luaL_checkudata( state, pos, COMPONENT_META_TYPE) ); }
 inline Core::UnitType* luau_checkunittype( lua_State * state, int pos) { return static_cast<Core::UnitType*>(luaL_checkudata(state, pos, UNIT_TYPE_OBJECT_TYPE_META) ); }
+inline Core::SquadFormation* luau_checksquadformation( lua_State * state, int pos) { return static_cast<Core::SquadFormation*>(luaL_checkudata(state, pos, SQUAD_FORMATION_META_TYPE) ); }
 
 namespace Core
 {
@@ -56,6 +60,8 @@ namespace Core
     LuaEntity* LuaUNewLightEntity( lua_State * L );
 
     LuaAspect* LuaUNewAspect( lua_State * L );
+
+    Core::SquadFormation* LuaUNewSquadFormation(lua_State * L);
 
     uint64_t* LuaUNewBitmask( lua_State * L );
 

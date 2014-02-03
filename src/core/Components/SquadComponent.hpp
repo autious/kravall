@@ -25,10 +25,9 @@ namespace Core
         Core::SquadFormation squadFormation = Core::SquadFormation::NO_FORMATION;
 
         int squadID = -1;
-        int squadGoalNode = -1;
         float squadGoal[3] = {0.0f, 0.0f, 0.0f};
-        float squadForward[2] = {1.0f, 0.0f};
-        float squadTargetForward[2] = {1.0f, 0.0f};
+        float squadForward[2] = {0.0f, -1.0f};
+        float squadTargetForward[2] = {0.0f, -1.0f};
         Core::Entity squadLeader = INVALID_ENTITY;
         bool squadMoveInFormation = false;
         bool waitForStraggler = false;

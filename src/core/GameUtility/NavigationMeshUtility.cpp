@@ -33,9 +33,10 @@ namespace Core
 	}
 
 
-    bool NavigationMesh::GetClosestPointInsideMesh(glm::vec3& point, const glm::vec3& origin, int node)
+    bool NavigationMesh::GetClosestPointInsideMesh(glm::vec3& point, const glm::vec3& origin)
     {
-        if(!CheckPointInsideNode(origin, node))        
+        int node;
+        if(!GetNodeForPoint(node, origin))
             return false;
         
 
@@ -133,6 +134,16 @@ namespace Core
 		// point is inside all lines
 		return true;
 	}
+
+    bool NavigationMesh::GetNodeForPoint(int& node, const glm::vec3& point)
+    {
+        for(node=0; node < nrNodes; ++node)
+        {
+            if(CheckPointInsideNode(point, node))
+                return true;
+        }
+        return false;
+    }
 
     bool NavigationMesh::CheckPointInsideNavigationMesh(const glm::vec3& point )
     {

@@ -12,17 +12,43 @@ namespace Core
         
     }
 
+    void SquadSystem::SetSquadGoal(int squadID, glm::vec3 target)
+    {
+        for(std::vector<Entity>::iterator squad_it = m_entities.begin(); squad_it != m_entities.end(); ++squad_it)        
+        {
+            Core::SquadComponent* sqdc = WGETC<Core::SquadComponent>(*squad_it);
+            if(sqdc->squadID == squadID)
+            {
+                sqdc->squadGoal[0] = target.x;
+                sqdc->squadGoal[1] = target.z;
+            }
+        }
+    }
+
     void SquadSystem::Update(float delta)
     {
         for(std::vector<Entity>::iterator squad_it = m_entities.begin(); squad_it != m_entities.end(); ++squad_it)        
         {
             Core::SquadComponent* sqdc = WGETC<Core::SquadComponent>(*squad_it);
+            std::vector<Core::Entity> squad = Core::world.m_systemHandler.GetSystem<Core::GroupDataSystem>()->GetMembersInGroup(sqdc->squadID);
+
+            if(sqdc->squadLeader == INVALID_ENTITY)
+            {
+                if(squad.size() > 0)
+                {
+                    sqdc->squadLeader = squad[0];
+                }
+                else
+                {
+                    //The group is empty
+                    continue;
+                }
+            }
+
             Core::WorldPositionComponent* leader_wpc = WGETC<Core::WorldPositionComponent>(sqdc->squadLeader);                
-            Core::FlowfieldComponent* leader_ffc = WGETC<Core::FlowfieldComponent>(sqdc->squadLeader);
 
             sqdc->waitForStraggler = true;
 
-            std::vector<Core::Entity> squad = Core::world.m_systemHandler.GetSystem<Core::GroupDataSystem>()->GetMembersInGroup(sqdc->squadID);
 
             glm::vec3 leaderPosition = Core::WorldPositionComponent::GetVec3(*leader_wpc);
 
@@ -65,7 +91,7 @@ namespace Core
 
                         //If the formation position is outside the navigation mesh the formation position should be on
                         //    the point where the line from the leader to the formation position collides with the navmesh.
-                        bool hasMovedFormationPos = navMesh->GetClosestPointInsideMesh(formationPosition, leaderPosition, leader_ffc->node);
+                        bool hasMovedFormationPos = navMesh->GetClosestPointInsideMesh(formationPosition, leaderPosition);
                         if(!hasMovedFormationPos)
                         {
                             //If a entity is given a new position he can no longer be a straggler
@@ -82,7 +108,7 @@ namespace Core
 
                         //If the formation position is outside the navigation mesh the formation position should be on
                         //    the point where the line from the target position to the formation position collides with the navmesh.
-                        navMesh->GetClosestPointInsideMesh(formationPosition, squadTargetPosition, sqdc->squadGoalNode);
+                        navMesh->GetClosestPointInsideMesh(formationPosition, squadTargetPosition);
                         mc->goal[0] = formationPosition.x;
                         mc->goal[1] = formationPosition.z;
                     }
