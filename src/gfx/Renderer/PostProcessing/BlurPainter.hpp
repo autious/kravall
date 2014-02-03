@@ -1,5 +1,5 @@
-#ifndef SRC_GFX_GLOBAL_ILLUMINATION_RENDERER_GI_PAINTER_HPP
-#define SRC_GFX_GLOBAL_ILLUMINATION_RENDERER_GI_PAINTER_HPP
+#ifndef SRC_GFX_BLUR_PAINTER_HPP
+#define SRC_GFX_BLUR_PAINTER_HPP
 
 #include "../BasePainter.hpp"
 #include <Shaders/ShaderManager.hpp>
@@ -11,12 +11,12 @@
 
 namespace GFX
 {
-	class GIPainter : public BasePainter
+	class BlurPainter : public BasePainter
 	{
 	public:
-		GIPainter(ShaderManager* shaderManager, UniformBufferManager* uniformBufferManager, RenderJobManager* renderJobManager);
+		BlurPainter(ShaderManager* shaderManager, UniformBufferManager* uniformBufferManager);
 
-		~GIPainter();
+		~BlurPainter();
 
 		/*!
 		Initialization function which sets the dummyVAO and FBO for later use in the painter.
@@ -24,29 +24,20 @@ namespace GFX
 		\param FBO ID of FBO used for rendertargets
 		\param dummyVAO ID of an empty VAO used for screenspace rendering
 		*/
-		void Initialize(GLuint FBO, GLuint dummyVAO, int screenWidth, int screenHeight);
+		void Initialize(GLuint FBO, GLuint dummyVAO);
 
 		/*!
-		Main rendering loop
+		Gaussian blur pass
 		*/
-		void Render(const double& delta, FBOTexture* normalDepth, FBOTexture* diffuse, glm::mat4 viewMatrix, glm::mat4 projMatrix);
+		void GaussianBlur(FBOTexture* texture);
 
-		void Resize(int width, int height);
 
-		FBOTexture* m_SSDOTexture;
 	private:
 		void InitFBO();
 
-		void BindSSDOFBO();
+		FBOTexture* m_intermediateTexture;
 
-		void RenderSSDO(FBOTexture* normalDepth, FBOTexture* diffuse, glm::mat4 invViewProj, glm::mat4 viewMatrix, glm::mat4 projMatrix);
-
-		RenderJobManager* m_renderJobManager;
-
-		int m_screenWidth;
-		int m_screenHeight;
-
-		GLuint m_SSDOFBO;
+		GLuint m_blurFBO;
 
 		GLuint m_seedTexture;
 
