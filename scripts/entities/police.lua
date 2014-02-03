@@ -33,7 +33,7 @@ return function(asm, posX, posY, posZ, groupID)
 			},
 			{
 				type = core.componentType.AttributeComponent,
-				data = { health = 0, stamina = 0, morale = 2.0, 
+				data = { health = 100, stamina = 0, morale = 2.0, 
 					   stancePolice = core.PoliceStance.Aggressive,
 					   statePolice = core.PoliceState.Attacking, 
 					   defense = 0, mobility = 0, squadID = groupID },
