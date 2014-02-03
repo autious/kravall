@@ -301,7 +301,8 @@ namespace Core
                 }
             }
             delete[] gnome->bones;
-            //delete[] gnome->animations;            
+
+			delete[] gnome->animations;
 
             delete gnome;
             return modelData;
@@ -392,7 +393,7 @@ namespace Core
 			/* Animations */
 			if (header.numberOfBones)
 			{
-				/* Bones */
+				/* Bones in bgnome */
 				for (int k = 0; k < header.numberOfBones; k++)
 				{
 					m_file.read((char*)&gnome->bones[k], sizeof(int) * 3 + sizeof(float) * 16 );
@@ -446,8 +447,15 @@ namespace Core
 					{
 						gnome->numberOfAnimations = 0;
 						gnome->animations = new Core::GnomeLoader::Animation[gnome->numberOfAnimations];
-						std::cout << "Binary Animation GNOME File is missing for " << GetFileNameAndPath(fileName, ".") << ".bagnome, proceeds without animation..." << std::endl;
+						LOG_FATAL << fileName << " is not a .BGNOME, of a obsolete version of .BGNOME or corrupted." << std::endl;
+						std::cout << "Binary Animation GNOME File do not match .bgnome, proceeds without animation..." << std::endl;
 					}
+				}
+				else
+				{
+					gnome->numberOfAnimations = 0;
+					gnome->animations = new Core::GnomeLoader::Animation[gnome->numberOfAnimations];
+					std::cout << "Binary Animation GNOME File is missing for " << GetFileNameAndPath(fileName, ".") << ".bagnome, proceeds without animation..." << std::endl;
 				}
 			}
 			else
