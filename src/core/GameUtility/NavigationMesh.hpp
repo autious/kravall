@@ -72,6 +72,7 @@ namespace Core
 				if true the respective edge cannot be traversed in the navmesh.
 			*/
 			bool blocked[4];
+			float heat[4]; // TEMP, merge this one to the blocking variable // NOCOMMIT
 
 			/*!
 				Metadata for each node. Each line is n to n + 1, with n to 0 for the last index.

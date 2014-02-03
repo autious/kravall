@@ -172,6 +172,7 @@ std::fstream& operator>> ( std::fstream& ff, Core::NavigationMesh::Node& node )
 	{
 		node.corners[i].cornerConnectsToNode = NAVMESH_NO_CONNECTING_CORNERS;
 		node.blocked[i] = false;
+		node.heat[i] = 0.0f;
 
 		ff >> node.corners[i].linksTo;
 

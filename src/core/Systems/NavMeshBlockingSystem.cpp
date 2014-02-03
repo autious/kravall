@@ -17,7 +17,13 @@ void Core::NavMeshBlockingSystem::Update( float delta )
 	Core::NavigationMesh* instance = Core::GetNavigationMesh();
 	if( instance )
 	{
+		for( int i = 0; i < instance->nrNodes; i++ )
+		{
 
+			for( int p = 0; p < 4; p++ )
+			{
+			}
+		}
 
 
 
