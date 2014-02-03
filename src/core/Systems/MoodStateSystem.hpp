@@ -12,7 +12,7 @@ namespace Core
 		virtual void Update(float delta) override;
 
 
-		virtual const char* GetHumanName(){ return "RioterStateSystem"; }
+		virtual const char* GetHumanName(){ return "MoodStateSystem"; }
 
 	private:
 		void UpdatePolice(float dt, Entity* it);

@@ -101,7 +101,6 @@ namespace Core
 
 			case PoliceState::PS_Routing:
 			{
-				std::cout << "RUNNING LIKE A BITCH" << std::endl;
 				switch (stance)
 				{
 					//case PoliceStance::Passive:
