@@ -142,8 +142,8 @@ void Core::PoliceGoalSystem::Update( float delta )
 		Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>(*it);
 		Core::FlowfieldComponent* ffc = WGETC<Core::FlowfieldComponent>(*it);
 		
-		if( mvmc->NavMeshGoalNodeIndex < 0 ) // NOCOMMIT should be here
-			continue;
+		//if( mvmc->NavMeshGoalNodeIndex < 0 ) // NOCOMMIT should be here
+		//	continue;
 
 		glm::vec3 position = glm::vec3( wpc->position[0], 0.0f, wpc->position[2] );
 		glm::vec3 target = glm::vec3( mvmc->goal[0], 0.0f, mvmc->goal[1] );
@@ -199,14 +199,13 @@ void Core::PoliceGoalSystem::Update( float delta )
 
 			glm::vec3 flowfieldDirection = glm::normalize( targetPosition - position );
 			MovementComponent::SetDirection( mvmc, flowfieldDirection.x, 0, flowfieldDirection.z );
-
 		}
 
 		if( move )
 		{
 		
 			// set speed according to state...
-			mvmc->desiredSpeed = GameData::GetWalkingSpeed().speedToDesire;
+			mvmc->desiredSpeed = Core::GameData::GetMovementDataWithState( mvmc->state ).speedToDesire; 
 
 		}
 		else

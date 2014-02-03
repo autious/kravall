@@ -115,7 +115,7 @@ namespace Core
                 else
                 {
                     //TODO: If the unit had another desiredSpeed than walking it needs to be taken into account here                        
-                    mc->desiredSpeed = Core::GameData::GetWalkingSpeed().speedToDesire;
+                    mc->desiredSpeed = Core::GameData::GetMovementDataWithState( mc->state ).speedToDesire; 
                 }
             }
         }

@@ -7,6 +7,10 @@ local T = {}
 
 local selectedSquad = nil
 
+core.movementData.setMovementMetaData( core.movementData.Idle, 5.8, 17, 17 )
+core.movementData.setMovementMetaData( core.movementData.Walking, 5.8, 17, 17 )
+core.movementData.setMovementMetaData( core.movementData.Sprinting, 8.8, 17, 14 )
+
 function T:new(o)
     o = o or {}
 

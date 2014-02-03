@@ -14,6 +14,17 @@ Core::NavMeshBlockingSystem::NavMeshBlockingSystem()
 
 void Core::NavMeshBlockingSystem::Update( float delta )
 {
+	Core::NavigationMesh* instance = Core::GetNavigationMesh();
+	if( instance )
+	{
+
+
+
+
+
+	}
+
+
 	return; // implementation incomplete
 
 	Core::NavigationMesh* instance = Core::GetNavigationMesh();
