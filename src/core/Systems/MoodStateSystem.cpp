@@ -1,4 +1,4 @@
-#include "RioterStateSystem.hpp"
+#include "MoodStateSystem.hpp"
 #include <gfx/GFXInterface.hpp>
 #include <utility/Colors.hpp>
 #include <World.hpp>
@@ -6,10 +6,10 @@
 namespace Core
 {
 
-	RioterStateSystem::RioterStateSystem() :BaseSystem(EntityHandler::GenerateAspect<AttributeComponent, UnitTypeComponent>(), 0ULL)
+	MoodStateSystem::MoodStateSystem() :BaseSystem(EntityHandler::GenerateAspect<AttributeComponent, UnitTypeComponent>(), 0ULL)
 	{}
 
-	void RioterStateSystem::Update(float delta)
+	void MoodStateSystem::Update(float delta)
 	{
 		for (std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); it++)
 		{

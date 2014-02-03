@@ -1,14 +1,14 @@
-#ifndef SRC_CORE_SYSTEMS_RIOTER_STATE_SYSTEM_HPP
-#define SRC_CORE_SYSTEMS_RIOTER_STATE_SYSTEM_HPP
+#ifndef SRC_CORE_SYSTEMS_MOOD_STATE_SYSTEM_HPP
+#define SRC_CORE_SYSTEMS_MOOD_STATE_SYSTEM_HPP
 
 #include <ComponentFramework/BaseSystem.hpp>
 
 namespace Core
 {
-	class RioterStateSystem : public BaseSystem
+	class MoodStateSystem : public BaseSystem
 	{
 	public:
-		RioterStateSystem();
+		MoodStateSystem();
 		virtual void Update(float delta) override;
 
 
