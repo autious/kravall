@@ -29,13 +29,14 @@ namespace Core
 				//State change factors, based upon what is found in GDD
 				//Upshift and downshift
 				//ranges from 0 to 400
-				float stateChangeFactor = morale * (rage + pressure);
+				float stateChangeFactor = morale * (rage + pressure) / 4.0f;
 				//ranges from 0 to 400
-				float routFactor = morale * (health + stamina);
+				float routFactor = morale * (health + stamina) / 4.0f;
 
 				//Normal, Agitated, Attacking, Retreating, Civilian
 
 				//State chain
+				//Downshift/upshift only or freeform state changes?
 				//Civilian -> Normal -> Agitated -> Attacking
 				//All states can go into a retreating state
 
@@ -51,10 +52,6 @@ namespace Core
 								{
 									atc->rioter.stance = RioterStance::Retreating;
 								}
-								else if (stateChangeFactor > 50) //Should be set to attacking
-								{
-									atc->rioter.stance = RioterStance::Attacking;
-								}
 								else if (stateChangeFactor > 30) //Should be set to agitated
 								{
 									atc->rioter.stance = RioterStance::Agitated;
@@ -62,7 +59,17 @@ namespace Core
 							}
 							break;
 
-						case RioterAlignment::Pacifist:
+							case RioterAlignment::Pacifist:
+							{
+								if (routFactor < 20) 	//should be set to routing
+								{
+									atc->rioter.stance = RioterStance::Retreating;
+								}
+								else if (stateChangeFactor > 50) //Should be set to agitated
+								{
+									atc->rioter.stance = RioterStance::Agitated;
+								}
+							}
 							break;
 						}
 
@@ -71,58 +78,128 @@ namespace Core
 					break;
 
 					case RioterStance::Agitated:
-
+					{
 						switch (alignment)
 						{
 							case RioterAlignment::Anarchist:
-								break;
+							{
+								if (routFactor < 30) 	//should be set to routing
+								{
+									atc->rioter.stance = RioterStance::Retreating;
+								}
+								else if (stateChangeFactor > 50) //Should be set to attacking
+								{
+									atc->rioter.stance = RioterStance::Attacking;
+								}
+								else if (stateChangeFactor < 20) //Should be set to normal
+								{
+									atc->rioter.stance = RioterStance::Normal;
+								}
+							}
+							break;
 
 							case RioterAlignment::Pacifist:
-								break;
+							{
+								if (routFactor < 20) 	//should be set to routing
+								{
+									atc->rioter.stance = RioterStance::Retreating;
+								}
+								else if (stateChangeFactor > 50) //Should be set to attacking
+								{
+									atc->rioter.stance = RioterStance::Attacking;
+								}
+								else if (stateChangeFactor < 20) //Should be set to normal
+								{
+									atc->rioter.stance = RioterStance::Normal;
+								}
+							}
+							break;
 						}
 						GFX::Debug::DrawSphere(WorldPositionComponent::GetVec3(*WGETC<WorldPositionComponent>(*it)), 1, Colors::Yellow, false);
+					}
 					break;
 
 					case RioterStance::Attacking:
-
+					{
 						switch (alignment)
 						{
-						case RioterAlignment::Anarchist:
+							case RioterAlignment::Anarchist:
+							{
+								if (routFactor < 10) 	//should be set to routing
+								{
+									atc->rioter.stance = RioterStance::Retreating;
+								}
+								else if (stateChangeFactor < 50) //Should be set to agitated
+								{
+									atc->rioter.stance = RioterStance::Agitated;
+								}
+							}
 							break;
 
-						case RioterAlignment::Pacifist:
+							case RioterAlignment::Pacifist:
+							{
+								if (routFactor < 10) 	//should be set to routing
+								{
+									atc->rioter.stance = RioterStance::Retreating;
+								}
+								else if (stateChangeFactor < 50) //Should be set to agitated
+								{
+									atc->rioter.stance = RioterStance::Agitated;
+								}
+							}
 							break;
 						}
 
 						GFX::Debug::DrawSphere(WorldPositionComponent::GetVec3(*WGETC<WorldPositionComponent>(*it)), 1, Colors::Red, false);
+					}
 					break;
 
 					case RioterStance::Civilian:
-
+					{
 						switch (alignment)
 						{
-						case RioterAlignment::Anarchist:
+							case RioterAlignment::Anarchist:
+							{
+								if (stateChangeFactor > 10) //Should be set to normal
+								{
+									atc->rioter.stance = RioterStance::Normal;
+								}
+							}
 							break;
 
-						case RioterAlignment::Pacifist:
+							case RioterAlignment::Pacifist:
+							{
+								if (stateChangeFactor > 10) //Should be set to normal
+								{
+									atc->rioter.stance = RioterStance::Normal;
+								}
+							}
 							break;
 						}
 
 						GFX::Debug::DrawSphere(WorldPositionComponent::GetVec3(*WGETC<WorldPositionComponent>(*it)), 1, Colors::White, false);
-
+					}
 					break;
 
+					//Retreating units should not change state right now
 					case RioterStance::Retreating:
-
+					{
 						switch (alignment)
 						{
-						case RioterAlignment::Anarchist:
+							case RioterAlignment::Anarchist:
+							{
+
+							}
 							break;
 
-						case RioterAlignment::Pacifist:
+							case RioterAlignment::Pacifist:
+							{
+
+							}
 							break;
 						}
 						GFX::Debug::DrawSphere(WorldPositionComponent::GetVec3(*WGETC<WorldPositionComponent>(*it)), 1, Colors::DeepPink, false);
+					}
 					break;
 				}
 
