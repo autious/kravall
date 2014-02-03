@@ -129,20 +129,37 @@ namespace Core
 		/*!
 			Returns true if point is inside node.
 		*/
-		bool CheckPointInsideNode( glm::vec3 point, int node );
+		bool CheckPointInsideNode( const glm::vec3& point, int node );
+
+        /*!
+            Gets the closest point on the navmesh on the line between origin and point. The origin has to be inside the mesh 
+            \param point InOut parameter, will be changed to the closest point inside the navmesh.
+            \param origin The start point from where the nearest point will be found.
+            \return True if a new closest point is found. False if origin is not inside the mesh or if a closer point was not found.
+        */
+        bool GetClosestPointInsideMesh( glm::vec3& point, const glm::vec3& origin ); 
+
+        /*!
+            Gets the node that the speciefied point is inside of. If multiple nodes contain the point the first one found will be returned.
+            \param node Out parameter, the node that the point is inside of will be returned through this parameter.
+            \param point The point to retrieve the containing node.
+            \returns Returns true if a containing node is found, false otherwise. 
+        */
+        bool GetNodeForPoint(int& node, const glm::vec3& point);
+        
 
         /*!
             Function for checking if a point is on the navigation mesh.
             \param point The point to check if inside the navigation mesh.
             \return Returns true if the given point is inside the navigation mesh, otherwise returns false.    
         */
-        bool CheckPointInsideNavigationMesh( glm::vec3 point );
+        bool CheckPointInsideNavigationMesh( const glm::vec3& point );
 
 		/*!
 			If point is inside a node the flowfield to get to that node will be calculated for the respective group.
 			Returns false if no field is calculated.
 		*/
-		bool CalculateFlowfieldForGroup( glm::vec3 point, int group );
+		bool CalculateFlowfieldForGroup(const glm::vec3& point, int group );
 
 		/*!
 			Uses the GFX debug system to draw the outlines of the navigation mesh.

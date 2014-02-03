@@ -79,11 +79,11 @@ extern "C"
             { 
                 const char * index = lua_tostring( L, 2 );
 
-                if( STREQ( index, "onchar" ) )
+                if( STREQ( index, "onChar" ) )
                 {
                     rawset = true;
                 } 
-                else if( STREQ( index, "onkey" ) )
+                else if( STREQ( index, "onKey" ) )
                 {
                     rawset = true;
                 }
@@ -108,15 +108,15 @@ extern "C"
             { 
                 const char * index = lua_tostring( L, 2 );
 
-                if( STREQ( index, "onbutton" ) )
+                if( STREQ( index, "onButton" ) )
                 {
                     rawset = true;
                 } 
-                else if( STREQ( index, "onposition" ) )
+                else if( STREQ( index, "onPosition" ) )
                 {
                     rawset = true;
                 }
-                else if( STREQ( index, "onscroll" ) )
+                else if( STREQ( index, "onScroll" ) )
                 {
                     rawset = true;
                 }
@@ -161,7 +161,7 @@ namespace Core
         lua_getglobal( m_luaState, "core" );
         lua_getfield( m_luaState, -1, "input" );
         lua_getfield( m_luaState, -1, "keyboard" );
-        lua_getfield( m_luaState, -1, "onkey" );
+        lua_getfield( m_luaState, -1, "onKey" );
         if( !lua_isnil( m_luaState, -1) )
         {
             if( lua_isfunction(m_luaState, -1) )
@@ -194,7 +194,7 @@ namespace Core
         lua_getglobal( m_luaState, "core" );
         lua_getfield( m_luaState, -1, "input" );
         lua_getfield( m_luaState, -1, "keyboard" );
-        lua_getfield( m_luaState, -1, "onchar" );
+        lua_getfield( m_luaState, -1, "onChar" );
         if( lua_isfunction( m_luaState, -1 ) )
         {
             lua_pushvalue( m_luaState, -1 );
@@ -220,7 +220,7 @@ namespace Core
         lua_getglobal( m_luaState, "core" );
         lua_getfield( m_luaState, -1, "input" );
         lua_getfield( m_luaState, -1, "mouse" );
-        lua_getfield( m_luaState, -1, "onbutton" );
+        lua_getfield( m_luaState, -1, "onButton" );
         if( lua_isfunction( m_luaState, -1 ) )
         {
             lua_pushvalue( m_luaState, -1 );
@@ -248,7 +248,7 @@ namespace Core
         lua_getglobal( m_luaState, "core" );
         lua_getfield( m_luaState, -1, "input" );
         lua_getfield( m_luaState, -1, "mouse" );
-        lua_getfield( m_luaState, -1, "onposition" );
+        lua_getfield( m_luaState, -1, "onPosition" );
         if( lua_isfunction( m_luaState, -1 ) )
         {
             lua_pushvalue( m_luaState, -1 );
@@ -274,7 +274,7 @@ namespace Core
         lua_getglobal( m_luaState, "core" );
         lua_getfield( m_luaState, -1, "input" );
         lua_getfield( m_luaState, -1, "mouse" );
-        lua_getfield( m_luaState, -1, "onscroll" );
+        lua_getfield( m_luaState, -1, "onScroll" );
         if( lua_isfunction( m_luaState, -1 ) )
         {
             lua_pushvalue( m_luaState, -1 );
@@ -310,10 +310,10 @@ namespace Core
                 lua_pushstring( L, "keyboard" );
                 lua_newtable(L);
                     lua_pushcfunction(L, LuaIsKeyDown);
-                    lua_setfield(L, -2, "iskeydown");
-                    luau_setfunction(L, "iskeydownonce", LuaIsKeyDownOnce );
+                    lua_setfield(L, -2, "isKeyDown");
+                    luau_setfunction(L, "isKeyDownOnce", LuaIsKeyDownOnce );
                     lua_pushcfunction(L, LuaIsKeyUp);
-                    lua_setfield(L, -2, "iskeyup");
+                    lua_setfield(L, -2, "isKeyUp");
                    
                     lua_newtable( L );
                         PushKeyboardConst( L );
@@ -335,10 +335,10 @@ namespace Core
                 lua_pushstring( L, "mouse" );
                 lua_newtable( L );
                     lua_pushcfunction(L, LuaIsButtonDown);
-                    lua_setfield(L, -2, "isbuttondown");
+                    lua_setfield(L, -2, "isButtonDown");
                     lua_pushcfunction(L, LuaIsButtonUp);
-                    lua_setfield(L, -2, "isbuttonup");
-                    luau_setfunction( L, "isbuttondownonce", LuaIsButtonDownOnce );
+                    lua_setfield(L, -2, "isButtonUp");
+                    luau_setfunction( L, "isButtonDownOnce", LuaIsButtonDownOnce );
                     luau_setfunction( L, "getPosition", LuaGetMousePosition );
                     luau_setfunction( L, "setPosition", LuaSetMousePosition );
                     

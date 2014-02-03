@@ -1,8 +1,12 @@
-local GUI = {  }
-GUI.winWidth, GUI.winHeight = core.config.initScreenWidth, core.config.initScreenHeight
-
 local viewport = require "gui/viewport"
 local window = require "window"
+
+local GUI = { winWidth = core.config.initScreenWidth, winHeight = core.config.initScreenHeight }
+
+window.registerWindowSizeCallback( function( width, height ) 
+    GUI.winWidth, GUI.winHeight = width, height
+end)
+
 
 function GUI:new(o)
     o = o or {}
@@ -15,6 +19,7 @@ function GUI:new(o)
     -- Callback function to move gui components.
     self.resizeCallback = function( width, height )
         for _,v in pairs( o.placers ) do
+            print( "NEW:",  width, " ", height )
             v:constrict( o.components, width, height )
         end
     end

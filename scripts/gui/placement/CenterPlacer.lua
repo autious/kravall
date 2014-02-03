@@ -1,4 +1,4 @@
-local CenterPlacer = {}
+local CenterPlacer = { padding = 10 }
 
 function CenterPlacer:new(o)
     o = o or {}
@@ -11,12 +11,11 @@ end
 
 function CenterPlacer:constrict( components, winWidth, winHeight )
     local tw,th = self:getTotalDim( components )
-    local startx = (winWidth - tw)
-    local starty = (winHeight - th)
+    local startx = winWidth/2
+    local starty = (winHeight - th)/2
     for _,c in pairs( components ) do 
-        print( startx," ", starty )
-        c:setPosition( startx, starty )
-        starty = starty + c.height
+        c:setPosition( startx - c.width/2, starty )
+        starty = starty + c.height + self.padding
     end 
 end
 
@@ -27,7 +26,7 @@ function CenterPlacer:getTotalDim( components )
         if tw < c.width then
             tw = c.width
         end
-        th = th + c.height 
+        th = th + c.height + self.padding
     end
     
     return tw, th

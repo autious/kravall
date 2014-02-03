@@ -57,6 +57,17 @@ Core::LuaAttributeComponentBridge::LuaAttributeComponentBridge( lua_State * L )
 		
 			lua_settable( L, coreTableIndex );
 
+		lua_pushstring(L, "PoliceState");
+		lua_newtable(L); // new table
+		int policeStateTable = lua_gettop(L);
+
+			PushPoliceObjectType(L, Core::PoliceState::PS_Normal, "Normal", policeStanceTable);
+			PushPoliceObjectType(L, Core::PoliceState::PS_Attacking, "Attacking", policeStanceTable);
+			PushPoliceObjectType(L, Core::PoliceState::PS_Fleeing, "Fleeing", policeStanceTable);
+			PushPoliceObjectType(L, Core::PoliceState::PS_Routing, "Routing", policeStanceTable);
+
+			lua_settable(L, coreTableIndex);
+
 
 		lua_pushstring( L, "RioterAlignment" );
         lua_newtable( L ); // new table
@@ -66,6 +77,17 @@ Core::LuaAttributeComponentBridge::LuaAttributeComponentBridge( lua_State * L )
 			PushRioterObjectType( L, Core::RioterAlignment::Pacifist, "Pacifist" , rioterAlignmentTable );
 		
 			lua_settable( L, coreTableIndex );
+
+		lua_pushstring(L, "RioterStance");
+		lua_newtable(L); // new table
+		int rioterStanceTable = lua_gettop(L);
+		
+			PushRioterObjectType(L, Core::RioterStance::Normal, "Normal", rioterStanceTable);
+			PushRioterObjectType(L, Core::RioterStance::Agitated, "Agitated", rioterStanceTable);
+			PushRioterObjectType(L, Core::RioterStance::Attacking, "Attacking", rioterStanceTable);
+			PushRioterObjectType(L, Core::RioterStance::Retreating, "Retreating", rioterStanceTable);
+			PushRioterObjectType(L, Core::RioterStance::Civilian, "Civilian", rioterStanceTable);
+			lua_settable(L, coreTableIndex);
 
         //lua_settable( L, coreTableIndex );
     }

@@ -26,7 +26,8 @@ namespace Core
 			a MovementComponent.
 		*/
 		MovementSystem() : BaseSystem(EntityHandler::GenerateAspect<WorldPositionComponent, MovementComponent>(), 0ULL)
-		{}
+		{
+		}
 
 		/*! 
 			The name of the system for printing.

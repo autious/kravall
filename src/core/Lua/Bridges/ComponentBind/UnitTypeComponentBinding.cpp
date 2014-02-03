@@ -2,7 +2,7 @@
 
 #include <World.hpp>
 
-#include <Lua/Bridges/LuaUnitTypeBridge.hpp>
+#include <Lua/LuaMetatableTypes.hpp>
 
 Core::ComponentGetters Core::UnitTypeComponentBinding::GetGetters()
 {

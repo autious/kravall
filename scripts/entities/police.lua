@@ -1,4 +1,4 @@
-return function(asm, posX, posY, posZ, groupID)
+return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, groupID)
 	asm:loadAssembly( 
 		{
 			{
@@ -33,8 +33,10 @@ return function(asm, posX, posY, posZ, groupID)
 			},
 			{
 				type = core.componentType.AttributeComponent,
-				data = { health = 0, stamina = 0, morale = 0, 
-					   stance = core.PoliceStance.Passive, defense = 0, mobility = 0, squadID = groupID },
+				data = { health = 100, stamina = 0, morale = 2.0, 
+					   stancePolice = core.PoliceStance.Aggressive,
+					   statePolice = core.PoliceState.Attacking, 
+					   defense = 0, mobility = 0, squadID = groupID },
                 ignoreHard = true
 			},
 			{
@@ -51,7 +53,11 @@ return function(asm, posX, posY, posZ, groupID)
 			{
 				type = core.componentType.FlowfieldComponent,
 				data = { node = -1 }
-			}
+			},
+            {
+                type = core.componentType.FormationComponent,
+                data = { relativePosition = { formationOffsetX, formationOffsetZ } }
+            }
 		}
 	)
 end

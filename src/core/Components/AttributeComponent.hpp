@@ -12,6 +12,11 @@ namespace Core
 		Passive, Defensive, Aggressive
 	};
 
+	enum PoliceState
+	{
+		PS_Normal, PS_Attacking, PS_Fleeing, PS_Routing
+	};
+
 	/*!
 	Enum specifying the alignment of the rioters.
 	A rioter's alignment defines its behaviour and reactions in different situations. There are two alignments:
@@ -53,23 +58,26 @@ namespace Core
 
 				/*! The police's mobility represented by a float with range [0.0f, 100.0f]. */
 				float mobility;
+
+				/*! The police's state represented by the PoliceState enum. */
+				PoliceState state;
 			} police;
 			struct
 			{
-				/*! The rioter's alignment represented by the RioterAlignment enum. */
-				RioterAlignment alignment;
+				/*! The rioter's stance represented by the RioterStance enum. */
+				RioterStance stance;
 
 				/*! The rioter's conceptual group ID. Used for determining which flow field to use.*/
 				int groupID;
 
-				/*! The rioter's rage represented by an integer with range [0, 100]. */
-				int rage;
+				/*! The rioter's rage represented by an floating point value with range [0, 100]. */
+				float rage;
 
-				/*! The rioter's pressure represented by an integer with range [0, 100]. */
-				int pressure;
+				/*! The rioter's pressure represented by an floating point value with range [0, 100]. */
+				float pressure;
 
-				/*! The rioter's stance represented by the RioterStance enum. */
-				RioterStance stance;
+				/*! The rioter's alignment represented by the RioterAlignment enum. */
+				RioterAlignment alignment;
 			} rioter;
 		};
 
