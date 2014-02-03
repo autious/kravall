@@ -3,28 +3,28 @@
 
 namespace Core
 {
-    struct FormationComponent    
-    {
-        float relativePosition[2];
-        bool isStraggler = false;
+	struct FormationComponent
+	{
+		float relativePosition[2];
+		bool isStraggler = false;
 
-        FormationComponent()
-        {
+		FormationComponent()
+		{
 			relativePosition[0] = 0.0f;
 			relativePosition[1] = 0.0f;
-        }
+		}
 
-        FormationComponent(float relativeX, float relativeY)
-        {
-            relativePosition[0] = relativeX;
-            relativePosition[1] = relativeY;
-        }
+		FormationComponent(float relativeX, float relativeY)
+		{
+			relativePosition[0] = relativeX;
+			relativePosition[1] = relativeY;
+		}
 
-        inline static const char* GetName()
-        {
-            return "FormationComponent";
-        }
-    };
+		inline static const char* GetName()
+		{
+			return "FormationComponent";
+		}
+	};
 }
 
 #endif

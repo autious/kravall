@@ -79,11 +79,11 @@ extern "C"
             { 
                 const char * index = lua_tostring( L, 2 );
 
-                if( STREQ( index, "onchar" ) )
+                if( STREQ( index, "onChar" ) )
                 {
                     rawset = true;
                 } 
-                else if( STREQ( index, "onkey" ) )
+                else if( STREQ( index, "onKey" ) )
                 {
                     rawset = true;
                 }
@@ -108,15 +108,15 @@ extern "C"
             { 
                 const char * index = lua_tostring( L, 2 );
 
-                if( STREQ( index, "onbutton" ) )
+                if( STREQ( index, "onButton" ) )
                 {
                     rawset = true;
                 } 
-                else if( STREQ( index, "onposition" ) )
+                else if( STREQ( index, "onPosition" ) )
                 {
                     rawset = true;
                 }
-                else if( STREQ( index, "onscroll" ) )
+                else if( STREQ( index, "onScroll" ) )
                 {
                     rawset = true;
                 }
@@ -161,7 +161,7 @@ namespace Core
         lua_getglobal( m_luaState, "core" );
         lua_getfield( m_luaState, -1, "input" );
         lua_getfield( m_luaState, -1, "keyboard" );
-        lua_getfield( m_luaState, -1, "onkey" );
+        lua_getfield( m_luaState, -1, "onKey" );
         if( !lua_isnil( m_luaState, -1) )
         {
             if( lua_isfunction(m_luaState, -1) )

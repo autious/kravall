@@ -38,8 +38,6 @@ flat out uint rnd_seed;
 
 void main()
 {
-#define INSTANCED
-#ifdef INSTANCED
 	//Move position to clip space
 	posW = gInstances[gl_InstanceID].mm * positionIN;
 	posFS = gProjection * gView * gInstances[gl_InstanceID].mm * positionIN;
@@ -49,19 +47,6 @@ void main()
 	tangentFS = gInstances[gl_InstanceID].mm * tangentIN;
 	//binormalFS = gInstances[gl_InstanceID].mm * binormalIN;
 	rnd_seed = gInstances[gl_InstanceID].rnd_seed;
-
-#else
-
-	//Move position to clip space
-	posW = modelMatrix * positionIN;
-	posFS = gProjection * gView * modelMatrix * positionIN;
-	
-	//Transform normal with model matrix
-	normalFS = modelMatrix * normalIN;
-	tangentFS = modelMatrix * tangentIN;
-	//binormalFS = modelMatrix * binormalIN;
-
-#endif
 
 	uvFS = uvIN;
 

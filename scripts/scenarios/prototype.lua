@@ -5,7 +5,7 @@ scen.asm:specific_content( core.contentmanager.load(
 		core.loaders.NavigationMeshLoader, "prototypeLevel.txt", function( value ) end, false ) )
 
 
-scen.gamemode = require "gamemodes/kravall":new()
+scen.gamemode = require "gamemodes/normal":new()
 
 scen:registerUpdateCallback( function(delta) scen.gamemode:update(delta) end )
 scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
