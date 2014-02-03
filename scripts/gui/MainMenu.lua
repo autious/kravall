@@ -10,7 +10,14 @@ function MainMenu:new(o,menuState)
     o = o or {}
 
     o.gui = GUI:new()
-    
+
+
+    o.gui:addComponent(Button:new({
+                                    matReleased = "assets/material/ui/logoKravall.material",
+                                    matPressed = "assets/material/ui/logoKravall.material",
+                                    matHover = "assets/material/ui/logoKravall.material",
+                                    xoffset=0,yoffset=-100}))
+
     o.gui:addComponent(Button:new({
                                     matReleased = "assets/material/ui/startButton.material",
                                     matPressed = "assets/material/ui/startButton.material",
