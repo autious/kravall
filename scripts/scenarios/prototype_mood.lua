@@ -122,6 +122,7 @@ function Update(dt)
 		local atc = rioters[i].instance:get(core.componentType.AttributeComponent)
 
 		print(atc.rage)
+		print(atc.pressure)
 
 		if atc.morale <= 0.0 then
 			rioters[i].instance:destroy()

@@ -57,6 +57,17 @@ Core::LuaAttributeComponentBridge::LuaAttributeComponentBridge( lua_State * L )
 		
 			lua_settable( L, coreTableIndex );
 
+		lua_pushstring(L, "PoliceState");
+		lua_newtable(L); // new table
+		int policeStateTable = lua_gettop(L);
+
+			PushPoliceObjectType(L, Core::PoliceState::PS_Normal, "Normal", policeStanceTable);
+			PushPoliceObjectType(L, Core::PoliceState::PS_Attacking, "Attacking", policeStanceTable);
+			PushPoliceObjectType(L, Core::PoliceState::PS_Fleeing, "Fleeing", policeStanceTable);
+			PushPoliceObjectType(L, Core::PoliceState::PS_Routing, "Routing", policeStanceTable);
+
+			lua_settable(L, coreTableIndex);
+
 
 		lua_pushstring( L, "RioterAlignment" );
         lua_newtable( L ); // new table
