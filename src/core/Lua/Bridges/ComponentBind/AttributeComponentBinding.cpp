@@ -46,6 +46,19 @@ Core::ComponentGetters Core::AttributeComponentBinding::GetGetters()
         return 1;
     };
 
+	getters["statePolice"] = [](Core::Entity entity, lua_State *L)
+	{
+		AttributeComponent *atrbc = WGETC<AttributeComponent>(entity);
+
+		Core::PoliceState* state = (Core::PoliceState*)lua_newuserdata(L, sizeof(Core::PoliceState));
+		*state = atrbc->police.state;
+
+		luaL_newmetatable(L, ATTRIBUTE_POLICE_COMPONENT_TYPE_META);
+		lua_setmetatable(L, -2);
+
+		return 1;
+	};
+
 	getters["defense"] = []( Core::Entity entity, lua_State *L )
     {
         AttributeComponent *atrbc = WGETC<AttributeComponent>( entity ); 
@@ -175,6 +188,12 @@ Core::ComponentSetters Core::AttributeComponentBinding::GetSetters()
         AttributeComponent *atrbc = WGETC<AttributeComponent>( entity ); 
         atrbc->police.stance = *(Core::PoliceStance*)luaL_checkudata( L, valueindex, ATTRIBUTE_POLICE_COMPONENT_TYPE_META );
     };
+
+	setters["statePolice"] = [](Core::Entity entity, lua_State * L, int valueindex)
+	{
+		AttributeComponent *atrbc = WGETC<AttributeComponent>(entity);
+		atrbc->police.state = *(Core::PoliceState*)luaL_checkudata(L, valueindex, ATTRIBUTE_POLICE_COMPONENT_TYPE_META);
+	};
 
 	setters["defense"] = []( Core::Entity entity, lua_State * L, int valueindex )
     {

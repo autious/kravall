@@ -15,6 +15,8 @@ namespace Core
 		virtual const char* GetHumanName(){ return "RioterStateSystem"; }
 
 	private:
+		void UpdatePolice(float dt, Entity* it);
+		void UpdateRioter(float dt, Entity* it);
 	};
 }
 
