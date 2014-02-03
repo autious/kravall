@@ -1,4 +1,4 @@
-return function(asm, posX, posY, posZ, groupID)
+return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, groupID)
 	asm:loadAssembly( 
 		{
 			{
@@ -53,7 +53,11 @@ return function(asm, posX, posY, posZ, groupID)
 			{
 				type = core.componentType.FlowfieldComponent,
 				data = { node = -1 }
-			}
+			},
+            {
+                type = core.componentType.FormationComponent,
+                data = { relativePosition = { formationOffsetX, formationOffsetZ } }
+            }
 		}
 	)
 end
