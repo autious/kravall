@@ -88,35 +88,37 @@ local police = ent.get "police"
 local building = ent.get "building"
 
 local dist = 1.8
-local policeGroup = core.system.groups.createGroup();
-
-local centerPoint = { -4, 0, -21}
-for i = -4, 3 do
-	j= 0
-		--police(scen, i * dist + centerPoint[1], 0 + centerPoint[2], j * dist + centerPoint[3], policeGroup)
-end
+--local policeGroup = core.system.groups.createGroup();
+--
+--local centerPoint = { -4, 0, -21}
+--for i = -4, 3 do
+--	j= 0
+--		--police(scen, i * dist + centerPoint[1], 0 + centerPoint[2], j * dist + centerPoint[3], policeGroup)
+--end
    
-local policeGroupTwo = core.system.groups.createGroup();
-centerPoint = { 5, 0, 5}
-for i = -4, 3 do
-	j= 0 --for j = -1, 1 do
-		--police(scen, j * dist + centerPoint[1], 0 + centerPoint[2], i * dist + centerPoint[3], policeGroupTwo)
-	--end
-end
+--local policeGroupTwo = core.system.groups.createGroup();
+--centerPoint = { 5, 0, 5}
+--for i = -4, 3 do
+--	j= 0 --for j = -1, 1 do
+--		--police(scen, j * dist + centerPoint[1], 0 + centerPoint[2], i * dist + centerPoint[3], policeGroupTwo)
+--	--end
+--end
 
 --police(scen, centerPoint[1], 0, centerPoint[3], policeGroupTwo)
 police( scen, 1, 0, -21, policeGroup );
 --police(scen, 1, 0, -20);
 
-local rGroup = core.system.groups.createGroup();
-local centerPoint = { 0, 0, 0 }	
-local side = math.sqrt( 4000 )	
-for i = -side / 2, side / 2 do
-	for p = - side / 2, side / 2 do
-		--police( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rGroup)
-	end
-end
+--local rGroup = core.system.groups.createGroup();
+--local centerPoint = { 0, 0, 0 }	
+--local side = math.sqrt( 4000 )	
+--for i = -side / 2, side / 2 do
+--	for p = - side / 2, side / 2 do
+--		--police( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rGroup)
+--	end
+--end
 
+
+local squadOne = squad(scen, -5, 0, 0, math.pi/2);
 
 
 
