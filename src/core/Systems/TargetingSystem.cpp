@@ -4,6 +4,9 @@
 
 #include <SystemDef.hpp>
 
+#define TEMP_UNIT_CHECK UnitType::Police
+#define TEMP_UNIT_TARGET UnitType::Rioter
+
 //#include <DebugMacros.hpp>
 //#include <GameUtility/GameData.hpp>
 
@@ -24,26 +27,112 @@ void Core::TargetingSystem::Update(float delta)
 		else if (utc->type == UnitType::Rioter)
 			HandleRioterTargeting(*it);
 	}
+
+	//TemporaryFunction();
 }
 
 void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police)
 {
 	Core::AttributeComponent* ac = WGETC<Core::AttributeComponent>(police);
 	Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(police);
-	
+	Core::TargetingComponent* tc = WGETC<Core::TargetingComponent>(police);
+	Core::MovementComponent* mc = WGETC<Core::MovementComponent>(police);
+
+	Core::WorldPositionComponent* targetPos;
+
 	GFXColor colour = GFXColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+	if (tc->target != INVALID_ENTITY)
+	{
+		Core::WorldPositionComponent* twpc = WGETC<Core::WorldPositionComponent>(tc->target);
+		Core::TargetingComponent* tcTarget = WGETC<Core::TargetingComponent>(tc->target);
+
+		float dx = twpc->position[0] - wpc->position[0];
+		float dy = twpc->position[1] - wpc->position[1];
+		float dz = twpc->position[2] - wpc->position[2];
+
+		float distSqr = dx * dx + dy * dy + dz * dz;
+
+		if (distSqr < 5.0f)
+			if (TargetingComponent::Attack(police, *tcTarget))
+				std::cout << "Police: " << police << " is attacking rioter " << tc->target << std::endl;
+	}
 
 	switch (ac->police.stance)
 	{
 		case PoliceStance::Aggressive:
-			FindClosestTarget(wpc, UnitType::Rioter);
-			colour = GFXColor(1.0f, 0.0f, 0.0f, 1.0f);
+			tc->target = FindClosestTarget(wpc, UnitType::Rioter);
+			if( tc->target != INVALID_ENTITY )
+			{
+				targetPos = WGETC<Core::WorldPositionComponent>(tc->target);
+
+				mc->goal[0] = targetPos->position[0];
+				mc->goal[1] = targetPos->position[1];
+				mc->goal[2] = targetPos->position[2];
+
+				colour = GFXColor(1.0f, 0.0f, 0.0f, 1.0f);
+			}
 			break;
 		case PoliceStance::Defensive:
+			if (tc->numberOfAttackers > 0)
+			{
+				float minDist = std::numeric_limits<float>::max();
+
+				for (int i = 0; i < tc->numberOfAttackers; ++i)
+				{
+					Core::WorldPositionComponent* twpc = WGETC<Core::WorldPositionComponent>(tc->attackers[i]);
+
+					float dx = twpc->position[0] - wpc->position[0];
+					float dy = twpc->position[1] - wpc->position[1];
+					float dz = twpc->position[2] - wpc->position[2];
+
+					float distSqr = dx * dx + dy * dy + dz * dz;
+
+					if (distSqr < minDist)
+					{
+						tc->target = tc->attackers[i];
+						minDist = distSqr;
+					}
+				}
+
+				targetPos = WGETC<Core::WorldPositionComponent>(tc->target);
+
+				mc->goal[0] = targetPos->position[0];
+				mc->goal[1] = targetPos->position[1];
+				mc->goal[2] = targetPos->position[2];
+			}
+			else
+			{
+				if (tc->target != INVALID_ENTITY)
+				{
+					TargetingComponent* tcTarget = WGETC<Core::TargetingComponent>(tc->target);
+					TargetingComponent::StopAttacking(police, *tcTarget);
+				}
+				tc->target = INVALID_ENTITY;
+			}
+
 			colour = GFXColor(0.0f, 1.0f, 0.0f, 1.0f);
+			break;
+		case PoliceStance::Passive:
+			colour = GFXColor(0.0f, 0.0f, 1.0f, 1.0f);
+
+			if (tc->target != INVALID_ENTITY)
+			{
+				TargetingComponent* tcTarget = WGETC<Core::TargetingComponent>(tc->target);
+				TargetingComponent::StopAttacking(police, *tcTarget);
+			}
+			tc->target = INVALID_ENTITY;
 			break;
 	}
 
+
+	if (tc->target != INVALID_ENTITY)
+	{
+		Core::WorldPositionComponent* twpc = WGETC<Core::WorldPositionComponent>(tc->target);
+		Core::BoundingVolumeComponent* tbvc = WGETC<Core::BoundingVolumeComponent>(tc->target);
+		Core::BoundingSphere* tSphere = reinterpret_cast<Core::BoundingSphere*>(tbvc->data);
+		GFX::Debug::DrawSphere(twpc->GetVec3(*twpc) + *reinterpret_cast<glm::vec3*>(tSphere->offset), tSphere->radius, GFXColor(1.0f, 0.0f, 0.0f, 1.0f), false);
+	}
 	
 	Core::BoundingVolumeComponent* bvc = WGETC<Core::BoundingVolumeComponent>(police);
 	Core::BoundingSphere* sphere = reinterpret_cast<Core::BoundingSphere*>(bvc->data);
@@ -88,7 +177,7 @@ void Core::TargetingSystem::TemporaryFunction()
 	for (std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); it++)
 	{
 		Core::UnitTypeComponent* utc = WGETC<Core::UnitTypeComponent>(*it);
-		if (utc->type != UnitType::Police)
+		if (utc->type != TEMP_UNIT_CHECK)
 			continue;
 
 		Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(*it);
@@ -107,7 +196,7 @@ void Core::TargetingSystem::TemporaryFunction()
 		GFX::Debug::DrawSphere(wpc->GetVec3(*wpc) + *reinterpret_cast<glm::vec3*>(sphere->offset), sphere->radius, colour, false);
 	}
 
-	int selectedEntity = Core::world.m_systemHandler.GetSystem<Core::PickingSystem>()->GetLastHitEntity();
+	Entity selectedEntity = Core::world.m_systemHandler.GetSystem<Core::PickingSystem>()->GetLastHitEntity();
 
 	if (Core::GetInputManager().GetMouseState().IsButtonDown(GLFW_MOUSE_BUTTON_1))
 	{
@@ -123,7 +212,18 @@ void Core::TargetingSystem::TemporaryFunction()
 
 		bool isFPressed = Core::GetInputManager().GetKeyboardState().IsKeyDown(GLFW_KEY_F);
 		if (isFPressed /*&& !m_wasFPressed*/)
-			m_currentTarget = FindClosestTarget(wpc, UnitType::Rioter);
+		{
+			m_currentTarget = FindClosestTarget(wpc, TEMP_UNIT_TARGET);
+			Core::TargetingComponent* tc = WGETC<Core::TargetingComponent>(m_lastClickedEntity);
+			Core::MovementComponent* mc = WGETC<Core::MovementComponent>(m_lastClickedEntity);
+			Core::WorldPositionComponent* twpc = WGETC<Core::WorldPositionComponent>(m_currentTarget);
+			
+			tc->target = m_currentTarget;
+
+			mc->goal[0] = twpc->position[0];
+			mc->goal[1] = twpc->position[1];
+			mc->goal[2] = twpc->position[2];
+		}
 		else if (Core::GetInputManager().GetKeyboardState().IsKeyDown(GLFW_KEY_P)) // Passive
 		{
 			int selectedSquad = WGETC<Core::AttributeComponent>(m_lastClickedEntity)->police.squadID;
@@ -135,11 +235,19 @@ void Core::TargetingSystem::TemporaryFunction()
 					continue;
 
 				Core::AttributeComponent* ac = WGETC<Core::AttributeComponent>(*it);
+				Core::MovementComponent* mc = WGETC<Core::MovementComponent>(*it);
 
 				if (ac->police.squadID != selectedSquad)
 					continue;
 
 				ac->police.stance = PoliceStance::Passive;
+				
+				mc->goal[0] = FLT_MAX;
+				mc->goal[1] = 0.0f;
+				mc->goal[2] = 0.0f;
+
+				mc->speed = 0.0f;
+				mc->desiredSpeed = 0.0f;
 			}
 		}
 		else if (Core::GetInputManager().GetKeyboardState().IsKeyDown(GLFW_KEY_O)) // Defensive
@@ -153,11 +261,18 @@ void Core::TargetingSystem::TemporaryFunction()
 					continue;
 
 				Core::AttributeComponent* ac = WGETC<Core::AttributeComponent>(*it);
+				Core::MovementComponent* mc = WGETC<Core::MovementComponent>(*it);
 
 				if (ac->police.squadID != selectedSquad)
 					continue;
 
-				ac->police.stance = PoliceStance::Defensive;
+				ac->police.stance = PoliceStance::Defensive; 
+				mc->goal[0] = FLT_MAX;
+				mc->goal[1] = 0.0f;
+				mc->goal[2] = 0.0f;
+
+				mc->speed = 0.0f;
+				mc->desiredSpeed = 0.0f;
 			}
 		}
 		else if (Core::GetInputManager().GetKeyboardState().IsKeyDown(GLFW_KEY_I)) // Aggressive

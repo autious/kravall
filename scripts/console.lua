@@ -106,3 +106,7 @@ end
 function errorHandler( errorMessage )
     return errorMessage .. "\n"  .. debug.traceback()
 end
+
+function print( ... )
+    core.log.info:print( ... )
+end

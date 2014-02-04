@@ -103,8 +103,6 @@ Core::LuaGroupsBridge::LuaGroupsBridge(lua_State * L)
 	int stackSize = lua_gettop(L);
 	lua_getglobal(L, "core");
 
-	int coreTableIndex = lua_gettop(L);
-
     lua_getfield(L, -1, "system");
 	
 

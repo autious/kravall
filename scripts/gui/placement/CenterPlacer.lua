@@ -14,7 +14,7 @@ function CenterPlacer:constrict( components, winWidth, winHeight )
     local startx = winWidth/2
     local starty = (winHeight - th)/2
     for _,c in pairs( components ) do 
-        c:setPosition( startx - c.width/2, starty )
+        c:setPosition( startx - c.width/2 + c.xoffset, starty + c.yoffset )
         starty = starty + c.height + self.padding
     end 
 end

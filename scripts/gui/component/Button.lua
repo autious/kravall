@@ -5,6 +5,8 @@ local Button =
                 {
                     x=0,
                     y=0,
+                    xoffset=0,
+                    yoffset=0,
                     matReleased = "assets/material/ui/button.material",
                     matPressed = "assets/material/ui/button_pressed.material",
                     matHover = "assets/material/ui/button_hover.material"
