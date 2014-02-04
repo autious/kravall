@@ -167,10 +167,40 @@ namespace Core
             {
                 SquadComponent* sqdc = WGETC<SquadComponent>(entity);
                 sqdc->squadID = static_cast<int>(lua_tonumber(L, valueindex));
+				LOG_WARNING << sqdc->squadID << std::endl;
             }
             else
             {
                 luaL_error(L, "unable to set squadID of entity %d, value is not a number", entity);
+            }
+        };
+
+		setters["squadGoal"] = [](Core::Entity entity, lua_State* L, int valueindex)
+        {
+            SquadComponent* sqdc = WGETC<SquadComponent>(entity);
+
+            if( lua_istable( L, valueindex ) )
+            {           
+                for( int i = 0; i < 3; i++ )
+                {
+                    lua_pushinteger( L, i+1 );
+                    lua_gettable(L, valueindex);
+
+                    if(lua_isnumber(L, -1))
+                    {
+                        sqdc->squadGoal[i] = static_cast<float>(lua_tonumber(L, -1));
+                    }
+                    else
+                    {
+                        luaL_error(L, "unable to set squadGoal of entity: %d ,argument %d is not a number", entity, i+1);
+                    }
+
+                    lua_pop(L, 1);
+                }
+            }
+            else
+            {
+                luaL_error(L, "unable to set squadGoal of entity: %d ,assignment is not a table", entity);
             }
         };
 
@@ -208,7 +238,7 @@ namespace Core
             if(lua_isboolean(L, valueindex))
             {
                 SquadComponent* sqdc = WGETC<SquadComponent>(entity);
-                sqdc->squadID = static_cast<bool>(lua_toboolean(L, valueindex));
+                sqdc->squadMoveInFormation = static_cast<bool>(lua_toboolean(L, valueindex));
             }
             else
             {

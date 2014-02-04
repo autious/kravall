@@ -19,7 +19,7 @@ const frsChargeCurve Core::FieldReactionSystem::CURVE[1][2] =
 };
 
 Core::FieldReactionSystem::FieldReactionSystem() : BaseSystem(EntityHandler::GenerateAspect<WorldPositionComponent, MovementComponent,
-	UnitTypeComponent, AttributeComponent>(), 0ULL), m_showPF(true), m_updateCounter(0), m_drawFieldCenter(-4.0f, -0.5f, -31.0f) //(20.0f, -0.5f, -40.0f)
+	UnitTypeComponent, AttributeComponent>(), 0ULL), m_showPF(false), m_updateCounter(0), m_drawFieldCenter(-4.0f, -0.5f, -31.0f) //(20.0f, -0.5f, -40.0f)
 {
 	for (int i = 0; i < FIELD_SIDE_CELL_COUNT; ++i)
 	{

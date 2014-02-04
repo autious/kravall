@@ -20,7 +20,7 @@ namespace Core
             if(sqdc->squadID == squadID)
             {
                 sqdc->squadGoal[0] = target.x;
-                sqdc->squadGoal[1] = target.z;
+                sqdc->squadGoal[2] = target.z;
             }
         }
     }
@@ -46,9 +46,6 @@ namespace Core
             }
 
             Core::WorldPositionComponent* leader_wpc = WGETC<Core::WorldPositionComponent>(sqdc->squadLeader);                
-
-            sqdc->waitForStraggler = true;
-
 
             glm::vec3 leaderPosition = Core::WorldPositionComponent::GetVec3(*leader_wpc);
 
@@ -83,16 +80,17 @@ namespace Core
 
                 glm::vec3 relativePosition = glm::vec3(relPos2D.x, 0.0f, relPos2D.y);
                 //If relative position is larger than zero
-                if((relativePosition.x * relativePosition.x + relativePosition.y * relativePosition.y) > 0.0f)
+                //if((relativePosition.x * relativePosition.x + relativePosition.y * relativePosition.y) > 0.0f)
                 {
                     Core::NavigationMesh* navMesh = Core::GetNavigationMesh();
                     if(sqdc->squadMoveInFormation)
                     {
                         glm::vec3 formationPosition = leaderPosition + relativePosition;
+						int goalNode;
 
                         //If the formation position is outside the navigation mesh the formation position should be on
                         //    the point where the line from the leader to the formation position collides with the navmesh.
-                        bool hasMovedFormationPos = navMesh->GetClosestPointInsideMesh(formationPosition, leaderPosition);
+                        bool hasMovedFormationPos = navMesh->GetClosestPointInsideMesh(formationPosition, leaderPosition, goalNode, 0.2f);
                         if(!hasMovedFormationPos)
                         {
                             //If an entity is given a new position it can no longer be a straggler
@@ -101,19 +99,25 @@ namespace Core
                         }
                         mc->goal[0] = formationPosition.x;
                         mc->goal[1] = formationPosition.z;
+						mc->NavMeshGoalNodeIndex = goalNode;
                     }
                     else
                     {
                         
                         glm::vec3 squadTargetPosition = glm::vec3(sqdc->squadGoal[0], sqdc->squadGoal[1], sqdc->squadGoal[2]);  
                         glm::vec3 formationPosition = squadTargetPosition + relativePosition;
+						int goalNode;
 
                         //If the formation position is outside the navigation mesh the formation position should be on
                         //    the point where the line from the target position to the formation position collides with the navmesh.
-                        navMesh->GetClosestPointInsideMesh(formationPosition, squadTargetPosition);
+                        
+						navMesh->GetClosestPointInsideMesh(formationPosition, squadTargetPosition, goalNode, 0.2f);
+
+						GFX::Debug::DrawSphere( formationPosition, 0.3f, GFXColor( 1, 0, 1, 1 ), false );
 
                         mc->goal[0] = formationPosition.x;
                         mc->goal[1] = formationPosition.z;
+						mc->NavMeshGoalNodeIndex = goalNode;
                     }
                 }
             }
@@ -140,7 +144,7 @@ namespace Core
                 else
                 {
                     //TODO: If the unit had another desiredSpeed than walking it needs to be taken into account here                        
-                    mc->desiredSpeed = Core::GameData::GetWalkingSpeed().speedToDesire;
+                    mc->desiredSpeed = Core::GameData::GetMovementDataWithState( mc->state ).speedToDesire; 
                 }
             }
         }

@@ -26,6 +26,7 @@
 #include <Systems/NameSystem.hpp>
 #include <Systems/AreaSystem.hpp>
 #include <Systems/GroupDataSystem.hpp>
+#include <Systems/NavMeshBlockingSystem.hpp>
 #include <Systems/AnimationSystem.hpp>
 #include <Systems/SquadSystem.hpp>
 #include <Systems/TargetingSystem.hpp>
@@ -49,9 +50,11 @@ namespace Core
 	class MoodStateSystem;
 	class RemovalSystem;
 	
-    typedef SystemHandlerTemplate<LightSystem, PoliceGoalSystem, FlowfieldPositioningSystem, NavMeshCollisionSystem, 
+
+    typedef SystemHandlerTemplate<LightSystem, FlowfieldPositioningSystem, PoliceGoalSystem, NavMeshCollisionSystem, 
 	CollisionSystem2D, PickingSystem, TargetingSystem, AIDebugSystem, FlowfieldSystem, /*FieldReactionSystem,*/ GPUPFSystem,
-	MovementSystem, NameSystem, GroupDataSystem, AreaSystem, MoodStateSystem, AnimationSystem, SquadSystem, RemovalSystem, RenderingSystem> SystemHandler;
+	MovementSystem, NameSystem, GroupDataSystem, AreaSystem, NavMeshBlockingSystem, MoodStateSystem, AnimationSystem, 
+	SquadSystem, RemovalSystem, RenderingSystem> SystemHandler;
 
     typedef EntityHandlerTemplate<SystemHandler, WorldPositionComponent, RotationComponent, ScaleComponent, 
 		GraphicsComponent, LightComponent, MovementComponent, UnitTypeComponent, AttributeComponent,
