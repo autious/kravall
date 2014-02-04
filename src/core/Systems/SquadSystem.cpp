@@ -5,6 +5,8 @@
 #include <glm/glm.hpp>
 #include <GameUtility/GameData.hpp>
 
+#include <gfx/GFXInterface.hpp>
+
 namespace Core
 {
     SquadSystem::SquadSystem() : Core::BaseSystem(Core::EntityHandler::GenerateAspect<Core::SquadComponent>(), 0ULL)
@@ -21,6 +23,38 @@ namespace Core
             {
                 sqdc->squadGoal[0] = target.x;
                 sqdc->squadGoal[2] = target.z;
+            }
+        }
+    }
+
+    void SquadSystem::SetSquadFormation(int squadID, Core::SquadFormation formation, const glm::vec3& startPos, const glm::vec3& endPos)
+    {
+        for(std::vector<Entity>::iterator squad_it = m_entities.begin(); squad_it != m_entities.end(); ++squad_it)        
+        {
+            Core::SquadComponent* sqdc = WGETC<Core::SquadComponent>(*squad_it);
+            if(sqdc->squadID == squadID)
+            {
+            
+                std::vector<Core::Entity> squad = Core::world.m_systemHandler.GetSystem<Core::GroupDataSystem>()->GetMembersInGroup(sqdc->squadID);
+
+                if(sqdc->squadLeader == INVALID_ENTITY)
+                {
+                    if(squad.size() > 0)
+                    {
+                        sqdc->squadLeader = squad[0];
+                    }
+                    else
+                    {
+                        //The group is empty
+                        continue;
+                    }
+                }
+
+                int membersInGroup = Core::world.m_systemHandler.GetSystem<Core::GroupDataSystem>()->GetMemberCount(sqdc->squadID);
+                
+
+
+
             }
         }
     }
@@ -59,13 +93,15 @@ namespace Core
             }
             else
             {
-                rotation = glm::atan(sqdc->squadTargetForward[1], sqdc->squadTargetForward[0]);
+                rotation = glm::atan(sqdc->squadTargetForward[1], sqdc->squadTargetForward[0]) ;
+
             }
 
-            float cosVal = glm::cos(rotation);
-            float sinVal = glm::sin(rotation);
-//            glm::mat2 rotMat = glm::mat2(cosVal, -sinVal, sinVal, cosVal);
-            glm::mat2 rotMat = glm::mat2(1.0f, 0.0f, 0.0f, 1.0f);
+            GFX::Debug::DrawLine(glm::vec3(0,0,0), glm::vec3(0,0,-10), GFXColor(0.0f, 1.0f, 0.0f, 1.0f),false);
+
+            float cosVal = glm::cos(glm::radians(rotation));
+            float sinVal = glm::sin(glm::radians(rotation));
+            glm::mat2 rotMat = glm::mat2(cosVal, -sinVal, sinVal, cosVal);
 
             //Calculate individual goals depending on formation settings.
             for(std::vector<Entity>::iterator entity_it = squad.begin(); entity_it != squad.end(); ++entity_it)
@@ -108,6 +144,7 @@ namespace Core
                         glm::vec3 formationPosition = squadTargetPosition + relativePosition;
 						int goalNode;
 
+                        GFX::Debug::DrawLine(squadTargetPosition, squadTargetPosition + glm::vec3(sqdc->squadTargetForward[0], 0.0f, sqdc->squadTargetForward[1])*3.0f, GFXColor(0.0f, 1.0f, 0.0f, 1.0f),false);
                         //If the formation position is outside the navigation mesh the formation position should be on
                         //    the point where the line from the target position to the formation position collides with the navmesh.
                         
