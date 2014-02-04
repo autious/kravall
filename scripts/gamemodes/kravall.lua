@@ -43,7 +43,8 @@ function T:update( delta )
         if selectedSquad then
             local mouseX, mouseY = core.input.mouse.getPosition()
             local groundX, groundY, groundZ = core.system.picking.getGroundHit(mouseX, mouseY);
-            core.system.groups.setGroupGoal(selectedSquad, groundX, groundY, groundZ);            
+            --core.system.groups.setGroupGoal(selectedSquad, groundX, groundY, groundZ);		
+			core.system.squad.setSquadGoal(selectedSquad, groundX, groundY, groundZ);
         end        
     end
 

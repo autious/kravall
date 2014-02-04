@@ -153,9 +153,10 @@ namespace Core
             \param origin The start point from where the nearest point will be found.
             \param node The index of the node that origin is inside of.
 			\param goalNode The index of the node that the origin is residing in. Will be set to -1 if point is outside mesh.
+			\param fromBorder The fudge factor, positon will be offsetted this far from the edge of the navigation mesh.
             \return True if a new closest point is found. False if origin is not inside the mesh or if a closer point was not found.
         */
-        bool GetClosestPointInsideMesh( glm::vec3& point, const glm::vec3& origin, int& goalNode ); 
+        bool GetClosestPointInsideMesh( glm::vec3& point, const glm::vec3& origin, int& goalNode, float fromBorder ); 
 
         /*!
             Gets the node that the speciefied point is inside of. If multiple nodes contain the point the first one found will be returned.
