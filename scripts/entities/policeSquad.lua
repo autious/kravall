@@ -5,12 +5,13 @@ return function(asm, posX, posY, posZ, rotation)
     local police = ent.get "police"
     local members = {}
     local groupId = core.system.groups.createGroup()
+	print(groupId)
     asm:loadAssembly(
             {
                 {
                     type = core.componentType.SquadComponent,
-                    data = {squadID = groupID, 
-                            squadGoal = {posX, posY, posZ},                                
+                    data = {squadID = groupId, 
+                            squadGoal = {posX, posY, posZ},
                             squadMoveInFormation = false,
                             squadTargetForward = {math.sin(rotation), -math.cos(rotation)}},                        
                         ignoreHard = true

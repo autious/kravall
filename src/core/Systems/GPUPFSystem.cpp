@@ -19,6 +19,7 @@ namespace Core
 
 	void GPUPFSystem::Update(float delta)
 	{
+
 		if (!m_foundShader)
 		{
 			GFX::Content::GetShaderId(m_shaderID, "GPUPFCompute");

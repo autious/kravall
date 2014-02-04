@@ -15,6 +15,17 @@ namespace Core
 {
 	struct NavigationMesh;
 
+	struct PathData
+	{
+		PathData() { node = -1; }
+		PathData( int node, int entryEdge, glm::vec3 point )
+		: node(node), entryEdge(entryEdge), point(point) {}
+
+		int node;
+		int entryEdge;
+		glm::vec3 point;
+	};
+
 	/*!
 		Get a pointer to the current instance of the navigaion mesh. Will return nullprt if no mesh is loaded.
 	*/
@@ -56,6 +67,11 @@ namespace Core
 				The x and z coordinates for the corners of the quad/triangle.
 			*/
 			float points[8];
+
+			/*!
+				if true the respective edge cannot be traversed in the navmesh.
+			*/
+			bool blocked[4];
 
 			/*!
 				Metadata for each node. Each line is n to n + 1, with n to 0 for the last index.
@@ -135,9 +151,12 @@ namespace Core
             Gets the closest point on the navmesh on the line between origin and point. The origin has to be inside the mesh 
             \param point InOut parameter, will be changed to the closest point inside the navmesh.
             \param origin The start point from where the nearest point will be found.
+            \param node The index of the node that origin is inside of.
+			\param goalNode The index of the node that the origin is residing in. Will be set to -1 if point is outside mesh.
+			\param fromBorder The fudge factor, positon will be offsetted this far from the edge of the navigation mesh.
             \return True if a new closest point is found. False if origin is not inside the mesh or if a closer point was not found.
         */
-        bool GetClosestPointInsideMesh( glm::vec3& point, const glm::vec3& origin ); 
+        bool GetClosestPointInsideMesh( glm::vec3& point, const glm::vec3& origin, int& goalNode, float fromBorder ); 
 
         /*!
             Gets the node that the speciefied point is inside of. If multiple nodes contain the point the first one found will be returned.
@@ -146,7 +165,7 @@ namespace Core
             \returns Returns true if a containing node is found, false otherwise. 
         */
         bool GetNodeForPoint(int& node, const glm::vec3& point);
-        
+       
 
         /*!
             Function for checking if a point is on the navigation mesh.
@@ -160,6 +179,18 @@ namespace Core
 			Returns false if no field is calculated.
 		*/
 		bool CalculateFlowfieldForGroup(const glm::vec3& point, int group );
+
+
+		/*!
+			Will allocate frame memory for Astar algorithm. Must be run before use of CalculateShortPath function.
+			Will reserve memory according to the currently loaded navigation mesh and will return false if heap allocation fails.
+		*/
+		bool AllocateFrameMemoryForAstar();
+
+		/*!
+			Used for single unit pathfinding. AllocateFrameMemoryForAstar() must be run once before any calls to this function. 
+		*/
+		PathData CalculateShortPath( int ownNode, glm::vec3 ownPosition, int otherNode, glm::vec3 otherPosition );
 
 		/*!
 			Uses the GFX debug system to draw the outlines of the navigation mesh.
@@ -190,6 +221,13 @@ namespace Core
 			current number of nodes reciding under the nodes-pointer.
 		*/
 		int nrNodes;
+
+		private : 
+
+			Flowfield tempField;
+			bool* visited;
+			float* distances;
+			glm::vec3* points;
 	};
 }
 
