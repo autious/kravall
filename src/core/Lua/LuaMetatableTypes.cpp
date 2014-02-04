@@ -105,6 +105,16 @@ namespace Core
 
         return quat;
     }
+    
+    LuaLog* LuaUNewLog( lua_State * L )
+    {
+        LuaLog* log = static_cast<LuaLog*>(lua_newuserdata( L, sizeof( LuaLog ) ));
+
+        luaL_getmetatable( L, LOG_META_TYPE );
+        lua_setmetatable( L, -2 );
+
+        return log;
+    }
 
     Camera** LuaUNewCamera( lua_State * L )
     {

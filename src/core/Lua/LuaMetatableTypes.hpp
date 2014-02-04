@@ -14,6 +14,7 @@
 #define CAMERA_META_TYPE "metatype_camera"
 #define UNIT_TYPE_OBJECT_TYPE_META "unit_type_object_type_meta"
 #define SQUAD_FORMATION_META_TYPE "metatype_squad_formation"
+#define LOG_META_TYPE "metatype_log"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
@@ -31,10 +32,18 @@
 #include <Components/SquadComponent.hpp>
 #include <Camera/Camera.hpp>
 
+#include <logger/Logger.hpp>
+
 struct LuaEntity
 {
     Core::Entity entity;
     bool light;
+};
+
+struct LuaLog
+{
+    LogSystem::LogType logType;
+    const char * name;
 };
 
 struct LuaAspect
@@ -53,6 +62,7 @@ inline LuaAspect* luau_checkaspect( lua_State* state, int pos ) { return static_
 inline Core::ComponentType luau_checkcomponent( lua_State * state, int pos ) { return *static_cast<Core::ComponentType*>(luaL_checkudata( state, pos, COMPONENT_META_TYPE) ); }
 inline Core::UnitType* luau_checkunittype( lua_State * state, int pos) { return static_cast<Core::UnitType*>(luaL_checkudata(state, pos, UNIT_TYPE_OBJECT_TYPE_META) ); }
 inline Core::SquadFormation* luau_checksquadformation( lua_State * state, int pos) { return static_cast<Core::SquadFormation*>(luaL_checkudata(state, pos, SQUAD_FORMATION_META_TYPE) ); }
+inline LuaLog* luau_checklog( lua_State * state, int pos ) { return static_cast<LuaLog*>(luaL_checkudata( state, pos, LOG_META_TYPE ) ); }
 
 namespace Core
 {
@@ -70,6 +80,8 @@ namespace Core
     glm::vec4* LuaUNewGLMVec4( lua_State * L );
     glm::mat4* LuaUNewGLMMat4( lua_State * L );
     glm::quat* LuaUNewGLMQuat( lua_State * L );
+
+    LuaLog* LuaUNewLog( lua_State * L );
     
     Camera** LuaUNewCamera( lua_State * L );
 }
