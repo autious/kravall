@@ -17,6 +17,7 @@ void Core::MovementSystem::Update(float delta)
 	{
 		WorldPositionComponent* wpc = WGETC<WorldPositionComponent>(*it);
 		MovementComponent* mc = WGETC<MovementComponent>(*it);
+		TargetingComponent* tc = WGETC<TargetingComponent>(*it);
 
 		// process speed...
 		const Core::MovementData& movementData = Core::GameData::GetMovementDataWithState( mc->state );
@@ -29,9 +30,26 @@ void Core::MovementSystem::Update(float delta)
 			mc->speed = mc->desiredSpeed;
 		else if ( mc->speed < 0.0f )
 			mc->speed = 0.0f;
-		
-		// process position...
-		InterpolateDirections(mc, delta);
+
+		// Targeting override
+		if (tc->target != INVALID_ENTITY)
+		{
+			WorldPositionComponent* tpos = WGETC<WorldPositionComponent>(tc->target);
+			glm::vec3 direction = WorldPositionComponent::GetVec3(*tpos) - WorldPositionComponent::GetVec3(*wpc);
+			direction = glm::normalize(direction);
+
+			mc->direction[0] = direction.x;
+			mc->direction[1] = direction.y;
+			mc->direction[2] = direction.z;
+
+			mc->speed = 5.0f;
+			mc->desiredSpeed = 5.0f;
+		}
+		else
+		{
+			// process position...
+			InterpolateDirections(mc, delta);
+		}
 
 		wpc->position[0] += mc->direction[0] * mc->speed * delta;
 		wpc->position[1] = 0.0f; //+= mc->direction[1] * mc->speed * delta;

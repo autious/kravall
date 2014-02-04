@@ -34,6 +34,51 @@ namespace Core
 		{
 			return "TargetingComponent";
 		}
+		
+		static bool Attack(const Entity& attacker, TargetingComponent& target)
+		{
+			if (target.numberOfAttackers >= MAX_ATTACKERS)
+				return false;
+
+			for (int i = 0; i < target.numberOfAttackers; ++i)
+			{
+				if (target.attackers[i] == attacker)
+					return false;
+			}
+
+			target.attackers[target.numberOfAttackers] = attacker;
+			target.numberOfAttackers++;
+
+			return true;
+		}
+
+		static void StopAttacking(const Entity& attacker, TargetingComponent& target)
+		{
+			bool found = false;
+
+			for (int i = 0; i < target.numberOfAttackers; ++i)
+			{
+				// If not found, check to see if the current attacker is the sought attacker
+				if (!found)
+				{
+					if (target.attackers[i] == attacker)
+					{
+						found = true;
+						target.attackers[i] = INVALID_ENTITY;
+					}
+				}
+				else
+				{
+					target.attackers[i - 1] = target.attackers[i];
+					target.attackers[i] = INVALID_ENTITY;
+				}
+			}
+
+			if (found)
+			{
+				target.numberOfAttackers--;
+			}
+		}
 	};
 }
 #endif
