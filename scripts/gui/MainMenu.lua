@@ -22,7 +22,7 @@ function MainMenu:new(o,menuState)
                                     matReleased = "assets/material/ui/startButton.material",
                                     matPressed = "assets/material/ui/startButton.material",
                                     matHover = "assets/material/ui/startButton.material",
-                                    xoffset=-20,yoffset=10,onClick = function() openscenario( "prototype_area") end
+                                    xoffset=-20,yoffset=10,onClick = menuState.goScenario
                                   }))
 
     o.gui:addComponent(Button:new({
@@ -30,7 +30,7 @@ function MainMenu:new(o,menuState)
                                     matReleased = "assets/material/ui/optionsButton.material",
                                     matPressed = "assets/material/ui/optionsButton.material",
                                     matHover = "assets/material/ui/optionsButton.material",
-                                    xoffset=100,yoffset=20,onClick = menuState.goScenario 
+                                    xoffset=100,yoffset=20,onClick = menuState.goSettings
                                   }))
 
     o.gui:addComponent(Button:new({
