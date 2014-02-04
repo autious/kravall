@@ -16,7 +16,6 @@ Core::TargetingSystem::TargetingSystem() : BaseSystem(EntityHandler::GenerateAsp
 
 void Core::TargetingSystem::Update(float delta)
 {
-	return; // NOCOMMIT
 	TemporaryFunction();
 
 	for (std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); it++)
@@ -63,13 +62,16 @@ void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police)
 	{
 		case PoliceStance::Aggressive:
 			tc->target = FindClosestTarget(wpc, UnitType::Rioter);
-			targetPos = WGETC<Core::WorldPositionComponent>(tc->target);
+			if( tc->target != INVALID_ENTITY )
+			{
+				targetPos = WGETC<Core::WorldPositionComponent>(tc->target);
 
-			mc->goal[0] = targetPos->position[0];
-			mc->goal[1] = targetPos->position[1];
-			mc->goal[2] = targetPos->position[2];
+				mc->goal[0] = targetPos->position[0];
+				mc->goal[1] = targetPos->position[1];
+				mc->goal[2] = targetPos->position[2];
 
-			colour = GFXColor(1.0f, 0.0f, 0.0f, 1.0f);
+				colour = GFXColor(1.0f, 0.0f, 0.0f, 1.0f);
+			}
 			break;
 		case PoliceStance::Defensive:
 			if (tc->numberOfAttackers > 0)

@@ -19,7 +19,6 @@ namespace Core
 
 	void GPUPFSystem::Update(float delta)
 	{
-		return; // NOCOMMIT
 
 		if (!m_foundShader)
 		{
