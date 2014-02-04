@@ -17,6 +17,7 @@
 #include "FBORenderer/FBOPainter.hpp"
 #include "PostProcessing/PostProcessingPainter.hpp"
 #include "GlobalIlluminationRenderer/GIPainter.hpp"
+#include "PostProcessing/BlurPainter.hpp"
 
 #include "TextRenderer/TextManager.hpp"
 #include "DebugRenderer/DebugManager.hpp"
@@ -211,6 +212,7 @@ namespace GFX
         OverlayPainter* m_overlayPainter;
 		PostProcessingPainter* m_postProcessingPainter;
 		GIPainter* m_GIPainter;
+		BlurPainter* m_blurPainter;
 
 		void SubSystemTimeRender();
         std::vector<std::pair<const char*, std::chrono::microseconds>> m_subsystemTimes;

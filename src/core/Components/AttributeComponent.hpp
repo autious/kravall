@@ -12,6 +12,11 @@ namespace Core
 		Passive, Defensive, Aggressive
 	};
 
+	enum PoliceState
+	{
+		PS_Normal, PS_Attacking, PS_Fleeing, PS_Routing
+	};
+
 	/*!
 	Enum specifying the alignment of the rioters.
 	A rioter's alignment defines its behaviour and reactions in different situations. There are two alignments:
@@ -53,6 +58,9 @@ namespace Core
 
 				/*! The police's mobility represented by a float with range [0.0f, 100.0f]. */
 				float mobility;
+
+				/*! The police's state represented by the PoliceState enum. */
+				PoliceState state;
 			} police;
 			struct
 			{

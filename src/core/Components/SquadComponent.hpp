@@ -25,7 +25,6 @@ namespace Core
 		Core::SquadFormation squadFormation = Core::SquadFormation::NO_FORMATION;
 
 		int squadID = -1;
-		int squadGoalNode = -1;
 		float squadGoal[3];
 		float squadForward[2];
 		float squadTargetForward[2];
@@ -44,7 +43,6 @@ namespace Core
 		SquadComponent()
 		{
 			squadID = -1;
-			squadGoalNode = -1;
 
 			squadGoal[0] = 0.0f;
 			squadGoal[1] = 0.0f;
@@ -62,15 +60,6 @@ namespace Core
 			squadHealth = 0;
 			squadStamina = 0;
 			squadMorale = 0.0f;
-		}
-
-		SquadComponent(Core::PoliceStance stance, Core::SquadFormation formation, int id, Core::Entity leader, bool moveInFormation)
-		{
-			squadStance = stance;
-			squadFormation = formation;
-			squadID = id;
-			squadLeader = leader;
-			squadMoveInFormation = moveInFormation;
 		}
 	};
 }

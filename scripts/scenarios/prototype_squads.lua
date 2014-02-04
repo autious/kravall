@@ -1,9 +1,13 @@
 local ent = require "entities"
-local scenario = require "scenario"
-local scen = scenario.new()
+local scen = require "scenario":new()
 
-scen.asm:specific_content( core.contentmanager.load( 
+scen.asm:specific_content( core.contentmanager.load(
 		core.loaders.NavigationMeshLoader, "prototypeLevel.txt", function( value ) end, false ) )
+
+scen.gamemode = require "gamemodes/kravall":new()
+
+scen:registerUpdateCallback( function(delta) scen.gamemode:update(delta) end )
+scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
 
 local ambient = ent.get "ambientLight"
 local directional = ent.get "directionalLight"
@@ -12,9 +16,10 @@ local street_light_intensity = 2.0
 ambient(scen, 1.0, 1.0, 1.0, 0.01)
 directional(scen, -1, -1, 0.5)
 
-scen.gamemode =  require "gamemodes/normal":new()
 scen:registerUpdateCallback( function( delta ) scen.gamemode:update(delta) end )
 scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
+
+--camera:lookAt( core.glm.vec3.new( -20, 35, 20 ), core.glm.vec3.new( 0, 0, 20 ) )
 scen.gamemode.camera:lookAt( core.glm.vec3.new( -20, 35, 0 ), core.glm.vec3.new( 0, 0, 30 ) )
 
 -- Group 0 start to end, top row (left side)
@@ -46,7 +51,7 @@ street_light(scen, 49.5, 13.5, street_light_intensity)
 street_light(scen, 59, 13.5, street_light_intensity)
 
 -- Group 0 end light
-street_light(scen.asm, 59, 4.75, street_light_intensity)
+street_light(scen, 59, 4.75, street_light_intensity)
 
 -- Group 1 start to end, bottom part, left row
 street_light(scen, -25, 32, street_light_intensity)
@@ -77,65 +82,61 @@ street_light(scen, 14, -35, street_light_intensity)
 street_light(scen, 28, -35, street_light_intensity)
 
 local rioter = ent.get "rioter"
-local police = ent.get "police"
+local squad = ent.get "policeSquad"
 local building = ent.get "building"
 
-local dist = 1.8
-local policeGroup = core.system.groups.createGroup();
 
-local centerPoint = { -4, 0, -21}
-for i = -4, 3 do
-	j= 0 --for j = -1, 1 do
-		police(scen, i * dist + centerPoint[1], 0 + centerPoint[2], j * dist + centerPoint[3], policeGroup)
-	--end
-end
+local squadOne = squad(scen, -5, 0, 0, math.pi/2);
+--local squadTwo = squad(scen, -5, 0, -10, math.pi/2);
+--core.system.groups.setGroupGoal(policeGroup, -43, 0, 4)
+   
+
+--police(scen, 1, 0, -22);
+--police(scen, 1, 0, -21);
+--police(scen, 1, 0, -20);
+
 
 -- Release	
---local rGroup = core.system.groups.createGroup();
---local centerPoint = { 49, 0, 5 }		
---for i = -7, 6 do
---	for p = -6, 6 do
---		rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rGroup)
---	end
---end
---core.system.groups.setGroupGoal(rGroup, -43, 0, 4)
---rioter( asm, 6 * 1.5 + centerPoint[1], 0  + centerPoint[2], 6 * 1.5  + centerPoint[3], 0)
---rioter( asm, 6 * 1.5 + centerPoint[1], 0  + centerPoint[2], -7 * 1.5  + centerPoint[3], 0)
-
-local rioters = {}
+local rGroup = core.system.groups.createGroup();
+local centerPoint = { 49, 0, 5 }		
+for i = -7, 6 do
+	for p = -6, 6 do
+		rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rGroup)
+	end
+end
+core.system.groups.setGroupGoal(rGroup, -43, 0, 4)
+--rioter( scen, 6 * 1.5 + centerPoint[1], 0  + centerPoint[2], 6 * 1.5  + centerPoint[3], 0)
+--rioter( scen, 6 * 1.5 + centerPoint[1], 0  + centerPoint[2], -7 * 1.5  + centerPoint[3], 0)
 
 local rioterGroup = core.system.groups.createGroup()
 local centerPoint = { 20.5, 0, -40 }		
 for i = -4, 4 do
 	for p = -5, 5 do
-		local r = {}
-		r.instance = rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rioterGroup)
-		table.insert(rioters, r)
+		rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rioterGroup)
 	end
 end
 core.system.groups.setGroupGoal(rioterGroup, -21, 0, 36)
 
 
-function Update(dt)
-	local i = 1
-	while i <= #rioters do
-		local atc = rioters[i].instance:get(core.componentType.AttributeComponent)
-
-		print(atc.rage)
-		print(atc.pressure)
-
-		if atc.morale <= 0.0 then
-			rioters[i].instance:destroy()
-			table.remove(rioters, i)
-		else
-			i = i + 1
-		end
-	end
-end
-
-scen:registerUpdateCallback(Update)
+-- Debug
+--local centerPoint = { 49, 0, 5 }		
+--for i = -2, 2 do
+--	for p = -2, 2 do
+--		rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], 0)
+--	end
+--end
+--core.nav_mesh.set_group_goal(0, -43, 0, 4)
+--
+--local centerPoint = { 20.5, 0, -40 }		
+--for i = -2, 2 do
+--	for p = -2, 2 do
+--		rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], 1)
+--	end
+--end
+--core.nav_mesh.set_group_goal(1, -21, 0, 36)
 
 local navmesh = ent.get "navMesh"
+--navmesh(scen, 0, -0.1, 0)
 local plane = ent.get "plane"
 plane(scen, 0, -1, 0, 150)
 
@@ -182,6 +183,4 @@ building(scen, 36, 20)
 building(scen, 45, 19)
 building(scen, 56, 19)
 
-
 return scen;
---return asm;
