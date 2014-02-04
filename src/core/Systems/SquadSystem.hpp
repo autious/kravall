@@ -2,6 +2,7 @@
 #define CORE_SYSTEMS_SQUAD_SYSTEM_HPP
 
 #include <ComponentFramework/BaseSystem.hpp>
+#include <glm/glm.hpp>
 
 namespace Core
 {
@@ -12,9 +13,8 @@ namespace Core
 
         virtual void Update(float delta) override;
         virtual const char* GetHumanName() { return "SquadSystem"; }
-
-    private:
-
+        
+        void SetSquadGoal(int squadID, glm::vec3 target);
     };
 }
 

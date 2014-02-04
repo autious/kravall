@@ -13,6 +13,8 @@ ambient(scen, 1.0, 1.0, 1.0, 0.01)
 directional(scen, -1, -1, 0.5)
 
 scen.gamemode =  require "gamemodes/normal":new()
+
+
 scen:registerUpdateCallback( function( delta ) scen.gamemode:update(delta) end )
 scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
 scen.gamemode.camera:lookAt( core.glm.vec3.new( -20, 35, 0 ), core.glm.vec3.new( 0, 0, 30 ) )
@@ -81,14 +83,16 @@ local police = ent.get "police"
 local building = ent.get "building"
 
 local dist = 1.8
-local policeGroup = core.system.groups.createGroup();
 
-local centerPoint = { -4, 0, -21}
-for i = -4, 3 do
-	j= 0 --for j = -1, 1 do
-		police(scen, i * dist + centerPoint[1], 0 + centerPoint[2], j * dist + centerPoint[3], policeGroup)
-	--end
-end
+local squadOne = squad(scen, -5, 0, 0, math.pi/2);
+
+--local policeGroup = core.system.groups.createGroup();
+--local centerPoint = { -4, 0, -21}
+--for i = -4, 3 do
+--	j= 0 --for j = -1, 1 do
+--		police(scen, i * dist + centerPoint[1], 0 + centerPoint[2], j * dist + centerPoint[3], policeGroup)
+--	--end
+--end
 
 -- Release	
 --local rGroup = core.system.groups.createGroup();
@@ -122,6 +126,7 @@ function Update(dt)
 		local atc = rioters[i].instance:get(core.componentType.AttributeComponent)
 
 		print(atc.rage)
+		print(atc.pressure)
 
 		if atc.morale <= 0.0 then
 			rioters[i].instance:destroy()

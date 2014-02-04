@@ -19,7 +19,6 @@ void Core::NavMeshBlockingSystem::Update( float delta )
 	{
 		for( int i = 0; i < instance->nrNodes; i++ )
 		{
-
 			for( int p = 0; p < 4; p++ )
 			{
 			}
@@ -31,8 +30,13 @@ void Core::NavMeshBlockingSystem::Update( float delta )
 	}
 
 
-	return; // implementation incomplete
 
+
+
+
+
+	return; // implementation incomplete
+	/*
 	Core::NavigationMesh* instance = Core::GetNavigationMesh();
 	if( instance )
 	{
@@ -73,4 +77,5 @@ void Core::NavMeshBlockingSystem::Update( float delta )
 
 		}
 	}
+	*/
 }

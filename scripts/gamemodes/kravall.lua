@@ -7,7 +7,7 @@ local T = {}
 
 local selectedSquad = nil
 
-core.movementData.setMovementMetaData( core.movementData.Idle, 5.8, 17, 17 )
+core.movementData.setMovementMetaData( core.movementData.Idle, 0, 17, 17 )
 core.movementData.setMovementMetaData( core.movementData.Walking, 5.8, 17, 17 )
 core.movementData.setMovementMetaData( core.movementData.Sprinting, 8.8, 17, 14 )
 
@@ -43,7 +43,8 @@ function T:update( delta )
         if selectedSquad then
             local mouseX, mouseY = core.input.mouse.getPosition()
             local groundX, groundY, groundZ = core.system.picking.getGroundHit(mouseX, mouseY);
-            core.system.groups.setGroupGoal(selectedSquad, groundX, groundY, groundZ);            
+            --core.system.groups.setGroupGoal(selectedSquad, groundX, groundY, groundZ);		
+			core.system.squad.setSquadGoal(selectedSquad, groundX, groundY, groundZ);
         end        
     end
 

@@ -7,7 +7,7 @@
 namespace Core
 {
 	/*!
-	Enumeration for the various formations a squad can take.
+		Enumeration for the various formations a squad can take.
 	*/
 	enum SquadFormation
 	{
@@ -17,7 +17,7 @@ namespace Core
 	};
 
 	/*!
-	Component used for controlling a group of police. The Entity asigned to the squadLeader varaible must match an aspect of Core::WorldPositionComponent.
+		Component used for controlling a group of police. The Entity asigned to the squadLeader varaible must match an aspect of Core::WorldPositionComponent.
 	*/
 	struct SquadComponent
 	{
@@ -25,11 +25,10 @@ namespace Core
 		Core::SquadFormation squadFormation = Core::SquadFormation::NO_FORMATION;
 
 		int squadID = -1;
-		int squadGoalNode = -1;
 		float squadGoal[3];
 		float squadForward[2];
 		float squadTargetForward[2];
-		Core::Entity squadLeader = INVALID_ENTITY;
+		Core::Entity squadLeader;
 		bool squadMoveInFormation = false;
 		bool waitForStraggler = false;
 		int squadHealth = 0;
@@ -41,37 +40,7 @@ namespace Core
 			return "SquadComponent";
 		}
 
-		SquadComponent()
-		{
-			squadID = -1;
-			squadGoalNode = -1;
-
-			squadGoal[0] = 0.0f;
-			squadGoal[1] = 0.0f;
-			squadGoal[2] = 0.0f;
-
-			squadForward[0] = 1.0f;
-			squadForward[0] = 0.0f;
-
-			squadTargetForward[0] = 1.0f;
-			squadTargetForward[1] = 0.0f;
-
-			squadLeader = INVALID_ENTITY;
-			squadMoveInFormation = false;
-			waitForStraggler = false;
-			squadHealth = 0;
-			squadStamina = 0;
-			squadMorale = 0.0f;
-		}
-
-		SquadComponent(Core::PoliceStance stance, Core::SquadFormation formation, int id, Core::Entity leader, bool moveInFormation)
-		{
-			squadStance = stance;
-			squadFormation = formation;
-			squadID = id;
-			squadLeader = leader;
-			squadMoveInFormation = moveInFormation;
-		}
+		SquadComponent();
 	};
 }
 

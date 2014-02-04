@@ -17,6 +17,9 @@ namespace GFX
 		GLint m_internalFormat;
 		GLint m_format;
 
+		int m_height;
+		int m_width;
+
 		void GenerateTexture();
 
 	public:
@@ -49,6 +52,16 @@ namespace GFX
 		\return id of texture
 		*/
 		GLuint GetTextureHandle();
+
+		inline int GetWidth()
+		{
+			return m_width;
+		}
+
+		inline int GetHeight()
+		{
+			return m_height;
+		}
 	};
 }
 

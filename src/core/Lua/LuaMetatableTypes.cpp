@@ -32,6 +32,15 @@ namespace Core
         return asp;
     }
 
+    Core::SquadFormation* LuaUNewSquadFormation(lua_State* L)
+    {
+        Core::SquadFormation* formation = static_cast<Core::SquadFormation*>(lua_newuserdata(L, sizeof(Core::SquadFormation)));                  
+        luaL_newmetatable(L, SQUAD_FORMATION_META_TYPE);
+        lua_setmetatable(L, -2);
+        
+        return formation;
+    }
+
     uint64_t* LuaUNewBitmask( lua_State * L )
     {
         uint64_t * data = (uint64_t*)lua_newuserdata( L, sizeof( uint64_t ));

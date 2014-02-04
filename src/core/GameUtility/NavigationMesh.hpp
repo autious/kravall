@@ -149,15 +149,24 @@ namespace Core
 		bool CheckPointInsideNode( const glm::vec3& point, int node );
 
         /*!
-            Gets the closest point on the navmesh on the line between origin and point. The origin has to be inside the node 
-            pointed to by the node paramter.
+            Gets the closest point on the navmesh on the line between origin and point. The origin has to be inside the mesh 
             \param point InOut parameter, will be changed to the closest point inside the navmesh.
             \param origin The start point from where the nearest point will be found.
             \param node The index of the node that origin is inside of.
-			\param goalNode The index of the node that the origin is residing in. Only eligable if return val is true and will otherwise be set to -1.
-            \return True if a new closest point is found. False if origin is not inside the node pointer to by the parameter node or if a closer point was not found.
+			\param goalNode The index of the node that the origin is residing in. Will be set to -1 if point is outside mesh.
+			\param fromBorder The fudge factor, positon will be offsetted this far from the edge of the navigation mesh.
+            \return True if a new closest point is found. False if origin is not inside the mesh or if a closer point was not found.
         */
-        bool GetClosestPointInsideMesh( glm::vec3& point, const glm::vec3& origin, int node, int& goalNode ); 
+        bool GetClosestPointInsideMesh( glm::vec3& point, const glm::vec3& origin, int& goalNode, float fromBorder ); 
+
+        /*!
+            Gets the node that the speciefied point is inside of. If multiple nodes contain the point the first one found will be returned.
+            \param node Out parameter, the node that the point is inside of will be returned through this parameter.
+            \param point The point to retrieve the containing node.
+            \returns Returns true if a containing node is found, false otherwise. 
+        */
+        bool GetNodeForPoint(int& node, const glm::vec3& point);
+       
 
         /*!
             Function for checking if a point is on the navigation mesh.

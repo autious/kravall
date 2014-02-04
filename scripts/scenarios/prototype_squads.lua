@@ -2,8 +2,7 @@ local ent = require "entities"
 local scen = require "scenario":new()
 
 scen.asm:specific_content( core.contentmanager.load(
-		core.loaders.NavigationMeshLoader, "extremeScenario.txt", function( value ) end, false ) )
-
+		core.loaders.NavigationMeshLoader, "prototypeLevel.txt", function( value ) end, false ) )
 
 scen.gamemode = require "gamemodes/kravall":new()
 
@@ -16,7 +15,6 @@ local street_light = ent.get "streetLight"
 local street_light_intensity = 2.0
 ambient(scen, 1.0, 1.0, 1.0, 0.01)
 directional(scen, -1, -1, 0.5)
-
 
 scen:registerUpdateCallback( function( delta ) scen.gamemode:update(delta) end )
 scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
@@ -84,42 +82,40 @@ street_light(scen, 14, -35, street_light_intensity)
 street_light(scen, 28, -35, street_light_intensity)
 
 local rioter = ent.get "rioter"
-local police = ent.get "police"
+local squad = ent.get "policeSquad"
 local building = ent.get "building"
-
-local dist = 1.8
---local policeGroup = core.system.groups.createGroup();
---
---local centerPoint = { -4, 0, -21}
---for i = -4, 3 do
---	j= 0
---		--police(scen, i * dist + centerPoint[1], 0 + centerPoint[2], j * dist + centerPoint[3], policeGroup)
---end
-   
---local policeGroupTwo = core.system.groups.createGroup();
---centerPoint = { 5, 0, 5}
---for i = -4, 3 do
---	j= 0 --for j = -1, 1 do
---		--police(scen, j * dist + centerPoint[1], 0 + centerPoint[2], i * dist + centerPoint[3], policeGroupTwo)
---	--end
---end
-
---police(scen, centerPoint[1], 0, centerPoint[3], policeGroupTwo)
-police( scen, 1, 0, -21, policeGroup );
---police(scen, 1, 0, -20);
-
---local rGroup = core.system.groups.createGroup();
---local centerPoint = { 0, 0, 0 }	
---local side = math.sqrt( 4000 )	
---for i = -side / 2, side / 2 do
---	for p = - side / 2, side / 2 do
---		--police( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rGroup)
---	end
---end
 
 
 local squadOne = squad(scen, -5, 0, 0, math.pi/2);
+--local squadTwo = squad(scen, -5, 0, -10, math.pi/2);
+--core.system.groups.setGroupGoal(policeGroup, -43, 0, 4)
+   
 
+--police(scen, 1, 0, -22);
+--police(scen, 1, 0, -21);
+--police(scen, 1, 0, -20);
+
+
+-- Release	
+local rGroup = core.system.groups.createGroup();
+local centerPoint = { 49, 0, 5 }		
+for i = -7, 6 do
+	for p = -6, 6 do
+		rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rGroup)
+	end
+end
+core.system.groups.setGroupGoal(rGroup, -43, 0, 4)
+--rioter( scen, 6 * 1.5 + centerPoint[1], 0  + centerPoint[2], 6 * 1.5  + centerPoint[3], 0)
+--rioter( scen, 6 * 1.5 + centerPoint[1], 0  + centerPoint[2], -7 * 1.5  + centerPoint[3], 0)
+
+local rioterGroup = core.system.groups.createGroup()
+local centerPoint = { 20.5, 0, -40 }		
+for i = -4, 4 do
+	for p = -5, 5 do
+		rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rioterGroup)
+	end
+end
+core.system.groups.setGroupGoal(rioterGroup, -21, 0, 36)
 
 
 -- Debug
@@ -141,5 +137,50 @@ local squadOne = squad(scen, -5, 0, 0, math.pi/2);
 
 local navmesh = ent.get "navMesh"
 --navmesh(scen, 0, -0.1, 0)
+local plane = ent.get "plane"
+plane(scen, 0, -1, 0, 150)
+
+building(scen, 64, 12)
+building(scen, 64, 2)
+building(scen, 64, -8)
+building(scen, 55, -12)
+building(scen, 45, -11)
+building(scen, 30, -10)
+building(scen, 20, -8)
+building(scen, 10, -9)
+building(scen, 13, -23)
+building(scen, 23, -24)
+building(scen, 33, -23)
+building(scen, 36, -40)
+building(scen, 33, -53)
+building(scen, 21, -52)
+building(scen, 11, -52)
+building(scen, 1, -49)
+building(scen, -10, -50)
+building(scen, -15, -40)
+building(scen, -18, -27)
+building(scen, -17, -10)
+building(scen, -29, -8)
+building(scen, -39, -9)
+building(scen, -49, -9)
+building(scen, -57, -4)
+building(scen, -58, 6)
+building(scen, -56, 14)
+building(scen, -44, 16)
+building(scen, -33, 15)
+building(scen, -18, 15)
+building(scen, -24, 21)
+building(scen, -30, 27)
+building(scen, -33, 40)
+building(scen, -21, 45)
+building(scen, -12, 43)
+building(scen, -1, 38)
+building(scen, 6, 30)
+building(scen, 9, 15)
+building(scen, 18, 18)
+building(scen, 28, 17)
+building(scen, 36, 20)
+building(scen, 45, 19)
+building(scen, 56, 19)
 
 return scen;
