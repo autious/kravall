@@ -24,6 +24,14 @@ directional( scen, 1.5707963705062866, -0.0, 0.0, 1.0, 1.0, 1.0, 1.0 )
 ambient( scen, 1.0, 1.0, 1.0, 0.5 )
 
 scen.cameras = scen.cameras or {}
+scen.cameras["credits"] = {
+    view = core.glm.mat4.new(
+    0.794392466545105, -0.05317002534866333, 0.6050732135772705, -0.0,
+    0.271955281496048, 0.9218692779541016, -0.27603834867477417, 0.0,
+    -0.5431214570999146, 0.38383567333221436, 0.7467859387397766, -0.0,
+    -78.51128387451172, -72.09426879882812, 26.56210708618164, 1.0 ),
+    fov = 0.8575560450553894
+}
 scen.cameras["main"] = {
     view = core.glm.mat4.new(
     1.0, 1.5099580252808664e-07, -1.5099580252808664e-07, -0.0,
@@ -49,6 +57,7 @@ scen.cameras["setup"] = {
     fov = 0.8575560450553894
 }
 
+local ent = staticModel( scen, 41.847232818603516, 93.87129974365234, -35.55999755859375, 0.0, -0.9728877544403076, 0.0, 0.23127798736095428, 1.0, "assets/model/animated/police/cop/cop-light_00.bgnome", "assets/material/animated/police/cop/cop-light_00.material", "" )
 local ent = staticModel( scen, 0.0, 0.0, -56.847023010253906, 0.0, 0.0, 0.0, 1.0, 1.0, "assets/model/ui/testMenue.bgnome", "assets/material/test.material", "" )
 
 

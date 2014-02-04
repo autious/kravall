@@ -37,7 +37,7 @@ function MainMenu:new(o,menuState)
                                     matReleased = "assets/material/ui/creditsButton.material",
                                     matPressed = "assets/material/ui/creditsButton.material",
                                     matHover = "assets/material/ui/creditsButton.material",
-                                    xoffset=-10,yoffset=20
+                                    xoffset=-10,yoffset=20,onClick = menuState.goCredits
                                     }))
 
     o.gui:addPlacementHandler( CenterPlacer:new() )

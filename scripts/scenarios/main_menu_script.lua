@@ -38,6 +38,16 @@ return function( scen )
         scen.gui = SetupMenu:new({},menuState)
     end
 
+    function menuState.goCredits()
+        scen.gamemode.camera:setGoal( scen.cameras.credits.view, MenuScrollSpeed )
+
+        if scen.gui ~= nil then
+            scen.gui:destroy()
+            scen.gui = nil
+        end
+        --scen.gui = SetupMenu:new({},menuState)
+    end
+
     local function onKey( key, scancode, action )
         if key == core.input.keyboard.key.A and action == core.input.action.Release then
             menuState.goMain()
@@ -49,6 +59,10 @@ return function( scen )
 
         if key == core.input.keyboard.key.C and action == core.input.action.Release then
             menuState.goSetup()
+        end  
+
+        if key == core.input.keyboard.key.D and action == core.input.action.Release then
+            menuState.goCredits()
         end  
     end
 
