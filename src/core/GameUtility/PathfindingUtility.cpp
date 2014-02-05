@@ -51,11 +51,6 @@ namespace Core
 		
 				float alongLine = glm::dot( hit - lineStart, (lineEnd - lineStart) * current->corners[i].inverseLength );
 
-				// check vs. corner
-				glm::vec3 toSphere = glm::vec3( current->points[ii], 0.0f, current->points[ii+1] ) - start;
-				float squareLength = glm::dot( toSphere, toSphere );
-				float projectedDistanceToSphere = glm::dot( toSphere, glm::normalize( goal - start ) );
-
 				float t = std::numeric_limits<float>::max();
 
 				// ray is inside the sphere, ignore...
@@ -63,6 +58,11 @@ namespace Core
 				// the sphere is too far from the line, ignore...
 				if( abs( glm::dot( goal - glm::vec3( current->points[ii], 0.0f, current->points[ii+1] ), goal - glm::vec3( current->points[ii], 0.0f, current->points[ii+1] ) )) > radius * radius )
 				{
+					// check vs. corner
+					glm::vec3 toSphere = glm::vec3( current->points[ii], 0.0f, current->points[ii+1] ) - start;
+					float squareLength = glm::dot( toSphere, toSphere );
+					float projectedDistanceToSphere = glm::dot( toSphere, glm::normalize( goal - start ) );
+
 					if( !(squareLength < radius * radius || projectedDistanceToSphere < 0 || squareLength - projectedDistanceToSphere * projectedDistanceToSphere > radius * radius) ) 
 					{
 						float sphereIntersectionDelta = sqrt( radius * radius - (squareLength - projectedDistanceToSphere * projectedDistanceToSphere) );	

@@ -9,6 +9,20 @@ function O:new(o)
     return o
 end
 
+function O:win()
+    for _,v in pairs( self.objectives ) do
+        v.state = "success"
+    end 
+    self.state = "success"
+end
+
+function O:loss()
+    for _,v in pairs( self.objectives ) do
+        v.state = "fail"
+    end 
+    self.state = "fail"
+end
+
 function O:isWin()
     return self.state == "success"
 end
