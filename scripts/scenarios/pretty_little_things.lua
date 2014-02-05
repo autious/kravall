@@ -1,9 +1,12 @@
-local ASML = require "assembly_loader" 
+local scenario = require "scenario"
+local scen = scenario.new()
 
-local asm = ASML.loadPack( {} )
+scen.gamemode = require "gamemodes/normal":new()
+scen:registerUpdateCallback( function(delta) scen.gamemode:update(delta) end )
+scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
 
 --Plane
-asm:loadAssembly( 
+scen:loadAssembly( 
 {
 	{
 		type = core.componentType.WorldPositionComponent,
@@ -54,7 +57,7 @@ asm:loadAssembly(
 --}
 --)
 --Teapot
-asm:loadAssembly( 
+scen:loadAssembly( 
 {
 	{
 		type = core.componentType.WorldPositionComponent,
@@ -80,7 +83,7 @@ asm:loadAssembly(
 }
 )
 --Torus
-asm:loadAssembly( 
+scen:loadAssembly( 
 {
 	{
 		type = core.componentType.WorldPositionComponent,
@@ -106,7 +109,7 @@ asm:loadAssembly(
 }
 )
 --Sphere
-asm:loadAssembly( 
+scen:loadAssembly( 
 {
 	{
 		type = core.componentType.WorldPositionComponent,
@@ -132,7 +135,7 @@ asm:loadAssembly(
 }
 )
 --Cone
-asm:loadAssembly( 
+scen:loadAssembly( 
 {
 	{
 		type = core.componentType.WorldPositionComponent,
@@ -158,7 +161,7 @@ asm:loadAssembly(
 }
 )
 --Pyramid
-asm:loadAssembly( 
+scen:loadAssembly( 
 {
 	{
 		type = core.componentType.WorldPositionComponent,
@@ -184,7 +187,7 @@ asm:loadAssembly(
 }
 )
 --Knot
-asm:loadAssembly( 
+scen:loadAssembly( 
 {
 	{
 		type = core.componentType.WorldPositionComponent,
@@ -210,7 +213,7 @@ asm:loadAssembly(
 }
 )
 -- Pointlight
-asm:loadAssembly( 
+scen:loadAssembly( 
     {
         {
             type = core.componentType.LightComponent,
@@ -240,7 +243,7 @@ asm:loadAssembly(
 	
 for i = 0, 255 do
 	local color = { math.random(), math.random(), math.random() }
-    asm:loadAssembly( 
+    scen:loadAssembly( 
     {
         {
             type = core.componentType.LightComponent,
@@ -271,7 +274,7 @@ end
 -- Spotlight
 for i = 0, 255 do
 	local color = { math.random(), math.random(), math.random() }
-    asm:loadAssembly( 
+    scen:loadAssembly( 
     {
         {
             type = core.componentType.LightComponent,
@@ -301,7 +304,7 @@ for i = 0, 255 do
     )
 end
 
-asm:loadAssembly( 
+scen:loadAssembly( 
 {
 	{
 		type = core.componentType.LightComponent,
@@ -329,7 +332,7 @@ asm:loadAssembly(
 	}
 } 
 )
-asm:loadAssembly( 
+scen:loadAssembly( 
 {
 	{
 		type = core.componentType.LightComponent,
@@ -357,7 +360,7 @@ asm:loadAssembly(
 	}
 } 
 )
-asm:loadAssembly( 
+scen:loadAssembly( 
 {
 	{
 		type = core.componentType.LightComponent,
@@ -388,7 +391,7 @@ asm:loadAssembly(
 
 
 -- Directional light
-asm:loadAssembly( 
+scen:loadAssembly( 
 {
 	{
 		type = core.componentType.LightComponent,
@@ -416,7 +419,7 @@ asm:loadAssembly(
 } 
 )
 -- Ambient light
-asm:loadAssembly( 
+scen:loadAssembly( 
 {
 	{
 		type = core.componentType.LightComponent,
@@ -442,4 +445,4 @@ asm:loadAssembly(
 	}
 } 
 )
-return asm;
+return scen;

@@ -18,13 +18,18 @@ local lanePos = { -17, 0, 17} -- Precalculated positions for the lanes positions
 local currentTileIndex = 0
 
 local numTracks = 8 -- Number of tracks to draw in each lane
-local trackCO = 40 -- The position at which tracks reset (behind camera)
+local trackCO = 100 -- The position at which tracks reset (behind camera)
 local trackLength = 100 -- Length of each track piece
 
 local numCaveSegs = 4 -- Number of tracks to draw in each lane
 local caveSegLength = 200 -- Length in units for a cave segment
 
-local cartSpeed = 75.0 -- Speed of the minecart
+local cartResetSpeed = 150.0
+local cartMaxSpeed = 275.0
+local cartSpeed = cartResetSpeed -- Speed of the minecart
+local cartAcc = 0.05
+
+local minecartY = 4
 
 local score = 0
 
@@ -47,7 +52,7 @@ local minecart = {
 	goldlight1 = entities.CreatePointlight({1, 9, -1}, {1, 1, 0}, 6, 10, scen),
 	goldlight2 = entities.CreatePointlight({0, 8, 0}, {1, 1, 0}, 6, 10, scen),
 	goldlight3 = entities.CreatePointlight({-1, 7, 1}, {1, 1, 0}, 6, 10, scen),
-	moodlight = entities.CreatePointlight({0, 15, -7}, {255/255, 90/255, 0/255}, 75, 2, scen),
+	moodlight = entities.CreatePointlight({0, 15, -7}, {230/255, 90/255, 30/255}, 50, 200, scen),
 	position = {0, 0, 0}
 	
 }
@@ -56,7 +61,7 @@ local function UpdateCartPosition(delta)
 	util.SetPosition(
 		{
 			minecart.position[1] + 0.0, 
-			minecart.position[2] + 0.0, 
+			minecart.position[2] + minecartY, 
 			minecart.position[3] + 0.0
 		}, minecart.cart)
 		
@@ -96,69 +101,119 @@ local function UpdateCartPosition(delta)
 		}, minecart.moodlight)
 end
 
+local function Overlap(a, b, c, ofs)
+	local a1 = a[1] - ofs
+	local a2 = a[2] + ofs
+	local b1 = b[1] - ofs
+	local b2 = b[2] + ofs
+	local c1 = c[1] - ofs
+	local c2 = c[2] + ofs
+	
+	-- a overlap b
+	if 		a1 <= b2 and b1 <= a2 
+	-- a overlap c
+	and 	a1 <= c2 and c1 <= a2 
+	-- b overlap c
+	and 	b1 <= c2 and b1 <= c2 
+	then return true 
+	else return false end
+end
+
+local function RandomFunc()
+	local fac = 15
+	local rmax = fac * (500 / (score + 500))
+	local rnd = math.random(1,3+rmax)
+	return rnd
+end
+
 -- Function for randomizing tracks
-local function RandomTrack(i, lane)
-	return track.CreateTrack({lanePos[lane], 0, trackCO-i*trackLength}, math.floor(math.random()*10)+1, scen)
+local function RandomTrack(i)
+	local e1, k1 = track.CreateTrack({lanePos[1], 0, trackCO-i*trackLength}, RandomFunc(), scen)
+	local e2, k2 = track.CreateTrack({lanePos[2], 0, trackCO-i*trackLength}, RandomFunc(), scen)
+	local e3, k3 = track.CreateTrack({lanePos[3], 0, trackCO-i*trackLength}, RandomFunc(), scen)
+	
+	local left	= {entity = e1, killzone = k1}
+	local mid	= {entity = e2, killzone = k2}
+	local right	= {entity = e3, killzone = k3}
+	
+	-- Check so that killzones are not overlapping
+	if Overlap(left.killzone, mid.killzone, right.killzone, 10) then 
+		local id = math.random(1,3)
+		if id == 1 then
+			left.entity:destroy()
+			left.entity, left.killzone = track.CreateTrack({lanePos[1], 0, trackCO-i*trackLength}, 1, scen)
+		elseif id == 2 then
+			mid.entity:destroy()
+			mid.entity, mid.killzone = track.CreateTrack({lanePos[2], 0, trackCO-i*trackLength}, 1, scen)
+		else
+			right.entity:destroy()
+			right.entity, right.killzone = track.CreateTrack({lanePos[3], 0, trackCO-i*trackLength}, 1, scen)
+		end
+	end
+	
+	return 	left, mid, right
 end
 
 -- Create tracks
-local l_tracks = {}
-local m_tracks = {}
-local r_tracks = {}
+local tracks = {}
+
+local function ResetAllTracks()
+	for i=1,numTracks do
+		tracks[i].left.entity:destroy()
+		tracks[i].mid.entity:destroy()
+		tracks[i].right.entity:destroy()
+		left, mid, right = RandomTrack(i)
+		tracks[i] = {
+						left = left,
+						mid = mid,
+						right = right,
+						offset = trackCO-i*trackLength
+					}
+	end
+end
+
 -- Create a few tracks to begin with
--- Left track
 for i=1,numTracks do
-	ent, kz = RandomTrack(i, 1)
-	l_tracks[i] = {entity = ent, killzone = kz, offset = trackCO-i*trackLength}
-end
--- Middle track
-for i=1,numTracks do
-	ent, kz = RandomTrack(i, 2)
-	m_tracks[i] = {entity = ent, killzone = kz, offset = trackCO-i*trackLength}
-end
--- Right track
-for i=1,numTracks do
-	ent, kz = RandomTrack(i, 3)
-	r_tracks[i] = {entity = ent, killzone = kz, offset = trackCO-i*trackLength}
+	left, mid, right = RandomTrack(i)
+	tracks[i] = {
+					left = left,
+					mid = mid,
+					right = right,
+					offset = trackCO-i*trackLength
+				}
 end
 
 local function UpdateTracks(delta)
+	local position = {0, 0, 0}
 	for i=1,numTracks do
 		-- Update left track
-		local position = util.GetPosition(l_tracks[i].entity)
-		l_tracks[i].offset = l_tracks[i].offset + delta * cartSpeed
-		if l_tracks[i].offset > trackLength then 
-			l_tracks[i].offset = l_tracks[i].offset -numTracks * trackLength 
-			l_tracks[i].entity:destroy()
-			l_tracks[i].entity, l_tracks[i].killzone = RandomTrack(i, 1)
-		end
-		position[3] = l_tracks[i].offset
-		util.SetPosition(position, l_tracks[i].entity)
+		tracks[i].offset = tracks[i].offset + delta * cartSpeed
 		
-		-- Update middle track
-		local position = util.GetPosition(m_tracks[i].entity)
-		m_tracks[i].offset = m_tracks[i].offset + delta * cartSpeed
-		if m_tracks[i].offset > trackLength then 
-			m_tracks[i].offset = m_tracks[i].offset -numTracks * trackLength 
-			m_tracks[i].entity:destroy()
-			m_tracks[i].entity, m_tracks[i].killzone = RandomTrack(i, 2)
+		if tracks[i].offset > trackLength then 
+			tracks[i].left.entity:destroy()
+			tracks[i].mid.entity:destroy()
+			tracks[i].right.entity:destroy()
+			
+			tracks[i].offset = tracks[i].offset -numTracks * trackLength 
+			tracks[i].left, tracks[i].mid, tracks[i].right = RandomTrack(i)
 		end
-		position[3] = m_tracks[i].offset
-		util.SetPosition(position, m_tracks[i].entity)
 		
-		-- Update right track
-		local position = util.GetPosition(r_tracks[i].entity)
-		r_tracks[i].offset = r_tracks[i].offset + delta * cartSpeed
-		local curOffset = r_tracks[i].offset
-		if r_tracks[i].offset > trackLength then 
-			r_tracks[i].offset = r_tracks[i].offset -numTracks * trackLength 
-			r_tracks[i].entity:destroy()
-			r_tracks[i].entity, r_tracks[i].killzone = RandomTrack(i, 3)
-		end
-		position[3] = r_tracks[i].offset
-		util.SetPosition(position, r_tracks[i].entity)
+		-- Left
+		position = util.GetPosition(tracks[i].left.entity)
+		position[3] = tracks[i].offset
+		util.SetPosition(position, tracks[i].left.entity)
 		
-		if curOffset >= -trackLength and curOffset < 0  then
+		-- Mid
+		position = util.GetPosition(tracks[i].mid.entity)
+		position[3] = tracks[i].offset
+		util.SetPosition(position, tracks[i].mid.entity)
+		
+		-- Right
+		position = util.GetPosition(tracks[i].right.entity)
+		position[3] = tracks[i].offset
+		util.SetPosition(position, tracks[i].right.entity)
+		
+		if tracks[i].offset >= -trackLength/2 and tracks[i].offset < trackLength/2  then
 			currentTileIndex = i
 		end
 		
@@ -195,20 +250,20 @@ local function IsKillzoned()
 	local i = currentTileIndex
 	
 	if currentLane == 1 then -- left
-		trk = l_tracks[i]
+		trk = tracks[i].left
 	elseif currentLane == 2 then -- mid
-		trk = m_tracks[i]
+		trk = tracks[i].mid
 	elseif currentLane == 3 then -- right
-		trk = r_tracks[i]
+		trk = tracks[i].right
 	else
 		return false
 	end
 	
-	if trk.killzone[1] >= 0 and trk.killzone[2] >= 0 then -- killzone is not nil
-		if trackLength + trk.offset < trk.killzone[2]  and trackLength + trk.offset > trk.killzone[1] then
-			return true
-		end
+	-- Check to see if inside the deadzone
+	if tracks[i].offset > trk.killzone[1]  and tracks[i].offset < trk.killzone[2] then
+		return true
 	end
+	
 	return false
 end
 
@@ -280,7 +335,7 @@ local function Update(delta)
 				local targetPos = lanePos[pendingLane]
 				local factor = switchingTime / switchingTimeConstant
 				minecart.position[1] =   factor * lanePos[currentLane] +   (1 - factor) * targetPos
-				minecart.position[2] = 15 * math.sin(math.pi * factor )
+				minecart.position[2] = 10 * math.sin(math.pi * factor )
 				if pendingLane < currentLane then
 					util.SetRotationZ(-math.pi*2 * factor, minecart.cart)
 				else
@@ -301,7 +356,7 @@ local function Update(delta)
 		
 		core.draw.drawText( 300, 35, "METERS TRAVELLED: "..math.floor(score) )
 		
-		
+		-- Die and stuff
 		if IsKillzoned() and invincitime < 0 and pendingLane == currentLane then 
 			util.SetLightIntensity(100, dblight) 
 			alive = false
@@ -309,7 +364,9 @@ local function Update(delta)
 			util.SetLightIntensity(0, dblight) 
 		end
 		
-		cartSpeed = cartSpeed + 0.05
+		cartSpeed = cartSpeed + cartAcc
+		
+		if cartSpeed > cartMaxSpeed then cartSpeed = cartMaxSpeed end
 
 		invincitime = invincitime - delta
 		if invincitime < 0.0 then 
@@ -318,14 +375,14 @@ local function Update(delta)
 			util.SetPosition(
 			{
 				minecart.position[1] + 0.0, 
-				minecart.position[2] + 0.0, 
+				minecart.position[2] + minecartY, 
 				1000
 			}, minecart.cart)
 		else
 			util.SetPosition(
 			{
 				minecart.position[1] + 0.0, 
-				minecart.position[2] + 0.0, 
+				minecart.position[2] + minecartY, 
 				0
 			}, minecart.cart)
 		end
@@ -345,15 +402,16 @@ local function Update(delta)
 			alive = true 
 			minecart.position[3] = 0
 			invincitime = 3
-			cartSpeed = 75.0
+			cartSpeed = cartResetSpeed
 			score = 0
 			currentLane = 2
 			pendingLane = 2
 			minecart.position[1] = lanePos[currentLane]
-			minecart.position[2] = 0
+			minecart.position[2] = minecartY
 			util.SetRotationZ(0, minecart.cart)
 			switchingTime = 0
 			switchingLane = false
+			ResetAllTracks()
 		end
 		
 	end

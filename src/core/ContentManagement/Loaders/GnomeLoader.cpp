@@ -301,7 +301,6 @@ namespace Core
                 }
             }
             delete[] gnome->bones;
-
 			delete[] gnome->animations;
 
             delete gnome;

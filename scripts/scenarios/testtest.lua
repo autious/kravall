@@ -7,6 +7,8 @@ scen.asm:specific_content( core.contentmanager.load(
 
 scen.gamemode = require "gamemodes/kravall":new()
 
+local squad = ent.get "policeSquad"
+
 scen:registerUpdateCallback( function(delta) scen.gamemode:update(delta) end )
 scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
 
@@ -105,7 +107,7 @@ local dist = 1.8
 --end
 
 --police(scen, centerPoint[1], 0, centerPoint[3], policeGroupTwo)
-police( scen, 1, 0, -21, policeGroup );
+--police( scen, 1, 0, -21, policeGroup );
 --police(scen, 1, 0, -20);
 
 --local rGroup = core.system.groups.createGroup();
@@ -123,13 +125,17 @@ local squadOne = squad(scen, -5, 0, 0, math.pi/2);
 
 
 -- Debug
---local centerPoint = { 49, 0, 5 }		
---for i = -2, 2 do
---	for p = -2, 2 do
---		rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], 0)
---	end
---end
---core.nav_mesh.set_group_goal(0, -43, 0, 4)
+local rioterGroup = core.system.groups.createGroup();
+local centerPoint = { -0, 0, 0 }		
+for i = -2, 2 do
+	for p = -2, 2 do
+		rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rioterGroup)
+	end
+end
+core.system.groups.setGroupGoal(rioterGroup, 150, 0, 0)
+
+
+--core.nav_mesh.set_group_goal(rioterGroup, 150, 0, 0)
 --
 --local centerPoint = { 20.5, 0, -40 }		
 --for i = -2, 2 do
@@ -139,7 +145,7 @@ local squadOne = squad(scen, -5, 0, 0, math.pi/2);
 --end
 --core.nav_mesh.set_group_goal(1, -21, 0, 36)
 
-local navmesh = ent.get "navMesh"
+
 --navmesh(scen, 0, -0.1, 0)
 
 return scen;
