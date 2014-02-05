@@ -65,7 +65,7 @@ function scen:load()
     local ent = pointLight( scen, -4.364441871643066, 0.6289991736412048, -3.9723050594329834, 1.0, 1.0, 1.0, 29.999980926513672, 1.0, "" )
     local ent = pointLight( scen, 4.076244831085205, 5.903861999511719, -1.0054539442062378, 1.0, 1.0, 1.0, 29.999980926513672, 1.0, "" )
 
-    local ent = staticModel( scen, -43.298274993896484, 0.27652621269226074, 258.86004638671875, 0.0, 0.0, 0.0, 1.0, 141.59959411621094, "assets/model/static/building/tmp/whitebox.bgnome", "assets/material/static/building/orange.material", "" )
+    local ent = staticModel( scen, -44.40789031982422, 0.0, 249.193603515625, 0.0, 0.0, 0.0, 1.0, 1.3679145574569702, "assets/model/static/building/tmp/whitebox.bgnome", "assets/material/static/building/orange.material", "" )
     local ent = staticModel( scen, 8.080698013305664, -1.0639421816449612e-05, 155.2982177734375, 0.0, 0.7071068286895752, 0.0, 0.7071068286895752, 1.0, "assets/model/static/building/apartment/s01-b/1-windows.bgnome", "assets/material/static/building/window-sandframe-64_00.material", "b1" )
     local ent = staticModel( scen, 8.080698013305664, -1.0639421816449612e-05, 155.2982177734375, 0.0, 0.7071068286895752, 0.0, 0.7071068286895752, 1.0, "assets/model/static/building/apartment/s01-b/1-frame.bgnome", "assets/material/static/building/concrete-sand-32_00.material", "b1" )
     local ent = staticModel( scen, 8.080698013305664, -1.0639421816449612e-05, 155.2982177734375, 0.0, 0.7071068286895752, 0.0, 0.7071068286895752, 1.0, "assets/model/static/building/apartment/s01-b/1-main.bgnome", "assets/material/static/building/brickwall-32_01.material", "b1" )
