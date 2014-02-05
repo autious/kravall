@@ -146,7 +146,8 @@ namespace Core
 					{
 						// the later half of this if will not be run if the first one is true, henc no explotion... 
 						//if( current.corners[i].linksTo < 0 || nodes[ current.corners[ i ].linksTo ].blocked[ current.corners[ i ].linksToEdge ] )
-						if( current.corners[i].linksTo < 0 || current.blocked[ i ] > EDGE_HEAT_DENSITY_THREASHOLD_FOR_BLOCKING )
+						if( current.corners[i].linksTo < 0 || current.blocked[ i ] > EDGE_HEAT_DENSITY_THREASHOLD_FOR_BLOCKING || 
+							nodes[ current.corners[i].linksTo ].blocked[ current.corners[i].linksToEdge ] > EDGE_HEAT_DENSITY_THREASHOLD_FOR_BLOCKING )
 							continue;
 
 						// calculate midpoint for the outgoing edge...

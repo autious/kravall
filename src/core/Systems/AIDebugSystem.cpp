@@ -87,8 +87,8 @@ void Core::AIDebugSystem::Update( float delta )
 				temp += glm::vec3( points[ g * 2 ], 0.0f, points[ g * 2 + 1] );
 			temp *= 0.25f;
 			GFX::Debug::DrawSphere( temp, 5, GFXColor( 0.5f, 1.0f, 0.2f, 1.0f ), false );
-
-			GFX::Debug::DrawLine( temp, instance->flowfields[0].list[i], GFXColor( 0, 0, 1, 1 ), false  );
+			if( instance->flowfields[4].list != nullptr )
+				GFX::Debug::DrawLine( temp, instance->flowfields[4].list[i], GFXColor( 0, 0, 1, 1 ), false  );
 
 		}
 

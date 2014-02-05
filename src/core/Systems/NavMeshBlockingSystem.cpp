@@ -202,6 +202,8 @@ void Core::NavMeshBlockingSystem::FreeBlockedNodes()
 
 void Core::NavMeshBlockingSystem::Update( float delta )
 {
+	return; // NOCOMMIT
+
 	Core::NavigationMesh* instance = Core::GetNavigationMesh();
 	if( instance )
 	{
