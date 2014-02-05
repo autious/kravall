@@ -128,6 +128,7 @@ namespace GFX
 
 		void SetExposure(float exposure);
 		void SetGamma(float gamma);
+		void SetWhitepoint(glm::vec3 whitePoint);
 
 		void DeleteMesh(unsigned long long id);
 		void LoadMesh(unsigned int& meshID, int& sizeVerts, int& sizeIndices, GFX::Vertex* verts, int* indices);
