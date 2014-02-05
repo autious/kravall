@@ -9,6 +9,20 @@ function O:new(o)
     return o
 end
 
+function O:win()
+    for _,v in pairs( self.objectives ) do
+        v.state = "success"
+    end 
+    self.state = "success"
+end
+
+function O:loss()
+    for _,v in pairs( self.objectives ) do
+        v.state = "fail"
+    end 
+    self.state = "fail"
+end
+
 function O:isWin()
     return self.state == "success"
 end
@@ -20,7 +34,6 @@ end
 function O:update( delta )
     if core.console.isVisible() == false then
         for index ,obj in pairs( self.objectives ) do
-            
             if obj.state == "success" then
                 core.draw.drawText( 20, index * 20 + 20 + 150, "[/]" )
             elseif obj.state == "fail" then
@@ -34,12 +47,14 @@ function O:update( delta )
     end
     if self.state == "" then
         local won = true
+        local has = false
         for i,o in pairs( self.objectives ) do
             if o.state ~= "success" then
                 won = false  
             end
+            has = true
         end
-        if won then
+        if won and has then
             self.state = "success" 
         end
         
@@ -48,8 +63,9 @@ function O:update( delta )
             if o.state ~= "fail" then
                 fail = false  
             end
+            has = true
         end
-        if fail then
+        if fail and has then
             self.state = "fail"
         end
     end

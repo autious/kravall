@@ -24,8 +24,6 @@ namespace Core
         virtual const char* GetHumanName() { return "AnimationSystem"; }
 
     private:
-        void CalculateMedianPositions();
-        void CalculateMembersInGroups();
 
 		int GetAnimationIDFromName(std::string animationName);
 

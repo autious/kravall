@@ -3,7 +3,7 @@
 
 #include <SystemDef.hpp>
 
-#define POLICE_GOAL_ARRIVAL_THRESHOLD 1.0f
+#define POLICE_GOAL_ARRIVAL_THRESHOLD 0.2f
 
 namespace Core
 {
@@ -26,7 +26,8 @@ namespace Core
 			a MovementComponent.
 		*/
 		MovementSystem() : BaseSystem(EntityHandler::GenerateAspect<WorldPositionComponent, MovementComponent>(), 0ULL)
-		{}
+		{
+		}
 
 		/*! 
 			The name of the system for printing.

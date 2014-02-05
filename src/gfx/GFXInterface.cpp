@@ -264,9 +264,9 @@ namespace GFX
 			return Renderer().AddAnimationToSkeleton(skeletonID, frames, numFrames, numBonesPerFrame);
 		}
 
-		int GetAnimationInfo(const int& skeletonID, const int& animationID, unsigned int& out_frameCount, unsigned int& out_bonesPerFrame)
+		int GetAnimationInfo(const int& skeletonID, const int& animationID, unsigned int& out_frameCount, unsigned int& out_bonesPerFrame, unsigned int& out_animationOffset)
 		{
-			return Renderer().GetAnimationInfo(skeletonID, animationID, out_frameCount, out_bonesPerFrame);
+			return Renderer().GetAnimationInfo(skeletonID, animationID, out_frameCount, out_bonesPerFrame, out_animationOffset);
 		}
 
 		void ReloadLUT()
@@ -305,7 +305,7 @@ namespace GFX
 
 		void SetWhitePoint(GFXVec3 whitePoint)
 		{
-
+			Renderer().SetWhitepoint(whitePoint);
 		}
 
 		void SetExposure(float exposure)

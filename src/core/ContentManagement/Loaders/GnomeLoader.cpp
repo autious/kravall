@@ -6,6 +6,10 @@
 #include <gfx/GFXInterface.hpp>
 #include <logger/Logger.hpp>
 #include <Animation/AnimationManager.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+//#include <glm/ext.hpp>
 
 namespace Core
 {
@@ -52,7 +56,7 @@ namespace Core
                 }
             }
             delete[] gnome->bones;
-            delete[] gnome->animations;            
+            //delete[] gnome->animations;            
 
             delete static_cast<Core::GnomeLoader::Gnome*>(handle);
             handle = reinterpret_cast<AssetHandle>(modelData);
@@ -63,6 +67,209 @@ namespace Core
             assert(false);
         }
     }
+	void Core::GnomeLoader::InterpolateBoneAnimation(int animationIndex, const Core::GnomeLoader::Gnome* gnome, float time, std::vector<glm::mat4x4>& boneTransforms)
+	{
+		for (int b = 0; b < gnome->numberOfBones; b++)
+		{
+			glm::mat4x4 &M = boneTransforms[b];
+			glm::vec3 S, P;
+			glm::quat Q;
+
+			Core::GnomeLoader::BoneForAnimation &boneAnim = gnome->animations[animationIndex].boneAnim[b];
+			
+
+			int numKeys = boneAnim.numKeys;
+			if (time <= boneAnim.Keyframes[0].time)
+			{
+				S = glm::vec3(
+							boneAnim.Keyframes[0].scale[0],
+							boneAnim.Keyframes[0].scale[1],
+							boneAnim.Keyframes[0].scale[2]);
+					
+				P = glm::vec3(
+							boneAnim.Keyframes[0].position[0],
+							boneAnim.Keyframes[0].position[1],
+							boneAnim.Keyframes[0].position[2]);
+					
+				Q = glm::quat(
+							boneAnim.Keyframes[0].rotation[0], 
+							boneAnim.Keyframes[0].rotation[1],
+							boneAnim.Keyframes[0].rotation[2],
+							boneAnim.Keyframes[0].rotation[3]);
+			}
+			else if (time >= boneAnim.Keyframes[numKeys-1].time)
+			{
+				S = glm::vec3(
+							boneAnim.Keyframes[numKeys-1].scale[0],
+							boneAnim.Keyframes[numKeys-1].scale[1],
+							boneAnim.Keyframes[numKeys-1].scale[2]);
+					
+				P = glm::vec3(
+							boneAnim.Keyframes[numKeys-1].position[0],
+							boneAnim.Keyframes[numKeys-1].position[1],
+							boneAnim.Keyframes[numKeys-1].position[2]);
+					
+				Q = glm::quat(
+							boneAnim.Keyframes[numKeys-1].rotation[0], 
+							boneAnim.Keyframes[numKeys-1].rotation[1],
+							boneAnim.Keyframes[numKeys-1].rotation[2],
+							boneAnim.Keyframes[numKeys-1].rotation[3]);
+			}
+			else
+			{
+				for (int i = 0; i < boneAnim.numKeys; i++)
+				{
+					if (time >= boneAnim.Keyframes[i].time && time <= boneAnim.Keyframes[i + 1].time)
+					{
+						float lerpPercent = (time - boneAnim.Keyframes[i].time) / (boneAnim.Keyframes[i+1].time - boneAnim.Keyframes[i].time);
+						
+						glm::vec3 s0 = glm::vec3(
+							boneAnim.Keyframes[i].scale[0],
+							boneAnim.Keyframes[i].scale[1],
+							boneAnim.Keyframes[i].scale[2]);
+						glm::vec3 s1 = glm::vec3(
+							boneAnim.Keyframes[i+1].scale[0],
+							boneAnim.Keyframes[i+1].scale[1],
+							boneAnim.Keyframes[i+1].scale[2]);
+						
+						glm::vec3 p0 = glm::vec3(
+							boneAnim.Keyframes[i].position[0],
+							boneAnim.Keyframes[i].position[1],
+							boneAnim.Keyframes[i].position[2]);
+						glm::vec3 p1 = glm::vec3(
+							boneAnim.Keyframes[i+1].position[0],
+							boneAnim.Keyframes[i+1].position[1],
+							boneAnim.Keyframes[i+1].position[2]);
+						
+						glm::quat q0 = glm::quat(
+							boneAnim.Keyframes[i].rotation[0],
+							boneAnim.Keyframes[i].rotation[1], 
+							boneAnim.Keyframes[i].rotation[2],
+							boneAnim.Keyframes[i].rotation[3]
+							);
+						glm::quat q1 = glm::quat(
+							boneAnim.Keyframes[i+1].rotation[0],
+							boneAnim.Keyframes[i+1].rotation[1], 
+							boneAnim.Keyframes[i+1].rotation[2],
+							boneAnim.Keyframes[i+1].rotation[3]
+							);
+						
+						S = glm::mix(s0, s1, lerpPercent);
+						P = glm::mix(p0, p1, lerpPercent);
+						Q = glm::slerp(q0, q1, lerpPercent);
+
+						break;
+					}
+				}
+			}
+			
+			glm::mat4x4 rotMatrix = glm::toMat4(glm::quat(Q.w, Q.x, Q.y, Q.z));
+			glm::mat4x4 transMatrix =  glm::translate(glm::mat4x4(1.0f), P);
+			glm::mat4x4 scaleMatrix =	glm::scale(glm::mat4x4(1.0f), S);
+			
+			M = transMatrix * rotMatrix * scaleMatrix;
+		}
+	}
+	void Core::GnomeLoader::GetFinalTransforms(int animationIndex, const Core::GnomeLoader::Gnome* gnome, float time, std::vector<glm::mat4x4>& finalTransforms)
+	{
+		int numBones = gnome->numberOfBones;
+		
+		if(finalTransforms.size() < numBones)
+			finalTransforms.resize(numBones);
+		
+		std::vector<glm::mat4x4> toParentTransforms = std::vector<glm::mat4x4>(numBones);
+		std::vector<glm::mat4x4> toRootTransforms = std::vector<glm::mat4x4>(numBones);
+
+		InterpolateBoneAnimation(animationIndex, gnome, time, toParentTransforms);
+
+		toRootTransforms[0] = toParentTransforms[0];
+
+		for (int i = 1; i < numBones; i++)
+		{
+			glm::mat4x4 toParent = toParentTransforms[i];
+
+			int parentIndex = gnome->bones[i].parentID;
+			if (parentIndex >= 0)
+			{
+				glm::mat4x4 parentToRoot = toRootTransforms[parentIndex];
+
+				glm::mat4x4 toRoot = parentToRoot * toParent;
+
+				toRootTransforms[i] = toRoot;
+			}
+			else
+			{
+				toRootTransforms[i] = glm::mat4x4(
+					1.0f, 0.0f, 0.0f, 0.0f, 
+					0.0f, 1.0f, 0.0f, 0.0f, 
+					0.0f, 0.0f, 1.0f, 0.0f, 
+					0.0f, 0.0f, 0.0f, 1.0f);
+			}
+		}
+
+		for (int i = 0; i < numBones; i++)
+		{
+			glm::mat4x4 offset = glm::mat4x4(
+							gnome->bones[i].offsetMatrix[0][0], gnome->bones[i].offsetMatrix[1][0], gnome->bones[i].offsetMatrix[2][0], gnome->bones[i].offsetMatrix[3][0],
+							gnome->bones[i].offsetMatrix[0][1], gnome->bones[i].offsetMatrix[1][1], gnome->bones[i].offsetMatrix[2][1], gnome->bones[i].offsetMatrix[3][1],
+							gnome->bones[i].offsetMatrix[0][2], gnome->bones[i].offsetMatrix[1][2], gnome->bones[i].offsetMatrix[2][2], gnome->bones[i].offsetMatrix[3][2],
+							gnome->bones[i].offsetMatrix[0][3], gnome->bones[i].offsetMatrix[1][3], gnome->bones[i].offsetMatrix[2][3], gnome->bones[i].offsetMatrix[3][3]
+							);
+			glm::mat4x4 toRoot = toRootTransforms[i];
+			finalTransforms[i] = toRoot * offset;
+		}
+
+	}
+
+	void Core::GnomeLoader::LoadAnimations(const Core::GnomeLoader::Gnome* gnome, const unsigned int& meshID)
+	{
+		int skeletonID = -1;
+		if (GFX::Content::CreateSkeleton(skeletonID) == GFX_SUCCESS
+			&& GFX::Content::BindSkeletonToMesh(meshID, skeletonID) == GFX_SUCCESS)
+		{
+			for (int a = 0; a < gnome->numberOfAnimations; ++a)
+			{
+				LOG_INFO << "Loading animation \'" << gnome->animations[a].name << "\'";
+
+				
+				std::vector<glm::mat4x4> frames;
+				float duration = 0.0f;
+				
+				// Find animation duration
+				for (int e = 0; e < gnome->numberOfBones; e++)
+				{
+					for (int k = 0; k < gnome->animations[a].boneAnim[e].numKeys; k++)
+					{
+						duration = std::max(duration, gnome->animations[a].boneAnim[e].Keyframes[k].time);
+					}
+				}
+				int numFrames = duration * GFX::Settings::GetAnimationFramerate();
+				//numFrames *= 1;
+
+				// Create frames
+				for (int f = 0; f < numFrames; f++)
+				{
+					float time = duration * (f/float(numFrames-1));
+					std::vector<glm::mat4x4> transforms;
+					GetFinalTransforms(a, gnome, time, transforms);
+					for (int t = 0; t < transforms.size(); t++)
+						frames.push_back(transforms[t]);
+				}
+				
+
+				// If everything was successful, move the animation to GFX and store its name to make it easier to use later
+				int result = GFX::Content::AddAnimationToSkeleton(skeletonID, frames.data(), numFrames, gnome->numberOfBones);
+
+				if (result == GFX_INVALID_ANIMATION)
+					LOG_ERROR << "Could not add animation \'" << gnome->animations[a].name << "\' Animation is invalid.";
+				else if (result == GFX_INVALID_SKELETON)
+					LOG_ERROR << "Could not add animation \'" << gnome->animations[a].name << "\' Skeleton with ID " << skeletonID << " does not exist.";
+				else
+					AnimationManager::StoreAnimationID(meshID, result, gnome->animations[a].name);
+			}
+		}
+	}
+
 
     Core::AssetHandle GnomeLoader::Load(const char* assetName)
     {        
@@ -75,43 +282,8 @@ namespace Core
 
 
 			// Load the animations for this mesh
-			if (gnome->numberOfBones)
-			{
-				if (GFX::Content::CreateSkeleton(modelData->skeletonID) == GFX_SUCCESS 
-					&& GFX::Content::BindSkeletonToMesh(modelData->meshID, modelData->skeletonID) == GFX_SUCCESS)
-				{
-					for (int i = 0; i < gnome->numberOfAnimations; ++i)
-					{
-						LOG_INFO << "Loading animation \'" << gnome->animations[i].name << "\'";
-
-						std::vector<glm::mat4x4> frames;
-
-						for (int e = 0; e < gnome->numberOfBones*150; e++)
-						{
-							int frame = e/gnome->numberOfBones;
-							gnome->animations[i].boneAnim[e%19].Keyframes[0].position;
-							float (&m)[4][4] = gnome->bones[e%19].offsetMatrix;
-							//float m[4][4] = {	{1.0f, 0.0f, 0.0f, 0.0f},
-							//					{0.0f, 1.0f, 0.0f, 0.0f},
-							//					{0.0f, 0.0f, 1.0f, 0.0f},
-							//					{0.0f, 0.0f, 0.0f, 1.0f} };
-							glm::mat4 matrix = glm::mat4(	m[0][0],m[1][0],m[2][0],m[3][0],
-															m[0][1],m[1][1],m[2][1],m[3][1],
-															m[0][2],m[1][2],m[2][2],m[3][2],
-															m[0][3],m[1][3] + frame,m[2][3],m[3][3]);
-							frames.push_back(matrix);
-						}
-
-						int result = GFX::Content::AddAnimationToSkeleton(modelData->skeletonID, frames.data(), 150, gnome->numberOfBones);
-
-						if (result == GFX_INVALID_ANIMATION)
-							LOG_ERROR << "Could not add animation \'" << gnome->animations[i].name << "\' Animation is invalid.";
-						else if (result == GFX_INVALID_SKELETON)
-							LOG_ERROR << "Could not add animation. Skeleton with ID " << modelData->skeletonID << " does not exist.";
-					}
-				}
-
-			}
+			if (gnome->numberOfAnimations)
+				LoadAnimations(gnome, modelData->meshID);
 
             m_modelData.push_back(modelData);
             
@@ -129,7 +301,7 @@ namespace Core
                 }
             }
             delete[] gnome->bones;
-            delete[] gnome->animations;            
+			delete[] gnome->animations;
 
             delete gnome;
             return modelData;
@@ -220,7 +392,7 @@ namespace Core
 			/* Animations */
 			if (header.numberOfBones)
 			{
-				/* Bones */
+				/* Bones in bgnome */
 				for (int k = 0; k < header.numberOfBones; k++)
 				{
 					m_file.read((char*)&gnome->bones[k], sizeof(int) * 3 + sizeof(float) * 16 );
@@ -274,8 +446,15 @@ namespace Core
 					{
 						gnome->numberOfAnimations = 0;
 						gnome->animations = new Core::GnomeLoader::Animation[gnome->numberOfAnimations];
-						std::cout << "Binary Animation GNOME File is missing for " << GetFileNameAndPath(fileName, ".") << ".bagnome, proceeds without animation..." << std::endl;
+						LOG_FATAL << fileName << " is not a .BGNOME, of a obsolete version of .BGNOME or corrupted." << std::endl;
+						std::cout << "Binary Animation GNOME File do not match .bgnome, proceeds without animation..." << std::endl;
 					}
+				}
+				else
+				{
+					gnome->numberOfAnimations = 0;
+					gnome->animations = new Core::GnomeLoader::Animation[gnome->numberOfAnimations];
+					std::cout << "Binary Animation GNOME File is missing for " << GetFileNameAndPath(fileName, ".") << ".bagnome, proceeds without animation..." << std::endl;
 				}
 			}
 			else

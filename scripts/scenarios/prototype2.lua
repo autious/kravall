@@ -1,9 +1,14 @@
 local ent = require "entities"
-local ASML = require "assembly_loader" 
-local asm = ASML.loadPack( {} )
+local scen = require "scenario":new()
 
-asm:specific_content( core.contentmanager.load( 
+scen.asm:specific_content( core.contentmanager.load( 
 		core.loaders.NavigationMeshLoader, "extremeScenario.txt", function( value ) end, false ) )
+
+--asm.gamemode =  require "gamemodes/normal":new()
+scen.gamemode = require "gamemodes/kravall":new()
+
+scen:registerUpdateCallback( function( delta ) scen.gamemode:update(delta) end )
+scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
 
 
 --local ambient = ent.get "ambientLight"
@@ -12,8 +17,18 @@ asm:specific_content( core.contentmanager.load(
 --directional.create(asm, -1, -1, 0.5)
 
 local rioter = ent.get "rioter"
-local police = ent.get "police"
+--local police = ent.get "police"
 local building = ent.get "building"
+local squad = ent.get "policeSquad"
+
+-- create squad
+local squadOne0 = squad(scen, -5, 0, 0, math.pi/2);
+local squadOne1 = squad(scen, -5, 0, 10, math.pi/2);
+local squadOne2 = squad(scen, -5, 0, 15, math.pi/2);
+local squadOne3 = squad(scen, -5, 0, 20, math.pi/2);
+local squadOne4 = squad(scen, -5, 0, 25, math.pi/2);
+local squadOne5 = squad(scen, -5, 0, 30, math.pi/2);
+
 local centerPoint = { 0, 0, 0 }
 local side = 32 -- math.sqrt( 1000 )
 
@@ -25,32 +40,32 @@ local gFour = core.system.groups.createGroup()
 
 for i = -side / 2, -1 do
 	for p = -side / 2, -1 do
-		rioter( asm, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], gOne )
+		rioter( scen, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], gOne )
 	end                         
 	for p = 1, side / 2 do      
-		rioter( asm, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], gTwo )
+		rioter( scen, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], gTwo )
 	end                         
 end                             
 for i = 1, side / 2 do          
 	for p = -side / 2, -1 do    
-		rioter( asm, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], gThree )
+		rioter( scen, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], gThree )
 	end                         
 	for p = 1, side / 2 do      
-		rioter( asm, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], gFour )
+		rioter( scen, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], gFour )
 	end
 end
 
-core.system.groups.setGroupGoal(gFour, -70, 0, 40)
-core.system.groups.setGroupGoal(gThree, -70, 0, -40)
-core.system.groups.setGroupGoal(gTwo, 70, 0, 40)
+--core.system.groups.setGroupGoal(gFour, -70, 0, 40)
+--core.system.groups.setGroupGoal(gThree, -70, 0, -40)
+--core.system.groups.setGroupGoal(gTwo, 70, 0, 40)
 --core.nav_mesh.set_group_goal(2, -50, 0, 4)
 --core.nav_mesh.set_group_goal(3, -1, 0, 4)
 
 
 
-for i = 0, 1023 do
+for i = 0, 100 do
 	local color = {1, 1, 1 }
-    asm:loadAssembly( 
+    scen:loadAssembly( 
     {
         {
             type = core.componentType.LightComponent,
@@ -59,7 +74,9 @@ for i = 0, 1023 do
                         speccolor = color,
                         intensity = 1.0,
                         type = core.gfx.objectTypes.Light,
-                        lighttype = core.gfx.lightTypes.Point
+                        lighttype = core.gfx.lightTypes.Point,
+						spotangle = 0,
+						spotpenumbra = 0
                     }
                     ,
                     ignoreHard = true
@@ -80,15 +97,12 @@ for i = 0, 1023 do
     )
 end
 
-rioter( asm, 0, 0, 0, 0 )
-core.system.groups.setGroupGoal(gOne, -30, 0, 0)
+--rioter( scen, 0, 0, 0, 0 )
+--core.system.groups.setGroupGoal(gOne, -30, 0, 0)
 
-camera:lookAt( core.glm.vec3.new( 65, 65, 65 ), core.glm.vec3.new( 0, 0, 0 ) )
+scen.gamemode.camera:lookAt( core.glm.vec3.new( 65, 65, 65 ), core.glm.vec3.new( 0, 0, 0 ) )
 
-
-
-
-return asm;
+return scen;
 
 
 

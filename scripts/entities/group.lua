@@ -4,7 +4,7 @@ local rioter = entities.get "rioter"
 return function(scen, verts, group, amount)
 	--local center = {(verts[1] + verts[3] + verts[5] + verts[7]) / 4,
 	--	(verts[2] + verts[4] + verts[6] + verts[8]) / 4}
-
+	
 	lowestX = math.min(verts[1], verts[3], verts[5], verts[7])
 	highestX = math.max(verts[1], verts[3], verts[5], verts[7])
 	lowestY = math.min(verts[2], verts[4], verts[6], verts[8])
@@ -16,8 +16,7 @@ return function(scen, verts, group, amount)
 				lowestX - ( ( (highestX - lowestX) / amount[1] ) / 2 ) + ((highestX - lowestX) * ((1 / amount[1]) * i)),
 				0,
 				lowestY - ( ( (highestY - lowestY) / amount[2] ) / 2 ) + ((highestY - lowestY) * ((1 / amount[2]) * k)),
-				group 
-				)
+				group)
 		end
 	end
 end

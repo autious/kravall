@@ -11,56 +11,6 @@
 
 #include <GameUtility/PathfindingUtility.hpp>
 
-void MarkClickedObject()
-{
-	int systemMax = Core::world.m_systemHandler.GetSystemCount();
-	int pickingSystem = -1;
-	for( int i = 0; i < systemMax; i++ )
-	{
-		if( std::string(Core::world.m_systemHandler.GetSystem( i )->GetHumanName()).compare( "PickingSystem" ) == 0 )
-			pickingSystem = i;
-	}
-
-	if( pickingSystem < 0 )
-		return;
-
-	Core::Entity ent;
-	if( (ent = ((Core::PickingSystem*)Core::world.m_systemHandler.GetSystem( pickingSystem ))->GetLastHitEntity()) != std::numeric_limits<Core::Entity>::max() )
-	{
-		Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(ent);
-		Core::BoundingVolumeComponent* bvc = WGETC<Core::BoundingVolumeComponent>(ent);
-		Core::BoundingSphere* sphere = reinterpret_cast<Core::BoundingSphere*>(bvc->data);
-		GFX::Debug::DrawSphere( wpc->GetVec3(*wpc) + *reinterpret_cast<glm::vec3*>( sphere->offset ), sphere->radius, GFXColor( 1.0f, 0.7f, 0.0f, 1.0f ), false );
-	}
-}
-
-
-/* right click to set navMesh goal for group 0 */
-void CheckNavMeshCalculation()
-{
-	if( !Core::GetInputManager().GetMouseState().IsButtonDown(1) )
-		return;
-
-	int systemMax = Core::world.m_systemHandler.GetSystemCount();
-	int pickingSystem = -1;
-	for( int i = 0; i < systemMax; i++ )
-	{
-		if( std::string(Core::world.m_systemHandler.GetSystem( i )->GetHumanName()).compare( "PickingSystem" ) == 0 )
-			pickingSystem = i;
-	}
-
-	if( pickingSystem < 0 )
-		return;
-
-	int x, y;
-	Core::GetInputManager().GetMouseState().GetCursorPosition( x, y );
-	glm::vec3 position = ((Core::PickingSystem*)Core::world.m_systemHandler.GetSystem( pickingSystem ))->GetGroundHit( x, y );
-
-	position.y = 0;
-
-	if( Core::GetNavigationMesh() )
-		Core::GetNavigationMesh()->CalculateFlowfieldForGroup( position, 0 );
-}
 
 
 void GetPlanePoint()
@@ -104,7 +54,11 @@ void TestPathFinding()
 		//GFX::Debug::DrawLine( temp, temp2, GFXColor( 1, 1, 0, 1 ), false );
 	}
 
+	//if( Core::GetNavigationMesh() )
+	//	Core::GetNavigationMesh()->CalculateFlowfieldForGroup( glm::vec3( 0,0,350 ), 1 );
 
+	if( Core::GetNavigationMesh() )
+		;//Core::GetNavigationMesh()->CalculatedShortPath( 0, glm::vec3( 0, 0, 0 ), 8, glm::vec3( -73,0,2 ) );
 
 
 }
@@ -114,15 +68,11 @@ void TestPathFinding()
 
 void Core::AIDebugSystem::Update( float delta )
 {
-	MarkClickedObject();
-
-	CheckNavMeshCalculation();
-
-	TestPathFinding();
 
 
-	GetPlanePoint();
 
+
+	//return;
 
 	if( Core::GetNavigationMesh() )
 	{
@@ -132,6 +82,9 @@ void Core::AIDebugSystem::Update( float delta )
 		{
 			for( int p = 0; p < 4; p++ )
 			{
+				if( instance->nodes[i].corners[p].linksTo < -0.5f )
+					continue;
+
 				int ii = p * 2;
 				int oo = (ii + 2) % 8;
 				float* points = instance->nodes[i].points;
@@ -143,6 +96,21 @@ void Core::AIDebugSystem::Update( float delta )
 				{
 					//GFX::Debug::DrawSphere( lineStart + (lineEnd - lineStart) * 0.5f, 1.3f, GFXColor( 1, 0, 0, 1 ), false );
 				}
+
+				float delta = 3.0f;
+
+				glm::vec3 normal = glm::normalize( glm::cross( (lineEnd - lineStart), glm::vec3( 0.0f, 1.0f, 0.0f ) ) );
+
+				//GFX::Debug::DrawSphere( lineStart + glm::normalize( lineEnd - lineStart ) * delta, 1.3f, GFXColor( 1, 0, 0, 1 ), false );
+				//GFX::Debug::DrawLine( lineStart, lineStart + glm::normalize( lineEnd - lineStart ) * delta, GFXColor( 0, 0, 1, 1 ), false  );
+				
+				//GFX::Debug::DrawSphere( lineStart + glm::normalize( lineEnd - lineStart ) * delta, 1.3f, GFXColor( 1, 0, 0, 1 ), false );
+				//GFX::Debug::DrawLine( lineEnd, lineStart + glm::normalize( lineEnd - lineStart ) * delta, GFXColor( 0, 0, 1, 1 ), false  );
+
+				//positions[0] = lineStart + glm::normalize( lineEnd - lineStart ) * 1.0f;
+				//positions[1] = ownMidLine;
+				//positions[2] = lineEnd + glm::normalize( lineStart - lineEnd ) * 1.0f;
+
 				
 				//glm::vec3 cross = glm::normalize( glm::cross( (lineEnd - lineStart), glm::vec3( 0.0f, 1.0f, 0.0f ) ) );
 				//GFX::Debug::DrawLine( lineStart + (lineEnd - lineStart) * 0.5f, lineStart + (lineEnd - lineStart) * 0.5f + cross, GFXColor( 0, 0, 1, 1 ), false  );

@@ -5,7 +5,8 @@
 #include <lauxlib.h>
 
 #include <Components/AttributeComponent.hpp>
-
+#include <Lua/LuaMetatableTypes.hpp>
+#include <Lua/LuaUtility.hpp>
 #include <logger/Logger.hpp>
 #include <cassert>
 
@@ -13,6 +14,14 @@
 extern "C"
 {
 
+    static int LuaStanceEq(lua_State* L)
+    {
+        Core::PoliceStance* lhs = luau_checkpolicestance(L, 1);
+        Core::PoliceStance* rhs = luau_checkpolicestance(L, 2);
+        lua_pushboolean(L, *lhs == *rhs);
+
+        return 1;
+    }
 }
 
 static void PushPoliceObjectType( lua_State * L, const unsigned int value, const char * name, int table )
@@ -21,7 +30,7 @@ static void PushPoliceObjectType( lua_State * L, const unsigned int value, const
         unsigned int* uvalue= (unsigned int*)lua_newuserdata( L, sizeof( Core::PoliceStance ) );
         *uvalue = value;
 
-            luaL_newmetatable( L, ATTRIBUTE_POLICE_COMPONENT_TYPE_META );
+            luaL_newmetatable( L, ATTRIBUTE_POLICE_COMPONENT_META_TYPE );
             lua_setmetatable( L, -2 );
         lua_settable( L, table );
 }
@@ -32,50 +41,63 @@ static void PushRioterObjectType( lua_State * L, const unsigned int value, const
         unsigned int* uvalue= (unsigned int*)lua_newuserdata( L, sizeof( Core::PoliceStance ) );
         *uvalue = value;
 
-            luaL_newmetatable( L, ATTRIBUTE_RIOTER_COMPONENT_TYPE_META );
+            luaL_newmetatable( L, ATTRIBUTE_RIOTER_COMPONENT_META_TYPE );
             lua_setmetatable( L, -2 );
         lua_settable( L, table );
 }
 
 Core::LuaAttributeComponentBridge::LuaAttributeComponentBridge( lua_State * L )
 {
-	int stackpos = lua_gettop( L );
+
+    int sanity = lua_gettop(L);
+
+    luaL_newmetatable(L, POLICE_STANCE_META_TYPE);
+        luau_setfunction(L, "__eq", LuaStanceEq);
+    lua_pop(L, 1);
 
     lua_getglobal( L, "core" );
+        lua_newtable( L );
+            Core::PoliceStance* stance = LuaUNewPoliceStance(L);
+                *stance = Core::PoliceStance::Passive;
+            lua_setfield(L, -2, "Passive");
 
-    int coreTableIndex = lua_gettop( L );
+            stance = LuaUNewPoliceStance(L);
+                *stance = Core::PoliceStance::Defensive;
+            lua_setfield(L, -2, "Defensive");
 
-    if( lua_isnil( L, -1 ) == false )
-    {
-        lua_pushstring( L, "PoliceStance" );
+            stance = LuaUNewPoliceStance(L);
+            *   stance = Core::PoliceStance::Aggressive;
+            lua_setfield(L, -2, "Aggressive");
+        lua_setfield(L, -2, "PoliceStance");    
+
+        //lua_pushstring(L, "PoliceState");
+        lua_newtable(L);
+            int policeStateTable = lua_gettop(L);
+            PushPoliceObjectType(L, Core::PoliceState::PS_Normal, "Normal", policeStateTable);
+            PushPoliceObjectType(L, Core::PoliceState::PS_Attacking, "Attacking", policeStateTable);
+            PushPoliceObjectType(L, Core::PoliceState::PS_Fleeing, "Fleeing", policeStateTable);
+            PushPoliceObjectType(L, Core::PoliceState::PS_Routing, "Routing", policeStateTable);
+        lua_setfield(L, -2, "PoliceState");
+
         lua_newtable( L ); // new table
-        int policeStanceTable = lua_gettop( L );
+            int rioterAlignmentTable = lua_gettop( L );
+            PushRioterObjectType( L, Core::RioterAlignment::Anarchist, "Anarchist" , rioterAlignmentTable );
+            PushRioterObjectType( L, Core::RioterAlignment::Pacifist, "Pacifist" , rioterAlignmentTable );
+        lua_setfield(L, -2, "RioterAlignment");    
 
-			PushPoliceObjectType( L, Core::PoliceStance::Passive, "Passive" , policeStanceTable );
-			PushPoliceObjectType( L, Core::PoliceStance::Defensive, "Defensive" , policeStanceTable );
-			PushPoliceObjectType( L, Core::PoliceStance::Aggressive, "Aggressive" , policeStanceTable );
-		
-			lua_settable( L, coreTableIndex );
-
-
-		lua_pushstring( L, "RioterAlignment" );
-        lua_newtable( L ); // new table
-        int rioterAlignmentTable = lua_gettop( L );
-
-			PushRioterObjectType( L, Core::RioterAlignment::Anarchist, "Anarchist" , rioterAlignmentTable );
-			PushRioterObjectType( L, Core::RioterAlignment::Pacifist, "Pacifist" , rioterAlignmentTable );
-		
-			lua_settable( L, coreTableIndex );
+        lua_newtable(L); // new table
+            int rioterStanceTable = lua_gettop(L);    
+            PushRioterObjectType(L, Core::RioterStance::Normal, "Normal", rioterStanceTable);
+            PushRioterObjectType(L, Core::RioterStance::Agitated, "Agitated", rioterStanceTable);
+            PushRioterObjectType(L, Core::RioterStance::Attacking, "Attacking", rioterStanceTable);
+            PushRioterObjectType(L, Core::RioterStance::Retreating, "Retreating", rioterStanceTable);
+            PushRioterObjectType(L, Core::RioterStance::Civilian, "Civilian", rioterStanceTable);
+        lua_setfield(L,-2, "RioterStance");
 
         //lua_settable( L, coreTableIndex );
-    }
-    else
-    {
-        LOG_ERROR << "Missing core table" << std::endl; 
-    }
 
 	lua_pop( L, 1 );
 
-	assert( stackpos == lua_gettop( L ) );
+	assert( sanity == lua_gettop( L ) );
 }
 

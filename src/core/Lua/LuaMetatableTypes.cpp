@@ -32,6 +32,24 @@ namespace Core
         return asp;
     }
 
+    Core::SquadFormation* LuaUNewSquadFormation(lua_State* L)
+    {
+        Core::SquadFormation* formation = static_cast<Core::SquadFormation*>(lua_newuserdata(L, sizeof(Core::SquadFormation)));                  
+        luaL_newmetatable(L, SQUAD_FORMATION_META_TYPE);
+        lua_setmetatable(L, -2);
+        
+        return formation;
+    }
+
+    Core::PoliceStance* LuaUNewPoliceStance(lua_State* L)
+    {
+        Core::PoliceStance* stance = static_cast<Core::PoliceStance*>(lua_newuserdata(L, sizeof(Core::PoliceStance)));                  
+        luaL_newmetatable(L, POLICE_STANCE_META_TYPE);
+        lua_setmetatable(L, -2);
+        
+        return stance;
+    }
+
     uint64_t* LuaUNewBitmask( lua_State * L )
     {
         uint64_t * data = (uint64_t*)lua_newuserdata( L, sizeof( uint64_t ));
@@ -95,6 +113,16 @@ namespace Core
         lua_setmetatable( L, -2 );
 
         return quat;
+    }
+    
+    LuaLog* LuaUNewLog( lua_State * L )
+    {
+        LuaLog* log = static_cast<LuaLog*>(lua_newuserdata( L, sizeof( LuaLog ) ));
+
+        luaL_getmetatable( L, LOG_META_TYPE );
+        lua_setmetatable( L, -2 );
+
+        return log;
     }
 
     Camera** LuaUNewCamera( lua_State * L )

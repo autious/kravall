@@ -51,6 +51,7 @@ namespace GFX
 		delete(m_splashPainter);
 		delete(m_fboPainter);
         delete(m_overlayPainter);
+		delete(m_blurPainter);
 	}
 
 	void RenderCore::Initialize(int windowWidth, int windowHeight)
@@ -80,6 +81,7 @@ namespace GFX
 		m_postProcessingPainter = new PostProcessingPainter(m_shaderManager, m_uniformBufferManager, m_textureManager);
 
 		m_GIPainter = new GIPainter(m_shaderManager, m_uniformBufferManager, m_renderJobManager);
+		m_blurPainter = new BlurPainter(m_shaderManager, m_uniformBufferManager);
 
 		m_debugPainter = new DebugPainter(m_shaderManager, m_uniformBufferManager);
 		m_textPainter = new TextPainter(m_shaderManager, m_uniformBufferManager);
@@ -106,8 +108,10 @@ namespace GFX
 		m_splashPainter->Initialize(m_FBO, m_dummyVAO);
 		m_fboPainter->Initialize(m_FBO, m_dummyVAO);
         m_overlayPainter->Initialize(m_FBO, m_dummyVAO);
-		m_postProcessingPainter->Initialize(m_FBO, m_dummyVAO, m_windowWidth, m_windowHeight);
+		m_blurPainter->Initialize(m_FBO, m_dummyVAO);
+		m_postProcessingPainter->Initialize(m_FBO, m_dummyVAO, m_windowWidth, m_windowHeight, m_blurPainter);
 		m_GIPainter->Initialize(m_FBO, m_dummyVAO, m_windowWidth, m_windowHeight);
+		
 
 		// Set console width
 		m_consolePainter->SetConsoleHeight(m_windowHeight);
@@ -137,7 +141,7 @@ namespace GFX
 		glViewport(0, 0, m_windowWidth, m_windowHeight);
 		ResizeGBuffer();
 		m_lightPainter->Resize(width, height);
-
+		m_postProcessingPainter->Resize(width, height);
 		// Set console width
 		m_consolePainter->SetConsoleHeight(m_windowHeight);
 	}
@@ -155,6 +159,11 @@ namespace GFX
 	void RenderCore::SetGamma(float gamma)
 	{
 		m_gamma = gamma;
+	}
+
+	void RenderCore::SetWhitepoint(glm::vec3 whitePoint)
+	{
+		m_whitePoint = whitePoint;
 	}
 
 	void RenderCore::ReloadLUT()
@@ -282,13 +291,13 @@ namespace GFX
 			GFX_CHECKTIME(m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_GIPainter->m_SSDOTexture,
 				m_viewMatrix, m_projMatrix, m_exposure, m_gamma, m_whitePoint, m_toneMappedTexture), "Lighting");
 
-			GFX_CHECKTIME(m_postProcessingPainter->Render(delta, m_toneMappedTexture, m_currentLUT), "PostProcessing");
+			GFX_CHECKTIME(m_postProcessingPainter->Render(delta, m_toneMappedTexture, m_currentLUT, m_exposure, m_gamma, m_whitePoint), "PostProcessing");
 
 			GFX_CHECKTIME( m_overlayPainter->Render( renderJobIndex, m_overlayViewMatrix, m_overlayProjMatrix ), "Console");
 			//Render FBO
 			
 			if (m_showFBO != 0)
-				GFX_CHECKTIME(m_fboPainter->Render(m_normalDepth, m_diffuse, m_GIPainter->m_SSDOTexture, m_glowMatID, m_windowWidth, m_windowHeight, m_showFBO), "FBO");
+				GFX_CHECKTIME(m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, m_showFBO), "FBO");
 
 
 			GFX_CHECKTIME(m_debugPainter->Render(m_depthBuffer, m_normalDepth, m_viewMatrix, m_projMatrix), "Debug");
@@ -308,13 +317,13 @@ namespace GFX
 			m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_GIPainter->m_SSDOTexture,
 				m_viewMatrix, m_projMatrix, m_exposure, m_gamma, m_whitePoint, m_toneMappedTexture);
 
-			m_postProcessingPainter->Render(delta, m_toneMappedTexture, m_currentLUT);
+			m_postProcessingPainter->Render(delta, m_toneMappedTexture, m_currentLUT, m_exposure, m_gamma, m_whitePoint);
 			
 			m_overlayPainter->Render( renderJobIndex, m_overlayViewMatrix, m_overlayProjMatrix );
 			//Render FBO
 			
 			if (m_showFBO != 0)
-				m_fboPainter->Render(m_normalDepth, m_diffuse, m_GIPainter->m_SSDOTexture, m_glowMatID, m_windowWidth, m_windowHeight, m_showFBO);
+				m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, m_showFBO);
 
 			m_debugPainter->Render(m_depthBuffer, m_normalDepth, m_viewMatrix, m_projMatrix);
 
@@ -487,8 +496,8 @@ namespace GFX
 		return m_animationManager->AddAnimationToSkeleton(skeletonID, frames, numFrames, numBonesPerFrame);
 	}
 
-	int RenderCore::GetAnimationInfo(const int& skeletonID, const int& animationID, unsigned int& out_frameCount, unsigned int& out_bonesPerFrame)
+	int RenderCore::GetAnimationInfo(const int& skeletonID, const int& animationID, unsigned int& out_frameCount, unsigned int& out_bonesPerFrame, unsigned int& out_animationOffset)
 	{
-		return m_animationManager->GetFrameInfo(skeletonID, animationID, out_frameCount, out_bonesPerFrame);
+		return m_animationManager->GetFrameInfo(skeletonID, animationID, out_frameCount, out_bonesPerFrame, out_animationOffset);
 	}
 }

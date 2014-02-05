@@ -37,7 +37,6 @@ namespace Core
 		struct DataIN
 		{
 			glm::vec4 position_unitType;
-			glm::vec4 direction_speed;
 			glm::vec4 newDirection_empty;
 			glm::vec4 health_stamina_morale_stancealignment;
 			glm::vec4 groupSquadID_defenseRage_mobilityPressure_empty;
@@ -46,13 +45,14 @@ namespace Core
 		struct DataOUT
 		{
 			glm::vec4 newDirection_speed;
+			glm::vec4 morale_rage_pressure_empty;
 		};
 
 		GLuint m_shaderID;
 		GLuint m_inDataBuffer;
 		GLuint m_outDataBuffer;
 
-		const unsigned int MAXIMUM_ENTITIES = 2048;
+		const unsigned int MAXIMUM_ENTITIES = 1280;
 
 		DataIN* m_inData;
 		DataOUT* m_outData;

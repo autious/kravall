@@ -71,7 +71,7 @@ void main()
         vec3( 0.534f,  0.157f, -0.250f)
     );
 
-	const int num_samples = 32;
+	const int num_samples = 0;
 
 	vec2 noiseTextureSize = vec2(4,4);
 	vec4 normals_depth = texture2D(gNormals_depth, uv);
@@ -119,5 +119,5 @@ void main()
         occlusion_sh2 += attenuation * sh2_weight * vec4(center_to_sample_normalized , 1);
 	}
 
-	resultColor = (1 * occlusion_sh2) * 0.5f + 0.5f;
+	resultColor = vec4((1 * occlusion_sh2).b * 0.5f + 0.5f, 0, 0, 1);
 }

@@ -43,14 +43,14 @@ namespace GFX
 		//glActiveTexture(GL_TEXTURE0 + m_textureHandle);
 		glBindTexture(m_textureTarget, m_textureHandle);
 
-		glGetError();
-
 		if (m_format == GL_DEPTH_STENCIL)
 			glTexImage2D(m_textureTarget, 0, m_internalFormat, width, height, 0, m_format, GL_UNSIGNED_INT_24_8, nullptr);
 		else
 			glTexImage2D(m_textureTarget, 0, m_internalFormat, width, height, 0, m_format, GL_UNSIGNED_BYTE, nullptr);
 
-		glGetError();
+
+		m_width = width;
+		m_height = height;
 	}
 
 	GLuint FBOTexture::GetTextureHandle()

@@ -42,6 +42,7 @@ namespace Core
 		void HandleRioterTargeting(Entity rioter);
 		Entity FindClosestTarget(WorldPositionComponent* origin, UnitType targetType);
 
+		/*! Verrry verrry temporary, plomise!! Don't kill me! :D */
 		void TemporaryFunction();
 	};
 }
