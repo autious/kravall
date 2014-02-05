@@ -305,7 +305,7 @@ namespace GFX
 
 		void SetWhitePoint(GFXVec3 whitePoint)
 		{
-
+			Renderer().SetWhitepoint(whitePoint);
 		}
 
 		void SetExposure(float exposure)
