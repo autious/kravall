@@ -15,7 +15,7 @@ return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, group
 			},
 			{
 				type = core.componentType.ScaleComponent,
-				data = { scale = 1.0 }
+				data = { scale = 3.0 }
 			},
 			{
 				type = core.componentType.RotationComponent,
