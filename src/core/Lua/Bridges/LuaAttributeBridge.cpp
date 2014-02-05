@@ -62,11 +62,11 @@ Core::LuaAttributeComponentBridge::LuaAttributeComponentBridge( lua_State * L )
             lua_setfield(L, -2, "Passive");
 
             stance = LuaUNewPoliceStance(L);
-                *stance = Core::PoliceStance::Passive;
+                *stance = Core::PoliceStance::Defensive;
             lua_setfield(L, -2, "Defensive");
 
             stance = LuaUNewPoliceStance(L);
-            *   stance = Core::PoliceStance::Passive;
+            *   stance = Core::PoliceStance::Aggressive;
             lua_setfield(L, -2, "Aggressive");
         lua_setfield(L, -2, "PoliceStance");    
 

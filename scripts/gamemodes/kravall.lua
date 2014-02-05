@@ -66,11 +66,12 @@ function squadHandling()
         end
     end
 
-    if core.input.keyboard.isKeyDown(core.input.keyboard.key.H)  then        
+    if core.input.keyboard.isKeyDown(core.input.keyboard.key.I)  then        
         if #selectedSquads > 0 then
             core.system.squad.setSquadStance(selectedSquads, core.PoliceStance.Aggressive)
-            print("Squad ", selectedSquads[1], " is aggressive")
         end   
+    else
+        core.system.squad.setSquadStance(selectedSquads, core.PoliceStance.Passive)
     end
 end
 

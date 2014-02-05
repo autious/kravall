@@ -16,7 +16,7 @@ Core::TargetingSystem::TargetingSystem() : BaseSystem(EntityHandler::GenerateAsp
 
 void Core::TargetingSystem::Update(float delta)
 {
-	TemporaryFunction();
+	//TemporaryFunction();
 
 	for (std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); it++)
 	{
