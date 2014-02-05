@@ -5,7 +5,7 @@ local window = require "window"
 local Camera = require "rts_camera"
 local T = {}
 
-local selectedSquad = nil
+local selectedSquads = {}
 local clickStartX, clickStartY, clickStartZ
 local clickEndX, clickEndY, clickEndZ
 local isClick;
@@ -15,40 +15,52 @@ core.movementData.setMovementMetaData( core.movementData.Walking, 5.8, 17, 17 )
 core.movementData.setMovementMetaData( core.movementData.Sprinting, 8.8, 17, 14 )
 
 function squadHandling()
-    if core.input.mouse.isButtonDown(core.input.mouse.button.Left) then        
+    if core.input.mouse.isButtonDownOnce(core.input.mouse.button.Left) then        
         selectedEntity = core.system.picking.getLastHitEntity()
         if selectedEntity then
             local unitTypeComponent = selectedEntity:get(core.componentType.UnitTypeComponent);
             local attributeComponent = selectedEntity:get(core.componentType.AttributeComponent);
             if attributeComponent and unitTypeComponent then                   
                 if unitTypeComponent.unitType == core.UnitType.Police then
-                    selectedSquad = attributeComponent.squadID
-                else
-                    selectedSquad = nil
+                    if core.input.keyboard.isKeyDown(core.input.keyboard.key.Left_shift) then
+                        local found = false
+
+                        for i=1, #selectedSquads do
+                            if selectedSquads[i] == attributeComponent.squadID then
+                                found = true
+                            end
+                        end
+
+                        if not found then                            
+                            selectedSquads[#selectedSquads+1] = attributeComponent.squadID
+                            print(selectedSquads[#selectedSquads])
+                        end
+                    else
+                        selectedSquads = {};
+                        selectedSquads[#selectedSquads+1] = attributeComponent.squadID
+                        print(selectedSquads[#selectedSquads])
+                    end
                 end
             end
         end        
     elseif core.input.mouse.isButtonDownOnce(core.input.mouse.button.Right) then
-        if selectedSquad then
+        if #selectedSquads > 0 then
             local mouseX, mouseY = core.input.mouse.getPosition()
             clickStartX, clickStartY, clickStartZ = core.system.picking.getGroundHit(mouseX, mouseY);
-            --core.system.groups.setGroupGoal(selectedSquad, groundX, groundY, groundZ);		
         end   
     elseif core.input.mouse.isButtonDown(core.input.mouse.button.Right) then        
-        if selectedSquad and clickStartX and clickStartY and clickStartZ then
+        if #selectedSquads > 0 and clickStartX and clickStartY and clickStartZ then
             local mouseX, mouseY = core.input.mouse.getPosition()
             local dragX, dragY, dragZ = core.system.picking.getGroundHit(mouseX, mouseY)    
 
-            core.system.squad.previewSquadFormation(selectedSquad, core.system.squad.formations.LineFormation, clickStartX, clickStartY, clickStartZ, dragX, dragY, dragZ)
-
+            core.system.squad.previewSquadFormation(selectedSquads, core.system.squad.formations.LineFormation, clickStartX, clickStartY, clickStartZ, dragX, dragY, dragZ)
         end
     elseif core.input.mouse.isButtonUp(core.input.mouse.button.Right) then
-        if selectedSquad and clickStartX and clickStartY and clickStartZ then
+        if #selectedSquads > 0 and clickStartX and clickStartY and clickStartZ then
             local mouseX, mouseY = core.input.mouse.getPosition()
             clickEndX, clickEndY, clickEndZ = core.system.picking.getGroundHit(mouseX, mouseY)    
-
-            core.system.squad.setSquadFormation(selectedSquad, core.system.squad.formations.LineFormation, clickStartX, clickStartY, clickStartZ, clickEndX, clickEndY, clickEndZ)
-	        core.system.squad.setSquadGoal(selectedSquad, clickStartX, clickStartY, clickStartZ)
+            core.system.squad.setSquadFormation(selectedSquads, core.system.squad.formations.LineFormation, clickStartX, clickStartY, clickStartZ, clickEndX, clickEndY, clickEndZ)
+	        core.system.squad.setSquadGoal(selectedSquads, clickStartX, clickStartY, clickStartZ)
 
             clickStartX, clickStartY, clickStartZ = nil, nil, nil
         end
