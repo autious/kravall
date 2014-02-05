@@ -20,7 +20,7 @@ scen:registerUpdateCallback( function( delta ) scen.gamemode:update(delta) end )
 scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
 
 --camera:lookAt( core.glm.vec3.new( -20, 35, 20 ), core.glm.vec3.new( 0, 0, 20 ) )
-scen.gamemode.camera:lookAt( core.glm.vec3.new( -20, 35, 0 ), core.glm.vec3.new( 0, 0, 30 ) )
+scen.gamemode.camera:lookAt( core.glm.vec3.new( -20, 35, 30 ), core.glm.vec3.new( 0, 0, 0 ) )
 
 -- Group 0 start to end, top row (left side)
 street_light(scen, -50, -0.5, street_light_intensity)
@@ -86,7 +86,7 @@ local squad = ent.get "policeSquad"
 local building = ent.get "building"
 
 
-local squadOne = squad(scen, -5, 0, 0, math.pi/2);
+local squadOne = squad(scen, -5, 0, 0, -math.pi/4);
 --local squadTwo = squad(scen, -5, 0, -10, math.pi/2);
 --core.system.groups.setGroupGoal(policeGroup, -43, 0, 4)
    
