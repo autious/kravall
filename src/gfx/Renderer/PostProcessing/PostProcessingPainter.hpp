@@ -4,9 +4,11 @@
 #include "../BasePainter.hpp"
 #include <Shaders/ShaderManager.hpp>
 #include <Buffers/UniformBufferManager.hpp>
+#include "../DeferredRenderer/FBOTexture.hpp"
 #include "../../Textures/TextureManager.hpp"
 #include "../../Textures/LUTManager.hpp"
 
+#include "BlurPainter.hpp"
 namespace GFX
 {
 
@@ -29,20 +31,23 @@ namespace GFX
 		\param FBO ID of FBO used for rendertargets
 		\param dummyVAO ID of an empty VAO used for screenspace rendering
 		*/
-		void Initialize(GLuint FBO, GLuint dummyVAO, int screenWidth, int screenHeight);
+		void Initialize(GLuint FBO, GLuint dummyVAO, int screenWidth, int screenHeight, BlurPainter* blurPainter);
 
 		/*!
 		Main rendering loop
 		*/
-		void Render(const double& delta, const GLuint& tonemappedTexture, std::string LUT);
+		void Render(const double& delta, const GLuint& tonemappedTexture, std::string LUT, float exposure, float gamma, glm::vec3 whitePoint);
 
 		void ReloadLUT();
 
-	private:
+		void Resize(int width, int height);
 
+	private:
 		void ColorGrading(const GLuint& tonemappedTexture, std::string LUT);
+		void HDRBloom(const GLuint& tonemappedTexture, float exposure, float gamma, glm::vec3 whitePoint);
 		void OutputTexture(const GLuint& texturehandle);
 
+		void BindTextureToFBO(FBOTexture& texture, bool ping);
 		GLint m_alphaUniform;
 		GLint m_textureUniform;
 
@@ -57,6 +62,19 @@ namespace GFX
 		TextureManager* m_textureManager;
 		LUTManager* m_LUTManager;
 
+		GLint m_gammaUniform;
+	
+		GLuint m_pingFBO;
+		GLuint m_pongFBO;
+
+		GLint m_whitePointUniformBP;
+		GLint m_textureUniformBP;
+		GLint m_exposureUniformBP;
+
+
+		std::vector<FBOTexture> m_bloomTextures;
+
+		BlurPainter* m_blurPainter;
 	};
 }
 #endif

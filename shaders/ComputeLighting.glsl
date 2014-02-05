@@ -381,6 +381,9 @@ void main()
 			color += vec4(lights[i].color*lights[i].intensity, 0.0f) * surface.diffuse;
 		}
 
+		//Add glow
+		color += surface.glow;
+		
 		//Add occlusion
 		//color.xyz *= sumOcclusion;
 
@@ -389,7 +392,6 @@ void main()
 
 		//Gamma correct
 		color.xyz = pow(color.xyz, vec3(1.0f / gGamma));
-		color += surface.glow;
 		
 		//if (gl_LocalInvocationID.x == 0 || gl_LocalInvocationID.y == 0)
 		//{

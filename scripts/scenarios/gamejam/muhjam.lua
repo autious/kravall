@@ -1434,10 +1434,10 @@ end
 
 local prevFrame = false
 local timer = 0
-local tOne = 5
-local tTwo = 5
-local tThree = 5
-local tFour = 5
+local tOne = 0
+local tTwo = 0
+local tThree = 0
+local tFour = 0
 
 
 function Update(dt)
@@ -1502,19 +1502,19 @@ function Update(dt)
 
 			if not goal.found then
 				core.draw.drawText( 520, 260, "QUANTITY BEFORE QUALITY")
-				core.draw.drawText( 540, 280, "PRES BUTAN TO ENTER")
+				core.draw.drawText( 540, 280, "PRESS ENTER TO START")
 			end
 		end
 
 		if dead then
-			core.draw.drawText( 580, 360, "U DED NIGGA")
-			core.draw.drawText(540, 380, "PRES BUTAN TO RETRY")
+			core.draw.drawText( 580, 360, "YOU DIED")
+			core.draw.drawText(540, 380, "PRESS ENTER TO RETRY")
 			if keyboard.isKeyDown( key.Enter ) then
 				ReloadMap()
 			end
 		elseif goal.found then
-			core.draw.drawText( 580, 360, "U WIN NIGGA")
-			core.draw.drawText(540, 380, "PRES BUTAN TO CONTINUE")
+			core.draw.drawText( 580, 360, "LEVEL COMPLETE")
+			core.draw.drawText(540, 380, "PRESS ENTER TO CONTINUE")
 			if keyboard.isKeyDown( key.Enter ) then
 				ReloadMap()
 			end
