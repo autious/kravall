@@ -70,7 +70,7 @@ void Core::AIDebugSystem::Update( float delta )
 {
 
 
-	//GetPlanePoint();
+	GetPlanePoint();
 
 	//return;
 

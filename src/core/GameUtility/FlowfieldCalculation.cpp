@@ -137,7 +137,8 @@ namespace Core
 					for( int i = 0; i < 4; i++ )
 					{
 						// the later half of this if will not be run if the first one is true, henc no explotion... 
-						if( current.corners[i].linksTo < 0 || nodes[ current.corners[ i ].linksTo ].blocked[ current.corners[ i ].linksToEdge ] )
+						//if( current.corners[i].linksTo < 0 || nodes[ current.corners[ i ].linksTo ].blocked[ current.corners[ i ].linksToEdge ] )
+						if( current.corners[i].linksTo < 0 || current.blocked[ i ] )
 							continue;
 
 						// calculate midpoint for the outgoing edge...

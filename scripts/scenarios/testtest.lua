@@ -35,7 +35,8 @@ local building = ent.get "building"
 
 
 local rGroup = core.system.groups.createGroup();
-local centerPoint = { 200, 0, 25 }		
+--local centerPoint = { 200, 0, 25 }
+local centerPoint = { 110, 0, 0 }
 local side = math.sqrt( 50 )
 for i = -side/2, side/2 do
 	for p = -side/2, side/2 do
