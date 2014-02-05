@@ -4,6 +4,10 @@ local windowFocusCallback = {}
 
 window.width,window.height = core.window.getSize()
 
+if window.width == nil or window.height == nil then
+    window.width,window.height = core.config.initScreenWidth, core.config.initScreenHeight
+end
+
 function core.window.windowSizeCallback( width, height )
     window.width = width
     window.height = height

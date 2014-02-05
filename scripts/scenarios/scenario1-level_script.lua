@@ -20,6 +20,7 @@ return function( scen )
 	scen.gamemode = require "gamemodes/kravall":new()
 	scen:registerUpdateCallback( function(delta) scen.gamemode:update(delta) end )
 	scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
+	scen:registerInitCallback( function() scen.gamemode.camera:lookAt( core.glm.vec3.new( 60, 120, 180 ), core.glm.vec3.new( -30, 0, 90 ) ) end)
 	
 	-- Just random helpful stuffzzz --
 	--core.system.name.getEntitiesByName( "area1" )[1]
