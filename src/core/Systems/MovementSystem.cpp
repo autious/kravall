@@ -63,7 +63,7 @@ void Core::MovementSystem::Update(float delta)
 
 			RotationComponent* rc = WGETC<RotationComponent>(*it);
 
-			*rc = RotationComponent::GetComponentRotateY(-angle - 3.141592f * 0.5f);
+			*rc = RotationComponent::GetComponentRotateY(-angle - 3.141592f * 1.5f); // We need to solve this, model might be wrong or something :)
 		}
 
 		// Draw the debug lines showing the rioter's direction.
