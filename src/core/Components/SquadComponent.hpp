@@ -11,7 +11,7 @@ namespace Core
 	*/
 	enum SquadFormation
 	{
-		NO_FORMATION,
+        NO_FORMATION,
 		LINE_FORMATION,
 		CIRCLE_FORMATION
 	};
