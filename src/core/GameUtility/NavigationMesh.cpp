@@ -36,10 +36,11 @@ namespace Core
             LOG_FATAL << "Flowfield array is out of indices" << std::endl;
         }
 
+		flowfields[nrUsedFlowfields].blocked = Core::world.m_levelHeap.NewPODArray<float>( nrNodes * 4 );
         flowfields[nrUsedFlowfields].edges = Core::world.m_levelHeap.NewPODArray<int>( nrNodes );
-		flowfields[nrUsedFlowfields].list = reinterpret_cast<glm::vec3*>(Core::world.m_levelHeap.NewPODArray<float>( 3 * nrNodes ));
+		flowfields[nrUsedFlowfields].list = (glm::vec3*)(Core::world.m_levelHeap.NewPODArray<float>( 3 * nrNodes ));
 
-
+		std::memset( flowfields[nrUsedFlowfields].blocked, 0, nrNodes * sizeof(float) * 4 );
 		std::memset( flowfields[nrUsedFlowfields].edges, 0, nrNodes * sizeof(int) );
 		std::memset( flowfields[nrUsedFlowfields].list, 0, nrNodes * sizeof(glm::vec3) );
 
@@ -176,7 +177,6 @@ std::fstream& operator>> ( std::fstream& ff, Core::NavigationMesh::Node& node )
 	for( int i = 0; i < 4; i++ )
 	{
 		node.corners[i].cornerConnectsToNode = NAVMESH_NO_CONNECTING_CORNERS;
-		node.blocked[i] = 0.0f;
 
 		ff >> node.corners[i].linksTo;
 

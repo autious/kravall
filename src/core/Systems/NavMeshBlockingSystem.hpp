@@ -12,8 +12,8 @@ namespace Core
     {
 	private:
 
-		void CalculateBlockedNodes();
-		void FreeBlockedNodes();
+		void CalculateBlockedNodes( int targetRioterGroup );
+		void FreeBlockedNodes( int targetRioterGroup );
 
 
     public:

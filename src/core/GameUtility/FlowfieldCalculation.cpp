@@ -66,8 +66,8 @@ namespace Core
 		for( int i = 0; i < 4; i++ )
 		{
 			int linksTo = nodes[ node ].corners[i].linksTo;
-			if( linksTo >= 0 && nodes[ node ].blocked[i] < EDGE_HEAT_DENSITY_THREASHOLD_FOR_BLOCKING 
-				&& nodes[ nodes[ node ].corners[i].linksTo ].blocked[ nodes[ node ].corners[i].linksToEdge ] < EDGE_HEAT_DENSITY_THREASHOLD_FOR_BLOCKING )
+			if( linksTo >= 0 && flowfields[ group ].blocked[ node * 4 + i] < EDGE_HEAT_DENSITY_THREASHOLD_FOR_BLOCKING 
+				&& flowfields[ group ].blocked[ nodes[ node ].corners[i].linksTo * 4 + nodes[ node ].corners[i].linksToEdge ] < EDGE_HEAT_DENSITY_THREASHOLD_FOR_BLOCKING )
 				prioList.push_back( TraversalData( linksTo, nodes[ node ].corners[i].linksToEdge, -5.0f, -1 ) );
 		}
 		std::sort( prioList.begin(), prioList.end(), sortingFunction );
@@ -146,8 +146,8 @@ namespace Core
 					{
 						// the later half of this if will not be run if the first one is true, henc no explotion... 
 						//if( current.corners[i].linksTo < 0 || nodes[ current.corners[ i ].linksTo ].blocked[ current.corners[ i ].linksToEdge ] )
-						if( current.corners[i].linksTo < 0 || current.blocked[ i ] > EDGE_HEAT_DENSITY_THREASHOLD_FOR_BLOCKING || 
-							nodes[ current.corners[i].linksTo ].blocked[ current.corners[i].linksToEdge ] > EDGE_HEAT_DENSITY_THREASHOLD_FOR_BLOCKING )
+						if( current.corners[i].linksTo < 0 || flowfields[ group ].blocked[ 4 * prioList[0].node + i ] > EDGE_HEAT_DENSITY_THREASHOLD_FOR_BLOCKING || 
+							flowfields[ group ].blocked[ current.corners[i].linksTo * 4 + current.corners[i].linksToEdge ] > EDGE_HEAT_DENSITY_THREASHOLD_FOR_BLOCKING )
 							continue;
 
 						// calculate midpoint for the outgoing edge...

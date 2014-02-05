@@ -119,7 +119,7 @@ void Core::NavMeshBlockingSystem::Update( float delta )
 }
 */
 
-void Core::NavMeshBlockingSystem::CalculateBlockedNodes()
+void Core::NavMeshBlockingSystem::CalculateBlockedNodes( int targetRioterGroup )
 {
 	Core::NavigationMesh* instance = Core::GetNavigationMesh();
 	if( instance )
@@ -136,6 +136,8 @@ void Core::NavMeshBlockingSystem::CalculateBlockedNodes()
 				Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(*it);
 				glm::vec3 position = Core::WorldPositionComponent::GetVec3( *wpc );
 
+				Core::AttributeComponent* attribc = WGETC<Core::AttributeComponent>(*it);
+
 				float* points = instance->nodes[ ffc->node ].points;
 				int nrCorners = instance->nodes[ ffc->node ].corners[3].length < 0.0f ? 3 : 4;
 				for( int i = 0; i < nrCorners; i++ )
@@ -151,7 +153,7 @@ void Core::NavMeshBlockingSystem::CalculateBlockedNodes()
 					glm::vec3 cross = glm::normalize( glm::cross( (lineEnd - lineStart), glm::vec3( 0.0f, 1.0f, 0.0f ) ) );
 					float distanceToLine = glm::dot( cross, fromStartToObject );
 
-					instance->nodes[ffc->node].blocked[i] += 5.0f / ( distanceToLine * distanceToLine + 1 );
+					instance->flowfields[ targetRioterGroup ].blocked[ ffc->node * 4 + i ] += 5.0f / ( distanceToLine * distanceToLine + 1 );
 				}
 			}
 		}
@@ -160,7 +162,8 @@ void Core::NavMeshBlockingSystem::CalculateBlockedNodes()
 		{
 			for( int pp = 0; pp < 4; pp++ )
 			{
-				if( instance->nodes[i].blocked[pp] > 5.0f )
+				if( instance->flowfields[ targetRioterGroup ].blocked[ i * 4 + pp ] > 5.0f )
+				//if( instance->nodes[i].blocked[pp] > 5.0f )
 				{
 					int ii = pp * 2;
 					int oo = (ii + 2) % 8;	
@@ -169,7 +172,8 @@ void Core::NavMeshBlockingSystem::CalculateBlockedNodes()
 					glm::vec3 lineStart = glm::vec3( points[ ii ], 0.0f, points[ ii + 1 ] );
 					glm::vec3 lineEnd	= glm::vec3( points[ oo ], 0.0f, points[ oo + 1 ] );
 		
-					GFX::Debug::DrawSphere( lineStart + ( lineEnd - lineStart ) * 0.5f, instance->nodes[i].blocked[pp], GFXColor( 0.5f, 1.0f, 0.2f, 1.0f ), false );
+					GFX::Debug::DrawSphere( lineStart + ( lineEnd - lineStart ) * 0.5f, 
+						instance->flowfields[ targetRioterGroup ].blocked[ i * 4 + pp ], GFXColor( 0.5f, 1.0f, 0.2f, 1.0f ), false );
 
 
 					//float* points = instance->nodes[i].points;
@@ -187,28 +191,26 @@ void Core::NavMeshBlockingSystem::CalculateBlockedNodes()
 }
 
 
-void Core::NavMeshBlockingSystem::FreeBlockedNodes()
+void Core::NavMeshBlockingSystem::FreeBlockedNodes( int targetRioterGroup )
 {
 	Core::NavigationMesh* instance = Core::GetNavigationMesh();
 	if( instance )
 	{
-		for( int i = 0; i < instance->nrNodes; i++ )
-		{
-			std::memset( instance->nodes[i].blocked, 0, sizeof(float) * 4 );
-		}
+		std::memset( instance->flowfields[ targetRioterGroup ].blocked, 0, instance->nrNodes * 4 * sizeof( float ) );
+		//for( int i = 0; i < instance->nrNodes; i++ )
+		//{
+		//	std::memset( instance->nodes[i].blocked, 0, sizeof(float) * 4 );
+		//
+		//}
 	}
 }
 
 
 void Core::NavMeshBlockingSystem::Update( float delta )
 {
-	return; // NOCOMMIT
-
 	Core::NavigationMesh* instance = Core::GetNavigationMesh();
 	if( instance )
 	{
-		CalculateBlockedNodes();
-
 		for( int i = 0; i < instance->nrUsedFlowfields; i++ )
 		{			
 			// currently, police squads will never recieve a ff goal...
@@ -229,6 +231,8 @@ void Core::NavMeshBlockingSystem::Update( float delta )
 					if( glm::distance( currentPosition, lastPosition ) < 3.0f )
 					{
 						// squad appears to be stuck...
+						FreeBlockedNodes( i );
+						CalculateBlockedNodes( i );
 						instance->CalculateFlowfieldForGroup( glm::vec3( meta.goal[0], 0.0f, meta.goal[1] ), i  );					
 					}
 
@@ -244,11 +248,8 @@ void Core::NavMeshBlockingSystem::Update( float delta )
 				}
 
 				meta.timeSinceLastCheck += delta;
-
 			}
 		}
-
-		FreeBlockedNodes();
 	}
 	
 

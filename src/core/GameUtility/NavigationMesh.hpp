@@ -69,11 +69,6 @@ namespace Core
 			float points[8];
 
 			/*!
-				if above zero the respective edge cannot be traversed in the navmesh.
-			*/
-			float blocked[4];
-
-			/*!
 				Metadata for each node. Each line is n to n + 1, with n to 0 for the last index.
 			*/
 			struct Corner
@@ -139,14 +134,28 @@ namespace Core
 
 			float timeSinceLastCheck;
 			float recordedPosition[2];
-			
-
 
 			/* ********* */
 
+			/*!
+				if above zero the respective edge cannot be traversed in the navmesh.
+			*/
+			float* blocked;
 
+			/*!
+				The assigned goal positing for the flowfield instance. Same position that was used for calculation.
+			*/
 			float goal[2];
+
+			/*!
+				A list with the same size as nrNodes and contains per node indexes for which egde links to next node.
+			*/
 			int* edges;
+
+			/*!
+				List withthe same size as nrNodes and contains per node positions for a point in the next node. 
+				In most cases, this position will be the entry position of the parent node.
+			*/
 			glm::vec3* list;
 		};
 
