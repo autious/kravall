@@ -37,11 +37,8 @@ function doscenario( name )
     --return dofile( "scripts/scenarios/" .. name .. ".lua" ) 
 end
 
-core.config.current_scenario = nil
-core.config.current_scenario_name = "No Scenario Loaded"
-
 function currentscenario()
-    print( core.config.current_scenario_name )
+    print( current_scenario_name )
 end
 
 function shh()
@@ -110,3 +107,5 @@ end
 function print( ... )
     core.log.info:print( ... )
 end
+
+       
