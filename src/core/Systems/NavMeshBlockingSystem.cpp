@@ -133,28 +133,55 @@ void Core::NavMeshBlockingSystem::CalculateBlockedNodes()
 				if( ffc->node < 0 )
 					continue;
 
-				instance->nodes[ffc->node].heat += 1.0f;
+				Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(*it);
+				glm::vec3 position = Core::WorldPositionComponent::GetVec3( *wpc );
+
+				float* points = instance->nodes[ ffc->node ].points;
+				int nrCorners = instance->nodes[ ffc->node ].corners[3].length < 0.0f ? 3 : 4;
+				for( int i = 0; i < nrCorners; i++ )
+				{
+					int ii = i * 2;
+					int oo = (ii + 2) % 8;	
+
+					// define lines...
+					glm::vec3 lineStart = glm::vec3( points[ ii ], 0.0f, points[ ii + 1 ] );
+					glm::vec3 lineEnd	= glm::vec3( points[ oo ], 0.0f, points[ oo + 1 ] );
+					glm::vec3 fromStartToObject = position - lineStart;
+
+					glm::vec3 cross = glm::normalize( glm::cross( (lineEnd - lineStart), glm::vec3( 0.0f, 1.0f, 0.0f ) ) );
+					float distanceToLine = glm::dot( cross, fromStartToObject );
+
+					instance->nodes[ffc->node].blocked[i] += 5.0f / ( distanceToLine * distanceToLine + 1 );
+				}
 			}
 		}
-
 
 		for( int i = 0; i < instance->nrNodes; i++ )
 		{
-			if( instance->nodes[i].heat > 5.0f )
+			for( int pp = 0; pp < 4; pp++ )
 			{
-				std::memset( instance->nodes[i].blocked, true, sizeof(bool) * 4 );
-				for( int pp = 0; pp < 4; pp++ )
-					;//GFX::Debug::DrawSphere( instance->nodes[i].GetMidPoint(pp), 5, GFXColor( 0.5f, 1.0f, 0.2f, 1.0f ), false );
+				if( instance->nodes[i].blocked[pp] > 5.0f )
+				{
+					int ii = pp * 2;
+					int oo = (ii + 2) % 8;	
+					float* points = instance->nodes[ i ].points;
+					// define lines...
+					glm::vec3 lineStart = glm::vec3( points[ ii ], 0.0f, points[ ii + 1 ] );
+					glm::vec3 lineEnd	= glm::vec3( points[ oo ], 0.0f, points[ oo + 1 ] );
+		
+					GFX::Debug::DrawSphere( lineStart + ( lineEnd - lineStart ) * 0.5f, instance->nodes[i].blocked[pp], GFXColor( 0.5f, 1.0f, 0.2f, 1.0f ), false );
 
 
-				//float* points = instance->nodes[i].points;
-				//glm::vec3 temp = glm::vec3(0.0f);
-				//for( int g = 0; g < 4; g++ )
-				//	temp += glm::vec3( points[ g * 2 ], 0.0f, points[ g * 2 + 1] );
-				//temp *= 0.25f;
-				//GFX::Debug::DrawSphere( temp, 5, GFXColor( 0.5f, 1.0f, 0.2f, 1.0f ), false );
+					//float* points = instance->nodes[i].points;
+					//glm::vec3 temp = glm::vec3(0.0f);
+					//for( int g = 0; g < 4; g++ )
+					//	temp += glm::vec3( points[ g * 2 ], 0.0f, points[ g * 2 + 1] );
+					//temp *= 0.25f;
+					//GFX::Debug::DrawSphere( temp, 5, GFXColor( 0.5f, 1.0f, 0.2f, 1.0f ), false );
+				}
 			}
 		}
+
 
 	}
 }
@@ -165,17 +192,9 @@ void Core::NavMeshBlockingSystem::FreeBlockedNodes()
 	Core::NavigationMesh* instance = Core::GetNavigationMesh();
 	if( instance )
 	{
-		// reset data...
 		for( int i = 0; i < instance->nrNodes; i++ )
 		{
-			std::memset( instance->nodes[i].blocked, false, sizeof(bool) * 4 );
-			instance->nodes[i].heat = 0.0f;
-
-			//instance->nodes[i].heat = 0.0f;
-			//for( int p = 0; p < 4; p++ )
-			//{
-			//	instance->nodes[i].blocked[p] = false;
-			//}
+			std::memset( instance->nodes[i].blocked, 0, sizeof(float) * 4 );
 		}
 	}
 }

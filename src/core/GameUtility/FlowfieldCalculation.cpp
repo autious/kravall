@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <logger/Logger.hpp>
 
+#define EDGE_HEAT_DENSITY_THREASHOLD_FOR_BLOCKING 5.0f
+
 namespace Core
 {
 	struct TraversalData
@@ -64,11 +66,17 @@ namespace Core
 		for( int i = 0; i < 4; i++ )
 		{
 			int linksTo = nodes[ node ].corners[i].linksTo;
-			if( linksTo >= 0 && !nodes[ node ].blocked[i] )
+			if( linksTo >= 0 && nodes[ node ].blocked[i] < EDGE_HEAT_DENSITY_THREASHOLD_FOR_BLOCKING 
+				&& nodes[ nodes[ node ].corners[i].linksTo ].blocked[ nodes[ node ].corners[i].linksToEdge ] < EDGE_HEAT_DENSITY_THREASHOLD_FOR_BLOCKING )
 				prioList.push_back( TraversalData( linksTo, nodes[ node ].corners[i].linksToEdge, -5.0f, -1 ) );
 		}
 		std::sort( prioList.begin(), prioList.end(), sortingFunction );
 
+		if( prioList.size() == 0 )
+		{
+			flowfields[group].goal[ 0 ] = std::numeric_limits< float >::max();
+			return false;
+		}
 
 		// allocate and initialize data
 		bool* visited = Core::world.m_frameHeap.NewPODArray<bool>( nrNodes );
@@ -138,7 +146,7 @@ namespace Core
 					{
 						// the later half of this if will not be run if the first one is true, henc no explotion... 
 						//if( current.corners[i].linksTo < 0 || nodes[ current.corners[ i ].linksTo ].blocked[ current.corners[ i ].linksToEdge ] )
-						if( current.corners[i].linksTo < 0 || current.blocked[ i ] )
+						if( current.corners[i].linksTo < 0 || current.blocked[ i ] > EDGE_HEAT_DENSITY_THREASHOLD_FOR_BLOCKING )
 							continue;
 
 						// calculate midpoint for the outgoing edge...

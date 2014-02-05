@@ -36,8 +36,14 @@ void Core::FlowfieldSystem::Update( float delta )
 			Core::AttributeComponent* attribc = WGETC<Core::AttributeComponent>(*it);
 			int groupID = attribc->rioter.groupID;
 
+			if( instance->flowfields[ groupID ].goal[0] == std::numeric_limits<float>::max() )
+			{
+				MovementComponent::SetDirection( mvmc, 0.0f, 0.0f, 0.0f );
+				continue;
+			}
+
 			Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(*it);
-			glm::vec3 position = wpc->GetVec3( *wpc );			
+			glm::vec3 position = wpc->GetVec3( *wpc );
 
 			glm::vec3 midOfEdgeLinkingToNextNode = instance->flowfields[groupID].list[ ffc->node ];
 			if( glm::dot( midOfEdgeLinkingToNextNode, midOfEdgeLinkingToNextNode ) > 0.05f ) // goal node condition...

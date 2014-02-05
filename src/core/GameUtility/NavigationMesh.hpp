@@ -69,10 +69,9 @@ namespace Core
 			float points[8];
 
 			/*!
-				if true the respective edge cannot be traversed in the navmesh.
+				if above zero the respective edge cannot be traversed in the navmesh.
 			*/
-			bool blocked[4];
-			float heat;
+			float blocked[4];
 
 			/*!
 				Metadata for each node. Each line is n to n + 1, with n to 0 for the last index.
