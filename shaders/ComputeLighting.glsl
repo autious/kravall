@@ -108,7 +108,7 @@ vec3 BlinnPhong( LightData light, SurfaceData surface, vec3 eyeDirection, vec3 l
 	{
 		vec3 H = normalize( lightDirection + eyeDirection );
 		float NdotH = dot( surface.normalDepth.xyz, H );
-		intensity = pow( clamp( NdotH, 0.0f, 1.0f ), surface.specular.w ) * df;
+		intensity = pow( clamp( NdotH, 0.0f, 1.0f ), surface.specular.w  * 256) * df;
 	
 		// Temp vars, need materials with these channels
 

@@ -78,7 +78,6 @@ namespace GFX
 		GLint m_exposureUniformBP;
 
 		FBOTexture* m_brightPassTexture;
-		FBOTexture* m_intermediateTexture;
 		std::vector<FBOTexture*> m_bloomTextures;
 		std::vector<FBOTexture*> m_intermediateBlurTextures;
 

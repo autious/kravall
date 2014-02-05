@@ -57,9 +57,6 @@ namespace GFX
 		m_brightPassTexture = new FBOTexture();
 		m_brightPassTexture->Initialize(GL_TEXTURE_2D, GL_LINEAR, GL_LINEAR, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, GL_RGBA32F, GL_RGBA);
 
-		m_intermediateTexture = new FBOTexture();
-		m_intermediateTexture->Initialize(GL_TEXTURE_2D, GL_LINEAR, GL_LINEAR, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, GL_RGBA32F, GL_RGBA);
-
 		m_shaderManager->CreateProgram("Composite");
 		m_shaderManager->LoadShader("shaders/RenderToQuad/Quad.vertex", "CVS", GL_VERTEX_SHADER);
 		m_shaderManager->LoadShader("shaders/FSQuadGS.glsl", "CGS", GL_GEOMETRY_SHADER);
@@ -144,7 +141,6 @@ namespace GFX
 		}
 
 		m_brightPassTexture->UpdateResolution(width, height);
-		m_intermediateTexture->UpdateResolution(width, height);
 	}
 
 	void PostProcessingPainter::ReloadLUT()
@@ -221,7 +217,10 @@ namespace GFX
 
 			m_shaderManager->UseProgram("GaussianBlurHorizontal");
 
-			TextureManager::BindTexture(m_brightPassTexture->GetTextureHandle(), m_shaderManager->GetUniformLocation("GaussianBlurHorizontal", "gTexture"), 0, GL_TEXTURE_2D);
+			if (i == 0)
+				TextureManager::BindTexture(m_brightPassTexture->GetTextureHandle(), m_shaderManager->GetUniformLocation("GaussianBlurHorizontal", "gTexture"), 0, GL_TEXTURE_2D);
+			else
+				TextureManager::BindTexture(m_bloomTextures[i - 1]->GetTextureHandle(), m_shaderManager->GetUniformLocation("GaussianBlurHorizontal", "gTexture"), 0, GL_TEXTURE_2D);
 			m_shaderManager->SetUniform((GLfloat)size.x, (GLfloat)size.y, m_shaderManager->GetUniformLocation("GaussianBlurHorizontal", "gScreenDimensions"));
 
 			glBindVertexArray(m_dummyVAO);
