@@ -18,7 +18,6 @@ namespace Core
 
         static ComponentType GetComponentType();
         static const char* GetComponentLuaName();
-
     };
 }
 

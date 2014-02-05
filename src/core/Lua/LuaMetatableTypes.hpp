@@ -69,7 +69,7 @@ inline Core::ComponentType luau_checkcomponent( lua_State * state, int pos ) { r
 inline Core::UnitType* luau_checkunittype( lua_State * state, int pos) { return static_cast<Core::UnitType*>(luaL_checkudata(state, pos, UNIT_TYPE_OBJECT_TYPE_META) ); }
 inline Core::SquadFormation* luau_checksquadformation( lua_State * state, int pos) { return static_cast<Core::SquadFormation*>(luaL_checkudata(state, pos, SQUAD_FORMATION_META_TYPE) ); }
 inline LuaLog* luau_checklog( lua_State * state, int pos ) { return static_cast<LuaLog*>(luaL_checkudata( state, pos, LOG_META_TYPE ) ); }
-inline LuaHoverText* luau_checkhovertext( lua_State * state, int pos ) { return static_cast<LuaHoverText*>(luaL_checkudata( state, pos, HOVER_TEXT_META_TYPE ) };
+inline LuaHoverText* luau_checkhovertext( lua_State * state, int pos ) { return static_cast<LuaHoverText*>(luaL_checkudata( state, pos, HOVER_TEXT_META_TYPE )); }
 
 namespace Core
 {

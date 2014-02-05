@@ -17,6 +17,24 @@ extern "C"
         return 1;
     }
 
+    static int LuaReallocateString( lua_State * L )
+    {
+        LuaHoverText * lht = luau_checkhovertext( L, 1 );
+        const char * string  = luaL_checkstring( L, 2 );
+        Core::HoverTextSystem *hts = Core::world.m_systemHandler.GetSystem<Core::HoverTextSystem>();
+
+        if( lht->hoverTextId == -1 )
+        {
+           lht->hoverTextId = hts->AllocateString( string );
+        } 
+        else
+        {
+           hts->SetString( lht->hoverTextId, string );
+        }
+
+        return 0;
+    }
+
     static int LuaChangeString( lua_State * L )
     {
         LuaHoverText * lht = luau_checkhovertext( L, 1 );
@@ -73,6 +91,7 @@ namespace Core
                         lua_pop( L, 1 ); 
 
                         luau_setfunction( L, "new", LuaAllocateString );
+                        luau_setfunction( L, "reallocate", LuaReallocateString );
                         luau_setfunction( L, "set", LuaChangeString );
                         luau_setfunction( L, "free", LuaFreeString );
                     lua_setfield( L, -2, "string" );
