@@ -141,7 +141,7 @@ namespace GFX
 		glViewport(0, 0, m_windowWidth, m_windowHeight);
 		ResizeGBuffer();
 		m_lightPainter->Resize(width, height);
-
+		m_postProcessingPainter->Resize(width, height);
 		// Set console width
 		m_consolePainter->SetConsoleHeight(m_windowHeight);
 	}
@@ -159,6 +159,11 @@ namespace GFX
 	void RenderCore::SetGamma(float gamma)
 	{
 		m_gamma = gamma;
+	}
+
+	void RenderCore::SetWhitepoint(glm::vec3 whitePoint)
+	{
+		m_whitePoint = whitePoint;
 	}
 
 	void RenderCore::ReloadLUT()

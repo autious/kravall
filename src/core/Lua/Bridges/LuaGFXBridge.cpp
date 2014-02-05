@@ -5,11 +5,13 @@
 #include <lauxlib.h>
 
 #include <gfx/BitmaskDefinitions.hpp>
-
+#include <GFXInterface.hpp>
 #include <logger/Logger.hpp>
 
 #include <sstream>
 #include <cassert>
+
+#include <Lua/LuaUtility.hpp>
 
 extern "C"
 {
@@ -38,6 +40,29 @@ extern "C"
 
         return 1;
     }
+
+	static int LuaSetGamma(lua_State* L)
+	{
+		float gamma = luaL_checknumber(L, 1);
+		GFX::Settings::SetGamma(gamma);
+		return 1;
+	}
+
+	static int LuaSetExposure(lua_State* L)
+	{
+		float exposure = luaL_checknumber(L, 1);
+		GFX::ColorSettings::SetExposure(exposure);
+		return 1;
+	}
+
+	static int LuaSetWhitepoint(lua_State* L)
+	{
+		float wpOne = luaL_checknumber(L, 1);
+		float wpTwo = luaL_checknumber(L, 2);
+		float wpThree = luaL_checknumber(L, 3);
+		GFX::ColorSettings::SetWhitePoint(glm::vec3(wpOne, wpTwo, wpThree));
+		return 1;
+	}
 }
 
 static void PushObjectType( lua_State * L, const unsigned int value, const char * name, int table )
@@ -84,6 +109,10 @@ Core::LuaGFXBridge::LuaGFXBridge( lua_State * L )
         lua_pushstring( L, "gfx" );
         lua_newtable( L ); //GFX table
         int gfxTable = lua_gettop( L );
+
+			luau_setfunction(L, "setGamma", LuaSetGamma);
+			luau_setfunction(L, "setExposure", LuaSetExposure);
+			luau_setfunction(L, "setWhitepoint", LuaSetWhitepoint);
 
             lua_pushstring( L, "objectTypes" );
             lua_newtable( L ); //objectTypes table
