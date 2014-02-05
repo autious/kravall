@@ -18,15 +18,18 @@ local lanePos = { -17, 0, 17} -- Precalculated positions for the lanes positions
 local currentTileIndex = 0
 
 local numTracks = 8 -- Number of tracks to draw in each lane
-local trackCO = 40 -- The position at which tracks reset (behind camera)
+local trackCO = 100 -- The position at which tracks reset (behind camera)
 local trackLength = 100 -- Length of each track piece
 
 local numCaveSegs = 4 -- Number of tracks to draw in each lane
 local caveSegLength = 200 -- Length in units for a cave segment
 
-local cartResetSpeed = 75.0
+local cartResetSpeed = 150.0
 local cartMaxSpeed = 275.0
 local cartSpeed = cartResetSpeed -- Speed of the minecart
+local cartAcc = 0.05
+
+local minecartY = 4
 
 local score = 0
 
@@ -49,7 +52,7 @@ local minecart = {
 	goldlight1 = entities.CreatePointlight({1, 9, -1}, {1, 1, 0}, 6, 10, scen),
 	goldlight2 = entities.CreatePointlight({0, 8, 0}, {1, 1, 0}, 6, 10, scen),
 	goldlight3 = entities.CreatePointlight({-1, 7, 1}, {1, 1, 0}, 6, 10, scen),
-	moodlight = entities.CreatePointlight({0, 15, -7}, {255/255, 90/255, 0/255}, 75, 2, scen),
+	moodlight = entities.CreatePointlight({0, 15, -7}, {230/255, 90/255, 30/255}, 50, 200, scen),
 	position = {0, 0, 0}
 	
 }
@@ -58,7 +61,7 @@ local function UpdateCartPosition(delta)
 	util.SetPosition(
 		{
 			minecart.position[1] + 0.0, 
-			minecart.position[2] + 0.0, 
+			minecart.position[2] + minecartY, 
 			minecart.position[3] + 0.0
 		}, minecart.cart)
 		
@@ -98,13 +101,13 @@ local function UpdateCartPosition(delta)
 		}, minecart.moodlight)
 end
 
-local function Overlap(a, b, c)
-	local a1 = a[1]
-	local a2 = a[2]
-	local b1 = b[1]
-	local b2 = b[2]
-	local c1 = c[1]
-	local c2 = c[2]
+local function Overlap(a, b, c, ofs)
+	local a1 = a[1] - ofs
+	local a2 = a[2] + ofs
+	local b1 = b[1] - ofs
+	local b2 = b[2] + ofs
+	local c1 = c[1] - ofs
+	local c2 = c[2] + ofs
 	
 	-- a overlap b
 	if 		a1 <= b2 and b1 <= a2 
@@ -134,7 +137,7 @@ local function RandomTrack(i)
 	local right	= {entity = e3, killzone = k3}
 	
 	-- Check so that killzones are not overlapping
-	if Overlap(left.killzone, mid.killzone, right.killzone) then 
+	if Overlap(left.killzone, mid.killzone, right.killzone, 10) then 
 		local id = math.random(1,3)
 		if id == 1 then
 			left.entity:destroy()
@@ -154,8 +157,22 @@ end
 -- Create tracks
 local tracks = {}
 
+local function ResetAllTracks()
+	for i=1,numTracks do
+		tracks[i].left.entity:destroy()
+		tracks[i].mid.entity:destroy()
+		tracks[i].right.entity:destroy()
+		left, mid, right = RandomTrack(i)
+		tracks[i] = {
+						left = left,
+						mid = mid,
+						right = right,
+						offset = trackCO-i*trackLength
+					}
+	end
+end
+
 -- Create a few tracks to begin with
--- Left track
 for i=1,numTracks do
 	left, mid, right = RandomTrack(i)
 	tracks[i] = {
@@ -196,7 +213,7 @@ local function UpdateTracks(delta)
 		position[3] = tracks[i].offset
 		util.SetPosition(position, tracks[i].right.entity)
 		
-		if tracks[i].offset >= -trackLength and tracks[i].offset < 0  then
+		if tracks[i].offset >= -trackLength/2 and tracks[i].offset < trackLength/2  then
 			currentTileIndex = i
 		end
 		
@@ -242,11 +259,11 @@ local function IsKillzoned()
 		return false
 	end
 	
-	if trk.killzone[1] >= 0 and trk.killzone[2] >= 0 then -- killzone is not nil
-		if trackLength + tracks[i].offset < trk.killzone[2]  and trackLength + tracks[i].offset > trk.killzone[1] then
-			return true
-		end
+	-- Check to see if inside the deadzone
+	if tracks[i].offset > trk.killzone[1]  and tracks[i].offset < trk.killzone[2] then
+		return true
 	end
+	
 	return false
 end
 
@@ -318,7 +335,7 @@ local function Update(delta)
 				local targetPos = lanePos[pendingLane]
 				local factor = switchingTime / switchingTimeConstant
 				minecart.position[1] =   factor * lanePos[currentLane] +   (1 - factor) * targetPos
-				minecart.position[2] = 15 * math.sin(math.pi * factor )
+				minecart.position[2] = 10 * math.sin(math.pi * factor )
 				if pendingLane < currentLane then
 					util.SetRotationZ(-math.pi*2 * factor, minecart.cart)
 				else
@@ -347,7 +364,7 @@ local function Update(delta)
 			util.SetLightIntensity(0, dblight) 
 		end
 		
-		cartSpeed = cartSpeed + 0.05
+		cartSpeed = cartSpeed + cartAcc
 		
 		if cartSpeed > cartMaxSpeed then cartSpeed = cartMaxSpeed end
 
@@ -358,14 +375,14 @@ local function Update(delta)
 			util.SetPosition(
 			{
 				minecart.position[1] + 0.0, 
-				minecart.position[2] + 0.0, 
+				minecart.position[2] + minecartY, 
 				1000
 			}, minecart.cart)
 		else
 			util.SetPosition(
 			{
 				minecart.position[1] + 0.0, 
-				minecart.position[2] + 0.0, 
+				minecart.position[2] + minecartY, 
 				0
 			}, minecart.cart)
 		end
@@ -390,10 +407,11 @@ local function Update(delta)
 			currentLane = 2
 			pendingLane = 2
 			minecart.position[1] = lanePos[currentLane]
-			minecart.position[2] = 0
+			minecart.position[2] = minecartY
 			util.SetRotationZ(0, minecart.cart)
 			switchingTime = 0
 			switchingLane = false
+			ResetAllTracks()
 		end
 		
 	end

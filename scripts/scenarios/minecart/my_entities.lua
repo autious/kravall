@@ -62,9 +62,9 @@ local function CreateHeadlight(scen)
 		{
 			type = core.componentType.LightComponent,
 			data =  { 
-						color = {255/255, 90/255, 0/255},
-						speccolor = {255/255, 90/255, 0/255},
-						intensity = 1500,
+						color = {230/255, 90/255, 30/255},
+						speccolor = {230/255, 90/255, 30/255},
+						intensity = 5000,
 						spotangle = math.pi/4,
 						spotpenumbra = 0.3,
 						type = core.gfx.objectTypes.Light,
