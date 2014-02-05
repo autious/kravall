@@ -57,7 +57,6 @@ extern "C"
     static int LuaFreeString( lua_State * L )
     {
         LuaHoverText * lht = luau_checkhovertext( L, 1 );
-
         Core::HoverTextSystem *hts = Core::world.m_systemHandler.GetSystem<Core::HoverTextSystem>();
 
         if( lht->hoverTextId != -1 )
@@ -88,6 +87,7 @@ namespace Core
                         luaL_newmetatable( L, HOVER_TEXT_META_TYPE ); 
                             lua_pushvalue( L, hoverIndex );
                             lua_setfield( L, -2, "__index" );
+                            luau_setfunction( L, "__gc", LuaFreeString );
                         lua_pop( L, 1 ); 
 
                         luau_setfunction( L, "new", LuaAllocateString );
