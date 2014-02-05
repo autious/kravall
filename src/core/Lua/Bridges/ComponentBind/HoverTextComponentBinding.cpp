@@ -29,7 +29,7 @@ namespace Core
 
         setters["hoverTextId"] = [](Core::Entity entity, lua_State * L, int valueindex )
         {
-            LuaHoverText *lht = luau_checkhovertext( L, 1 );
+            LuaHoverText *lht = luau_checkhovertext( L, valueindex );
             HoverTextComponent *htc = WGETC<HoverTextComponent>( entity );
 
             htc->hoverTextId = lht->hoverTextId;

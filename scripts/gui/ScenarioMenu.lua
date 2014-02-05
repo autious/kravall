@@ -2,6 +2,7 @@ local GUI = require "gui/GUI"
 local Button = require "gui/component/Button"
 local Slider = require "gui/component/Slider"
 local Checkbox = require "gui/component/Checkbox"
+local TextSelectList = require "gui/component/TextSelectList"
 local CenterPlacer = require "gui/placement/CenterPlacer"
 
 ScenarioMenu = {}
@@ -13,6 +14,7 @@ function ScenarioMenu:new(o,menuState)
 
     o.gui:addComponent(Button:new({xoffset=10,yoffset=10,onClick = menuState.goMain }))
     o.gui:addComponent(Checkbox:new())
+    o.gui:addComponent(TextSelectList:new())
 
     o.gui:addPlacementHandler( CenterPlacer:new() )
 
