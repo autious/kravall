@@ -159,7 +159,7 @@ extern "C"
         }
     }
 
-    static int LuaSquadStance(lua_State* L)
+    static int LuaSetSquadStance(lua_State* L)
     {
 
         Core::SquadSystem* squadSystem = Core::world.m_systemHandler.GetSystem<Core::SquadSystem>();
@@ -220,6 +220,7 @@ namespace Core
                     luau_setfunction(L, "setSquadGoal", LuaSetSquadGoal);
                     luau_setfunction(L, "setSquadFormation", LuaSetSquadFormation);
                     luau_setfunction(L, "previewSquadFormation", LuaPreviewSquadFormation);
+                    luau_setfunction(L, "setSquadStance", LuaSetSquadStance);
                         lua_newtable(L);
                         Core::SquadFormation* formation = LuaUNewSquadFormation(L);
                         *formation = Core::SquadFormation::NO_FORMATION;
