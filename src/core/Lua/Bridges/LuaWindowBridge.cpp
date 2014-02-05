@@ -11,12 +11,20 @@ extern "C"
     static int LuaGetWindowSize( lua_State * L )
     {
         int width, height; 
-        glfwGetWindowSize( mainWindow, &width, &height );
 
-        lua_pushinteger( L, width );
-        lua_pushinteger( L, height );
+        if( mainWindow == nullptr )
+        {
+            return 0;
+        }
+        else
+        {
+            glfwGetWindowSize( mainWindow, &width, &height );
 
-        return 2;
+            lua_pushinteger( L, width );
+            lua_pushinteger( L, height );
+
+            return 2;
+        }
     }
 }
 
