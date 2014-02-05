@@ -18,6 +18,13 @@ namespace Core
 
 	bool CheckLineWithCornerCheck( glm::vec3 start, glm::vec3 goal, float radius, Core::NavigationMesh* instance, int startNode )
 	{
+		bool samePoint = true;
+		for( int i = 0; i < 3; i++ )
+			if( start[i] != goal[i] )
+				samePoint = false;
+		if( samePoint )
+			return false;
+
 		float hitDistance = 0;
 		float distanceToTarget = glm::distance( start, goal );
 		int nextNode = startNode;
