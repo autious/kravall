@@ -224,6 +224,8 @@ int Core::LuaState::DoBlock( const char * block, int args, int rargs )
         return 0;
     }
 
+    VerifyUpdateFunction();
+
     return rargs;
 }
 
@@ -319,9 +321,9 @@ void Core::LuaState::VerifyUpdateFunction()
     lua_getfield( m_state, -1, "update" );
     lua_rawgeti( m_state, LUA_REGISTRYINDEX, m_coreUpdateFunctionReg );
 
-    if( lua_equal( m_state, -1, -2 ) == 0 && lua_isnil( m_state, -2 ) == 0 )
+    if( lua_isfunction( m_state, -2 ) && m_activeUpdate == false )
     {
-        LOG_INFO << "Loaded new core.update function, (re)activating update call." << std::endl;
+        LOG_INFO << "Loaded new block into environment, (re)activating update call." << std::endl;
         m_activeUpdate = true;
 
         if( lua_isnil( m_state, -1 ) == 0 )

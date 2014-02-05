@@ -23,6 +23,9 @@ function T:new(o)
     return o
 end
 
+function T:init()
+end
+
 function T:update( delta )
     self.objectiveHandler:update( delta )
 

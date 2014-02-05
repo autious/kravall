@@ -7,6 +7,8 @@ scen.asm:specific_content( core.contentmanager.load(
 
 scen.gamemode = require "gamemodes/kravall":new()
 
+local squad = ent.get "policeSquad"
+
 scen:registerUpdateCallback( function(delta) scen.gamemode:update(delta) end )
 scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
 
@@ -43,15 +45,11 @@ end
 core.system.groups.setGroupGoal(rGroup, 0, 0, 0)
 
 
-local squad = ent.get "policeSquad"
 local squadOne = squad(scen, 77, 0, 0, math.pi/2);
 local squadTwo = squad(scen, 77, 0, 43, math.pi/2);
 
 
 
 
-
-
---local navmesh = ent.get "navMesh"
 
 return scen;

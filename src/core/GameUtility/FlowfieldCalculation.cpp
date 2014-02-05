@@ -220,7 +220,7 @@ namespace Core
 
 			// sort...
 			std::sort( &positions[0], &positions[3], 
-				[&test]( glm::vec3& A, glm::vec3& B )
+				[&test]( const glm::vec3& A, const glm::vec3& B )
 			{ 
 				if( glm::distance(A, test) < glm::distance( B, test ) ) 
 					return true; 
@@ -273,7 +273,7 @@ namespace Core
 		float distanceToGoal;
 	};
 
-	bool AstarSortingFunction( AStarData& a1, AStarData& a2 )
+	bool AstarSortingFunction( const AStarData& a1, const AStarData& a2 )
 	{
 		if( a1.entryDistance + a1.distanceToGoal < a2.entryDistance + a2.distanceToGoal)
 				return true;
@@ -460,7 +460,7 @@ namespace Core
 
 			// sort...
 			std::sort( &positions[0], &positions[3], 
-				[&posFromParent]( glm::vec3& A, glm::vec3& B )
+				[&posFromParent]( const glm::vec3& A, const glm::vec3& B )
 			{ 
 				if( glm::distance2(A, posFromParent) < glm::distance2( B, posFromParent ) ) 
 					return true; 
