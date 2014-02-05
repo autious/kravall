@@ -4,9 +4,21 @@
 #include <float.h> // For FLT_MAX
 #include <cassert>
 #include <cmath>
+#include <limits>
 
 namespace Core
 {
+	/*!
+		State used to set the respective movement properties.
+	*/
+	enum MovementState
+	{
+		Idle,
+		Walking,
+		Sprinting,
+		COUNT,
+	};
+
 	/*!
 	Component holding a moving object's speed, maximum speed and direction of movement.
 	*/
@@ -33,6 +45,16 @@ namespace Core
 		*/
 		float goal[3];
 
+		/*!
+			The Navigation mesh node index in which the goal resides.
+		*/
+		int NavMeshGoalNodeIndex;
+
+		/*!
+			State used when resetting movement data, eg. when changing states. 
+		*/
+		MovementState state;
+
 		/*! Default constructor. Initialising all members to 0. */
 		MovementComponent() : speed(0.0f), desiredSpeed(0.0f)
 		{
@@ -44,9 +66,13 @@ namespace Core
 			newDirection[1] = 0.0f;
 			newDirection[2] = 0.0f;
 
-			goal[0] = FLT_MAX;
+			goal[0] = std::numeric_limits<float>::max();
 			goal[1] = 0.0f;
 			goal[2] = 0.0f;
+
+			NavMeshGoalNodeIndex = -1;
+
+			state = MovementState::Walking;
 		}
 
 		/*!
@@ -70,6 +96,8 @@ namespace Core
 			goal[0] = FLT_MAX;
 			goal[1] = 0.0f;
 			goal[2] = 0.0f;
+
+			state = MovementState::Walking;
 		}
 
 		inline static const char* GetName()

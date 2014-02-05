@@ -5,6 +5,9 @@
 #include <logger/Logger.hpp>
 #include <glm/glm.hpp>
 
+#define NO_LINE_COLLISION -0.5f
+#define NO_LINE_COLLISION_VALUE -1.0f
+
 namespace Core
 {
 	// Im going to fix this one of these days ;)
@@ -22,10 +25,8 @@ namespace Core
 
 	public:		
 		
-
 		static bool CheckLineVsNavMesh( glm::vec3 from, glm::vec3 to, float cornerRadius );
 		static bool CheckLineVsNavMesh( glm::vec3 from, glm::vec3 to, float cornerRadius, int startNode );
-
 	
 	private:
 

@@ -33,17 +33,28 @@ namespace Core
 	}
 
 
-    bool NavigationMesh::GetClosestPointInsideMesh(glm::vec3& point, const glm::vec3& origin, int node)
+    bool NavigationMesh::GetClosestPointInsideMesh(glm::vec3& point, const glm::vec3& origin, int& goalNode, float fromBorder )
     {
-        if(!CheckPointInsideNode(origin, node))        
+        int node;
+        if(!GetNodeForPoint(node, origin))
+		{
+			goalNode = -1;
             return false;
+		}
         
 
 		Core::NavigationMesh* instance = Core::GetNavigationMesh();
         bool closestPointFound = false;
 
+		if( glm::dot( point - origin, point - origin ) < 0.01 )
+		{
+			goalNode = node;
+			return false;
+		}
+
         glm::vec3 direction = glm::normalize(point - origin);
         float length = glm::length(point - origin);
+		bool changedPoint = true;
 
         while(!closestPointFound)
         {
@@ -51,7 +62,7 @@ namespace Core
             int cornerId = -1;
 
             for( int i = 0; i < 4; i++ )
-            {
+            {				
                 //if( instance->nodes[node].corners[i].linksTo < -1.5f )
                   //  continue;
 
@@ -63,19 +74,19 @@ namespace Core
                 glm::vec3 lineEnd	= glm::vec3( points[ oo ], 0.0f, points[ oo + 1 ] );
 
                 // calc normal
-                glm::vec3 planeNormal = glm::normalize( glm::cross( (lineEnd - lineStart), glm::vec3( 0.0f, 1.0f, 0.0f ) ) );
+                glm::vec3 planeNormal = glm::normalize( glm::cross( (lineEnd - lineStart), glm::vec3( 0.0f, 1.0f, 0.0f ) ) );				
 
                 // check collision               
                 float dot = glm::dot( planeNormal, direction);
                 //The line has to collide with one corner in the node
                 if( dot < 0.0f )
-                {
-                    float distance = glm::dot(lineStart, origin) / dot;
+                {				
+                    float distance = glm::dot(lineStart - origin, planeNormal) / dot;				
                     if(distance > 0.0f)
-                    {
+                    {						
                         if( distance <= closestDistance)
                         {
-                            closestDistance = (-dot);
+                            closestDistance = distance;
                             cornerId = i;                                   
                         }
                     }
@@ -85,6 +96,7 @@ namespace Core
             if(closestDistance > length)
             {
                 closestPointFound = true;
+				changedPoint = false;
             }
             else
             {
@@ -97,12 +109,14 @@ namespace Core
                 else
                 {
                     //If it is not a neighbour the closest point from the origin on the mesh is at the intersection point.
-                    point = origin + direction * closestDistance;
+                    point = origin + direction * (closestDistance - fromBorder);
                     closestPointFound = true;
                 }
             }
         }
-        return true;
+
+		goalNode = node;
+        return changedPoint;
     }
 
 
@@ -133,6 +147,16 @@ namespace Core
 		// point is inside all lines
 		return true;
 	}
+
+    bool NavigationMesh::GetNodeForPoint(int& node, const glm::vec3& point)
+    {
+        for(node=0; node < nrNodes; ++node)
+        {
+            if(CheckPointInsideNode(point, node))
+                return true;
+        }
+        return false;
+    }
 
     bool NavigationMesh::CheckPointInsideNavigationMesh(const glm::vec3& point )
     {
