@@ -108,7 +108,7 @@ vec3 BlinnPhong( LightData light, SurfaceData surface, vec3 eyeDirection, vec3 l
 	{
 		vec3 H = normalize( lightDirection + eyeDirection );
 		float NdotH = dot( surface.normalDepth.xyz, H );
-		intensity = pow( clamp( NdotH, 0.0f, 1.0f ), surface.specular.w ) * df;
+		intensity = pow( clamp( NdotH, 0.0f, 1.0f ), surface.specular.w  * 256) * df;
 	
 		// Temp vars, need materials with these channels
 
@@ -381,15 +381,17 @@ void main()
 			color += vec4(lights[i].color*lights[i].intensity, 0.0f) * surface.diffuse;
 		}
 
+		//Add glow
+		color += surface.glow;
+		
 		//Add occlusion
 		//color.xyz *= sumOcclusion;
 
 		//Tone map
-		color.xyz = Uncharted2Tonemap(color.xyz * gExposure) / Uncharted2Tonemap(gWhitePoint);
+		//color.xyz = Uncharted2Tonemap(color.xyz * gExposure) / Uncharted2Tonemap(gWhitePoint);
 
 		//Gamma correct
-		color.xyz = pow(color.xyz, vec3(1.0f / gGamma));
-		color += surface.glow;
+		//color.xyz = pow(color.xyz, vec3(1.0f / gGamma));
 		
 		//if (gl_LocalInvocationID.x == 0 || gl_LocalInvocationID.y == 0)
 		//{

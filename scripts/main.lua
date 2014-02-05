@@ -71,3 +71,11 @@ function closescenario()
     collectgarbage() --For niceness, always good to do right after loading a scenario as the
                      --assembly files are quite large.
 end
+
+function win()
+    current_scenario.gamemode.objectiveHandler:win()
+end
+
+function loss()
+    current_scenario.gamemode.objectiveHandler:loss()
+end

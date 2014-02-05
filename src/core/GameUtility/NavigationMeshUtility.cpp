@@ -63,8 +63,8 @@ namespace Core
 
             for( int i = 0; i < 4; i++ )
             {				
-                //if( instance->nodes[node].corners[i].linksTo < -1.5f )
-                  //  continue;
+                if( instance->nodes[node].corners[i].length < 0.0f )
+                    continue;
 
                 int ii = i * 2;
                 int oo = (ii + 2) % 8;

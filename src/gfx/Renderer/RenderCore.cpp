@@ -108,9 +108,10 @@ namespace GFX
 		m_splashPainter->Initialize(m_FBO, m_dummyVAO);
 		m_fboPainter->Initialize(m_FBO, m_dummyVAO);
         m_overlayPainter->Initialize(m_FBO, m_dummyVAO);
-		m_postProcessingPainter->Initialize(m_FBO, m_dummyVAO, m_windowWidth, m_windowHeight);
-		m_GIPainter->Initialize(m_FBO, m_dummyVAO, m_windowWidth, m_windowHeight);
 		m_blurPainter->Initialize(m_FBO, m_dummyVAO);
+		m_postProcessingPainter->Initialize(m_FBO, m_dummyVAO, m_windowWidth, m_windowHeight, m_blurPainter);
+		m_GIPainter->Initialize(m_FBO, m_dummyVAO, m_windowWidth, m_windowHeight);
+		
 
 		// Set console width
 		m_consolePainter->SetConsoleHeight(m_windowHeight);
@@ -119,7 +120,7 @@ namespace GFX
 
 		m_gamma = 2.2f;
 		m_exposure = 1.0f;
-		m_whitePoint = glm::vec3(2.0f);
+		m_whitePoint = glm::vec3(1.0f);
 
 		m_currentLUT = "identity";
 	}
@@ -140,7 +141,7 @@ namespace GFX
 		glViewport(0, 0, m_windowWidth, m_windowHeight);
 		ResizeGBuffer();
 		m_lightPainter->Resize(width, height);
-
+		m_postProcessingPainter->Resize(width, height);
 		// Set console width
 		m_consolePainter->SetConsoleHeight(m_windowHeight);
 	}
@@ -158,6 +159,11 @@ namespace GFX
 	void RenderCore::SetGamma(float gamma)
 	{
 		m_gamma = gamma;
+	}
+
+	void RenderCore::SetWhitepoint(glm::vec3 whitePoint)
+	{
+		m_whitePoint = whitePoint;
 	}
 
 	void RenderCore::ReloadLUT()
@@ -285,13 +291,13 @@ namespace GFX
 			GFX_CHECKTIME(m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_GIPainter->m_SSDOTexture,
 				m_viewMatrix, m_projMatrix, m_exposure, m_gamma, m_whitePoint, m_toneMappedTexture), "Lighting");
 
-			GFX_CHECKTIME(m_postProcessingPainter->Render(delta, m_toneMappedTexture, m_currentLUT), "PostProcessing");
+			GFX_CHECKTIME(m_postProcessingPainter->Render(delta, m_toneMappedTexture, m_currentLUT, m_exposure, m_gamma, m_whitePoint), "PostProcessing");
 
 			GFX_CHECKTIME( m_overlayPainter->Render( renderJobIndex, m_overlayViewMatrix, m_overlayProjMatrix ), "Console");
 			//Render FBO
 			
 			if (m_showFBO != 0)
-				GFX_CHECKTIME(m_fboPainter->Render(m_normalDepth, m_diffuse, m_GIPainter->m_SSDOTexture, m_glowMatID, m_windowWidth, m_windowHeight, m_showFBO), "FBO");
+				GFX_CHECKTIME(m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, m_showFBO), "FBO");
 
 
 			GFX_CHECKTIME(m_debugPainter->Render(m_depthBuffer, m_normalDepth, m_viewMatrix, m_projMatrix), "Debug");
@@ -311,13 +317,13 @@ namespace GFX
 			m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_GIPainter->m_SSDOTexture,
 				m_viewMatrix, m_projMatrix, m_exposure, m_gamma, m_whitePoint, m_toneMappedTexture);
 
-			m_postProcessingPainter->Render(delta, m_toneMappedTexture, m_currentLUT);
+			m_postProcessingPainter->Render(delta, m_toneMappedTexture, m_currentLUT, m_exposure, m_gamma, m_whitePoint);
 			
 			m_overlayPainter->Render( renderJobIndex, m_overlayViewMatrix, m_overlayProjMatrix );
 			//Render FBO
 			
 			if (m_showFBO != 0)
-				m_fboPainter->Render(m_normalDepth, m_diffuse, m_GIPainter->m_SSDOTexture, m_glowMatID, m_windowWidth, m_windowHeight, m_showFBO);
+				m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, m_showFBO);
 
 			m_debugPainter->Render(m_depthBuffer, m_normalDepth, m_viewMatrix, m_projMatrix);
 

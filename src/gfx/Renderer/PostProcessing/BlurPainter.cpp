@@ -77,12 +77,11 @@ namespace GFX
 		m_intermediateTexture->UpdateResolution(texWidth, texHeight);
 		
 		glBindFramebuffer(GL_FRAMEBUFFER, m_blurFBO);
-		err = glGetError();
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_intermediateTexture->GetTextureHandle(), 0);
-		err = glGetError();
 		glDrawBuffer( GL_COLOR_ATTACHMENT0 );
-		err = glGetError();
-		
+
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 		m_shaderManager->UseProgram("GaussianBlurHorizontal");
 		
 		TextureManager::BindTexture(texture->GetTextureHandle(), m_shaderManager->GetUniformLocation("GaussianBlurHorizontal", "gTexture"), 0, GL_TEXTURE_2D);
@@ -90,34 +89,24 @@ namespace GFX
 		err = glGetError();
 		
 		glBindVertexArray(m_dummyVAO);
-		err = glGetError();
 		glDrawArrays(GL_POINTS, 0, 1);
-		err = glGetError();
 		BasePainter::ClearFBO();
 		m_shaderManager->ResetProgram();
-		err = glGetError();
 
 		glBindFramebuffer(GL_FRAMEBUFFER, m_blurFBO);
-		err = glGetError();
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture->GetTextureHandle(), 0);
-		err = glGetError();
 		glDrawBuffer(GL_COLOR_ATTACHMENT0);
-		err = glGetError();
 		m_shaderManager->UseProgram("GaussianBlurVertical");
-		err = glGetError();
-		
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 		TextureManager::BindTexture(m_intermediateTexture->GetTextureHandle(), m_shaderManager->GetUniformLocation("GaussianBlurVertical", "gTexture"), 0, GL_TEXTURE_2D);
 		m_shaderManager->SetUniform((GLfloat)texWidth, (GLfloat)texHeight, m_shaderManager->GetUniformLocation("GaussianBlurVertical", "gScreenDimensions"));
-		err = glGetError();
 		
 		glBindVertexArray(m_dummyVAO);
-		err = glGetError();
 		glDrawArrays(GL_POINTS, 0, 1);
-		err = glGetError();
 		BasePainter::ClearFBO();
 		m_shaderManager->ResetProgram();
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		err = glGetError();
 
 
 	}

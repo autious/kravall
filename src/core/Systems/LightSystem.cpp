@@ -27,11 +27,14 @@ namespace Core
 			data->position = glm::vec3(0.0f);
 			data->radius_length = 0.0f;
 			data->color = glm::vec3(0.0f);
-			data->intensity = 0.0f;
 			data->spec_color = glm::vec3(0.0f);
 			data->spot_penumbra = 0.0f;
 			data->spot_angle = 0.0f;
 			data->orientation = glm::vec3(0.0f);
+			data->intensity = lc->intensity;
+
+			if (lc->intensity <= 0.0f)
+				continue;
 
             unsigned int lightType = LightComponent::GetLightType( *lc );
 			
@@ -45,7 +48,6 @@ namespace Core
 					data->color[0] = lc->color[0];
 					data->color[1] = lc->color[1];
 					data->color[2] = lc->color[2];
-					data->intensity = lc->intensity;
 					data->spec_color[0] = lc->specColor[0];
 					data->spec_color[1] = lc->specColor[1];
 					data->spec_color[2] = lc->specColor[2];
@@ -65,7 +67,6 @@ namespace Core
 					data->color[0] = lc->color[0];
 					data->color[1] = lc->color[1];
 					data->color[2] = lc->color[2];
-					data->intensity = lc->intensity;
 					data->spec_color[0] = lc->specColor[0];
 					data->spec_color[1] = lc->specColor[1];
 					data->spec_color[2] = lc->specColor[2];
@@ -94,7 +95,6 @@ namespace Core
 					data->color[0] = lc->color[0];
 					data->color[1] = lc->color[1];
 					data->color[2] = lc->color[2];
-					data->intensity = lc->intensity;
 					data->spec_color[0] = lc->specColor[0];
 					data->spec_color[1] = lc->specColor[1];
 					data->spec_color[2] = lc->specColor[2];
@@ -110,7 +110,6 @@ namespace Core
 					data->color[0] = lc->color[0];
 					data->color[1] = lc->color[1];
 					data->color[2] = lc->color[2];
-					data->intensity = lc->intensity;
 				}
 				break;
 			}
