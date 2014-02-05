@@ -126,4 +126,15 @@ namespace Core
        
         return cam;
     }
+
+    LuaHoverText* LuaUNewHoverText( lua_State * L )
+    {
+        LuaHoverText* hover = static_cast<LuaHoverText*>( lua_newuserdata( L, sizeof( LuaHoverText*) ) );
+        hover->hoverTextId = -1;
+           
+        luaL_getmetatable( L, HOVER_TEXT_META_TYPE );
+        lua_setmetatable( L, -2 );
+
+        return hover;
+    }
 }
