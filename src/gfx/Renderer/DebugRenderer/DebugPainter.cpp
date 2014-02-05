@@ -256,31 +256,33 @@ namespace GFX
 			glPointSize(1.0f);
 			m_shaderManager->ResetProgram();
 
+
+			m_shaderManager->UseProgram("TQ");
+
+			glDisable(GL_DEPTH_TEST);
+			glDepthMask(GL_FALSE);
+
+			m_shaderManager->SetUniform(1.0f, m_shaderManager->GetUniformLocation("TQ", "alphaIN"));
+			TextureManager::BindTexture(color->GetTextureHandle(), m_shaderManager->GetUniformLocation("TQ", "textureIN"), 0, GL_TEXTURE_2D);
+
+			glBindVertexArray(m_dummyVAO);
+			glDrawArrays(GL_POINTS, 0, 1);
+
+			m_shaderManager->ResetProgram();
+
+			glEnable(GL_DEPTH_TEST);
+			glDepthMask(GL_TRUE);
+			glDisable(GL_BLEND);
+
+			BasePainter::ClearFBO();
+
+			TextureManager::UnbindTexture();
+
+			DebugDrawing().Clear();
 		}
 		
 
-		m_shaderManager->UseProgram("TQ");
 		
-		glDisable(GL_DEPTH_TEST);
-		glDepthMask(GL_FALSE);
-		
-		m_shaderManager->SetUniform(1.0f, m_shaderManager->GetUniformLocation("TQ", "alphaIN"));
-		TextureManager::BindTexture(color->GetTextureHandle(), m_shaderManager->GetUniformLocation("TQ", "textureIN"), 0, GL_TEXTURE_2D);
-		
-		glBindVertexArray(m_dummyVAO);
-		glDrawArrays(GL_POINTS, 0, 1);
-		
-		m_shaderManager->ResetProgram();
-		
-		glEnable(GL_DEPTH_TEST);
-		glDepthMask(GL_TRUE);
-		glDisable(GL_BLEND);
-		
-		BasePainter::ClearFBO();
-
-		TextureManager::UnbindTexture();
-
-		DebugDrawing().Clear();
 
 	}
 
