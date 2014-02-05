@@ -51,6 +51,7 @@ namespace GFX
 		delete(m_splashPainter);
 		delete(m_fboPainter);
         delete(m_overlayPainter);
+		delete(m_blurPainter);
 	}
 
 	void RenderCore::Initialize(int windowWidth, int windowHeight)
@@ -80,6 +81,7 @@ namespace GFX
 		m_postProcessingPainter = new PostProcessingPainter(m_shaderManager, m_uniformBufferManager, m_textureManager);
 
 		m_GIPainter = new GIPainter(m_shaderManager, m_uniformBufferManager, m_renderJobManager);
+		m_blurPainter = new BlurPainter(m_shaderManager, m_uniformBufferManager);
 
 		m_debugPainter = new DebugPainter(m_shaderManager, m_uniformBufferManager);
 		m_textPainter = new TextPainter(m_shaderManager, m_uniformBufferManager);
@@ -108,6 +110,7 @@ namespace GFX
         m_overlayPainter->Initialize(m_FBO, m_dummyVAO);
 		m_postProcessingPainter->Initialize(m_FBO, m_dummyVAO, m_windowWidth, m_windowHeight);
 		m_GIPainter->Initialize(m_FBO, m_dummyVAO, m_windowWidth, m_windowHeight);
+		m_blurPainter->Initialize(m_FBO, m_dummyVAO);
 
 		// Set console width
 		m_consolePainter->SetConsoleHeight(m_windowHeight);
@@ -116,7 +119,7 @@ namespace GFX
 
 		m_gamma = 2.2f;
 		m_exposure = 1.0f;
-		m_whitePoint = glm::vec3(1.0f);
+		m_whitePoint = glm::vec3(2.0f);
 
 		m_currentLUT = "identity";
 	}

@@ -49,6 +49,13 @@ function openscenario( name )
     current_scenario = dofile( "scripts/scenarios/" .. name .. ".lua" )
     current_scenario_name = name
 
+    if type( current_scenario.load ) ~= "function" then
+        --closescenario()
+        core.log.warning( "A scenario now must do all entity and content loading in a function named scen:load. IF YOU LOAD IN ENTITIES FROM THE BODY OF THE SCENARIO YOU*RE DOING SOMETHING WRONG. See protoype_area for example." )
+    else
+        current_scenario:load()
+    end
+
     collectgarbage() --For niceness, always good to do right after loading a scenario as the
                      --assembly files are quite large.
 end

@@ -5,6 +5,8 @@ local Checkbox =
                 {
                     x=0,
                     y=0,
+                    xoffset=0,
+                    yoffset=0,
                     width=0,
                     height=0,
                     checked = false,
