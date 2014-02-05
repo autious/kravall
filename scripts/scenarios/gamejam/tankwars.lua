@@ -49,30 +49,30 @@ for i=1,n do
 		)
 	end
 end
---scen:loadAssembly( 
---{
---	{
---		type = core.componentType.WorldPositionComponent,
---		data = { position = { 0, 0, 0 } }
---	},
---	{
---		type = core.componentType.GraphicsComponent,
---		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
---		load = { 
---					mesh = { core.loaders.GnomeLoader, "assets/box_3ds.bgnome", false },
---					material = { core.loaders.MaterialLoader, "assets/material/simple.material", false }
---			   }
---	},
---	{
---		type = core.componentType.ScaleComponent,
---		data = { scale = 1.0 }
---	},
---	{
---		type = core.componentType.RotationComponent,
---		data = { rotation = { 0, 0, 0, 1 } }
---	}
---}
---)
+scen:loadAssembly( 
+{
+	{
+		type = core.componentType.WorldPositionComponent,
+		data = { position = { 0, 0, 0 } }
+	},
+	{
+		type = core.componentType.GraphicsComponent,
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+		load = { 
+					mesh = { core.loaders.GnomeLoader, "assets/model/static/building/apartment/s01-h/0-main.bgnome", false },
+					material = { core.loaders.MaterialLoader, "assets/material/static/building/apartment/s01-h/0-main.material", false }
+			   }
+	},
+	{
+		type = core.componentType.ScaleComponent,
+		data = { scale = 1.0 }
+	},
+	{
+		type = core.componentType.RotationComponent,
+		data = { rotation = { 0, 0, 0, 1 } }
+	}
+}
+)
 --
 --scen:loadAssembly( 
 --{
