@@ -132,6 +132,8 @@ namespace GFX
 
 	void PostProcessingPainter::Resize(int width, int height)
 	{
+		m_screenWidth = width;
+		m_screenHeight = height;
 		glm::vec2 size = glm::vec2(width, height);
 		for (int i = 0; i < m_bloomTextures.size(); i++)
 		{

@@ -141,7 +141,7 @@ namespace GFX
 		glViewport(0, 0, m_windowWidth, m_windowHeight);
 		ResizeGBuffer();
 		m_lightPainter->Resize(width, height);
-
+		m_postProcessingPainter->Resize(m_windowWidth, m_windowHeight);
 		// Set console width
 		m_consolePainter->SetConsoleHeight(m_windowHeight);
 	}
