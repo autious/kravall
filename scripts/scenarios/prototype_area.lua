@@ -8,27 +8,23 @@ scen.gamemode =  require "gamemodes/kravall":new()
 scen:registerUpdateCallback( function(delta) scen.gamemode:update(delta) end )
 scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
 
-scen:registerInitCallback( function()
-    local DONT_DIE_MSG = "Don't let the anarchists die" 
-    local objDontDie = objective.new( DONT_DIE_MSG ) 
+local DONT_DIE_MSG = "Don't let the anarchists die" 
+local ESCORT_MSG = "Escort atleast 5 anarchists to their home."
+local objDontDie
+local objLeadThrough
 
-    local ESCORT_MSG = "Escort atleast 5 anarchists to their home."
-    local objLeadThrough = objective.new( ESCORT_MSG )
-
-    scen.gamemode.objectiveHandler:addObjective( objDontDie )
-    scen.gamemode.objectiveHandler:addObjective( objLeadThrough )
-
-    function printCount( ent )
-    --    print( core.system.area.getAreaRioterCount( ent ) ) 
-        for _,ent in pairs( core.system.area.getAreaRioters( ent ) ) do
-            scen.asm:destroyEntity( ent )
-        end
+function printCount( ent )
+--    print( core.system.area.getAreaRioterCount( ent ) ) 
+    for _,ent in pairs( core.system.area.getAreaRioters( ent ) ) do
+        scen.asm:destroyEntity( ent )
     end
+end
 
-    function checkObjCount( ent )
-        local count = core.system.area.getAreaRioterCount( ent )
-        local alive_count = core.system.groups.getGroupMemberCount( 1 )
+function checkObjCount( ent )
+    local count = core.system.area.getAreaRioterCount( ent )
+    local alive_count = core.system.groups.getGroupMemberCount( 1 )
 
+    if objDontDie ~= nil and objLeadThrough ~= nil then
         if alive_count < 5 then
             objDontDie.state = "fail"   
             objLeadThrough.state = "fail"
@@ -41,6 +37,13 @@ scen:registerInitCallback( function()
 
         objDontDie.title = DONT_DIE_MSG .. " " .. alive_count .. " still alive."
     end
+end
+
+scen:registerInitCallback( function()
+    objDontDie = objective.new( DONT_DIE_MSG ) 
+    objLeadThrough = objective.new( ESCORT_MSG )
+    scen.gamemode.objectiveHandler:addObjective( objDontDie )
+    scen.gamemode.objectiveHandler:addObjective( objLeadThrough )
 end)
 
 --DATA--

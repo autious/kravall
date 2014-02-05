@@ -5,8 +5,8 @@ return function(asm, posX, posY, posZ, group)
 				type = core.componentType.GraphicsComponent,
 				data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry },
 				load = { 
-							mesh = { core.loaders.GnomeLoader, "assets/model/animated/police/cop/cop-light_00.bgnome" },
-							material = { core.loaders.MaterialLoader, "assets/material/rioter.material" }
+							mesh = { core.loaders.GnomeLoader, "assets/model/animated/rioter/rioter_00.bgnome" },
+							material = { core.loaders.MaterialLoader, "assets/material/rioter_00.material" }
 					   }
 			},
 			{
@@ -48,6 +48,18 @@ return function(asm, posX, posY, posZ, group)
 				data = { sphereOffset = { 0, 0, 0 }, sphereRadius = 0.3, 
 						collisionModel = core.BoundingVolumeCollisionModel.DynamicResolution, 
 						type = core.BoundingVolumeType.SphereBoundingType }
+			},
+			{
+				type = core.componentType.AnimationComponent,
+				data = { 
+					animationID = 0,
+					currentTime = 0.0,
+					loop = true,
+					playing = true,
+					speed = 1.6,
+					currentFrame = 0,
+					queuedAnimationID = 0
+				}
 			},
 			{
 				type = core.componentType.FlowfieldComponent,

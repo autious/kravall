@@ -55,6 +55,22 @@ function squadHandling()
     end
 end
 
+
+function T:new(o)
+    o = o or {}
+
+    o.objectiveHandler = objective_handler:new()
+    o.camera = Camera.new()
+
+    setmetatable( o, self )
+    self.__index = self
+
+    return o
+end
+
+function T:init()
+end
+
 function T:new(o)
     o = o or {}
 

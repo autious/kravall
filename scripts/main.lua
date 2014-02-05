@@ -51,7 +51,7 @@ function openscenario( name )
 
     if type( current_scenario.load ) ~= "function" then
         --closescenario()
-        print( "WARNING: A scenario now must do all entity and content loading in a function named scen:load. IF YOU LOAD IN ENTITIES FROM THE BODY OF THE SCENARIO YOU*RE DOING SOMETHING WRONG. See protoype_area for example WARNING" )
+        core.log.warning( "A scenario now must do all entity and content loading in a function named scen:load. IF YOU LOAD IN ENTITIES FROM THE BODY OF THE SCENARIO YOU*RE DOING SOMETHING WRONG. See protoype_area for example." )
     else
         current_scenario:load()
     end
