@@ -388,10 +388,10 @@ void main()
 		//color.xyz *= sumOcclusion;
 
 		//Tone map
-		color.xyz = Uncharted2Tonemap(color.xyz * gExposure) / Uncharted2Tonemap(gWhitePoint);
+		//color.xyz = Uncharted2Tonemap(color.xyz * gExposure) / Uncharted2Tonemap(gWhitePoint);
 
 		//Gamma correct
-		color.xyz = pow(color.xyz, vec3(1.0f / gGamma));
+		//color.xyz = pow(color.xyz, vec3(1.0f / gGamma));
 		
 		//if (gl_LocalInvocationID.x == 0 || gl_LocalInvocationID.y == 0)
 		//{

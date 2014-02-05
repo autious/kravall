@@ -45,9 +45,13 @@ namespace GFX
 	private:
 		void ColorGrading(const GLuint& tonemappedTexture, std::string LUT);
 		void HDRBloom(const GLuint& tonemappedTexture, float exposure, float gamma, glm::vec3 whitePoint);
+		void Composite(const GLuint& tonemappedTexture, float exposure, float gamma, glm::vec3 whitePoint);
+
 		void OutputTexture(const GLuint& texturehandle);
 
-		void BindTextureToFBO(FBOTexture& texture, bool ping);
+		void BindTextureToFBO(FBOTexture* texture, bool ping);
+		void InitFBO();
+
 		GLint m_alphaUniform;
 		GLint m_textureUniform;
 
@@ -62,6 +66,8 @@ namespace GFX
 		TextureManager* m_textureManager;
 		LUTManager* m_LUTManager;
 
+		//FBOTexture* m_brightPassTexture;
+
 		GLint m_gammaUniform;
 	
 		GLuint m_pingFBO;
@@ -71,10 +77,19 @@ namespace GFX
 		GLint m_textureUniformBP;
 		GLint m_exposureUniformBP;
 
-
-		std::vector<FBOTexture> m_bloomTextures;
+		FBOTexture* m_brightPassTexture;
+		FBOTexture* m_intermediateTexture;
+		std::vector<FBOTexture*> m_bloomTextures;
+		std::vector<FBOTexture*> m_intermediateBlurTextures;
 
 		BlurPainter* m_blurPainter;
+
+		std::vector<GLint> m_bloomSamplerUniforms;
+
+		GLint m_whitePointUniformC;
+		GLint m_textureUniformC;
+		GLint m_exposureUniformC;
+		GLint m_gammaUniformC;
 	};
 }
 #endif
