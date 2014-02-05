@@ -10,6 +10,11 @@ namespace Core
 	*/
     class NavMeshBlockingSystem : public BaseSystem
     {
+	private:
+
+		void CalculateBlockedNodes();
+		void FreeBlockedNodes();
+
 
     public:
         virtual void Update( float delta ) override;

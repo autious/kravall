@@ -46,6 +46,11 @@ namespace Core
 		flowfields[nrUsedFlowfields].goal[ 0 ] = std::numeric_limits<float>::max();
 		flowfields[nrUsedFlowfields].goal[ 1 ] = std::numeric_limits<float>::max();
 
+		flowfields[nrUsedFlowfields].timeSinceLastCheck = -1.0f;
+
+		flowfields[nrUsedFlowfields].recordedPosition[0] = 0.0f;
+		flowfields[nrUsedFlowfields].recordedPosition[1] = 0.0f;
+
         return nrUsedFlowfields++;
     }
 
@@ -167,12 +172,13 @@ std::fstream& operator>> ( std::fstream& ff, Core::NavigationMesh::Node& node )
 	for( int i = 0; i < 8; i++ )
 		ff >> node.points[i];
 	
+	node.heat = 0.0f;
+
 	// handle meta...
 	for( int i = 0; i < 4; i++ )
 	{
 		node.corners[i].cornerConnectsToNode = NAVMESH_NO_CONNECTING_CORNERS;
 		node.blocked[i] = false;
-		node.heat[i] = 0.0f;
 
 		ff >> node.corners[i].linksTo;
 

@@ -51,7 +51,7 @@ namespace Core
 	*/
 	struct NavigationMesh
 	{	
-
+		
 		NavigationMesh()
 		{
 		}
@@ -72,7 +72,7 @@ namespace Core
 				if true the respective edge cannot be traversed in the navmesh.
 			*/
 			bool blocked[4];
-			float heat[4]; // TEMP, merge this one to the blocking variable // NOCOMMIT
+			float heat;
 
 			/*!
 				Metadata for each node. Each line is n to n + 1, with n to 0 for the last index.
@@ -115,13 +115,37 @@ namespace Core
 				int cornerConnectsToCorner;
 				
 			} corners[4];
+
+
+			/*!
+				Will return a vector to the mid-point of the respective edge.
+			*/
+			glm::vec3 GetMidPoint( int edge )
+			{
+				int ii = edge * 2;
+				int oo = (ii + 2) % 8;
+				return glm::vec3( points[ ii ], 0.0f, points[ ii + 1 ] ) + 
+					(glm::vec3( points[ oo ], 0.0f, points[ oo + 1 ] ) - 
+					glm::vec3( points[ ii ], 0.0f, points[ ii + 1 ] )) * 0.5f;
+			}
 		};
 
 		/*!
 			Struct containing a list of direction vectors and from-goal entry edges with the same size as Core::NavigationMesh::nrNodes.
+			Temporarily contains group metadata as well.
 		*/
 		struct Flowfield
 		{
+			/* Group Data */
+
+			float timeSinceLastCheck;
+			float recordedPosition[2];
+			
+
+
+			/* ********* */
+
+
 			float goal[2];
 			int* edges;
 			glm::vec3* list;

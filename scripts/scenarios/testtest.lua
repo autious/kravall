@@ -24,122 +24,34 @@ scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
 --camera:lookAt( core.glm.vec3.new( -20, 35, 20 ), core.glm.vec3.new( 0, 0, 20 ) )
 scen.gamemode.camera:lookAt( core.glm.vec3.new( -20, 35, 0 ), core.glm.vec3.new( 0, 0, 30 ) )
 
--- Group 0 start to end, top row (left side)
-street_light(scen, -50, -0.5, street_light_intensity)
-street_light(scen, -40, -0.5, street_light_intensity)
-street_light(scen, -30, -0.5, street_light_intensity)
-street_light(scen, -20, -0.5, street_light_intensity)
-street_light(scen, -10.5, -0.5, street_light_intensity)
-street_light(scen, 1, -0.5, street_light_intensity)
-street_light(scen, 11, -0.5, street_light_intensity)
-street_light(scen, 21, -0.5, street_light_intensity)
-street_light(scen, 30.5, -2, street_light_intensity)
-street_light(scen, 40, -4, street_light_intensity)
-street_light(scen, 49.5, -4, street_light_intensity)
-street_light(scen, 59, -4, street_light_intensity)
 
--- Group 0 start to end, bottom row (right side)
-street_light(scen, -50, 10, street_light_intensity)
-street_light(scen, -40, 10, street_light_intensity)
-street_light(scen, -30, 10, street_light_intensity)
-street_light(scen, -20, 10, street_light_intensity)
-street_light(scen, -10.5, 10, street_light_intensity)
-street_light(scen, 1, 10, street_light_intensity)
-street_light(scen, 11, 10, street_light_intensity)
-street_light(scen, 21, 10, street_light_intensity)
-street_light(scen, 30.5, 11.5, street_light_intensity)
-street_light(scen, 40, 13.5, street_light_intensity)
-street_light(scen, 49.5, 13.5, street_light_intensity)
-street_light(scen, 59, 13.5, street_light_intensity)
 
--- Group 0 end light
-street_light(scen, 59, 4.75, street_light_intensity)
-
--- Group 1 start to end, bottom part, left row
-street_light(scen, -25, 32, street_light_intensity)
-street_light(scen, -17, 32, street_light_intensity)
-street_light(scen, -10.5, 28, street_light_intensity)
-street_light(scen, -10.5, 19, street_light_intensity)
-
--- Group 1 start to end, bottom part, right row
-street_light(scen, -25, 40.5, street_light_intensity)
-street_light(scen, -17, 40.5, street_light_intensity)
-street_light(scen, -8.5, 34.25, street_light_intensity)
-street_light(scen, 0, 28, street_light_intensity)
-street_light(scen, 1, 19, street_light_intensity)
-
--- Group 1 start to end, top part, left row
-street_light(scen, -10.5, -12, street_light_intensity)
-street_light(scen, -10.5, -25, street_light_intensity)
-street_light(scen, -5.75, -34, street_light_intensity)
-street_light(scen, -1, -43, street_light_intensity)
-street_light(scen, 14, -46, street_light_intensity)
-street_light(scen, 28, -46, street_light_intensity)
-
--- Group 1 start to end, top part, right row
-street_light(scen, 1, -12, street_light_intensity)
-street_light(scen, 1, -25, street_light_intensity)
-street_light(scen, 6, -34, street_light_intensity)
-street_light(scen, 14, -35, street_light_intensity)
-street_light(scen, 28, -35, street_light_intensity)
 
 local rioter = ent.get "rioter"
 local police = ent.get "police"
 local building = ent.get "building"
 
-local dist = 1.8
---local policeGroup = core.system.groups.createGroup();
---
---local centerPoint = { -4, 0, -21}
---for i = -4, 3 do
---	j= 0
---		--police(scen, i * dist + centerPoint[1], 0 + centerPoint[2], j * dist + centerPoint[3], policeGroup)
---end
-   
---local policeGroupTwo = core.system.groups.createGroup();
---centerPoint = { 5, 0, 5}
---for i = -4, 3 do
---	j= 0 --for j = -1, 1 do
---		--police(scen, j * dist + centerPoint[1], 0 + centerPoint[2], i * dist + centerPoint[3], policeGroupTwo)
---	--end
---end
 
---police(scen, centerPoint[1], 0, centerPoint[3], policeGroupTwo)
-police( scen, 1, 0, -21, policeGroup );
---police(scen, 1, 0, -20);
-
---local rGroup = core.system.groups.createGroup();
---local centerPoint = { 0, 0, 0 }	
---local side = math.sqrt( 4000 )	
---for i = -side / 2, side / 2 do
---	for p = - side / 2, side / 2 do
---		--police( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rGroup)
---	end
---end
+local rGroup = core.system.groups.createGroup();
+local centerPoint = { 200, 0, 25 }		
+local side = math.sqrt( 50 )
+for i = -side/2, side/2 do
+	for p = -side/2, side/2 do
+		rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rGroup)
+	end
+end
+core.system.groups.setGroupGoal(rGroup, 0, 0, 0)
 
 
-local squadOne = squad(scen, -5, 0, 0, math.pi/2);
+local squad = ent.get "policeSquad"
+local squadOne = squad(scen, 77, 0, 0, math.pi/2);
+local squadTwo = squad(scen, 77, 0, 43, math.pi/2);
 
 
 
--- Debug
---local centerPoint = { 49, 0, 5 }		
---for i = -2, 2 do
---	for p = -2, 2 do
---		rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], 0)
---	end
---end
---core.nav_mesh.set_group_goal(0, -43, 0, 4)
---
---local centerPoint = { 20.5, 0, -40 }		
---for i = -2, 2 do
---	for p = -2, 2 do
---		rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], 1)
---	end
---end
---core.nav_mesh.set_group_goal(1, -21, 0, 36)
 
-local navmesh = ent.get "navMesh"
---navmesh(scen, 0, -0.1, 0)
+
+
+--local navmesh = ent.get "navMesh"
 
 return scen;
