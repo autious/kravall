@@ -15,6 +15,7 @@ return function( scen )
 	local ESCORT_MSG = "Escort atleast 100 deserters to the embassy."
 	local objDontDie
 	local objLeadThrough
+	local track = true
 
 	scen.gamemode = require "gamemodes/kravall":new()
 	scen:registerUpdateCallback( function(delta) scen.gamemode:update(delta) end )
@@ -77,8 +78,12 @@ return function( scen )
 			if T.checkObjCount( destArea ) > 10 then
 				pathFlag = pathFlag + 1;
 			end
+			
+			-- WIN CONDITION
 			else if T.checkObjCount( destArea ) > 50 then
 				objLeadThrough.state = "success" 
+				objDontDie.state = "success" 
+				track = false
 			end
 		end
 		
@@ -104,6 +109,7 @@ return function( scen )
 		local kill = 10
 		if result < kill then
 			objLeadThrough.state = "fail"
+			objDontDie.state = "fail"
 		end
 	end
 	
