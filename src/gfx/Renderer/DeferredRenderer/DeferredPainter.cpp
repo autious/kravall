@@ -316,7 +316,7 @@ namespace GFX
 		glClearStencil(0);
 		glClear(GL_STENCIL_BUFFER_BIT);
 		glDisable(GL_STENCIL_TEST);
-
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 		ClearFBO();
 		renderIndex = i;
 
