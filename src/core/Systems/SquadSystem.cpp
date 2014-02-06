@@ -7,8 +7,8 @@
 
 #include <gfx/GFXInterface.hpp>
 
-#define FORMATION_COLUMN_SPACING_MINIMUM 1.5f
-#define FORMATION_ROW_SPACING 1.5f
+#define FORMATION_COLUMN_SPACING_MINIMUM 2.0f
+#define FORMATION_ROW_SPACING 2.0f
 
 namespace Core
 {
@@ -47,7 +47,7 @@ namespace Core
             units.insert(units.end(), squad.begin(), squad.end());
         }
 
-        //Set Squads forward direction
+        //Set Squads forward direction and formation
         glm::vec3 squadForward = glm::normalize(glm::cross(startPos-endPos, glm::vec3(0.0f, 1.0f, 0.0f)));
 
         for(std::vector<Entity>::iterator squad_it = m_entities.begin(); squad_it != m_entities.end(); ++squad_it)        
@@ -59,14 +59,17 @@ namespace Core
                 {
                     sqdc->squadTargetForward[0] = squadForward.x;
                     sqdc->squadTargetForward[1] = squadForward.z;
+                    sqdc->squadFormation = formation;
                 }
             }
         }
 
-        int membersInGroup = units.size(); 
-         
+        int membersInGroup = units.size();        
+        bool isHalfCircle = false;
+
         switch( formation)
         {
+            //Line formation
             case Core::SquadFormation::LINE_FORMATION:
             {
                 float xOffset = 0.0f;
@@ -93,15 +96,50 @@ namespace Core
                 }
                 break;
             }
-            case Core::SquadFormation::CIRCLE_FORMATION:
+            //Circle and Half Circle formations
+            case Core::SquadFormation::HALF_CIRCLE_FORMATION:            
             {
-                LOG_ERROR << "Circle formation is not yet implemented" << std::endl; 
+                isHalfCircle = true;
+                case Core::SquadFormation::CIRCLE_FORMATION:
+                {           
+                    float circumferenceOffset = 0.0f;
+                    float radius = glm::distance(startPos, endPos) / 2.0f;
+                    float circumference = 3.14f * radius * 2.0f;
+                    glm::vec3 centerPosition = isHalfCircle ? (startPos + endPos) / 2.0f: startPos;
+                    float circleSpacing = circumference / static_cast<float>(membersInGroup);
+                    float radiusSpacing = static_cast<float>(world.m_config.GetDouble("squadFormationRowSpacing", FORMATION_ROW_SPACING));
+
+                    circleSpacing = (circleSpacing > static_cast<float>(world.m_config.GetDouble("squadFormationColumnSpacingMinimum", FORMATION_COLUMN_SPACING_MINIMUM))) ? circleSpacing : static_cast<float>(world.m_config.GetDouble("squadFormationSpacingMinimum", FORMATION_COLUMN_SPACING_MINIMUM));
+                    for(std::vector<Core::Entity>::iterator it = units.begin(); it != units.end(); ++it)
+                    {
+                        Core::FormationComponent* frmc = WGETC<Core::FormationComponent>(*it);
+
+                        float radianOffset = -(circumferenceOffset / circumference) * 3.14f * (isHalfCircle ? 1.0f : 2.0f);
+                        float cosVal = glm::cos(radianOffset);
+                        float sinVal = glm::sin(radianOffset);
+                        glm::mat2 rotMat2D = glm::mat2(cosVal, -sinVal, sinVal, cosVal);
+
+                        glm::vec2 relPos2D = glm::vec2(radius, 0.0f);
+                        relPos2D = rotMat2D * relPos2D;
+
+                        frmc->relativePosition[0] = relPos2D.x + radius;
+                        frmc->relativePosition[1] = relPos2D.y;
+
+                        circumferenceOffset += circleSpacing;
+                        if(circumferenceOffset >= circumference)
+                        {
+                            circumferenceOffset = 0.0f;
+                            radius += radiusSpacing;
+                            circumference = 3.14f * radius * (isHalfCircle ? 1.0f : 2.0f);
+                        }
+                    }                    
+                }
                 break;
             }
             default:
-            {
+            
                 break;
-            }
+            
         }
     }
 
@@ -124,18 +162,19 @@ namespace Core
         GFX::Debug::DrawLine((startPos+endPos)/2.0f, (startPos+endPos)/2.0f + squadForward, GFXColor(1.0f, 1.0f, 0.0f, 1.0f), false);
         float rotation = glm::atan(-squadForward.z, squadForward.x) - (3.14f / 2.0f);
 
-        float cosVal = glm::cos(rotation);
-        float sinVal = glm::sin(rotation);
-        glm::mat2 rotMat = glm::mat2(cosVal, -sinVal, sinVal, cosVal);
+        int membersInGroup = units.size();                 
+        bool isHalfCircle = false;
 
-        int membersInGroup = units.size(); 
-                 
         Core::NavigationMesh* navMesh = Core::GetNavigationMesh();
 
         switch( formation)
         {
             case Core::SquadFormation::LINE_FORMATION:
             {
+                float cosVal = glm::cos(rotation);
+                float sinVal = glm::sin(rotation);
+                glm::mat2 rotMat2D = glm::mat2(cosVal, -sinVal, sinVal, cosVal);
+
                 float xOffset = 0.0f;
                 float zOffset = 0.0f;
                 float distance = glm::distance(startPos, endPos);
@@ -147,7 +186,7 @@ namespace Core
                 for(int i=0; i < membersInGroup; ++i)
                 {
                     glm::vec2 relPos2D = glm::vec2(xOffset, zOffset);
-                    relPos2D = rotMat * relPos2D;
+                    relPos2D = rotMat2D * relPos2D;
                     int goalNode;
                     glm::vec3 relPos = glm::vec3(relPos2D.x, 0.0f, relPos2D.y);
                     glm::vec3 finalPosition = startPos + relPos;
@@ -164,9 +203,44 @@ namespace Core
                 }
                 break;
             }
-            case Core::SquadFormation::CIRCLE_FORMATION:
+            case Core::SquadFormation::HALF_CIRCLE_FORMATION:
             {
-                LOG_ERROR << "Circle formation is not yet implemented" << std::endl; 
+                isHalfCircle = true;
+                case Core::SquadFormation::CIRCLE_FORMATION:            
+                {
+                    float circumferenceOffset = 0.0f;
+                    float radius = glm::distance(startPos, endPos) / 2.0f;
+                    float circumference = 3.14f * radius * 2.0f;
+                    glm::vec3 centerPosition =  isHalfCircle ? (startPos + endPos) / 2.0f: startPos; 
+                    float circleSpacing = circumference / static_cast<float>(membersInGroup);
+                    float radiusSpacing = static_cast<float>(world.m_config.GetDouble("squadFormationRowSpacing", FORMATION_ROW_SPACING));
+
+                    circleSpacing = (circleSpacing > static_cast<float>(world.m_config.GetDouble("squadFormationColumnSpacingMinimum", FORMATION_COLUMN_SPACING_MINIMUM))) ? circleSpacing : static_cast<float>(world.m_config.GetDouble("squadFormationSpacingMinimum", FORMATION_COLUMN_SPACING_MINIMUM));
+                    for(int i=0; i < membersInGroup; ++i)
+                    {
+                        float radianOffset = -(circumferenceOffset / circumference) * 3.14f * (isHalfCircle ? 1.0f : 2.0f);
+                        float cosVal = glm::cos(rotation + radianOffset);
+                        float sinVal = glm::sin(rotation + radianOffset);
+                        glm::mat2 rotMat2D = glm::mat2(cosVal, -sinVal, sinVal, cosVal);
+
+                        glm::vec2 relPos2D = glm::vec2(radius, 0.0f);
+                        relPos2D = rotMat2D * relPos2D;
+                        int goalNode;
+                        glm::vec3 relPos = glm::vec3(relPos2D.x, 0.0f, relPos2D.y);
+                        glm::vec3 finalPosition = centerPosition + relPos;
+                        //TODO: Replace Debug draw with decals
+                        navMesh->GetClosestPointInsideMesh(finalPosition, startPos, goalNode, 0.2f);
+                        GFX::Debug::DrawSphere(finalPosition, 0.5f, GFXColor(1.0f, 0.0f, 0.0f, 1.0f), false);
+
+                        circumferenceOffset += circleSpacing;
+                        if(circumferenceOffset >= circumference)
+                        {
+                            circumferenceOffset = 0.0f;
+                            radius += radiusSpacing;
+                            circumference = 3.14f * radius * (isHalfCircle ? 1.0f : 2.0f);
+                        }
+                    }
+                }
                 break;
             }
             default:
@@ -190,6 +264,19 @@ namespace Core
                 }
             }
         }
+    }
+
+    Core::Entity SquadSystem::GetSquadEntity(int squadID)
+    {
+        for(std::vector<Entity>::iterator squad_it = m_entities.begin(); squad_it != m_entities.end(); ++squad_it)        
+        {
+            Core::SquadComponent* sqdc = WGETC<Core::SquadComponent>(*squad_it);
+            if(sqdc->squadID == squadID)
+            {
+                return *squad_it;
+            }
+        }
+        return INVALID_ENTITY;
     }
 
     void SquadSystem::Update(float delta)

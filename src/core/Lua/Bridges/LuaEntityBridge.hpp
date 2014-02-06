@@ -129,7 +129,7 @@ namespace Core
             }
             else
             {
-                return luaL_error( L, "%s: Internal error on parameter %s for component type %s", 
+                return luaL_error( L, "%s: Internal error on parameter %s for component type %s, function getter does not return required 1", 
                                         __FUNCTION__, it->first.c_str(), Handler::GetComponentLuaName() );
             }
         }

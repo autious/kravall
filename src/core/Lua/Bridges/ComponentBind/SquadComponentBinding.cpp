@@ -49,31 +49,39 @@ namespace Core
         {
             SquadComponent* sqdc = WGETC<SquadComponent>(entity);
 
-            lua_pushnumber(L, sqdc->squadGoal[0]);
-            lua_pushnumber(L, sqdc->squadGoal[1]);
-            lua_pushnumber(L, sqdc->squadGoal[2]);
+            lua_newtable(L);
+                lua_pushnumber(L, sqdc->squadForward[0]);
+                lua_rawseti(L, -2, 1);
+                lua_pushnumber(L, sqdc->squadForward[1]);
+                lua_rawseti(L, -2, 2);            
+                lua_pushnumber(L, sqdc->squadForward[2]);
+                lua_rawseti(L, -2, 3);            
 
-            return 3;
+            return 1;
         };
 
         getters["squadForward"] = [](Core::Entity entity, lua_State* L)
         {
             SquadComponent* sqdc = WGETC<SquadComponent>(entity);
 
-            lua_pushnumber(L, sqdc->squadForward[0]);
-            lua_pushnumber(L, sqdc->squadForward[1]);
-
-            return 2;
+            lua_newtable(L);
+                lua_pushnumber(L, sqdc->squadForward[0]);
+                lua_rawseti(L, -2, 1);
+                lua_pushnumber(L, sqdc->squadForward[1]);
+                lua_rawseti(L, -2, 2);            
+            return 1;
         };
 
         getters["squadTargetForward"] = [](Core::Entity entity, lua_State* L)
         {
             SquadComponent* sqdc = WGETC<SquadComponent>(entity);
-
-            lua_pushnumber(L, sqdc->squadTargetForward[0]);
-            lua_pushnumber(L, sqdc->squadTargetForward[1]);
             
-            return 2;
+            lua_newtable(L);
+                lua_pushnumber(L, sqdc->squadTargetForward[0]);
+                lua_rawseti(L, -2, 1);
+                lua_pushnumber(L, sqdc->squadTargetForward[1]);
+                lua_rawseti(L, -2, 2);            
+            return 1;
         };
 
         getters["squadLeader"] = [](Core::Entity entity, lua_State* L)
