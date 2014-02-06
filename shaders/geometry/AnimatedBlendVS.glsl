@@ -10,7 +10,7 @@ struct InstanceData
 	vec4 outlineColor;
 };
 
-layout (std140, binding = 4) readonly buffer instanceBuffer
+layout (shared, binding = 4) readonly buffer instanceBuffer
 {
     InstanceData gInstances[];
 };
