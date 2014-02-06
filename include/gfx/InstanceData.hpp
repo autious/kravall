@@ -13,6 +13,7 @@ namespace GFX
 		unsigned int frameOffset;
 		unsigned int rnd_seed;
 		int pad;
+		glm::vec4 outlineColor;
 	};
 
 	//struct StaticMeshInstanceData

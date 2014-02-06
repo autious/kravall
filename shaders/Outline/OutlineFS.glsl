@@ -1,10 +1,7 @@
 #version 430
 
 in vec4 posFS;
-in vec4 posW;
-in vec4 normalFS;
-in vec4 tangentFS;
-in vec2 uvFS;
+in vec4 outlineColor;
 
 uniform vec4 gOutlineColor;
 
@@ -16,7 +13,7 @@ layout ( location = 4 ) out vec4 gGlowMatRT;
 void main()
 {
 	gNormalDepthRT = vec4(0);//vec4(finalNormal, );
-	gDiffuseRT	= gOutlineColor;
+	gDiffuseRT	= outlineColor;
 	gSpecularRT = vec4(0);
-	gGlowMatRT = vec4(0);//vec4(1, 0, 0, 1);
+	gGlowMatRT = outlineColor;//vec4(0);//outlineColor;
 }

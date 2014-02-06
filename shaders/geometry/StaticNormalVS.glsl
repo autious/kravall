@@ -7,6 +7,7 @@ struct InstanceData
 	uint animationOffset;
 	uint rnd_seed;
 	uint pad2;
+	vec4 outlineColor;
 };
 
 layout (std140, binding = 4) readonly buffer buffah
