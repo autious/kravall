@@ -6,7 +6,7 @@ struct InstanceData
 	vec4 outlineColor;
 	uint animationIndex;
 	uint frameOffset;
-	uint pad1;
+	uint rnd_seed;
 	uint pad2;
 	
 };
@@ -16,15 +16,15 @@ layout (std140, binding = 4) readonly buffer instanceBuffer
     InstanceData gInstances[];
 };
 
-layout (std140, binding = 6) readonly buffer animationBuffer
-{
-	mat4x4 gBones[];
-};
-
 layout (shared) uniform PerFrameBlock
 {
 	mat4 gView;
 	mat4 gProjection;
+};
+
+layout (std140, binding = 6) readonly buffer animationBuffer
+{
+	mat4x4 gBones[];
 };
 
 uniform mat4 modelMatrix;
@@ -37,15 +37,11 @@ layout ( location = 4 ) in vec4 boneWeights;
 layout ( location = 5 ) in vec2 uvIN;
 
 out vec4 posFS;
-out vec4 posW;
-out vec4 normalFS;
-out vec4 tangentFS;
-out vec2 uvFS;
+out vec4 outlineColor;
 
 mat4x4 GetBoneMatrix(InstanceData instanceData, int boneIndex)
 {
-	return gBones[instanceData.animationIndex + instanceData.frameOffset + boneIndex];
-	//return mat4x4(1.0f);
+	return gBones[instanceData.frameOffset + boneIndex];
 }
 
 void main()
@@ -78,14 +74,10 @@ void main()
 	tangentA	+= boneWeights[3]*( boneMat * tangentIN		);
 
 	//Move position to clip space
-	posW = instance.mm * posA;
 	posFS = gProjection * gView * instance.mm * posA;
 	
+	outlineColor = instance.outlineColor;
+
 	//Transform normal with model matrix
-	normalFS = instance.mm * normalA;
-	tangentFS = instance.mm * tangentA;
-
-	uvFS = uvIN;
-
 	gl_Position = posFS;
 }

@@ -31,7 +31,7 @@ for i=1,n do
 			},
 			{
 				type = core.componentType.GraphicsComponent,
-				data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+				data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 				load = { 
 							mesh = { core.loaders.GnomeLoader, "assets/plane.bgnome", false },
 							material = { core.loaders.MaterialLoader, "assets/texture/tankwars/ground.material", false }
@@ -111,7 +111,7 @@ local playerTank = scen:loadAssembly(
 	},
 	{
 		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/model/tankwars/Leopard_Body.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/tankwars/Leopard_Body.material", false }
@@ -136,7 +136,7 @@ local playerTurret = scen:loadAssembly(
 	},
 	{
 		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/model/tankwars/Leopard_Turret.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/tankwars/Leopard_Turret.material", false }
@@ -226,7 +226,7 @@ local function CreateBullet(pos, direction)
 	},
 	{
 		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/model/tankwars/bullet.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/tankwars/bullet.material", false }
@@ -377,7 +377,7 @@ local function CreateRailGunBullet(pos, direction)
 	},
 	{
 		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/model/tankwars/bullet.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/tankwars/bullet.material", false }
@@ -501,7 +501,7 @@ local function CreateEnemyTankBody(position)
 	},
 	{
 		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/model/tankwars/Leopard_Body.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/tankwars/Leopard_Body.material", false }
@@ -528,7 +528,7 @@ local function CreateEnemyTankTurret(position)
 	},
 	{
 		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/model/tankwars/Leopard_Turret.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/tankwars/Leopard_Turret.material", false }

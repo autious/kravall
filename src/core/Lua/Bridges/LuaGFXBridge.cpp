@@ -41,6 +41,19 @@ extern "C"
         return 1;
     }
 
+	static int LuaToStringGFXLayerType(lua_State * L)
+	{
+		Core::GFXLayerType *ot = (Core::GFXLayerType*)luaL_checkudata(L, 1, GFX_LAYER_TYPE_META);
+
+		std::stringstream ss;
+
+		ss << "layerType:" << *ot;
+
+		lua_pushstring(L, ss.str().c_str());
+
+		return 1;
+	}
+
 	static int LuaSetGamma(lua_State* L)
 	{
 		float gamma = luaL_checknumber(L, 1);
@@ -83,6 +96,16 @@ static void PushLightType( lua_State * L, const unsigned int value, const char *
             luaL_newmetatable( L, GFX_LIGHT_TYPE_META );
             lua_setmetatable( L, -2 );
         lua_settable( L, table );
+}
+
+static void PushLayerType(lua_State * L, const unsigned int value, const char * name, int table)
+{
+	lua_pushstring(L, name);
+	Core::GFXLayerType* uvalue = (Core::GFXLayerType*)lua_newuserdata(L, sizeof(unsigned int));
+	*uvalue = value;
+	luaL_newmetatable(L, GFX_LAYER_TYPE_META);
+	lua_setmetatable(L, -2);
+	lua_settable(L, table);
 }
 
 Core::LuaGFXBridge::LuaGFXBridge( lua_State * L )
@@ -134,6 +157,13 @@ Core::LuaGFXBridge::LuaGFXBridge( lua_State * L )
                 PushLightType( L, GFX::LIGHT_TYPES::DIR, "Dir" , lightTypeTable );
                 PushLightType( L, GFX::LIGHT_TYPES::AMBIENT, "Ambient" , lightTypeTable );
             lua_settable( L, gfxTable );
+
+			lua_pushstring(L, "layerTypes");
+			lua_newtable(L);
+				int layerTypeTable = lua_gettop(L);
+				PushLayerType(L, GFX::LAYER_TYPES::MESH_LAYER, "MeshLayer", layerTypeTable);
+				PushLayerType(L, GFX::LAYER_TYPES::OUTLINE_LAYER, "OutlineLayer", layerTypeTable);
+			lua_settable(L, gfxTable);
                 
 
         lua_settable( L, coreTableIndex );
