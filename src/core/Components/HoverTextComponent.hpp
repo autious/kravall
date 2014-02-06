@@ -12,13 +12,13 @@ namespace Core
     struct HoverTextComponent
     {
         int hoverTextId;
-        int size;
+        float size;
         float color[4];
         
         HoverTextComponent()
         {
             hoverTextId = -1;
-            size = 14;
+            size = 1;
             SetColor( *this, Colors::White );
         }
 

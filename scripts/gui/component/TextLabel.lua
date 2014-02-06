@@ -2,7 +2,7 @@ local GUIComponent = require "gui/component/GUIComponent"
 local image = require"factories/image"
 local text = require"factories/text"
 
-local TextSelectList = 
+local TextLabel = 
                 {
                     x=0,
                     y=0,
@@ -11,10 +11,10 @@ local TextSelectList =
                     width=0,
                     height=0,
                     padding=4,
-                    elements = { { name = "default" }, {name = "default2"}}
+                    label = "default" 
                 }
 
-function TextSelectList:new(o)
+function TextLabel:new(o)
     o = o or {}
     setmetatable( o,self )
     self.__index = self
@@ -34,13 +34,14 @@ function TextSelectList:new(o)
                                             onEnter = function() o:onEnter() end,
                                             onExit = function() o:onExit() end
                                         }
-
-    o:updateList()
+    o.text = text( o.x, o.y, o.label)
+    o.width, o.height = o.text:getDim()
+    o:setPosition( o.x, o.y )
 
     return o
 end
 
-function TextSelectList:updateList()
+function TextLabel:updateList()
     for _,v in pairs( self.textElements ) do
         v:destroy()        
     end
@@ -51,10 +52,6 @@ function TextSelectList:updateList()
     local widest = 0
 
     for k,v in pairs( self.elements ) do
-        local text = text(self.x,self.y,v.name)
-        local width, height = text:getDim()
-        
-        text:setPosition( self.x, self.y + heightOffset )
         heightOffset = heightOffset + height + self.padding
 
         self.textElements[#(self.textElements)+1] = text
@@ -68,35 +65,32 @@ function TextSelectList:updateList()
     self.height = heightOffset
 end
 
-function TextSelectList:render()
+function TextLabel:render()
 
 end
 
-function TextSelectList:setPosition(x,y)
+function TextLabel:setPosition( x, y )
     self.x = x;
     self.y = y 
-    self:updateList()
+    
+    self.text:setPosition( self.x, self.y )
 end
 
-function TextSelectList:onPress() 
+function TextLabel:onPress() 
 end
 
-function TextSelectList:onRelease()
+function TextLabel:onRelease()
 end
 
-function TextSelectList:onEnter()
+function TextLabel:onEnter()
 end
 
-function TextSelectList:onExit()
+function TextLabel:onExit()
 end
 
-function TextSelectList:destroy()
-    for _,v in pairs( self.textElements ) do
-        v:destroy()        
-    end
-
-    self.textElements = nil
+function TextLabel:destroy()
+    self.text:destroy()
     self.GUIComponent:destroy()
 end
 
-return TextSelectList
+return TextLabel
