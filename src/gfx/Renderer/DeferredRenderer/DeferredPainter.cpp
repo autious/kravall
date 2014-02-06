@@ -120,8 +120,8 @@ namespace GFX
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
 
-		glClearStencil(0);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		//glClearStencil(0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);// | GL_STENCIL_BUFFER_BIT);
 
 		// Clear depth RT
 		float c[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
@@ -313,9 +313,9 @@ namespace GFX
 
 		m_shaderManager->ResetProgram();
 
-		glClearStencil(0);
-		glClear(GL_STENCIL_BUFFER_BIT);
-		glDisable(GL_STENCIL_TEST);
+		//glClearStencil(0);
+		//glClear(GL_STENCIL_BUFFER_BIT);
+		//glDisable(GL_STENCIL_TEST);
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 		ClearFBO();
 		renderIndex = i;
