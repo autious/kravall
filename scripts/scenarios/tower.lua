@@ -9,6 +9,7 @@ scen:registerUpdateCallback( function(delta) scen.gamemode:update(delta) end )
 scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
 
 scen.gamemode.camera:lookAt( core.glm.vec3.new( 0, 60, 120 ), core.glm.vec3.new( 0, 20, 50 ) )
+core.gfx.setWhitepoint(1.0, 1.0, 1.0)
 --Plane
 scen.asm:loadAssembly( 
 {
@@ -39,7 +40,7 @@ local dude = scen.asm:loadAssembly(
 {
 	{
 		type = core.componentType.WorldPositionComponent,
-		data = { position = { 0, 0, 0 } }
+		data = { position = { -10, 0, 0 } }
 	},
 	{
 		type = core.componentType.GraphicsComponent,
@@ -107,6 +108,42 @@ local dude2 = scen.asm:loadAssembly(
 	}
 }
 )
+local knot = scen.asm:loadAssembly( 
+{
+	{
+		type = core.componentType.WorldPositionComponent,
+		data = { position = { 0, 0, 0 } }
+	},
+	{
+		type = core.componentType.GraphicsComponent,
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+		load = { 
+					mesh = { core.loaders.GnomeLoader, "assets/knot.bgnome", false },
+					material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
+			   }
+	},
+	{
+		type = core.componentType.AnimationComponent,
+		data = { 
+			animationID = 0,
+			queuedAnimationID = 0,
+			currentTime = 0.0,
+			loop = false,
+			playing = false,
+			speed = 1.0,
+			currentFrame = 0
+		}
+	},
+	{
+		type = core.componentType.ScaleComponent,
+		data = { scale = 10.0 }
+	},
+	{
+		type = core.componentType.RotationComponent,
+		data = { rotation = { 0, 0, 0, 1 }}
+	}
+}
+)
 
 -- Spotlight
 scen.asm:loadAssembly( 
@@ -116,11 +153,11 @@ scen.asm:loadAssembly(
 		data =  { 
 					color = { 1, 1, 1 },
 					speccolor = { 1, 1, 1 },
-					intensity = 100.0,
+					intensity = 1.0,
 					spotangle = 3.14/4.0,
 					spotpenumbra = 0.03,
 					type = core.gfx.objectTypes.Light,
-					lighttype = core.gfx.lightTypes.Spot
+					lighttype = core.gfx.lightTypes.Dir
 				}
 	},
 	{
@@ -133,7 +170,7 @@ scen.asm:loadAssembly(
 	},
 	{
 		type = core.componentType.RotationComponent,
-		data = { rotation = {0,-1,0,0 } }
+		data = { rotation = {1,-1,0,0 } }
 	}
 } 
 )

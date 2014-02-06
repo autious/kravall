@@ -294,6 +294,16 @@ namespace GFX
 		{
 			Renderer().SetAnimationFramerate(framerate);
 		}
+
+		int SetConfiguration(const int setting, const int value)
+		{
+			return Renderer().SetConfiguration(setting, value);
+		}
+
+		int GetConfiguration(const int setting, int& out_value)
+		{
+			return Renderer().GetConfiguration(setting, out_value);
+		}
 	}
 
 	namespace ColorSettings

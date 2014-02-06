@@ -26,24 +26,22 @@
 #include "../Textures/TextureManager.hpp"
 #include "../Material/MaterialManager.hpp"
 
+#include <GFXSettings.hpp>
+
 #include <iostream>
 #include <array>
 
 #include "../Utility/Timer.hpp"
 
-#define GFX_CHECKTIME(x, y)\
-{\
-	Timer().Start(); \
-	x; \
-	Timer().Stop(); \
-	std::chrono::microseconds ms = Timer().GetDelta(); \
-	m_subsystemTimes.push_back(std::pair<const char*, std::chrono::microseconds>(y, ms)); \
-}
 
 namespace GFX
 {
 	class RenderCore
 	{
+	private:
+		/* Holds settings data for the graphics system */
+		unsigned int m_settings[GFX_SETTINGS_COUNT];
+
 	public:
 
 		/*!
@@ -58,6 +56,19 @@ namespace GFX
 		\param windowHeight Width of the window when the RenderCore is initialized
 		*/
 		void Initialize(int windowWidth, int windowHeight);
+
+		/*!
+		Sets a setting to the specified value
+		\return Returns either GFX_SUCCESS or GFX_FAIL
+		*/
+		int SetConfiguration(const int setting, const int value);
+
+		/*!
+		Gets the value of a setting
+		\return Returns either GFX_SUCCESS or GFX_FAIL
+		*/
+		int GetConfiguration(const int setting, int& out_value);
+
 
 		/*!
 		Main rendering loop, calls all painters
@@ -179,7 +190,11 @@ namespace GFX
 		void ResizeGBuffer();
 
 		void LoadGPUPF();
-
+		
+		/*!
+		Initialize the shadow map texture
+		*/
+		void InitializeShadowMapTexture();
 
 		int m_windowWidth;
 		int m_windowHeight;
@@ -191,6 +206,8 @@ namespace GFX
 		FBOTexture* m_diffuse;
 		FBOTexture* m_specular;
 		FBOTexture* m_glowMatID;
+		
+		FBOTexture* m_shadowMapTexture;
 
 		GLuint m_dummyVAO;
 

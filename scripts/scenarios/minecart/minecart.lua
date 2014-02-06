@@ -27,7 +27,7 @@ local caveSegLength = 200 -- Length in units for a cave segment
 local cartResetSpeed = 150.0
 local cartMaxSpeed = 275.0
 local cartSpeed = cartResetSpeed -- Speed of the minecart
-local cartAcc = 0.05
+local cartAcc = 0.2
 
 local minecartY = 4
 
@@ -49,10 +49,10 @@ util.SetLightIntensity(0, dblight)
 local minecart = {
 	cart = entities.CreateMinecart(scen),
 	spotlight = entities.CreateHeadlight(scen),
-	goldlight1 = entities.CreatePointlight({1, 9, -1}, {1, 1, 0}, 6, 10, scen),
-	goldlight2 = entities.CreatePointlight({0, 8, 0}, {1, 1, 0}, 6, 10, scen),
-	goldlight3 = entities.CreatePointlight({-1, 7, 1}, {1, 1, 0}, 6, 10, scen),
-	moodlight = entities.CreatePointlight({0, 15, -7}, {230/255, 90/255, 30/255}, 50, 200, scen),
+	goldlight1 = entities.CreatePointlight({1, 9, -1}, {1, 1, 0}, 6, 5, scen),
+	goldlight2 = entities.CreatePointlight({0, 8, 0}, {1, 1, 0}, 6, 5, scen),
+	goldlight3 = entities.CreatePointlight({-1, 7, 1}, {1, 1, 0}, 6, 5, scen),
+	moodlight = entities.CreatePointlight({0, 15, -7}, {190/255, 90/255, 30/255}, 50, 200, scen),
 	position = {0, 0, 0}
 	
 }
@@ -122,7 +122,7 @@ end
 local function RandomFunc()
 	local fac = 15
 	local rmax = fac * (500 / (score + 500))
-	local rnd = math.random(1,3+rmax)
+	local rnd = math.random(2,3 + rmax)
 	return rnd
 end
 
@@ -285,7 +285,7 @@ local invincitime = 3
 local prevKeysPressed 	= {false, false, false, false }
 local keysPressed 		= {false, false, false, false }
 local switchingLane = false
-local switchingTimeConstant = 0.2
+local switchingTimeConstant = 0.3
 local switchingTime = 0
 local pendingLane = 2
 local function Update(delta)

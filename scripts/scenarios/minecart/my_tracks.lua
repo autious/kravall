@@ -16,10 +16,13 @@ local function CreateTrack(position, tracktype, scen)
 	-- rotate a track around for extra randomness
 	if math.random(0,1) == 1 then
 		rot = { 0, math.sin( math.pi/2 ), 0, math.cos(math.pi/2) }
-		local kz1 = killzone[1]
-		local kz2 = killzone[2]
-		killzone[1] = -kz2
-		killzone[2] = -kz1
+		
+		killzone[1], killzone[2] = -killzone[2], -killzone[1]
+		
+		--local kz1 = killzone[1]
+		--local kz2 = killzone[2]
+		--killzone[1] = -kz2
+		--killzone[2] = -kz1
 	end
 	return scen:loadAssembly( 
 	{
