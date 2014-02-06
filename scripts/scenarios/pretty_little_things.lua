@@ -15,7 +15,7 @@ scen:loadAssembly(
 	},
 	{
 		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry,layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/plane.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
@@ -66,7 +66,7 @@ scen:loadAssembly(
 	},
 	{
 		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry,layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/teapot.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
@@ -92,7 +92,7 @@ scen:loadAssembly(
 	},
 	{
 		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry,layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/torus.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
@@ -118,7 +118,7 @@ scen:loadAssembly(
 	},
 	{
 		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry,layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/sphere.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
@@ -144,7 +144,7 @@ scen:loadAssembly(
 	},
 	{
 		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry,layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/cone.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
@@ -170,7 +170,7 @@ scen:loadAssembly(
 	},
 	{
 		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry,layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/pyramid.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
@@ -196,7 +196,7 @@ scen:loadAssembly(
 	},
 	{
 		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry,layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/knot.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }

@@ -33,7 +33,7 @@ function scen:load()
 		},
 		{
 			type = core.componentType.GraphicsComponent,
-			data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry },
+			data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1} },
 			load = { 
 						mesh = { core.loaders.GnomeLoader, "assets/model/animated/rioter/rioter_00.bgnome" },
 						material = { core.loaders.MaterialLoader, "assets/material/gameJam_john/player.material" }
@@ -163,7 +163,7 @@ function scen:load()
 		},
 		{
 			type = core.componentType.GraphicsComponent,
-			data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry },
+			data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1} },
 			load = { 
 						mesh = { core.loaders.GnomeLoader, "assets/material/gameJam_john/gameJam_cave_ty_johan.bgnome" },
 						material = { core.loaders.MaterialLoader, "assets/material/gameJam_john/cave.material" }
@@ -224,7 +224,7 @@ function scen:load()
 		{
 			{
 				type = core.componentType.GraphicsComponent,
-				data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry },
+				data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1} },
 				load = { 
 							mesh = { core.loaders.GnomeLoader, "assets/model/animated/rioter/rioter_00.bgnome" },
 							material = { core.loaders.MaterialLoader, "assets/material/gameJam_john/player.material" }
@@ -305,7 +305,7 @@ function scen:load()
 		},
 		{
 			type = core.componentType.GraphicsComponent,
-			data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry },
+			data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1} },
 			load = { 
 						mesh = { core.loaders.GnomeLoader, "assets/material/gameJam_john/minecart.bgnome" },
 						material = { core.loaders.MaterialLoader, "assets/material/gameJam_john/cart.material" }
