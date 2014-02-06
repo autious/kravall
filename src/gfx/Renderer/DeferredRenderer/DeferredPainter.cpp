@@ -203,41 +203,41 @@ namespace GFX
 					
 					if (mesh.skeletonID >= 0)
 						animationManager->BindSkeleton(mesh.skeletonID);
-				
-					if (currentLayer == LAYER_TYPES::OUTLINE_LAYER)
-					{
-						glEnable(GL_STENCIL_TEST);
-						glStencilFunc(GL_ALWAYS, 1, -1);
-						glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-						glEnable(GL_DEPTH_TEST);
-					}
+					
+					//if (currentLayer == LAYER_TYPES::OUTLINE_LAYER)
+					//{
+					//	glEnable(GL_STENCIL_TEST);
+					//	glStencilFunc(GL_ALWAYS, 1, -1);
+					//	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+					//	glEnable(GL_DEPTH_TEST);
+					//}
 				
 					glDrawElementsInstanced(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0, instanceCount);
 
-					if (currentLayer == LAYER_TYPES::OUTLINE_LAYER)
-					{
-						glDisable(GL_DEPTH_TEST);
-						glStencilFunc(GL_NOTEQUAL, 1, -1);
-						glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-						glLineWidth(m_outlineThickness);
-						glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-						if (currentShader == m_staticBlend || currentShader == m_staticNormal)
-							m_shaderManager->UseProgram("StaticOutline");
-						else if (currentShader == m_animatedBlend || currentShader == m_animatedNormal)
-							m_shaderManager->UseProgram("AnimatedOutline");
-
-						glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_instanceBuffer);
-
-						glDrawElementsInstanced(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0, instanceCount);
-
-						glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-						
-
-						glUseProgram(currentShader);
-						glEnable(GL_DEPTH_TEST);
-						glDisable(GL_STENCIL_TEST);
-					}
+					//if (currentLayer == LAYER_TYPES::OUTLINE_LAYER)
+					//{
+					//	glDisable(GL_DEPTH_TEST);
+					//	glStencilFunc(GL_NOTEQUAL, 1, -1);
+					//	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+					//	glLineWidth(m_outlineThickness);
+					//	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+					//
+					//	if (currentShader == m_staticBlend || currentShader == m_staticNormal)
+					//		m_shaderManager->UseProgram("StaticOutline");
+					//	else if (currentShader == m_animatedBlend || currentShader == m_animatedNormal)
+					//		m_shaderManager->UseProgram("AnimatedOutline");
+					//
+					//	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_instanceBuffer);
+					//
+					//	glDrawElementsInstanced(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0, instanceCount);
+					//
+					//	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+					//	
+					//
+					//	glUseProgram(currentShader);
+					//	glEnable(GL_DEPTH_TEST);
+					//	glDisable(GL_STENCIL_TEST);
+					//}
 					
 					instanceCount = 0;
 				}

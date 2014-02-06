@@ -10,7 +10,7 @@ struct InstanceData
 	vec4 outlineColor;
 };
 
-layout (shared, binding = 4) readonly buffer buffah
+layout (std140, binding = 4) readonly buffer buffah
 {
     InstanceData gInstances[];
 };
