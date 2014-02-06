@@ -47,10 +47,11 @@ namespace Core
 		flowfields[nrUsedFlowfields].goal[ 0 ] = std::numeric_limits<float>::max();
 		flowfields[nrUsedFlowfields].goal[ 1 ] = std::numeric_limits<float>::max();
 
-		flowfields[nrUsedFlowfields].timeSinceLastCheck = -1.0f;
-
-		flowfields[nrUsedFlowfields].recordedPosition[0] = 0.0f;
-		flowfields[nrUsedFlowfields].recordedPosition[1] = 0.0f;
+		flowfields[ nrUsedFlowfields ].stuckTimer = 0.0f;
+		flowfields[ nrUsedFlowfields ].timeSinceLastCheck = -1.0f;
+				    				 
+		flowfields[ nrUsedFlowfields ].recordedPosition[0] = 0.0f;
+		flowfields[ nrUsedFlowfields ].recordedPosition[1] = 0.0f;
 
         return nrUsedFlowfields++;
     }

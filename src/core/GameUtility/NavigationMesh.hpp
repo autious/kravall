@@ -122,6 +122,24 @@ namespace Core
 					(glm::vec3( points[ oo ], 0.0f, points[ oo + 1 ] ) - 
 					glm::vec3( points[ ii ], 0.0f, points[ ii + 1 ] )) * 0.5f;
 			}
+
+			/*!
+				Will return a vector to the starting point of the indexed edge.
+			*/
+			glm::vec3 GetLineStart( int edge )
+			{
+				return glm::vec3( points[ edge * 2 ], 0.0f, points[ edge * 2 + 1 ] );
+			}
+
+			/*!
+				Will return a vector to the ending point of the indexed edge.
+			*/
+			glm::vec3 GetLineEnd( int edge )
+			{
+				int oo = (edge * 2 + 2) % 8;
+				return glm::vec3( points[ oo ], 0.0f, points[ oo + 1 ] );
+			}
+
 		};
 
 		/*!
@@ -132,6 +150,7 @@ namespace Core
 		{
 			/* Group Data */
 
+			float stuckTimer;
 			float timeSinceLastCheck;
 			float recordedPosition[2];
 
