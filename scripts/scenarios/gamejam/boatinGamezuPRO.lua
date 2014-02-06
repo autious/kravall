@@ -37,7 +37,8 @@ local player = scen:loadAssembly(
 			loop = true,
 			playing = true,
 			speed = 1.0,
-			currentFrame = 0
+			currentFrame = 0,
+			queuedAnimationID = 0
 		}
 	},
 	{
@@ -227,7 +228,8 @@ for i = 0, 100 do
 				loop = true,
 				playing = true,
 				speed = 1.0,
-				currentFrame = 0
+				currentFrame = 0,
+				queuedAnimationID = 0
 			}
 		},
 		{
