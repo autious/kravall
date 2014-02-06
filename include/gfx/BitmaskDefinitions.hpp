@@ -16,6 +16,12 @@ namespace GFX
 		static const GFXBitmask MATERIAL_ID = 0x0000007FFF000000ULL;
 		static const GFXBitmask DEPTH = 0x0000000000FFFFFFULL;
 	}
+
+	namespace LAYER_TYPES
+	{
+		static const unsigned int MESH_LAYER = 3;
+		static const unsigned int OUTLINE_LAYER = 2;
+	}
 	
 	namespace OBJECT_TYPES
 	{

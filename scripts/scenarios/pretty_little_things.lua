@@ -4,7 +4,8 @@ local scen = scenario.new()
 scen.gamemode = require "gamemodes/normal":new()
 scen:registerUpdateCallback( function(delta) scen.gamemode:update(delta) end )
 scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
-
+core.gfx.setGamma(1)
+core.gfx.setExposure(10)
 --Plane
 scen:loadAssembly( 
 {
