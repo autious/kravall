@@ -38,12 +38,9 @@ namespace Core
                 instanceData->rnd_seed = *it;
                 instanceData->frameOffset = 0;
                 instanceData->animationIndex = -1;
+				instanceData->outlineColor = glm::vec4(gc->outlineColor[0], gc->outlineColor[1], gc->outlineColor[2], gc->outlineColor[3]);
 
-				//if (i % 2 == 0)
-					GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::LAYER, GFX::LAYER_TYPES::OUTLINE_LAYER);
-				i++;
-
-				instanceData->outlineColor = glm::vec4(1, 0, 0, 1);
+				//GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::LAYER, GFX::LAYER_TYPES::OUTLINE_LAYER);
 
                 if (ac != nullptr)
                 {
