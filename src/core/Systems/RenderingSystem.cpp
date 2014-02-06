@@ -15,7 +15,7 @@ namespace Core
 		glm::mat4 rotationMatrix;
 		glm::mat4 translationMatrix;
 		glm::mat4 scaleMatrix;
-		int i = 0;
+
 		for (std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); it++)
 		{
 			WorldPositionComponent* wpc = WGETC<WorldPositionComponent>(*it);
@@ -39,8 +39,6 @@ namespace Core
                 instanceData->frameOffset = 0;
                 instanceData->animationIndex = -1;
 				instanceData->outlineColor = glm::vec4(gc->outlineColor[0], gc->outlineColor[1], gc->outlineColor[2], gc->outlineColor[3]);
-
-				//GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::LAYER, GFX::LAYER_TYPES::OUTLINE_LAYER);
 
                 if (ac != nullptr)
                 {
