@@ -7,6 +7,7 @@ scen.asm:specific_content( core.contentmanager.load(
 
 scen.gamemode = require "gamemodes/kravall":new()
 
+local mouse = core.input.mouse
 local squad = ent.get "policeSquad"
 
 scen:registerUpdateCallback( function(delta) scen.gamemode:update(delta) end )
@@ -145,7 +146,41 @@ core.system.groups.setGroupGoal(rioterGroup, 150, 0, 0)
 --end
 --core.nav_mesh.set_group_goal(1, -21, 0, 36)
 
+local clicked = false
+local prevClicked = true
+local firstX, firstY
 
+function Update(dt)
+	
+	if clicked == true then
+		prevClicked = true
+	else
+		prevClicked = false
+	end
+	
+	
+	if core.input.mouse.isButtonDown(core.input.mouse.button.Left) then
+		clicked = true			
+	else 
+		clicked = false
+	end
+	
+	
+	if clicked == true and prevClicked == false then
+		firstX, firstY = core.input.mouse.getPosition()
+	end
+	
+	if clicked == true then 
+		local secondX, secondY = core.input.mouse.getPosition()
+		core.system.picking.getEntitiesInsideBox( firstX, firstY, secondX, secondY )
+		--print( firstX .. "  " .. firstY .. "  " ..  secondX .. "  " .. secondY)
+	end 
+	
+	
+	
+end
+
+scen:registerUpdateCallback( Update )
 --navmesh(scen, 0, -0.1, 0)
 
 return scen;
