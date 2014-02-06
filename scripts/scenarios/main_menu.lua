@@ -70,7 +70,6 @@ function scen:load()
     ambient( scen, 1.0, 1.0, 1.0, 0.5 )
 
 
-    local ent = staticModel( scen, -25.067977905273438, 43.6976318359375, -176.21974182128906, 0.0, 0.0, 0.0, 1.0, 1.0, "assets/model/static/building/apt-a-0-corners_00.bgnome", "assets/texture/dev/default.material", "" )
     local ent = staticModel( scen, 78.6101303100586, 66.74439239501953, -124.31913757324219, 0.7071068286895752, 0.0, 0.0, 0.7071068286895752, 2.061257839202881, "assets/model/dev/block-building_00.bgnome", "assets/texture/dev/test.material", "" )
     local ent = staticModel( scen, -15.090109825134277, 45.471405029296875, -33.91289138793945, 0.0, -0.9728877544403076, 0.0, 0.23127798736095428, 1.0, "assets/model/animated/police/cop/cop-light_00.bgnome", "assets/texture/animated/police/cop/cop-light_00.material", "" )
     local ent = staticModel( scen, -100.81935119628906, 95.04367065429688, -179.70816040039062, 0.7071068286895752, 0.0, 0.0, 0.7071068286895752, 3.508004983266195, "assets/model/dev/tall-building_00.bgnome", "assets/texture/dev/test.material", "" )

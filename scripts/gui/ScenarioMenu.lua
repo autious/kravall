@@ -7,18 +7,24 @@ local TextLabel = require "gui/component/TextLabel"
 local TextBox = require "gui/component/TextBox"
 local AnchorPlacer = require "gui/placement/AnchorPlacer"
 
-ScenarioMenu = {}
+ScenarioMenu = { scenarios={} }
 
 function ScenarioMenu:new(o,menuState)
     o = o or {}
 
     o.gui = GUI:new()
 
+    local descriptionBox = TextBox:new({anchor="East", body="This is a scenario description"})
+
+    local function onScenarioSelect( object )
+        descriptionBox:setText( object.description )         
+    end
+
     o.gui:addComponent(Button:new({anchor="SouthWest",xoffset=0,yoffset=0,onClick = menuState.goMain }))
     o.gui:addComponent(Button:new({anchor="SouthEast",xoffset=0,yoffset=0,onClick = menuState.goMain }))
-    o.gui:addComponent(TextSelectList:new({ anchor="West", xoffset=300}))
+    o.gui:addComponent(TextSelectList:new({ anchor="West", xoffset=300, elements=o.scenarios, onSelect = onScenarioSelect }))
     o.gui:addComponent(TextLabel:new({ xoffset=-50, yoffset=250, anchor="NorthEast", label="Scenario Title"}))
-    o.gui:addComponent(TextBox:new({anchor="East", body="This is a scenario description"}))
+    o.gui:addComponent( descriptionBox )
 
     o.gui:addPlacementHandler( AnchorPlacer:new() )
 

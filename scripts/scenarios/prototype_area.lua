@@ -3,6 +3,9 @@ local scenario = require "scenario"
 local objective = require "objective" 
 local scen = scenario.new()
 
+scen.name = "Protype Area"
+scen.description = "Test scenario area for you"
+
 -- SCRIPTS \/
 scen.gamemode =  require "gamemodes/kravall":new()
 scen:registerUpdateCallback( function(delta) scen.gamemode:update(delta) end )

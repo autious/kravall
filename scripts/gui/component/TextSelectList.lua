@@ -11,7 +11,7 @@ local TextSelectList =
                     width=0,
                     height=0,
                     padding=4,
-                    elements = { { name = "default" }, {name = "default2"}}
+                    elements = {{name = "default"}, {name = "default2"}}
                 }
 
 function TextSelectList:new(o)
