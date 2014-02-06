@@ -19,7 +19,7 @@ void Core::FlowfieldSystem::Update( float delta )
 		for( std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); it++ )
 		{
 			UnitTypeComponent* utc = WGETC<UnitTypeComponent>(*it);
-			if( utc->type == Core::UnitType::Police )
+			if( utc->type == Core::UnitType::Police || utc->type == Core::UnitType::Object )
 				continue;
 
 			// entity is not assigned to a node...
