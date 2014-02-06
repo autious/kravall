@@ -227,6 +227,8 @@ namespace GFX
 						else if (currentShader == m_animatedBlend || currentShader == m_animatedNormal)
 							m_shaderManager->UseProgram("AnimatedOutline");
 
+						glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_instanceBuffer);
+
 						glDrawElementsInstanced(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0, instanceCount);
 
 						glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
