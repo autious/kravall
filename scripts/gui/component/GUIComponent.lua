@@ -15,7 +15,11 @@ function GUIComponent:new(o)
     end
 
     o.callbacks = {}
+    local curr_mouse_x = 0
+    local curr_mouse_y = 0
     function o.callbacks.onPosition( x,y )
+        curr_mouse_x = x
+        curr_mouse_y = y
         if AABB:new({o.x,o.y,o.width,o.height}):collides( x, y ) then
             if o.inside == false then
                 o.onEnter()  
@@ -41,7 +45,7 @@ function GUIComponent:new(o)
         if button == mouse.button.Left then
             if action == core.input.action.Press then
                 if o.inside == true then
-                    o.onPress() 
+                    o.onPress( curr_mouse_x, curr_mouse_y ) 
                     o.press = true
                 end
             elseif action == core.input.action.Release then

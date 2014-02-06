@@ -17,6 +17,7 @@ function AnchorPlacer:new(o)
 end
 
 function AnchorPlacer:constrict( components, winWidth, winHeight )
+    print( "CONSTRICTION" )
     -- Bags for different regions
     local bags = {}
     

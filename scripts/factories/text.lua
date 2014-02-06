@@ -7,7 +7,7 @@ end
 
 function Text:setText( string )
     self.string = string
-    self.textId = core.system.hoverText.string.reallocate( self.textId, string )
+    self.textId:reallocate( string )
 end
 
 function Text:setPosition( x,y )

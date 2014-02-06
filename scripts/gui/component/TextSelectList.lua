@@ -1,6 +1,7 @@
 local GUIComponent = require "gui/component/GUIComponent"
 local image = require"factories/image"
 local text = require"factories/text"
+local AABB = require"collision/aabb"
 
 local TextSelectList = 
                 {
@@ -11,7 +12,8 @@ local TextSelectList =
                     width=0,
                     height=0,
                     padding=4,
-                    elements = {{name = "default"}, {name = "default2"}}
+                    elements = {{name = "default"}, {name = "default2"}},
+                    onSelect = function() end
                 }
 
 function TextSelectList:new(o)
@@ -29,7 +31,7 @@ function TextSelectList:new(o)
                                             y=o.y,
                                             width=o.width,
                                             height=o.height,
-                                            onPress = function()  o:onPress() end,
+                                            onPress = function(x,y)  o:onPress(x,y) end,
                                             onRelease = function() o:onRelease() end,
                                             onEnter = function() o:onEnter() end,
                                             onExit = function() o:onExit() end
@@ -57,6 +59,7 @@ function TextSelectList:updateList()
         text:setPosition( self.x, self.y + heightOffset )
         heightOffset = heightOffset + height + self.padding
 
+        text.object = v
         self.textElements[#(self.textElements)+1] = text
 
         if width > widest then
@@ -66,6 +69,8 @@ function TextSelectList:updateList()
 
     self.width = widest
     self.height = heightOffset
+    self.GUIComponent.width = self.width
+    self.GUIComponent.height = self.height
 end
 
 function TextSelectList:render()
@@ -75,10 +80,18 @@ end
 function TextSelectList:setPosition(x,y)
     self.x = x;
     self.y = y 
+    self.GUIComponent.x = self.x
+    self.GUIComponent.y = self.y
     self:updateList()
 end
 
-function TextSelectList:onPress() 
+function TextSelectList:onPress(x,y) 
+    for k,v in pairs( self.textElements ) do
+        local width,height = v:getDim()
+        if AABB:new({v.x,v.y,width,height}):collides( x, y ) then
+            self.onSelect( v.object )
+        end
+    end
 end
 
 function TextSelectList:onRelease()

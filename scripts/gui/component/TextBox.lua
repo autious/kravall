@@ -35,38 +35,13 @@ function TextBox:new(o)
                                             onExit = function() o:onExit() end
                                         }
     o.text = text( o.x, o.y, o.body)
-    o.width, o.height = o.text:getDim()
     o:setPosition( o.x, o.y )
 
     return o
 end
 
-function TextBox:updateList()
-    for _,v in pairs( self.textElements ) do
-        v:destroy()        
-    end
-
-    self.textElements = {}
-
-    local heightOffset = 0
-    local widest = 0
-
-    for k,v in pairs( self.elements ) do
-        heightOffset = heightOffset + height + self.padding
-
-        self.textElements[#(self.textElements)+1] = text
-
-        if width > widest then
-            widest = width
-        end
-    end
-
-    self.width = widest
-    self.height = heightOffset
-end
-
-function TextBox:render()
-
+function TextBox:setText( string )
+    self.text:setText( string )
 end
 
 function TextBox:setPosition( x, y )

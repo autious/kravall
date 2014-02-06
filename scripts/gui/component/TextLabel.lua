@@ -41,32 +41,9 @@ function TextLabel:new(o)
     return o
 end
 
-function TextLabel:updateList()
-    for _,v in pairs( self.textElements ) do
-        v:destroy()        
-    end
-
-    self.textElements = {}
-
-    local heightOffset = 0
-    local widest = 0
-
-    for k,v in pairs( self.elements ) do
-        heightOffset = heightOffset + height + self.padding
-
-        self.textElements[#(self.textElements)+1] = text
-
-        if width > widest then
-            widest = width
-        end
-    end
-
-    self.width = widest
-    self.height = heightOffset
-end
-
-function TextLabel:render()
-
+function TextLabel:setLabel( string )
+    self.text:setText( string ) 
+    self.width, self.height = self.text:getDim()
 end
 
 function TextLabel:setPosition( x, y )
