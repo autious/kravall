@@ -43,7 +43,13 @@ namespace Core
             \param stance The stance to set the squads to.
         */
         void SetSquadStance(int* squadIDs, int nSqauds, Core::PoliceStance stance);
-        
+       
+        /*!
+            Retrieves the entity with the given squadID. If there are more than one squad with the same ID the firt one encounterd is returned.
+            \param squadID The ID of the entity to retrieve's Core::SquadComponent.
+            \returns An entity with the given squadID, or INVALID_ENTITY if none is found.
+        */
+        Core::Entity GetSquadEntity(int squadID);
 
     };
 }
