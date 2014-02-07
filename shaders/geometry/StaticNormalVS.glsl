@@ -3,6 +3,7 @@
 struct InstanceData
 {
 	mat4 mm;
+	vec4 outlineColor;
 	uint animationFrame;
 	uint animationOffset;
 	uint rnd_seed;
