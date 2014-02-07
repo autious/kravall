@@ -87,7 +87,10 @@ extern "C"
             int Y2 = luaL_checkint(L, 4);
 			float gaceDistance = luaL_checknumber( L, 5 );
 
+			// temp code !
 			GFX::Debug::DrawRectangle( glm::vec2( X, Y ), glm::vec2( X2 - X, Y2 - Y ), false, GFXColor( 1, 0, 1, 1 ) );	
+			// temp code end !
+			
 			std::vector< Core::Entity > list = Core::world.m_systemHandler.GetSystem<Core::PickingSystem>()->BoxSelect( X, Y, X2, Y2, gaceDistance );
 			std::map< int, int > groups = std::map<int, int>();
 
@@ -98,10 +101,6 @@ extern "C"
 				if( attribc && utc )
 					if( utc->type == Core::UnitType::Police )
 						groups[ attribc->police.squadID ] = attribc->police.squadID;	
-
-				// DEBUG // NOCOMMIT
-				Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(list[i]);
-				GFX::Debug::DrawSphere( Core::WorldPositionComponent::GetVec3( *wpc ), 2.0f, GFXColor( 1, 1, 0, 1 ), false );
 			}
 
 			if( groups.size() == 2 )
@@ -113,7 +112,6 @@ extern "C"
 				int pos = 1;
 				for (std::map<int,int>::iterator it = groups.begin(); it != groups.end(); ++it )
 				{
-					lua_pushnumber( L, pos );
 					lua_pushnumber( L, it->second );
 					lua_rawseti(L, -2, pos++);
 				}
@@ -126,7 +124,7 @@ extern "C"
 			return 1;
         }
             
-        return luaL_error(L, "getEntitiesInsideBox(mouseX, mouseY, mouseX2, mouseY2), requires 4 arguments");
+        return luaL_error(L, "getPoliceGroupsInsideBox(mouseX, mouseY, mouseX2, mouseY2, graceDistance), requires 5 arguments");
 	}
 
 

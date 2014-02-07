@@ -42,7 +42,7 @@ function squadHandling()
                     else
                         selectedSquads = {};
                         selectedSquads[#selectedSquads+1] = attributeComponent.squadID
-                        print(selectedSquads[#selectedSquads])
+                        --print(selectedSquads[#selectedSquads])
                     end
                 end
             end
@@ -86,33 +86,29 @@ function squadHandling()
 	-- box select
 	if boxStartX and boxStartY and boxEndX and boxEndY and core.input.mouse.isButtonUp(core.input.mouse.button.Left) then
 		if boxStartX ~= boxEndX and boxStartY ~= boxEndY then
+			if not core.input.keyboard.isKeyDown(core.input.keyboard.key.Left_shift) then
+				selectedSquads = {}
+			end
 			if groupsSelectedByBox then
-				for i = 1, #groupsSelectedByBox do
+				for p = 1, #groupsSelectedByBox do
 					local found = false
 					for i=1, #selectedSquads do
-						if selectedSquads[i] == groupsSelectedByBox[i] then
+						if selectedSquads[i] == groupsSelectedByBox[p] then
 							found = true
 						end
 					end
 					
 					if not found then                            
-						selectedSquads[#selectedSquads+1] = groupsSelectedByBox[i]
-						print(selectedSquads[#selectedSquads])
+						selectedSquads[#selectedSquads+1] = groupsSelectedByBox[p]
 					end			
 				end
 				groupsSelectedByBox = {}
 			elseif not core.config.stickySelection then
 				selectedSquads = {}
 			end
-		end		
+		end			
 		boxStartX, boxStartY, boxEndX, boxEndY = nil, nil, nil, nil
 	end
-	
-	
-	
-	
-	
-	
 	
 	
 end
