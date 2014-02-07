@@ -69,12 +69,12 @@ Core::ComponentGetters Core::GraphicsComponentBinding::GetGetters()
 		GraphicsComponent *gc = WGETC<GraphicsComponent>(entity);
 
 		lua_newtable(L);
+        int index = lua_gettop(L); 
 
 		for (int i = 0; i < 4; i++)
 		{
-			lua_pushinteger(L, i + 1);
 			lua_pushnumber(L, gc->outlineColor[i]);
-			lua_settable(L, -4);
+			lua_rawseti( L, index, i + 1 );
 		}
 
 		return 1;
