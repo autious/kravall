@@ -6,6 +6,7 @@
 #include <GameUtility/GameData.hpp>
 
 #include <gfx/GFXInterface.hpp>
+#include <gfx/BitmaskDefinitions.hpp>
 
 #define FORMATION_COLUMN_SPACING_MINIMUM 2.0f
 #define FORMATION_ROW_SPACING 2.0f
@@ -317,6 +318,38 @@ namespace Core
             }
         }
         return INVALID_ENTITY;
+    }
+
+    void SquadSystem::EnableOutline(int* squadIDs, int nSquads,const glm::vec4& Color)
+    {        
+        for(int i=0; i<nSquads; ++i)
+        {
+            std::vector<Core::Entity> squad = Core::world.m_systemHandler.GetSystem<Core::GroupDataSystem>()->GetMembersInGroup(squadIDs[i]);
+
+            for(std::vector<Entity>::iterator it = squad.begin(); it != squad.end(); ++it)        
+            {
+                Core::GraphicsComponent* gfxc = WGETC<Core::GraphicsComponent>(*it);
+                gfxc->outlineColor[0] = Color.x;
+                gfxc->outlineColor[1] = Color.y;
+                gfxc->outlineColor[2] = Color.z;
+                gfxc->outlineColor[3] = Color.w;
+                GFX::SetBitmaskValue(gfxc->bitmask, GFX::BITMASK::LAYER, GFX::LAYER_TYPES::OUTLINE_LAYER);
+            }
+        }
+    }
+
+    void SquadSystem::DisableOutline(int* squadIDs, int nSquads)
+    {
+        for(int i=0; i<nSquads; ++i)
+        {
+            std::vector<Core::Entity> squad = Core::world.m_systemHandler.GetSystem<Core::GroupDataSystem>()->GetMembersInGroup(squadIDs[i]);
+
+            for(std::vector<Entity>::iterator it = squad.begin(); it != squad.end(); ++it)        
+            {
+                Core::GraphicsComponent* gfxc = WGETC<Core::GraphicsComponent>(*it);
+                GFX::SetBitmaskValue(gfxc->bitmask, GFX::BITMASK::LAYER, GFX::LAYER_TYPES::MESH_LAYER);
+            }
+        }
     }
 
     void SquadSystem::Update(float delta)
