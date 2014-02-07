@@ -1,6 +1,9 @@
 local ent = require "entities"
 local scen = require "scenario":new()
 
+scen.name = "Protype"
+scen.description = "Test scenario for you"
+
 -- SETTING GAMEMODE
 scen.gamemode = require "gamemodes/normal":new()
 scen:registerUpdateCallback( function(delta) scen.gamemode:update(delta) end )
