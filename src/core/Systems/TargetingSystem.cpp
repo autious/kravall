@@ -23,7 +23,7 @@ void Core::TargetingSystem::Update(float delta)
 			HandleRioterTargeting(*it, delta);
 	}
 
-	TemporaryFunction();
+	//TemporaryFunction();
 }
 
 void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police, float delta)
