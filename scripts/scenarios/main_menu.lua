@@ -2,26 +2,8 @@ local entities = require "entities"
 local scenario = require "scenario"
 local scen = scenario.new()
 
-local ambient = entities.get "ambientLight"
-local directional = entities.get "directionalLight"
-local pointLight = entities.get "pointLight"
-local spotLight = entities.get "spotLight"
-local area = entities.get "area"
-local rioter = entities.get "rioter"
-local staticModel = entities.get "staticModel"
-
-local script = dofile "scripts/scenarios/main_menu_script.lua"( scen )
-
-local function genF( e, f )
-    if type( script[f] ) == "function"  then
-        return function() script[ f ]( e ) end
-    else
-        error( "Function " .. f .. " does not exist in script file" )
-    end
-end
-
-directional( scen, 1.5707963705062866, -0.0, 0.0, 1.0, 1.0, 1.0, 1.0 )
-ambient( scen, 1.0, 1.0, 1.0, 0.5 )
+scen.name = "Default Scenario Name"
+scen.description = "Default Description"
 
 scen.cameras = scen.cameras or {}
 scen.cameras["settings"] = {
@@ -65,9 +47,32 @@ scen.cameras["setup"] = {
     fov = 0.8575560450553894
 }
 
-local ent = staticModel( scen, 78.6101303100586, 66.74439239501953, -124.31913757324219, 0.7071068286895752, 0.0, 0.0, 0.7071068286895752, 2.061257839202881, "assets/model/dev/block-building_00.bgnome", "assets/material/dev/test.material", "" )
-local ent = staticModel( scen, -15.090109825134277, 45.471405029296875, -33.91289138793945, 0.0, -0.9728877544403076, 0.0, 0.23127798736095428, 1.0, "assets/model/animated/police/cop/cop-light_00.bgnome", "assets/material/animated/police/cop/cop-light_00.material", "" )
-local ent = staticModel( scen, -100.81935119628906, 95.04367065429688, -179.70816040039062, 0.7071068286895752, 0.0, 0.0, 0.7071068286895752, 3.508004983266195, "assets/model/dev/tall-building_00.bgnome", "assets/material/dev/test.material", "" )
+local script = dofile "scripts/scenarios/main_menu_script.lua"( scen )
+
+function scen:load()
+    local ambient = entities.get "ambientLight"
+    local directional = entities.get "directionalLight"
+    local pointLight = entities.get "pointLight"
+    local spotLight = entities.get "spotLight"
+    local area = entities.get "area"
+    local rioter = entities.get "rioter"
+    local staticModel = entities.get "staticModel"
+    
+    local function genF( e, f )
+        if type( script[f] ) == "function"  then
+            return function() script[ f ]( e ) end
+        else
+            error( "Function " .. f .. " does not exist in script file" )
+        end
+    end
+    
+    directional( scen, -0.0, -1.0, 0.0, 1.0, 1.0, 1.0, 1.0 )
+    ambient( scen, 1.0, 1.0, 1.0, 0.5 )
 
 
+    local ent = staticModel( scen, 78.6101303100586, 66.74439239501953, -124.31913757324219, 0.7071068286895752, 0.0, 0.0, 0.7071068286895752, 2.061257839202881, "assets/model/dev/block-building_00.bgnome", "assets/texture/dev/test.material", "" )
+    local ent = staticModel( scen, -15.090109825134277, 45.471405029296875, -33.91289138793945, 0.0, -0.9728877544403076, 0.0, 0.23127798736095428, 1.0, "assets/model/animated/police/cop/cop-light_00.bgnome", "assets/texture/animated/police/cop/cop-light_00.material", "" )
+    local ent = staticModel( scen, -100.81935119628906, 95.04367065429688, -179.70816040039062, 0.7071068286895752, 0.0, 0.0, 0.7071068286895752, 3.508004983266195, "assets/model/dev/tall-building_00.bgnome", "assets/texture/dev/test.material", "" )
+
+end
 return scen
