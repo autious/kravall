@@ -7,11 +7,11 @@
 #include <lua.h>
 #include <lualib.h>
 #include <lauxlib.h>
-/*
+
 TEST( LuaBindingDataRetention, GraphicsComponentBinding )
 {
     const char * lua_set = "test_entity = core.entity.create( core.componentType.GraphicsComponent )\n"
-                           "test_entity:set( core.componentType.GraphicsComponent, { mesh = 10, material = 9, type = core.gfx.objectTypes.OpaqueGeometry, render = true }, true )\n";
+                           "test_entity:set( core.componentType.GraphicsComponent, { mesh = 10, material = 9, type = core.gfx.objectTypes.OpaqueGeometry, render = true, outlineColor = {1,1,1,1}, layer = core.gfx.layerTypes.MeshLayer } )\n";
 
 
     const char * lua_get = "local function elems( table )\n"
@@ -24,27 +24,29 @@ TEST( LuaBindingDataRetention, GraphicsComponentBinding )
                            "local data = test_entity:get( core.componentType.GraphicsComponent )\n"
                            "test_entity:destroy()\n"
                            "test_entity = nil\n"
-                           "return data.render, data.type, data.material, data.mesh, elems( data )\n";
+                           "return data.layer, data.outlineColor, data.render, data.type, data.material, data.mesh, elems(data)\n";
 
     Core::world.m_luaState.DoBlock( lua_set );
 
-    int values = Core::world.m_luaState.DoBlock( lua_get, 0, 5 );
+    lua_State * L  = Core::world.m_luaState.GetState();
+
+    int values = Core::world.m_luaState.DoBlock( lua_get, 0, 7 );
     ASSERT_LE( 0, values );
 
-    int count = lua_tointeger( Core::world.m_luaState.GetState(), -1 );
+    int count = lua_tointeger( L , -1 );
     EXPECT_EQ( 6, count ); 
-    int data = lua_tointeger(Core::world.m_luaState.GetState(), -2 );
+    int data = lua_tointeger( L, -2 );
     EXPECT_EQ( data, 10 );
-    data = lua_tointeger(Core::world.m_luaState.GetState(), -3 );
+    data = lua_tointeger( L, -3 );
     EXPECT_EQ( data, 9 );
-    Core::GFXObjectType * objectType  = (Core::GFXObjectType*)luaL_checkudata( Core::world.m_luaState.GetState(), -4, GFX_OBJECT_TYPE_META );
-    EXPECT_EQ( *objectType, GFX::OBJECT_TYPES::OPAQUE_GEOMETRY );
-    bool render = lua_toboolean( Core::world.m_luaState.GetState(), -4 );
+    EXPECT_TRUE( lua_isuserdata(  L, -4 ) );
+    bool render = lua_toboolean( L, -5 );
     EXPECT_EQ( true, render );
+    EXPECT_TRUE( lua_istable(L, -6) );
+    EXPECT_TRUE( lua_isuserdata(L, -7));
     
     lua_pop( Core::world.m_luaState.GetState(), values );
 }
-*/
 
 TEST( LuaBindingDataRetention, RotationComponentBinding  )
 {

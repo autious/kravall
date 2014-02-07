@@ -104,7 +104,7 @@ namespace Core
         }
         else
         {
-            //TODO: throw exception and do lua error further up
+            //TODO: return error code and do lua error further up.
             luaL_error( L, "Unable to set data for %s, given tableindex is not a table", Handler::GetComponentLuaName() );
         }
     }
@@ -352,12 +352,14 @@ namespace Core
                 }
                 else
                 {
+                    LOG_ERROR << "Unable to get component data, entity doesn't have component type" << std::endl;
                     return luaL_error( L, "Unable to get component data, entity doesn't have component type" );
                 }
 
             }
             else
             {
+                LOG_ERROR << "Unable to Get component data, incorrect first two parameters" << std::endl;
                 return luaL_error( L, "Unable to Get component data, incorrect first two parameters" );
             }
         }
