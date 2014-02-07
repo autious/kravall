@@ -2,6 +2,8 @@ local input = require "input"
 local MainMenu = require "gui/MainMenu"
 local SetupMenu = require "gui/SetupMenu"
 local ScenarioMenu = require "gui/ScenarioMenu"
+local SettingsMenu = require "gui/SettingsMenu"
+local CreditsMenu = require "gui/CreditsMenu"
 
 local MenuScrollSpeed = 500
 
@@ -59,7 +61,7 @@ return function( scen )
             scen.gui:destroy()
             scen.gui = nil
         end
-        --scen.gui = SetupMenu:new({},menuState)
+        scen.gui = CreditsMenu:new({},menuState)
     end
 
     function menuState.goSettings()
@@ -69,7 +71,7 @@ return function( scen )
             scen.gui:destroy()
             scen.gui = nil
         end
-        --scen.gui = SetupMenu:new({},menuState)
+        scen.gui = SettingsMenu:new({},menuState)
     end
 
     local function onKey( key, scancode, action )
