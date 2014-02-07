@@ -15,6 +15,9 @@ function C.new( )
     self.position = vec3.new( 0,0,0 )
     self.pitch = 0
     self.yaw = 0
+	
+	self.near = core.config.initCameraNearClipDistance
+	self.far = core.config.initCameraFarClipDistance
 
     self.width = core.config.initScreenWidth
     self.height = core.config.initScreenHeight
@@ -41,7 +44,7 @@ end
 
 function C:getProjection()
     -- TODO: replace with callback.
-    return mat4.perspective( core.config.initCameraFieldOfView, self.width/self.height, core.config.initCameraNearClipDistance, core.config.initCameraFarClipDistance )
+    return mat4.perspective( core.config.initCameraFieldOfView, self.width/self.height, self.near, self.far )
 end
 
 local unit_right = vec3.new(1,0,0)
@@ -113,7 +116,7 @@ function C:lookAt( position, target )
 	
 	local proj = self:getProjection()
     local view = self:getView()
-    camera:setProjection( proj  )
+    camera:setProjection( proj )
     camera:setView( view )
 end
 
