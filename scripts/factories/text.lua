@@ -1,4 +1,5 @@
 local Text = {}
+local utility = require "utility"
 
 function Text:destroy()
     self.ent:destroy()
@@ -28,10 +29,20 @@ function Text:getDim( )
     --return string.len( self.string ) * 10, 14
 end
 
+function Text:setColor( r,g,b,a )
+    if type( r ) == "string" then
+        r,g,b,a = utility.fromHtmlHex( r )
+    end
+
+    self.ent:set( core.componentType.HoverTextComponent, {color = {r,g,b,a} }, true )
+end
+
 Text.__index = Text
 
-return function( x,y, string )
+return function( x,y, string, color )
     local self = {}
+
+    color = color or {1,1,1,1}
     
     setmetatable( self, Text )
     
@@ -41,7 +52,7 @@ return function( x,y, string )
     self.string = string
     self.textId = core.system.hoverText.string.new( string )
 
-    self.ent:set( core.componentType.HoverTextComponent, {hoverTextId = self.textId} )
+    self.ent:set( core.componentType.HoverTextComponent, {hoverTextId = self.textId, color = color} )
 
     self:setPosition( x,y )
 

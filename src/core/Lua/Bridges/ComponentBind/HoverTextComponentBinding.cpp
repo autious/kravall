@@ -20,6 +20,21 @@ namespace Core
             return 1;
         };
 
+        getters["color"] = []( Core::Entity entity, lua_State * L )
+        {
+            HoverTextComponent *htc = WGETC<HoverTextComponent>( entity );
+            lua_newtable(L);
+                lua_pushnumber( L, htc->color[0] );
+                lua_rawseti( L, -2, 1 ); 
+                lua_pushnumber( L, htc->color[1] );
+                lua_rawseti( L, -2, 2 ); 
+                lua_pushnumber( L, htc->color[2] );
+                lua_rawseti( L, -2, 3 ); 
+                lua_pushnumber( L, htc->color[4] );
+                lua_rawseti( L, -2, 4 ); 
+            return 1;
+        };
+
         return getters;
     }
 
@@ -33,6 +48,27 @@ namespace Core
             HoverTextComponent *htc = WGETC<HoverTextComponent>( entity );
 
             htc->hoverTextId = lht->hoverTextId;
+        };
+
+        setters["color"] = [](Core::Entity entity, lua_State * L, int valueindex )
+        {
+            if( lua_istable( L, valueindex ) )
+            {
+                HoverTextComponent *htc = WGETC<HoverTextComponent>( entity );
+
+                for( int i = 0; i < 4; i++ )
+                {
+                    lua_rawgeti( L, valueindex, i+1 );
+                    htc->color[i] = luau_checkfloat( L, -1 );
+                    lua_pop(L,1);
+                }
+            
+                return 1;
+            }
+            else
+            {
+                return luaL_error( L, "Value color in HoverTextComponent is not table" );
+            }
         };
 
         return setters;

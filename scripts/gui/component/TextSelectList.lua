@@ -72,6 +72,8 @@ function TextSelectList:updateList()
     self.height = heightOffset
     self.GUIComponent.width = self.width
     self.GUIComponent.height = self.height
+
+    self:colorActive()
 end
 
 function TextSelectList:render()
@@ -104,6 +106,15 @@ end
 function TextSelectList:setActive( object )
     self.activeObject = object
     self.onSelect( object )
+    self:colorActive()
+end
+
+function TextSelectList:colorActive()
+    for k,v in pairs( self.textElements ) do
+        if v.object == self.activeObject then
+            v:setColor( "#f3ff2c" )
+        end
+    end
 end
 
 function TextSelectList:onRelease()
