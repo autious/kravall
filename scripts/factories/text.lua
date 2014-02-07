@@ -3,6 +3,8 @@ local Text = {}
 function Text:destroy()
     self.ent:destroy()
     self.textId:free()
+    self.textId = nil
+    self.ent = nil
 end
 
 function Text:setText( string )
@@ -22,7 +24,8 @@ function Text:getPosition( x,y )
 end 
 
 function Text:getDim( )
-    return string.len( self.string ) * 10, 14
+    return self.textId:getDimensions()
+    --return string.len( self.string ) * 10, 14
 end
 
 Text.__index = Text

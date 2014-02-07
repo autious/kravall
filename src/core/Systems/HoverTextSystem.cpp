@@ -36,13 +36,28 @@ namespace Core
         return nextId;
     }
 
+    int HoverTextSystem::AllocateString( const char * string, glm::vec2 offset, glm::vec2 dimensions )
+    {
+        return AllocateString( string );
+    }
+
     void HoverTextSystem::SetString( int id, const char * string )
     {
         m_strings[id] = std::string( string );
     }
 
+    void HoverTextSystem::SetString( int id, const char * string, glm::vec2 offset, glm::vec2 dimensions )
+    {
+        SetString( id, string );
+    }
+
     void HoverTextSystem::FreeString( int id )
     {
         m_strings.erase( id ); 
+    }
+
+    glm::vec2 HoverTextSystem::GetStringDimensions( int id )
+    {
+        return glm::vec2(m_strings[id].size() * 6, 14);
     }
 }

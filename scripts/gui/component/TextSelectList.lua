@@ -45,6 +45,7 @@ end
 function TextSelectList:updateList()
     for _,v in pairs( self.textElements ) do
         v:destroy()        
+        v = nil
     end
 
     self.textElements = {}
@@ -53,14 +54,14 @@ function TextSelectList:updateList()
     local widest = 0
 
     for k,v in pairs( self.elements ) do
-        local text = text(self.x,self.y,v.name)
-        local width, height = text:getDim()
+        local text1 = text(self.x,self.y,v.name)
+        local width, height = text1:getDim()
         
-        text:setPosition( self.x, self.y + heightOffset )
+        text1:setPosition( self.x, self.y + heightOffset )
         heightOffset = heightOffset + height + self.padding
 
-        text.object = v
-        self.textElements[#(self.textElements)+1] = text
+        text1.object = v
+        self.textElements[#(self.textElements)+1] = text1
 
         if width > widest then
             widest = width
@@ -86,15 +87,22 @@ function TextSelectList:setPosition(x,y)
 end
 
 function TextSelectList:onPress(x,y) 
+    local newActive = nil
+
     for k,v in pairs( self.textElements ) do
         local width,height = v:getDim()
         if AABB:new({v.x,v.y,width,height}):collides( x, y ) then
-            self:setActive( v.object )
+            newActive = v.object
         end
+    end
+
+    if newActive ~= nil and newActive ~= self.activeObject then
+        self:setActive( newActive )
     end
 end
 
 function TextSelectList:setActive( object )
+    self.activeObject = object
     self.onSelect( object )
 end
 
@@ -110,6 +118,7 @@ end
 function TextSelectList:destroy()
     for _,v in pairs( self.textElements ) do
         v:destroy()        
+        v = nil
     end
 
     self.textElements = nil

@@ -4,6 +4,8 @@
 #include <Lua/LuaMetatableTypes.hpp>
 #include <World.hpp>
 
+#include <glm/glm.hpp>
+
 extern "C" 
 {
     static int LuaAllocateString( lua_State * L )
@@ -35,23 +37,23 @@ extern "C"
         return 0;
     }
 
-    static int LuaChangeString( lua_State * L )
+    static int LuaGetStringDimensions( lua_State * L )
     {
         LuaHoverText * lht = luau_checkhovertext( L, 1 );
-        const char * string = luaL_checkstring( L, 2 );
-
         Core::HoverTextSystem *hts = Core::world.m_systemHandler.GetSystem<Core::HoverTextSystem>();
-
         if( lht->hoverTextId != -1 )
         {
-            hts->SetString( lht->hoverTextId, string );
+            glm::vec2 dim = hts->GetStringDimensions( lht->hoverTextId ); 
+
+            lua_pushinteger( L, dim[0] );
+            lua_pushinteger( L, dim[1] );
+
+            return 2;
         }
         else
         {
-            luaL_error( L, "Invalid hover text id" );
-        }
-
-        return 0;
+            return luaL_error( L, "Attempting to fetch dimensions of invalid text object" );
+        } 
     }
 
     static int LuaFreeString( lua_State * L )
@@ -92,8 +94,8 @@ namespace Core
 
                         luau_setfunction( L, "new", LuaAllocateString );
                         luau_setfunction( L, "reallocate", LuaReallocateString );
-                        luau_setfunction( L, "set", LuaChangeString );
                         luau_setfunction( L, "free", LuaFreeString );
+                        luau_setfunction( L, "getDimensions", LuaGetStringDimensions );
                     lua_setfield( L, -2, "string" );
                 lua_setfield( L, -2, "hoverText" );
         lua_pop( L, 2 );
