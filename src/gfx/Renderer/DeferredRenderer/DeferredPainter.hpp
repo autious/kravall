@@ -46,7 +46,8 @@ namespace GFX
 		\param specular Rendertarget for specular
 		\param glowMatID Rendertarget for glow and materialID
 		*/
-		void Render(AnimationManager* animationManager, unsigned int& renderIndex, FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix, const float& gamma);
+		void Render(AnimationManager* animationManager, unsigned int& renderIndex, FBOTexture* depthBuffer, FBOTexture* normalDepth, 
+			FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix, const float& gamma);
 
 	private:
 		
@@ -81,6 +82,14 @@ namespace GFX
 		InstanceData* m_staticInstances;
 		const unsigned int MAX_INSTANCES = 1024;
 		GLuint m_instanceBuffer;
+
+		GLint m_animatedBlend;
+		GLint m_animatedNormal;
+
+		GLint m_staticBlend;
+		GLint m_staticNormal;
+
+		unsigned int m_outlineThickness;
 	};
 }
 

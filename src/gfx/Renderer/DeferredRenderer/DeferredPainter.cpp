@@ -20,7 +20,7 @@ namespace GFX
 	DeferredPainter::~DeferredPainter()
 	{
 	}
-	
+
 	void DeferredPainter::Initialize(GLuint FBO, GLuint dummyVAO)
 	{
 		BasePainter::Initialize(FBO, dummyVAO);
@@ -48,13 +48,17 @@ namespace GFX
 		m_shaderManager->AttachShader("StaticNormalVS", "StaticNormal");
 		m_shaderManager->AttachShader("StaticNormalFS", "StaticNormal");
 		m_shaderManager->LinkProgram("StaticNormal");
-		
+
+		m_staticNormal = m_shaderManager->GetShaderProgramID("StaticNormal");
+
 		m_shaderManager->CreateProgram("AnimatedNormal");
 		m_shaderManager->LoadShader("shaders/geometry/AnimatedNormalVS.glsl", "AnimatedNormalVS", GL_VERTEX_SHADER);
-		m_shaderManager->LoadShader("shaders/geometry/StaticNormalFS.glsl",   "AnimatedNormalFS", GL_FRAGMENT_SHADER);
+		m_shaderManager->LoadShader("shaders/geometry/StaticNormalFS.glsl", "AnimatedNormalFS", GL_FRAGMENT_SHADER);
 		m_shaderManager->AttachShader("AnimatedNormalVS", "AnimatedNormal");
 		m_shaderManager->AttachShader("AnimatedNormalFS", "AnimatedNormal");
 		m_shaderManager->LinkProgram("AnimatedNormal");
+
+		m_animatedNormal = m_shaderManager->GetShaderProgramID("AnimatedNormal");
 
 		// Blend map shaders
 		m_shaderManager->CreateProgram("StaticBlend");
@@ -64,14 +68,35 @@ namespace GFX
 		m_shaderManager->AttachShader("StaticBlendFS", "StaticBlend");
 		m_shaderManager->LinkProgram("StaticBlend");
 
+		m_staticBlend = m_shaderManager->GetShaderProgramID("StaticBlend");
+
 		m_shaderManager->CreateProgram("AnimatedBlend");
 		m_shaderManager->LoadShader("shaders/geometry/AnimatedBlendVS.glsl", "AnimatedBlendVS", GL_VERTEX_SHADER);
-		m_shaderManager->LoadShader("shaders/geometry/StaticBlendFS.glsl",   "AnimatedBlendFS", GL_FRAGMENT_SHADER);
+		m_shaderManager->LoadShader("shaders/geometry/StaticBlendFS.glsl", "AnimatedBlendFS", GL_FRAGMENT_SHADER);
 		m_shaderManager->AttachShader("AnimatedBlendVS", "AnimatedBlend");
 		m_shaderManager->AttachShader("AnimatedBlendFS", "AnimatedBlend");
 		m_shaderManager->LinkProgram("AnimatedBlend");
 
+		m_animatedBlend = m_shaderManager->GetShaderProgramID("AnimatedBlend");
+
+		m_shaderManager->CreateProgram("AnimatedOutline");
+		m_shaderManager->LoadShader("shaders/Outline/AnimatedOutlineVS.glsl", "AnimatedOutlineVS", GL_VERTEX_SHADER);
+		m_shaderManager->LoadShader("shaders/Outline/OutlineFS.glsl", "AnimatedOutlineFS", GL_FRAGMENT_SHADER);
+		m_shaderManager->AttachShader("AnimatedOutlineVS", "AnimatedOutline");
+		m_shaderManager->AttachShader("AnimatedOutlineFS", "AnimatedOutline");
+		m_shaderManager->LinkProgram("AnimatedOutline");
+
+		m_shaderManager->CreateProgram("StaticOutline");
+		m_shaderManager->LoadShader("shaders/Outline/StaticOutlineVS.glsl", "StaticOutlineVS", GL_VERTEX_SHADER);
+		m_shaderManager->LoadShader("shaders/Outline/OutlineFS.glsl", "StaticOutlineFS", GL_FRAGMENT_SHADER);
+		m_shaderManager->AttachShader("StaticOutlineVS", "StaticOutline");
+		m_shaderManager->AttachShader("StaticOutlineFS", "StaticOutline");
+		m_shaderManager->LinkProgram("StaticOutline");
+
 		m_uniformBufferManager->CreateBasicCameraUBO(m_shaderManager->GetShaderProgramID("StaticBlend"));
+
+
+		m_outlineThickness = 2;
 
 #ifdef INSTANCED_DRAWING
 
@@ -86,15 +111,17 @@ namespace GFX
 	}
 #ifdef INSTANCED_DRAWING
 
-	void DeferredPainter::Render(AnimationManager* animationManager, unsigned int& renderIndex, 
-	FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix, const float& gamma)
+	void DeferredPainter::Render(AnimationManager* animationManager, unsigned int& renderIndex,
+		FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix, const float& gamma)
 	{
 		BasePainter::Render();
 
 		BindGBuffer(depthBuffer, normalDepth, diffuse, specular, glowMatID);
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		glClearStencil(0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 		// Clear depth RT
 		float c[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
@@ -112,6 +139,8 @@ namespace GFX
 		unsigned int currentShader = std::numeric_limits<decltype(currentShader)>::max();
 		unsigned int currentMaterial = std::numeric_limits<decltype(currentMaterial)>::max();
 		unsigned int currentMesh = std::numeric_limits<decltype(currentMesh)>::max();
+		unsigned int currentLayer = std::numeric_limits<decltype(currentMesh)>::max();
+
 
 		unsigned int objType = std::numeric_limits<decltype(objType)>::max();
 		unsigned int viewport = std::numeric_limits<decltype(viewport)>::max();
@@ -151,19 +180,19 @@ namespace GFX
 				material = GetBitmaskValue(bitmask, BITMASK::MATERIAL_ID);
 				depth = GetBitmaskValue(bitmask, BITMASK::DEPTH);
 			}
-			
 
-			if (material == currentMaterial && meshID == currentMesh && !endMe && instanceCount < MAX_INSTANCES)
+
+			if (material == currentMaterial && meshID == currentMesh && !endMe && instanceCount < MAX_INSTANCES && layer == currentLayer)
 			{
 				InstanceData smid = *(InstanceData*)renderJobs.at(i).value;
 				m_staticInstances[instanceCount++] = smid;
 			}
-			else 
+			else
 			{
 				if (i > 0)
 				{
 					glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_instanceBuffer);
-					InstanceData* pData = (InstanceData*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, MAX_INSTANCES * sizeof(InstanceData), 
+					InstanceData* pData = (InstanceData*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, MAX_INSTANCES * sizeof(InstanceData),
 
 						GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
 					memcpy(pData, m_staticInstances, instanceCount * sizeof(InstanceData));
@@ -171,16 +200,46 @@ namespace GFX
 					glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
 					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IBO);
-					
+
 					if (mesh.skeletonID >= 0)
 						animationManager->BindSkeleton(mesh.skeletonID);
 
-					glDrawElementsInstanced(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0, instanceCount);
-					
-					instanceCount = 0;
+					if (currentLayer == LAYER_TYPES::OUTLINE_LAYER)
+					{
+						glEnable(GL_STENCIL_TEST);
+						glStencilFunc(GL_ALWAYS, 1, -1);
+						glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+						glEnable(GL_DEPTH_TEST);
+					}
 
+					glDrawElementsInstanced(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0, instanceCount);
+
+					if (currentLayer == LAYER_TYPES::OUTLINE_LAYER)
+					{
+						glDisable(GL_DEPTH_TEST);
+						glStencilFunc(GL_NOTEQUAL, 1, -1);
+						glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+						glLineWidth(m_outlineThickness);
+						glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+						if (currentShader == m_staticBlend || currentShader == m_staticNormal)
+							m_shaderManager->UseProgram("StaticOutline");
+						else if (currentShader == m_animatedBlend || currentShader == m_animatedNormal)
+							m_shaderManager->UseProgram("AnimatedOutline");
+
+						glDrawElementsInstanced(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0, instanceCount);
+
+						glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+
+						glUseProgram(currentShader);
+						glEnable(GL_DEPTH_TEST);
+						glDisable(GL_STENCIL_TEST);
+					}
+
+					instanceCount = 0;
 				}
-				
+
 				if (endMe)
 					break;
 
@@ -199,8 +258,8 @@ namespace GFX
 					//assert(mat.textures.size() == 4); 
 
 					currentMaterial = material;
-					
-					
+
+
 					//compare shader
 					if (mat.shaderProgramID != currentShader)
 					{
@@ -220,24 +279,29 @@ namespace GFX
 					m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[1]).textureHandle, m_uniformTexture1, 1, GL_TEXTURE_2D);
 					m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[2]).textureHandle, m_uniformTexture2, 2, GL_TEXTURE_2D);
 					m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[3]).textureHandle, m_uniformTexture3, 3, GL_TEXTURE_2D);
-					
+
 					//Set gamma
 					m_shaderManager->SetUniform(gamma, m_gammaUniform);
 				}
 
-					if (meshID != currentMesh)
+				if (meshID != currentMesh)
 				{
 					mesh = m_meshManager->GetMesh(meshID);
 					currentMesh = meshID;
 
 					glBindVertexArray(mesh.VAO);
 					error = glGetError();
-					
-					
+
+
 					if (mesh.skeletonID >= 0)
 						animationManager->BindSkeletonData(mesh.skeletonID);
 				}
-					 
+
+				if (layer != currentLayer)
+				{
+					currentLayer = layer;
+				}
+
 				InstanceData smid = *(InstanceData*)renderJobs.at(i).value;
 				m_staticInstances[instanceCount++] = smid;
 			}
@@ -247,14 +311,17 @@ namespace GFX
 
 		m_shaderManager->ResetProgram();
 
-		ClearFBO();
+		glClearStencil(0);
+		glClear(GL_STENCIL_BUFFER_BIT);
+		glDisable(GL_STENCIL_TEST);
 
+		ClearFBO();
 		renderIndex = i;
 
 	}
-	
+
 #else
-	
+
 	void DeferredPainter::Render(unsigned int& renderIndex, FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix)
 	{
 		BasePainter::Render();
@@ -266,14 +333,14 @@ namespace GFX
 
 		// Clear depth RT
 		float c[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-		glClearBufferfv(GL_COLOR, 1, &glm::vec4(0.0f, 0.0f, 0.0f,1.0f)[0]);
+		glClearBufferfv(GL_COLOR, 1, &glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)[0]);
 
 		m_shaderManager->UseProgram("StaticNormal");
-		
+
 		BasicCamera bc;
 		bc.viewMatrix = viewMatrix;
 		bc.projMatrix = projMatrix;
-		
+
 		m_uniformBufferManager->SetBasicCameraUBO(bc);
 
 		std::vector<RenderJobManager::RenderJob> renderJobs = m_renderJobManager->GetJobs();
@@ -325,18 +392,18 @@ namespace GFX
 			{
 				mat = m_materialManager->GetMaterial(material);
 
-                //It's possible that a material is removed before an entity. Should this be ok, do we need to be
-                // more rigorous from the outside?
-                if( mat.textures.size() != 4 )
-                {
-                    LOG_ERROR << "Trying to render object with invalid material" << std::endl;
-                    continue;
-                }
-                //alt
+				//It's possible that a material is removed before an entity. Should this be ok, do we need to be
+				// more rigorous from the outside?
+				if (mat.textures.size() != 4)
+				{
+					LOG_ERROR << "Trying to render object with invalid material" << std::endl;
+					continue;
+				}
+				//alt
 				//assert(mat.textures.size() == 4); 
 
 				currentMaterial = material;
-				
+
 				//compare shader
 				if (mat.shaderProgramID != currentShader)
 				{
@@ -344,7 +411,7 @@ namespace GFX
 					error = glGetError();
 					currentShader = mat.shaderProgramID;
 				}
-				
+
 				//set textures
 				m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[0]).textureHandle, m_uniformTexture0, 0, GL_TEXTURE_2D);
 				m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[1]).textureHandle, m_uniformTexture1, 1, GL_TEXTURE_2D);
@@ -358,17 +425,17 @@ namespace GFX
 				currentMesh = meshID;
 
 				glBindVertexArray(mesh.VAO);
-					error = glGetError();
+				error = glGetError();
 				//set mesh
 			}
 
 			m_shaderManager->SetUniform(1, *(glm::mat4*)renderJobs.at(i).value, m_modelMatrixUniform);
-					error = glGetError();
+			error = glGetError();
 			//glDrawArrays(GL_TRIANGLES, 0, 3559);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IBO);
-					error = glGetError();
+			error = glGetError();
 			glDrawElements(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0);
-					error = glGetError();
+			error = glGetError();
 		}
 
 		m_shaderManager->ResetProgram();
@@ -378,7 +445,7 @@ namespace GFX
 		renderIndex = i;
 
 	}
-	
+
 #endif
 
 	void DeferredPainter::BindGBuffer(FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID)

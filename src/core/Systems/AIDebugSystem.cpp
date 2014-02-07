@@ -68,11 +68,14 @@ void TestPathFinding()
 
 void Core::AIDebugSystem::Update( float delta )
 {
+	
 
 
 	GetPlanePoint();
 
+
 	return; //////////////////////////////////////////
+
 
 	if( Core::GetNavigationMesh() )
 	{
@@ -91,9 +94,6 @@ void Core::AIDebugSystem::Update( float delta )
 				GFX::Debug::DrawLine( temp, instance->flowfields[4].list[i], GFXColor( 0, 0, 1, 1 ), false  );
 
 		}
-
-
-
 	}
 
 

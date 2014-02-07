@@ -51,31 +51,31 @@ void Core::NavMeshBlockingSystem::CalculateBlockedNodes( int targetRioterGroup )
 			}
 		}
 
-		for( int i = 0; i < instance->nrNodes; i++ )
-		{
-			for( int pp = 0; pp < 4; pp++ )
-			{
-				if( instance->flowfields[ targetRioterGroup ].blocked[ i * 4 + pp ] > 5.0f )
-				{
-					int ii = pp * 2;
-					int oo = (ii + 2) % 8;	
-					float* points = instance->nodes[ i ].points;
-					glm::vec3 lineStart = glm::vec3( points[ ii ], 0.0f, points[ ii + 1 ] );
-					glm::vec3 lineEnd	= glm::vec3( points[ oo ], 0.0f, points[ oo + 1 ] );
-		
-					GFX::Debug::DrawSphere( lineStart + ( lineEnd - lineStart ) * 0.5f, 
-						instance->flowfields[ targetRioterGroup ].blocked[ i * 4 + pp ], GFXColor( 0.5f, 1.0f, 0.2f, 1.0f ), false );
-
-
-					//float* points = instance->nodes[i].points;
-					//glm::vec3 temp = glm::vec3(0.0f);
-					//for( int g = 0; g < 4; g++ )
-					//	temp += glm::vec3( points[ g * 2 ], 0.0f, points[ g * 2 + 1] );
-					//temp *= 0.25f;
-					//GFX::Debug::DrawSphere( temp, 5, GFXColor( 0.5f, 1.0f, 0.2f, 1.0f ), false );
-				}
-			}
-		}
+		//for( int i = 0; i < instance->nrNodes; i++ )
+		//{
+		//	for( int pp = 0; pp < 4; pp++ )
+		//	{
+		//		if( instance->flowfields[ targetRioterGroup ].blocked[ i * 4 + pp ] > 5.0f )
+		//		{
+		//			int ii = pp * 2;
+		//			int oo = (ii + 2) % 8;	
+		//			float* points = instance->nodes[ i ].points;
+		//			glm::vec3 lineStart = glm::vec3( points[ ii ], 0.0f, points[ ii + 1 ] );
+		//			glm::vec3 lineEnd	= glm::vec3( points[ oo ], 0.0f, points[ oo + 1 ] );
+		//
+		//			GFX::Debug::DrawSphere( lineStart + ( lineEnd - lineStart ) * 0.5f, 
+		//				instance->flowfields[ targetRioterGroup ].blocked[ i * 4 + pp ], GFXColor( 0.5f, 1.0f, 0.2f, 1.0f ), false );
+		//
+		//
+		//			//float* points = instance->nodes[i].points;
+		//			//glm::vec3 temp = glm::vec3(0.0f);
+		//			//for( int g = 0; g < 4; g++ )
+		//			//	temp += glm::vec3( points[ g * 2 ], 0.0f, points[ g * 2 + 1] );
+		//			//temp *= 0.25f;
+		//			//GFX::Debug::DrawSphere( temp, 5, GFXColor( 0.5f, 1.0f, 0.2f, 1.0f ), false );
+		//		}
+		//	}
+		//}
 
 
 	}
@@ -108,7 +108,7 @@ void Core::NavMeshBlockingSystem::Update( float delta )
 				Core::NavigationMesh::Flowfield& meta = instance->flowfields[i];
 
 				glm::vec3 currentPosition = Core::world.m_systemHandler.GetSystem<Core::GroupDataSystem>()->GetMedianPosition(i);
-				GFX::Debug::DrawSphere( currentPosition, meta.stuckTimer + 2.0f, GFXColor( 0, 0, 1, 1 ), false );
+				//GFX::Debug::DrawSphere( currentPosition, meta.stuckTimer + 2.0f, GFXColor( 0, 0, 1, 1 ), false );
 
 				if( meta.timeSinceLastCheck > GROUP_CHECK_STUCK_TIMER )
 				{
@@ -118,12 +118,12 @@ void Core::NavMeshBlockingSystem::Update( float delta )
 					glm::vec3 lastPosition = glm::vec3( meta.recordedPosition[0], 0.0f, meta.recordedPosition[1] );
 
 					
-					GFX::Debug::DrawLine( currentPosition, lastPosition, GFXColor( 1, 0, 1, 1 ), false );
+					//GFX::Debug::DrawLine( currentPosition, lastPosition, GFXColor( 1, 0, 1, 1 ), false );
 
 					if( glm::distance( currentPosition, lastPosition ) < GROUP_IS_STUCK_DISTANCE )
 					{
 						meta.stuckTimer += meta.stuckTimer == 0.0f ? delta : GROUP_CHECK_STUCK_TIMER;
-						GFX::Debug::DrawSphere( currentPosition, 4.0f, GFXColor( 1, 1, 0, 1 ), false );
+						//GFX::Debug::DrawSphere( currentPosition, 4.0f, GFXColor( 1, 1, 0, 1 ), false );
 						if( meta.stuckTimer > GROUP_FIND_NEW_PATH_TIMER )
 						{
 							// squad appears to be stuck...
@@ -134,7 +134,7 @@ void Core::NavMeshBlockingSystem::Update( float delta )
 					}
 					else
 					{
-						GFX::Debug::DrawSphere( currentPosition, 4.0f, GFXColor( 1, 0, 0, 1 ), false );
+						//GFX::Debug::DrawSphere( currentPosition, 4.0f, GFXColor( 1, 0, 0, 1 ), false );
 						meta.stuckTimer = 0.0f;
 					}
 

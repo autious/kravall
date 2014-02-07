@@ -7,6 +7,7 @@ scen.asm:specific_content( core.contentmanager.load(
 
 scen.gamemode = require "gamemodes/kravall":new()
 
+local mouse = core.input.mouse
 local squad = ent.get "policeSquad"
 
 scen:registerUpdateCallback( function(delta) scen.gamemode:update(delta) end )
@@ -35,7 +36,6 @@ local building = ent.get "building"
 
 
 local rGroup = core.system.groups.createGroup();
---local centerPoint = { 200, 0, 25 }
 local centerPoint = { 110, 0, 0 }
 local side = math.sqrt( 50 )
 for i = -side/2, side/2 do
@@ -51,6 +51,19 @@ local squadTwo = squad(scen, 77, 0, 43, math.pi/2);
 
 
 
+local clicked = false
+local prevClicked = true
+local firstX, firstY
 
+function Update(dt)
+	
+end
+
+
+
+
+
+
+scen:registerUpdateCallback( Update )
 
 return scen;
