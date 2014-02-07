@@ -20,7 +20,12 @@ return function( scen )
 	scen.gamemode = require "gamemodes/kravall":new()
 	scen:registerUpdateCallback( function(delta) scen.gamemode:update(delta) end )
 	scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
-	scen:registerInitCallback( function() scen.gamemode.camera:lookAt( core.glm.vec3.new( 60, 120, 180 ), core.glm.vec3.new( -30, 0, 90 ) ) end)
+	scen:registerInitCallback( function() 
+									scen.gamemode.camera:lookAt( core.glm.vec3.new( -40, 30, 180 ), core.glm.vec3.new( -40, 0, 155 ) ) 
+									--scen.gamemode.camera.yaw = scen.gamemode.camera.yaw + math.pi
+									local plane = entity.get "plane"
+									plane(scen, 0, 0, 0, 900)
+							   end)
 	
 	-- Just random helpful stuffzzz --
 	--core.system.name.getEntitiesByName( "area1" )[1]

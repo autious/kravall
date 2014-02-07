@@ -1,6 +1,5 @@
-local planeScale = 17
-return function(asm, posX, posY, posZ, scale)
-    scale = scale or 100
+return function(asm, posX, posY, posZ, planeScale)
+    --scale = scale or 100
 	asm:loadAssembly( 
 		{
 			{
@@ -21,7 +20,7 @@ return function(asm, posX, posY, posZ, scale)
 			},
 			{
 				type = core.componentType.ScaleComponent,
-				data = { scale = scale }
+				data = { scale = planeScale }
 			},
 			{
 				type = core.componentType.UnitTypeComponent,
