@@ -3,6 +3,7 @@
 
 #include "../RenderCore.hpp"
 #include <logger/Logger.hpp>
+#include <Textures/TextureManager.hpp>
 
 namespace GFX
 {

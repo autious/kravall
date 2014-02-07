@@ -6,6 +6,8 @@
 #include <logger/Logger.hpp>
 #include <Input/InputManager.hpp>
 
+#undef max
+
 Core::PickingSystem::PickingSystem()
 : BaseSystem(EntityHandler::GenerateAspect< WorldPositionComponent, BoundingVolumeComponent >(), 0ULL), 
 m_lastSelectedEntity(INVALID_ENTITY), m_currentGroundHit(glm::vec3(0.0f)) 
@@ -29,7 +31,7 @@ Core::Entity Core::PickingSystem::GetHitEntity(int mouseX, int mouseY, Core::Asp
 	glm::vec3 rayDir = GetRayFromCamera( mouseX, mouseY );
 	glm::vec3 rayOrigin = Core::gameCamera.GetPosition();
 
-	float closestHit = FLT_MAX;
+	float closestHit = std::numeric_limits< float >::max();
 	Entity objectHit;
 	bool somethingHit = false;
 
@@ -118,7 +120,7 @@ glm::vec3 Core::PickingSystem::GetRayFromCamera( int mouseX, int mouseY )
 	mousePos.x = ( 2.f * (float)mouseX ) / (float)GFX::GetScreenWidth() - 1.f;
 	mousePos.y = 1.f - ( 2.f * (float)mouseY ) / (float)GFX::GetScreenHeight();
 
-	glm::vec4 rayClipSpace = glm::vec4( mousePos.x, mousePos.y, -1, 1 );
+	glm::vec4 rayClipSpace = glm::vec4( mousePos.x, mousePos.y, -1.f, 1.f );
 	glm::vec4 rayEyeSpace = glm::inverse( Core::gameCamera.GetProjectionMatrix() ) * rayClipSpace;
 	rayEyeSpace.z = -1;
 	rayEyeSpace.w = 0;
@@ -128,3 +130,59 @@ glm::vec3 Core::PickingSystem::GetRayFromCamera( int mouseX, int mouseY )
 	return glm::vec3( ray );
 }
 
+
+std::vector< Core::Entity > Core::PickingSystem::BoxSelect( int X, int Y, int X2, int Y2, float graceDistance, Core::Aspect aspectMask )
+{
+	std::vector< Core::Entity > hitEntities;
+
+	// TO DO : might need error-checks ~ which ones?
+	if( X == X2 || Y == Y2 )
+		return std::move( hitEntities );
+
+	// swap values for correct winding...
+	int windedX = X < X2 ? X : X2;
+	int windedY = Y < Y2 ? Y : Y2;
+	int windedX2 = X > X2 ? X : X2;
+	int windedY2 = Y > Y2 ? Y : Y2;
+
+	glm::vec3 cameraPos = Core::gameCamera.GetPosition();
+	glm::vec3 cameraForward = glm::vec3( glm::inverse( Core::gameCamera.GetViewMatrix() )[2] );
+
+	glm::vec3 topLeft		= GetRayFromCamera( windedX,	windedY );
+	glm::vec3 topRight		= GetRayFromCamera( windedX2,	windedY );
+	glm::vec3 bottomLeft	= GetRayFromCamera( windedX,	windedY2 );
+	glm::vec3 bottomRight	= GetRayFromCamera( windedX2,	windedY2 );
+	
+	glm::vec3 planes[5];
+	planes[0] = glm::normalize( glm::cross( bottomLeft, topLeft ));		// leftPlane	
+	planes[1] = glm::normalize( glm::cross( topLeft, topRight ));		// topPlane	
+	planes[2] = glm::normalize( glm::cross( topRight, bottomRight ));	// rightPlane
+	planes[3] = glm::normalize( glm::cross( bottomRight, bottomLeft ));	// bottomPlane
+	planes[4] = glm::normalize( -cameraForward );						// cameraPlane
+
+	
+	for( std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); it++ )
+	{
+		if ((Core::world.m_entityHandler.GetEntityAspect(*it) & aspectMask) != aspectMask)
+			continue;
+
+		Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(*it);
+		glm::vec3 cameraToObject = Core::WorldPositionComponent::GetVec3( *wpc ) - cameraPos;
+
+		bool inside = true;
+		for( int i = 0; i < 5; i++ )
+		{
+			float distanceToLine = glm::dot( planes[i], cameraToObject );
+			if( distanceToLine < -graceDistance )
+			{
+				inside = false;
+				break;
+			}
+		}
+
+		if( inside )
+			hitEntities.push_back( *it );
+	}
+
+	return std::move( hitEntities );
+}

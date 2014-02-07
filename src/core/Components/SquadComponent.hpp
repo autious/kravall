@@ -13,7 +13,8 @@ namespace Core
 	{
         NO_FORMATION,
 		LINE_FORMATION,
-		CIRCLE_FORMATION
+		CIRCLE_FORMATION,
+        HALF_CIRCLE_FORMATION
 	};
 
 	/*!

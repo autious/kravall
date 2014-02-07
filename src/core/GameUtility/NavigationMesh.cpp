@@ -36,15 +36,22 @@ namespace Core
             LOG_FATAL << "Flowfield array is out of indices" << std::endl;
         }
 
+		flowfields[nrUsedFlowfields].blocked = Core::world.m_levelHeap.NewPODArray<float>( nrNodes * 4 );
         flowfields[nrUsedFlowfields].edges = Core::world.m_levelHeap.NewPODArray<int>( nrNodes );
-		flowfields[nrUsedFlowfields].list = reinterpret_cast<glm::vec3*>(Core::world.m_levelHeap.NewPODArray<float>( 3 * nrNodes ));
+		flowfields[nrUsedFlowfields].list = (glm::vec3*)(Core::world.m_levelHeap.NewPODArray<float>( 3 * nrNodes ));
 
-
+		std::memset( flowfields[nrUsedFlowfields].blocked, 0, nrNodes * sizeof(float) * 4 );
 		std::memset( flowfields[nrUsedFlowfields].edges, 0, nrNodes * sizeof(int) );
 		std::memset( flowfields[nrUsedFlowfields].list, 0, nrNodes * sizeof(glm::vec3) );
 
 		flowfields[nrUsedFlowfields].goal[ 0 ] = std::numeric_limits<float>::max();
 		flowfields[nrUsedFlowfields].goal[ 1 ] = std::numeric_limits<float>::max();
+
+		flowfields[ nrUsedFlowfields ].stuckTimer = 0.0f;
+		flowfields[ nrUsedFlowfields ].timeSinceLastCheck = -1.0f;
+				    				 
+		flowfields[ nrUsedFlowfields ].recordedPosition[0] = 0.0f;
+		flowfields[ nrUsedFlowfields ].recordedPosition[1] = 0.0f;
 
         return nrUsedFlowfields++;
     }
@@ -166,12 +173,11 @@ std::fstream& operator>> ( std::fstream& ff, Core::NavigationMesh::Node& node )
 	// read points...
 	for( int i = 0; i < 8; i++ )
 		ff >> node.points[i];
-	
+
 	// handle meta...
 	for( int i = 0; i < 4; i++ )
 	{
 		node.corners[i].cornerConnectsToNode = NAVMESH_NO_CONNECTING_CORNERS;
-		node.blocked[i] = false;
 
 		ff >> node.corners[i].linksTo;
 

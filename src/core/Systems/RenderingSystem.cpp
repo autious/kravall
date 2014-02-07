@@ -2,6 +2,7 @@
 
 #include <gfx/GFXInterface.hpp>
 #include <gfx/InstanceData.hpp>
+#include <gfx/BitmaskDefinitions.hpp>
 #include <World.hpp>
 
 namespace Core
@@ -38,7 +39,11 @@ namespace Core
                 instanceData->rnd_seed = *it;
                 instanceData->frameOffset = 0;
                 instanceData->animationIndex = -1;
-				instanceData->outlineColor = glm::vec4(gc->outlineColor[0], gc->outlineColor[1], gc->outlineColor[2], gc->outlineColor[3]);
+
+				instanceData->outlineColor[0] = gc->outlineColor[0];
+				instanceData->outlineColor[1] = gc->outlineColor[1];
+				instanceData->outlineColor[2] = gc->outlineColor[2];
+				instanceData->outlineColor[3] = gc->outlineColor[3];
 
                 if (ac != nullptr)
                 {

@@ -68,11 +68,14 @@ void TestPathFinding()
 
 void Core::AIDebugSystem::Update( float delta )
 {
+	
 
 
+	GetPlanePoint();
 
 
-	//return;
+	return; //////////////////////////////////////////
+
 
 	if( Core::GetNavigationMesh() )
 	{
@@ -80,45 +83,17 @@ void Core::AIDebugSystem::Update( float delta )
 
 		for( int i = 0; i < instance->nrNodes; i++ )
 		{
-			for( int p = 0; p < 4; p++ )
-			{
-				if( instance->nodes[i].corners[p].linksTo < -0.5f )
-					continue;
 
-				int ii = p * 2;
-				int oo = (ii + 2) % 8;
-				float* points = instance->nodes[i].points;
+			float* points = instance->nodes[i].points;
+			glm::vec3 temp = glm::vec3(0.0f);
+			for( int g = 0; g < 4; g++ )
+				temp += glm::vec3( points[ g * 2 ], 0.0f, points[ g * 2 + 1] );
+			temp *= 0.25f;
+			GFX::Debug::DrawSphere( temp, 5, GFXColor( 0.5f, 1.0f, 0.2f, 1.0f ), false );
+			if( instance->flowfields[4].list != nullptr )
+				GFX::Debug::DrawLine( temp, instance->flowfields[4].list[i], GFXColor( 0, 0, 1, 1 ), false  );
 
-				glm::vec3 lineStart = glm::vec3( points[ ii ], 0.0f, points[ ii + 1 ] );
-				glm::vec3 lineEnd	= glm::vec3( points[ oo ], 0.0f, points[ oo + 1 ] );
-
-				if( p == 0 )
-				{
-					//GFX::Debug::DrawSphere( lineStart + (lineEnd - lineStart) * 0.5f, 1.3f, GFXColor( 1, 0, 0, 1 ), false );
-				}
-
-				float delta = 3.0f;
-
-				glm::vec3 normal = glm::normalize( glm::cross( (lineEnd - lineStart), glm::vec3( 0.0f, 1.0f, 0.0f ) ) );
-
-				//GFX::Debug::DrawSphere( lineStart + glm::normalize( lineEnd - lineStart ) * delta, 1.3f, GFXColor( 1, 0, 0, 1 ), false );
-				//GFX::Debug::DrawLine( lineStart, lineStart + glm::normalize( lineEnd - lineStart ) * delta, GFXColor( 0, 0, 1, 1 ), false  );
-				
-				//GFX::Debug::DrawSphere( lineStart + glm::normalize( lineEnd - lineStart ) * delta, 1.3f, GFXColor( 1, 0, 0, 1 ), false );
-				//GFX::Debug::DrawLine( lineEnd, lineStart + glm::normalize( lineEnd - lineStart ) * delta, GFXColor( 0, 0, 1, 1 ), false  );
-
-				//positions[0] = lineStart + glm::normalize( lineEnd - lineStart ) * 1.0f;
-				//positions[1] = ownMidLine;
-				//positions[2] = lineEnd + glm::normalize( lineStart - lineEnd ) * 1.0f;
-
-				
-				//glm::vec3 cross = glm::normalize( glm::cross( (lineEnd - lineStart), glm::vec3( 0.0f, 1.0f, 0.0f ) ) );
-				//GFX::Debug::DrawLine( lineStart + (lineEnd - lineStart) * 0.5f, lineStart + (lineEnd - lineStart) * 0.5f + cross, GFXColor( 0, 0, 1, 1 ), false  );
-			}
 		}
-
-
-
 	}
 
 

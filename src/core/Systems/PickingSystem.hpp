@@ -4,6 +4,7 @@
 #include <SystemDef.hpp>
 
 
+
 namespace Core
 {
 	/*!
@@ -38,6 +39,11 @@ namespace Core
 		*/
 		glm::vec3 GetCurrentGroundHit() { return m_currentGroundHit; }
 
+		/*!
+			Will form a frustum form the 2 screen space points and return a list of all entities that 
+			graceDistance is how far outside the frustum the object center is allowed to be. Can be negative.
+		*/
+		std::vector< Core::Entity > BoxSelect( int X, int Y, int X2, int Y2, float graceDistance, Core::Aspect aspectMask = 0ULL );
 
 		/*!
 			Will return a ray going from the game camera via cursor to far-plane.

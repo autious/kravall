@@ -56,14 +56,14 @@ function Button:onPress()
     self.pressedImg:show(true)
     self.releasedImg:show(false)
     self.hoverImg:show(false)
-
-    self.onClick() 
 end
 
 function Button:onRelease()
     self.pressedImg:show(false)
     self.releasedImg:show(false)
     self.hoverImg:show(true)
+
+    self.onClick() 
 end
 
 function Button:onEnter()
