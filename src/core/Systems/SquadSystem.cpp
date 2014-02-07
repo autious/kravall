@@ -122,7 +122,7 @@ namespace Core
                         glm::vec2 relPos2D = glm::vec2(radius, 0.0f);
                         relPos2D = rotMat2D * relPos2D;
 
-                        frmc->relativePosition[0] = relPos2D.x + radius;
+                        frmc->relativePosition[0] = relPos2D.x + (isHalfCircle ? radius : 0.0f);
                         frmc->relativePosition[1] = relPos2D.y;
 
                         circumferenceOffset += circleSpacing;

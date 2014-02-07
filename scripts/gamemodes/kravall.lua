@@ -21,9 +21,6 @@ core.movementData.setMovementMetaData( core.movementData.Sprinting, 8.8, 17, 14 
 function squadHandling()
     --Formations
     if core.input.mouse.isButtonDownOnce(core.input.mouse.button.Left) then        
-        if isClick == true then
-            isClick = false
-        end
 		boxStartX, boxStartY = core.input.mouse.getPosition()
         selectedEntity = core.system.picking.getLastHitEntity()
         if selectedEntity then
@@ -61,9 +58,14 @@ function squadHandling()
                     end
                 end
             end
-		elseif not core.input.keyboard.isKeyDown(core.input.keyboard.key.Left_shift) and not core.config.stickySelection then
+		elseif not core.input.keyboard.isKeyDown(core.input.keyboard.key.Left_shift) and not core.config.stickySelection and not isClick then
 			selectedSquads = {}
-        end   
+        end
+
+        if isClick == true then
+            isClick = false
+        end
+
 	elseif core.input.mouse.isButtonDown(core.input.mouse.button.Left) then
 		boxEndX, boxEndY = core.input.mouse.getPosition()
 		groupsSelectedByBox = core.system.picking.getPoliceGroupsInsideBox( boxStartX, boxStartY, boxEndX, boxEndY, core.config.boxSelectionGraceDistance )
