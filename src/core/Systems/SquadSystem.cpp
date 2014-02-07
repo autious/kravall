@@ -67,18 +67,37 @@ namespace Core
         int membersInGroup = units.size();        
         bool isHalfCircle = false;
 
+        Core::NavigationMesh* navMesh = Core::GetNavigationMesh();
+
         switch( formation)
         {
             //Line formation
             case Core::SquadFormation::LINE_FORMATION:
             {
-                float xOffset = 0.0f;
-                float zOffset = 0.0f;
-                float distance =  glm::distance(startPos, endPos);
-                float xSpacing = distance / static_cast<float>(membersInGroup);
+                int goalNode;
+                glm::vec3 center = (startPos + endPos) / 2.0f;
+                float leftDistance = 0.0f;
+                float rightDistance = 0.0f;
+                
+                glm::vec3 start = startPos;
+                glm::vec3 end = endPos;
+
+                if(!navMesh->CheckPointInsideNavigationMesh(center))
+                    return;
+
+                navMesh->GetClosestPointInsideMesh(start, center, goalNode, world.m_config.GetDouble("squadFormationRowSpacing", FORMATION_ROW_SPACING) / 2.0f);                
+                navMesh->GetClosestPointInsideMesh(end, center, goalNode, world.m_config.GetDouble("squadFormationRowSpacing", FORMATION_ROW_SPACING) / 2.0f);
+
+                leftDistance = glm::distance(start, center);
+                rightDistance = glm::distance(end, center);
+
+                float xSpacing = (leftDistance + rightDistance) / static_cast<float>(membersInGroup);
                 float zSpacing = static_cast<float>(world.m_config.GetDouble("squadFormationRowSpacing", FORMATION_ROW_SPACING));
 
                 xSpacing = (xSpacing > static_cast<float>(world.m_config.GetDouble("squadFormationColumnSpacingMinimum", FORMATION_COLUMN_SPACING_MINIMUM))) ? xSpacing : static_cast<float>(world.m_config.GetDouble("squadFormationSpacingMinimum", FORMATION_COLUMN_SPACING_MINIMUM));
+
+                float xOffset = -leftDistance;
+                float zOffset = 0.0f;                
 
                 for(std::vector<Core::Entity>::iterator it = units.begin(); it != units.end(); ++it)
                 {
@@ -88,9 +107,9 @@ namespace Core
                     frmc->relativePosition[1] = zOffset;
 
                     xOffset += xSpacing;
-                    if(xOffset >= distance)
+                    if(xOffset > rightDistance)
                     {
-                        xOffset = 0.0f;
+                        xOffset = -leftDistance;
                         zOffset += zSpacing;
                     }                   
                 }
@@ -109,6 +128,9 @@ namespace Core
                     float circleSpacing = circumference / static_cast<float>(membersInGroup);
                     float radiusSpacing = static_cast<float>(world.m_config.GetDouble("squadFormationRowSpacing", FORMATION_ROW_SPACING));
 
+                    if(!navMesh->CheckPointInsideNavigationMesh(centerPosition))
+                        return;
+
                     circleSpacing = (circleSpacing > static_cast<float>(world.m_config.GetDouble("squadFormationColumnSpacingMinimum", FORMATION_COLUMN_SPACING_MINIMUM))) ? circleSpacing : static_cast<float>(world.m_config.GetDouble("squadFormationSpacingMinimum", FORMATION_COLUMN_SPACING_MINIMUM));
                     for(std::vector<Core::Entity>::iterator it = units.begin(); it != units.end(); ++it)
                     {
@@ -122,7 +144,7 @@ namespace Core
                         glm::vec2 relPos2D = glm::vec2(radius, 0.0f);
                         relPos2D = rotMat2D * relPos2D;
 
-                        frmc->relativePosition[0] = relPos2D.x + (isHalfCircle ? radius : 0.0f);
+                        frmc->relativePosition[0] = relPos2D.x;// + (isHalfCircle ? radius : 0.0f);
                         frmc->relativePosition[1] = relPos2D.y;
 
                         circumferenceOffset += circleSpacing;
@@ -171,33 +193,49 @@ namespace Core
         {
             case Core::SquadFormation::LINE_FORMATION:
             {
+                int goalNode;
                 float cosVal = glm::cos(rotation);
                 float sinVal = glm::sin(rotation);
                 glm::mat2 rotMat2D = glm::mat2(cosVal, -sinVal, sinVal, cosVal);
 
-                float xOffset = 0.0f;
-                float zOffset = 0.0f;
-                float distance = glm::distance(startPos, endPos);
-                float xSpacing = distance / static_cast<float>(membersInGroup);
+                glm::vec3 center = (startPos + endPos) / 2.0f;
+                glm::vec3 start = startPos;
+                glm::vec3 end = endPos;
+
+                float rightDistance = 0.0f;
+                float leftDistance = 0.0f;
+
+                if(!navMesh->CheckPointInsideNavigationMesh(center))
+                    return;
+
+                navMesh->GetClosestPointInsideMesh(start, center, goalNode, 0.0f);                
+                navMesh->GetClosestPointInsideMesh(end, center, goalNode, 0.0f);
+
+                leftDistance = glm::distance(start, center);
+                rightDistance = glm::distance(end, center);
+
+                float xSpacing = (leftDistance + rightDistance) / static_cast<float>(membersInGroup);
                 float zSpacing = static_cast<float>(world.m_config.GetDouble("squadFormationRowSpacing", FORMATION_ROW_SPACING));
 
                 xSpacing = (xSpacing > static_cast<float>(world.m_config.GetDouble("squadFormationColumnSpacingMinimum", FORMATION_COLUMN_SPACING_MINIMUM))) ? xSpacing : static_cast<float>(world.m_config.GetDouble("squadFormationSpacingMinimum", FORMATION_COLUMN_SPACING_MINIMUM));
+
+                float xOffset = -leftDistance;
+                float zOffset = 0.0f;
 
                 for(int i=0; i < membersInGroup; ++i)
                 {
                     glm::vec2 relPos2D = glm::vec2(xOffset, zOffset);
                     relPos2D = rotMat2D * relPos2D;
-                    int goalNode;
                     glm::vec3 relPos = glm::vec3(relPos2D.x, 0.0f, relPos2D.y);
-                    glm::vec3 finalPosition = startPos + relPos;
+                    glm::vec3 finalPosition = center + relPos;
                     //TODO: Replace Debug draw with decals
-                    navMesh->GetClosestPointInsideMesh(finalPosition, startPos, goalNode, 0.2f);
+                    navMesh->GetClosestPointInsideMesh(finalPosition, center, goalNode, 0.2f);
                     GFX::Debug::DrawSphere(finalPosition, 0.5f, GFXColor(1.0f, 0.0f, 0.0f, 1.0f), false);
 
                     xOffset += xSpacing;
-                    if(xOffset >= distance)
+                    if(xOffset > rightDistance)
                     {
-                        xOffset = 0.0f;
+                        xOffset = -leftDistance;
                         zOffset += zSpacing;
                     }                   
                 }
@@ -215,6 +253,8 @@ namespace Core
                     float circleSpacing = circumference / static_cast<float>(membersInGroup);
                     float radiusSpacing = static_cast<float>(world.m_config.GetDouble("squadFormationRowSpacing", FORMATION_ROW_SPACING));
 
+                    if(!navMesh->CheckPointInsideNavigationMesh(centerPosition))
+                        return;
                     circleSpacing = (circleSpacing > static_cast<float>(world.m_config.GetDouble("squadFormationColumnSpacingMinimum", FORMATION_COLUMN_SPACING_MINIMUM))) ? circleSpacing : static_cast<float>(world.m_config.GetDouble("squadFormationSpacingMinimum", FORMATION_COLUMN_SPACING_MINIMUM));
                     for(int i=0; i < membersInGroup; ++i)
                     {
@@ -229,7 +269,7 @@ namespace Core
                         glm::vec3 relPos = glm::vec3(relPos2D.x, 0.0f, relPos2D.y);
                         glm::vec3 finalPosition = centerPosition + relPos;
                         //TODO: Replace Debug draw with decals
-                        navMesh->GetClosestPointInsideMesh(finalPosition, startPos, goalNode, 0.2f);
+                        navMesh->GetClosestPointInsideMesh(finalPosition, centerPosition, goalNode, 0.2f);
                         GFX::Debug::DrawSphere(finalPosition, 0.5f, GFXColor(1.0f, 0.0f, 0.0f, 1.0f), false);
 
                         circumferenceOffset += circleSpacing;
@@ -290,7 +330,7 @@ namespace Core
             {
                 if(squad.size() > 0)
                 {
-                    sqdc->squadLeader = squad[0];
+                    sqdc->squadLeader = squad[static_cast<int>(squad.size() / 2)];
                 }
                 else
                 {

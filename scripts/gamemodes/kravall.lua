@@ -87,7 +87,12 @@ function squadHandling()
             local mouseX, mouseY = core.input.mouse.getPosition()
             clickEndX, clickEndY, clickEndZ = core.system.picking.getGroundHit(mouseX, mouseY)    
             core.system.squad.setSquadFormation(selectedSquads, selectedFormation, clickStartX, clickStartY, clickStartZ, clickEndX, clickEndY, clickEndZ)
-	        core.system.squad.setSquadGoal(selectedSquads, clickStartX, clickStartY, clickStartZ)
+            if clickEndX and clickEndY and clickEndZ and selectedFormation ~= core.system.squad.formations.CircleFormation then
+	            core.system.squad.setSquadGoal(selectedSquads, (clickStartX + clickEndX) / 2, (clickStartY + clickEndY) / 2, (clickStartZ + clickEndZ) / 2)
+            else                
+	            core.system.squad.setSquadGoal(selectedSquads, clickStartX, clickStartY, clickStartZ)
+            end
+
 
             clickStartX, clickStartY, clickStartZ = nil, nil, nil
             isClick = false
