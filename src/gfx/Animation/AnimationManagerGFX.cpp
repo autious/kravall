@@ -1,23 +1,23 @@
-#include "AnimationManager.hpp"
+#include "AnimationManagerGFX.hpp"
 
-AnimationManager::AnimationManager()
+AnimationManagerGFX::AnimationManagerGFX()
 {
 	m_idCounter = 0;
 }
 
-AnimationManager::~AnimationManager()
+AnimationManagerGFX::~AnimationManagerGFX()
 {
 
 }
 
-int AnimationManager::CreateSkeleton(int& out_skeletonID)
+int AnimationManagerGFX::CreateSkeleton(int& out_skeletonID)
 {
 	out_skeletonID = m_idCounter++;
 	m_skeletons[out_skeletonID] = new Skeleton();
 	return GFX_SUCCESS;
 }
 
-int AnimationManager::DeleteSkeleton(const int& skeletonID)
+int AnimationManagerGFX::DeleteSkeleton(const int& skeletonID)
 {
 	if (m_skeletons.find(skeletonID) != m_skeletons.end())
 	{
@@ -29,7 +29,7 @@ int AnimationManager::DeleteSkeleton(const int& skeletonID)
 		return GFX_FAIL;
 }
 
-int AnimationManager::AddAnimationToSkeleton(const int& skeletonID, glm::mat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame)
+int AnimationManagerGFX::AddAnimationToSkeleton(const int& skeletonID, glm::mat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame)
 {
 	if (m_skeletons.find(skeletonID) != m_skeletons.end())
 	{
@@ -39,7 +39,7 @@ int AnimationManager::AddAnimationToSkeleton(const int& skeletonID, glm::mat4x4*
 		return GFX_INVALID_SKELETON;
 }
 
-int AnimationManager::GetFrameInfo(const int& skeletonID, const int& animationID, unsigned int& out_frameCount, unsigned int& out_bonesPerFrame, unsigned int& out_animationOffset)
+int AnimationManagerGFX::GetFrameInfo(const int& skeletonID, const int& animationID, unsigned int& out_frameCount, unsigned int& out_bonesPerFrame, unsigned int& out_animationOffset)
 {
 	if (m_skeletons.find(skeletonID) != m_skeletons.end())
 	{
@@ -49,7 +49,7 @@ int AnimationManager::GetFrameInfo(const int& skeletonID, const int& animationID
 }
 
 
-void AnimationManager::BindSkeletonData(const int& skeletonID)
+void AnimationManagerGFX::BindSkeletonData(const int& skeletonID)
 {
 	if (m_skeletons.find(skeletonID) != m_skeletons.end())
 	{
@@ -57,7 +57,7 @@ void AnimationManager::BindSkeletonData(const int& skeletonID)
 	}
 }
 
-void AnimationManager::BindSkeleton(const int& skeletonID)
+void AnimationManagerGFX::BindSkeleton(const int& skeletonID)
 {
 	if (m_skeletons.find(skeletonID) != m_skeletons.end())
 	{

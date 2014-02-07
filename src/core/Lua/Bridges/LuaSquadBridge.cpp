@@ -161,7 +161,6 @@ extern "C"
 
     static int LuaSetSquadStance(lua_State* L)
     {
-
         Core::SquadSystem* squadSystem = Core::world.m_systemHandler.GetSystem<Core::SquadSystem>();
 
         if(lua_gettop(L) == 2)
@@ -201,6 +200,24 @@ extern "C"
             return luaL_error(L, "setSquadStance([squadIDs], <SquadFormation>, startX, startY, startZ, endX, endY, endZ)  expects 8 paramters");
         }
     }
+
+    static int LuaGetSquadEntity(lua_State* L)
+    {
+        Core::SquadSystem* squadSystem = Core::world.m_systemHandler.GetSystem<Core::SquadSystem>();
+        
+        Core::Entity ent = squadSystem->GetSquadEntity(static_cast<int>(luaL_checknumber(L, 1)));
+        if(ent != INVALID_ENTITY)
+        {
+            LuaEntity* luaEnt = Core::LuaUNewLightEntity(L);
+            luaEnt->entity = ent;
+        }
+        else
+        {
+            lua_pushnil(L);
+        }
+
+        return 1;
+    }
 }
 
 namespace Core
@@ -221,6 +238,7 @@ namespace Core
                     luau_setfunction(L, "setSquadFormation", LuaSetSquadFormation);
                     luau_setfunction(L, "previewSquadFormation", LuaPreviewSquadFormation);
                     luau_setfunction(L, "setSquadStance", LuaSetSquadStance);
+                    luau_setfunction(L, "getSquadEntity", LuaGetSquadEntity);
                         lua_newtable(L);
                         Core::SquadFormation* formation = LuaUNewSquadFormation(L);
                         *formation = Core::SquadFormation::NO_FORMATION;
@@ -233,6 +251,10 @@ namespace Core
                         formation = LuaUNewSquadFormation(L);
                         *formation = Core::SquadFormation::CIRCLE_FORMATION;
                         lua_setfield(L, -2, "CircleFormation");
+
+                        formation = LuaUNewSquadFormation(L);
+                        *formation = Core::SquadFormation::HALF_CIRCLE_FORMATION;
+                        lua_setfield(L, -2, "HalfCircleFormation");
 
                     lua_setfield(L, -2, "formations");
                 lua_setfield(L, -2, "squad");

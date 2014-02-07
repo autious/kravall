@@ -6,11 +6,11 @@
 #include "Skeleton.hpp"
 #include <GFXDefines.hpp>
 
-class AnimationManager
+class AnimationManagerGFX
 {
 public:
-	AnimationManager();
-	~AnimationManager();
+	AnimationManagerGFX();
+	~AnimationManagerGFX();
 	
 	/*!
 	Creates a skeleton on the GPU
