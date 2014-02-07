@@ -23,6 +23,17 @@ namespace Core
             if( htc->hoverTextId != -1 )
             {
                 GFX::RenderText( localFontData, glm::vec2( wpc->position[0], -wpc->position[1] ), htc->size, HoverTextComponent::GetColor( *htc ), m_strings[htc->hoverTextId].c_str() );
+
+
+                if( CONF.GetBool( "debugRenderHoverTextBounding", true ) )
+                { 
+                    glm::vec2 pos(wpc->position[0], -wpc->position[1]);
+                    glm::vec2 dim = GetStringDimensions( htc->hoverTextId );
+                    pos.y -= dim.y;
+                    
+
+                    GFX::Debug::DrawRectangle(pos,dim,false,Colors::Black );
+                }
             }
         }
     }
@@ -58,6 +69,6 @@ namespace Core
 
     glm::vec2 HoverTextSystem::GetStringDimensions( int id )
     {
-        return glm::vec2(m_strings[id].size() * 6, 14);
+        return glm::vec2(m_strings[id].size() * 10, 14);
     }
 }
