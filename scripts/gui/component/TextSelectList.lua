@@ -89,9 +89,13 @@ function TextSelectList:onPress(x,y)
     for k,v in pairs( self.textElements ) do
         local width,height = v:getDim()
         if AABB:new({v.x,v.y,width,height}):collides( x, y ) then
-            self.onSelect( v.object )
+            self:setActive( v.object )
         end
     end
+end
+
+function TextSelectList:setActive( object )
+    self.onSelect( object )
 end
 
 function TextSelectList:onRelease()
