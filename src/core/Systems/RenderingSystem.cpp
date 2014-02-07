@@ -41,7 +41,7 @@ namespace Core
                 instanceData->animationIndex = -1;
 
 				GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::LAYER, GFX::LAYER_TYPES::OUTLINE_LAYER);
-
+				instanceData->outlineColor = glm::vec4(rand() % 255 / 255.0f, rand() % 255 / 255.0f, rand() % 255 / 255.0f, 1);
                 if (ac != nullptr)
                 {
                     instanceData->animationIndex = ac->animationID;

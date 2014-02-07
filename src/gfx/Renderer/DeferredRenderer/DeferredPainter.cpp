@@ -72,18 +72,18 @@ namespace GFX
 		m_shaderManager->LinkProgram("AnimatedBlend");
 
 		m_shaderManager->CreateProgram("AnimatedOutline");
-		m_shaderManager->LoadShader("shaders/geometry/AnimatedBlendVS.glsl", "AnimatedOutlineVS", GL_VERTEX_SHADER);
-		m_shaderManager->LoadShader("shaders/geometry/OutlineFS.glsl", "AnimatedOutlineFS", GL_FRAGMENT_SHADER);
+		m_shaderManager->LoadShader("shaders/Outline/AnimatedOutlineVS.glsl", "AnimatedOutlineVS", GL_VERTEX_SHADER);
+		m_shaderManager->LoadShader("shaders/Outline/OutlineFS.glsl", "AnimatedOutlineFS", GL_FRAGMENT_SHADER);
 		m_shaderManager->AttachShader("AnimatedOutlineVS", "AnimatedOutline");
 		m_shaderManager->AttachShader("AnimatedOutlineFS", "AnimatedOutline");
 		m_shaderManager->LinkProgram("AnimatedOutline");
 
-		m_shaderManager->CreateProgram("StaticOutline");
-		m_shaderManager->LoadShader("shaders/geometry/AnimatedBlendVS.glsl", "StaticOutlineVS", GL_VERTEX_SHADER);
-		m_shaderManager->LoadShader("shaders/geometry/OutlineFS.glsl", "StaticOutlineFS", GL_FRAGMENT_SHADER);
-		m_shaderManager->AttachShader("StaticOutlineVS", "StaticOutline");
-		m_shaderManager->AttachShader("StaticOutlineFS", "StaticOutline");
-		m_shaderManager->LinkProgram("StaticOutline");
+		//m_shaderManager->CreateProgram("StaticOutline");
+		//m_shaderManager->LoadShader("shaders/geometry/AnimatedBlendVS.glsl", "StaticOutlineVS", GL_VERTEX_SHADER);
+		//m_shaderManager->LoadShader("shaders/geometry/OutlineFS.glsl", "StaticOutlineFS", GL_FRAGMENT_SHADER);
+		//m_shaderManager->AttachShader("StaticOutlineVS", "StaticOutline");
+		//m_shaderManager->AttachShader("StaticOutlineFS", "StaticOutline");
+		//m_shaderManager->LinkProgram("StaticOutline");
 
 		m_uniformBufferManager->CreateBasicCameraUBO(m_shaderManager->GetShaderProgramID("StaticBlend"));
 
