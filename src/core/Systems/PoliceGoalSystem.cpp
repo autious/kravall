@@ -134,16 +134,13 @@ void Core::PoliceGoalSystem::Update( float delta )
 		int groupId = attribc->police.squadID;
 		if( groupId < 0 )
 			continue;
-
-		//if( instance->flowfields[ groupId ].goal[0] == std::numeric_limits<float>::max() )
-		//	continue;
-
-		Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(*it);
-		Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>(*it);
-		Core::FlowfieldComponent* ffc = WGETC<Core::FlowfieldComponent>(*it);
 		
+		Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>(*it);
 		if( mvmc->NavMeshGoalNodeIndex < 0 )
 			continue;
+
+		Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(*it);
+		Core::FlowfieldComponent* ffc = WGETC<Core::FlowfieldComponent>(*it);
 
 		glm::vec3 position = glm::vec3( wpc->position[0], 0.0f, wpc->position[2] );
 		glm::vec3 target = glm::vec3( mvmc->goal[0], 0.0f, mvmc->goal[1] );	

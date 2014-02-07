@@ -63,7 +63,7 @@ void Core::NavMeshCollisionSystem::Update( float delta )
 				glm::vec3 cross = glm::normalize( glm::cross( (lineEnd - lineStart), glm::vec3( 0.0f, 1.0f, 0.0f ) ) );
 				float distanceToLine = glm::dot( cross, fromStartToObject );
 				
-				if( distanceToLine < sphere.radius && distanceToLine >= 0 )
+				if( distanceToLine < sphere.radius )// && distanceToLine >= 0 )
 					position += cross * (sphere.radius - distanceToLine);
 			}
 

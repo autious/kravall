@@ -55,7 +55,8 @@ void Core::FlowfieldPositioningSystem::Update( float delta )
 
 					// else set node as unassigned
 					else
-						ffc->node = -1;
+						; //ffc->node = -1; // else do nothing, ffc is initialized to -1 and collision system will make sure 
+						  // that after assignment they will never leave the navigation mesh
 				}
 			}
 

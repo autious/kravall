@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <logger/Logger.hpp>
 
+#define EDGE_HEAT_DENSITY_THREASHOLD_FOR_BLOCKING 5.0f
+
 namespace Core
 {
 	struct TraversalData
@@ -64,11 +66,17 @@ namespace Core
 		for( int i = 0; i < 4; i++ )
 		{
 			int linksTo = nodes[ node ].corners[i].linksTo;
-			if( linksTo >= 0 && !nodes[ node ].blocked[i] )
+			if( linksTo >= 0 && flowfields[ group ].blocked[ node * 4 + i] < EDGE_HEAT_DENSITY_THREASHOLD_FOR_BLOCKING 
+				&& flowfields[ group ].blocked[ nodes[ node ].corners[i].linksTo * 4 + nodes[ node ].corners[i].linksToEdge ] < EDGE_HEAT_DENSITY_THREASHOLD_FOR_BLOCKING )
 				prioList.push_back( TraversalData( linksTo, nodes[ node ].corners[i].linksToEdge, -5.0f, -1 ) );
 		}
 		std::sort( prioList.begin(), prioList.end(), sortingFunction );
 
+		if( prioList.size() == 0 )
+		{
+			flowfields[group].goal[ 0 ] = std::numeric_limits< float >::max();
+			return false;
+		}
 
 		// allocate and initialize data
 		bool* visited = Core::world.m_frameHeap.NewPODArray<bool>( nrNodes );
@@ -137,7 +145,9 @@ namespace Core
 					for( int i = 0; i < 4; i++ )
 					{
 						// the later half of this if will not be run if the first one is true, henc no explotion... 
-						if( current.corners[i].linksTo < 0 || nodes[ current.corners[ i ].linksTo ].blocked[ current.corners[ i ].linksToEdge ] )
+						//if( current.corners[i].linksTo < 0 || nodes[ current.corners[ i ].linksTo ].blocked[ current.corners[ i ].linksToEdge ] )
+						if( current.corners[i].linksTo < 0 || flowfields[ group ].blocked[ 4 * prioList[0].node + i ] > EDGE_HEAT_DENSITY_THREASHOLD_FOR_BLOCKING || 
+							flowfields[ group ].blocked[ current.corners[i].linksTo * 4 + current.corners[i].linksToEdge ] > EDGE_HEAT_DENSITY_THREASHOLD_FOR_BLOCKING )
 							continue;
 
 						// calculate midpoint for the outgoing edge...
@@ -161,7 +171,7 @@ namespace Core
 				}
 			}
 
-			if( prioList[0].node == 0 )
+			if( prioList[0].node == 4 )
 				int pp = 0;
 				
 
@@ -310,14 +320,6 @@ namespace Core
 	{
 		std::vector< AStarData > prioList;
 
-		prioList.reserve( 1000 );
-		prioList.push_back( AStarData( 0, 0, 0, 0, 0 ) );
-		prioList.push_back( AStarData( 0, 0, 0, 0, 0 ) );
-		prioList.push_back( AStarData( 0, 0, 0, 0, 0 ) );
-		prioList.push_back( AStarData( 0, 0, 0, 0, 0 ) );
-		prioList.clear();
-
-
 		// init memory...
 		std::memset( visited, false, sizeof(bool) * nrNodes );
 		std::memset( distances, 0, sizeof(float) * nrNodes );
@@ -339,7 +341,7 @@ namespace Core
 			float distToGoal = glm::distance2( ownPosition, mid );
 
 			int linksTo = nodes[ otherNode ].corners[i].linksTo;
-			if( linksTo >= 0 && !nodes[ otherNode ].blocked[i] )
+			if( linksTo >= 0 )
 				prioList.push_back( AStarData( linksTo, nodes[ otherNode ].corners[i].linksToEdge, -1, dist, distToGoal ) );
 		}
 		std::sort( prioList.begin(), prioList.end(), AstarSortingFunction );
@@ -387,7 +389,7 @@ namespace Core
 					for( int i = 0; i < 4; i++ )
 					{
 						// the later half of this if will not be run if the first one is true, henc no explotion... 
-						if( current.corners[i].linksTo < 0 || nodes[ current.corners[ i ].linksTo ].blocked[ current.corners[ i ].linksToEdge ] )
+						if( current.corners[i].linksTo < 0 )
 							continue;
 
 						// calculate midpoint for the outgoing edge...
