@@ -19,6 +19,7 @@
 #include <Lua/Bridges/ComponentBind/TargetingComponentBinding.hpp>
 #include <Lua/Bridges/ComponentBind/SquadComponentBinding.hpp>
 #include <Lua/Bridges/ComponentBind/FormationComponentBinding.hpp>
+#include <Lua/Bridges/ComponentBind/HoverTextComponentBinding.hpp>
 
 #include <cassert>
 
@@ -43,7 +44,8 @@ namespace Core
 	 AnimationComponentBinding,
 	 TargetingComponentBinding,
      SquadComponentBinding,
-     FormationComponentBinding> EntityBridge;
+     FormationComponentBinding,
+     HoverTextComponentBinding> EntityBridge;
 }
 
 /*************/

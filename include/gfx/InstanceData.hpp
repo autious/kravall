@@ -9,7 +9,7 @@ namespace GFX
 	struct InstanceData
 	{
 		glm::mat4 modelMatrix;
-		float outlineColor[4];
+		glm::vec4 outlineColor;
 		int animationIndex;
 		unsigned int frameOffset;
 		unsigned int rnd_seed;

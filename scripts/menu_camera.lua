@@ -9,6 +9,7 @@ local keyboard = core.input.keyboard
 local mouse = core.input.mouse
 local camera= core.camera.gameCamera
 local key = keyboard.key
+local utility = require "utility"
 
 function C:new(o)
     local o = o or {}
@@ -59,7 +60,7 @@ function C:update( dt )
         if self.interpolatePosition > 1 then
             self.interpolatePosition = 1
         end
-        self.viewMatrix = self.viewSource:interpolate( self.viewGoal, self.interpolatePosition )
+        self.viewMatrix = self.viewSource:interpolate( self.viewGoal, utility.smoothStep( self.interpolatePosition ) )
 
         if self.interpolatePosition == 1 then
             self.viewMatrix = self.viewGoal

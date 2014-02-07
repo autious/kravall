@@ -51,7 +51,7 @@ namespace Core
 	*/
 	struct NavigationMesh
 	{	
-
+		
 		NavigationMesh()
 		{
 		}
@@ -67,11 +67,6 @@ namespace Core
 				The x and z coordinates for the corners of the quad/triangle.
 			*/
 			float points[8];
-
-			/*!
-				if true the respective edge cannot be traversed in the navmesh.
-			*/
-			bool blocked[4];
 
 			/*!
 				Metadata for each node. Each line is n to n + 1, with n to 0 for the last index.
@@ -114,15 +109,72 @@ namespace Core
 				int cornerConnectsToCorner;
 				
 			} corners[4];
+
+
+			/*!
+				Will return a vector to the mid-point of the respective edge.
+			*/
+			glm::vec3 GetMidPoint( int edge )
+			{
+				int ii = edge * 2;
+				int oo = (ii + 2) % 8;
+				return glm::vec3( points[ ii ], 0.0f, points[ ii + 1 ] ) + 
+					(glm::vec3( points[ oo ], 0.0f, points[ oo + 1 ] ) - 
+					glm::vec3( points[ ii ], 0.0f, points[ ii + 1 ] )) * 0.5f;
+			}
+
+			/*!
+				Will return a vector to the starting point of the indexed edge.
+			*/
+			glm::vec3 GetLineStart( int edge )
+			{
+				return glm::vec3( points[ edge * 2 ], 0.0f, points[ edge * 2 + 1 ] );
+			}
+
+			/*!
+				Will return a vector to the ending point of the indexed edge.
+			*/
+			glm::vec3 GetLineEnd( int edge )
+			{
+				int oo = (edge * 2 + 2) % 8;
+				return glm::vec3( points[ oo ], 0.0f, points[ oo + 1 ] );
+			}
+
 		};
 
 		/*!
 			Struct containing a list of direction vectors and from-goal entry edges with the same size as Core::NavigationMesh::nrNodes.
+			Temporarily contains group metadata as well.
 		*/
 		struct Flowfield
 		{
+			/* Group Data */
+
+			float stuckTimer;
+			float timeSinceLastCheck;
+			float recordedPosition[2];
+
+			/* ********* */
+
+			/*!
+				if above zero the respective edge cannot be traversed in the navmesh.
+			*/
+			float* blocked;
+
+			/*!
+				The assigned goal positing for the flowfield instance. Same position that was used for calculation.
+			*/
 			float goal[2];
+
+			/*!
+				A list with the same size as nrNodes and contains per node indexes for which egde links to next node.
+			*/
 			int* edges;
+
+			/*!
+				List withthe same size as nrNodes and contains per node positions for a point in the next node. 
+				In most cases, this position will be the entry position of the parent node.
+			*/
 			glm::vec3* list;
 		};
 

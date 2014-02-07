@@ -3,10 +3,49 @@
 
 #include <logger/Logger.hpp>
 
+#include <gfx/InstanceData.hpp>
+#include "../../Buffers/MeshManager.hpp"
+#include "../../Textures/TextureManager.hpp"
+#include "../../Material/MaterialManager.hpp"
+#include <Animation/AnimationManagerGFX.hpp>
+#include "../../Buffers/UniformBufferManager.hpp"
+#include "../RenderJobManager.hpp"
+#include <Shaders/ShaderManager.hpp>
+
 #define INSTANCED_DRAWING
 
-namespace GFX
+//Ugly fix for something that messed up OpenGL on GCC.
+// causes no problems since there is only one instance of DeferredPainter anyway.
+extern "C"
 {
+    static GLuint m_uniformTexture0;
+    static GLuint m_uniformTexture1;
+    static GLuint m_uniformTexture2;
+    static GLuint m_uniformTexture3;
+
+    static GLuint m_modelMatrixUniform;
+
+    static GLuint m_gammaUniform;
+
+    static GLint m_cameraPosUniform;
+
+    static unsigned int testCubeMap;
+    static GLint cubemapUniform;
+
+    static const unsigned int MAX_INSTANCES = 1024;
+    static GLuint m_instanceBuffer;
+
+    static GLint m_animatedBlend;
+	static GLint m_animatedNormal;
+
+	static GLint m_staticBlend;
+	static GLint m_staticNormal;
+
+	static unsigned int m_outlineThickness = 0;
+}
+namespace GFX
+{    
+
 	DeferredPainter::DeferredPainter(ShaderManager* shaderManager, UniformBufferManager* uniformBufferManager, RenderJobManager* renderJobManager,
 		MeshManager* meshManager, TextureManager* textureManager, MaterialManager* materialManager)
 		: BasePainter(shaderManager, uniformBufferManager)
@@ -15,6 +54,9 @@ namespace GFX
 		m_meshManager = meshManager;
 		m_textureManager = textureManager;
 		m_materialManager = materialManager;
+        
+        m_animatedBlend = 0;
+
 	}
 
 	DeferredPainter::~DeferredPainter()
@@ -111,8 +153,8 @@ namespace GFX
 	}
 #ifdef INSTANCED_DRAWING
 
-	void DeferredPainter::Render(AnimationManager* animationManager, unsigned int& renderIndex,
-		FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix, const float& gamma)
+	void DeferredPainter::Render(AnimationManagerGFX* animationManager, unsigned int& renderIndex, 
+	FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix, const float& gamma)
 	{
 		BasePainter::Render();
 

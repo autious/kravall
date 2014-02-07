@@ -19,7 +19,6 @@ function GUI:new(o)
     -- Callback function to move gui components.
     self.resizeCallback = function( width, height )
         for _,v in pairs( o.placers ) do
-            print( "NEW:",  width, " ", height )
             v:constrict( o.components, width, height )
         end
     end

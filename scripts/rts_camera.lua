@@ -191,6 +191,7 @@ function C:lookAt( position, target )
 	local dir = core.glm.vec3.normalize( core.glm.vec3.subtract( target, position ) )
 	local x, y, z = core.glm.vec3.get(dir)
 	self.yaw = math.atan( x/-y ) * 180 / math.pi
+	--self.yaw = math.atan2( y, x ) * 180 / math.pi
 	self.pitch = math.asin( -y ) * 180 / math.pi
 	
 	self.px, self.py = mouse.getPosition()

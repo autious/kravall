@@ -53,7 +53,8 @@ return function(asm, posX, posY, posZ, group)
 				type = core.componentType.AnimationComponent,
 				data = { 
 					animationID = 0,
-					currentTime = 0.0,
+					--currentTime = 0.0,
+					currentTime = math.random() * 10,
 					loop = true,
 					playing = true,
 					speed = 1.6,

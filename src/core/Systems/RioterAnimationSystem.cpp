@@ -24,8 +24,13 @@ namespace Core
 
 			if( mvmc->speed < 0.01f || glm::dot( temp, temp ) == 0.0f )
 			{
-				ac->currentTime = 0.33f;
-			}			
+				//ac->currentTime = 0.33f;
+				ac->speed = 0.0f;
+			}
+			else
+			{
+				ac->speed = 1.0f;
+			}
 		}
 	}
 
