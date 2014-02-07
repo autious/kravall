@@ -32,38 +32,14 @@ layout ( location = 4 ) in vec4 boneWeights;
 layout ( location = 5 ) in vec2 uvIN;
 
 out vec4 posFS;
-out vec4 posW;
-out vec4 normalFS;
-out vec4 tangentFS;
-out vec2 uvFS;
+out vec4 outlineColor;
 
 void main()
 {
-#define INSTANCED
-#ifdef INSTANCED
 	//Move position to clip space
-	posW = gInstances[gl_InstanceID].mm * positionIN;
 	posFS = gProjection * gView * gInstances[gl_InstanceID].mm * positionIN;
 	
-	//Transform normal with model matrix
-	normalFS = gInstances[gl_InstanceID].mm * normalIN;
-	tangentFS = gInstances[gl_InstanceID].mm * tangentIN;
-	//binormalFS = gInstances[gl_InstanceID].mm * binormalIN;
-
-#else
-
-	//Move position to clip space
-	posW = modelMatrix * positionIN;
-	posFS = gProjection * gView * modelMatrix * positionIN;
-	
-	//Transform normal with model matrix
-	normalFS = modelMatrix * normalIN;
-	tangentFS = modelMatrix * tangentIN;
-	//binormalFS = modelMatrix * binormalIN;
-
-#endif
-
-	uvFS = uvIN;
+	outlineColor = gInstances[gl_InstanceID].outlineColor;
 
 	gl_Position = posFS;
 }

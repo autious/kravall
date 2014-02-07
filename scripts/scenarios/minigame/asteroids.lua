@@ -21,7 +21,7 @@ local spaceship = scen:loadAssembly(
 	},
 	{
 		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/asteroidship.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/asteroids/roids_white.material", false }
@@ -100,7 +100,7 @@ scen:loadAssembly(
 	},
 	{
 		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/plane.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/asteroids/roids_black.material", false }
@@ -124,7 +124,7 @@ scen:loadAssembly(
 	},
 	{
 		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/plane.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/asteroids/roids_white.material", false }
@@ -210,7 +210,7 @@ local function CreateAsteroid(scale, position)
 		},
 		{
 			type = core.componentType.GraphicsComponent,
-			data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+			data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 			load = { 
 						mesh = { core.loaders.GnomeLoader, "assets/sphere.bgnome", false },
 						material = { core.loaders.MaterialLoader, "assets/material/asteroids/roids_white.material", false }

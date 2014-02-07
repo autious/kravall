@@ -5,6 +5,32 @@
 #include <utility/Colors.hpp>
 #include <GFXDefines.hpp>
 
+
+#include "DeferredRenderer/FBOTexture.hpp"
+#include "DeferredRenderer/LightPainter.hpp"
+#include "DeferredRenderer/DeferredPainter.hpp"
+#include "Console/ConsolePainter.hpp"
+#include "OverlayRenderer/OverlayPainter.hpp"
+#include "DebugRenderer/DebugPainter.hpp"
+#include "TextRenderer/TextPainter.hpp"
+#include "SplashRenderer/SplashPainter.hpp"
+#include "FBORenderer/FBOPainter.hpp"
+#include "PostProcessing/PostProcessingPainter.hpp"
+#include "GlobalIlluminationRenderer/GIPainter.hpp"
+#include "PostProcessing/BlurPainter.hpp"
+
+#include <Shaders/ShaderManager.hpp>
+#include <Buffers/UniformBufferManager.hpp>
+#include "TextRenderer/TextManager.hpp"
+#include "DebugRenderer/DebugManager.hpp"
+#include "RenderJobManager.hpp"
+#include "../Buffers/MeshManager.hpp"
+#include "../Textures/TextureManager.hpp"
+#include "../Material/MaterialManager.hpp"
+
+#include <FontData.hpp>
+#include <Vertex.hpp>
+
 namespace GFX
 {
 	RenderCore& Renderer()
@@ -71,7 +97,7 @@ namespace GFX
 		m_meshManager = new MeshManager();
 		m_textureManager = new TextureManager();
 		m_materialManager = new MaterialManager();
-		m_animationManager = new AnimationManager();
+		m_animationManager = new AnimationManagerGFX();
 
 		m_deferredPainter = new DeferredPainter(m_shaderManager, m_uniformBufferManager, 
 		m_renderJobManager, m_meshManager, m_textureManager, m_materialManager);
@@ -379,11 +405,9 @@ namespace GFX
 
 		m_normalDepth->Initialize(GL_TEXTURE_2D, GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, GL_RGBA32F, GL_RGBA);
 
-
 		m_diffuse->Initialize(GL_TEXTURE_2D, GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, GL_RGBA32F, GL_RGBA);
 
 		m_specular->Initialize(GL_TEXTURE_2D, GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, GL_RGBA32F, GL_RGBA);
-
 
 		m_glowMatID->Initialize(GL_TEXTURE_2D, GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, GL_RGBA32F, GL_RGBA);
 

@@ -41,6 +41,15 @@ namespace Core
         return formation;
     }
 
+    Core::PoliceStance* LuaUNewPoliceStance(lua_State* L)
+    {
+        Core::PoliceStance* stance = static_cast<Core::PoliceStance*>(lua_newuserdata(L, sizeof(Core::PoliceStance)));                  
+        luaL_newmetatable(L, POLICE_STANCE_META_TYPE);
+        lua_setmetatable(L, -2);
+        
+        return stance;
+    }
+
     uint64_t* LuaUNewBitmask( lua_State * L )
     {
         uint64_t * data = (uint64_t*)lua_newuserdata( L, sizeof( uint64_t ));

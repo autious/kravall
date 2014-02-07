@@ -1,5 +1,5 @@
 core.config = {
-showSplash = true,
+showSplash = false,
 vsync = 0,
 windowResizable = true,
 initScreenWidth = 1280,
@@ -24,5 +24,7 @@ debugLightVolumes = false,
 animationQuality = 0, -- range 0 - 2, determines frames/second in animation
 toggleConsoleButton = core.input.keyboard.key.GRAVE_ACCENT,
 cameraScrollingSpeed = 0,
-consoleOutputLevel = "warning" -- debug, warning, error, fatal
+consoleOutputLevel = "warning", -- debug, warning, error, fatal
+stickySelection = false,
+boxSelectionGraceDistance = 0.5
 }

@@ -17,175 +17,181 @@ namespace Core
         
     }
 
-    void SquadSystem::SetSquadGoal(int squadID, glm::vec3 target)
+    void SquadSystem::SetSquadGoal(int* squadIDs, int nSquads, glm::vec3 target)
     {
-        for(std::vector<Entity>::iterator squad_it = m_entities.begin(); squad_it != m_entities.end(); ++squad_it)        
+        for(int i=0; i<nSquads; ++i)
         {
-            Core::SquadComponent* sqdc = WGETC<Core::SquadComponent>(*squad_it);
-            if(sqdc->squadID == squadID)
+            for(std::vector<Entity>::iterator squad_it = m_entities.begin(); squad_it != m_entities.end(); ++squad_it)        
             {
-                sqdc->squadGoal[0] = target.x;
-                sqdc->squadGoal[2] = target.z;
-            }
-        }
-    }
-
-    void SquadSystem::SetSquadFormation(int squadID, Core::SquadFormation formation, const glm::vec3& startPos, const glm::vec3& endPos)
-    {
-        if(glm::dot(startPos-endPos, startPos-endPos) < 0.25f)
-            return;
-
-        for(std::vector<Entity>::iterator squad_it = m_entities.begin(); squad_it != m_entities.end(); ++squad_it)        
-        {
-            Core::SquadComponent* sqdc = WGETC<Core::SquadComponent>(*squad_it);
-            if(sqdc->squadID == squadID)
-            {
-                std::vector<Core::Entity> squad = Core::world.m_systemHandler.GetSystem<Core::GroupDataSystem>()->GetMembersInGroup(sqdc->squadID);
-
-                if(sqdc->squadLeader == INVALID_ENTITY)
+                Core::SquadComponent* sqdc = WGETC<Core::SquadComponent>(*squad_it);
+                if(sqdc->squadID == squadIDs[i])
                 {
-                    if(squad.size() > 0)
-                    {
-                        sqdc->squadLeader = squad[0];
-                    }
-                    else
-                    {
-                        //The group is empty
-                        return;
-                    }
-                }
-
-                glm::vec3 squadForward = glm::normalize(glm::cross(startPos-endPos, glm::vec3(0.0f, 1.0f, 0.0f)));
-                sqdc->squadTargetForward[0] = squadForward.x;
-                sqdc->squadTargetForward[1] = squadForward.z;
-
-                int membersInGroup = Core::world.m_systemHandler.GetSystem<Core::GroupDataSystem>()->GetMemberCount(sqdc->squadID);
-                 
-                switch( formation)
-                {
-                    case Core::SquadFormation::LINE_FORMATION:
-                    {
-                        float xOffset = 0.0f;
-                        float zOffset = 0.0f;
-                        float distance =  glm::distance(startPos, endPos);
-                        float xSpacing = distance / static_cast<float>(membersInGroup);
-                        float zSpacing = static_cast<float>(world.m_config.GetDouble("squadFormationRowSpacing", FORMATION_ROW_SPACING));
-
-                        xSpacing = (xSpacing > static_cast<float>(world.m_config.GetDouble("squadFormationColumnSpacingMinimum", FORMATION_COLUMN_SPACING_MINIMUM))) ? xSpacing : static_cast<float>(world.m_config.GetDouble("squadFormationSpacingMinimum", FORMATION_COLUMN_SPACING_MINIMUM));
-
-                        for(std::vector<Core::Entity>::iterator it = squad.begin(); it != squad.end(); ++it)
-                        {
-                            Core::FormationComponent* frmc = WGETC<Core::FormationComponent>(*it);
-
-                            frmc->relativePosition[0] = xOffset;
-                            frmc->relativePosition[1] = zOffset;
-
-                            xOffset += xSpacing;
-                            if(xOffset >= distance)
-                            {
-                                xOffset = 0.0f;
-                                zOffset += zSpacing;
-                            }                   
-                        }
-                        break;
-                    }
-                    case Core::SquadFormation::CIRCLE_FORMATION:
-                    {
-                        LOG_ERROR << "Circle formation is not yet implemented" << std::endl; 
-                        break;
-                    }
-                    default:
-                    {
-                        break;
-                    }
+                    sqdc->squadGoal[0] = target.x;
+                    sqdc->squadGoal[2] = target.z;
                 }
             }
         }
     }
 
-    void SquadSystem::PreviewSquadFormation(int squadID, Core::SquadFormation formation, const glm::vec3& startPos, const glm::vec3& endPos)
+    void SquadSystem::SetSquadFormation(int* squadIDs, int nSquads, Core::SquadFormation formation, const glm::vec3& startPos, const glm::vec3& endPos)
     {
         if(glm::dot(startPos-endPos, startPos-endPos) < 0.25f)
             return;
 
+        //Retrieve units
+        std::vector<Core::Entity> units;
+
+        for(int i=0; i<nSquads; ++i)
+        {
+            std::vector<Core::Entity> squad = Core::world.m_systemHandler.GetSystem<Core::GroupDataSystem>()->GetMembersInGroup(squadIDs[i]);
+            units.insert(units.end(), squad.begin(), squad.end());
+        }
+
+        //Set Squads forward direction
+        glm::vec3 squadForward = glm::normalize(glm::cross(startPos-endPos, glm::vec3(0.0f, 1.0f, 0.0f)));
+
         for(std::vector<Entity>::iterator squad_it = m_entities.begin(); squad_it != m_entities.end(); ++squad_it)        
         {
-            Core::SquadComponent* sqdc = WGETC<Core::SquadComponent>(*squad_it);
-            if(sqdc->squadID == squadID)
+            Core::SquadComponent* sqdc = WGETC<Core::SquadComponent>(*squad_it);         
+            for(int i=0; i<nSquads; ++i)
             {
-                std::vector<Core::Entity> squad = Core::world.m_systemHandler.GetSystem<Core::GroupDataSystem>()->GetMembersInGroup(sqdc->squadID);
-
-                if(sqdc->squadLeader == INVALID_ENTITY)
+                if(sqdc->squadID == squadIDs[i])
                 {
-                    if(squad.size() > 0)
-                    {
-                        sqdc->squadLeader = squad[0];
-                    }
-                    else
-                    {
-                        //The group is empty
-                        return;
-                    }
+                    sqdc->squadTargetForward[0] = squadForward.x;
+                    sqdc->squadTargetForward[1] = squadForward.z;
                 }
+            }
+        }
 
-                glm::vec3 squadForward = glm::normalize(glm::cross(startPos-endPos, glm::vec3(0.0f, 1.0f, 0.0f)));
+        int membersInGroup = units.size(); 
+         
+        switch( formation)
+        {
+            case Core::SquadFormation::LINE_FORMATION:
+            {
+                float xOffset = 0.0f;
+                float zOffset = 0.0f;
+                float distance =  glm::distance(startPos, endPos);
+                float xSpacing = distance / static_cast<float>(membersInGroup);
+                float zSpacing = static_cast<float>(world.m_config.GetDouble("squadFormationRowSpacing", FORMATION_ROW_SPACING));
 
-                GFX::Debug::DrawLine((startPos+endPos)/2.0f, (startPos+endPos)/2.0f + squadForward, GFXColor(1.0f, 1.0f, 0.0f, 1.0f), false);
-                float rotation = glm::atan(-squadForward.z, squadForward.x) - (3.14f / 2.0f);
+                xSpacing = (xSpacing > static_cast<float>(world.m_config.GetDouble("squadFormationColumnSpacingMinimum", FORMATION_COLUMN_SPACING_MINIMUM))) ? xSpacing : static_cast<float>(world.m_config.GetDouble("squadFormationSpacingMinimum", FORMATION_COLUMN_SPACING_MINIMUM));
 
-                float cosVal = glm::cos(rotation);
-                float sinVal = glm::sin(rotation);
-                glm::mat2 rotMat = glm::mat2(cosVal, -sinVal, sinVal, cosVal);
-
-                int membersInGroup = Core::world.m_systemHandler.GetSystem<Core::GroupDataSystem>()->GetMemberCount(sqdc->squadID);
-                 
-                Core::NavigationMesh* navMesh = Core::GetNavigationMesh();
-
-                switch( formation)
+                for(std::vector<Core::Entity>::iterator it = units.begin(); it != units.end(); ++it)
                 {
-                    case Core::SquadFormation::LINE_FORMATION:
-                    {
-                        float xOffset = 0.0f;
-                        float zOffset = 0.0f;
-                        float distance = glm::distance(startPos, endPos);
-                        float xSpacing = distance / static_cast<float>(membersInGroup);
-                        float zSpacing = static_cast<float>(world.m_config.GetDouble("squadFormationRowSpacing", FORMATION_ROW_SPACING));
+                    Core::FormationComponent* frmc = WGETC<Core::FormationComponent>(*it);
 
-                        xSpacing = (xSpacing > static_cast<float>(world.m_config.GetDouble("squadFormationColumnSpacingMinimum", FORMATION_COLUMN_SPACING_MINIMUM))) ? xSpacing : static_cast<float>(world.m_config.GetDouble("squadFormationSpacingMinimum", FORMATION_COLUMN_SPACING_MINIMUM));
+                    frmc->relativePosition[0] = xOffset;
+                    frmc->relativePosition[1] = zOffset;
 
-                        for(int i=0; i < membersInGroup; ++i)
-                        {
-                            glm::vec2 relPos2D = glm::vec2(xOffset, zOffset);
-                            relPos2D = rotMat * relPos2D;
-                            int goalNode;
-                            glm::vec3 relPos = glm::vec3(relPos2D.x, 0.0f, relPos2D.y);
-                            glm::vec3 finalPosition = startPos + relPos;
-                            //TODO: Replace Debug draw with decals
-				    		navMesh->GetClosestPointInsideMesh(finalPosition, startPos, goalNode, 0.2f);
-                            GFX::Debug::DrawSphere(finalPosition, 0.5f, GFXColor(1.0f, 0.0f, 0.0f, 1.0f), false);
+                    xOffset += xSpacing;
+                    if(xOffset >= distance)
+                    {
+                        xOffset = 0.0f;
+                        zOffset += zSpacing;
+                    }                   
+                }
+                break;
+            }
+            case Core::SquadFormation::CIRCLE_FORMATION:
+            {
+                LOG_ERROR << "Circle formation is not yet implemented" << std::endl; 
+                break;
+            }
+            default:
+            {
+                break;
+            }
+        }
+    }
 
-                            xOffset += xSpacing;
-                            if(xOffset >= distance)
-                            {
-                                xOffset = 0.0f;
-                                zOffset += zSpacing;
-                            }                   
-                        }
-                        break;
-                    }
-                    case Core::SquadFormation::CIRCLE_FORMATION:
+    void SquadSystem::PreviewSquadFormation(int* squadIDs, int nSquads, Core::SquadFormation formation, const glm::vec3& startPos, const glm::vec3& endPos)
+    {
+        if(glm::dot(startPos-endPos, startPos-endPos) < 0.25f)
+            return;
+
+        //Retrieve units
+        std::vector<Core::Entity> units;
+
+        for(int i=0; i<nSquads; ++i)
+        {
+            std::vector<Core::Entity> squad= Core::world.m_systemHandler.GetSystem<Core::GroupDataSystem>()->GetMembersInGroup(squadIDs[i]);
+            units.insert(units.end(), squad.begin(), squad.end());
+        }
+
+        //Calculate rotation matrix for position projection
+        glm::vec3 squadForward = glm::normalize(glm::cross(startPos-endPos, glm::vec3(0.0f, 1.0f, 0.0f)));
+        GFX::Debug::DrawLine((startPos+endPos)/2.0f, (startPos+endPos)/2.0f + squadForward, GFXColor(1.0f, 1.0f, 0.0f, 1.0f), false);
+        float rotation = glm::atan(-squadForward.z, squadForward.x) - (3.14f / 2.0f);
+
+        float cosVal = glm::cos(rotation);
+        float sinVal = glm::sin(rotation);
+        glm::mat2 rotMat = glm::mat2(cosVal, -sinVal, sinVal, cosVal);
+
+        int membersInGroup = units.size(); 
+                 
+        Core::NavigationMesh* navMesh = Core::GetNavigationMesh();
+
+        switch( formation)
+        {
+            case Core::SquadFormation::LINE_FORMATION:
+            {
+                float xOffset = 0.0f;
+                float zOffset = 0.0f;
+                float distance = glm::distance(startPos, endPos);
+                float xSpacing = distance / static_cast<float>(membersInGroup);
+                float zSpacing = static_cast<float>(world.m_config.GetDouble("squadFormationRowSpacing", FORMATION_ROW_SPACING));
+
+                xSpacing = (xSpacing > static_cast<float>(world.m_config.GetDouble("squadFormationColumnSpacingMinimum", FORMATION_COLUMN_SPACING_MINIMUM))) ? xSpacing : static_cast<float>(world.m_config.GetDouble("squadFormationSpacingMinimum", FORMATION_COLUMN_SPACING_MINIMUM));
+
+                for(int i=0; i < membersInGroup; ++i)
+                {
+                    glm::vec2 relPos2D = glm::vec2(xOffset, zOffset);
+                    relPos2D = rotMat * relPos2D;
+                    int goalNode;
+                    glm::vec3 relPos = glm::vec3(relPos2D.x, 0.0f, relPos2D.y);
+                    glm::vec3 finalPosition = startPos + relPos;
+                    //TODO: Replace Debug draw with decals
+                    navMesh->GetClosestPointInsideMesh(finalPosition, startPos, goalNode, 0.2f);
+                    GFX::Debug::DrawSphere(finalPosition, 0.5f, GFXColor(1.0f, 0.0f, 0.0f, 1.0f), false);
+
+                    xOffset += xSpacing;
+                    if(xOffset >= distance)
                     {
-                        LOG_ERROR << "Circle formation is not yet implemented" << std::endl; 
-                        break;
-                    }
-                    default:
-                    {
-                        break;
-                    }
+                        xOffset = 0.0f;
+                        zOffset += zSpacing;
+                    }                   
+                }
+                break;
+            }
+            case Core::SquadFormation::CIRCLE_FORMATION:
+            {
+                LOG_ERROR << "Circle formation is not yet implemented" << std::endl; 
+                break;
+            }
+            default:
+            {
+                break;
+            }
+        }           
+        
+    }
+
+    void SquadSystem::SetSquadStance(int* squadIDs, int nSquads, Core::PoliceStance stance)
+    {
+        for(int i=0; i<nSquads; ++i)
+        {
+            for(std::vector<Entity>::iterator squad_it = m_entities.begin(); squad_it != m_entities.end(); ++squad_it)        
+            {
+                Core::SquadComponent* sqdc = WGETC<Core::SquadComponent>(*squad_it);
+                if(sqdc->squadID == squadIDs[i])
+                {
+                    sqdc->squadStance = stance;
                 }
             }
         }
     }
+
     void SquadSystem::Update(float delta)
     {
         for(std::vector<Entity>::iterator squad_it = m_entities.begin(); squad_it != m_entities.end(); ++squad_it)        

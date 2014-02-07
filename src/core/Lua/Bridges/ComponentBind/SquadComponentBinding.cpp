@@ -21,11 +21,8 @@ namespace Core
         {
             SquadComponent* sqdc = WGETC<SquadComponent>(entity);
 
-            Core::PoliceStance* stance = static_cast<Core::PoliceStance*>(lua_newuserdata(L, sizeof(Core::PoliceStance)));
+            Core::PoliceStance* stance = LuaUNewPoliceStance(L);
             *stance = sqdc->squadStance;
-            
-            luaL_newmetatable(L, ATTRIBUTE_POLICE_COMPONENT_TYPE_META);
-            lua_setmetatable(L, -2);
 
             return 1;
         };
@@ -152,7 +149,7 @@ namespace Core
         setters["squadStance"] = [](Core::Entity entity, lua_State* L, int valueindex)
         {
             SquadComponent* sqdc = WGETC<SquadComponent>(entity);
-            sqdc->squadStance = *static_cast<Core::PoliceStance*>(luaL_checkudata(L, valueindex, ATTRIBUTE_POLICE_COMPONENT_TYPE_META));
+            sqdc->squadStance = *luau_checkpolicestance(L, valueindex);
         };
 
         setters["squadFormation"] = [](Core::Entity entity, lua_State* L, int valueindex)
