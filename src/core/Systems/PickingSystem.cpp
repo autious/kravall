@@ -131,7 +131,7 @@ glm::vec3 Core::PickingSystem::GetRayFromCamera( int mouseX, int mouseY )
 }
 
 
-std::vector< Core::Entity > Core::PickingSystem::BoxSelect( int X, int Y, int X2, int Y2, Core::Aspect aspectMask )
+std::vector< Core::Entity > Core::PickingSystem::BoxSelect( int X, int Y, int X2, int Y2, float graceDistance, Core::Aspect aspectMask )
 {
 	std::vector< Core::Entity > hitEntities;
 
@@ -173,7 +173,7 @@ std::vector< Core::Entity > Core::PickingSystem::BoxSelect( int X, int Y, int X2
 		for( int i = 0; i < 5; i++ )
 		{
 			float distanceToLine = glm::dot( planes[i], cameraToObject );
-			if( distanceToLine < 0 )
+			if( distanceToLine < -graceDistance )
 			{
 				inside = false;
 				break;

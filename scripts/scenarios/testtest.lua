@@ -122,6 +122,7 @@ local dist = 1.8
 
 
 local squadOne = squad(scen, -5, 0, 0, math.pi/2);
+local squadTwo = squad(scen, 5, 0, 0, math.pi/2);
 
 
 
@@ -152,29 +153,29 @@ local firstX, firstY
 
 function Update(dt)
 	
-	if clicked == true then
-		prevClicked = true
-	else
-		prevClicked = false
-	end
-	
-	
-	if core.input.mouse.isButtonDown(core.input.mouse.button.Left) then
-		clicked = true			
-	else 
-		clicked = false
-	end
-	
-	
-	if clicked == true and prevClicked == false then
-		firstX, firstY = core.input.mouse.getPosition()
-	end
-	
-	if clicked == true then 
-		local secondX, secondY = core.input.mouse.getPosition()
-		core.system.picking.getEntitiesInsideBox( firstX, firstY, secondX, secondY )
-		--print( firstX .. "  " .. firstY .. "  " ..  secondX .. "  " .. secondY)
-	end 
+	--if clicked == true then
+	--	prevClicked = true
+	--else
+	--	prevClicked = false
+	--end
+	--
+	--
+	--if core.input.mouse.isButtonDown(core.input.mouse.button.Left) then
+	--	clicked = true			
+	--else 
+	--	clicked = false
+	--end
+	--
+	--
+	--if clicked == true and prevClicked == false then
+	--	firstX, firstY = core.input.mouse.getPosition()
+	--end
+	--
+	--if clicked == true then 
+	--	local secondX, secondY = core.input.mouse.getPosition()
+	--	core.system.picking.getEntitiesInsideBox( firstX, firstY, secondX, secondY )
+	--	--print( firstX .. "  " .. firstY .. "  " ..  secondX .. "  " .. secondY)
+	--end 
 	
 	
 	

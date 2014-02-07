@@ -10,12 +10,16 @@ local clickStartX, clickStartY, clickStartZ
 local clickEndX, clickEndY, clickEndZ
 local isClick;
 
+local boxStartX, boxStartY, boxEndX, boxEndY
+local groupsSelectedByBox = {}
+
 core.movementData.setMovementMetaData( core.movementData.Idle, 0, 17, 17 )
 core.movementData.setMovementMetaData( core.movementData.Walking, 5.8, 17, 17 )
 core.movementData.setMovementMetaData( core.movementData.Sprinting, 8.8, 17, 14 )
 
 function squadHandling()
-    if core.input.mouse.isButtonDownOnce(core.input.mouse.button.Left) then        
+    if core.input.mouse.isButtonDownOnce(core.input.mouse.button.Left) then
+		boxStartX, boxStartY = core.input.mouse.getPosition()
         selectedEntity = core.system.picking.getLastHitEntity()
         if selectedEntity then
             local unitTypeComponent = selectedEntity:get(core.componentType.UnitTypeComponent);
@@ -42,7 +46,12 @@ function squadHandling()
                     end
                 end
             end
-        end        
+		elseif not core.input.keyboard.isKeyDown(core.input.keyboard.key.Left_shift) and not core.config.stickySelection then
+			selectedSquads = {}
+        end   
+	elseif core.input.mouse.isButtonDown(core.input.mouse.button.Left) then
+		boxEndX, boxEndY = core.input.mouse.getPosition()
+		groupsSelectedByBox = core.system.picking.getPoliceGroupsInsideBox( boxStartX, boxStartY, boxEndX, boxEndY, core.config.boxSelectionGraceDistance )
     elseif core.input.mouse.isButtonDownOnce(core.input.mouse.button.Right) then
         if #selectedSquads > 0 then
             local mouseX, mouseY = core.input.mouse.getPosition()
@@ -73,6 +82,39 @@ function squadHandling()
     else
         core.system.squad.setSquadStance(selectedSquads, core.PoliceStance.Passive)
     end
+	
+	-- box select
+	if boxStartX and boxStartY and boxEndX and boxEndY and core.input.mouse.isButtonUp(core.input.mouse.button.Left) then
+		if boxStartX ~= boxEndX and boxStartY ~= boxEndY then
+			if groupsSelectedByBox then
+				for i = 1, #groupsSelectedByBox do
+					local found = false
+					for i=1, #selectedSquads do
+						if selectedSquads[i] == groupsSelectedByBox[i] then
+							found = true
+						end
+					end
+					
+					if not found then                            
+						selectedSquads[#selectedSquads+1] = groupsSelectedByBox[i]
+						print(selectedSquads[#selectedSquads])
+					end			
+				end
+				groupsSelectedByBox = {}
+			elseif not core.config.stickySelection then
+				selectedSquads = {}
+			end
+		end		
+		boxStartX, boxStartY, boxEndX, boxEndY = nil, nil, nil, nil
+	end
+	
+	
+	
+	
+	
+	
+	
+	
 end
 
 
