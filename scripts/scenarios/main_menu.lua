@@ -19,7 +19,7 @@ scen.cameras["credits"] = {
     0.794392466545105, -0.05317002534866333, 0.6050732135772705, -0.0,
     0.271955281496048, 0.9218692779541016, -0.27603834867477417, 0.0,
     -0.5431214570999146, 0.38383567333221436, 0.7467859387397766, -0.0,
-    -19.223499298095703, -31.135475158691406, 46.4231071472168, 1.0 ),
+    10.752090454101562, -74.53640747070312, 90.53107452392578, 1.0 ),
     fov = 0.8575560450553894
 }
 scen.cameras["main"] = {
@@ -73,7 +73,7 @@ function scen:load()
     local ent = staticModel( scen, 6.528011798858643, -508.095458984375, -102.48731231689453, 0.7071068286895752, 0.0, 0.0, 0.7071068286895752, 2.061257839202881, "assets/model/dev/block-building_00.bgnome", "assets/texture/dev/test.material", "" )
     local ent = staticModel( scen, 5.5598907470703125, -150.8646240234375, -100.6944580078125, 0.7071068286895752, 0.0, 0.0, 0.7071068286895752, 2.061257839202881, "assets/model/dev/block-building_00.bgnome", "assets/texture/dev/test.material", "" )
     local ent = staticModel( scen, 78.6101303100586, 66.74439239501953, -124.31913757324219, 0.7071068286895752, 0.0, 0.0, 0.7071068286895752, 2.061257839202881, "assets/model/dev/block-building_00.bgnome", "assets/texture/dev/test.material", "" )
-    local ent = staticModel( scen, -15.090109825134277, 45.471405029296875, -33.91289138793945, 0.0, -0.9728877544403076, 0.0, 0.23127798736095428, 1.0, "assets/model/animated/police/cop/cop-light_00.bgnome", "assets/texture/animated/police/cop/cop-light_00.material", "" )
+    local ent = staticModel( scen, -67.89867401123047, 89.50486755371094, -33.91289138793945, 0.0, -0.9728877544403076, 0.0, 0.23127798736095428, 1.0, "assets/model/animated/police/cop/cop-light_00.bgnome", "assets/texture/animated/police/cop/cop-light_00.material", "" )
     local ent = staticModel( scen, -100.81935119628906, 95.04367065429688, -179.70816040039062, 0.7071068286895752, 0.0, 0.0, 0.7071068286895752, 3.508004983266195, "assets/model/dev/tall-building_00.bgnome", "assets/texture/dev/test.material", "" )
 
 end
