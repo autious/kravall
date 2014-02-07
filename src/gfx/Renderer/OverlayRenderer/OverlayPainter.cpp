@@ -4,6 +4,8 @@
 #include <logger/Logger.hpp>
 #include <utility/GLMStreams.hpp>
 
+#include <InstanceData.hpp>
+
 namespace GFX
 {
 
