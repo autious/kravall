@@ -4,6 +4,7 @@
 #include <ComponentFramework/BaseSystem.hpp>
 #include <Components/WorldPositionComponent.hpp>
 #include <Components/UnitTypeComponent.hpp>
+#include <Components/TargetingComponent.hpp>
 
 namespace Core
 {
@@ -38,9 +39,10 @@ namespace Core
 		Entity m_currentTarget;
 		bool m_wasFPressed;
 
-		void HandlePoliceTargeting(Entity police);
-		void HandleRioterTargeting(Entity rioter);
+		void HandlePoliceTargeting(Entity police, float delta);
+		void HandleRioterTargeting(Entity rioter, float delta);
 		Entity FindClosestTarget(WorldPositionComponent* origin, UnitType targetType);
+		Entity FindClosestAttacker(TargetingComponent* originTC, WorldPositionComponent* originWPC);
 
 		/*! Verrry verrry temporary, plomise!! Don't kill me! :D */
 		void TemporaryFunction();

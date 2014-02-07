@@ -4,7 +4,7 @@
 #include <fstream>
 #include <logger/Logger.hpp>
 #include <limits>
-static bool drawNavigationMesh = false; // true;
+static bool drawNavigationMesh = true;
 
 namespace Core
 {
