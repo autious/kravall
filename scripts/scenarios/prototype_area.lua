@@ -232,7 +232,7 @@ function scen:load()
     local Checkbox = require "gui/component/Checkbox"
 
     local CenterPlacer = require "gui/placement/CenterPlacer"
-    local LeftPlacer = require "gui/placement/LeftPlacer"
+    local WestPlacer = require "gui/placement/WestPlacer"
 
     local gui = GUI:new()
 
@@ -257,7 +257,7 @@ function scen:load()
     gui:addComponent(slider)
     gui:addComponent(checkbox)
 
-    gui:addPlacementHandler( LeftPlacer:new() )
+    gui:addPlacementHandler( WestPlacer:new() )
 
     scen.gui = gui
     scen:registerDestroyCallback( function() scen.gui:destroy() end )
