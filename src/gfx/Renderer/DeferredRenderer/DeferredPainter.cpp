@@ -90,12 +90,12 @@ namespace GFX
 		m_shaderManager->AttachShader("AnimatedOutlineFS", "AnimatedOutline");
 		m_shaderManager->LinkProgram("AnimatedOutline");
 
-		m_shaderManager->CreateProgram("StaticOutline");
-		m_shaderManager->LoadShader("shaders/Outline/StaticOutlineVS.glsl", "StaticOutlineVS", GL_VERTEX_SHADER);
-		m_shaderManager->LoadShader("shaders/Outline/OutlineFS.glsl", "StaticOutlineFS", GL_FRAGMENT_SHADER);
-		m_shaderManager->AttachShader("StaticOutlineVS", "StaticOutline");
-		m_shaderManager->AttachShader("StaticOutlineFS", "StaticOutline");
-		m_shaderManager->LinkProgram("StaticOutline");
+		//m_shaderManager->CreateProgram("StaticOutline");
+		//m_shaderManager->LoadShader("shaders/Outline/StaticOutlineVS.glsl", "StaticOutlineVS", GL_VERTEX_SHADER);
+		//m_shaderManager->LoadShader("shaders/Outline/OutlineFS.glsl", "StaticOutlineFS", GL_FRAGMENT_SHADER);
+		//m_shaderManager->AttachShader("StaticOutlineVS", "StaticOutline");
+		//m_shaderManager->AttachShader("StaticOutlineFS", "StaticOutline");
+		//m_shaderManager->LinkProgram("StaticOutline");
 
 		m_uniformBufferManager->CreateBasicCameraUBO(m_shaderManager->GetShaderProgramID("StaticBlend"));
 
@@ -143,7 +143,7 @@ namespace GFX
 		unsigned int currentShader = std::numeric_limits<decltype(currentShader)>::max();
 		unsigned int currentMaterial = std::numeric_limits<decltype(currentMaterial)>::max();
 		unsigned int currentMesh = std::numeric_limits<decltype(currentMesh)>::max();
-		unsigned int currentLayer = std::numeric_limits<decltype(currentMesh)>::max();
+		unsigned int currentLayer = std::numeric_limits<decltype(currentLayer)>::max();
 
 		unsigned int objType = std::numeric_limits<decltype(objType)>::max();
 		unsigned int viewport = std::numeric_limits<decltype(viewport)>::max();
@@ -164,9 +164,6 @@ namespace GFX
 		bool endMe = false;
 		for (i = renderIndex; i < renderJobs.size(); i++)
 		{
-
-			
-
 			bitmask = renderJobs[i].bitmask;
 
 			objType = GetBitmaskValue(bitmask, BITMASK::TYPE);
@@ -188,7 +185,7 @@ namespace GFX
 			}
 			
 
-			if (material == currentMaterial && meshID == currentMesh && !endMe && instanceCount < MAX_INSTANCES && layer == currentLayer)
+			if (material == currentMaterial && meshID == currentMesh && !endMe && instanceCount < MAX_INSTANCES)// && layer == currentLayer)
 			{
 				InstanceData smid = *(InstanceData*)renderJobs.at(i).value;
 				m_staticInstances[instanceCount++] = smid;
@@ -288,10 +285,10 @@ namespace GFX
 						animationManager->BindSkeletonData(mesh.skeletonID);
 				}
 
-				if (layer != currentLayer)
-				{
-					currentLayer = layer;
-				}
+				//if (layer != currentLayer)
+				//{
+				//	currentLayer = layer;
+				//}
 					 
 				InstanceData smid = *(InstanceData*)renderJobs.at(i).value;
 				m_staticInstances[instanceCount++] = smid;
