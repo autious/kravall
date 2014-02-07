@@ -3,11 +3,12 @@
 struct InstanceData
 {
 	mat4 mm;
+	vec4 outlineColor;
 	uint animationIndex;
 	uint frameOffset;
 	uint pad1;
 	uint pad2;
-	vec4 outlineColor;
+	
 };
 
 layout (std140, binding = 4) readonly buffer instanceBuffer
