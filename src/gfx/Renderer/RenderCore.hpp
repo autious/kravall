@@ -1,35 +1,15 @@
 #ifndef SRC_GFX_RENDERER_RENDER_CORE_HPP
 #define SRC_GFX_RENDERER_RENDER_CORE_HPP
 
-#include <Shaders/ShaderManager.hpp>
-#include <Buffers/UniformBufferManager.hpp>
-#include <Animation/AnimationManager.hpp>
-
-#include "DeferredRenderer/FBOTexture.hpp"
-#include "DeferredRenderer/DeferredPainter.hpp"
-#include "DeferredRenderer/LightPainter.hpp"
-
-#include "Console/ConsolePainter.hpp"
-#include "OverlayRenderer/OverlayPainter.hpp"
-#include "DebugRenderer/DebugPainter.hpp"
-#include "TextRenderer/TextPainter.hpp"
-#include "SplashRenderer/SplashPainter.hpp"
-#include "FBORenderer/FBOPainter.hpp"
-#include "PostProcessing/PostProcessingPainter.hpp"
-#include "GlobalIlluminationRenderer/GIPainter.hpp"
-#include "PostProcessing/BlurPainter.hpp"
-
-#include "TextRenderer/TextManager.hpp"
-#include "DebugRenderer/DebugManager.hpp"
-#include "RenderJobManager.hpp"
-#include "../Buffers/MeshManager.hpp"
-#include "../Textures/TextureManager.hpp"
-#include "../Material/MaterialManager.hpp"
-
+#include <GL/glew.h>
 #include <iostream>
 #include <array>
-
+#include <vector>
+#include <glm/glm.hpp>
+#include <BitmaskDefinitions.hpp>
 #include "../Utility/Timer.hpp"
+
+#include "Animation/AnimationManagerGFX.hpp"
 
 #define GFX_CHECKTIME(x, y)\
 {\
@@ -42,11 +22,39 @@
 
 namespace GFX
 {
-	class RenderCore
-	{
-	public:
+   // class AnimationManagerGFX;
+    class UniformBufferManager;
+    class ShaderManager;
+    class RenderJobManager;
+    class MeshManager;
+    class TextureManager;
+    class MaterialManager;
 
-		/*!
+
+    class DeferredPainter;
+    class LightPainter;
+    class TextPainter;
+    class DebugPainter;
+    class ConsolePainter;
+    class SplashPainter;
+    class FBOPainter;
+    class OverlayPainter;
+    class PostProcessingPainter;
+    class GIPainter;
+    class BlurPainter;
+
+    class FontData;
+    class Vertex;
+    class FBOTexture;
+}                          
+                           
+namespace GFX              
+{                          
+	class RenderCore       
+	{                      
+	public:                
+                           
+		/*!                BlurPainter*
 		Friend function to get singleton
 		\return RenderCore Returns the RenderCore instance
 		*/
@@ -200,7 +208,7 @@ namespace GFX
 		MeshManager*			m_meshManager;
 		TextureManager*			m_textureManager;
 		MaterialManager*		m_materialManager;
-		AnimationManager*		m_animationManager;
+		AnimationManagerGFX*    m_animationManager;
 
 
 		DeferredPainter* m_deferredPainter;
