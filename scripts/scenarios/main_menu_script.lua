@@ -7,6 +7,20 @@ local MenuScrollSpeed = 500
 
 return function( scen )
     local menuState = {}
+    local scenarios = {}
+    
+    for _,v in pairs( require "scenario_list" ) do
+        local new_scen = {}
+        local s  = dofile( "scripts/scenarios/" .. v .. ".lua" )
+
+        new_scen.filename = v
+        new_scen.name = s.name or ""
+        new_scen.description = s.description or ""
+
+        scenarios[#scenarios+1] = new_scen
+    end
+
+    menuState.selectedScenario = nil 
 
     function menuState.goMain()
         scen.gamemode.camera:setGoal( scen.cameras.main.view, MenuScrollSpeed )
@@ -25,7 +39,7 @@ return function( scen )
             scen.gui:destroy()
             scen.gui = nil
         end
-        scen.gui = ScenarioMenu:new({},menuState)
+        scen.gui = ScenarioMenu:new({scenarios = scenarios},menuState)
     end
 
     function menuState.goSetup()
