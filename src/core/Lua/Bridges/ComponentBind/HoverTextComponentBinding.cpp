@@ -62,12 +62,10 @@ namespace Core
                     htc->color[i] = luau_checkfloat( L, -1 );
                     lua_pop(L,1);
                 }
-            
-                return 1;
             }
             else
             {
-                return luaL_error( L, "Value color in HoverTextComponent is not table" );
+                luaL_error( L, "Value color in HoverTextComponent is not table" );
             }
         };
 
