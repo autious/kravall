@@ -70,7 +70,17 @@ namespace GFX
         MaterialManager* m_materialManager;
         TextureManager* m_textureManager;
 
-        InstanceData* m_staticInstances;
+		InstanceData* m_staticInstances;
+		const unsigned int MAX_INSTANCES = 1024;
+		GLuint m_instanceBuffer;
+
+		GLint m_animatedBlend;
+		GLint m_animatedNormal;
+
+		GLint m_staticBlend;
+		GLint m_staticNormal;
+
+		unsigned int m_outlineThickness;
 	};
 }
 
