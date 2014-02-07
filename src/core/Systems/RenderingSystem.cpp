@@ -2,6 +2,7 @@
 
 #include <gfx/GFXInterface.hpp>
 #include <gfx/InstanceData.hpp>
+#include <gfx/BitmaskDefinitions.hpp>
 #include <World.hpp>
 
 namespace Core
