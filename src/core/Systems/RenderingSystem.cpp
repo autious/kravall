@@ -2,6 +2,7 @@
 
 #include <gfx/GFXInterface.hpp>
 #include <gfx/InstanceData.hpp>
+#include <gfx/BitmaskDefinitions.hpp>
 #include <World.hpp>
 
 namespace Core
@@ -38,6 +39,8 @@ namespace Core
                 instanceData->rnd_seed = *it;
                 instanceData->frameOffset = 0;
                 instanceData->animationIndex = -1;
+
+				GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::LAYER, GFX::LAYER_TYPES::OUTLINE_LAYER);
 
                 if (ac != nullptr)
                 {

@@ -203,7 +203,7 @@ namespace GFX
 					glDisable(GL_DEPTH_TEST);
 					glStencilFunc(GL_NOTEQUAL, 1, -1);
 					glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-					glLineWidth(3);
+					glLineWidth(300);
 					glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 					m_shaderManager->UseProgram("AnimatedOutline");
 					glDrawElementsInstanced(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0, instanceCount);

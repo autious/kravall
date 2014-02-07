@@ -18,5 +18,5 @@ void main()
 	gNormalDepthRT = vec4(0);//vec4(finalNormal, );
 	gDiffuseRT	= gOutlineColor;
 	gSpecularRT = vec4(0);
-	gGlowMatRT = vec4(0);//vec4(1, 0, 0, 1);
+	gGlowMatRT = vec4(1);//vec4(1, 0, 0, 1);
 }
