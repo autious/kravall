@@ -17,15 +17,13 @@ function ScenarioMenu:new(o,menuState)
 
     o.gui = GUI:new()
     
-    local selectedFilename = ""
-
     local descriptionBox = TextBox:new({anchor="East", body="", width = 300, height = 100})
     local scenarioLabel = TextLabel:new({ xoffset=-50, yoffset=250, anchor="NorthEast", label=""})
 
     local function onScenarioSelect( object )
         descriptionBox:setText( object.description )         
         scenarioLabel:setLabel( object.name )
-        selectedFilename = object.filename
+        menuState.selectedScenario = object
         o.gui:constrict()
 
     end
@@ -47,7 +45,9 @@ function ScenarioMenu:new(o,menuState)
     o.gui:addComponent( scenarioLabel )
     o.gui:addComponent( descriptionBox )
     
-    if #(o.scenarios) > 0 then
+    if menuState.selectedScenario ~=nil then
+        selectionList:setActive( menuState.selectedScenario )
+    elseif #(o.scenarios) > 0 then
         selectionList:setActive( o.scenarios[1] )
     end
 

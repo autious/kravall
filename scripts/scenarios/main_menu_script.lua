@@ -11,14 +11,16 @@ return function( scen )
     
     for _,v in pairs( require "scenario_list" ) do
         local new_scen = {}
-        new_scen.filename = "scripts/scenarios/" .. v .. ".lua"
-        local s  = dofile( new_scen.filename )
+        local s  = dofile( "scripts/scenarios/" .. v .. ".lua" )
 
+        new_scen.filename = v
         new_scen.name = s.name or ""
         new_scen.description = s.description or ""
 
         scenarios[#scenarios+1] = new_scen
     end
+
+    menuState.selectedScenario = nil 
 
     function menuState.goMain()
         scen.gamemode.camera:setGoal( scen.cameras.main.view, MenuScrollSpeed )
