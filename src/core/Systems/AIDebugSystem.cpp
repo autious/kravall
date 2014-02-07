@@ -68,11 +68,11 @@ void TestPathFinding()
 
 void Core::AIDebugSystem::Update( float delta )
 {
+	
 
 
 
-
-	//return;
+	return;
 
 	if( Core::GetNavigationMesh() )
 	{

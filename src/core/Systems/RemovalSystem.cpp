@@ -25,13 +25,11 @@ namespace Core
 				//Leave graphics, animation, WPC, scale and rotation so we can keep rendering the object
 				if (atc->health <= 0)
 				{
-					//world.m_entityHandler.RemoveComponents<UnitTypeComponent, MovementComponent, AttributeComponent, TargetingComponent, BoundingVolumeComponent, FlowfieldComponent>(*it);
 					rioterEntities[rioterCount++] = *it;
 					
 				}
 				else if (atc->stamina <= 0)//Some kind of formula shiet here
 				{
-					//world.m_entityHandler.RemoveComponents<UnitTypeComponent, MovementComponent, AttributeComponent, TargetingComponent, BoundingVolumeComponent, FlowfieldComponent>(*it);
 					rioterEntities[rioterCount++] = *it;
 				}
 			}
@@ -40,7 +38,6 @@ namespace Core
 				AttributeComponent* atc = WGETC<AttributeComponent>(*it);
 				if (atc->health <= 0)
 				{
-					//world.m_entityHandler.RemoveComponents<UnitTypeComponent, MovementComponent, AttributeComponent, TargetingComponent, BoundingVolumeComponent, FlowfieldComponent>(*it);
 					policeEntities[policeCount++] = *it;
 				}
 			}

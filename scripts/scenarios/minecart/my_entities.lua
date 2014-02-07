@@ -7,7 +7,7 @@ local function CreateMinecart(scen)
 		},
 		{
 			type = core.componentType.GraphicsComponent,
-			data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+			data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 			load = { 
 						mesh = { core.loaders.GnomeLoader, "assets/minecart/minecart.bgnome", false },
 						material = { core.loaders.MaterialLoader, "assets/minecart/material/minecart.material", false }
@@ -37,7 +37,7 @@ local function CreateCavePiece(position, cavetype, scen)
 		},
 		{
 			type = core.componentType.GraphicsComponent,
-			data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+			data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry,layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 			load = { 
 						mesh = { core.loaders.GnomeLoader, model, false },
 						material = { core.loaders.MaterialLoader, "assets/minecart/material/cave.material", false }
@@ -158,7 +158,7 @@ local function CreateBaseplane(scen)
 		},
 		{
 			type = core.componentType.GraphicsComponent,
-			data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+			data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 			load = { 
 						mesh = { core.loaders.GnomeLoader, "assets/plane.bgnome", false },
 						material = { core.loaders.MaterialLoader, "assets/minecart/material/cave.material", false }
