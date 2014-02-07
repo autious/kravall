@@ -1,5 +1,5 @@
 #include "FBOTexture.hpp"
-
+#include <gfx/GFXSettings.hpp>
 namespace GFX
 {
 	
@@ -36,6 +36,47 @@ namespace GFX
 		m_format = format;
 
 		this->GenerateTexture();
+	}
+
+	void FBOTexture::CreateShadowmap(int resolution, int quality)
+	{
+		
+		GLenum err;
+		//Initialize Shadowmap texture, parameters should be configurable through settings
+		
+		glGenTextures(1, &m_textureHandle);
+		glBindTexture(GL_TEXTURE_2D, m_textureHandle);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+
+		if (quality == GFX_SHADOWS_VARIANCE) 
+		{
+			// Create 2 channel texture for variance shadowmapping
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, resolution, resolution, 0, GL_RGBA, GL_FLOAT, nullptr);
+			GLfloat border[4] = { 1.0f, 1.0f, 0.0f, 0.0f };
+			glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, border);
+		}
+		else if (quality == GFX_SHADOWS_BASIC) 
+		{
+			// Create 1 channel texture for basic shadowmapping
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, resolution, resolution, 0, GL_R, GL_FLOAT, nullptr);
+			GLfloat border[4] = { 1.0f, 0.0f, 0.0f, 0.0f };
+			glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, border);
+		}
+		else
+		{
+
+		}
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 4);
+		glGenerateMipmap(GL_TEXTURE_2D);
+
+		m_width = resolution;
+		m_height = resolution;
 	}
 
 	void FBOTexture::UpdateResolution(int width, int height)

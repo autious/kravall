@@ -18,6 +18,7 @@
 #include "PostProcessing/PostProcessingPainter.hpp"
 #include "GlobalIlluminationRenderer/GIPainter.hpp"
 #include "PostProcessing/BlurPainter.hpp"
+#include "DeferredRenderer/ShadowPainter.hpp"
 
 #include "TextRenderer/TextManager.hpp"
 #include "DebugRenderer/DebugManager.hpp"
@@ -166,7 +167,7 @@ namespace GFX
         */
         inline void SetStatisticsFont(GFX::FontData* font) { m_font = font; }
 		inline void ShowStatistics(bool enabled){ m_showStatistics = enabled; }
-		inline void ShowFBO(int which){ m_showFBO = ( which >= 0 && which <= 5 ) ? which : 0; }
+		inline void ShowFBO(int which){ m_showFBO = ( which >= 0 && which <= 6 ) ? which : 0; }
 		
 		void SetAnimationFramerate(unsigned int framerate);
 		inline unsigned int GetAnimationFramerate(){ return m_animationFramerate; }
@@ -190,11 +191,6 @@ namespace GFX
 		void ResizeGBuffer();
 
 		void LoadGPUPF();
-		
-		/*!
-		Initialize the shadow map texture
-		*/
-		void InitializeShadowMapTexture();
 
 		int m_windowWidth;
 		int m_windowHeight;
@@ -231,6 +227,7 @@ namespace GFX
 		PostProcessingPainter* m_postProcessingPainter;
 		GIPainter* m_GIPainter;
 		BlurPainter* m_blurPainter;
+		ShadowPainter* m_shadowPainter;
 
 		void SubSystemTimeRender();
         std::vector<std::pair<const char*, std::chrono::microseconds>> m_subsystemTimes;

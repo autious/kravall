@@ -1,5 +1,5 @@
-#ifndef SRC_GFX_RENDERER_DEFERRED_PAINTER_HPP
-#define SRC_GFX_RENDERER_DEFERRED_PAINTER_HPP
+#ifndef SRC_GFX_RENDERER_SHADOW_PAINTER_HPP
+#define SRC_GFX_RENDERER_SHADOW_PAINTER_HPP
 
 #include "../BasePainter.hpp"
 #include <Shaders/ShaderManager.hpp>
@@ -10,10 +10,11 @@
 #include <GL/glew.h>
 #include <vector>
 #include "../../Buffers/MeshManager.hpp"
-#include "../../Material/MaterialManager.hpp"
 #include "../PostProcessing/BlurPainter.hpp"
 #include <gfx/InstanceData.hpp>
 #include <Animation/AnimationManager.hpp>
+#include "../Defines.hpp"
+
 namespace GFX
 {
 	class ShadowPainter : public BasePainter
@@ -26,7 +27,7 @@ namespace GFX
 		\param bufferManager Pointer to BufferManager present in RenderCore
 		*/
 		ShadowPainter(ShaderManager* shaderManager, UniformBufferManager* uniformBufferManager, RenderJobManager* renderJobManager, 
-			MeshManager* meshManager, MaterialManager* materialManager);
+			MeshManager* meshManager);
 
 		~ShadowPainter();
 
@@ -41,8 +42,8 @@ namespace GFX
 		/*!
 		Main rendering function
 		*/
-		void Render(AnimationManager* animationManager, unsigned int& renderIndex, glm::mat4 viewMatrix, glm::mat4 projMatrix,
-			const unsigned int& geometryStartIndex, const unsigned int& geometryEndIndex, FBOTexture* shadowMap);
+		void Render(AnimationManager* animationManager, const unsigned int& renderIndex, glm::mat4 viewMatrix, glm::mat4 projMatrix,
+			const unsigned int& geometryStartIndex, const unsigned int& geometryEndIndex, FBOTexture* shadowMap, const unsigned int& width, const unsigned int& height);
 
 	private:
 
@@ -50,11 +51,11 @@ namespace GFX
 
 		RenderJobManager* m_renderJobManager;
 		MeshManager* m_meshManager;
-		MaterialManager* m_materialManager;
 
 		InstanceData* m_staticInstances;
-		const unsigned int MAX_INSTANCES = 1024;
 		GLuint m_instanceBuffer;
+
+		GLuint m_matricesUniform;
 	};
 }
 

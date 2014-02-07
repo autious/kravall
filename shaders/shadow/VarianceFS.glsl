@@ -2,11 +2,10 @@
 
 in vec4 posFS;
 
-layout ( location = 1 ) out vec2 varianceMap;
+out vec4 varianceMap;
 
 void main()
 {
-	float depth = posFS.z;
-	varianceMap.x = depth;
-	varianceMap.y = depth * depth;
+	float depth = posFS.z/posFS.w;
+	varianceMap = vec4(1, 0, 0, 1);
 }

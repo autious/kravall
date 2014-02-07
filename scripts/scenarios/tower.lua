@@ -157,7 +157,7 @@ scen.asm:loadAssembly(
 					spotangle = 3.14/4.0,
 					spotpenumbra = 0.03,
 					type = core.gfx.objectTypes.Light,
-					lighttype = core.gfx.lightTypes.Dir
+					lighttype = core.gfx.lightTypes.DirShadow
 				}
 	},
 	{

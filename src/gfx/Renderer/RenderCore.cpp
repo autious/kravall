@@ -53,6 +53,7 @@ namespace GFX
 		delete(m_fboPainter);
         delete(m_overlayPainter);
 		delete(m_blurPainter);
+		delete(m_shadowPainter);
 	}
 
 	int RenderCore::SetConfiguration(const int setting, const int value)
@@ -95,6 +96,13 @@ namespace GFX
 		m_specular = new FBOTexture();
 		m_glowMatID = new FBOTexture();
 		m_depthBuffer = new FBOTexture();
+		m_shadowMapTexture = new FBOTexture();
+
+		// Fill shadowmap with reds!
+		m_shadowMapTexture->CreateShadowmap(m_settings[GFX_SHADOW_RESOLUTION], m_settings[GFX_SHADOW_QUALITY]);
+
+
+
 
 		m_shaderManager = new ShaderManager();
 		m_uniformBufferManager = new UniformBufferManager();
@@ -106,6 +114,8 @@ namespace GFX
 
 		m_deferredPainter = new DeferredPainter(m_shaderManager, m_uniformBufferManager, 
 		m_renderJobManager, m_meshManager, m_textureManager, m_materialManager);
+
+		m_shadowPainter = new ShadowPainter(m_shaderManager, m_uniformBufferManager, m_renderJobManager, m_meshManager);
 
 		m_lightPainter = new LightPainter(m_shaderManager, m_uniformBufferManager, m_renderJobManager);
 
@@ -132,6 +142,7 @@ namespace GFX
 
 
 		m_deferredPainter->Initialize(m_FBO, m_dummyVAO);
+		m_shadowPainter->Initialize(m_FBO, m_dummyVAO, m_blurPainter);
 		m_lightPainter->Initialize(m_FBO, m_dummyVAO, m_windowWidth, m_windowHeight);
 		m_debugPainter->Initialize(m_FBO, m_dummyVAO);
 		m_textPainter->Initialize(m_FBO, m_dummyVAO);
@@ -337,7 +348,7 @@ namespace GFX
 		CT(m_deferredPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix, m_gamma), "Geometry");
 
 		// Draw geometry to shadow maps
-		CT(int i = 0, "Shadowmap");
+		CT(m_shadowPainter->Render(m_animationManager, renderJobIndex, m_viewMatrix, m_projMatrix, 0, renderJobIndex, m_shadowMapTexture, m_windowWidth, m_windowHeight), "Shadowmap");
 			
 		// Do global illumination / ssao
 		CT(m_GIPainter->Render(delta, m_normalDepth, m_diffuse, m_viewMatrix, m_projMatrix), "GI");
@@ -354,7 +365,7 @@ namespace GFX
 			
 		// Draw fbo previews
 		if (m_showFBO != 0)
-			CT(m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, m_showFBO), "FBO");
+			CT(m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, m_shadowMapTexture, m_showFBO), "FBO");
 
 		// Draw debug information
 		CT(m_debugPainter->Render(m_depthBuffer, m_normalDepth, m_viewMatrix, m_projMatrix), "Debug");
@@ -450,45 +461,6 @@ namespace GFX
 		m_glowMatID->UpdateResolution(m_windowWidth, m_windowHeight);
 	}
 
-	void RenderCore::InitializeShadowMapTexture()
-	{
-		//Initialize Shadowmap texture, parameters should be configurable through settings
-		GLuint textureHandle = m_shadowMapTexture->GetTextureHandle();
-
-		glGenTextures(1, &textureHandle);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, textureHandle);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-
-		int resolution = m_settings[GFX_SHADOW_RESOLUTION];
-		
-		if (m_settings[GFX_SHADOW_QUALITY] == GFX_SHADOWS_VARIANCE) 
-		{
-			// Create 2 channel texture for variance shadowmapping
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RG32F, resolution, resolution, 0, GL_RG, GL_FLOAT, nullptr);
-			GLfloat border[4] = { 1.0f, 1.0f, 0.0f, 0.0f };
-			glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, border);
-		}
-		else if (m_settings[GFX_SHADOW_QUALITY] == GFX_SHADOWS_BASIC) 
-		{
-			// Create 1 channel texture for basic shadowmapping
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, resolution, resolution, 0, GL_R, GL_FLOAT, nullptr);
-			GLfloat border[4] = { 1.0f, 0.0f, 0.0f, 0.0f };
-			glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, border);
-		}
-		else
-		{
-
-		}
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 4);
-		glGenerateMipmap(GL_TEXTURE_2D);
-
-	}
 	void RenderCore::InitializeDummyVAO()
 	{
 		float dummy = 1;

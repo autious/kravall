@@ -120,6 +120,7 @@ namespace GFX
 		unsigned int totalDrawCalls = 0;
 		GFXBitmask bitmask;
 		bool ok = true;
+
 		for (i = renderIndex; i < renderJobs.size(); i++)
 		{
 
@@ -138,7 +139,11 @@ namespace GFX
 			if (lightType != GFX::LIGHT_TYPES::POINT && lightType != GFX::LIGHT_TYPES::DIR 
 				&& lightType != GFX::LIGHT_TYPES::AMBIENT && lightType != GFX::LIGHT_TYPES::SPOT)
 			{
-				break;
+				if (lightType == GFX::LIGHT_TYPES::POINT_SHADOW || lightType == GFX::LIGHT_TYPES::SPOT_SHADOW ||
+					lightType == GFX::LIGHT_TYPES::DIR_SHADOW)
+					continue;
+				else
+					break;
 			}
 
 			viewport = GetBitmaskValue(bitmask, BITMASK::VIEWPORT_ID);
