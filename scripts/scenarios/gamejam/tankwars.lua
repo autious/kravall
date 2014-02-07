@@ -31,10 +31,10 @@ for i=1,n do
 			},
 			{
 				type = core.componentType.GraphicsComponent,
-				data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+				data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 				load = { 
 							mesh = { core.loaders.GnomeLoader, "assets/plane.bgnome", false },
-							material = { core.loaders.MaterialLoader, "assets/material/simple.material", false }
+							material = { core.loaders.MaterialLoader, "assets/texture/tankwars/ground.material", false }
 					   }
 			},
 			{
@@ -59,8 +59,8 @@ end
 --		type = core.componentType.GraphicsComponent,
 --		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
 --		load = { 
---					mesh = { core.loaders.GnomeLoader, "assets/box_3ds.bgnome", false },
---					material = { core.loaders.MaterialLoader, "assets/material/simple.material", false }
+--					mesh = { core.loaders.GnomeLoader, "assets/model/static/building/apartment/s01-h/0-main.bgnome", false },
+--					material = { core.loaders.MaterialLoader, "assets/material/static/building/apartment/s01-h/0-main.material", false }
 --			   }
 --	},
 --	{
@@ -111,7 +111,7 @@ local playerTank = scen:loadAssembly(
 	},
 	{
 		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/model/tankwars/Leopard_Body.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/tankwars/Leopard_Body.material", false }
@@ -136,7 +136,7 @@ local playerTurret = scen:loadAssembly(
 	},
 	{
 		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/model/tankwars/Leopard_Turret.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/tankwars/Leopard_Turret.material", false }
@@ -157,34 +157,34 @@ local playerTurret = scen:loadAssembly(
 
 
 ---- Ambient light
-scen:loadAssembly( 
-{
-	{
-		type = core.componentType.LightComponent,
-		data =  { 
-					color = { 1.0, 1.0, 1.0 },
-					intensity = 0.01,
-					type = core.gfx.objectTypes.Light,
-					lighttype = core.gfx.lightTypes.Ambient,
-					spotangle = 0,
-					spotpenumbra = 0,
-					speccolor = {0,0,0}
-				}
-	},
-	{
-		type = core.componentType.WorldPositionComponent,
-		data = { position = { 0, 0, 0 } }
-	},
-	{
-		type = core.componentType.ScaleComponent,
-		data = { scale = 1.0 }
-	},
-	{
-		type = core.componentType.RotationComponent,
-		data = { rotation = { 0,0,0,0 } }
-	}
-} 
-)
+--scen:loadAssembly( 
+--{
+--	{
+--		type = core.componentType.LightComponent,
+--		data =  { 
+--					color = { 1.0, 1.0, 1.0 },
+--					intensity = 0.01,
+--					type = core.gfx.objectTypes.Light,
+--					lighttype = core.gfx.lightTypes.Ambient,
+--					spotangle = 0,
+--					spotpenumbra = 0,
+--					speccolor = {0,0,0}
+--				}
+--	},
+--	{
+--		type = core.componentType.WorldPositionComponent,
+--		data = { position = { 0, 0, 0 } }
+--	},
+--	{
+--		type = core.componentType.ScaleComponent,
+--		data = { scale = 1.0 }
+--	},
+--	{
+--		type = core.componentType.RotationComponent,
+--		data = { rotation = { 0,0,0,0 } }
+--	}
+--} 
+--)
 
 
 ---- Directional light
@@ -194,7 +194,7 @@ scen:loadAssembly(
 		type = core.componentType.LightComponent,
 		data =  { 
 					color = { 1.0, 1.0, 0.7 },
-					intensity = 1.0,
+					intensity = 0.01,
 					type = core.gfx.objectTypes.Light,
 					lighttype = core.gfx.lightTypes.Dir,
 					spotangle = 0,
@@ -226,7 +226,7 @@ local function CreateBullet(pos, direction)
 	},
 	{
 		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/model/tankwars/bullet.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/tankwars/bullet.material", false }
@@ -275,9 +275,159 @@ local function CreateBulletLight(pos)
 	)
 end
 
+local function CreateBulletFireLight(position, scale, direction)
+	return scen:loadAssembly( 
+	{
+		{
+			type = core.componentType.LightComponent,
+			data =  { 
+						color = {1.0, 0.7, 0.1},
+						speccolor = {1.0, 0.7, 0.1},
+						intensity = 5.0,
+						spotangle = 1.0,
+						spotpenumbra = 0.01,
+						type = core.gfx.objectTypes.Light,
+						lighttype = core.gfx.lightTypes.Spot
+					}
+		},
+		{
+			type = core.componentType.WorldPositionComponent,
+			data = { position = position }
+		},
+		{
+			type = core.componentType.ScaleComponent,
+			data = { scale = scale } 
+		},
+		{
+			type = core.componentType.RotationComponent,
+			data = { rotation = { math.cos(direction), 0, math.sin(direction), 0 } } -- Lights uses rotation component as a direction vector, not a quaternion
+		}
+	} 
+	)
+end
 
 
-local function CreateBulletExplosionLight(position, scale)
+
+local function CreateMissile(pos, direction, directionUp)
+	return scen:loadAssembly( 
+	{
+	{
+		type = core.componentType.WorldPositionComponent,
+		data = { position = pos }
+	},
+	{
+		type = core.componentType.GraphicsComponent,
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+		load = { 
+					mesh = { core.loaders.GnomeLoader, "assets/model/tankwars/missile.bgnome", false },
+					material = { core.loaders.MaterialLoader, "assets/texture/tankwars/missile.material", false }
+			   }
+	},
+	{
+		type = core.componentType.ScaleComponent,
+		data = { scale = 1.0 }
+	},
+	{
+		type = core.componentType.RotationComponent,
+		data = { rotation = { 0, math.sin( (math.pi/2 - direction)/2 ), 0, math.cos( (math.pi/2 - direction)/2 ) } }
+	}
+}
+	)
+end
+
+local function CreateMissileLight(pos)
+	return scen:loadAssembly( 
+	{
+		{
+			type = core.componentType.LightComponent,
+			data =  { 
+						color = {1.0, 0.7, 0.1},
+						speccolor = {1.0, 0.7, 0.1},
+						intensity = 1.0,
+						spotangle = 0.0,
+						spotpenumbra = 0.0,
+						type = core.gfx.objectTypes.Light,
+						lighttype = core.gfx.lightTypes.Point
+					}
+		},
+		{
+			type = core.componentType.WorldPositionComponent,
+			data = { position = pos }
+		},
+		{
+			type = core.componentType.ScaleComponent,
+			data = { scale = 10.0 } 
+		},
+		{
+			type = core.componentType.RotationComponent,
+			data = { rotation = { 1, 0, 0, 0 } } -- Lights uses rotation component as a direction vector, not a quaternion
+		}
+	} 
+	)
+end
+
+
+
+local function CreateRailGunBullet(pos, direction)
+	return scen:loadAssembly( 
+	{
+	{
+		type = core.componentType.WorldPositionComponent,
+		data = { position = pos }
+	},
+	{
+		type = core.componentType.GraphicsComponent,
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
+		load = { 
+					mesh = { core.loaders.GnomeLoader, "assets/model/tankwars/bullet.bgnome", false },
+					material = { core.loaders.MaterialLoader, "assets/material/tankwars/bullet.material", false }
+			   }
+	},
+	{
+		type = core.componentType.ScaleComponent,
+		data = { scale = 2.0 }
+	},
+	{
+		type = core.componentType.RotationComponent,
+		data = { rotation = { 0, math.sin( (math.pi/2 - direction)/2 ), 0, math.cos( (math.pi/2 - direction)/2 ) } }
+	}
+}
+	)
+end
+
+local function CreateRailGunLight(pos, scale)
+	return scen:loadAssembly( 
+	{
+		{
+			type = core.componentType.LightComponent,
+			data =  { 
+						color = {0.0, 1.0, 1.0},
+						speccolor = {0.0, 1.0, 1.0},
+						intensity = 1.0,
+						spotangle = 0.0,
+						spotpenumbra = 0.0,
+						type = core.gfx.objectTypes.Light,
+						lighttype = core.gfx.lightTypes.Point
+					}
+		},
+		{
+			type = core.componentType.WorldPositionComponent,
+			data = { position = pos }
+		},
+		{
+			type = core.componentType.ScaleComponent,
+			data = { scale = scale } 
+		},
+		{
+			type = core.componentType.RotationComponent,
+			data = { rotation = { 1, 0, 0, 0 } } -- Lights uses rotation component as a direction vector, not a quaternion
+		}
+	} 
+	)
+end
+
+
+local function CreateExplosionLight(position, scale)
 	return scen:loadAssembly( 
 	{
 		{
@@ -309,36 +459,38 @@ local function CreateBulletExplosionLight(position, scale)
 end
 
 
-local function CreateBulletFireLight(position, scale, direction)
-	return scen:loadAssembly( 
-	{
-		{
-			type = core.componentType.LightComponent,
-			data =  { 
-						color = {1.0, 0.7, 0.1},
-						speccolor = {1.0, 0.7, 0.1},
-						intensity = 200.0,
-						spotangle = 1.0,
-						spotpenumbra = 0.01,
-						type = core.gfx.objectTypes.Light,
-						lighttype = core.gfx.lightTypes.Spot
-					}
-		},
-		{
-			type = core.componentType.WorldPositionComponent,
-			data = { position = position }
-		},
-		{
-			type = core.componentType.ScaleComponent,
-			data = { scale = scale } 
-		},
-		{
-			type = core.componentType.RotationComponent,
-			data = { rotation = { math.cos(direction), 0, math.sin(direction), 0 } } -- Lights uses rotation component as a direction vector, not a quaternion
-		}
-	} 
-	)
-end
+--local function CreateMissileExplosionLight(position, scale)
+--	return scen:loadAssembly( 
+--	{
+--		{
+--			type = core.componentType.LightComponent,
+--			data =  { 
+--						color = {1.0, 0.7, 0.1},
+--						speccolor = {1.0, 0.7, 0.1},
+--						intensity = 20.0,
+--						spotangle = 0.0,
+--						spotpenumbra = 0.0,
+--						type = core.gfx.objectTypes.Light,
+--						lighttype = core.gfx.lightTypes.Point
+--					}
+--		},
+--		{
+--			type = core.componentType.WorldPositionComponent,
+--			data = { position = position }
+--		},
+--		{
+--			type = core.componentType.ScaleComponent,
+--			data = { scale = scale } 
+--		},
+--		{
+--			type = core.componentType.RotationComponent,
+--			data = { rotation = { 1, 0, 0, 0 } } -- Lights uses rotation component as a direction vector, not a quaternion
+--		}
+--	} 
+--	)
+--end
+
+
 
 local function CreateEnemyTankBody(position)
 	return scen:loadAssembly( 
@@ -349,7 +501,7 @@ local function CreateEnemyTankBody(position)
 	},
 	{
 		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/model/tankwars/Leopard_Body.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/tankwars/Leopard_Body.material", false }
@@ -376,7 +528,7 @@ local function CreateEnemyTankTurret(position)
 	},
 	{
 		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/model/tankwars/Leopard_Turret.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/tankwars/Leopard_Turret.material", false }
@@ -429,7 +581,7 @@ local decc = 0.95
 local turnSpeed = 2
 local turnSpeedTurret = 2.5
 local topSpeed = 10
-local shootTimer = 0
+
 
 
 local bulletBoundX = 100
@@ -438,13 +590,41 @@ local bulletBoundY = 100
 local boundX = 10
 local boundY = 10
 
+local shootTimer = 0
 local shootInterval = 1.0
 local bulletSpeed = 150
 
 local bullets = {}
 local bulletLights = {}
-local bulletExplosionLights = {}
 local bulletFireLights = {}
+
+local explosionLights = {}
+
+local shootMissileTimer = 0
+local shootMissileTimerInterval = 3
+local missileSpeed = 65
+local missileBarrage = 10
+local currentMissileBarrage = missileBarrage
+local missileLuanchInterval = 0.1
+local missileLuanchIntervalTimer = 0.0
+local isShootingMissiles = false
+
+local missiles = {}
+local missileLights = {}
+local missileExplosions = {}
+
+
+
+
+local shootRailgunTimer = 0
+local shootRailgunTimerInterval = 10
+local shootRailgunBuildUpTimer = 0
+local shootRailgunBuildUpTimerInterval = 3
+
+
+local railgunParticles = {}
+local railgunLights = {}
+
 
 
 local enemyTurnSpeed = 0.3
@@ -459,7 +639,6 @@ local enemyTankTurrets = {}
 
 
 local function InitEnemyTanks(n)
-	--local size = 1.0
 	local minSpawn = 20
 	local maxSpawn = (boundX + boundY) / 2 - minSpawn
 	for i=1,n do
@@ -487,7 +666,7 @@ end
 
 InitEnemyTanks(1)
 
-local function Shoot(direction, position, playerMade)
+local function ShootBullets(direction, position, playerMade)
 	if position[1] > playerPosition[1] - bulletBoundX
 	or position[1] < playerPosition[1] + bulletBoundX
 	or position[3] > playerPosition[2] - bulletBoundY
@@ -495,15 +674,59 @@ local function Shoot(direction, position, playerMade)
 	then
 		table.insert(bullets, { entity = CreateBullet(position, direction), direction = direction, playerMade = playerMade })
 		
-		table.insert(bulletLights, { entity = CreateBulletLight(position), direction = direction })
+		table.insert(bulletLights, { entity = CreateBulletLight(position)})
 		
-		table.insert(bulletFireLights, { entity = CreateBulletFireLight(position, 200, direction)})
+		table.insert(bulletFireLights, { entity = CreateBulletFireLight(position, 10, direction)})
 		
 	end
 end
 
 
-local function bulletHit(bulletID)
+local function ShootMissiles(direction, directionUp, position, playerMade)
+	if position[1] > playerPosition[1] - bulletBoundX
+	or position[1] < playerPosition[1] + bulletBoundX
+	or position[3] > playerPosition[2] - bulletBoundY
+	or position[3] < playerPosition[2] + bulletBoundY
+	then
+		table.insert(missiles, { entity = CreateMissile(position, direction), direction = direction, directionUp = directionUp, playerMade = playerMade })
+		
+		table.insert(missileLights, { entity = CreateMissileLight(position)})
+		
+		--table.insert(bulletFireLights, { entity = CreateBulletFireLight(position, 200, direction)})
+		
+	end
+end
+
+
+local function ShootRailgun(direction, position, playerMade)
+	--if position[1] > playerPosition[1] - bulletBoundX
+	--or position[1] < playerPosition[1] + bulletBoundX
+	--or position[3] > playerPosition[2] - bulletBoundY
+	--or position[3] < playerPosition[2] + bulletBoundY
+	--then
+		local tmpPos = position
+		--while tmpPos[1] > playerPosition[1] - bulletBoundX
+		--or tmpPos[1] < playerPosition[1] + bulletBoundX
+		--or tmpPos[3] > playerPosition[2] - bulletBoundY
+		--or tmpPos[3] < playerPosition[2] + bulletBoundY
+		--do
+		local i = 1
+		while i <= 151 do
+			table.insert(railgunParticles, { entity = CreateBullet(tmpPos, direction), direction = direction, playerMade = playerMade })
+			
+			table.insert(railgunLights, { entity = CreateRailGunLight(tmpPos, 20)})
+			
+			tmpPos[1] = tmpPos[1] + math.cos(direction) * 0.3
+			tmpPos[2] = position[2]
+			tmpPos[3] = tmpPos[3] + math.sin(direction) * 0.3
+			i = i + 1
+		end
+	--end
+end
+
+
+
+local function BulletHit(bulletID)
 	tankSize = 3
 	bulletSize = 1
 	wasHit = false
@@ -514,8 +737,8 @@ local function bulletHit(bulletID)
 		
 		if CheckCollision(playerPos[1] - tankSize * 0.5, playerPos[3] - tankSize * 0.5, tankSize, tankSize, bulletPos[1] - bulletSize * 0.5, bulletPos[3] - bulletSize * 0.5, bulletSize, bulletSize) then
 			health = health - 5
-			table.insert(bulletExplosionLights, { entity = CreateBulletExplosionLight(bulletPos, 20)})
-			--bulletExplosionLights
+			table.insert(explosionLights, { entity = CreateExplosionLight(bulletPos, 20)})
+			--explosionLights
 			return true
 		end
 
@@ -540,14 +763,119 @@ local function bulletHit(bulletID)
 			table.remove(enemyTankTurrets, i)
 			
 			
-			table.insert(bulletExplosionLights, { entity = CreateBulletExplosionLight(bulletPos, 20)})
+			table.insert(explosionLights, { entity = CreateExplosionLight(bulletPos, 20)})
 			return true
+		else
+			i = i + 1
 		end
-		i = i + 1
 	end
 	
 	return false
 end
+
+
+
+local function MissileHit(missileID)
+	tankSize = 3
+	missileSize = 10
+	wasHit = false
+	missilePos = missiles[missileID].entity:get(core.componentType.WorldPositionComponent).position
+	if missilePos[2] <= 0.0 then
+		if not missiles[missileID].playerMade then
+			playerPos = playerTank:get(core.componentType.WorldPositionComponent).position
+			
+			if CheckCollision(playerPos[1] - tankSize * 0.5, playerPos[3] - tankSize * 0.5, tankSize, tankSize, missilePos[1] - missileSize * 0.5, missilePos[3] - missileSize * 0.5, missileSize, missileSize) then
+				health = health - 5
+				--table.insert(explosionLights, { entity = CreateBulletExplosionLight(missilePos, 20)})
+				--explosionLights
+				return true
+			end
+
+			return false
+		end
+		
+		
+		local i = 1
+		while i <= #enemyTanks do
+			local tankPos = enemyTanks[i].entity:get(core.componentType.WorldPositionComponent).position
+			wasHit = CheckCollision(tankPos[1] - tankSize * 0.5, tankPos[3] - tankSize * 0.5, tankSize, tankSize, missilePos[1] - missileSize * 0.5, missilePos[3] - missileSize * 0.5, missileSize, missileSize)
+			if wasHit == true then
+				
+				score = score + 10
+				
+				enemyTanks[i].entity:destroy()
+				enemyTanks[i] = nil
+				table.remove(enemyTanks, i)
+				
+				enemyTankTurrets[i].entity:destroy()
+				enemyTankTurrets[i] = nil
+				table.remove(enemyTankTurrets, i)
+				
+				
+				--table.insert(explosionLights, { entity = CreateExplosionLight({missilePos[1], 1.5, missilePos[2]}, 20)})
+				--return true
+			
+			else
+				i = i + 1
+			end
+		end
+		table.insert(explosionLights, { entity = CreateExplosionLight({missilePos[1], 1.5, missilePos[3]}, 40)})
+		return true
+	end
+	return false
+end
+
+
+--local function RailgunHit()
+--	tankSize = 3
+--	missileSize = 10
+--	wasHit = false
+--
+--	--if not missiles[missileID].playerMade then
+--	--	playerPos = playerTank:get(core.componentType.WorldPositionComponent).position
+--	--	
+--	--	if CheckCollision(playerPos[1] - tankSize * 0.5, playerPos[3] - tankSize * 0.5, tankSize, tankSize, missilePos[1] - missileSize * 0.5, missilePos[3] - missileSize * 0.5, missileSize, missileSize) then
+--	--		health = health - 5
+--	--		--table.insert(explosionLights, { entity = CreateBulletExplosionLight(missilePos, 20)})
+--	--		--explosionLights
+--	--		return true
+--	--	end
+--    --
+--	--	return false
+--	--end
+--	
+--	
+--	local i = 1
+--	while i <= #enemyTanks do
+--		local tankPos = enemyTanks[i].entity:get(core.componentType.WorldPositionComponent).position
+--		wasHit = CheckCollision(tankPos[1] - tankSize * 0.5, tankPos[3] - tankSize * 0.5, tankSize, tankSize, missilePos[1] - missileSize * 0.5, missilePos[3] - missileSize * 0.5, missileSize, missileSize)
+--		if wasHit == true then
+--			
+--			score = score + 10
+--			table.insert(explosionLights, { entity = CreateExplosionLight({tankPos[1], 1.5, tankPos[3]}, 20)})
+--			
+--			enemyTanks[i].entity:destroy()
+--			enemyTanks[i] = nil
+--			table.remove(enemyTanks, i)
+--			
+--			enemyTankTurrets[i].entity:destroy()
+--			enemyTankTurrets[i] = nil
+--			table.remove(enemyTankTurrets, i)
+--			
+--			
+--			--table.insert(explosionLights, { entity = CreateExplosionLight({missilePos[1], 1.5, missilePos[2]}, 20)})
+--			--return true
+--		
+--		else
+--			i = i + 1
+--		end
+--	end
+--	
+--	return true
+--	end
+--	return false
+--end
+
 
 
 local function UpdateBullets(delta)
@@ -563,7 +891,7 @@ local function UpdateBullets(delta)
 		or position[1] > playerPosition[1] + bulletBoundX
 		or position[3] < playerPosition[2] - bulletBoundY
 		or position[3] > playerPosition[2] + bulletBoundY
-		or bulletHit(i)
+		or BulletHit(i)
 		then            
 			-- Remove bullet outside of bounds
 			bullets[i].entity:destroy()
@@ -583,19 +911,93 @@ local function UpdateBullets(delta)
 	end
 end
 
-local function UpdateBulletExplosions(delta)
+
+local function UpdateMissiles(delta)
+	
 	local i = 1
-	while i <= #bulletExplosionLights do
-		scale = bulletExplosionLights[i].entity:get(core.componentType.ScaleComponent)
+	while i <= #missiles do
+	
+		local wpc
+		wpc = missiles[i].entity:get(core.componentType.WorldPositionComponent)
+		position = wpc.position
+		
+		if position[1] < playerPosition[1] - bulletBoundX
+		or position[1] > playerPosition[1] + bulletBoundX
+		or position[3] < playerPosition[2] - bulletBoundY
+		or position[3] > playerPosition[2] + bulletBoundY
+		or MissileHit(i)
+		then            
+			-- Remove bullet outside of bounds
+			missiles[i].entity:destroy()
+			table.remove(missiles, i)
+			
+			missileLights[i].entity:destroy()
+			table.remove(missileLights, i)
+		else
+			missiles[i].directionUp = missiles[i].directionUp - math.pi * 2 * delta
+			wpc.position[1] = wpc.position[1] + missileSpeed * math.cos(missiles[i].direction) * delta
+			wpc.position[2] = wpc.position[2] + missileSpeed * math.sin(missiles[i].directionUp) * delta
+			wpc.position[3] = wpc.position[3] + missileSpeed * math.sin(missiles[i].direction) * delta
+			
+			missiles[i].entity:set(core.componentType.WorldPositionComponent, wpc)
+			missileLights[i].entity:set(core.componentType.WorldPositionComponent, wpc)
+			i = i + 1
+		end
+	end
+end
+
+
+local function UpdateRailgun(delta)
+	
+	local i = 1
+	while i <= #railgunParticles do
+	
+		local scale = railgunParticles[i].entity:get(core.componentType.ScaleComponent)
+		
+		scale.scale[1] = scale.scale[1] * 0.985
+		scale.scale[2] = scale.scale[2] * 0.985
+		scale.scale[3] = scale.scale[3] * 0.985
+		railgunParticles[i].entity:set(core.componentType.ScaleComponent, scale)
+		
+		
+		scale = railgunLights[i].entity:get(core.componentType.ScaleComponent)
+		
+		scale.scale[1] = scale.scale[1] * 0.985
+		scale.scale[2] = scale.scale[2] * 0.985
+		scale.scale[3] = scale.scale[3] * 0.985
+		railgunLights[i].entity:set(core.componentType.ScaleComponent, scale)
+		
+		if scale.scale[1] < 0.1 then
+			railgunParticles[i].entity:destroy()
+			table.remove(railgunParticles, i)
+			
+			railgunLights[i].entity:destroy()
+			table.remove(railgunLights, i)
+			
+		else
+			i = i + 1
+		end
+		
+		
+	end
+end
+
+
+
+
+local function UpdateExplosions(delta)
+	local i = 1
+	while i <= #explosionLights do
+		scale = explosionLights[i].entity:get(core.componentType.ScaleComponent)
 		if scale.scale[1] < 0.001 then
-			bulletExplosionLights[i].entity:destroy()
-			table.remove(bulletExplosionLights, i)
+			explosionLights[i].entity:destroy()
+			table.remove(explosionLights, i)
 		else
 			local rnd = (0.95 * (math.random() + 0.5))
 			scale.scale[1] = scale.scale[1] * rnd
 			scale.scale[2] = scale.scale[2] * rnd
 			scale.scale[3] = scale.scale[3] * rnd
-			bulletExplosionLights[i].entity:set(core.componentType.ScaleComponent, scale)
+			explosionLights[i].entity:set(core.componentType.ScaleComponent, scale)
 		end
 		i = i + 1
 	end
@@ -621,7 +1023,6 @@ local function UpdateBulletFireLights(delta)
 end
 
 
-
 local function UpdateEnemyTanks(delta)
 	local playerPos = playerTank:get(core.componentType.WorldPositionComponent).position
 	local i = 1
@@ -636,79 +1037,89 @@ local function UpdateEnemyTanks(delta)
 		dir[1] = dir[1] / length
 		dir[2] = dir[2] / length
 		
-		local toPlayerDir = math.atan2(dir[2], dir[1]) + math.pi
+		local toPlayerDir = math.atan2(dir[2], dir[1]) --+ math.pi
 		
-		local dire = toPlayerDir - math.pi
+		--if toPlayerDir < 0 then
+		--	toPlayerDir = toPlayerDir + math.pi * 2
+		--end
 		
-		if dire < 0 then
-			dire = dire + math.pi * 2
+		--print (toPlayerDir)
+		--local dire = toPlayerDir - math.pi
+		
+		--if dire < 0 then
+		--	dire = dire + math.pi * 2
+		--end
+		--if dire > math.pi * 2 then
+		--	dire = dire - math.pi * 2
+		--end
+		
+		
+		local direa = toPlayerDir - (math.pi / 4)-- + math.pi / 2)
+		local direb = toPlayerDir + (math.pi / 4)-- + math.pi / 2)
+		
+		if direa < 0 then
+			direa = direa + math.pi * 2
+		elseif direb >= 2 * math.pi then
+			direb = direb - math.pi * 2
 		end
+		enemyTanks[i].direction = toPlayerDir
+		enemyTankTurrets[i].direction = toPlayerDir
+		--print (direa)
+		--print (direb)
+		--print (enemyTankTurrets[i].direction)
+		--
+		--if dire < enemyTanks[i].direction then
+		--	enemyTanks[i].direction = enemyTanks[i].direction - enemyTurnSpeed * delta
+		--elseif dire >= enemyTanks[i].direction then
+		--	enemyTanks[i].direction = enemyTanks[i].direction + enemyTurnSpeed * delta
+		--end
+		--
+		--if dire < enemyTankTurrets[i].direction then
+		--	enemyTankTurrets[i].direction = enemyTankTurrets[i].direction - enemyTurnSpeedTurret * delta
+		--elseif dire >= enemyTankTurrets[i].direction then
+		--	enemyTankTurrets[i].direction = enemyTankTurrets[i].direction + enemyTurnSpeedTurret * delta
+		--end
+		--
+		--if enemyTanks[i].direction < 0 then
+		--	enemyTanks[i].direction = enemyTanks[i].direction + math.pi * 2
+		--elseif enemyTanks[i].direction >= 2 * math.pi then
+		--	enemyTanks[i].direction = enemyTanks[i].direction - math.pi * 2
+		--end
+		--
+		--if enemyTankTurrets[i].direction < 0 then
+		--	enemyTankTurrets[i].direction = enemyTankTurrets[i].direction + math.pi * 2
+		--elseif enemyTankTurrets[i].direction >= 2 * math.pi then
+		--	enemyTankTurrets[i].direction = enemyTankTurrets[i].direction - math.pi * 2
+		--end
 		
-		local diree = toPlayerDir - math.pi / 2
-		local direa = toPlayerDir + math.pi / 2
 		
-		if diree < 0 then
-			diree = diree + math.pi * 2
-		end
 		
-		if diree > 2 * math.pi then
-			diree = diree - math.pi * 2
+		local bo = false
+		if (direa < enemyTanks[i].direction)
+		or (direb > enemyTanks[i].direction)
+		then
+			bo = true
 		end
 		
 
-		if dire < enemyTanks[i].direction then
-			enemyTanks[i].direction = enemyTanks[i].direction - enemyTurnSpeed * delta
-		elseif dire > enemyTanks[i].direction then
-			enemyTanks[i].direction = enemyTanks[i].direction + enemyTurnSpeed * delta
-		end
-		
-		if dire < enemyTankTurrets[i].direction then
-			enemyTankTurrets[i].direction = enemyTankTurrets[i].direction - enemyTurnSpeed * delta
-		elseif dire > enemyTankTurrets[i].direction then
-			enemyTankTurrets[i].direction = enemyTankTurrets[i].direction + enemyTurnSpeed * delta
-		end
-		
-		if enemyTanks[i].direction <= 0 then
-			enemyTanks[i].direction = enemyTanks[i].direction - math.pi * 2
-		elseif enemyTanks[i].direction > 2 * math.pi then
-			enemyTanks[i].direction = enemyTanks[i].direction + math.pi * 2
-		end
-		
-		if enemyTankTurrets[i].direction <= 0 then
-			enemyTankTurrets[i].direction = enemyTankTurrets[i].direction - math.pi * 2
-		elseif enemyTankTurrets[i].direction > 2 * math.pi then
-			enemyTankTurrets[i].direction = enemyTankTurrets[i].direction + math.pi * 2
-		end
-		
-		
-
-		if length > 15.0 then
-			--if diree < toPlayerDir 
-			--or direa > toPlayerDir 
-			--then
-				enemyTanks[i].velocity[1] = enemyTanks[i].velocity[1] + math.cos(enemyTanks[i].direction) * acc
-				enemyTanks[i].velocity[2] = enemyTanks[i].velocity[2] + math.sin(enemyTanks[i].direction) * acc
-
-				local speed = math.sqrt(enemyTanks[i].velocity[1] * enemyTanks[i].velocity[1] + enemyTanks[i].velocity[2] * enemyTanks[i].velocity[2])
-				if speed > enemyTopSpeed then
-					enemyTanks[i].velocity[1] = enemyTopSpeed * (enemyTanks[i].velocity[1] / speed)
-					enemyTanks[i].velocity[2] = enemyTopSpeed * (enemyTanks[i].velocity[2] / speed)
-				--elseif speed < 0.001 then
-				--	enemyTanks[i].velocity[1] = 0
-				--	enemyTanks[i].velocity[2] = 0
-				end
-			--end
+		if length > 15.0 then-- and bo == false then
+			enemyTanks[i].velocity[1] = enemyTanks[i].velocity[1] + math.cos(enemyTanks[i].direction) * acc
+			enemyTanks[i].velocity[2] = enemyTanks[i].velocity[2] + math.sin(enemyTanks[i].direction) * acc
 		else
 			enemyTanks[i].velocity[1] = enemyTanks[i].velocity[1] * decc
 			enemyTanks[i].velocity[2] = enemyTanks[i].velocity[2] * decc
-			
-			local speed = math.sqrt(enemyTanks[i].velocity[1] * enemyTanks[i].velocity[1] + enemyTanks[i].velocity[2] * enemyTanks[i].velocity[2])
-
-			if speed < 0.001 then
-				enemyTanks[i].velocity[1] = 0
-				enemyTanks[i].velocity[2] = 0
-			end
 		end
+		
+		
+		local speed = math.sqrt(enemyTanks[i].velocity[1] * enemyTanks[i].velocity[1] + enemyTanks[i].velocity[2] * enemyTanks[i].velocity[2])
+		if speed > enemyTopSpeed then
+			enemyTanks[i].velocity[1] = enemyTopSpeed * (enemyTanks[i].velocity[1] / speed)
+			enemyTanks[i].velocity[2] = enemyTopSpeed * (enemyTanks[i].velocity[2] / speed)
+		elseif speed < 0.001 then
+			enemyTanks[i].velocity[1] = 0
+			enemyTanks[i].velocity[2] = 0
+		end
+		
 		
 		local tankPos = enemyTanks[i].entity:get(core.componentType.WorldPositionComponent)
 		tankPos.position[1] = tankPos.position[1] + enemyTanks[i].velocity[1] * delta
@@ -722,8 +1133,6 @@ local function UpdateEnemyTanks(delta)
 		tankRot.rotation[3] = 0
 		tankRot.rotation[4] = math.cos( (math.pi/2 - enemyTanks[i].direction)/2 )
 		enemyTanks[i].entity:set(core.componentType.RotationComponent, tankRot)
-		
-		
 		
 		
 		local turretPos = enemyTankTurrets[i].entity:get(core.componentType.WorldPositionComponent)
@@ -743,11 +1152,9 @@ local function UpdateEnemyTanks(delta)
 		enemyTanks[i].shootTimer = enemyTanks[i].shootTimer - delta
 		if enemyTanks[i].shootTimer < 0 then
 			enemyTanks[i].shootTimer = enemyShootInterval
-			Shoot(enemyTankTurrets[i].direction, {tankPos.position[1] + math.cos(enemyTankTurrets[i].direction) * 3, 0, tankPos.position[3] + math.sin(enemyTankTurrets[i].direction) * 3}, false)
+			ShootBullets(enemyTankTurrets[i].direction, {tankPos.position[1] + math.cos(enemyTankTurrets[i].direction) * 3, 0, tankPos.position[3] + math.sin(enemyTankTurrets[i].direction) * 3}, false)
 		end		
 		
-		
-		--end
 		i = i + 1
 	end
 end
@@ -763,14 +1170,15 @@ local function UpdatePlayerTank(delta)
 	local leftTurretTurn = keyboard.isKeyDown( key.A )
 	local rightTurretTurn = keyboard.isKeyDown( key.D )
 	
-	local shooting = keyboard.isKeyDown( key.Space )
-
+	local shootBullet = keyboard.isKeyDown( key.Space )
+	local fireMissile = keyboard.isKeyDown( key.M )
+	local fireRailgun = keyboard.isKeyDown( key.R )
 	
-	if leftTurn then
+	if leftTurn == true and isShootingMissiles == false then
 		playerDirection = playerDirection - turnSpeed * delta
 	end
 	
-	if rightTurn then
+	if rightTurn == true and isShootingMissiles == false then
 		playerDirection = playerDirection + turnSpeed * delta
 	end
 	
@@ -783,11 +1191,11 @@ local function UpdatePlayerTank(delta)
 	
 	
 	
-	if leftTurretTurn then
+	if leftTurretTurn == true and isShootingMissiles == false then
 		playerTurretDirection = playerTurretDirection - turnSpeedTurret * delta
 	end
 	
-	if rightTurretTurn then
+	if rightTurretTurn == true and isShootingMissiles == false then
 		playerTurretDirection = playerTurretDirection + turnSpeedTurret * delta
 	end
 	
@@ -798,10 +1206,10 @@ local function UpdatePlayerTank(delta)
 	end
 	
 	
-	if moveForward then
+	if moveForward == true and isShootingMissiles == false then
 		velocity[1] = velocity[1] + math.cos(playerDirection) * acc
 		velocity[2] = velocity[2] + math.sin(playerDirection) * acc
-	elseif moveBackward then
+	elseif moveBackward == true and isShootingMissiles == false then
 		velocity[1] = velocity[1] - math.cos(playerDirection) * acc
 		velocity[2] = velocity[2] - math.sin(playerDirection) * acc
 	else
@@ -829,20 +1237,85 @@ local function UpdatePlayerTank(delta)
 		shootTimer = 0
 	end
 	
-	if shooting and shootTimer == 0 then 
+	if shootBullet and shootTimer == 0 then 
 		shootTimer = shootInterval
 	else 
-		shooting = false 
+		shootBullet = false 
+	end
+
+	if shootBullet then
+		ShootBullets(playerTurretDirection, {playerPosition[1] + math.cos(playerTurretDirection) * 3, 1.5, playerPosition[2] + math.sin(playerTurretDirection) * 3}, true)
+	end
+
+
+	
+	
+	
+	
+	--shootMissileTimer = shootMissileTimer - delta
+	--if shootMissileTimer < 0 then
+	--	shootMissileTimer = 0
+	--end
+	--
+	--if fireMissile and shootMissileTimer == 0 then 
+	--	shootMissileTimer = shootMissileInterval
+	--else 
+	--	fireMissile = false 
+	--end
+
+	
+	if not isShootingMissiles then
+		shootMissileTimer = shootMissileTimer - delta
+	end
+	
+	if fireMissile == true
+	and isShootingMissiles == false
+	and shootMissileTimer <= 0
+	then
+		isShootingMissiles = true
+		shootMissileTimer = shootMissileTimerInterval
+	end
+	
+	if isShootingMissiles then
+		missileLuanchIntervalTimer = missileLuanchIntervalTimer - delta
+		if missileLuanchIntervalTimer < 0 then
+			missileLuanchIntervalTimer = missileLuanchInterval
+			currentMissileBarrage = currentMissileBarrage - 1
+			ShootMissiles(playerTurretDirection + math.random() * 0.15, math.pi * 0.5 + math.random() * 0.15, {playerPosition[1] - math.cos(playerTurretDirection) * 3, 1.5, playerPosition[2] - math.sin(playerTurretDirection) * 3}, true)
+		end
+		
+		if currentMissileBarrage < 0 then
+			isShootingMissiles = false
+			currentMissileBarrage = missileBarrage
+		end
+	end
+
+	
+	
+	
+	
+	shootRailgunTimer = shootRailgunTimer - delta
+	
+	if fireRailgun then
+		shootRailgunBuildUpTimer = shootRailgunBuildUpTimer - delta
+		shootRailgunTimer = shootRailgunTimerInterval
+	else
+		shootRailgunBuildUpTimer = shootRailgunBuildUpTimerInterval
+		--shootRailgunTimer = shootRailgunTimerInterval
+	end
+	
+	if shootRailgunBuildUpTimer <= 0 then
+		ShootRailgun(playerTurretDirection, {playerPosition[1] + math.cos(playerTurretDirection) * 3, 1.5, playerPosition[2] + math.sin(playerTurretDirection) * 3}, true)
+		shootRailgunBuildUpTimer = shootRailgunBuildUpTimerInterval
+		shootRailgunTimer = shootRailgunTimerInterval
 	end
 	
 	
 	
-	if shooting then
-		Shoot(playerTurretDirection, {playerPosition[1] + math.cos(playerTurretDirection) * 3, 0, playerPosition[2] + math.sin(playerTurretDirection) * 3}, true)
-	end
-	
-	--UpdateBullets(delta)
-	
+	--local shootRailgunTimer = 0
+	--local shootRailgunTimerInterval = 10
+	--local shootRailgunBuildUpTimer = 0
+	--local shootRailgunBuildUpTimerInterval = 3
 	
 	local tankPos = playerTank:get(core.componentType.WorldPositionComponent)
 	tankPos.position[1] = playerPosition[1]
@@ -875,7 +1348,7 @@ end
 
 
 local function UpdateCamera()
-	camera:lookAt( core.glm.vec3.new( playerPosition[1], 50, playerPosition[2] ), core.glm.vec3.new( playerPosition[1], 0, playerPosition[2]) )
+	camera:lookAt( core.glm.vec3.new( playerPosition[1] , 50, playerPosition[2] ), core.glm.vec3.new( playerPosition[1], 0, playerPosition[2] ))
 	core.camera.gameCamera:setView( camera:getView( ) )
 end
 
@@ -928,10 +1401,13 @@ function Update(delta)
 	if alive then
 		UpdatePlayerTank(delta)
 		UpdateEnemyTanks(delta)
-		UpdateBullets(delta)
 		UpdateCamera()
 	end
-	UpdateBulletExplosions(delta)
+	
+	UpdateBullets(delta)
+	UpdateMissiles(delta)
+	UpdateRailgun(delta)
+	UpdateExplosions(delta)
 	UpdateBulletFireLights(delta)
 	
 	if 0.0 >= health then

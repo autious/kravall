@@ -29,7 +29,7 @@ static void PushObjectType( lua_State * L, const unsigned int value, const char 
         unsigned int* uvalue= (unsigned int*)lua_newuserdata( L, sizeof( Core::UnitType ) );
         *uvalue = value;
 
-            luaL_newmetatable( L, UNIT_TYPE_OBJECT_TYPE_META );
+            luaL_newmetatable( L, UNIT_TYPE_OBJECT_META_TYPE );
                 luau_setfunction( L, "__eq", LuaEq ); 
             lua_setmetatable( L, -2 );
         lua_settable( L, table );

@@ -72,7 +72,7 @@ function CreateEnemy(x, y, z)
 			},
 			{
 				type = core.componentType.GraphicsComponent,
-				data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+				data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1} },
 				load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/cube.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/gamejam/redpixel.material", false }
@@ -116,7 +116,7 @@ function CreateEnemyShot(x, y, z)
 			},
 			{
 				type = core.componentType.GraphicsComponent,
-				data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+				data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 				load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/sphere.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/gamejam/whitePixel.material", false }
@@ -154,7 +154,7 @@ function CreateShot(x, y, z)
 			},
 			{
 				type = core.componentType.GraphicsComponent,
-				data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+				data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 				load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/sphere.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/gamejam/greenpixel.material", false }
@@ -187,7 +187,7 @@ function CreateTreasure(x, y, z)
 			},
 			{
 				type = core.componentType.GraphicsComponent,
-				data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+				data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 				load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/minecart.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/minecart.material", false }
@@ -399,7 +399,7 @@ function CreatePlayer(sizeX, sizeY)
 			},
 			{
 				type = core.componentType.GraphicsComponent,
-				data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+				data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 				load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/cube.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/blackPixel.material", false }
@@ -430,7 +430,7 @@ function CreateTile(x, y, z, lives)
 			{
 				
 				type = core.componentType.GraphicsComponent,
-				data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+				data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 				load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/cube.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/gamejam/whitePixel.material", false }
@@ -457,7 +457,7 @@ function CreateTile(x, y, z, lives)
 			{
 				
 				type = core.componentType.GraphicsComponent,
-				data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+				data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 				load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/cube.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/gamejam/greenPixel.material", false }
@@ -484,7 +484,7 @@ function CreateTile(x, y, z, lives)
 			{
 				
 				type = core.componentType.GraphicsComponent,
-				data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+				data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry,layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1},  render = true },
 				load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/cube.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/gamejam/redPixel.material", false }

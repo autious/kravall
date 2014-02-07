@@ -15,7 +15,7 @@ Core::ComponentGetters Core::UnitTypeComponentBinding::GetGetters()
         Core::UnitType* type = (Core::UnitType*)lua_newuserdata( L, sizeof( Core::UnitType ) );
         *type = utc->type;
         
-        luaL_newmetatable( L, UNIT_TYPE_OBJECT_TYPE_META );
+        luaL_newmetatable( L, UNIT_TYPE_OBJECT_META_TYPE );
         lua_setmetatable( L, -2 );
     
         return 1;
@@ -32,7 +32,7 @@ Core::ComponentSetters Core::UnitTypeComponentBinding::GetSetters()
     setters["unitType"] = []( Core::Entity entity, lua_State * L, int valueindex )
     {
         UnitTypeComponent *utc = WGETC<UnitTypeComponent>( entity ); 
-		utc->type = *(Core::UnitType*)luaL_checkudata( L, valueindex, UNIT_TYPE_OBJECT_TYPE_META );
+		utc->type = *(Core::UnitType*)luaL_checkudata( L, valueindex, UNIT_TYPE_OBJECT_META_TYPE );
     };
 
     return setters;
