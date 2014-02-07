@@ -33,8 +33,6 @@ namespace GFX
 		m_shaderManager->AttachShader("StaticMeshFS", "StaticMesh");
 		m_shaderManager->LinkProgram("StaticMesh");
 
-
-
 		//Normal mapped, non-animated shader
 		m_shaderManager->CreateProgram("NormalMappedStatic");
 		m_shaderManager->LoadShader("shaders/geometry/StaticNormalVS.glsl", "NormalMappedStaticVS", GL_VERTEX_SHADER);
@@ -50,8 +48,6 @@ namespace GFX
 		m_shaderManager->AttachShader("StaticNormalVS", "StaticNormal");
 		m_shaderManager->AttachShader("StaticNormalFS", "StaticNormal");
 		m_shaderManager->LinkProgram("StaticNormal");
-
-		m_staticNormal = m_shaderManager->GetShaderProgramID("StaticNormal");
 		
 		m_shaderManager->CreateProgram("AnimatedNormal");
 		m_shaderManager->LoadShader("shaders/geometry/AnimatedNormalVS.glsl", "AnimatedNormalVS", GL_VERTEX_SHADER);
@@ -59,8 +55,6 @@ namespace GFX
 		m_shaderManager->AttachShader("AnimatedNormalVS", "AnimatedNormal");
 		m_shaderManager->AttachShader("AnimatedNormalFS", "AnimatedNormal");
 		m_shaderManager->LinkProgram("AnimatedNormal");
-
-		m_animatedNormal = m_shaderManager->GetShaderProgramID("AnimatedNormal");
 
 		// Blend map shaders
 		m_shaderManager->CreateProgram("StaticBlend");
@@ -70,18 +64,12 @@ namespace GFX
 		m_shaderManager->AttachShader("StaticBlendFS", "StaticBlend");
 		m_shaderManager->LinkProgram("StaticBlend");
 
-		m_staticBlend = m_shaderManager->GetShaderProgramID("StaticBlend");
-
 		m_shaderManager->CreateProgram("AnimatedBlend");
 		m_shaderManager->LoadShader("shaders/geometry/AnimatedBlendVS.glsl", "AnimatedBlendVS", GL_VERTEX_SHADER);
 		m_shaderManager->LoadShader("shaders/geometry/StaticBlendFS.glsl",   "AnimatedBlendFS", GL_FRAGMENT_SHADER);
 		m_shaderManager->AttachShader("AnimatedBlendVS", "AnimatedBlend");
 		m_shaderManager->AttachShader("AnimatedBlendFS", "AnimatedBlend");
 		m_shaderManager->LinkProgram("AnimatedBlend");
-
-		m_animatedBlend = m_shaderManager->GetShaderProgramID("AnimatedBlend");
-
-		//Outline shaders
 
 		m_shaderManager->CreateProgram("AnimatedOutline");
 		m_shaderManager->LoadShader("shaders/Outline/AnimatedOutlineVS.glsl", "AnimatedOutlineVS", GL_VERTEX_SHADER);
@@ -91,16 +79,13 @@ namespace GFX
 		m_shaderManager->LinkProgram("AnimatedOutline");
 
 		//m_shaderManager->CreateProgram("StaticOutline");
-		//m_shaderManager->LoadShader("shaders/Outline/StaticOutlineVS.glsl", "StaticOutlineVS", GL_VERTEX_SHADER);
-		//m_shaderManager->LoadShader("shaders/Outline/OutlineFS.glsl", "StaticOutlineFS", GL_FRAGMENT_SHADER);
+		//m_shaderManager->LoadShader("shaders/geometry/AnimatedBlendVS.glsl", "StaticOutlineVS", GL_VERTEX_SHADER);
+		//m_shaderManager->LoadShader("shaders/geometry/OutlineFS.glsl", "StaticOutlineFS", GL_FRAGMENT_SHADER);
 		//m_shaderManager->AttachShader("StaticOutlineVS", "StaticOutline");
 		//m_shaderManager->AttachShader("StaticOutlineFS", "StaticOutline");
 		//m_shaderManager->LinkProgram("StaticOutline");
 
 		m_uniformBufferManager->CreateBasicCameraUBO(m_shaderManager->GetShaderProgramID("StaticBlend"));
-
-		m_outlineThickness = 2;
-
 
 #ifdef INSTANCED_DRAWING
 
@@ -143,7 +128,6 @@ namespace GFX
 		unsigned int currentShader = std::numeric_limits<decltype(currentShader)>::max();
 		unsigned int currentMaterial = std::numeric_limits<decltype(currentMaterial)>::max();
 		unsigned int currentMesh = std::numeric_limits<decltype(currentMesh)>::max();
-		unsigned int currentLayer = std::numeric_limits<decltype(currentLayer)>::max();
 
 		unsigned int objType = std::numeric_limits<decltype(objType)>::max();
 		unsigned int viewport = std::numeric_limits<decltype(viewport)>::max();
@@ -164,6 +148,9 @@ namespace GFX
 		bool endMe = false;
 		for (i = renderIndex; i < renderJobs.size(); i++)
 		{
+
+			
+
 			bitmask = renderJobs[i].bitmask;
 
 			objType = GetBitmaskValue(bitmask, BITMASK::TYPE);
@@ -185,7 +172,7 @@ namespace GFX
 			}
 			
 
-			if (material == currentMaterial && meshID == currentMesh && !endMe && instanceCount < MAX_INSTANCES)// && layer == currentLayer)
+			if (material == currentMaterial && meshID == currentMesh && !endMe && instanceCount < MAX_INSTANCES)
 			{
 				InstanceData smid = *(InstanceData*)renderJobs.at(i).value;
 				m_staticInstances[instanceCount++] = smid;
@@ -272,7 +259,7 @@ namespace GFX
 					m_shaderManager->SetUniform(gamma, m_gammaUniform);
 				}
 
-				if (meshID != currentMesh)
+					if (meshID != currentMesh)
 				{
 					mesh = m_meshManager->GetMesh(meshID);
 					currentMesh = meshID;
@@ -284,11 +271,6 @@ namespace GFX
 					if (mesh.skeletonID >= 0)
 						animationManager->BindSkeletonData(mesh.skeletonID);
 				}
-
-				//if (layer != currentLayer)
-				//{
-				//	currentLayer = layer;
-				//}
 					 
 				InstanceData smid = *(InstanceData*)renderJobs.at(i).value;
 				m_staticInstances[instanceCount++] = smid;
