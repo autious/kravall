@@ -258,7 +258,7 @@ int main(int argc, char** argv)
     if( gtestReturn != 0 )
 	{
 #ifdef _WIN32 
-	std::cin.get();
+	    std::cin.get();
 #endif
         return gtestReturn;
 	}
