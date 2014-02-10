@@ -27,7 +27,7 @@ scen.asm:loadAssembly(
 	},
 	{
 		type = core.componentType.ScaleComponent,
-		data = { scale = 100.0 }
+		data = { scale = 250.0 }
 	},
 	{
 		type = core.componentType.RotationComponent,
@@ -108,52 +108,52 @@ local dude2 = scen.asm:loadAssembly(
 	}
 }
 )
---local knot = scen.asm:loadAssembly( 
---{
---	{
---		type = core.componentType.WorldPositionComponent,
---		data = { position = { 0, 0, 0 } }
---	},
---	{
---		type = core.componentType.GraphicsComponent,
---		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
---		load = { 
---					mesh = { core.loaders.GnomeLoader, "assets/knot.bgnome", false },
---					material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
---			   }
---	},
---	{
---		type = core.componentType.AnimationComponent,
---		data = { 
---			animationID = 0,
---			queuedAnimationID = 0,
---			currentTime = 0.0,
---			loop = false,
---			playing = false,
---			speed = 1.0,
---			currentFrame = 0
---		}
---	},
---	{
---		type = core.componentType.ScaleComponent,
---		data = { scale = 10.0 }
---	},
---	{
---		type = core.componentType.RotationComponent,
---		data = { rotation = { 0, 0, 0, 1 }}
---	}
---}
---)
+local knot = scen.asm:loadAssembly( 
+{
+	{
+		type = core.componentType.WorldPositionComponent,
+		data = { position = { 0, 5, 10 } }
+	},
+	{
+		type = core.componentType.GraphicsComponent,
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+		load = { 
+					mesh = { core.loaders.GnomeLoader, "assets/knot.bgnome", false },
+					material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
+			   }
+	},
+	{
+		type = core.componentType.AnimationComponent,
+		data = { 
+			animationID = 0,
+			queuedAnimationID = 0,
+			currentTime = 0.0,
+			loop = false,
+			playing = false,
+			speed = 1.0,
+			currentFrame = 0
+		}
+	},
+	{
+		type = core.componentType.ScaleComponent,
+		data = { scale = 5.0 }
+	},
+	{
+		type = core.componentType.RotationComponent,
+		data = { rotation = { 0, 0, 0, 1 }}
+	}
+}
+)
 
 -- Spotlight
-scen.asm:loadAssembly( 
+light = scen.asm:loadAssembly( 
 {
 	{
 		type = core.componentType.LightComponent,
 		data =  { 
 					color = { 1, 1, 1 },
 					speccolor = { 1, 1, 1},
-					intensity = 1.0,
+					intensity = 0.8,
 					spotangle = 3.14/4.0,
 					spotpenumbra = 0.03,
 					type = core.gfx.objectTypes.Light,
@@ -170,39 +170,40 @@ scen.asm:loadAssembly(
 	},
 	{
 		type = core.componentType.RotationComponent,
-		data = { rotation = {1,-0.5,1,0 } }
+		data = { rotation = {1,-1,1,0 } }
 	}
 } 
 )
-scen.asm:loadAssembly( 
-{
-	{
-		type = core.componentType.LightComponent,
-		data =  { 
-					color = { 1.0, 1.0, 1.0 },
-					speccolor = { 1.0, 1.0, 1.0 },
-					intensity = 0.05,
-					type = core.gfx.objectTypes.Light,
-					lighttype = core.gfx.lightTypes.Dir
-				},
-		ignoreHard = true
-	},
-	{
-		type = core.componentType.WorldPositionComponent,
-		data = { position = { 0, 0, 0 } }
-	},
-	{
-		type = core.componentType.ScaleComponent,
-		data = { scale = 1.0 } 
-	},
-	{
-		type = core.componentType.RotationComponent,
-		data = { rotation = { 2,-3,-1,0 } } -- Lights uses rotation component as a direction vector, not a quaternion
-	}
-} 
-)
-
+--scen.asm:loadAssembly( 
+--{
+--	{
+--		type = core.componentType.LightComponent,
+--		data =  { 
+--					color = { 1.0, 1.0, 1.0 },
+--					speccolor = { 1.0, 1.0, 1.0 },
+--					intensity = 0.05,
+--					type = core.gfx.objectTypes.Light,
+--					lighttype = core.gfx.lightTypes.Dir
+--				},
+--		ignoreHard = true
+--	},
+--	{
+--		type = core.componentType.WorldPositionComponent,
+--		data = { position = { 0, 0, 0 } }
+--	},
+--	{
+--		type = core.componentType.ScaleComponent,
+--		data = { scale = 1.0 } 
+--	},
+--	{
+--		type = core.componentType.RotationComponent,
+--		data = { rotation = { 2,-3,-1,0 } } -- Lights uses rotation component as a direction vector, not a quaternion
+--	}
+--} 
+--)
+local rot = 0
 local function Update(delta)
+	rot = rot + delta;
 	if keyboard.isKeyDown( key.Left ) then
 		core.animations.loop(dude, "rioter-walk_00")
 		core.animations.loop(dude2, "rioter-walk_00")
@@ -223,6 +224,13 @@ local function Update(delta)
 		core.animations.queue(dude, "rioter-male-wave-walk_00", true)
 		core.animations.queue(dude2, "rioter-male-wave-walk_00", false)
 	end
+	
+	local rc;
+    rc = light:get(core.componentType.RotationComponent)
+	rc.rotation = { math.cos(rot), -1 - (0.1 + math.sin(rot)), math.sin(rot), 0 }
+	light:set(core.componentType.RotationComponent, rc)
+	
+	
 end
 
 scen:registerUpdateCallback( Update )

@@ -133,9 +133,10 @@ namespace GFX
 				// TODO: Make light frustum fit the camera frustum
 				//bc.viewMatrix = viewMatrix;
 				//bc.viewMatrix = glm::lookAt<float>(-lightData.orientation, lightData.orientation, glm::vec3(0.0f, 1.0f, 0.0f));
-				bc.viewMatrix = glm::lookAt<float>(-lightData.orientation * 20.0f, lightData.orientation, glm::vec3(0.0f, 1.0f, 0.0f));
+				bc.viewMatrix = glm::lookAt<float>(-lightData.orientation * 1.0f, lightData.orientation, glm::vec3(0.0f, 1.0f, 0.0f));
 				//bc.projMatrix = projMatrix;
-				bc.projMatrix = glm::ortho<float>(-50.0f, 50.0f, -50.0f, 50.0f, 0.0f, 100.0f);
+				bc.projMatrix = glm::ortho<float>(-50.0f, 50.0f, -50.0f, 50.0f, -50.0f, 50.0f);
+				//bc.projMatrix = glm::perspective<float>(45.0f, 1.0f, 1.0f, 100.0f);
 
 				// Add the data to the global array of shadow data for use in LightPainter
 				ShadowData shadowData;

@@ -194,20 +194,28 @@ vec4 CalculateDirlightShadow(mat4x4 lightMatrix, LightData light, SurfaceData su
 	vec4 shadowCoords = lightMatrix * vec4(wPos.xyz, 1.0);
 	//shadowCoords.z = 2 * shadowCoords.z - 1;
 	vec3 uv = shadowCoords.xyz/shadowCoords.w;
-	uv.xy = (uv.xy + 1) * 0.5;
+	uv.xy = uv.xy * 0.5 + 0.5;
 	//ivec2 iuv = ivec2(uv.x, uv.y);
-	float depth = uv.z;
+	float depth = uv.z * 0.5 + 0.5;
 	//vec2 moments = imageLoad(shadowMap, iuv).xy;
 	vec2 moments = texture2D(shadowMap, uv.xy).xy;
-	float E_x2 = moments.y;
-	float Ex_2 = moments.x*moments.x;
-	float var = E_x2-Ex_2;
-	var = max(var, 0.00002);
-	float mD = depth-moments.x;
-	float mD_2 = mD*mD;
-	float p_max = var/(var+ mD_2);
-	float shadowFactor = max(p_max, (depth<=moments.x)?1.0:0.2);
-
+	float shadowFactor;
+	if(depth <= moments.x)
+	{
+		shadowFactor = 1.0;
+	}
+	else
+	{
+		float E_x2 = moments.y;
+		float Ex_2 = moments.x*moments.x;
+		float var = E_x2-Ex_2;
+		var = max(var, 0.00002);
+	
+		float mD = depth-moments.x;
+		float mD_2 = mD*mD;
+		float p_max = var/(var + mD_2);
+		shadowFactor = clamp(2 * max(p_max, (depth<=moments.x)?1.0:0.2) - 0.9, 0.0, 1.0);
+	}
 
 	vec3 lightDir = normalize(-light.orientation.xyz);
 	vec3 eyeDir = normalize(eyePosition - wPos.xyz);
