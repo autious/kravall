@@ -223,6 +223,9 @@ namespace GFX
 				depth = GetBitmaskValue(bitmask, BITMASK::DEPTH);
 			}
 
+			if (layer == LAYER_TYPES::DECAL_LAYER)
+				continue;
+
 
 			if (material == currentMaterial && meshID == currentMesh && !endMe && instanceCount < MAX_INSTANCES && layer == currentLayer)
 			{

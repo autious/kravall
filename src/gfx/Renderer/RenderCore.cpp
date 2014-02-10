@@ -18,6 +18,7 @@
 #include "PostProcessing/PostProcessingPainter.hpp"
 #include "GlobalIlluminationRenderer/GIPainter.hpp"
 #include "PostProcessing/BlurPainter.hpp"
+#include "DecalRenderer/DecalPainter.hpp"
 
 #include <Shaders/ShaderManager.hpp>
 #include <Buffers/UniformBufferManager.hpp>
@@ -78,6 +79,7 @@ namespace GFX
 		delete(m_fboPainter);
         delete(m_overlayPainter);
 		delete(m_blurPainter);
+		delete(m_decalPainter);
 	}
 
 	void RenderCore::Initialize(int windowWidth, int windowHeight)
@@ -108,6 +110,7 @@ namespace GFX
 
 		m_GIPainter = new GIPainter(m_shaderManager, m_uniformBufferManager, m_renderJobManager);
 		m_blurPainter = new BlurPainter(m_shaderManager, m_uniformBufferManager);
+		m_decalPainter = new DecalPainter(m_shaderManager, m_uniformBufferManager, m_renderJobManager, m_meshManager, m_textureManager, m_materialManager);
 
 		m_debugPainter = new DebugPainter(m_shaderManager, m_uniformBufferManager);
 		m_textPainter = new TextPainter(m_shaderManager, m_uniformBufferManager);
@@ -137,7 +140,7 @@ namespace GFX
 		m_blurPainter->Initialize(m_FBO, m_dummyVAO);
 		m_postProcessingPainter->Initialize(m_FBO, m_dummyVAO, m_windowWidth, m_windowHeight, m_blurPainter);
 		m_GIPainter->Initialize(m_FBO, m_dummyVAO, m_windowWidth, m_windowHeight);
-		
+		m_decalPainter->Initialize(m_FBO, m_dummyVAO);
 
 		// Set console width
 		m_consolePainter->SetConsoleHeight(m_windowHeight);
@@ -311,6 +314,8 @@ namespace GFX
 			GFX_CHECKTIME(m_renderJobManager->Sort(), "Sorting");
 
 			GFX_CHECKTIME(m_deferredPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix, m_gamma), "Geometry");
+
+			GFX_CHECKTIME(m_decalPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix, m_gamma), "Decals");
 			
 			GFX_CHECKTIME(m_GIPainter->Render(delta, m_normalDepth, m_diffuse, m_viewMatrix, m_projMatrix), "GI");
 
@@ -337,6 +342,8 @@ namespace GFX
 			m_renderJobManager->Sort();
 
 			m_deferredPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix, m_gamma);
+
+			m_decalPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix, m_gamma);
 
 			m_GIPainter->Render(delta, m_normalDepth, m_diffuse, m_viewMatrix, m_projMatrix);
 

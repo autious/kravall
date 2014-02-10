@@ -10,13 +10,15 @@ namespace Core
 
     RenderingSystem::RenderingSystem() :BaseSystem(EntityHandler::GenerateAspect<GraphicsComponent, WorldPositionComponent, RotationComponent, ScaleComponent>(), 0ULL)
 		{}
+
+
 	void RenderingSystem::Update(float delta)
 	{
 		glm::quat rot;
 		glm::mat4 rotationMatrix;
 		glm::mat4 translationMatrix;
 		glm::mat4 scaleMatrix;
-
+		int i = 0;
 		for (std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); it++)
 		{
 			WorldPositionComponent* wpc = WGETC<WorldPositionComponent>(*it);
@@ -45,6 +47,9 @@ namespace Core
 				instanceData->outlineColor[2] = gc->outlineColor[2];
 				instanceData->outlineColor[3] = gc->outlineColor[3];
 
+				if (i % 2 == 0)
+					GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::LAYER, GFX::LAYER_TYPES::DECAL_LAYER);
+				i++;
                 if (ac != nullptr)
                 {
                     instanceData->animationIndex = ac->animationID;
