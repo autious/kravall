@@ -6,6 +6,8 @@
 #include <cmath>
 #include <limits>
 
+
+
 namespace Core
 {
 	/*!
@@ -16,7 +18,7 @@ namespace Core
 		Idle,
 		Walking,
 		Sprinting,
-		COUNT,
+		MOVEMENTSTATE_COUNT,
 	};
 
 	/*!

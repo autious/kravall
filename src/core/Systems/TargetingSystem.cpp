@@ -1,5 +1,6 @@
 #include "TargetingSystem.hpp"
 #include <Input/InputManager.hpp>
+#include <GameUtility/GameData.hpp>
 #include "World.hpp"
 
 #include <SystemDef.hpp>
@@ -53,9 +54,19 @@ void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police)
 
 		float distSqr = dx * dx + dy * dy + dz * dz;
 
-		if (distSqr < 5.0f)
+		const Core::WeaponData& weapon = Core::GameData::GetWeaponDataFromWeapon( tcTarget->weapon );
+
+		if (distSqr < weapon.range * weapon.range )
+		{
 			if (TargetingComponent::Attack(police, *tcTarget))
+			{
+				
+
+
+
 				std::cout << "Police: " << police << " is attacking rioter " << tc->target << std::endl;
+			}
+		}
 	}
 
 	switch (ac->police.stance)

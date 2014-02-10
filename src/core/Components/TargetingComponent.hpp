@@ -7,6 +7,14 @@
 
 namespace Core
 {
+	enum WeaponType
+	{
+		Melee,
+		Baton,
+		Gun,
+		Rifle,
+		WEAPONTYPE_COUNT
+	};
 	/*!
 		Component holding a moving object's speed, maximum speed and direction of movement.
 	*/
@@ -21,8 +29,10 @@ namespace Core
 		/*! The entity that is the current target. */
 		Entity target;
 
+		WeaponType weapon;
+
 		/*! Default constructor. Initialising all members to 0. */
-		TargetingComponent() : numberOfAttackers(0), target(INVALID_ENTITY)
+		TargetingComponent() : numberOfAttackers(0), target(INVALID_ENTITY), weapon( WeaponType::Melee )
 		{
 			for (int i = 0; i < MAX_ATTACKERS; ++i)
 			{

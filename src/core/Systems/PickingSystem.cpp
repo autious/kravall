@@ -6,7 +6,6 @@
 #include <logger/Logger.hpp>
 #include <Input/InputManager.hpp>
 
-#undef max
 
 Core::PickingSystem::PickingSystem()
 : BaseSystem(EntityHandler::GenerateAspect< WorldPositionComponent, BoundingVolumeComponent >(), 0ULL), 
