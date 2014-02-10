@@ -19,7 +19,8 @@ layout (std140, binding = 6) readonly buffer animationBuffer
 	mat4x4 gBones[];
 };
 
-layout (std140, binding = 0) uniform Matrices
+
+layout (shared) uniform PerFrameBlock
 {
 	mat4 gView;
 	mat4 gProjection;

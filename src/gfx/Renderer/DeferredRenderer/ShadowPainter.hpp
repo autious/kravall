@@ -37,12 +37,18 @@ namespace GFX
 		\param FBO ID of FBO used for rendertargets
 		\param dummyVAO ID of an empty VAO used for screenspace rendering
 		*/
-		void Initialize(GLuint FBO, GLuint dummyVAO, BlurPainter* blurPainter);
+		void Initialize(GLuint FBO, GLuint dummyVAO, BlurPainter* blurPainter, const unsigned int& shadowmapResolution);
+
+
+		/*!
+		Used to resize the shadowmap painter
+		*/
+		void Resize(const unsigned int& shadowmapResolution);
 
 		/*!
 		Main rendering function
 		*/
-		void Render(AnimationManager* animationManager, const unsigned int& renderIndex, glm::mat4 viewMatrix, glm::mat4 projMatrix,
+		void Render(AnimationManager* animationManager, const unsigned int& renderIndex, FBOTexture* depthBuffer, glm::mat4 viewMatrix, glm::mat4 projMatrix,
 			const unsigned int& geometryStartIndex, const unsigned int& geometryEndIndex, FBOTexture* shadowMap, const unsigned int& width, const unsigned int& height);
 
 	private:
@@ -54,6 +60,9 @@ namespace GFX
 
 		InstanceData* m_staticInstances;
 		GLuint m_instanceBuffer;
+		GLuint m_RBO;
+
+		BlurPainter* m_blurPainter;
 
 		GLuint m_matricesUniform;
 	};

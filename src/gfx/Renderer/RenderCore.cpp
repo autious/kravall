@@ -4,7 +4,12 @@
 #include <iomanip>
 #include <utility/Colors.hpp>
 #include <GFXDefines.hpp>
+#include "ShadowData.hpp"
+ShadowData ShadowDataContainer::data[MAXIMUM_SHADOWCASTERS];
 
+unsigned int ShadowDataContainer::numDirLights = 0;
+unsigned int ShadowDataContainer::numSpotLights = 0;
+unsigned int ShadowDataContainer::numPointLights = 0;
 
 namespace GFX
 {
@@ -142,7 +147,7 @@ namespace GFX
 
 
 		m_deferredPainter->Initialize(m_FBO, m_dummyVAO);
-		m_shadowPainter->Initialize(m_FBO, m_dummyVAO, m_blurPainter);
+		m_shadowPainter->Initialize(m_FBO, m_dummyVAO, m_blurPainter, m_settings[GFX_SHADOW_RESOLUTION]);
 		m_lightPainter->Initialize(m_FBO, m_dummyVAO, m_windowWidth, m_windowHeight);
 		m_debugPainter->Initialize(m_FBO, m_dummyVAO);
 		m_textPainter->Initialize(m_FBO, m_dummyVAO);
@@ -335,6 +340,11 @@ namespace GFX
 		// Apply lighting for lights with shadow
 		// Apply lighting for lights without shadow
 
+		// Reset shadow data
+		ShadowDataContainer::numDirLights = 0;
+		ShadowDataContainer::numSpotLights = 0;
+		ShadowDataContainer::numPointLights = 0;
+
 		// renderJobIndex is the index of the current render job
 		unsigned int renderJobIndex = 0;
 
@@ -347,15 +357,15 @@ namespace GFX
 		// Draw geometry to G-buffers
 		CT(m_deferredPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix, m_gamma), "Geometry");
 
-		// Draw geometry to shadow maps
-		CT(m_shadowPainter->Render(m_animationManager, renderJobIndex, m_viewMatrix, m_projMatrix, 0, renderJobIndex, m_shadowMapTexture, m_windowWidth, m_windowHeight), "Shadowmap");
+		// Draw shadow map geometry
+		CT(m_shadowPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_viewMatrix, m_projMatrix, 0, renderJobIndex, m_shadowMapTexture, m_windowWidth, m_windowHeight), "Shadowmap");
 			
 		// Do global illumination / ssao
 		CT(m_GIPainter->Render(delta, m_normalDepth, m_diffuse, m_viewMatrix, m_projMatrix), "GI");
 
 		// Do lighting calculations
 		CT(m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_GIPainter->m_SSDOTexture,
-			m_viewMatrix, m_projMatrix, m_exposure, m_gamma, m_whitePoint, m_toneMappedTexture), "Lighting");
+			m_shadowMapTexture, m_viewMatrix, m_projMatrix, m_exposure, m_gamma, m_whitePoint, m_toneMappedTexture), "Lighting");
 
 		// Do post processing
 		CT(m_postProcessingPainter->Render(delta, m_toneMappedTexture, m_currentLUT, m_exposure, m_gamma, m_whitePoint), "PostProcessing");

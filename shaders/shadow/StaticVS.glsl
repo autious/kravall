@@ -13,7 +13,7 @@ layout (std140, binding = 4) readonly buffer instanceBuffer
     InstanceData gInstances[];
 };
 
-layout (std140, binding = 0) uniform Matrices
+layout (shared) uniform PerFrameBlock
 {
 	mat4 gView;
 	mat4 gProjection;
@@ -32,7 +32,5 @@ void main()
 {
 	//Move position to clip space
 	posFS = gProjection * gView * gInstances[gl_InstanceID].mm * positionIN;
-	vec2 Tex = vec2((gl_VertexID << 1) & 2, gl_VertexID & 2);
-    vec4 Pos = vec4(Tex * vec2(2,-2) + vec2(-1,1), 0, 1);
-	gl_Position = Pos;//posFS;
+	gl_Position = posFS;
 }

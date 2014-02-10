@@ -43,19 +43,18 @@ namespace GFX
 		
 		GLenum err;
 		//Initialize Shadowmap texture, parameters should be configurable through settings
-		
 		glGenTextures(1, &m_textureHandle);
 		glBindTexture(GL_TEXTURE_2D, m_textureHandle);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
 		if (quality == GFX_SHADOWS_VARIANCE) 
 		{
 			// Create 2 channel texture for variance shadowmapping
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, resolution, resolution, 0, GL_RGBA, GL_FLOAT, nullptr);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RG32F, resolution, resolution, 0, GL_RG, GL_FLOAT, nullptr);
 			GLfloat border[4] = { 1.0f, 1.0f, 0.0f, 0.0f };
 			glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, border);
 		}

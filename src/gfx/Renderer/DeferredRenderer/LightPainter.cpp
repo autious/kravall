@@ -1,5 +1,6 @@
 #include "LightPainter.hpp"
 #include <logger/Logger.hpp>
+#include "../ShadowData.hpp"
 #include <limits>
 
 namespace GFX
@@ -41,20 +42,24 @@ namespace GFX
 		m_exposureUniform = m_shaderManager->GetUniformLocation("ComputeLighting", "gExposure");
 		m_whitePointUniform = m_shaderManager->GetUniformLocation("ComputeLighting", "gWhitePoint");
 
-		numActiveLightsUniform = m_shaderManager->GetUniformLocation("ComputeLighting", "numActiveLights");
+		m_numActiveLightsUniform = m_shaderManager->GetUniformLocation("ComputeLighting", "numActiveLights");
 
 		m_numPointLightsUniform = m_shaderManager->GetUniformLocation("ComputeLighting", "numPointLights");
 		m_numSpotLightsUniform = m_shaderManager->GetUniformLocation("ComputeLighting", "numSpotLights");
 		m_numDirLightsUniform = m_shaderManager->GetUniformLocation("ComputeLighting", "numDirLights");
 		m_numAmbientLightsUniform = m_shaderManager->GetUniformLocation("ComputeLighting", "numAmbientLights");
 
+		m_numPointShadowsUniform = m_shaderManager->GetUniformLocation("ComputeLighting", "numPointShadows");
+		m_numSpotShadowsUniform = m_shaderManager->GetUniformLocation("ComputeLighting", "numSpotShadows");
+		m_numDirShadowsUniform = m_shaderManager->GetUniformLocation("ComputeLighting", "numDirShadows");
+
 		glUniform1i(m_shaderManager->GetUniformLocation("ComputeLighting", "destTex"), 0);
 
-		alphaUniform = m_shaderManager->GetUniformLocation("TQ", "alphaIN");
-		textureUniform = m_shaderManager->GetUniformLocation("TQ", "textureIN");
+		m_alphaUniform = m_shaderManager->GetUniformLocation("TQ", "alphaIN");
+		m_textureUniform = m_shaderManager->GetUniformLocation("TQ", "textureIN");
 
 		Resize(m_screenWidth, m_screenHeight);
-
+		
 
 		m_lights = new LightData[MAXIMUM_LIGHTS];
 
@@ -62,6 +67,13 @@ namespace GFX
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_pointLightBuffer);
 		glBufferData(GL_SHADER_STORAGE_BUFFER, MAXIMUM_LIGHTS * sizeof(LightData), NULL, GL_STREAM_COPY);
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, m_pointLightBuffer);
+
+
+		glGenBuffers(1, &m_shadowDataBuffer);
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_shadowDataBuffer);
+		glBufferData(GL_SHADER_STORAGE_BUFFER, MAXIMUM_SHADOWCASTERS * sizeof(ShadowData), NULL, GL_STREAM_COPY);
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 8, m_shadowDataBuffer);
+
 	}
 
 	void LightPainter::Resize(int screenWidth, int screenHeight)
@@ -83,7 +95,7 @@ namespace GFX
 
 
 	void LightPainter::Render(unsigned int& renderIndex, FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, FBOTexture* SSDOTexture,
-		glm::mat4 viewMatrix, glm::mat4 projMatrix, float exposure, float gamma, glm::vec3 whitePoint, GLuint& toneMappedTexture)
+		FBOTexture* shadowMap, glm::mat4 viewMatrix, glm::mat4 projMatrix, float exposure, float gamma, glm::vec3 whitePoint, GLuint& toneMappedTexture)
 	{
 		m_shaderManager->UseProgram("ComputeLighting");
 
@@ -137,12 +149,12 @@ namespace GFX
 			lightType = GetBitmaskValue(bitmask, BITMASK::LIGHT_TYPE);
 			// Do point and directional lights only
 			if (lightType != GFX::LIGHT_TYPES::POINT && lightType != GFX::LIGHT_TYPES::DIR 
-				&& lightType != GFX::LIGHT_TYPES::AMBIENT && lightType != GFX::LIGHT_TYPES::SPOT)
+				&& lightType != GFX::LIGHT_TYPES::AMBIENT && lightType != GFX::LIGHT_TYPES::SPOT && lightType != GFX::LIGHT_TYPES::DIR_SHADOW)
 			{
-				if (lightType == GFX::LIGHT_TYPES::POINT_SHADOW || lightType == GFX::LIGHT_TYPES::SPOT_SHADOW ||
-					lightType == GFX::LIGHT_TYPES::DIR_SHADOW)
-					continue;
-				else
+				//if (lightType == GFX::LIGHT_TYPES::POINT_SHADOW || lightType == GFX::LIGHT_TYPES::SPOT_SHADOW ||
+				//	lightType == GFX::LIGHT_TYPES::DIR_SHADOW)
+				//	continue;
+				//else
 					break;
 			}
 
@@ -180,12 +192,16 @@ namespace GFX
 		}
 		renderIndex = i;
 
-		m_shaderManager->SetUniform((GLuint)numLights, numActiveLightsUniform);
+		m_shaderManager->SetUniform((GLuint)numLights, m_numActiveLightsUniform);
 
 		m_shaderManager->SetUniform((GLuint)totalNumLights[LIGHT_TYPES::POINT], m_numPointLightsUniform);
 		m_shaderManager->SetUniform((GLuint)totalNumLights[LIGHT_TYPES::SPOT], m_numSpotLightsUniform);
 		m_shaderManager->SetUniform((GLuint)totalNumLights[LIGHT_TYPES::DIR], m_numDirLightsUniform);
 		m_shaderManager->SetUniform((GLuint)totalNumLights[LIGHT_TYPES::AMBIENT], m_numAmbientLightsUniform);
+
+		m_shaderManager->SetUniform((GLuint)ShadowDataContainer::numPointLights, m_numPointShadowsUniform);
+		m_shaderManager->SetUniform((GLuint)ShadowDataContainer::numSpotLights, m_numSpotShadowsUniform);
+		m_shaderManager->SetUniform((GLuint)ShadowDataContainer::numDirLights, m_numDirShadowsUniform);
 
 		//TextureManager::BindTexture(diffuse->GetTextureHandle(), m_shaderManager->GetUniformLocation("ComputeLighting", "normal"), 0, GL_TEXTURE_2D);
 		glBindImageTexture(0, m_textureHandle, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
@@ -195,14 +211,32 @@ namespace GFX
 		glBindImageTexture(4, glowMatID->GetTextureHandle(), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
 		glBindImageTexture(5, SSDOTexture->GetTextureHandle(), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
 
+		
+		m_shadowMapUniform = m_shaderManager->GetUniformLocation("ComputeLighting", "shadowMap");
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, shadowMap->GetTextureHandle());
+		//glBindImageTexture(6, shadowMap->GetTextureHandle(), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RG32F);
+
+
+		// Transfer Lights to GPU
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_pointLightBuffer);
-		LightData* pData = (LightData*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, MAXIMUM_LIGHTS * sizeof(LightData), 
+		LightData* lightData = (LightData*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, MAXIMUM_LIGHTS * sizeof(LightData), 
 			GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
 
-		memcpy(pData, m_lights, numLights * sizeof(LightData));
+		memcpy(lightData, m_lights, numLights * sizeof(LightData));
 
 		glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
+		// Transfer Shadow Data to GPU
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_shadowDataBuffer);
+		ShadowData* shadowData = (ShadowData*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, MAXIMUM_SHADOWCASTERS * sizeof(ShadowData),
+			GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
+
+		memcpy(shadowData, ShadowDataContainer::data, MAXIMUM_SHADOWCASTERS * sizeof(ShadowData));
+
+		glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+
+		// Run the shader
 		glDispatchCompute(GLuint((m_screenWidth + WORK_GROUP_SIZE - 1) / float(WORK_GROUP_SIZE)), GLuint((m_screenHeight + WORK_GROUP_SIZE - 1) / float(WORK_GROUP_SIZE)), 1);
 		
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
@@ -213,9 +247,9 @@ namespace GFX
 		//glDisable(GL_BLEND);
 		//glDepthMask(GL_FALSE);
 		//
-		//m_shaderManager->SetUniform(1.0f, alphaUniform);
+		//m_shaderManager->SetUniform(1.0f, m_alphaUniform);
 		//
-		//TextureManager::BindTexture(m_textureHandle, textureUniform, 0, GL_TEXTURE_2D);
+		//TextureManager::BindTexture(m_textureHandle, m_textureUniform, 0, GL_TEXTURE_2D);
 		//
 		//glBindVertexArray(m_dummyVAO);
 		//glDrawArrays(GL_POINTS, 0, 1);

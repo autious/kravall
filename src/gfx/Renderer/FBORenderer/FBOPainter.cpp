@@ -97,7 +97,6 @@ namespace GFX
 		else if (current == 6) // Draw shadowmap
 		{
 			glViewport(0, 0, 256, 256);
-			//glActiveTexture(GL_TEXTURE0);
 			TextureManager::BindTexture(shadowMap->GetTextureHandle(), m_textureUniform, 0, GL_TEXTURE_2D);
 			glBindVertexArray(m_dummyVAO);
 			glDrawArrays(GL_POINTS, 0, 1);
