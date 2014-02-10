@@ -20,7 +20,8 @@ return function(asm, posX, posY, posZ, planeScale)
 			},
 			{
 				type = core.componentType.ScaleComponent,
-				data = { scale = planeScale }
+				data = { scale = planeScale },
+                ignoreHard = true
 			},
 			{
 				type = core.componentType.UnitTypeComponent,
