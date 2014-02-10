@@ -50,6 +50,7 @@ namespace Core
 				if (i % 2 == 0)
 					GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::LAYER, GFX::LAYER_TYPES::DECAL_LAYER);
 				i++;
+
                 if (ac != nullptr)
                 {
                     instanceData->animationIndex = ac->animationID;

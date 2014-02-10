@@ -52,7 +52,7 @@ namespace GFX
 	void DecalPainter::Render(AnimationManagerGFX* animationManager, unsigned int& renderIndex,
 		FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix, const float& gamma)
 	{
-		BasePainter::Render();
+		//BasePainter::Render();
 		/*
 		BindGBuffer(depthBuffer, normalDepth, diffuse, specular, glowMatID);
 		glEnable(GL_DEPTH_TEST);
@@ -145,7 +145,7 @@ namespace GFX
 
 		m_shaderManager->ResetProgram();
 		*/
-		ClearFBO();
+		//ClearFBO();
 	}
 
 	void DecalPainter::BindGBuffer(FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID)
