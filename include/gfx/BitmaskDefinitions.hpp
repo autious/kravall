@@ -21,6 +21,7 @@ namespace GFX
 	{
 		static const unsigned int MESH_LAYER = 3;
 		static const unsigned int OUTLINE_LAYER = 2;
+		static const unsigned int DECAL_LAYER = 1;
 	}
 	
 	namespace OBJECT_TYPES
