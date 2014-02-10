@@ -14,10 +14,11 @@
 
 namespace 
 {
+
 	TEST(LogSystemTest, FileTest )
 	{
-
 #ifdef __WIN32
+
 		logger::SetNewLogHandler( &logger::debugHandler, 
 			new FileHandler( logger::LogType::logType_debug, "loggerTestFile.txt", false) );
 
@@ -46,8 +47,10 @@ namespace
 		std::string test = std::string(logger::debug.GetPrefix()) + ":: This file is just for testing 123456789 ";
 		int diff = fromFile.compare( test );
 		ASSERT_TRUE( diff == 0 );
+
 #endif
 	}
+
 
 	TEST(LogSystemTest, TestMemory )
 	{
@@ -81,5 +84,7 @@ namespace
 		ASSERT_FALSE( diff );
 #endif
 	}
+
 }
+
 #endif

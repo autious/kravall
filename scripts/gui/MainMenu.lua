@@ -13,30 +13,30 @@ function MainMenu:new(o,menuState)
 
 
     o.gui:addComponent(Button:new({
-                                    matReleased = "assets/material/ui/logoKravall.material",
-                                    matPressed = "assets/material/ui/logoKravall.material",
-                                    matHover = "assets/material/ui/logoKravall.material",
+                                    matReleased = "assets/texture/ui/logo-kravall_00.material",
+                                    matPressed = "assets/texture/ui/logo-kravall_00.material",
+                                    matHover = "assets/texture/ui/logo-kravall_00.material",
                                     xoffset=0,yoffset=-100}))
 
     o.gui:addComponent(Button:new({
-                                    matReleased = "assets/material/ui/startButton.material",
-                                    matPressed = "assets/material/ui/startButton.material",
-                                    matHover = "assets/material/ui/startButton.material",
+                                    matReleased = "assets/texture/ui/start-button-release_00.material",
+                                    matPressed = "assets/texture/ui/start-button-press_00.material",
+                                    matHover = "assets/texture/ui/start-button-hover_00.material",
                                     xoffset=-20,yoffset=10,onClick = menuState.goScenario
                                   }))
 
     o.gui:addComponent(Button:new({
 
-                                    matReleased = "assets/material/ui/optionsButton.material",
-                                    matPressed = "assets/material/ui/optionsButton.material",
-                                    matHover = "assets/material/ui/optionsButton.material",
+                                    matReleased = "assets/texture/ui/options-button-release_00.material",
+                                    matPressed = "assets/texture/ui/options-button-press_00.material",
+                                    matHover = "assets/texture/ui/options-button-hover_00.material",
                                     xoffset=100,yoffset=20,onClick = menuState.goSettings
                                   }))
 
     o.gui:addComponent(Button:new({
-                                    matReleased = "assets/material/ui/creditsButton.material",
-                                    matPressed = "assets/material/ui/creditsButton.material",
-                                    matHover = "assets/material/ui/creditsButton.material",
+                                    matReleased = "assets/texture/ui/credits-button-release_00.material",
+                                    matPressed = "assets/texture/ui/credits-button-press_00.material",
+                                    matHover = "assets/texture/ui/credits-button-hover_00.material",
                                     xoffset=-10,yoffset=20,onClick = menuState.goCredits
                                     }))
 

@@ -9,7 +9,6 @@
 
 extern "C"
 {
-
     static int LuaEq(lua_State* L)
     {
         Core::SquadFormation* lhs = luau_checksquadformation(L, 1);
@@ -60,7 +59,7 @@ extern "C"
         }
         else
         {
-            return luaL_error(L, "setSquadGoal([squadIDs], x, y, z)  expects 4 paramters");
+            return luaL_error(L, "setSquadGoal([squadIDs], x, y, z)  expects 4 parameters");
         }
     }
 
@@ -107,7 +106,7 @@ extern "C"
         }
         else
         {
-            return luaL_error(L, "setSquadFormation([squadIDs], <SquadFormation>, startX, startY, startZ, endX, endY, endZ)  expects 8 paramters");
+            return luaL_error(L, "setSquadFormation([squadIDs], <SquadFormation>, startX, startY, startZ, endX, endY, endZ)  expects 8 parameters");
         }
     }
 
@@ -155,7 +154,7 @@ extern "C"
         }
         else
         {
-            return luaL_error(L, "previewSquadFormation([squadIDs], <SquadFormation>, startX, startY, startZ, endX, endY, endZ)  expects 8 paramters");
+            return luaL_error(L, "previewSquadFormation([squadIDs], <SquadFormation>, startX, startY, startZ, endX, endY, endZ)  expects 8 parameters");
         }
     }
 
@@ -197,7 +196,7 @@ extern "C"
         }
         else
         {
-            return luaL_error(L, "setSquadStance([squadIDs], <SquadFormation>, startX, startY, startZ, endX, endY, endZ)  expects 8 paramters");
+            return luaL_error(L, "setSquadStance([squadIDs], <SquadFormation>, startX, startY, startZ, endX, endY, endZ)  expects 8 parameters");
         }
     }
 
@@ -217,6 +216,92 @@ extern "C"
         }
 
         return 1;
+    }
+
+    static int LuaEnableOutline(lua_State* L)    
+    {
+        Core::SquadSystem* squadSystem = Core::world.m_systemHandler.GetSystem<Core::SquadSystem>();
+
+        if(lua_gettop(L) == 5)
+        {
+            if(lua_istable(L, 1))
+            {   
+                int nSquads = 0;
+                int* squads = nullptr;
+
+                lua_pushnil(L);
+                while(lua_next(L, 1))
+                {
+                    lua_pop(L, 1);
+                    ++nSquads;
+                }
+                        
+                squads = Core::world.m_frameHeap.NewPODArray<int>(nSquads);
+
+                lua_pushnil(L);
+                for(int i=0; lua_next(L, 1); ++i)
+                {
+                    squads[i] = luaL_checknumber(L, -1);
+                    lua_pop(L, 1);
+                }
+
+                squadSystem->EnableOutline(squads, nSquads, 
+                        glm::vec4(luaL_checknumber(L, 2), 
+                                    luaL_checknumber(L, 3), 
+                                    luaL_checknumber(L, 4), 
+                                    luaL_checknumber(L, 5))); 
+                return 0;
+            }
+            else
+            {
+                return luaL_error(L, "argument 1 of enableOutline is not a table");
+            }
+        }
+        else
+        {
+            return luaL_error(L, "enableOutline([squadIDs], Red, Green, Blue, Alpha)  expects 5 parameters");
+        }
+    }
+
+    static int LuaDisableOutline(lua_State* L)    
+    {
+        Core::SquadSystem* squadSystem = Core::world.m_systemHandler.GetSystem<Core::SquadSystem>();
+
+        if(lua_gettop(L) == 1)
+        {
+            if(lua_istable(L, 1))
+            {   
+                int nSquads = 0;
+                int* squads = nullptr;
+
+                lua_pushnil(L);
+                while(lua_next(L, 1))
+                {
+                    lua_pop(L, 1);
+                    ++nSquads;
+                }
+                        
+                squads = Core::world.m_frameHeap.NewPODArray<int>(nSquads);
+
+                lua_pushnil(L);
+                for(int i=0; lua_next(L, 1); ++i)
+                {
+                    squads[i] = luaL_checknumber(L, -1);
+                    lua_pop(L, 1);
+                }
+
+                squadSystem->DisableOutline(squads, nSquads); 
+                return 0;
+            }
+            else
+            {
+                return luaL_error(L, "argument 1 of disableOutline is not a table");
+            }
+        }
+        else
+        {
+            return luaL_error(L, "disableOutline([squadIDs])  expects 1 parameter");
+        }
     }
 }
 
@@ -239,6 +324,8 @@ namespace Core
                     luau_setfunction(L, "previewSquadFormation", LuaPreviewSquadFormation);
                     luau_setfunction(L, "setSquadStance", LuaSetSquadStance);
                     luau_setfunction(L, "getSquadEntity", LuaGetSquadEntity);
+                    luau_setfunction(L, "enableOutline", LuaEnableOutline);
+                    luau_setfunction(L, "disableOutline", LuaDisableOutline);
                         lua_newtable(L);
                         Core::SquadFormation* formation = LuaUNewSquadFormation(L);
                         *formation = Core::SquadFormation::NO_FORMATION;

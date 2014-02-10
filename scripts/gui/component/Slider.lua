@@ -10,10 +10,10 @@ local Slider =
                     yoffset=0,
                     width =0,
                     height = 0,
-                    matReleased = "assets/material/ui/slider_knob_release.material",
-                    matPressed = "assets/material/ui/slider_knob_pressed.material",
-                    matHover = "assets/material/ui/slider_knob_hover.material",
-                    matBackground = "assets/material/ui/slider_background.material"
+                    matReleased = "assets/texture/ui/slider-knob-release_00.material",
+                    matPressed = "assets/texture/ui/slider-knob-press_00.material",
+                    matHover = "assets/texture/ui/slider-knob-hover_00.material",
+                    matBackground = "assets/texture/ui/slider-background_00.material"
                 
                 }
 

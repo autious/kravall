@@ -29,10 +29,18 @@ namespace Core
 		/*! The entity that is the current target. */
 		Entity target;
 
+		/*! The type of weapon used by this unit. */
 		WeaponType weapon;
+		
+		/*! How long the unit has tried to attack the current target. */
+		float attackTime;
+
+		/*! Whether the unit is currently attacking its target. */
+		bool isAttacking;
 
 		/*! Default constructor. Initialising all members to 0. */
-		TargetingComponent() : numberOfAttackers(0), target(INVALID_ENTITY), weapon( WeaponType::Melee )
+		TargetingComponent() : numberOfAttackers(0), target(INVALID_ENTITY), attackTime(0.0f), isAttacking(false), 
+			weapon( WeaponType::Melee )
 		{
 			for (int i = 0; i < MAX_ATTACKERS; ++i)
 			{

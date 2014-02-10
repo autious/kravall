@@ -1,23 +1,37 @@
-translateOS = { windows="win32", linux="linux"}
+function dist_name()
+    if os.is( "linux" ) then
+        if os.is64bit() then 
+            return "linux_amd64" 
+        else
+            error( "Build script does not support 32-bit linux machines" ) 
+        end
+    elseif os.is( "windows" ) then
+        return "win32"
+    end
+end
 
 solution "RiotGame"
     configurations {"DebugTest","Debug", "Release", "ReleaseTest", "PureReleaseTest", "PureDebugTest"}
         flags{ "Unicode", "NoPCH" } 
-        libdirs { translateOS[os.get()] .. "/lib" }
-        includedirs { translateOS[os.get()] .. "/deps", "deps", "include"}
+        libdirs { dist_name() .. "/lib" }
+        includedirs { dist_name() .. "/deps", "deps", "include"}
     
-    local location_path = "build"
+        local location_path = "build"
 
-    if os.is( "linux" ) then
-        buildoptions { "-std=c++11 -Wall -Werror=return-type"}-- -Wconversion"} -- -Wno-unused-parameter" }
-        location_path = "" 
-    elseif(os.is("windows")) then
-        location_path = location_path .."/win32/" .. _ACTION
-        location ( location_path )
-        location_path = location_path .. "/projects"
-    end
-    
-	defines { "_CRT_SECURE_NO_WARNINGS", "NOMINMAX" }
+        -- GMAKE people are lazy, populate root folder with build files
+        -- Also give extra flags to the GCC compiler
+        if _ACTION == "gmake" then 
+            buildoptions { "-std=c++11 -Wall -Werror=return-type"}-- -Wconversion"} -- -Wno-unused-parameter" }
+            location_path = "" 
+        else
+            --Disable warnings about using completely standard (and normal) c functions.
+            --In visual studio
+	        defines { "_CRT_SECURE_NO_WARNINGS", "NOMINMAX" }
+
+            location_path = location_path .."/" .. dist_name() .. "/" .. _ACTION
+            location ( location_path )
+            location_path = location_path .. "/projects"
+        end
 	
     configuration { "Debug or DebugTest or PureDebugTest" }
         defines { "DEBUG" }
@@ -34,22 +48,22 @@ solution "RiotGame"
         defines { "SKIP_RUN" }
 
     configuration { "Debug" }
-        targetdir ( "bin/" .. translateOS[os.get()] .. "/debug" )
+        targetdir ( "bin/" .. dist_name() .. "/debug" )
 
     configuration { "Release" } 
-        targetdir ( "bin/" .. translateOS[os.get()] .. "/release" )   
+        targetdir ( "bin/" .. dist_name() .. "/release" )   
 
     configuration { "DebugTest" }
-        targetdir ( "bin/" .. translateOS[os.get()] .. "/debugtest" )
+        targetdir ( "bin/" .. dist_name() .. "/debugtest" )
 
     configuration { "ReleaseTest" } 
-        targetdir ( "bin/" .. translateOS[os.get()] .. "/releasetest" )   
+        targetdir ( "bin/" .. dist_name() .. "/releasetest" )   
     
     configuration { "PureReleaseTest" } 
-        targetdir ( "bin/" .. translateOS[os.get()] .. "/purereleasetest" )   
+        targetdir ( "bin/" .. dist_name() .. "/purereleasetest" )   
 
     configuration { "PureDebugTest" } 
-        targetdir ( "bin/" .. translateOS[os.get()] .. "/puredebugtest" )   
+        targetdir ( "bin/" .. dist_name() .. "/puredebugtest" )   
 
     project "core"
         targetname "RiotGame" 
