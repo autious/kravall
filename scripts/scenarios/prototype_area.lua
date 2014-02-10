@@ -250,7 +250,7 @@ function scen:load()
 
     local checkbox = Checkbox:new({x=100,y=400,checked=true})
     function checkbox.onChange( value )
-        --core.config.debugRenderAreas = value
+        core.config.debugRenderAreas = value
     end
 
     gui:addComponent(button)
