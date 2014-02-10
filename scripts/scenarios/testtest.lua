@@ -40,14 +40,15 @@ local centerPoint = { 110, 0, 0 }
 local side = math.sqrt( 50 )
 for i = -side/2, side/2 do
 	for p = -side/2, side/2 do
-		rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rGroup)
+		--rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rGroup)
 	end
 end
+rioter( scen, 0, 0, 0, rGroup)
 core.system.groups.setGroupGoal(rGroup, 0, 0, 0)
 
 
 local squadOne = squad(scen, 77, 0, 0, math.pi/2);
-local squadTwo = squad(scen, 77, 0, 43, math.pi/2);
+--local squadTwo = squad(scen, 77, 0, 43, math.pi/2);
 
 
 
