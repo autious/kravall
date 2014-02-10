@@ -13,10 +13,16 @@ local isClick;
 
 local boxStartX, boxStartY, boxEndX, boxEndY
 local groupsSelectedByBox = {}
+local previousGroupsSelectedByBox = {}
 
 core.movementData.setMovementMetaData( core.movementData.Idle, 0, 17, 17 )
 core.movementData.setMovementMetaData( core.movementData.Walking, 5.8, 17, 17 )
 core.movementData.setMovementMetaData( core.movementData.Sprinting, 8.8, 17, 14 )
+
+function DeselectAllSquads()
+    core.system.squad.disableOutline(selectedSquads)    
+    selectedSquads = {}
+end
 
 function squadHandling()
     --Formations
@@ -48,7 +54,7 @@ function squadHandling()
                             end
                         end
                     else
-                        selectedSquads = {};
+                        DeselectAllSquads()
                         selectedSquads[#selectedSquads+1] = attributeComponent.squadID
                         selectedFormation = squadComponent.squadFormation
                     end
@@ -59,7 +65,7 @@ function squadHandling()
                 end
             end
 		elseif not core.input.keyboard.isKeyDown(core.input.keyboard.key.Left_shift) and not core.config.stickySelection and not isClick then
-			selectedSquads = {}
+			DeselectAllSquads()
         end
 
         if isClick == true then
@@ -69,6 +75,17 @@ function squadHandling()
 	elseif core.input.mouse.isButtonDown(core.input.mouse.button.Left) then
 		boxEndX, boxEndY = core.input.mouse.getPosition()
 		groupsSelectedByBox = core.system.picking.getPoliceGroupsInsideBox( boxStartX, boxStartY, boxEndX, boxEndY, core.config.boxSelectionGraceDistance )
+        
+        if previousGroupsSelectedByBox and #previousGroupsSelectedByBox then
+            core.system.squad.disableOutline(previousGroupsSelectedByBox)
+        end
+
+        if groupsSelectedByBox and #groupsSelectedByBox >= 1 then
+            core.system.squad.enableOutline(groupsSelectedByBox, 1, 0.9, 0.1, 1)
+        end
+
+        previousGroupsSelectedByBox = groupsSelectedByBox
+
     elseif core.input.mouse.isButtonDownOnce(core.input.mouse.button.Right) then
         if #selectedSquads > 0 then
             isClick = true
@@ -87,7 +104,12 @@ function squadHandling()
             local mouseX, mouseY = core.input.mouse.getPosition()
             clickEndX, clickEndY, clickEndZ = core.system.picking.getGroundHit(mouseX, mouseY)    
             core.system.squad.setSquadFormation(selectedSquads, selectedFormation, clickStartX, clickStartY, clickStartZ, clickEndX, clickEndY, clickEndZ)
-	        core.system.squad.setSquadGoal(selectedSquads, clickStartX, clickStartY, clickStartZ)
+            if clickEndX and clickEndY and clickEndZ and selectedFormation ~= core.system.squad.formations.CircleFormation then
+	            core.system.squad.setSquadGoal(selectedSquads, (clickStartX + clickEndX) / 2, (clickStartY + clickEndY) / 2, (clickStartZ + clickEndZ) / 2)
+            else                
+	            core.system.squad.setSquadGoal(selectedSquads, clickStartX, clickStartY, clickStartZ)
+            end
+
 
             clickStartX, clickStartY, clickStartZ = nil, nil, nil
             isClick = false
@@ -122,9 +144,10 @@ function squadHandling()
 	if boxStartX and boxStartY and boxEndX and boxEndY and core.input.mouse.isButtonUp(core.input.mouse.button.Left) then
 		if boxStartX ~= boxEndX and boxStartY ~= boxEndY then
 			if not core.input.keyboard.isKeyDown(core.input.keyboard.key.Left_shift) then
-				selectedSquads = {}
+				DeselectAllSquads()
 			end
 			if groupsSelectedByBox then
+
 				for p = 1, #groupsSelectedByBox do
 					local found = false
 					for i=1, #selectedSquads do
@@ -149,12 +172,15 @@ function squadHandling()
 				end
 				groupsSelectedByBox = {}
 			elseif not core.config.stickySelection and not core.input.keyboard.isKeyDown(core.input.keyboard.key.Left_shift) then
-				selectedSquads = {}
+				DeselectAllSquads()
 			end
 		end			
 		boxStartX, boxStartY, boxEndX, boxEndY = nil, nil, nil, nil
 	end
-	
+    
+    if selectedSquads and #selectedSquads >= 1 then
+        core.system.squad.enableOutline(selectedSquads, 0.1, 0.9, 0.3, 1.0)
+    end
 	
 end
 

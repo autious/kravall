@@ -277,7 +277,7 @@ void main()
 	
 	if (gl_LocalInvocationIndex == 0)
 	{
-		gChargeCurves[0][0].ch_cu_re_dec = vec4(3.0f, 5.0f, 1.0f, 3.0f / (5.0f)); //0.3 makes them stick into a huge blob
+		gChargeCurves[0][0].ch_cu_re_dec = vec4(25.0f, 5.0f, 1.0f, 25.0f / (5.0f)); //0.3 makes them stick into a huge blob
 		gChargeCurves[0][1].ch_cu_re_dec = vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f));
 
 		//MOOD CURVE INDICES/PLACEMENT CAN BE FOUND AT THE BOTTOM OF THIS DOCUMENT
@@ -496,7 +496,7 @@ void main()
 			chargeSums[7].y = 1;
 			chargeSums[7].chargeSum = chargeSum;
 
-			bool set = false;
+			//bool set = false;
 			for (int i = 0; i < 8; i++)
 			{
 				if (chargeSums[i].chargeSum > highestSum)
