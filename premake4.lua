@@ -26,7 +26,7 @@ solution "RiotGame"
         else
             --Disable warnings about using completely standard (and normal) c functions.
             --In visual studio
-	        defines { "_CRT_SECURE_NO_WARNINGS" }
+	        defines { "_CRT_SECURE_NO_WARNINGS", "NOMINMAX" }
 
             location_path = location_path .."/" .. dist_name() .. "/" .. _ACTION
             location ( location_path )
