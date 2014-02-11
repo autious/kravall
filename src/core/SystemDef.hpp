@@ -21,6 +21,7 @@
 #include <Components/FormationComponent.hpp>
 #include <Components/TargetingComponent.hpp>
 #include <Components/HoverTextComponent.hpp>
+#include <Components/EmitterComponent.hpp>
 
 /* TODO: Put your system up here instead of the end of the header. noobs */
 #include <Systems/RenderingSystem.hpp>
@@ -35,6 +36,7 @@
 #include <Systems/RemovalSystem.hpp>
 #include <Systems/HoverTextSystem.hpp>
 #include <Systems/RioterAnimationSystem.hpp>
+#include <Systems/ParticleSystem.hpp>
 
 namespace Core
 {
@@ -55,14 +57,14 @@ namespace Core
 	
 
     typedef SystemHandlerTemplate<LightSystem, FlowfieldPositioningSystem, PoliceGoalSystem, NavMeshCollisionSystem, 
-	CollisionSystem2D, PickingSystem, TargetingSystem, AIDebugSystem, FlowfieldSystem, /*FieldReactionSystem,*/ GPUPFSystem,
-	MovementSystem, NameSystem, GroupDataSystem, AreaSystem, NavMeshBlockingSystem, MoodStateSystem, RioterAnimationSystem, AnimationSystem, 
-	SquadSystem, RemovalSystem, HoverTextSystem, RenderingSystem> SystemHandler;
+	    CollisionSystem2D, PickingSystem, TargetingSystem, AIDebugSystem, FlowfieldSystem, GPUPFSystem, ParticleSystem,
+	    MovementSystem, NameSystem, GroupDataSystem, AreaSystem, NavMeshBlockingSystem, MoodStateSystem, RioterAnimationSystem,
+        AnimationSystem, SquadSystem, RemovalSystem, HoverTextSystem, RenderingSystem> SystemHandler;
 
     typedef EntityHandlerTemplate<SystemHandler, WorldPositionComponent, RotationComponent, ScaleComponent, 
 		GraphicsComponent, LightComponent, MovementComponent, UnitTypeComponent, AttributeComponent,
 		BoundingVolumeComponent, FlowfieldComponent, AreaComponent,NameComponent, AnimationComponent,
-        SquadComponent, FormationComponent, TargetingComponent, HoverTextComponent> EntityHandler;
+        SquadComponent, FormationComponent, TargetingComponent, HoverTextComponent, EmitterComponent> EntityHandler;
 }
 
 /**********All systems after this line************/

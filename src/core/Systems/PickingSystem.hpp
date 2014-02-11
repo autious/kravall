@@ -3,8 +3,6 @@
 
 #include <SystemDef.hpp>
 
-
-
 namespace Core
 {
 	/*!
