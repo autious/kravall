@@ -14,7 +14,7 @@ void main()
 	//varianceMap = vec4(gl_FragCoord.xy/vec2(1024, 1024),0, 1);
 
 	
-	float depth = posFS.z;
+	float depth = posFS.z/posFS.w;//gl_FragCoord.z;
 	depth = depth * 0.5 + 0.5;
 	float dx = dFdx(depth);
 	float dy = dFdy(depth);

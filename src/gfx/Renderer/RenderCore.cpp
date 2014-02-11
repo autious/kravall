@@ -120,7 +120,7 @@ namespace GFX
 		
 		// Set default settings
 		m_settings[GFX_SHADOW_QUALITY] = GFX_SHADOWS_VARIANCE; // TODO: Implement basic shadow mapping as low res option
-		m_settings[GFX_SHADOW_RESOLUTION] = 1024;
+		m_settings[GFX_SHADOW_RESOLUTION] = 2048;
 
 		m_normalDepth = new FBOTexture();
 		m_diffuse = new FBOTexture();
@@ -467,7 +467,7 @@ namespace GFX
 			m_shadowMapTexture, m_viewMatrix, m_projMatrix, m_exposure, m_gamma, m_whitePoint, m_toneMappedTexture), "Lighting");
 
 		// Do post processing
-		//CT(m_postProcessingPainter->Render(delta, m_toneMappedTexture, m_currentLUT, m_exposure, m_gamma, m_whitePoint), "PostProcessing");
+		CT(m_postProcessingPainter->Render(delta, m_toneMappedTexture, m_currentLUT, m_exposure, m_gamma, m_whitePoint), "PostProcessing");
 
 		// Draw overlays/ui
 		CT( m_overlayPainter->Render( renderJobIndex, m_overlayViewMatrix, m_overlayProjMatrix ), "Console");
