@@ -11,7 +11,7 @@ local EastPlacer = require "gui/placement/EastPlacer"
 local NorthPlacer = require "gui/placement/NorthPlacer"
 local WestPlacer = require "gui/placement/WestPlacer"
 
-local EventLister = require "gui/kravall_control/EventListerPlacer"
+local EventListerGUI = require "gui/kravall_control/EventListerGUI"
 
 local KravallControl = {}
 
@@ -39,7 +39,7 @@ function KravallControl:new(o)
 
     o.statusGUI:addPlacementHandler( WestPlacer )
 
-    o.eventGUI = GUI:new( {x=0,y=0, width=200, height=200, anchor="SouthWest"} )
+    o.eventGUI = EventListerGUI:new( {x=0,y=0, width=200, height=200, anchor="SouthWest"} )
 
     o.eventGUI:addComponent( TextLabel:new( {label="Status: Cool", anchor="SouthEast"} ) )
     o.eventGUI:addComponent( TextLabel:new( {label="Status: Cool", anchor="SouthEast"} ) )
@@ -54,13 +54,21 @@ function KravallControl:new(o)
     return o
 end
 
+function KravallControl:addEvent( component )
+
+end
+
 function KravallControl:init()
 end
 
 function KravallControl:update( delta )
+    -- For debug writing
     self.gui:update( delta )
     self.eventGUI:update( delta )
     self.statusGUI:update( delta )
+
+    -- constrict each frame to give animation like results.
+    self.eventGUI:constrict( delta )
 end
 
 function KravallControl:destroy()

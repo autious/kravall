@@ -53,9 +53,6 @@ end
 
 -- Can be called with nil-values to reactivate automatic window resizing
 function GUI:setPosition(x,y)
-    if x ~= nil then
-        print( "GUISET" .. x .. " " .. y )
-    end
     self.x = x
     self.y = y
 
