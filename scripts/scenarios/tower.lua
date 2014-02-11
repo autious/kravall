@@ -108,11 +108,12 @@ local dude2 = scen.asm:loadAssembly(
 	}
 }
 )
-local knot = scen.asm:loadAssembly( 
+for i=1,10 do
+scen.asm:loadAssembly( 
 {
 	{
 		type = core.componentType.WorldPositionComponent,
-		data = { position = { 0, 5, 10 } }
+		data = { position = { -50 + math.random() * 100, 1, -50 + math.random() * 100 } }
 	},
 	{
 		type = core.componentType.GraphicsComponent,
@@ -136,7 +137,7 @@ local knot = scen.asm:loadAssembly(
 	},
 	{
 		type = core.componentType.ScaleComponent,
-		data = { scale = 5.0 }
+		data = { scale = 1.0 }
 	},
 	{
 		type = core.componentType.RotationComponent,
@@ -144,6 +145,7 @@ local knot = scen.asm:loadAssembly(
 	}
 }
 )
+end
 
 -- Spotlight
 light = scen.asm:loadAssembly( 

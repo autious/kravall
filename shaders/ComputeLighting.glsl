@@ -189,16 +189,17 @@ vec4 CalculateDirlight( LightData light, SurfaceData surface, vec3 wPos, vec3 ey
 	return vec4(BlinnPhong(light, surface, eyeDir, lightDir, 1.0f, occlusion), 0.0f);
 }
 
+float linstep(float low, float high, float v)
+{
+	return clamp((v-low)/(high-low), 0.0, 1.0);
+}
+
 vec4 CalculateDirlightShadow(mat4x4 lightMatrix, LightData light, SurfaceData surface, vec4 wPos, vec3 eyePosition, inout float occlusion)
 {
 	vec4 shadowCoords = lightMatrix * vec4(wPos.xyz, 1.0);
-	//shadowCoords.z = 2 * shadowCoords.z - 1;
-	vec3 uv = shadowCoords.xyz/shadowCoords.w;
-	uv.xy = uv.xy * 0.5 + 0.5;
-	//ivec2 iuv = ivec2(uv.x, uv.y);
-	float depth = uv.z * 0.5 + 0.5;
-	//vec2 moments = imageLoad(shadowMap, iuv).xy;
-	vec2 moments = texture2D(shadowMap, uv.xy).xy;
+	vec2 uv = shadowCoords.xy/shadowCoords.w * 0.5 + 0.5;
+	float depth = shadowCoords.z/shadowCoords.w * 0.5 + 0.5;
+	vec2 moments = texture2D(shadowMap, uv).xy;
 	float shadowFactor;
 	if(depth <= moments.x || depth >= 1.0)
 	{
@@ -206,23 +207,19 @@ vec4 CalculateDirlightShadow(mat4x4 lightMatrix, LightData light, SurfaceData su
 	}
 	else
 	{
-		float E_x2 = moments.y;
-		float Ex_2 = moments.x*moments.x;
-		float var = E_x2-Ex_2;
-		var = max(var, 0.0000001);
-	
-		float mD = depth-moments.x;
-		float mD_2 = mD*mD;
-		float p_max = var/(var + mD_2);
-		shadowFactor = clamp(max(p_max, (depth<=moments.x)?1.0:0.2), 0.0, 1.0);
-		//return vec4(1,0,0,1);
+		float p = smoothstep(depth-0.02, depth, moments.x);
+		float variance = max(moments.y - moments.x * moments.x, -0.001);
+		float d = depth - moments.x;
+		float p_max = linstep(0.2, 1.0, variance / (variance + d*d));
+		shadowFactor = clamp(max(p, p_max), 0.0, 1.0);
 	}
+
 
 	vec3 lightDir = normalize(-light.orientation.xyz);
 	vec3 eyeDir = normalize(eyePosition - wPos.xyz);
 	float df =  max( 0.0f, dot(surface.normalDepth.xyz, lightDir));
 	vec4 color = vec4(BlinnPhong(light, surface, eyeDir, lightDir, 1.0f, occlusion), 0.0f);
-	return color * shadowFactor;
+	return vec4(shadowFactor);//color * shadowFactor;
 }
 
 vec3 Uncharted2Tonemap(vec3 x)

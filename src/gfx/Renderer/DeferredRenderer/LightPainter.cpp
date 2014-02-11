@@ -241,24 +241,30 @@ namespace GFX
 		
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 
-		//m_shaderManager->UseProgram("TQ");
-		//
-		//glDisable(GL_DEPTH_TEST);
-		//glDisable(GL_BLEND);
-		//glDepthMask(GL_FALSE);
-		//
-		//m_shaderManager->SetUniform(1.0f, m_alphaUniform);
-		//
-		//TextureManager::BindTexture(m_textureHandle, m_textureUniform, 0, GL_TEXTURE_2D);
-		//
-		//glBindVertexArray(m_dummyVAO);
-		//glDrawArrays(GL_POINTS, 0, 1);
-		//
-		//m_shaderManager->ResetProgram();
-		//
-		//glEnable(GL_DEPTH_TEST);
-		//glEnable(GL_BLEND);
-		//glDepthMask(GL_TRUE);
+
+
+
+		m_shaderManager->UseProgram("TQ");
+		
+		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_BLEND);
+		glDepthMask(GL_FALSE);
+		
+		m_shaderManager->SetUniform(1.0f, m_alphaUniform);
+		
+		TextureManager::BindTexture(m_textureHandle, m_textureUniform, 0, GL_TEXTURE_2D);
+		
+		glBindVertexArray(m_dummyVAO);
+		glDrawArrays(GL_POINTS, 0, 1);
+		
+		m_shaderManager->ResetProgram();
+		
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+		glDepthMask(GL_TRUE);
+
+
+
 
 		BasePainter::ClearFBO();
 
