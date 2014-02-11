@@ -29,6 +29,7 @@ namespace GFX
     class MeshManager;
     class TextureManager;
     class MaterialManager;
+    class ParticleManager;
 
 
     class DeferredPainter;
@@ -45,6 +46,7 @@ namespace GFX
 
     class FontData;
     class Vertex;
+    class Particle;
     class FBOTexture;
 }                          
                            
@@ -156,6 +158,9 @@ namespace GFX
 		int BindSkeletonToMesh(const unsigned int& meshID, const int& skeletonID);
 		int AddAnimationToSkeleton(const int& skeletonID, glm::mat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame);
 		int GetAnimationInfo(const int& skeletonID, const int& animationID, unsigned int& out_frameCount, unsigned int& out_bonesPerFrame, unsigned int& out_animationOffset);
+        void CreateParticleBuffer(unsigned int& bufferId, unsigned int particleCount);
+        void DeleteParticleBuffer(unsigned int bufferId);
+        void BufferParticleData(unsigned int bufferId, GFX::Particle* data);
 
         /*!
         Sets the font used for rendering SubSystem statistics.
@@ -209,6 +214,7 @@ namespace GFX
 		TextureManager*			m_textureManager;
 		MaterialManager*		m_materialManager;
 		AnimationManagerGFX*    m_animationManager;
+        ParticleManager*        m_particleManager;
 
 
 		DeferredPainter* m_deferredPainter;

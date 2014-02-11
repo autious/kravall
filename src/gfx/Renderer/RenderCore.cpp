@@ -24,12 +24,14 @@
 #include "TextRenderer/TextManager.hpp"
 #include "DebugRenderer/DebugManager.hpp"
 #include "RenderJobManager.hpp"
-#include "../Buffers/MeshManager.hpp"
-#include "../Textures/TextureManager.hpp"
-#include "../Material/MaterialManager.hpp"
+#include <Buffers/MeshManager.hpp>
+#include <Textures/TextureManager.hpp>
+#include <Material/MaterialManager.hpp>
+#include <Particle/ParticleManager.hpp>
 
 #include <FontData.hpp>
 #include <Vertex.hpp>
+#include <Particle.hpp>
 
 namespace GFX
 {
@@ -68,6 +70,7 @@ namespace GFX
 		delete(m_textureManager);
 		delete(m_materialManager);
 		delete(m_animationManager);
+        delete(m_particleManager);
 
 		delete(m_deferredPainter);
 		delete(m_lightPainter);
@@ -98,6 +101,7 @@ namespace GFX
 		m_textureManager = new TextureManager();
 		m_materialManager = new MaterialManager();
 		m_animationManager = new AnimationManagerGFX();
+        m_particleManager = new ParticleManager();
 
 		m_deferredPainter = new DeferredPainter(m_shaderManager, m_uniformBufferManager, 
 		m_renderJobManager, m_meshManager, m_textureManager, m_materialManager);
@@ -524,4 +528,19 @@ namespace GFX
 	{
 		return m_animationManager->GetFrameInfo(skeletonID, animationID, out_frameCount, out_bonesPerFrame, out_animationOffset);
 	}
+
+    void RenderCore::CreateParticleBuffer(unsigned int& bufferId, unsigned int particleCount)
+    {
+        m_particleManager->CreateParticleBuffer(bufferId, particleCount);
+    }
+
+    void RenderCore::DeleteParticleBuffer(unsigned int bufferId)
+    {
+        m_particleManager->DeleteParticleBuffer(bufferId);
+    }
+
+    void RenderCore::BufferParticleData(unsigned int bufferId, GFX::Particle* data)
+    {
+        m_particleManager->BufferParticleData(bufferId, data);
+    }
 }

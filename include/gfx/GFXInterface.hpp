@@ -31,6 +31,11 @@ typedef GFXVec4 GFXColor;
 
 namespace GFX
 {
+    class Particle;
+}
+
+namespace GFX
+{
 	DLL_API void test(std::vector<float>* t);
 
 	/*!
@@ -249,6 +254,27 @@ namespace GFX
 		\return Returns #GFX_SUCCESS, #GFX_INVALID_MATERIAL
 		*/
 		DLL_API int AttachShaderToMaterial(const unsigned long long int& materialID, const unsigned int& shaderID);
+
+        /*!
+        Creates a buffer that stores particles.
+        \param bufferId Out parameter that will be assigned the id of the particle buffer.
+        \param particleCount The number of particles that the buffer will hold.
+        */
+        DLL_API void CreateParticleBuffer(unsigned int& bufferId, unsigned int particleCount);
+
+        /*!
+        Deletes the specified particle buffer.
+        \param bufferId The Id of the particle buffer to be deleted.
+        */
+        DLL_API void DeleteParticleBuffer(unsigned int bufferId);
+
+        /*!
+        Transfers data over to the given particle buffer.
+        \param bufferId The buffer id to assign the data to.
+        \param particleData The data to be set.
+        \param particleCount The number of particles the data contains.
+        */
+        DLL_API void BufferParticleData(unsigned int bufferId, GFX::Particle* const data);
 
 		DLL_API void ReloadLUT();
 	}

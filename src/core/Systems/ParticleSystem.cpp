@@ -169,6 +169,8 @@ namespace Core
                 }
             }
         }
+
+        //Buffer particles and render them
     }
 
     void ParticleSystem::Reset()
