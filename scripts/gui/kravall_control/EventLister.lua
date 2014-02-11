@@ -33,6 +33,11 @@ function EventLister:new(o)
                                             onExit = function() o:onExit() end
                                         }
     o:setPosition( o.x, o.y )
+
+    local eventObj = {}
+    eventObj.str = "Event 1"
+    o:queueEvent( eventObj )
+
     return o
 end
 
@@ -60,7 +65,8 @@ function EventLister:update( delta )
 end
 
 function EventLister:setPosition( x, y )
-    print( "New Position" .. x .. y )
+    print( debug.traceback() )
+    print( "EventListerPos " .. x .. " " .. y )
     self.GUIComponent:setPosition(x,y)
     self.x = x
     self.y = y

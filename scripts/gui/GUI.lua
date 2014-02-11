@@ -1,7 +1,11 @@
 local viewport = require "gui/viewport"
 local window = require "window"
 
-local GUI = { winWidth = core.config.initScreenWidth, winHeight = core.config.initScreenHeight }
+local GUI = { 
+                winWidth = core.config.initScreenWidth, 
+                winHeight = core.config.initScreenHeight,
+                xoffset = 0,
+                yoffset = 0 }
 
 window.registerWindowSizeCallback( function( width, height ) 
     GUI.winWidth, GUI.winHeight = width, height
@@ -49,12 +53,15 @@ end
 
 -- Can be called with nil-values to reactivate automatic window resizing
 function GUI:setPosition(x,y)
+    if x ~= nil then
+        print( "GUISET" .. x .. " " .. y )
+    end
     self.x = x
     self.y = y
 
     -- Callback function to move gui components.
     -- We ignore the window dimensions if we have our own specific placement
-    if self.x == nil and self.y == nil then
+    if self.x == nil and self.y == nil and self.resizeCallback == nil then
         self.resizeCallback = function( width, height )
             self.width = width
             self.height = height 
@@ -76,6 +83,7 @@ end
 function GUI:setDimensions(width,height)
     self.width = width
     self.height = height
+    self:constrict()
 end
 
 function GUI:constrict()

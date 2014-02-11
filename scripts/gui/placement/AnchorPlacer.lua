@@ -16,7 +16,7 @@ function AnchorPlacer:new(o)
     return o
 end
 
-function AnchorPlacer:constrict( components, winWidth, winHeight )
+function AnchorPlacer:constrict( components, winWidth, winHeight, posx, posy )
     -- Bags for different regions
     local bags = {}
     
@@ -39,7 +39,7 @@ function AnchorPlacer:constrict( components, winWidth, winHeight )
     end 
 
     for index,bag in pairs(bags) do
-        self.placers[index]:constrict( bag, winWidth, winHeight )
+        self.placers[index]:constrict( bag, winWidth, winHeight, posx, posy )
     end
 end
 

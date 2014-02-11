@@ -22,6 +22,11 @@ function KravallControl:new(o)
     o.gui = GUI:new()
     
     o.eventLister = EventLister:new({anchor = "NorthEast"})
+     
+    o.gui:addComponent( o.eventLister )
+    local statusGUI = GUI:new( {x=0,y=0, width=200, height=200, anchor="SouthEast"} )
+    statusGUI:addComponent( o.eventLister )
+    statusGUI:addPlacementHandler( AnchorPlacer:new() )
 
     local labelName = TextLabel:new( {label="Name: Greger", anchor="SouthEast"} )
     local labelMorale = TextLabel:new( {label="Morale: Bad", anchor="SouthEast"} )
@@ -32,7 +37,7 @@ function KravallControl:new(o)
     o.gui:addComponent( labelMorale )
     o.gui:addComponent( labelHealth )
     o.gui:addComponent( labelStatus )
-    o.gui:addComponent( o.eventLister )
+    o.gui:addComponent( statusGUI )
 
     o.gui:addPlacementHandler( AnchorPlacer:new() )
 
