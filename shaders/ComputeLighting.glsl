@@ -211,7 +211,7 @@ vec4 CalculateDirlightShadow(mat4x4 lightMatrix, LightData light, SurfaceData su
 		float variance = max(moments.y - moments.x * moments.x, -0.001);
 		float d = depth - moments.x;
 		float p_max = linstep(0.2, 1.0, variance / (variance + d*d));
-		shadowFactor = clamp(max(p, p_max), 0.0, 1.0);
+		shadowFactor = clamp(pow(clamp(max(p, p_max), 0.0, 1.0)+0.07, 5), 0.0, 1.0);
 	}
 
 
@@ -219,7 +219,8 @@ vec4 CalculateDirlightShadow(mat4x4 lightMatrix, LightData light, SurfaceData su
 	vec3 eyeDir = normalize(eyePosition - wPos.xyz);
 	float df =  max( 0.0f, dot(surface.normalDepth.xyz, lightDir));
 	vec4 color = vec4(BlinnPhong(light, surface, eyeDir, lightDir, 1.0f, occlusion), 0.0f);
-	return vec4(shadowFactor);//color * shadowFactor;
+	//return vec4(shadowFactor);
+	return color * shadowFactor;
 }
 
 vec3 Uncharted2Tonemap(vec3 x)

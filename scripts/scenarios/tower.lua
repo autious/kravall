@@ -206,7 +206,9 @@ light = scen.asm:loadAssembly(
 --)
 local rot = 0
 local function Update(delta)
-	rot = rot + delta;
+	if keyboard.isKeyDown( key.R ) then
+		rot = rot + delta;
+	end
 	if keyboard.isKeyDown( key.Left ) then
 		core.animations.loop(dude, "rioter-walk_00")
 		core.animations.loop(dude2, "rioter-walk_00")

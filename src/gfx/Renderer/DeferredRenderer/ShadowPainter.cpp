@@ -135,7 +135,7 @@ namespace GFX
 				//bc.viewMatrix = glm::lookAt<float>(-lightData.orientation, lightData.orientation, glm::vec3(0.0f, 1.0f, 0.0f));
 				bc.viewMatrix = glm::lookAt<float>(-glm::normalize(lightData.orientation) * 1.0f, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 				//bc.projMatrix = projMatrix;
-				bc.projMatrix = glm::ortho<float>(-50.0f, 50.0f, -50.0f, 50.0f, -50.0f, 50.0f);
+				bc.projMatrix = glm::ortho<float>(-100.0f, 100.0f, -100.0f, 100.0f, -50.0f, 75.0f);
 				//bc.projMatrix = glm::perspective<float>(45.0f, 1.0f, 20.0f, 100.0f);
 
 				// Add the data to the global array of shadow data for use in LightPainter
