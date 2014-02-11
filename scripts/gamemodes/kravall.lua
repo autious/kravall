@@ -201,12 +201,12 @@ function T:new(o)
 end
 
 function T:init()
-    self.gui = KravallControl:new()
+    --self.gui = KravallControl:new()
 end
 
 function T:update( delta )
     self.objectiveHandler:update( delta )
-    self.gui:update(delta)
+    --self.gui:update(delta)
 
     squadHandling()
 
@@ -221,6 +221,7 @@ function T:update( delta )
 end
 
 function T:destroy()
+    --self.gui:destroy()
     self.objectiveHandler:destroy() 
     if self.popup ~= nil then
         self.popup:destroy()
