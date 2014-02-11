@@ -172,12 +172,10 @@ function scen:load()
     local navmesh = ent.get "navMesh"
     navmesh(scen, 0, -0.1, 0)
     local plane = ent.get "plane"
-    plane(scen, 0, -1, 0, 150)
+    plane(scen, 0, -1, 0, 50)
 
     local navmesh = ent.get "navMesh"
     navmesh(scen, 0, -0.1, 0)
-    local plane = ent.get "plane"
-    plane(scen, 0, -1, 0)
 
     local lol_building = building(scen, 64, 12)
     building(scen, 64, 2)
