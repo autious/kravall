@@ -7,7 +7,7 @@ local TextLabel = require "gui/component/TextLabel"
 local TextBox = require "gui/component/TextBox"
 local AnchorPlacer = require "gui/placement/AnchorPlacer"
 
-local EventLister = require "gui/kravall_control/EventLister"
+local EventLister = require "gui/kravall_control/EventListerPlacer"
 
 local KravallControl = {}
 
@@ -20,13 +20,10 @@ function KravallControl:new(o)
     self.__index = self
 
     o.gui = GUI:new()
-    
-    o.eventLister = EventLister:new({anchor = "NorthEast"})
      
-    o.gui:addComponent( o.eventLister )
-    local statusGUI = GUI:new( {x=0,y=0, width=200, height=200, anchor="SouthEast"} )
-    statusGUI:addComponent( o.eventLister )
-    statusGUI:addPlacementHandler( AnchorPlacer:new() )
+    o.statusGUI = GUI:new( {x=0,y=0, width=200, height=200, anchor="NorthEast"} )
+
+    o.statusGUI:addPlacementHandler( EventListerPlacer )
 
     local labelName = TextLabel:new( {label="Name: Greger", anchor="SouthEast"} )
     local labelMorale = TextLabel:new( {label="Morale: Bad", anchor="SouthEast"} )
@@ -37,9 +34,9 @@ function KravallControl:new(o)
     o.gui:addComponent( labelMorale )
     o.gui:addComponent( labelHealth )
     o.gui:addComponent( labelStatus )
-    o.gui:addComponent( statusGUI )
+    o.gui:addComponent( o.statusGUI )
 
-    o.gui:addPlacementHandler( AnchorPlacer:new() )
+    o.gui:addPlacementHandler( AnchorPlacer )
 
     return o
 end
@@ -48,7 +45,8 @@ function KravallControl:init()
 end
 
 function KravallControl:update( delta )
-    self.eventLister:update( delta )
+    self.gui:update( delta )
+    self.statusGUI:update( delta )
 end
 
 function KravallControl:destroy()

@@ -1,38 +1,16 @@
-local EastPlacer = {leftOffset = 20, padding = 10}
+local leftOffset = 20
+local padding = 10
+local PU = require "gui/placement/util"
 
-function EastPlacer:new(o)
-    o = o or {}
-
-    setmetatable( o, self )
-    self.__index = self
-
-    return o
-end
-
-function EastPlacer:constrict( components, winWidth, winHeight, posx, posy )
+return function( components, winWidth, winHeight, posx, posy )
     posx = posx or 0
     posy = posy or 0
 
-    local tw,th = self:getTotalDim( components )
+    local tw,th = PU.getTotalDimHeight( components, padding, padding )
     local startx = winWidth
     local starty = (winHeight - th)/2
     for _,c in pairs( components ) do 
-        c:setPosition( c.xoffset + startx - c.width - self.padding + posx, starty + c.yoffset + posy )
-        starty = starty + c.height + self.padding
+        c:setPosition( c.xoffset + startx - c.width - padding + posx, starty + c.yoffset + posy )
+        starty = starty + c.height + padding
     end 
 end
-
-function EastPlacer:getTotalDim( components )
-    local tw = 0
-    local th = 0
-    for _,c in pairs( components ) do     
-        if tw < c.width then
-            tw = c.width
-        end
-        th = th + c.height + self.padding
-    end
-    
-    return tw, th
-end
-
-return EastPlacer

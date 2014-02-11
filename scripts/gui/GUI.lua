@@ -88,7 +88,7 @@ end
 
 function GUI:constrict()
     for _,v in pairs( self.placers ) do
-        v:constrict( self.components, self.width, self.height, self.x, self.y )
+        v( self.components, self.width, self.height, self.x, self.y )
     end
 end
 
@@ -116,6 +116,9 @@ function GUI:destroy()
 end
 
 function GUI:update(delta)
+    if core.config.debugDrawGUIBorders then 
+        core.draw.drawRectangle( self.x, self.y, self.width, self.height, false )
+    end
 end
 
 return GUI

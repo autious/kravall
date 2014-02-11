@@ -1,22 +1,14 @@
-local AnchorPlacer = { padding = 10, defaultAnchor = "North" }
+local padding = 10
+local defaultAnchor = "North"
 
 local validPlacements = { "Center", "North", "West", "East", "South", "SouthEast", "SouthWest", "NorthEast" }
 
-AnchorPlacer.placers = {}
+local placers = {}
 for _,v in pairs( validPlacements ) do
-    AnchorPlacer.placers[v] = require( "gui/placement/" .. v .. "Placer" )  
+    placers[v] = require( "gui/placement/" .. v .. "Placer" )  
 end
 
-function AnchorPlacer:new(o)
-    o = o or {}
-
-    setmetatable( o, self )
-    self.__index = self
-
-    return o
-end
-
-function AnchorPlacer:constrict( components, winWidth, winHeight, posx, posy )
+return function( components, winWidth, winHeight, posx, posy )
     -- Bags for different regions
     local bags = {}
     
@@ -26,7 +18,7 @@ function AnchorPlacer:constrict( components, winWidth, winHeight, posx, posy )
     end
 
     -- Bag that all non anchored end up in
-    local defaultBag = bags[self.defaultAnchor]
+    local defaultBag = bags[defaultAnchor]
 
     -- Fill bags
     for _,comp in pairs( components ) do
@@ -39,21 +31,6 @@ function AnchorPlacer:constrict( components, winWidth, winHeight, posx, posy )
     end 
 
     for index,bag in pairs(bags) do
-        self.placers[index]:constrict( bag, winWidth, winHeight, posx, posy )
+        placers[index]( bag, winWidth, winHeight, posx, posy )
     end
 end
-
-function AnchorPlacer:getTotalDim( bag )
-    local tw = 0
-    local th = 0
-    for _,c in pairs( bag ) do     
-        if tw < c.width then
-            tw = c.width
-        end
-        th = th + c.height + self.padding
-    end
-    
-    return tw, th
-end
-
-return AnchorPlacer
