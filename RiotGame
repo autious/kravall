@@ -1,2 +1,2 @@
 #!/bin/sh
-./bin/linux_amd64/debugtest/RiotGame --conf 'core.config.windowResizable = false; core.config.showSplash = false; core.config.init = function() openscenario( "prototype_area" ) end'
+./bin/linux_amd64/debugtest/RiotGame --conf 'core.config.windowResizable = false; core.config.showSplash = false;' # core.config.init = function() openscenario( "prototype_area" ) end'
