@@ -5,7 +5,11 @@ local Checkbox = require "gui/component/Checkbox"
 local TextSelectList = require "gui/component/TextSelectList"
 local TextLabel = require "gui/component/TextLabel"
 local TextBox = require "gui/component/TextBox"
+
 local AnchorPlacer = require "gui/placement/AnchorPlacer"
+local EastPlacer = require "gui/placement/EastPlacer"
+local NorthPlacer = require "gui/placement/NorthPlacer"
+local WestPlacer = require "gui/placement/WestPlacer"
 
 local EventLister = require "gui/kravall_control/EventListerPlacer"
 
@@ -21,21 +25,30 @@ function KravallControl:new(o)
 
     o.gui = GUI:new()
      
-    o.statusGUI = GUI:new( {x=0,y=0, width=200, height=200, anchor="NorthEast"} )
+    o.statusGUI = GUI:new( {x=0,y=0, width=200, height=150, anchor="SouthEast"} )
 
-    o.statusGUI:addPlacementHandler( EventListerPlacer )
+    local labelName = TextLabel:new( {label="Name: Greger"} )
+    local labelMorale = TextLabel:new( {label="Morale: Bad"} )
+    local labelHealth = TextLabel:new( {label="Health: Good"} )
+    local labelStatus = TextLabel:new( {label="Status: Cool"} )
 
-    local labelName = TextLabel:new( {label="Name: Greger", anchor="SouthEast"} )
-    local labelMorale = TextLabel:new( {label="Morale: Bad", anchor="SouthEast"} )
-    local labelHealth = TextLabel:new( {label="Health: Good", anchor="SouthEast"} )
-    local labelStatus = TextLabel:new( {label="Status: Cool", anchor="SouthEast"} )
+    o.statusGUI:addComponent( labelName   )
+    o.statusGUI:addComponent( labelMorale )
+    o.statusGUI:addComponent( labelHealth )
+    o.statusGUI:addComponent( labelStatus )
 
-    o.gui:addComponent( labelName   )
-    o.gui:addComponent( labelMorale )
-    o.gui:addComponent( labelHealth )
-    o.gui:addComponent( labelStatus )
+    o.statusGUI:addPlacementHandler( WestPlacer )
+
+    o.eventGUI = GUI:new( {x=0,y=0, width=200, height=200, anchor="SouthWest"} )
+
+    o.eventGUI:addComponent( TextLabel:new( {label="Status: Cool", anchor="SouthEast"} ) )
+    o.eventGUI:addComponent( TextLabel:new( {label="Status: Cool", anchor="SouthEast"} ) )
+    o.eventGUI:addComponent( TextLabel:new( {label="Status: Cool", anchor="SouthEast"} ) )
+    o.eventGUI:addComponent( TextLabel:new( {label="Status: Cool", anchor="SouthEast"} ) )
+    o.eventGUI:addPlacementHandler( EventLister )
+
     o.gui:addComponent( o.statusGUI )
-
+    o.gui:addComponent( o.eventGUI )
     o.gui:addPlacementHandler( AnchorPlacer )
 
     return o
@@ -46,6 +59,7 @@ end
 
 function KravallControl:update( delta )
     self.gui:update( delta )
+    self.eventGUI:update( delta )
     self.statusGUI:update( delta )
 end
 

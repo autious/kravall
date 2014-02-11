@@ -1,5 +1,4 @@
 local PU = require "gui/placement/util"
-local leftOffset = 20
 local padding = 10
 
 return function( components, winWidth, winHeight, posx, posy )
@@ -7,10 +6,10 @@ return function( components, winWidth, winHeight, posx, posy )
     posy = posy or 0
 
     local tw,th = PU.getTotalDimHeight( components,padding,padding )
-    local startx = leftOffset
-    local starty = (winHeight - th)/2
+    local startx = posx + padding
+    local starty = (winHeight - th)/2 + posy + padding
     for _,c in pairs( components ) do 
-        c:setPosition( startx + c.xoffset + posx, starty + c.yoffset + posy )
+        c:setPosition( startx + c.xoffset, starty + c.yoffset )
         starty = starty + c.height + padding
     end 
 end
