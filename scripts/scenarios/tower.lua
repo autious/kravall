@@ -109,11 +109,12 @@ local dude2 = scen.asm:loadAssembly(
 }
 )
 for i=1,10 do
+local scl = 1 + 2 * math.random()
 scen.asm:loadAssembly( 
 {
 	{
 		type = core.componentType.WorldPositionComponent,
-		data = { position = { -50 + math.random() * 100, 1, -50 + math.random() * 100 } }
+		data = { position = { -50 + math.random() * 100, scl, -50 + math.random() * 100 } }
 	},
 	{
 		type = core.componentType.GraphicsComponent,
@@ -137,7 +138,7 @@ scen.asm:loadAssembly(
 	},
 	{
 		type = core.componentType.ScaleComponent,
-		data = { scale = 1.0 }
+		data = { scale = scl }
 	},
 	{
 		type = core.componentType.RotationComponent,

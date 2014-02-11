@@ -177,90 +177,54 @@ namespace GFX
 			m_uniformBufferManager->SetBasicCameraUBO(bc);
 
 
-
-			Mesh mesh;
-			GFXBitmask geometryBitmask;
-			int instanceCount = 0;
-			bool endGeometry = false;
-
 			// Loop through all the geometry
-			unsigned int i;
-			for (i = startIndex; i < endIndex; i++)
+			unsigned int instanceCount = 0;
+			for (unsigned int i = startIndex; i < endIndex;)
 			{
-				geometryBitmask = renderJobs[i].bitmask;
-
+				GFXBitmask geometryBitmask = renderJobs[i].bitmask;
 				objType = GetBitmaskValue(geometryBitmask, BITMASK::TYPE);
+				meshID = GetBitmaskValue(geometryBitmask, BITMASK::MESH_ID);
+				currentMesh = meshID;
 
-				// Break if no opaque object
 				if (objType != GFX::OBJECT_TYPES::OPAQUE_GEOMETRY)
-				{
-					endGeometry = true;
-				}
+					break;
 
-				if (!endGeometry)
-				{
-					viewport = GetBitmaskValue(geometryBitmask, BITMASK::VIEWPORT_ID);
-					layer = GetBitmaskValue(geometryBitmask, BITMASK::LAYER);
-					translucency = GetBitmaskValue(geometryBitmask, BITMASK::TRANSLUCENCY_TYPE);
-					meshID = GetBitmaskValue(geometryBitmask, BITMASK::MESH_ID);
-					depth = GetBitmaskValue(geometryBitmask, BITMASK::DEPTH);
-				}
-
-
-				if (meshID == currentMesh && !endGeometry && instanceCount < MAX_INSTANCES)
+				do
 				{
 					InstanceData smid = *(InstanceData*)renderJobs.at(i).value;
-					m_staticInstances[instanceCount++] = smid;
+					m_staticInstances[instanceCount] = smid;
+					instanceCount++;
+					i++;
+					geometryBitmask = renderJobs[i].bitmask;
+					meshID = GetBitmaskValue(geometryBitmask, BITMASK::MESH_ID);
+				} while (meshID == currentMesh && i < endIndex);
+
+				// Bind mesh for drawing
+				Mesh mesh = m_meshManager->GetMesh(currentMesh);
+				glBindVertexArray(mesh.VAO);
+				GLenum error = glGetError();
+
+				if (mesh.skeletonID >= 0)
+				{
+					animationManager->BindSkeletonData(mesh.skeletonID);
+					m_shaderManager->UseProgram("SMAV");
 				}
 				else
 				{
-					if (i > 0)
-					{
-						
-						if (mesh.skeletonID >= 0)
-						{
-							animationManager->BindSkeleton(mesh.skeletonID);
-							m_shaderManager->UseProgram("SMAV");
-						}
-						else
-						{
-							m_shaderManager->UseProgram("SMSV");
-						}
-
-
-						glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_instanceBuffer);
-						InstanceData* pData = (InstanceData*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, MAX_INSTANCES * sizeof(InstanceData),
-							GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
-
-						memcpy(pData, m_staticInstances, instanceCount * sizeof(InstanceData));
-
-						glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
-
-						glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IBO);
-
-
-						glDrawElementsInstanced(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0, instanceCount);
-
-						instanceCount = 0;
-
-					}
-
-					if (endGeometry)
-						break;
-
-					if (meshID != currentMesh)
-					{
-						mesh = m_meshManager->GetMesh(meshID);
-						currentMesh = meshID;
-						glBindVertexArray(mesh.VAO);
-						if (mesh.skeletonID >= 0)
-							animationManager->BindSkeletonData(mesh.skeletonID);
-					}
-
-					InstanceData smid = *(InstanceData*)renderJobs.at(i).value;
-					m_staticInstances[instanceCount++] = smid;
+					m_shaderManager->UseProgram("SMSV");
 				}
+				
 
+				glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_instanceBuffer);
+				InstanceData* pData = (InstanceData*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, MAX_INSTANCES * sizeof(InstanceData),
+					GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
+				memcpy(pData, m_staticInstances, instanceCount * sizeof(InstanceData));
+				glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IBO);
+				glDrawElementsInstanced(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0, instanceCount);
+
+				instanceCount = 0;
 
 			}
 		}
