@@ -200,7 +200,7 @@ vec4 CalculateDirlightShadow(mat4x4 lightMatrix, LightData light, SurfaceData su
 	//vec2 moments = imageLoad(shadowMap, iuv).xy;
 	vec2 moments = texture2D(shadowMap, uv.xy).xy;
 	float shadowFactor;
-	if(depth <= moments.x)
+	if(depth <= moments.x || depth >= 1.0)
 	{
 		shadowFactor = 1.0;
 	}
@@ -209,12 +209,13 @@ vec4 CalculateDirlightShadow(mat4x4 lightMatrix, LightData light, SurfaceData su
 		float E_x2 = moments.y;
 		float Ex_2 = moments.x*moments.x;
 		float var = E_x2-Ex_2;
-		var = max(var, 0.00002);
+		var = max(var, 0.0000001);
 	
 		float mD = depth-moments.x;
 		float mD_2 = mD*mD;
 		float p_max = var/(var + mD_2);
-		shadowFactor = clamp(2 * max(p_max, (depth<=moments.x)?1.0:0.2) - 0.9, 0.0, 1.0);
+		shadowFactor = clamp(max(p_max, (depth<=moments.x)?1.0:0.2), 0.0, 1.0);
+		//return vec4(1,0,0,1);
 	}
 
 	vec3 lightDir = normalize(-light.orientation.xyz);

@@ -386,6 +386,79 @@ namespace GFX
 		// Draw shadow map geometry
 		CT(m_shadowPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_viewMatrix, m_projMatrix, 0, renderJobIndex, m_shadowMapTexture, m_windowWidth, m_windowHeight), "Shadowmap");
 			
+
+		// Draw frustum
+		for (int i = 0; i < ShadowDataContainer::numDirLights; i++)
+		{
+			DebugLine lines[4];
+			for (int e = 0; e < 4; e++)
+			{
+				lines[e].color = Colors::Blue;
+				lines[e].thickness = 1.0f;
+				lines[e].useDepth = true;
+			}
+
+			glm::mat4x4 invMat = glm::inverse(ShadowDataContainer::data[i].lightMatrix);
+			for (int e = 0; e < 4; e++)
+			{
+				float x = -1 + 2 * (e % 2);
+				float y = -1 + 2 * (e / 2);
+				
+				glm::vec4 start =	invMat * glm::vec4(x, y,  1.0f, 1.0f);
+				glm::vec4 end =		invMat * glm::vec4(x, y, -1.0f, 1.0f);
+				
+				lines[e].start = glm::vec3(glm::vec3(start) / start.w);
+				lines[e].end = glm::vec3(glm::vec3(end) / end.w);
+
+				DebugDrawing().AddLineWorld(lines[e]);
+			}
+			for (int e = 0; e < 4; e++)
+			{
+				float z = -1 + 2 * (e % 2);
+				float y = -1 + 2 * (e / 2);
+				
+				glm::vec4 start =	invMat * glm::vec4(-1, y, z, 1.0f);
+				glm::vec4 end =		invMat * glm::vec4( 1, y, z, 1.0f);
+				
+				lines[e].start = glm::vec3(glm::vec3(start) / start.w);
+				lines[e].end = glm::vec3(glm::vec3(end) / end.w);
+
+				DebugDrawing().AddLineWorld(lines[e]);
+			}
+			for (int e = 0; e < 4; e++)
+			{
+				float z = -1 + 2 * (e % 2);
+				float x = -1 + 2 * (e / 2);
+				
+				glm::vec4 start =	invMat * glm::vec4(x, -1, z, 1.0f);
+				glm::vec4 end =		invMat * glm::vec4(x,  1, z, 1.0f);
+				
+				lines[e].start = glm::vec3(glm::vec3(start) / start.w);
+				lines[e].end = glm::vec3(glm::vec3(end) / end.w);
+
+				DebugDrawing().AddLineWorld(lines[e]);
+			}
+			for (int e = 0; e < 2; e++)
+			{
+				float y = -1 + 2 * e;
+				
+				glm::vec4 start =	invMat * glm::vec4(-0.3f, -0.3f * y, 1.0, 1.0f);
+				glm::vec4 end =		invMat * glm::vec4( 0.3f,  0.3f * y, 1.0, 1.0f);
+				
+				lines[e].start = glm::vec3(glm::vec3(start) / start.w);
+				lines[e].end = glm::vec3(glm::vec3(end) / end.w);
+
+				DebugDrawing().AddLineWorld(lines[e]);
+			}
+
+		}
+		//for (int i = 0; i < ShadowDataContainer::numSpotLights; i++)
+		//{
+		//}
+		//for (int i = 0; i < ShadowDataContainer::numDirLights; i++)
+		//{
+		//}
+
 		// Do global illumination / ssao
 		CT(m_GIPainter->Render(delta, m_normalDepth, m_diffuse, m_viewMatrix, m_projMatrix), "GI");
 
