@@ -3,10 +3,10 @@ return function(asm, posX, posY, posZ, group)
 		{
 			{
 				type = core.componentType.GraphicsComponent,
-				data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry },
+				data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1} },
 				load = { 
 							mesh = { core.loaders.GnomeLoader, "assets/model/animated/rioter/rioter_00.bgnome" },
-							material = { core.loaders.MaterialLoader, "assets/material/rioter_00.material" }
+							material = { core.loaders.MaterialLoader, "assets/material/rioter_00.material" },
 					   }
 			},
 			{
@@ -53,7 +53,8 @@ return function(asm, posX, posY, posZ, group)
 				type = core.componentType.AnimationComponent,
 				data = { 
 					animationID = 0,
-					currentTime = 0.0,
+					--currentTime = 0.0,
+					currentTime = math.random() * 10,
 					loop = true,
 					playing = true,
 					speed = 1.6,

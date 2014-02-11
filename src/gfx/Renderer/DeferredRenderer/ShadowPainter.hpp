@@ -12,7 +12,7 @@
 #include "../../Buffers/MeshManager.hpp"
 #include "../PostProcessing/BlurPainter.hpp"
 #include <gfx/InstanceData.hpp>
-#include <Animation/AnimationManager.hpp>
+#include <Animation/AnimationManagerGFX.hpp>
 #include "../Defines.hpp"
 
 namespace GFX
@@ -48,7 +48,7 @@ namespace GFX
 		/*!
 		Main rendering function
 		*/
-		void Render(AnimationManager* animationManager, const unsigned int& renderIndex, FBOTexture* depthBuffer, glm::mat4 viewMatrix, glm::mat4 projMatrix,
+		void Render(AnimationManagerGFX* animationManager, const unsigned int& renderIndex, FBOTexture* depthBuffer, glm::mat4 viewMatrix, glm::mat4 projMatrix,
 			const unsigned int& geometryStartIndex, const unsigned int& geometryEndIndex, FBOTexture* shadowMap, const unsigned int& width, const unsigned int& height);
 
 	private:

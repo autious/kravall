@@ -19,9 +19,12 @@ initCameraFarClipDistance = 1000.0,
 consoleFont = "assets/Fonts/ConsoleFont.font",
 defaultNrFlowfields = 20,
 debugRenderAreas = true,
+debugRenderHoverTextBounding = false,
 debugLightVolumes = false,
 animationQuality = 0, -- range 0 - 2, determines frames/second in animation
 toggleConsoleButton = core.input.keyboard.key.GRAVE_ACCENT,
 cameraScrollingSpeed = 0,
-consoleOutputLevel = "warning" -- debug, warning, error, fatal
+consoleOutputLevel = "warning", -- debug, warning, error, fatal
+stickySelection = false,
+boxSelectionGraceDistance = 0.5
 }

@@ -2,20 +2,23 @@
 #define SRC_GFX_RENDERER_DEFERRED_PAINTER_HPP
 
 #include "../BasePainter.hpp"
-#include <Shaders/ShaderManager.hpp>
-
-#include "../RenderJobManager.hpp"
-
 #include "FBOTexture.hpp"
-#include "../../Buffers/UniformBufferManager.hpp"
 #include <GL/glew.h>
 #include <vector>
-#include "../../Textures/TextureManager.hpp"
-#include "../../Buffers/MeshManager.hpp"
-#include "../../Material/MaterialManager.hpp"
-#include <gfx/InstanceData.hpp>
-#include <Animation/AnimationManager.hpp>
 #include "../Defines.hpp"
+
+#include <Animation/AnimationManagerGFX.hpp>
+
+namespace GFX
+{
+    class InstanceData;
+    class MeshManager;
+    class TextureManager;
+    class MaterialManager;
+    class UniformBufferManager;
+    class RenderJobManager;
+    class ShaderManager;
+}
 
 namespace GFX
 {
@@ -48,7 +51,8 @@ namespace GFX
 		\param specular Rendertarget for specular
 		\param glowMatID Rendertarget for glow and materialID
 		*/
-		void Render(AnimationManager* animationManager, unsigned int& renderIndex, FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix, const float& gamma);
+		void Render(AnimationManagerGFX* animationManager, unsigned int& renderIndex, FBOTexture* depthBuffer, FBOTexture* normalDepth, 
+			FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix, const float& gamma);
 
 	private:
 		
@@ -61,27 +65,22 @@ namespace GFX
 		*/
 		void BindGBuffer(FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID);
 
-		GLuint m_uniformTexture0;
-		GLuint m_uniformTexture1;
-		GLuint m_uniformTexture2;
-		GLuint m_uniformTexture3;
-
-		GLuint m_modelMatrixUniform;
-
-		GLuint m_gammaUniform;
-
-		GLint m_cameraPosUniform;
-
-		unsigned int testCubeMap;
-		GLint cubemapUniform;
-
-		RenderJobManager* m_renderJobManager;
-		MeshManager* m_meshManager;
-		MaterialManager* m_materialManager;
-		TextureManager* m_textureManager;
+        
+        RenderJobManager* m_renderJobManager;
+        MeshManager* m_meshManager;
+        MaterialManager* m_materialManager;
+        TextureManager* m_textureManager;
 
 		InstanceData* m_staticInstances;
 		GLuint m_instanceBuffer;
+
+		GLint m_animatedBlend;
+		GLint m_animatedNormal;
+
+		GLint m_staticBlend;
+		GLint m_staticNormal;
+
+		unsigned int m_outlineThickness;
 	};
 }
 

@@ -7,9 +7,9 @@ local Button =
                     y=0,
                     xoffset=0,
                     yoffset=0,
-                    matReleased = "assets/material/ui/button.material",
-                    matPressed = "assets/material/ui/button_pressed.material",
-                    matHover = "assets/material/ui/button_hover.material"
+                    matReleased = "assets/texture/ui/button-release_00.material",
+                    matPressed = "assets/texture/ui/button-press_00.material",
+                    matHover = "assets/texture/ui/button-hover_00.material"
                 }
 
 function Button:new(o)
@@ -56,14 +56,14 @@ function Button:onPress()
     self.pressedImg:show(true)
     self.releasedImg:show(false)
     self.hoverImg:show(false)
-
-    self.onClick() 
 end
 
 function Button:onRelease()
     self.pressedImg:show(false)
     self.releasedImg:show(false)
     self.hoverImg:show(true)
+
+    self.onClick() 
 end
 
 function Button:onEnter()

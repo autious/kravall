@@ -3,10 +3,12 @@
 struct InstanceData
 {
 	mat4 mm;
+	vec4 outlineColor;
 	uint animationFrame;
 	uint animationOffset;
 	uint rnd_seed;
 	uint pad2;
+	
 };
 
 layout (std140, binding = 4) readonly buffer buffah

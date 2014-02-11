@@ -32,7 +32,7 @@ local function CreateTrack(position, tracktype, scen)
 		},
 		{
 			type = core.componentType.GraphicsComponent,
-			data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
+			data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1},render = true },
 			load = { 
 						mesh = { core.loaders.GnomeLoader, path, false },
 						material = { core.loaders.MaterialLoader, "assets/minecart/material/track.material", false }

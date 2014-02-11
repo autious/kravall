@@ -10,10 +10,10 @@ local Checkbox =
                     width=0,
                     height=0,
                     checked = false,
-                    matOpen = "assets/material/ui/checkbox_open.material",
-                    matSelected = "assets/material/ui/checkbox_selected.material",
-                    matHoverOpen = "assets/material/ui/checkbox_hover_open.material",
-                    matHoverSelected = "assets/material/ui/checkbox_hover_selected.material"
+                    matOpen = "assets/texture/ui/checkbox-open_00.material",
+                    matSelected = "assets/texture/ui/checkbox-selected_00.material",
+                    matHoverOpen = "assets/texture/ui/checkbox-hover-open_00.material",
+                    matHoverSelected = "assets/texture/ui/checkbox-hover-selected_00.material"
                 }
 
 

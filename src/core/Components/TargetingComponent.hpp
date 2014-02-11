@@ -21,8 +21,14 @@ namespace Core
 		/*! The entity that is the current target. */
 		Entity target;
 
+		/*! How long the unit has tried to attack the current target. */
+		float attackTime;
+
+		/*! Whether the unit is currently attacking its target. */
+		bool isAttacking;
+
 		/*! Default constructor. Initialising all members to 0. */
-		TargetingComponent() : numberOfAttackers(0), target(INVALID_ENTITY)
+		TargetingComponent() : numberOfAttackers(0), target(INVALID_ENTITY), attackTime(0.0f), isAttacking(false)
 		{
 			for (int i = 0; i < MAX_ATTACKERS; ++i)
 			{

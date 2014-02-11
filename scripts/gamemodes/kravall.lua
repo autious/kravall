@@ -8,21 +8,41 @@ local T = {}
 local selectedSquads = {}
 local clickStartX, clickStartY, clickStartZ
 local clickEndX, clickEndY, clickEndZ
+local selectedFormation
 local isClick;
+
+local boxStartX, boxStartY, boxEndX, boxEndY
+local groupsSelectedByBox = {}
+local previousGroupsSelectedByBox = {}
+
+local keyboard = core.input.keyboard
+local mouse = core.input.mouse
+local s_squad = core.system.squad
 
 core.movementData.setMovementMetaData( core.movementData.Idle, 0, 17, 17 )
 core.movementData.setMovementMetaData( core.movementData.Walking, 5.8, 17, 17 )
 core.movementData.setMovementMetaData( core.movementData.Sprinting, 8.8, 17, 14 )
 
+function DeselectAllSquads()
+    s_squad.disableOutline(selectedSquads)    
+    selectedSquads = {}
+end
+
 function squadHandling()
-    if core.input.mouse.isButtonDownOnce(core.input.mouse.button.Left) then        
+    --Formations
+    if mouse.isButtonDownOnce(mouse.button.Left) then        
+		boxStartX, boxStartY = mouse.getPosition()
         selectedEntity = core.system.picking.getLastHitEntity()
         if selectedEntity then
             local unitTypeComponent = selectedEntity:get(core.componentType.UnitTypeComponent);
             local attributeComponent = selectedEntity:get(core.componentType.AttributeComponent);
-            if attributeComponent and unitTypeComponent then                   
+            if attributeComponent and unitTypeComponent then                 
                 if unitTypeComponent.unitType == core.UnitType.Police then
-                    if core.input.keyboard.isKeyDown(core.input.keyboard.key.Left_shift) then
+
+                    local squadEntity = s_squad.getSquadEntity(attributeComponent.squadID)
+                    local squadComponent = squadEntity:get(core.componentType.SquadComponent)
+
+                    if keyboard.isKeyDown(keyboard.key.Left_shift) then
                         local found = false
 
                         for i=1, #selectedSquads do
@@ -31,48 +51,141 @@ function squadHandling()
                             end
                         end
 
-                        if not found then                            
+                        if not found then
                             selectedSquads[#selectedSquads+1] = attributeComponent.squadID
-                            print(selectedSquads[#selectedSquads])
+                            if #selectedSquads == 1 then                                
+                                selectedFormation = squadComponent.squadFormation
+                            end
                         end
                     else
-                        selectedSquads = {};
+                        DeselectAllSquads()
                         selectedSquads[#selectedSquads+1] = attributeComponent.squadID
-                        print(selectedSquads[#selectedSquads])
+                        selectedFormation = squadComponent.squadFormation
+                    end
+
+                    if squadComponent.squadFormation ~= selectedFormation then
+                        selectedFormation = s_squad.formations.NoFormation
                     end
                 end
             end
-        end        
-    elseif core.input.mouse.isButtonDownOnce(core.input.mouse.button.Right) then
+		elseif not keyboard.isKeyDown(keyboard.key.Left_shift) and not core.config.stickySelection and not isClick then
+			DeselectAllSquads()
+        end
+
+        if isClick == true then
+            isClick = false
+        end
+
+	elseif mouse.isButtonDown(mouse.button.Left) then
+		boxEndX, boxEndY = mouse.getPosition()
+		groupsSelectedByBox = core.system.picking.getPoliceGroupsInsideBox( boxStartX, boxStartY, boxEndX, boxEndY, core.config.boxSelectionGraceDistance )
+        
+        if previousGroupsSelectedByBox and #previousGroupsSelectedByBox then
+            s_squad.disableOutline(previousGroupsSelectedByBox)
+        end
+
+        if groupsSelectedByBox and #groupsSelectedByBox >= 1 then
+            s_squad.enableOutline(groupsSelectedByBox, 1, 0.9, 0.1, 1)
+        end
+
+        previousGroupsSelectedByBox = groupsSelectedByBox
+
+    elseif mouse.isButtonDownOnce(mouse.button.Right) then
         if #selectedSquads > 0 then
-            local mouseX, mouseY = core.input.mouse.getPosition()
+            isClick = true
+            local mouseX, mouseY = mouse.getPosition()
             clickStartX, clickStartY, clickStartZ = core.system.picking.getGroundHit(mouseX, mouseY);
         end   
-    elseif core.input.mouse.isButtonDown(core.input.mouse.button.Right) then        
-        if #selectedSquads > 0 and clickStartX and clickStartY and clickStartZ then
-            local mouseX, mouseY = core.input.mouse.getPosition()
+    elseif mouse.isButtonDown(mouse.button.Right) then        
+        if #selectedSquads > 0 and clickStartX and clickStartY and clickStartZ and isClick then
+            local mouseX, mouseY = mouse.getPosition()
             local dragX, dragY, dragZ = core.system.picking.getGroundHit(mouseX, mouseY)    
 
-            core.system.squad.previewSquadFormation(selectedSquads, core.system.squad.formations.LineFormation, clickStartX, clickStartY, clickStartZ, dragX, dragY, dragZ)
+            s_squad.previewSquadFormation(selectedSquads, selectedFormation, clickStartX, clickStartY, clickStartZ, dragX, dragY, dragZ)
         end
-    elseif core.input.mouse.isButtonUp(core.input.mouse.button.Right) then
-        if #selectedSquads > 0 and clickStartX and clickStartY and clickStartZ then
-            local mouseX, mouseY = core.input.mouse.getPosition()
+    elseif mouse.isButtonUp(mouse.button.Right) then
+        if #selectedSquads > 0 and clickStartX and clickStartY and clickStartZ and isClick then
+            local mouseX, mouseY = mouse.getPosition()
             clickEndX, clickEndY, clickEndZ = core.system.picking.getGroundHit(mouseX, mouseY)    
-            core.system.squad.setSquadFormation(selectedSquads, core.system.squad.formations.LineFormation, clickStartX, clickStartY, clickStartZ, clickEndX, clickEndY, clickEndZ)
-	        core.system.squad.setSquadGoal(selectedSquads, clickStartX, clickStartY, clickStartZ)
+            s_squad.setSquadFormation(selectedSquads, selectedFormation, clickStartX, clickStartY, clickStartZ, clickEndX, clickEndY, clickEndZ)
+            if clickEndX and clickEndY and clickEndZ and selectedFormation ~= s_squad.formations.CircleFormation then
+	            s_squad.setSquadGoal(selectedSquads, (clickStartX + clickEndX) / 2, (clickStartY + clickEndY) / 2, (clickStartZ + clickEndZ) / 2)
+            else                
+	            s_squad.setSquadGoal(selectedSquads, clickStartX, clickStartY, clickStartZ)
+            end
+
 
             clickStartX, clickStartY, clickStartZ = nil, nil, nil
+            isClick = false
         end
     end
 
-    if core.input.keyboard.isKeyDown(core.input.keyboard.key.I)  then        
-        if #selectedSquads > 0 then
-            core.system.squad.setSquadStance(selectedSquads, core.PoliceStance.Aggressive)
-        end   
-    else
-        core.system.squad.setSquadStance(selectedSquads, core.PoliceStance.Passive)
+    --Formation selectiong
+    if keyboard.isKeyDown(keyboard.key.H) then
+        selectedFormation = s_squad.formations.HalfCircleFormation
+    elseif keyboard.isKeyDown(keyboard.key.C) then
+        selectedFormation = s_squad.formations.CircleFormation
+    elseif keyboard.isKeyDown(keyboard.key.L) then
+        selectedFormation = s_squad.formations.LineFormation
     end
+
+    --Stances
+    if keyboard.isKeyDown(keyboard.key.I)  then        
+        if #selectedSquads > 0 then
+            s_squad.setSquadStance(selectedSquads, core.PoliceStance.Aggressive)
+        end   
+    elseif keyboard.isKeyDown(keyboard.key.O) then
+        if #selectedSquads > 0 then
+            s_squad.setSquadStance(selectedSquads, core.PoliceStance.Defensive)
+        end   
+    elseif keyboard.isKeyDown(keyboard.key.P) then
+        if #selectedSquads > 0 then
+            s_squad.setSquadStance(selectedSquads, core.PoliceStance.Passive)
+        end
+    end
+	
+	-- box select
+	if boxStartX and boxStartY and boxEndX and boxEndY and mouse.isButtonUp(mouse.button.Left) then
+		if boxStartX ~= boxEndX and boxStartY ~= boxEndY then
+			if not keyboard.isKeyDown(keyboard.key.Left_shift) then
+				DeselectAllSquads()
+			end
+			if groupsSelectedByBox then
+
+				for p = 1, #groupsSelectedByBox do
+					local found = false
+					for i=1, #selectedSquads do
+						if selectedSquads[i] == groupsSelectedByBox[p] then
+							found = true
+						end
+					end
+					
+					if not found then                            
+                        local squadEntity = s_squad.getSquadEntity(groupsSelectedByBox[p])
+                        local squadComponent = squadEntity:get(core.componentType.SquadComponent)
+
+						selectedSquads[#selectedSquads+1] = groupsSelectedByBox[p]
+                        if #selectedSquads == 1 then
+                            selectedFormation = squadComponent.squadFormation
+                        end
+
+                        if selectedFormation ~= squadComponent.squadFormation then
+                            selectedFormation = s_squad.formations.NoFormation
+                        end
+					end			
+				end
+				groupsSelectedByBox = {}
+			elseif not core.config.stickySelection and not keyboard.isKeyDown(keyboard.key.Left_shift) then
+				DeselectAllSquads()
+			end
+		end			
+		boxStartX, boxStartY, boxEndX, boxEndY = nil, nil, nil, nil
+	end
+    
+    if selectedSquads and #selectedSquads >= 1 then
+        s_squad.enableOutline(selectedSquads, 0.1, 0.9, 0.3, 1.0)
+    end
+	
 end
 
 

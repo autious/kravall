@@ -3,6 +3,9 @@ local scenario = require "scenario"
 local objective = require "objective" 
 local scen = scenario.new()
 
+scen.name = "Protype Area"
+scen.description = "Test scenario area for you"
+
 -- SCRIPTS \/
 scen.gamemode =  require "gamemodes/kravall":new()
 scen:registerUpdateCallback( function(delta) scen.gamemode:update(delta) end )
@@ -229,7 +232,7 @@ function scen:load()
     local Checkbox = require "gui/component/Checkbox"
 
     local CenterPlacer = require "gui/placement/CenterPlacer"
-    local LeftPlacer = require "gui/placement/LeftPlacer"
+    local WestPlacer = require "gui/placement/WestPlacer"
 
     local gui = GUI:new()
 
@@ -247,14 +250,14 @@ function scen:load()
 
     local checkbox = Checkbox:new({x=100,y=400,checked=true})
     function checkbox.onChange( value )
-        --core.config.debugRenderAreas = value
+        core.config.debugRenderAreas = value
     end
 
     gui:addComponent(button)
     gui:addComponent(slider)
     gui:addComponent(checkbox)
 
-    gui:addPlacementHandler( LeftPlacer:new() )
+    gui:addPlacementHandler( WestPlacer:new() )
 
     scen.gui = gui
     scen:registerDestroyCallback( function() scen.gui:destroy() end )

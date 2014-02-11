@@ -4,9 +4,14 @@
 #include <Renderer/RenderCore.hpp>
 #include <Shaders/ShaderManager.hpp>
 #include <Buffers/MeshManager.hpp>
-#include <Animation/AnimationManager.hpp>
+#include <Animation/AnimationManagerGFX.hpp>
+#include <Renderer/TextRenderer/TextManager.hpp>
+#include <Renderer/DebugRenderer/DebugManager.hpp>
+
 #include <gfx/Vertex.hpp>
 #include <GFXInterface.hpp>
+#include <FontData.hpp>
+#include <Buffers/Text.hpp>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -143,7 +148,7 @@ namespace GFX
 	}
 	void RenderText(GFX::FontData* fontData, GFXVec2 position, float size, GFXVec4 color, const char* text)
 	{
-		Text t(position.x, position.y, size, size, fontData, color, text, Renderer().GetWindowWidth(), Renderer().GetWindowHeight());
+        GFX::Text t(position.x, position.y, size, size, fontData, color, text, Renderer().GetWindowWidth(), Renderer().GetWindowHeight());
 		GetTextManager().AddText(t);
 	}
 	void ShowConsole()

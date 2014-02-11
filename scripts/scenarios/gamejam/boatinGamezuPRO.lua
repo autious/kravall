@@ -8,213 +8,32 @@ local keyboard = core.input.keyboard
 local key = keyboard.key
 local camera = require "rts_camera".new()
 
-
-
-scen.asm:specific_content( core.contentmanager.load( 
-		core.loaders.NavigationMeshLoader, "scripts/scenarios/gamejam/gameJamu.nav", function( value ) end, false ) )
-
-
-local IdForNavMesh = core.system.groups.createGroup()
-local player = scen:loadAssembly( 
-{
-	{
-		type = core.componentType.WorldPositionComponent,
-		data = { position = { 0, 0, 0 } }
-	},
-	{
-		type = core.componentType.GraphicsComponent,
-		data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry },
-		load = { 
-					mesh = { core.loaders.GnomeLoader, "assets/model/animated/rioter/rioter_00.bgnome" },
-					material = { core.loaders.MaterialLoader, "assets/material/gameJam_john/player.material" }
-				}
-	},
-	{
-		type = core.componentType.AnimationComponent,
-		data = { 
-			animationID = 0,
-			currentTime = 0.0,
-			loop = true,
-			playing = true,
-			speed = 1.0,
-			currentFrame = 0,
-			queuedAnimationID = 0
-		}
-	},
-	{
-		type = core.componentType.ScaleComponent,
-		data = { scale = 3.0 }
-	},
-	{
-		type = core.componentType.RotationComponent,
-		data = { rotation = { 0,0, math.sin( 0 ), math.cos( 0 ) } }
-	},
-	{
-		type = core.componentType.UnitTypeComponent,
-		data = { unitType = core.UnitType.Object }
-	},
-	{
-		type = core.componentType.MovementComponent,
-		data = { direction = { 1, 0, 0 }, newDirection = { 0, 0, 0 }, speed = 5.8, 
-		desiredSpeed = 5.8, goal = { 0, 0, 0 } },
-        ignoreHard = true 
-	},
-	{
-		type = core.componentType.AttributeComponent,
-		data = { health = 0, stamina = 0, morale = 2.0, 
-				stancePolice = core.PoliceStance.Aggressive, defense = 0, mobility = 0, squadID = IdForNavMesh },
-        ignoreHard = true
-	},
-	{
-		type = core.componentType.TargetingComponent,
-		data = { },
-		ignoreHard = true
-	},
-	{
-		type = core.componentType.BoundingVolumeComponent,
-		data = { sphereOffset = { 0, 0, 0 }, sphereRadius = 0.7, 
-				collisionModel = core.BoundingVolumeCollisionModel.DynamicResolution, 
-				type = core.BoundingVolumeType.SphereBoundingType }
-	},
-	{
-		type = core.componentType.FlowfieldComponent,
-		data = { node = -1 }
-	}
-}
-)
-
-local playerLight = scen:loadAssembly( 
-{
-	{
-		type = core.componentType.WorldPositionComponent,
-		data = { position = { 0, 1.5, 0 } }
-	},
-	{
-		type = core.componentType.ScaleComponent,
-		data = { scale = 20.0 }
-	},
-	{
-		type = core.componentType.RotationComponent,
-		data = { rotation = { 0,0, math.sin( 3.14 ), math.cos(3.14/2.0) } }
-	},
-	{
-		type = core.componentType.LightComponent,
-		data =  { 
-			color = { 1.0, 1.0, 1.0 },
-			intensity = 1.0,
-			type = core.gfx.objectTypes.Light,
-			lighttype = core.gfx.lightTypes.Point,
-			spotangle = 0,
-			spotpenumbra = 0,
-			speccolor = {0,0,0}
-		}
-	}
-}
-)
-
-local playerSpotLight = scen:loadAssembly( 
-{
-	{
-		type = core.componentType.WorldPositionComponent,
-		data = { position = { 0, 1, 0 } }
-	},
-	{
-		type = core.componentType.ScaleComponent,
-		data = { scale = 20.0 }
-	},
-	{
-		type = core.componentType.RotationComponent,
-		data = { rotation = { 0,0, math.sin( 3.14 ), math.cos(3.14/2.0) } }
-	},
-	{
-		type = core.componentType.LightComponent,
-		data =  { 
-			color = { 1.0, 1.0, 1.0 },
-			speccolor = {0,0,0},
-			intensity = 3.0,
-			spotangle = 3.14/4.0,
-			spotpenumbra = 0.21,
-			type = core.gfx.objectTypes.Light,
-			lighttype = core.gfx.lightTypes.Spot
-		}
-	}
-}
-)
-
-
-
-
--- cave mesh
-local cave = scen:loadAssembly( 
-{
-	{
-		type = core.componentType.WorldPositionComponent,
-		data = { position = { -6.4, 0, -5.7 } }
-	},
-	{
-		type = core.componentType.GraphicsComponent,
-		data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry },
-		load = { 
-					mesh = { core.loaders.GnomeLoader, "assets/material/gameJam_john/gameJam_cave_ty_johan.bgnome" },
-					material = { core.loaders.MaterialLoader, "assets/material/gameJam_john/cave.material" }
-				}
-	},
-	{
-		type = core.componentType.ScaleComponent,
-		data = { scale = 1.0 }
-	},
-	{
-		type = core.componentType.RotationComponent,
-		--data = { rotation = { 0,0, math.sin( 3.14 ), math.cos(3.14/2.0) } }
-		data = { rotation = { -math.sin(math.pi/4.0), 0, 0, math.cos(math.pi/4.0) } }
-	}
-}
-)
-
-
----- Ambient light
-scen:loadAssembly( 
-{
-	{
-		type = core.componentType.LightComponent,
-		data =  { 
-					color = { 1.0, 1.0, 1.0 },
-					intensity = 0.0,
-					type = core.gfx.objectTypes.Light,
-					lighttype = core.gfx.lightTypes.Ambient,
-					spotangle = 0,
-					spotpenumbra = 0,
-					speccolor = {0,0,0}
-				}
-	},
-	{
-		type = core.componentType.WorldPositionComponent,
-		data = { position = { 0, 0, 0 } }
-	},
-	{
-		type = core.componentType.ScaleComponent,
-		data = { scale = 1.0 }
-	},
-	{
-		type = core.componentType.RotationComponent,
-		data = { rotation = { 0,0,0,0 } }
-	}
-} 
-)
-
--- zombies
-local group = core.system.groups.createGroup()
+local player
+local playerLight
+local playerSpotLight
+local cave
 local Zombies = { }
+local group
+local treasurePositions
+local treasurePos
+local treasure
 
-local posX = -3
-local posZ = 75
+function scen:load()
 
-for i = 0, 100 do
-	Zombies[ #Zombies + 1 ] = scen:loadAssembly( 
+	scen.asm:specific_content( core.contentmanager.load( 
+			core.loaders.NavigationMeshLoader, "scripts/scenarios/gamejam/gameJamu.nav", function( value ) end, false ) )
+
+
+	local IdForNavMesh = core.system.groups.createGroup()
+	player = scen:loadAssembly( 
 	{
 		{
+			type = core.componentType.WorldPositionComponent,
+			data = { position = { 0, 0, 0 } }
+		},
+		{
 			type = core.componentType.GraphicsComponent,
-			data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry },
+			data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1} },
 			load = { 
 						mesh = { core.loaders.GnomeLoader, "assets/model/animated/rioter/rioter_00.bgnome" },
 						material = { core.loaders.MaterialLoader, "assets/material/gameJam_john/player.material" }
@@ -224,7 +43,7 @@ for i = 0, 100 do
 			type = core.componentType.AnimationComponent,
 			data = { 
 				animationID = 0,
-				currentTime = math.random( 2 ),
+				currentTime = 0.0,
 				loop = true,
 				playing = true,
 				speed = 1.0,
@@ -233,32 +52,27 @@ for i = 0, 100 do
 			}
 		},
 		{
-			type = core.componentType.WorldPositionComponent,
-			data = { position = { posX, 0, posZ} }
-		},
-		{
-			type = core.componentType.RotationComponent,
-			data = { rotation = { 0, 0, 0, 0 } }
-		},
-		{
 			type = core.componentType.ScaleComponent,
 			data = { scale = 3.0 }
 		},
 		{
+			type = core.componentType.RotationComponent,
+			data = { rotation = { 0,0, math.sin( 0 ), math.cos( 0 ) } }
+		},
+		{
 			type = core.componentType.UnitTypeComponent,
-			data = { unitType = core.UnitType.Rioter }
+			data = { unitType = core.UnitType.Object }
 		},
 		{
 			type = core.componentType.MovementComponent,
-			data = { direction = { 0, 0, 0 }, newDirection = { 0, 0, 0 }, speed = 1.5, 
-			desiredSpeed = 3.5, goal = false }
-			,ignoreHard = true
+			data = { direction = { 1, 0, 0 }, newDirection = { 0, 0, 0 }, speed = 5.8, 
+			desiredSpeed = 5.8, goal = { 0, 0, 0 } },
+			ignoreHard = true 
 		},
 		{
 			type = core.componentType.AttributeComponent,
 			data = { health = 0, stamina = 0, morale = 2.0, 
-					alignment = core.RioterAlignment.Anarchist, rage = 0, pressure = 0, groupID = group, stanceRioter = core.RioterStance.Normal}
-			,
+					stancePolice = core.PoliceStance.Aggressive, defense = 0, mobility = 0, squadID = IdForNavMesh },
 			ignoreHard = true
 		},
 		{
@@ -268,7 +82,7 @@ for i = 0, 100 do
 		},
 		{
 			type = core.componentType.BoundingVolumeComponent,
-			data = { sphereOffset = { 0, 0, 0 }, sphereRadius = 0.3, 
+			data = { sphereOffset = { 0, 0, 0 }, sphereRadius = 0.7, 
 					collisionModel = core.BoundingVolumeCollisionModel.DynamicResolution, 
 					type = core.BoundingVolumeType.SphereBoundingType }
 		},
@@ -276,42 +90,239 @@ for i = 0, 100 do
 			type = core.componentType.FlowfieldComponent,
 			data = { node = -1 }
 		}
-			
 	}
 	)
 
-end
-
-
-
--- treasure
-local treasurePositions = { { -20, -16 }, { 8, 44 }, { 47, 5 }, { 53, 26 }, { 42, 80 }, { 25, 65 }, { 53, 41 } }
-local treasurePos = treasurePositions[ math.random( #treasurePositions ) ]
-local treasure = scen:loadAssembly( 
-{
+	playerLight = scen:loadAssembly( 
 	{
-		type = core.componentType.WorldPositionComponent,
-		data = { position = { treasurePos[1], 0, treasurePos[2] } }
-	},
-	{
-		type = core.componentType.GraphicsComponent,
-		data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry },
-		load = { 
-					mesh = { core.loaders.GnomeLoader, "assets/material/gameJam_john/minecart.bgnome" },
-					material = { core.loaders.MaterialLoader, "assets/material/gameJam_john/cart.material" }
-				}
-	},
-	{
-		type = core.componentType.ScaleComponent,
-		data = { scale = 1.0 }
-	},
-	{
-		type = core.componentType.RotationComponent,
-		data = { rotation = { 0,0, math.sin( 3.14 ), math.cos(3.14/2.0) } }
+		{
+			type = core.componentType.WorldPositionComponent,
+			data = { position = { 0, 1.5, 0 } }
+		},
+		{
+			type = core.componentType.ScaleComponent,
+			data = { scale = 20.0 }
+		},
+		{
+			type = core.componentType.RotationComponent,
+			data = { rotation = { 0,0, math.sin( 3.14 ), math.cos(3.14/2.0) } }
+		},
+		{
+			type = core.componentType.LightComponent,
+			data =  { 
+				color = { 1.0, 1.0, 1.0 },
+				intensity = 1.0,
+				type = core.gfx.objectTypes.Light,
+				lighttype = core.gfx.lightTypes.Point,
+				spotangle = 0,
+				spotpenumbra = 0,
+				speccolor = {0,0,0}
+			}
+		}
 	}
-}
-)
+	)
 
+	playerSpotLight = scen:loadAssembly( 
+	{
+		{
+			type = core.componentType.WorldPositionComponent,
+			data = { position = { 0, 1, 0 } }
+		},
+		{
+			type = core.componentType.ScaleComponent,
+			data = { scale = 20.0 }
+		},
+		{
+			type = core.componentType.RotationComponent,
+			data = { rotation = { 0,0, math.sin( 3.14 ), math.cos(3.14/2.0) } }
+		},
+		{
+			type = core.componentType.LightComponent,
+			data =  { 
+				color = { 1.0, 1.0, 1.0 },
+				speccolor = {0,0,0},
+				intensity = 3.0,
+				spotangle = 3.14/4.0,
+				spotpenumbra = 0.21,
+				type = core.gfx.objectTypes.Light,
+				lighttype = core.gfx.lightTypes.Spot
+			}
+		}
+	}
+	)
+
+
+
+
+	-- cave mesh
+	cave = scen:loadAssembly( 
+	{
+		{
+			type = core.componentType.WorldPositionComponent,
+			data = { position = { -6.4, 0, -5.7 } }
+		},
+		{
+			type = core.componentType.GraphicsComponent,
+			data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1} },
+			load = { 
+						mesh = { core.loaders.GnomeLoader, "assets/material/gameJam_john/gameJam_cave_ty_johan.bgnome" },
+						material = { core.loaders.MaterialLoader, "assets/material/gameJam_john/cave.material" }
+					}
+		},
+		{
+			type = core.componentType.ScaleComponent,
+			data = { scale = 1.0 }
+		},
+		{
+			type = core.componentType.RotationComponent,
+			--data = { rotation = { 0,0, math.sin( 3.14 ), math.cos(3.14/2.0) } }
+			data = { rotation = { -math.sin(math.pi/4.0), 0, 0, math.cos(math.pi/4.0) } }
+		}
+	}
+	)
+
+
+	---- Ambient light
+	scen:loadAssembly( 
+	{
+		{
+			type = core.componentType.LightComponent,
+			data =  { 
+						color = { 1.0, 1.0, 1.0 },
+						intensity = 0.0,
+						type = core.gfx.objectTypes.Light,
+						lighttype = core.gfx.lightTypes.Ambient,
+						spotangle = 0,
+						spotpenumbra = 0,
+						speccolor = {0,0,0}
+					}
+		},
+		{
+			type = core.componentType.WorldPositionComponent,
+			data = { position = { 0, 0, 0 } }
+		},
+		{
+			type = core.componentType.ScaleComponent,
+			data = { scale = 1.0 }
+		},
+		{
+			type = core.componentType.RotationComponent,
+			data = { rotation = { 0,0,0,0 } }
+		}
+	} 
+	)
+
+	-- zombies
+
+	group = core.system.groups.createGroup()
+
+	local posX = -3
+	local posZ = 75
+
+	for i = 0, 100 do
+		Zombies[ #Zombies + 1 ] = scen:loadAssembly( 
+		{
+			{
+				type = core.componentType.GraphicsComponent,
+				data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1} },
+				load = { 
+							mesh = { core.loaders.GnomeLoader, "assets/model/animated/rioter/rioter_00.bgnome" },
+							material = { core.loaders.MaterialLoader, "assets/material/gameJam_john/player.material" }
+						}
+			},
+			{
+				type = core.componentType.AnimationComponent,
+				data = { 
+					animationID = 0,
+					currentTime = math.random( 2 ),
+					loop = true,
+					playing = true,
+					speed = 1.0,
+					currentFrame = 0,
+					queuedAnimationID = 0
+				}
+			},
+			{
+				type = core.componentType.WorldPositionComponent,
+				data = { position = { posX, 0, posZ} }
+			},
+			{
+				type = core.componentType.RotationComponent,
+				data = { rotation = { 0, 0, 0, 0 } }
+			},
+			{
+				type = core.componentType.ScaleComponent,
+				data = { scale = 3.0 }
+			},
+			{
+				type = core.componentType.UnitTypeComponent,
+				data = { unitType = core.UnitType.Rioter }
+			},
+			{
+				type = core.componentType.MovementComponent,
+				data = { direction = { 0, 0, 0 }, newDirection = { 0, 0, 0 }, speed = 1.5, 
+				desiredSpeed = 3.5, goal = false }
+				,ignoreHard = true
+			},
+			{
+				type = core.componentType.AttributeComponent,
+				data = { health = 100, stamina = 100, morale = 2.0, 
+						alignment = core.RioterAlignment.Anarchist, rage = 0, pressure = 0, groupID = group, stanceRioter = core.RioterStance.Normal}
+				,
+				ignoreHard = true
+			},
+			{
+				type = core.componentType.TargetingComponent,
+				data = { },
+				ignoreHard = true
+			},
+			{
+				type = core.componentType.BoundingVolumeComponent,
+				data = { sphereOffset = { 0, 0, 0 }, sphereRadius = 0.3, 
+						collisionModel = core.BoundingVolumeCollisionModel.DynamicResolution, 
+						type = core.BoundingVolumeType.SphereBoundingType }
+			},
+			{
+				type = core.componentType.FlowfieldComponent,
+				data = { node = -1 }
+			}
+				
+		}
+		)
+
+	end
+
+
+
+	-- treasure
+	treasurePositions = { { -20, -16 }, { 8, 44 }, { 47, 5 }, { 53, 26 }, { 42, 80 }, { 25, 65 }, { 53, 41 } }
+	treasurePos = treasurePositions[ math.random( #treasurePositions ) ]
+	treasure = scen:loadAssembly( 
+	{
+		{
+			type = core.componentType.WorldPositionComponent,
+			data = { position = { treasurePos[1], 0, treasurePos[2] } }
+		},
+		{
+			type = core.componentType.GraphicsComponent,
+			data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1} },
+			load = { 
+						mesh = { core.loaders.GnomeLoader, "assets/material/gameJam_john/minecart.bgnome" },
+						material = { core.loaders.MaterialLoader, "assets/material/gameJam_john/cart.material" }
+					}
+		},
+		{
+			type = core.componentType.ScaleComponent,
+			data = { scale = 1.0 }
+		},
+		{
+			type = core.componentType.RotationComponent,
+			data = { rotation = { 0,0, math.sin( 3.14 ), math.cos(3.14/2.0) } }
+		}
+	}
+	)
+
+end -- function load
 
 
 -- utility variables...

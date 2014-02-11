@@ -3,7 +3,7 @@
 
 #include <Shaders/ShaderManager.hpp>
 #include <Buffers/UniformBufferManager.hpp>
-#include <Animation/AnimationManager.hpp>
+#include <Animation/AnimationManagerGFX.hpp>
 
 #include "DeferredRenderer/FBOTexture.hpp"
 #include "DeferredRenderer/DeferredPainter.hpp"
@@ -29,11 +29,41 @@
 
 #include <GFXSettings.hpp>
 
+#include <GL/glew.h>
 #include <iostream>
 #include <array>
-
+#include <vector>
+#include <glm/glm.hpp>
+#include <BitmaskDefinitions.hpp>
 #include "../Utility/Timer.hpp"
 
+namespace GFX
+{
+   // class AnimationManagerGFX;
+    class UniformBufferManager;
+    class ShaderManager;
+    class RenderJobManager;
+    class MeshManager;
+    class TextureManager;
+    class MaterialManager;
+
+
+    class DeferredPainter;
+    class LightPainter;
+    class TextPainter;
+    class DebugPainter;
+    class ConsolePainter;
+    class SplashPainter;
+    class FBOPainter;
+    class OverlayPainter;
+    class PostProcessingPainter;
+    class GIPainter;
+    class BlurPainter;
+
+    class FontData;
+    class Vertex;
+    class FBOTexture;
+}                 
 
 namespace GFX
 {
@@ -44,8 +74,7 @@ namespace GFX
 		unsigned int m_settings[GFX_SETTINGS_COUNT];
 
 	public:
-
-		/*!
+		/*!     
 		Friend function to get singleton
 		\return RenderCore Returns the RenderCore instance
 		*/
@@ -213,7 +242,7 @@ namespace GFX
 		MeshManager*			m_meshManager;
 		TextureManager*			m_textureManager;
 		MaterialManager*		m_materialManager;
-		AnimationManager*		m_animationManager;
+		AnimationManagerGFX*    m_animationManager;
 
 
 		DeferredPainter* m_deferredPainter;

@@ -24,9 +24,9 @@ end
 -- Called when program starts
 function core.init() 
     print( "Program starting in lua" )
-    logo = image( 10,10, "assets/material/ui/test.material", false )
-	openscenario( "tower" )    
-    --openscenario( "main_menu" )    
+    logo = image( 10,10, "assets/texture/ui/ekswaised-logo_00.material", false )
+    --openscenario( "main_menu" ) 
+	openscenario( "tower" ) 
 end
 
 menuState = nil

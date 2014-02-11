@@ -5,7 +5,7 @@ return	asm:loadAssembly(
 		{
 			{
 				type = core.componentType.GraphicsComponent,
-				data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry },
+				data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry,layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 0, 0} },
 				load = { 
 							mesh = { core.loaders.GnomeLoader, "assets/haus.bgnome" },
 							material = { core.loaders.MaterialLoader, "assets/material/brick.material" }
