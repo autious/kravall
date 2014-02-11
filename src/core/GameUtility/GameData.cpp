@@ -42,10 +42,11 @@ namespace Core
 		m_movementData[ state ].deceleration	= deceleration;
 	}
 
-	void Core::GameData::SetWeaponDataForWeapon( WeaponType weapon, float range, float damage, float animationDmgDealingtime, int animationID )
+	void Core::GameData::SetWeaponDataForWeapon( WeaponType weapon, float range, float weaponDamage, float moraleDamage, float animationDmgDealingtime, int animationID )
 	{
 		m_weaponData[ weapon ].range					= range;
-		m_weaponData[ weapon ].damage					= damage;
+		m_weaponData[ weapon ].weaponDamage				= weaponDamage;
+		m_weaponData[ weapon ].moraleDamage				= moraleDamage;
 		m_weaponData[ weapon ].animationDmgDealingtime	= animationDmgDealingtime;
 		m_weaponData[ weapon ].animationID				= animationID;
 	}

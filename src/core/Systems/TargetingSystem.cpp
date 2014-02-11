@@ -49,18 +49,11 @@ void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police, float del
 
 		float distSqr = dx * dx + dy * dy + dz * dz;
 
-		const Core::WeaponData& weapon = Core::GameData::GetWeaponDataFromWeapon( tcTarget->weapon );
-
+		const Core::WeaponData& weapon = Core::GameData::GetWeaponDataFromWeapon( tc->weapon );
 		if (distSqr < weapon.range * weapon.range )
 		{
 			if (TargetingComponent::Attack(police, *tcTarget))
-			{
-			
-
-
-
 				std::cout << "Police: " << police << " is attacking rioter " << tc->target << std::endl;
-			}
 		}
 
 		tc->attackTime += delta;
@@ -83,11 +76,11 @@ void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police, float del
 			}
 			else
 			{
-				targetPos = WGETC<Core::WorldPositionComponent>(tc->target);
-
-				mc->goal[0] = targetPos->position[0];
-				mc->goal[1] = targetPos->position[1];
-				mc->goal[2] = targetPos->position[2];
+				//targetPos = WGETC<Core::WorldPositionComponent>(tc->target);
+				//
+				//mc->goal[0] = targetPos->position[0];
+				//mc->goal[1] = targetPos->position[1];
+				//mc->goal[2] = targetPos->position[2];
 
 				colour = GFXColor(1.0f, 0.0f, 0.0f, 1.0f);
 			}
@@ -101,11 +94,10 @@ void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police, float del
 
 			tc->target = FindClosestAttacker(tc, wpc);
 
-			targetPos = WGETC<Core::WorldPositionComponent>(tc->target);
-
-			mc->goal[0] = targetPos->position[0];
-			mc->goal[1] = targetPos->position[1];
-			mc->goal[2] = targetPos->position[2];
+			//targetPos = WGETC<Core::WorldPositionComponent>(tc->target);
+			//mc->goal[0] = targetPos->position[0];
+			//mc->goal[1] = targetPos->position[1];
+			//mc->goal[2] = targetPos->position[2];
 
 			break;
 		case PoliceStance::Passive:
@@ -121,15 +113,15 @@ void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police, float del
 
 	if (tc->target != INVALID_ENTITY)
 	{
-		Core::WorldPositionComponent* twpc = WGETC<Core::WorldPositionComponent>(tc->target);
-		Core::BoundingVolumeComponent* tbvc = WGETC<Core::BoundingVolumeComponent>(tc->target);
-		Core::BoundingSphere* tSphere = reinterpret_cast<Core::BoundingSphere*>(tbvc->data);
-		GFX::Debug::DrawSphere(twpc->GetVec3(*twpc) + *reinterpret_cast<glm::vec3*>(tSphere->offset), tSphere->radius, GFXColor(1.0f, 0.0f, 0.0f, 1.0f), false);
+		//Core::WorldPositionComponent* twpc = WGETC<Core::WorldPositionComponent>(tc->target);
+		//Core::BoundingVolumeComponent* tbvc = WGETC<Core::BoundingVolumeComponent>(tc->target);
+		//Core::BoundingSphere* tSphere = reinterpret_cast<Core::BoundingSphere*>(tbvc->data);
+		//GFX::Debug::DrawSphere(twpc->GetVec3(*twpc) + *reinterpret_cast<glm::vec3*>(tSphere->offset), tSphere->radius, GFXColor(1.0f, 0.0f, 0.0f, 1.0f), false);
 	}
 	
-	Core::BoundingVolumeComponent* bvc = WGETC<Core::BoundingVolumeComponent>(police);
-	Core::BoundingSphere* sphere = reinterpret_cast<Core::BoundingSphere*>(bvc->data);
-	GFX::Debug::DrawSphere(wpc->GetVec3(*wpc) + *reinterpret_cast<glm::vec3*>(sphere->offset), sphere->radius, colour, false);
+	//Core::BoundingVolumeComponent* bvc = WGETC<Core::BoundingVolumeComponent>(police);
+	//Core::BoundingSphere* sphere = reinterpret_cast<Core::BoundingSphere*>(bvc->data);
+	//GFX::Debug::DrawSphere(wpc->GetVec3(*wpc) + *reinterpret_cast<glm::vec3*>(sphere->offset), sphere->radius, colour, false);
 }
 
 void Core::TargetingSystem::HandleRioterTargeting(Core::Entity rioter, float delta)

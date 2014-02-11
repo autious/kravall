@@ -47,7 +47,7 @@ rioter( scen, 0, 0, 0, rGroup)
 core.system.groups.setGroupGoal(rGroup, 0, 0, 0)
 
 
-local squadOne = squad(scen, 77, 0, 0, math.pi/2);
+local squadOne = squad(scen, 20, 0, 0, math.pi/2);
 --local squadTwo = squad(scen, 77, 0, 43, math.pi/2);
 
 

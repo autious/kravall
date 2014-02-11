@@ -41,13 +41,15 @@ namespace Core
 		WeaponData()
 		{
 			range = 1.5f;
-			damage = 30;
+			weaponDamage = 30;
+			moraleDamage = 0.2f;
 			animationDmgDealingtime = 0.5f;
-			animationID = 0;
+			animationID = 1;
 		}
 		
 		float range;
-		float damage;
+		float weaponDamage;
+		float moraleDamage;
 		float animationDmgDealingtime;
 		int animationID;
 	};
@@ -82,7 +84,7 @@ namespace Core
 		/*!
 			Will set the WeaponData for the respective weapon. Should not be used carelessly form C.
 		*/
-		static void SetWeaponDataForWeapon( WeaponType weapon, float range, float damage, float animationDmgDealingtime, int animationID );
+		static void SetWeaponDataForWeapon( WeaponType weapon, float range, float weaponDamage, float moraleDamage, float animationDmgDealingtime, int animationID );
 
 
 	private:

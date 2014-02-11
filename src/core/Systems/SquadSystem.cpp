@@ -421,9 +421,9 @@ namespace Core
                         frmc->isStraggler = glm::distance(formationPosition, WorldPositionComponent::GetVec3(*wpc)) > static_cast<float>(Core::world.m_config.GetDouble("formationStraggleDistance", 0.5));  
                         sqdc->waitForStraggler = !sqdc->waitForStraggler ? frmc->isStraggler : true;                                                    
                     }
-                    mc->goal[0] = formationPosition.x;
-                    mc->goal[1] = formationPosition.z;
-                    mc->NavMeshGoalNodeIndex = goalNode;
+
+					formationPosition.y = 0.0f;
+					mc->SetGoal( formationPosition, goalNode, Core::MovementGoalPriority::FormationPriority );
                 }
                 else
                 {
@@ -438,9 +438,8 @@ namespace Core
                     
                     navMesh->GetClosestPointInsideMesh(formationPosition, squadTargetPosition, goalNode, 0.2f);
 
-                    mc->goal[0] = formationPosition.x;
-                    mc->goal[1] = formationPosition.z;
-                    mc->NavMeshGoalNodeIndex = goalNode;
+                    formationPosition.y = 0.0f;
+					mc->SetGoal( formationPosition, goalNode, Core::MovementGoalPriority::FormationPriority );
                 }
             }
 

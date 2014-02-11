@@ -4,7 +4,7 @@
 namespace Core
 {
 
-	RemovalSystem::RemovalSystem() :BaseSystem(EntityHandler::GenerateAspect<UnitTypeComponent>(), 0ULL)
+	RemovalSystem::RemovalSystem() :BaseSystem(EntityHandler::GenerateAspect<UnitTypeComponent, AttributeComponent, TargetingComponent>(), 0ULL)
 	{}
 
 	void RemovalSystem::Update(float delta)
@@ -44,9 +44,29 @@ namespace Core
 		}
 
 		for (int i = 0; i < rioterCount; i++)
+		{
+			// remove this entity form its attackers...
+			Core::TargetingComponent* tc = WGETC<Core::TargetingComponent>(rioterEntities[i]);
+			for( int p = 0; p < tc->numberOfAttackers; p++ )
+			{
+				Core::TargetingComponent* attackerTc = WGETC<Core::TargetingComponent>(tc->attackers[p]);
+				attackerTc->target = INVALID_ENTITY;
+			}
+
 			world.m_entityHandler.RemoveComponents<UnitTypeComponent, MovementComponent, AttributeComponent, TargetingComponent, BoundingVolumeComponent, FlowfieldComponent>(rioterEntities[i]);
+		}
 
 		for (int i = 0; i < policeCount; i++)
+		{
+			// remove this entity form its attackers...
+			Core::TargetingComponent* tc = WGETC<Core::TargetingComponent>(rioterEntities[i]);
+			for( int p = 0; p < tc->numberOfAttackers; p++ )
+			{
+				Core::TargetingComponent* attackerTc = WGETC<Core::TargetingComponent>(tc->attackers[p]);
+				attackerTc->target = INVALID_ENTITY;
+			}
+
 			world.m_entityHandler.RemoveComponents<UnitTypeComponent, MovementComponent, AttributeComponent, TargetingComponent, BoundingVolumeComponent, FlowfieldComponent>(policeEntities[i]);
+		}
 	}
 }

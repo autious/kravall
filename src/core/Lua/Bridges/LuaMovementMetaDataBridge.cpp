@@ -56,9 +56,9 @@ Core::LuaMovementMetaDataBridge::LuaMovementMetaDataBridge( lua_State * L )
         lua_newtable( L ); // new table
         int movementDataTable = lua_gettop( L );
 
-            PushObjectType( L, Core::MovementState::Walking, "Walking" , movementDataTable );
-			PushObjectType( L, Core::MovementState::Sprinting, "Sprinting" , movementDataTable );
-			PushObjectType( L, Core::MovementState::Idle, "Idle" , movementDataTable );
+            PushObjectType( L, Core::MovementState::Movement_Walking, "Walking",		movementDataTable );
+			PushObjectType( L, Core::MovementState::Movement_Sprinting, "Sprinting",	movementDataTable );
+			PushObjectType( L, Core::MovementState::Movement_Idle, "Idle",				movementDataTable );
 
 			luau_setfunction( L, "setMovementMetaData", LuaSetMovememntTypeData );
 

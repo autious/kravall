@@ -7,7 +7,7 @@
 namespace Core
 {
     RioterAnimationSystem::RioterAnimationSystem() : BaseSystem(EntityHandler::GenerateAspect<
-		Core::MovementComponent, Core::GraphicsComponent, Core::AnimationComponent>(), 0ULL)
+		Core::MovementComponent, Core::GraphicsComponent, Core::AnimationComponent, Core::UnitTypeComponent>(), 0ULL)
     {
     }
 
@@ -17,6 +17,10 @@ namespace Core
 	{
 		for(std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); ++it)
 		{
+			Core::UnitTypeComponent* utc = WGETC<Core::UnitTypeComponent>(*it);
+			if( utc->type == Core::UnitType::Police )
+				continue;
+
 			Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>(*it);
 			Core::AnimationComponent* ac = WGETC<Core::AnimationComponent>(*it);
 

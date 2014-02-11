@@ -17,7 +17,9 @@ void Core::MovementSystem::Update(float delta)
 	{
 		WorldPositionComponent* wpc = WGETC<WorldPositionComponent>(*it);
 		MovementComponent* mc = WGETC<MovementComponent>(*it);
-		TargetingComponent* tc = WGETC<TargetingComponent>(*it);
+		//TargetingComponent* tc = WGETC<TargetingComponent>(*it);
+
+
 
 		// process speed...
 		const Core::MovementData& movementData = Core::GameData::GetMovementDataWithState( mc->state );
@@ -31,25 +33,27 @@ void Core::MovementSystem::Update(float delta)
 		else if ( mc->speed < 0.0f )
 			mc->speed = 0.0f;
 
-		// Targeting override
-		if (tc->target != INVALID_ENTITY)
+		// goal management...
+		//if (tc->target != INVALID_ENTITY)
+		if( mc->goal[0] != std::numeric_limits<float>::max() )
 		{
-			WorldPositionComponent* tpos = WGETC<WorldPositionComponent>(tc->target);
-			glm::vec3 direction = WorldPositionComponent::GetVec3(*tpos) - WorldPositionComponent::GetVec3(*wpc);
-			direction = glm::normalize(direction);
+			//WorldPositionComponent* tpos = WGETC<WorldPositionComponent>(tc->target);
+			glm::vec3 direction = glm::vec3( mc->goal[0], mc->goal[1], mc->goal[2] ) - WorldPositionComponent::GetVec3(*wpc);
+			if( glm::dot( direction, direction ) > 0 )
+				direction = glm::normalize(direction);
 
-			mc->direction[0] = direction.x;
-			mc->direction[1] = direction.y;
-			mc->direction[2] = direction.z;
+			mc->SetDirection( mc, direction.x, direction.y, direction.z );
 
-			mc->speed = 5.0f;
-			mc->desiredSpeed = 5.0f;
+			//mc->direction[0] = direction.x;
+			//mc->direction[1] = direction.y;
+			//mc->direction[2] = direction.z;
+
+			//mc->speed = 5.0f;
+			//mc->desiredSpeed = 5.0f;
 		}
-		else
-		{
-			// process position...
-			InterpolateDirections(mc, delta);
-		}
+
+
+		InterpolateDirections(mc, delta);
 
 		wpc->position[0] += mc->direction[0] * mc->speed * delta;
 		wpc->position[1] = 0.0f; //+= mc->direction[1] * mc->speed * delta;
@@ -63,7 +67,7 @@ void Core::MovementSystem::Update(float delta)
 
 			RotationComponent* rc = WGETC<RotationComponent>(*it);
 
-			*rc = RotationComponent::GetComponentRotateY(-angle - 3.141592f * 1.5f); // We need to solve this, model might be wrong or something :)
+			*rc = RotationComponent::GetComponentRotateY(-angle - 3.141592f * 1.5f); // We need to solve this, model might be wrong or something :) // johan sais wait and see ;) -> blame maya? yes. fin.
 		}
 
 		// Draw the debug lines showing the rioter's direction.

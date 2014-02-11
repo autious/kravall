@@ -38,9 +38,12 @@ namespace Core
 		/*! Whether the unit is currently attacking its target. */
 		bool isAttacking;
 
+		/*! Is true if the unit isAttacking and has passed the damage dealing time of the animation ( as to not deal damage several times ). */
+		bool hasAttacked;
+
 		/*! Default constructor. Initialising all members to 0. */
 		TargetingComponent() : numberOfAttackers(0), target(INVALID_ENTITY), attackTime(0.0f), isAttacking(false), 
-			weapon( WeaponType::Melee )
+			weapon( WeaponType::Melee ), hasAttacked(false)
 		{
 			for (int i = 0; i < MAX_ATTACKERS; ++i)
 			{

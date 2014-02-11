@@ -35,6 +35,8 @@
 #include <Systems/RemovalSystem.hpp>
 #include <Systems/HoverTextSystem.hpp>
 #include <Systems/RioterAnimationSystem.hpp>
+#include <Systems/WeaponAnimationSystem.hpp>
+#include <Systems/PriorityResetSystem.hpp>
 
 namespace Core
 {
@@ -54,8 +56,8 @@ namespace Core
 	class RemovalSystem;
 	
 
-    typedef SystemHandlerTemplate<LightSystem, FlowfieldPositioningSystem, PoliceGoalSystem, NavMeshCollisionSystem, 
-	CollisionSystem2D, PickingSystem, TargetingSystem, AIDebugSystem, FlowfieldSystem, /*FieldReactionSystem,*/ GPUPFSystem,
+    typedef SystemHandlerTemplate<PriorityResetSystem, LightSystem, FlowfieldPositioningSystem, PoliceGoalSystem, NavMeshCollisionSystem, 
+	CollisionSystem2D, PickingSystem, TargetingSystem, WeaponAnimationSystem, AIDebugSystem, FlowfieldSystem, /*FieldReactionSystem,*/ GPUPFSystem,
 	MovementSystem, NameSystem, GroupDataSystem, AreaSystem, NavMeshBlockingSystem, MoodStateSystem, RioterAnimationSystem, AnimationSystem, 
 	SquadSystem, RemovalSystem, HoverTextSystem, RenderingSystem> SystemHandler;
 

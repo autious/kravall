@@ -5,7 +5,7 @@
 #include <cassert>
 #include <cmath>
 #include <limits>
-
+#include <glm/glm.hpp>
 
 
 namespace Core
@@ -15,10 +15,19 @@ namespace Core
 	*/
 	enum MovementState
 	{
-		Idle,
-		Walking,
-		Sprinting,
+		Movement_Idle,
+		Movement_Walking,
+		Movement_Sprinting,
 		MOVEMENTSTATE_COUNT,
+	};
+
+	
+	enum MovementGoalPriority
+	{
+		NoGoalPriority,
+		FlowfieldGoalPriority,
+		AttackGoalPriority,
+		FormationPriority,
 	};
 
 	/*!
@@ -41,24 +50,23 @@ namespace Core
 		/*! An array specifying the object's new direction of movement where index 0 = x, index 1 = y and index 2 = z. */
 		float newDirection[3];
 
+		/*! Priority value for the current set goal. If new value has higher priority the current value may be repalced. */
+		MovementGoalPriority currentGoalPriority;
+
 		/*!
 			An array specifying the object's goal, ceasing movement when the goal is reached. The index 0 corresponds
 			to the x component, 1 to y and 2 to z. An x-value of FLT_MAX disables the goal.
 		*/
 		float goal[3];
 
-		/*!
-			The Navigation mesh node index in which the goal resides.
-		*/
+		/*! The Navigation mesh node index in which the goal resides. */
 		int NavMeshGoalNodeIndex;
 
-		/*!
-			State used when resetting movement data, eg. when changing states. 
-		*/
+		/*! State used when resetting movement data, eg. when changing states. */
 		MovementState state;
 
 		/*! Default constructor. Initialising all members to 0. */
-		MovementComponent() : speed(0.0f), desiredSpeed(0.0f)
+		MovementComponent() : speed(0.0f), desiredSpeed(0.0f), currentGoalPriority( MovementGoalPriority::NoGoalPriority )
 		{
 			direction[0] = 0.0f;
 			direction[1] = 0.0f;
@@ -74,7 +82,7 @@ namespace Core
 
 			NavMeshGoalNodeIndex = -1;
 
-			state = MovementState::Walking;
+			state = MovementState::Movement_Walking;
 		}
 
 		/*!
@@ -99,7 +107,7 @@ namespace Core
 			goal[1] = 0.0f;
 			goal[2] = 0.0f;
 
-			state = MovementState::Walking;
+			state = MovementState::Movement_Walking;
 		}
 
 		inline static const char* GetName()
@@ -116,6 +124,31 @@ namespace Core
 			mc->newDirection[1] = newY;
 			mc->newDirection[2] = newZ;
 		}
+
+		inline void SetGoal( glm::vec3 newGoal, int node, MovementGoalPriority prio )
+		{
+			if( currentGoalPriority <= prio )
+			{
+				currentGoalPriority = prio; 
+				goal[0] = newGoal.x;
+				goal[1] = newGoal.y;
+				goal[2] = newGoal.z;
+				NavMeshGoalNodeIndex = node;
+			}
+		}
+
+		inline void SetGoal( float newGoal[3], int node, MovementGoalPriority prio )
+		{
+			if( currentGoalPriority <= prio )
+			{
+				currentGoalPriority = prio;
+				goal[0] = newGoal[0];
+				goal[1] = newGoal[1];
+				goal[2] = newGoal[2];
+				NavMeshGoalNodeIndex = node;
+			}
+		}
+
 	};
 }
 #endif
