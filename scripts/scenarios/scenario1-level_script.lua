@@ -24,6 +24,8 @@ return function( scen )
 	scen:registerUpdateCallback( function(delta) scen.gamemode:update(delta) end )
 	scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
 	scen:registerInitCallback( function() 
+                                    print( "FUND" )
+                                    scen.gamemode:init()
 									scen.gamemode.camera:lookAt( core.glm.vec3.new( -40, 30, 180 ), core.glm.vec3.new( -40, 0, 155 ) ) 
 									--scen.gamemode.camera.yaw = scen.gamemode.camera.yaw + math.pi
 									local plane = entity.get "plane"
