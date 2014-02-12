@@ -74,50 +74,50 @@ namespace GFX
 
 	glm::mat4x4 FitFrustum(const glm::mat4x4& camera, const glm::mat4x4& lightViewMat)
 	{
-		// Fit debug light frustum to camera frustum
-			// Get view frustum corner points
-			glm::mat4x4 invViewProj = glm::inverse(camera);
-			glm::vec3 corners[8];
-			corners[0] = glm::vec3(-1.0f, -1.0f, 1.0f);
-			corners[1] = glm::vec3(-1.0f, -1.0f, -1.0f);
-			corners[2] = glm::vec3(-1.0f, 1.0f, 1.0f);
-			corners[3] = glm::vec3(-1.0f, 1.0f, -1.0f);
-			corners[4] = glm::vec3(1.0f, -1.0f, 1.0f);
-			corners[5] = glm::vec3(1.0f, -1.0f, -1.0f);
-			corners[6] = glm::vec3(1.0f, 1.0f, 1.0f);
-			corners[7] = glm::vec3(1.0f, 1.0f, -1.0f);
-			for (unsigned int i = 0; i < 8; i++)
-			{
-				glm::vec4 worldPos = invViewProj * glm::vec4(corners[i], 1.0f);
-				worldPos.x /= worldPos.w;
-				worldPos.y /= worldPos.w;
-				worldPos.z /= worldPos.w;
-				worldPos.w = 1.0f;
-				worldPos = lightViewMat * worldPos;
+		// Get view frustum corner points
+		glm::mat4x4 invViewProj = glm::inverse(camera);
+		glm::vec3 corners[8];
+		corners[0] = glm::vec3(-1.0f, -1.0f, 1.0f);
+		corners[1] = glm::vec3(-1.0f, -1.0f, -1.0f);
+		corners[2] = glm::vec3(-1.0f, 1.0f, 1.0f);
+		corners[3] = glm::vec3(-1.0f, 1.0f, -1.0f);
+		corners[4] = glm::vec3(1.0f, -1.0f, 1.0f);
+		corners[5] = glm::vec3(1.0f, -1.0f, -1.0f);
+		corners[6] = glm::vec3(1.0f, 1.0f, 1.0f);
+		corners[7] = glm::vec3(1.0f, 1.0f, -1.0f);
+		for (unsigned int i = 0; i < 8; i++)
+		{
+			glm::vec4 worldPos = invViewProj * glm::vec4(corners[i], 1.0f);
+			worldPos.x /= worldPos.w;
+			worldPos.y /= worldPos.w;
+			worldPos.z /= worldPos.w;
+			worldPos.w = 1.0f;
+			worldPos = lightViewMat * worldPos;
 
-				//eyePos = m_debugLightFrustum * eyePos;
-				//corners[i] = glm::vec3(eyePos);
-				// Convert view frustum corners to light space
+			//eyePos = m_debugLightFrustum * eyePos;
+			//corners[i] = glm::vec3(eyePos);
+			// Convert view frustum corners to light space
 
-				corners[i] = glm::vec3(worldPos);
-			}
-			
-			// Chack corners to finx min/max x/y
-			float minX = 1000000.0f, maxX = -1000000.0f;
-			float minY = 1000000.0f, maxY = -1000000.0f;
-			float minZ = 1000000.0f, maxZ = -1000000.0f;
-			for (unsigned int i = 0; i < 8; i++)
-			{
-				minX = std::min(minX, corners[i].x);
-				minY = std::min(minY, corners[i].y);
-				minZ = std::min(minZ, corners[i].z);
+			corners[i] = glm::vec3(worldPos);
+		}
 
-				maxX = std::max(maxX, corners[i].x);
-				maxY = std::max(maxY, corners[i].y);
-				maxZ = std::max(maxZ, corners[i].z);
-			}
-			// Set ortho matrix to use the calculated corner points
-			return glm::ortho<float>(minX, maxX, minY, maxY, minZ, maxZ);
+		// Chack corners to finx min/max x/y
+		float minX = 1000000.0f, maxX = -1000000.0f;
+		float minY = 1000000.0f, maxY = -1000000.0f;
+		float minZ = 1000000.0f, maxZ = -1000000.0f;
+		for (unsigned int i = 0; i < 8; i++)
+		{
+			minX = std::min(minX, corners[i].x);
+			minY = std::min(minY, corners[i].y);
+			minZ = std::min(minZ, corners[i].z);
+
+			maxX = std::max(maxX, corners[i].x);
+			maxY = std::max(maxY, corners[i].y);
+			maxZ = std::max(maxZ, corners[i].z);
+		}
+		// Set ortho matrix to use the calculated corner points
+		return glm::ortho<float>(minX, maxX, minY, maxY, -200, -minZ);
+		//return glm::ortho<float>(minX, maxX, minY, maxY, -maxZ, -minZ);
 
 	}
 #include <Windows.h>
@@ -187,7 +187,7 @@ namespace GFX
 				// Create matrices for the lights
 				bc.viewMatrix = glm::lookAt<float>(-glm::normalize(lightData.orientation) * 50.0f, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 				//bc.projMatrix = projMatrix;
-				glm::mat4x4 dummyProjMat = glm::perspective<float>(45.0f, 1280.0f/720.0f, 1.0f, 100.0f);
+				glm::mat4x4 dummyProjMat = glm::perspective<float>(45.0f, 1280.0f/720.0f, 5.0f, 125.0f);
 				bc.projMatrix = FitFrustum(dummyProjMat * viewMatrix, bc.viewMatrix);
 				//bc.projMatrix = glm::perspective<float>(45.0f, 1.0f, 20.0f, 100.0f);
 
@@ -273,7 +273,6 @@ namespace GFX
 				// Bind mesh for drawing
 				Mesh mesh = m_meshManager->GetMesh(currentMesh);
 				glBindVertexArray(mesh.VAO);
-				GLenum error = glGetError();
 
 				if (mesh.skeletonID >= 0)
 				{
@@ -305,7 +304,7 @@ namespace GFX
 		ClearFBO();
 
 		// Apply gaussain blur to the shadowmap
-		m_blurPainter->GaussianBlur(shadowMap);
+		//m_blurPainter->GaussianBlur(shadowMap);
 
 		glViewport(0, 0, width, height);
 		

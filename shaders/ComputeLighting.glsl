@@ -203,10 +203,12 @@ vec4 CalculateDirlightShadow(mat4x4 lightMatrix, LightData light, SurfaceData su
 	//float shadowmapDepth = texture2D( shadowMap, shadowCoords.xy ).x;
 	//
 	//float shadowFactor = float(shadowmapDepth + 0.005 > shadowCoords.z);
+
+
 	vec4 shadowCoords = lightMatrix * vec4(wPos.xyz, 1.0);
 	shadowCoords.xyz /= shadowCoords.w;
 	shadowCoords.xyz = shadowCoords.xyz * 0.5 + 0.5;
-
+	
 	vec2 uv = shadowCoords.xy;
 	float depth = (shadowCoords.z);
 	vec2 moments = texture2D(shadowMap, uv).xy;
@@ -221,7 +223,7 @@ vec4 CalculateDirlightShadow(mat4x4 lightMatrix, LightData light, SurfaceData su
 		float variance = max(moments.y - moments.x * moments.x, -0.001);
 		float d = depth - moments.x;
 		float p_max = linstep(0.2, 1.0, variance / (variance + d*d));
-		shadowFactor = clamp(max(p, p_max), 0.0, 1.0);
+		shadowFactor = clamp(pow(max(p, p_max), 20), 0.0, 1.0);
 		//return vec4(moments.x);
 		//return vec4(vec2(depth, depth*depth), 0.0, 1.0);
 		//return vec4(moments, 0.0, 1.0);
@@ -232,7 +234,7 @@ vec4 CalculateDirlightShadow(mat4x4 lightMatrix, LightData light, SurfaceData su
 	float df =  max( 0.0f, dot(surface.normalDepth.xyz, lightDir));
 	vec4 color = vec4(BlinnPhong(light, surface, eyeDir, lightDir, 1.0f, occlusion), 0.0f);
 	return color * shadowFactor;
-	//return vec4(moments.x < depth);
+
 }
 
 vec3 Uncharted2Tonemap(vec3 x)
@@ -262,6 +264,7 @@ void main()
 
 		barrier();
 
+		uint totalShadowcasters = numPointShadows + numSpotShadows + numDirShadows;
 
         ivec2 pixel = ivec2(gl_GlobalInvocationID.xy);
 
@@ -341,7 +344,7 @@ void main()
 			if(lightIndex >= numPointLights)
 				break;
 		
-			lightIndex = min(lightIndex, numPointLights-1); // Dont want this because of break above?
+			lightIndex = min(lightIndex, numPointLights+totalShadowcasters-1); // Dont want this because of break above?
 		
 			p = lights[lightIndex];
 			pos = view * vec4(p.position, 1.0f);
@@ -375,7 +378,7 @@ void main()
 
 			lightIndex += numPointLights;
 		
-			lightIndex = min(lightIndex, numPointLights+numSpotLights-1); // Dont want this because of break above?
+			lightIndex = min(lightIndex, numPointLights+numSpotLights+totalShadowcasters-1); // Dont want this because of break above?
 		
 			p = lights[lightIndex];
 			pos = view * vec4(p.position, 1.0f);
@@ -413,21 +416,27 @@ void main()
 
 		//point lights
 		uint i;
-		uint shadowDataIndex = 0;
+
+		
+// Do shadowcasters
+		for(i = 0; i < numDirShadows; i++)
+		{
+			float localOcclusion = 0.0f;
+			mat4x4 mat = mat4x4(1.0);
+			color += CalculateDirlightShadow(shadowData[0].lightMatrix, lights[i], surface, wPos, eyePos, localOcclusion);
+			sumOcclusion += localOcclusion;
+		}
+
 
 		// Do shadowcasters
-		// TODO: Add pointlight shadows
-		// Do regular lights
+// Do regular lights
 		for(i = 0; i < pointLightCount; i++)
 		{
 			float localOcclusion = 0.0f;
 			color += CalculatePointlight(lights[pointLightIndex[i]], surface, wPos.xyz, eyePos, localOcclusion);
 			sumOcclusion += localOcclusion;
 		}
-		shadowDataIndex += numPointShadows;
 
-		// Do shadowcasters
-		// TODO: Add spotlight shadows
 		//spot lights
 		for(i = 0; i < spotLightCount; i++)
 		{
@@ -435,26 +444,17 @@ void main()
 			color += CalculateSpotlight(lights[spotLightIndex[i]], surface, wPos.xyz, eyePos, localOcclusion);
 			sumOcclusion += localOcclusion;
 		}
-		shadowDataIndex += numSpotShadows;
 
 		//Directional lights
-		uint ofst = numPointLights + numSpotLights;
-		// Do shadowcasters
-		for(i = ofst; i < numDirShadows + ofst; i++)
-		{
-			float localOcclusion = 0.0f;
-			mat4x4 mat = mat4x4(1.0);
-			color += CalculateDirlightShadow(shadowData[0].lightMatrix, lights[i], surface, wPos, eyePos, localOcclusion);
-			sumOcclusion += localOcclusion;
-		}
-		for(i; i < numDirLights + ofst; i++)
+		uint ofst = numPointLights + numSpotLights + totalShadowcasters;
+		for(i = i + numDirShadows; i < numDirLights + ofst; i++)
 		{
 			float localOcclusion = 0.0f;
 			color += CalculateDirlight(lights[i],  surface, wPos.xyz, eyePos, localOcclusion);
 			sumOcclusion += localOcclusion;
 		}
 		
-		ofst = numPointLights + numSpotLights + numDirLights;
+		ofst = numPointLights + numSpotLights + numDirLights + totalShadowcasters;
 
 		//float light_occlusion = 1 - clamp(dot(vec4(lightDirection , 1.0f), surface.occlusion), 0.0f, 1.0f);
 

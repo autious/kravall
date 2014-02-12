@@ -120,7 +120,7 @@ namespace GFX
 		
 		// Set default settings
 		m_settings[GFX_SHADOW_QUALITY] = GFX_SHADOWS_VARIANCE; // TODO: Implement basic shadow mapping as low res option
-		m_settings[GFX_SHADOW_RESOLUTION] = 512;
+		m_settings[GFX_SHADOW_RESOLUTION] = 2048;
 
 		m_normalDepth = new FBOTexture();
 		m_diffuse = new FBOTexture();
