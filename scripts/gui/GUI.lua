@@ -1,34 +1,36 @@
 local viewport = require "gui/viewport"
 local window = require "window"
 
-local GUI = { winWidth = core.config.initScreenWidth, winHeight = core.config.initScreenHeight }
+local GUI = { 
+                winWidth = core.config.initScreenWidth, 
+                winHeight = core.config.initScreenHeight,
+                xoffset = 0,
+                yoffset = 0 }
 
 window.registerWindowSizeCallback( function( width, height ) 
     GUI.winWidth, GUI.winHeight = width, height
 end)
 
-
 function GUI:new(o)
     o = o or {}
-    o.components = {}
-    o.placers = {}
 
     setmetatable( o, self )
     self.__index = self
 
-    -- Callback function to move gui components.
-    self.resizeCallback = function( width, height )
-        for _,v in pairs( o.placers ) do
-            v:constrict( o.components, width, height )
-        end
-    end
+    o.components = {}
+    o.placers = {}
+    o.width = o.width or o.winWidth
+    o.height = o.height or o.winHeight
 
-    window.registerWindowSizeCallback( self.resizeCallback )
+    -- Set our position to enable/disable the 
+    -- constrict on resize call
+    o:setPosition( o.x, o.y )
 
     return o
 end
 
 function GUI:addComponent( comp )
+    assert( comp ~= nil, "Component is nil" )
     self.components[#(self.components)+1] = comp 
     self:constrict( )
 end
@@ -49,9 +51,44 @@ function GUI:removeComponent( comp )
     self:constrict( )
 end
 
+-- Can be called with nil-values to reactivate automatic window resizing
+function GUI:setPosition(x,y)
+    if x ~= nil then
+        print( "GUISET" .. x .. " " .. y )
+    end
+    self.x = x
+    self.y = y
+
+    -- Callback function to move gui components.
+    -- We ignore the window dimensions if we have our own specific placement
+    if self.x == nil and self.y == nil and self.resizeCallback == nil then
+        self.resizeCallback = function( width, height )
+            self.width = width
+            self.height = height 
+            self:constrict()
+        end
+
+        window.registerWindowSizeCallback( self.resizeCallback )
+    end
+
+    --Disable the screen resize callback as we now have a specific position in the world
+    if self.x ~= nil and self.y ~= nil and self.resizeCallback then
+        window.deregisterWindowSizeCallback( self.resizeCallback ) 
+        self.resizeCallback = nil
+    end
+
+    self:constrict()
+end
+
+function GUI:setDimensions(width,height)
+    self.width = width
+    self.height = height
+    self:constrict()
+end
+
 function GUI:constrict()
     for _,v in pairs( self.placers ) do
-        v:constrict( self.components, self.winWidth, self.winHeight )
+        v:constrict( self.components, self.width, self.height, self.x, self.y )
     end
 end
 
@@ -72,7 +109,10 @@ function GUI:destroy()
 
     self.components = nil
     self.placers = nil
-    window.deregisterWindowSizeCallback( self.resizeCallback )
+
+    if self.resizeCallback then
+        window.deregisterWindowSizeCallback( self.resizeCallback )
+    end
 end
 
 function GUI:update(delta)
