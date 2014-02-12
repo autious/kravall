@@ -168,7 +168,6 @@ namespace GFX
 			if (numLights < MAXIMUM_LIGHTS)
 			{
 
-
 				m_lights[numLights] = *reinterpret_cast<LightData*>(renderJobs[i].value);
 
 				// Count light types

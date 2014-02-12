@@ -343,6 +343,14 @@ namespace GFX
 		\param color Color of the circle
 		*/
 		DLL_API void DrawCircle(GFXVec2 position, float radius, unsigned int lineWidth, GFXColor color);
+		
+		/*!
+		Draws a frustum
+		\param cameraMatrix The matrix representing the frustum to draw
+		\param color The color to draw the frustum
+		\param useDepth If true, the depth buffer is used to occlude if behind an object, else draws on top of existing geometry regardless of depth
+		*/
+		DLL_API void DrawFrustum(GFXMat4x4 cameraMatrix, GFXColor color, bool useDepth);
 
 
         /*!

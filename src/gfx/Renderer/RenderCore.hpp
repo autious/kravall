@@ -283,6 +283,10 @@ namespace GFX
 		std::string m_currentLUT;
 
 		unsigned int m_animationFramerate;
+		
+		glm::mat4x4 m_debugLightFrustum;
+		glm::mat4x4 m_debugCameraFrustum;
+		glm::mat4x4 m_debugFitFrustum;
 
 	};
 

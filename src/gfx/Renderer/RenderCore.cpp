@@ -120,7 +120,7 @@ namespace GFX
 		
 		// Set default settings
 		m_settings[GFX_SHADOW_QUALITY] = GFX_SHADOWS_VARIANCE; // TODO: Implement basic shadow mapping as low res option
-		m_settings[GFX_SHADOW_RESOLUTION] = 2048;
+		m_settings[GFX_SHADOW_RESOLUTION] = 512;
 
 		m_normalDepth = new FBOTexture();
 		m_diffuse = new FBOTexture();
@@ -324,7 +324,7 @@ namespace GFX
 	} \
 }
 
-
+#include <Windows.h>
 	void RenderCore::Render(const double& delta)
 	{
 		if (m_playSplash)
@@ -386,72 +386,26 @@ namespace GFX
 		// Draw shadow map geometry
 		CT(m_shadowPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_viewMatrix, m_projMatrix, 0, renderJobIndex, m_shadowMapTexture, m_windowWidth, m_windowHeight), "Shadowmap");
 			
-
+#ifdef WIN32
 		// Draw frustum
-		for (int i = 0; i < ShadowDataContainer::numDirLights; i++)
+		if (GetAsyncKeyState(VK_F1))
 		{
-			DebugLine lines[4];
-			for (int e = 0; e < 4; e++)
-			{
-				lines[e].color = Colors::Blue;
-				lines[e].thickness = 1.0f;
-				lines[e].useDepth = true;
-			}
+			for (int i = 0; i < ShadowDataContainer::numDirLights; i++)
+				m_debugLightFrustum = ShadowDataContainer::data[i].lightMatrix;
+			//m_debugCameraFrustum = m_projMatrix * m_viewMatrix;
+			m_debugCameraFrustum = glm::perspective<float>(45.0f, 1280.0f/720.0f, 25.0f, 150.0f) * m_viewMatrix;
 
-			glm::mat4x4 invMat = glm::inverse(ShadowDataContainer::data[i].lightMatrix);
-			for (int e = 0; e < 4; e++)
-			{
-				float x = -1 + 2 * (e % 2);
-				float y = -1 + 2 * (e / 2);
-				
-				glm::vec4 start =	invMat * glm::vec4(x, y,  1.0f, 1.0f);
-				glm::vec4 end =		invMat * glm::vec4(x, y, -1.0f, 1.0f);
-				
-				lines[e].start = glm::vec3(glm::vec3(start) / start.w);
-				lines[e].end = glm::vec3(glm::vec3(end) / end.w);
-
-				DebugDrawing().AddLineWorld(lines[e]);
-			}
-			for (int e = 0; e < 4; e++)
-			{
-				float z = -1 + 2 * (e % 2);
-				float y = -1 + 2 * (e / 2);
-				
-				glm::vec4 start =	invMat * glm::vec4(-1, y, z, 1.0f);
-				glm::vec4 end =		invMat * glm::vec4( 1, y, z, 1.0f);
-				
-				lines[e].start = glm::vec3(glm::vec3(start) / start.w);
-				lines[e].end = glm::vec3(glm::vec3(end) / end.w);
-
-				DebugDrawing().AddLineWorld(lines[e]);
-			}
-			for (int e = 0; e < 4; e++)
-			{
-				float z = -1 + 2 * (e % 2);
-				float x = -1 + 2 * (e / 2);
-				
-				glm::vec4 start =	invMat * glm::vec4(x, -1, z, 1.0f);
-				glm::vec4 end =		invMat * glm::vec4(x,  1, z, 1.0f);
-				
-				lines[e].start = glm::vec3(glm::vec3(start) / start.w);
-				lines[e].end = glm::vec3(glm::vec3(end) / end.w);
-
-				DebugDrawing().AddLineWorld(lines[e]);
-			}
-			for (int e = 0; e < 2; e++)
-			{
-				float y = -1 + 2 * e;
-				
-				glm::vec4 start =	invMat * glm::vec4(-0.3f, -0.3f * y, 1.0, 1.0f);
-				glm::vec4 end =		invMat * glm::vec4( 0.3f,  0.3f * y, 1.0, 1.0f);
-				
-				lines[e].start = glm::vec3(glm::vec3(start) / start.w);
-				lines[e].end = glm::vec3(glm::vec3(end) / end.w);
-
-				DebugDrawing().AddLineWorld(lines[e]);
-			}
+			// Fit debug light frustum to camera frustum
+			// Get points in view frustum
+			// 
+			m_debugFitFrustum = glm::ortho<float>(-10.0f, 10.0f, -10.0f, 10.0f, -10.0f, 10.0f) * glm::lookAt<float>(glm::vec3(10.0f, 10.0f, 10.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
 		}
+		DebugDrawing().AddFrustum(m_debugLightFrustum, Colors::Blue, true);
+		DebugDrawing().AddFrustum(m_debugCameraFrustum, Colors::Red, true);
+		DebugDrawing().AddFrustum(m_debugFitFrustum, Colors::White, true);
+#endif
+
 		//for (int i = 0; i < ShadowDataContainer::numSpotLights; i++)
 		//{
 		//}

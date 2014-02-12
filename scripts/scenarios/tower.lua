@@ -208,7 +208,7 @@ light = scen.asm:loadAssembly(
 	},
 	{
 		type = core.componentType.RotationComponent,
-		data = { rotation = {1,-1,1,0 } }
+		data = { rotation = {1,0,0,0 } }
 	}
 } 
 )
@@ -239,7 +239,7 @@ light = scen.asm:loadAssembly(
 --	}
 --} 
 --)
-local rot = 0
+local rot = 10
 local function Update(delta)
 	if keyboard.isKeyDown( key.R ) then
 		rot = rot + delta;

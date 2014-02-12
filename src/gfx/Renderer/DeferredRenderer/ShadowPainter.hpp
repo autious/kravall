@@ -65,6 +65,7 @@ namespace GFX
 		BlurPainter* m_blurPainter;
 
 		GLuint m_matricesUniform;
+
 	};
 }
 

@@ -129,6 +129,10 @@ namespace GFX
 			if (lightType == GFX::LIGHT_TYPES::DIR_SHADOW)
 			{
 				LightData lightData = *(LightData*)renderJobs.at(l).value;
+				if (lightData.orientation.x == 0.0f)
+				{
+					lightData.orientation.x = 0.0001f;
+				}
 				// Create matrices for the lights
 				// TODO: Make light frustum fit the camera frustum
 				//bc.viewMatrix = viewMatrix;d
@@ -150,6 +154,10 @@ namespace GFX
 			{
 				break; // TODO: Implement spot shadowmapping
 				//LightData lightData = *(LightData*)renderJobs.at(l).value;
+				//if (lightData.orientation.x == 0.0f)
+				//{
+				//	lightData.orientation.x = 0.0001f;
+				//}
 				//// Create matrices for the lights
 				//bc.viewMatrix = glm::lookAt<float>(lightData.position, lightData.orientation, glm::vec3(0.0f, 1.0f, 0.0f));
 				//bc.projMatrix = glm::perspective<float>(glm::degrees(lightData.spot_angle), 1.0f, 0.001f, lightData.radius_length);
@@ -178,7 +186,6 @@ namespace GFX
 
 
 			// Loop through all the geometry
-			unsigned int instanceCount = 0;
 			for (unsigned int i = startIndex; i < endIndex;)
 			{
 				GFXBitmask geometryBitmask = renderJobs[i].bitmask;
@@ -188,7 +195,8 @@ namespace GFX
 
 				if (objType != GFX::OBJECT_TYPES::OPAQUE_GEOMETRY)
 					break;
-
+				
+				unsigned int instanceCount = 0;
 				do
 				{
 					InstanceData smid = *(InstanceData*)renderJobs.at(i).value;
@@ -224,7 +232,7 @@ namespace GFX
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IBO);
 				glDrawElementsInstanced(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0, instanceCount);
 
-				instanceCount = 0;
+				//instanceCount = 0;
 
 			}
 		}

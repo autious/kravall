@@ -194,4 +194,69 @@ namespace GFX
 		m_shouldRender = true;
 		m_filledCircles.push_back(circle);
 	}
+	void DebugManager::AddFrustum(glm::mat4x4 frustum, glm::vec4 color, bool useDepth)
+	{
+		DebugLine lines[4];
+			for (int e = 0; e < 4; e++)
+			{
+				lines[e].color = color;
+				lines[e].thickness = 1.0f;
+				lines[e].useDepth = useDepth;
+			}
+
+			glm::mat4x4 invMat = glm::inverse(frustum);
+			for (int e = 0; e < 4; e++)
+			{
+				float x = -1 + 2 * (e % 2);
+				float y = -1 + 2 * (e / 2);
+				
+				glm::vec4 start =	invMat * glm::vec4(x, y,  1.0f, 1.0f);
+				glm::vec4 end =		invMat * glm::vec4(x, y, -1.0f, 1.0f);
+				
+				lines[e].start = glm::vec3(glm::vec3(start) / start.w);
+				lines[e].end = glm::vec3(glm::vec3(end) / end.w);
+
+				AddLineWorld(lines[e]);
+			}
+			for (int e = 0; e < 4; e++)
+			{
+				float z = -1 + 2 * (e % 2);
+				float y = -1 + 2 * (e / 2);
+				
+				glm::vec4 start =	invMat * glm::vec4(-1, y, z, 1.0f);
+				glm::vec4 end =		invMat * glm::vec4( 1, y, z, 1.0f);
+				
+				lines[e].start = glm::vec3(glm::vec3(start) / start.w);
+				lines[e].end = glm::vec3(glm::vec3(end) / end.w);
+
+				AddLineWorld(lines[e]);
+			}
+			for (int e = 0; e < 4; e++)
+			{
+				float z = -1 + 2 * (e % 2);
+				float x = -1 + 2 * (e / 2);
+				
+				glm::vec4 start =	invMat * glm::vec4(x, -1, z, 1.0f);
+				glm::vec4 end =		invMat * glm::vec4(x,  1, z, 1.0f);
+				
+				lines[e].start = glm::vec3(glm::vec3(start) / start.w);
+				lines[e].end = glm::vec3(glm::vec3(end) / end.w);
+
+				AddLineWorld(lines[e]);
+			}
+
+			// Draw crosshair to better see direction of the frustum
+			for (int e = 0; e < 2; e++)
+			{
+				float x = -1.0f + 2.0f * e;
+				
+				glm::vec4 start =	invMat * glm::vec4(-0.3f * x, 1.0f, 1.0f, 1.0f);
+				glm::vec4 end =		invMat * glm::vec4( 0.0f	, 1.4f, 1.0f, 1.0f);
+				
+				lines[e].start = glm::vec3(glm::vec3(start) / start.w);
+				lines[e].end = glm::vec3(glm::vec3(end) / end.w);
+
+				AddLineWorld(lines[e]);
+			}
+	}
 }

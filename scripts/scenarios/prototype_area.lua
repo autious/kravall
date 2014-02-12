@@ -8,6 +8,7 @@ scen.description = "Test scenario area for you"
 
 -- SCRIPTS \/
 scen.gamemode =  require "gamemodes/kravall":new()
+scen:registerInitCallback( function() scen.gamemode:init() end )
 scen:registerUpdateCallback( function(delta) scen.gamemode:update(delta) end )
 scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
 
@@ -171,12 +172,10 @@ function scen:load()
     local navmesh = ent.get "navMesh"
     navmesh(scen, 0, -0.1, 0)
     local plane = ent.get "plane"
-    plane(scen, 0, -1, 0, 150)
+    plane(scen, 0, -1, 0, 50)
 
     local navmesh = ent.get "navMesh"
     navmesh(scen, 0, -0.1, 0)
-    local plane = ent.get "plane"
-    plane(scen, 0, -1, 0)
 
     local lol_building = building(scen, 64, 12)
     building(scen, 64, 2)

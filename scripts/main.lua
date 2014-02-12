@@ -25,8 +25,14 @@ end
 function core.init() 
     print( "Program starting in lua" )
     logo = image( 10,10, "assets/texture/ui/ekswaised-logo_00.material", false )
-    --openscenario( "main_menu" ) 
-	openscenario( "tower" ) 
+
+    if core.config.init then
+        core.config.init()
+    end
+
+    if current_scenario == nil then 
+        openscenario( "main_menu" )    
+    end
 end
 
 menuState = nil

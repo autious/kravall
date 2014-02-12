@@ -350,12 +350,12 @@ namespace GFX
 		DebugDrawing().AddPoint(p);
 	}
 
-	void Debug::DrawLine(GFXVec3 p1, GFXVec3 p2, GFXColor color, bool useDepth) // TODO: IMPLEMENT DEPTH
+	void Debug::DrawLine(GFXVec3 p1, GFXVec3 p2, GFXColor color, bool useDepth)
 	{
 		Debug::DrawLine(p1, p2, color, 1.0f, useDepth);
 	}
 
-	void Debug::DrawLine(GFXVec3 p1, GFXVec3 p2, GFXColor color, float thickness, bool useDepth) // TODO: IMPLEMENT DEPTH
+	void Debug::DrawLine(GFXVec3 p1, GFXVec3 p2, GFXColor color, float thickness, bool useDepth)
 	{
 		DebugLine l;
 		l.color = color;
@@ -401,7 +401,7 @@ namespace GFX
 		DebugDrawing().AddRect(r, solid);
 	}
 
-	void Debug::DrawBox(GFXVec3 position, GFXVec3 dimensions, bool solid, GFXColor color, bool useDepth) // TODO: IMPLEMENT DEPTH
+	void Debug::DrawBox(GFXVec3 position, GFXVec3 dimensions, bool solid, GFXColor color, bool useDepth)
 	{
 		DebugBox b;
 		b.color = color;
@@ -425,7 +425,7 @@ namespace GFX
 		DebugDrawing().AddCircle(c);
 	}
 
-	void Debug::DrawSphere(GFXVec3 position, float radius, GFXColor color, bool useDepth) // TODO: IMPLEMENT DEPTH
+	void Debug::DrawSphere(GFXVec3 position, float radius, GFXColor color, bool useDepth)
 	{
 		DebugSphere s;
 		s.position = position;
@@ -433,6 +433,11 @@ namespace GFX
 		s.color = color;
 		s.useDepth = useDepth;
 		DebugDrawing().AddSphere(s);
+	}
+
+	void Debug::DrawFrustum(GFXMat4x4 cameraMatrix, GFXColor color, bool useDepth)
+	{
+		DebugDrawing().AddFrustum(cameraMatrix, color, useDepth);
 	}
 
     void Debug::SetStatisticsFont(GFX::FontData* font)
