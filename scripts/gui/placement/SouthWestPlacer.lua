@@ -9,12 +9,15 @@ function SouthWestPlacer:new(o)
     return o
 end
 
-function SouthWestPlacer:constrict( components, winWidth, winHeight )
+function SouthWestPlacer:constrict( components, winWidth, winHeight, posx, posy )
+    posx = posx or 0
+    posy = posy or 0
+    
     local tw,th = self:getTotalDim( components )
     local startx = 0
     local starty = winHeight - th
     for _,c in pairs( components ) do 
-        c:setPosition( startx + c.xoffset + self.padding, starty + c.yoffset )
+        c:setPosition( startx + c.xoffset + self.padding + posx, starty + c.yoffset + posy )
         starty = starty + c.height + self.padding
     end 
 end

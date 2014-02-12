@@ -3,6 +3,7 @@ local objective = require "objective"
 local fac_image = require "factories/image"
 local window = require "window"
 local Camera = require "rts_camera"
+local KravallControl = require "gui/KravallControl"
 local T = {}
 
 local selectedSquads = {}
@@ -189,53 +190,42 @@ function squadHandling()
     if selectedSquads and #selectedSquads >= 1 then
         s_squad.enableOutline(selectedSquads, 0.1, 0.9, 0.3, 1.0)
     end
-	
 end
-
 
 function T:new(o)
     o = o or {}
 
-    o.objectiveHandler = objective_handler:new()
-    o.camera = Camera.new()
-
     setmetatable( o, self )
     self.__index = self
+
+    o.objectiveHandler = objective_handler:new()
+    o.camera = Camera.new()
 
     return o
 end
 
 function T:init()
-end
-
-function T:new(o)
-    o = o or {}
-
-    o.objectiveHandler = objective_handler:new()
-    o.camera = Camera.new()
-
-    setmetatable( o, self )
-    self.__index = self
-
-    return o
+    --self.gui = KravallControl:new()
 end
 
 function T:update( delta )
     self.objectiveHandler:update( delta )
+    --self.gui:update(delta)
 
     squadHandling()
 
     if self.popup == nil then
         if self.objectiveHandler:isWin() then
-            self.popup = fac_image( window.width/2,window.height/2, "assets/material/ui/win.material",true )
+            self.popup = fac_image( window.width/2, window.height/2, "assets/texture/ui/win.material",true )
         elseif self.objectiveHandler:isLoss() then
-            self.popup = fac_image( window.width/2,window.height/2, "assets/material/ui/loss.material",true ) 
+            self.popup = fac_image( window.width/2, window.height/2, "assets/texture/ui/loss.material",true ) 
         end
     end
     self.camera:update( delta )
 end
 
 function T:destroy()
+    --self.gui:destroy()
     self.objectiveHandler:destroy() 
     if self.popup ~= nil then
         self.popup:destroy()

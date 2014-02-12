@@ -9,12 +9,15 @@ function CenterPlacer:new(o)
     return o
 end
 
-function CenterPlacer:constrict( components, winWidth, winHeight )
+function CenterPlacer:constrict( components, winWidth, winHeight, posx, posy )
+    posx = posx or 0
+    posy = posy or 0
+
     local tw,th = self:getTotalDim( components )
     local startx = winWidth/2
     local starty = (winHeight - th)/2
     for _,c in pairs( components ) do 
-        c:setPosition( startx - c.width/2 + c.xoffset, starty + c.yoffset )
+        c:setPosition( startx - c.width/2 + c.xoffset + posx, starty + c.yoffset + posy )
         starty = starty + c.height + self.padding
     end 
 end
