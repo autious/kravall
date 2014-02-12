@@ -20,10 +20,12 @@ solution "RiotGame"
 
         -- GMAKE people are lazy, populate root folder with build files
         -- Also give extra flags to the GCC compiler
-        if _ACTION == "gmake" then 
+        if _ACTION and _ACTION == "gmake" then 
             buildoptions { "-std=c++11 -Wall -Werror=return-type"}-- -Wconversion"} -- -Wno-unused-parameter" }
+            --Add the lib folder as an rpath.
+            linkoptions { "-Wl,-rpath=" .. dist_name() .. "/lib" }
             location_path = "" 
-        else
+        elseif _ACTION then
             --Disable warnings about using completely standard (and normal) c functions.
             --In visual studio
 	        defines { "_CRT_SECURE_NO_WARNINGS", "NOMINMAX" }

@@ -9,12 +9,15 @@ function EastPlacer:new(o)
     return o
 end
 
-function EastPlacer:constrict( components, winWidth, winHeight )
+function EastPlacer:constrict( components, winWidth, winHeight, posx, posy )
+    posx = posx or 0
+    posy = posy or 0
+
     local tw,th = self:getTotalDim( components )
     local startx = winWidth
     local starty = (winHeight - th)/2
     for _,c in pairs( components ) do 
-        c:setPosition( c.xoffset + startx - c.width - self.padding, starty + c.yoffset )
+        c:setPosition( c.xoffset + startx - c.width - self.padding + posx, starty + c.yoffset + posy )
         starty = starty + c.height + self.padding
     end 
 end

@@ -136,6 +136,12 @@ void run( GLFWwindow * window )
 
 	LOG_INFO << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " " << std::endl;
 
+    LOG_WARNING << "Startup complete, setting output to \"" << CONF.GetString( "consoleOutputLevel", "debug" ) << "\" level (to change this do lua core.config.consoleOutputLevel=\"debug\" or change the setting in scripts/config.lua" << std::endl;
+
+    //Set output level before calling init
+    std::string consoleOutputLevel = CONF.GetString( "consoleOutputLevel", "debug" );
+    SetCLOPLevel( consoleOutputLevel.c_str() );
+
     Core::world.m_luaState.Init();
 
 	//inputline.resize(1);
@@ -151,12 +157,11 @@ void run( GLFWwindow * window )
     int fpsCounterIndex = 0;
 
     
-    LOG_WARNING << "Startup complete, setting output to \"" << CONF.GetString( "consoleOutputLevel", "debug" ) << "\" level (to change this do lua core.config.consoleOutputLevel=\"debug\" or change the setting in scripts/config.lua" << std::endl;
 
 	while (!glfwWindowShouldClose(window) && killProgram == false)
 	{
-        //Set the output filtering level for the console.
-        std::string consoleOutputLevel = CONF.GetString( "consoleOutputLevel", "debug" );
+        //Set the output filtering level for the console each frame
+        consoleOutputLevel = CONF.GetString( "consoleOutputLevel", "debug" );
         SetCLOPLevel( consoleOutputLevel.c_str() );
 
 		// calc delta time
