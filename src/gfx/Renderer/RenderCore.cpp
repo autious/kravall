@@ -324,7 +324,6 @@ namespace GFX
 	} \
 }
 
-#include <Windows.h>
 	void RenderCore::Render(const double& delta)
 	{
 		if (m_playSplash)
@@ -387,6 +386,7 @@ namespace GFX
 		CT(m_shadowPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_viewMatrix, m_projMatrix, 0, renderJobIndex, m_shadowMapTexture, m_windowWidth, m_windowHeight), "Shadowmap");
 			
 #ifdef WIN32
+#include <Windows.h>
 		// Draw frustum
 		if (GetAsyncKeyState(VK_F1))
 		{
