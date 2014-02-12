@@ -48,7 +48,14 @@ int Skeleton::AddAnimation(glm::mat4x4* frames, const unsigned int& numFrames, c
 	}
 	else
 	{
-		return GFX_INVALID_ANIMATION;
+		if (numFrames <= 0)
+			return GFX_INVALID_NR_FRAMES;
+		else if (numBonesPerFrame <= 0)
+			return GFX_INVALID_NR_BONES;
+		else if (m_numFrames < MAX_FRAMES)
+			return GFX_INVALID_MAX_FRAMES;
+		else
+			return GFX_INVALID_ANIMATION;
 	}
 }
 
