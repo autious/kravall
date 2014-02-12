@@ -384,7 +384,7 @@ namespace GFX
 
 		// Draw shadow map geometry
 		CT(m_shadowPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_viewMatrix, m_projMatrix, 0, renderJobIndex, m_shadowMapTexture, m_windowWidth, m_windowHeight), "Shadowmap");
-			
+
 		// Do global illumination / ssao
 		CT(m_GIPainter->Render(delta, m_normalDepth, m_diffuse, m_viewMatrix, m_projMatrix), "GI");
 
