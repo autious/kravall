@@ -23,6 +23,10 @@ core.movementData.setMovementMetaData( core.movementData.Idle, 0, 17, 17 )
 core.movementData.setMovementMetaData( core.movementData.Walking, 5.8, 17, 17 )
 core.movementData.setMovementMetaData( core.movementData.Sprinting, 8.8, 17, 14 )
 
+-- usual weapons...
+fists = core.weaponData.pushWeapon( 1.5, 20, 0.2, 0.5, 1 )
+
+
 function DeselectAllSquads()
     s_squad.disableOutline(selectedSquads)    
     selectedSquads = {}

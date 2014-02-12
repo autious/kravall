@@ -7,6 +7,13 @@
 //const float Core::MovementSystem::TURN_FACTOR = 10.0f;
 const float Core::MovementSystem::TURN_FACTOR = 7.5f;
 
+Core::MovementSystem::MovementSystem()  
+		: BaseSystem(EntityHandler::GenerateAspect<WorldPositionComponent, MovementComponent>(), 0ULL)
+{
+}
+
+
+
 void Core::MovementSystem::Update(float delta)
 {
 
@@ -17,9 +24,6 @@ void Core::MovementSystem::Update(float delta)
 	{
 		WorldPositionComponent* wpc = WGETC<WorldPositionComponent>(*it);
 		MovementComponent* mc = WGETC<MovementComponent>(*it);
-		//TargetingComponent* tc = WGETC<TargetingComponent>(*it);
-
-
 
 		// process speed...
 		const Core::MovementData& movementData = Core::GameData::GetMovementDataWithState( mc->state );
@@ -32,26 +36,6 @@ void Core::MovementSystem::Update(float delta)
 			mc->speed = mc->desiredSpeed;
 		else if ( mc->speed < 0.0f )
 			mc->speed = 0.0f;
-
-		// goal management...
-		//if (tc->target != INVALID_ENTITY)
-		if( mc->goal[0] != std::numeric_limits<float>::max() )
-		{
-			//WorldPositionComponent* tpos = WGETC<WorldPositionComponent>(tc->target);
-			glm::vec3 direction = glm::vec3( mc->goal[0], mc->goal[1], mc->goal[2] ) - WorldPositionComponent::GetVec3(*wpc);
-			if( glm::dot( direction, direction ) > 0 )
-				direction = glm::normalize(direction);
-
-			mc->SetDirection( mc, direction.x, direction.y, direction.z );
-
-			//mc->direction[0] = direction.x;
-			//mc->direction[1] = direction.y;
-			//mc->direction[2] = direction.z;
-
-			//mc->speed = 5.0f;
-			//mc->desiredSpeed = 5.0f;
-		}
-
 
 		InterpolateDirections(mc, delta);
 
@@ -67,7 +51,9 @@ void Core::MovementSystem::Update(float delta)
 
 			RotationComponent* rc = WGETC<RotationComponent>(*it);
 
-			*rc = RotationComponent::GetComponentRotateY(-angle - 3.141592f * 1.5f); // We need to solve this, model might be wrong or something :) // johan sais wait and see ;) -> blame maya? yes. fin.
+
+			// We need to solve this, model might be wrong or something :) // johan sais wait and see ;) -> blame maya? yes. fin.
+			*rc = RotationComponent::GetComponentRotateY(-angle - 3.141592f * 1.5f); 
 		}
 
 		// Draw the debug lines showing the rioter's direction.

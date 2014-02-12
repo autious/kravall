@@ -137,7 +137,7 @@ function scen:load()
     local centerPoint = { 49, 0, 5 }		
     for i = -7, 6 do
         for p = -6, 6 do
-            rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], groupOneGroupId)
+            rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], groupOneGroupId, fists)
         end
     end
     core.system.groups.setGroupGoal(groupOneGroupId, -43, 0, 4)
@@ -146,7 +146,7 @@ function scen:load()
     local centerPoint = { 20.5, 0, -40 }		
     for i = -4, 4 do
         for p = -5, 5 do
-            rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], groupTwoGroupId)
+            rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], groupTwoGroupId, fists)
         end
     end
     core.system.groups.setGroupGoal(groupTwoGroupId, -21, 0, 36)

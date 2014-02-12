@@ -4,6 +4,12 @@
 #include <gfx/LightData.hpp>
 namespace Core
 {
+
+	LightSystem::LightSystem() 
+		: BaseSystem(EntityHandler::GenerateAspect<LightComponent, WorldPositionComponent, RotationComponent, ScaleComponent>(), 0ULL)
+	{
+	}
+
 	static double lel = 0;
 	void LightSystem::Update(float delta)
 	{

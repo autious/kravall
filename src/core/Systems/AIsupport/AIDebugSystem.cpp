@@ -12,6 +12,11 @@
 #include <GameUtility/PathfindingUtility.hpp>
 
 
+Core::AIDebugSystem::AIDebugSystem()  
+		: BaseSystem( EntityHandler::GenerateAspect< WorldPositionComponent, BoundingVolumeComponent >(), 0ULL )
+{
+}
+
 
 void GetPlanePoint()
 {

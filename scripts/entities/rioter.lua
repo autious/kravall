@@ -1,4 +1,4 @@
-return function(asm, posX, posY, posZ, group)
+return function(asm, posX, posY, posZ, group, weaponType)
 	return asm:loadAssembly( 
 		{
 			{
@@ -40,7 +40,7 @@ return function(asm, posX, posY, posZ, group)
 			},
 			{
 				type = core.componentType.TargetingComponent,
-				data = { },
+				data = { weapon = weaponType or fists },
 				ignoreHard = true
 			},
 			{

@@ -2,6 +2,8 @@
 #include "World.hpp"
 #include <logger/Logger.hpp>
 
+#include <gfx/GFXInterface.hpp>
+
 #define frsChargeCurve Core::FieldReactionSystem::ChargeCurve
 #define PF_DRAW_DIVIDE_FACTOR 0.0001f
 #define PF_FACTOR 0.5f

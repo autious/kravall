@@ -8,7 +8,7 @@ namespace Core
 	/*!
 		System for handling attack-animations, movementspeed and dealing damage to respective targets.
 	*/
-	class WeaponAnimationSystem : public BaseSystem
+	class AttackAnimationSystem : public BaseSystem
 	{
 
 	public:
@@ -21,13 +21,13 @@ namespace Core
 		/*!
 			Constructor, does nothing besides defining target components.
 		*/ 
-		WeaponAnimationSystem();
+		AttackAnimationSystem();
 
 		/*!
 			The name of the system for printing.
 			\return The system's name.
 		*/
-		virtual const char* GetHumanName() { return "WeaponAnimationSystem"; }
+		virtual const char* GetHumanName() { return "AttackAnimationSystem"; }
 
 	private:
 		

@@ -1,10 +1,13 @@
 #ifndef SRC_CORE_SYSTEMS_FIELD_REACTION_SYSTEM_HPP
 #define SRC_CORE_SYSTEMS_FIELD_REACTION_SYSTEM_HPP
 
-#include <SystemDef.hpp>
+#include <ComponentFramework/BaseSystem.hpp>
+#include <glm/glm.hpp>
 
 namespace Core
 {
+	struct WorldPositionComponent;
+
 	/*!
 		System for handling the movement of moving objects. Moving objects are defined by a WorldPositionComponent and
 		a MovementComponent.

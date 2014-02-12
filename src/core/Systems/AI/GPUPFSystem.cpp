@@ -4,6 +4,8 @@
 #include <gfx/GFXInterface.hpp>
 #include <math.h>
 
+#include <SystemDef.hpp>
+
 namespace Core
 {
 	GPUPFSystem::GPUPFSystem() : BaseSystem(EntityHandler::GenerateAspect<WorldPositionComponent, MovementComponent,

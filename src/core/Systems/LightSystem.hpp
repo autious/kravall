@@ -1,7 +1,7 @@
 #ifndef SRC_CORE_SYSTEMS_LIGHT_SYSTEM_HPP
 #define SRC_CORE_SYSTEMS_LIGHT_SYSTEM_HPP
 
-#include <SystemDef.hpp>
+#include <ComponentFramework/BaseSystem.hpp>
 
 namespace Core
 {
@@ -10,8 +10,7 @@ namespace Core
 	public:
 		virtual void Update(float delta) override;
 
-		LightSystem() :BaseSystem(EntityHandler::GenerateAspect<LightComponent, WorldPositionComponent, RotationComponent, ScaleComponent>(), 0ULL)
-		{}
+		LightSystem();
 
 		virtual const char* GetHumanName(){ return "LightSystem"; }
 	};

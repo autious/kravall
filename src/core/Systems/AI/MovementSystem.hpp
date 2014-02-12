@@ -1,10 +1,13 @@
 #ifndef SRC_CORE_SYSTEMS_MOVEMENT_SYSTEM_HPP
 #define SRC_CORE_SYSTEMS_MOVEMENT_SYSTEM_HPP
 
-#include <SystemDef.hpp>
+#include <ComponentFramework/BaseSystem.hpp>
 
 namespace Core
 {
+
+	struct MovementComponent;
+
 	/*!
 		System for handling the movement of moving objects. Moving objects are defined by a WorldPositionComponent and
 		a MovementComponent.
@@ -23,9 +26,7 @@ namespace Core
 			Default constructor creating a system. The system works on entities containing a WorldPositioncomponent and
 			a MovementComponent.
 		*/
-		MovementSystem() : BaseSystem(EntityHandler::GenerateAspect<WorldPositionComponent, MovementComponent>(), 0ULL)
-		{
-		}
+		MovementSystem();
 
 		/*! 
 			The name of the system for printing.

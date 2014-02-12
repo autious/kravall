@@ -40,6 +40,33 @@ Core::ComponentGetters Core::TargetingComponentBinding::GetGetters()
 		return 1;
 	};
 
+	getters["isAttacking"] = [](Core::Entity entity, lua_State *L)
+	{
+		TargetingComponent *mvc = WGETC<TargetingComponent>(entity);
+
+		lua_pushnumber(L, mvc->isAttacking);
+
+		return 1;
+	};
+
+	getters["hasAttacked"] = [](Core::Entity entity, lua_State *L)
+	{
+		TargetingComponent *mvc = WGETC<TargetingComponent>(entity);
+
+		lua_pushnumber(L, mvc->hasAttacked);
+
+		return 1;
+	};
+
+	getters["weapon"] = [](Core::Entity entity, lua_State *L)
+	{
+		TargetingComponent *mvc = WGETC<TargetingComponent>(entity);
+
+		lua_pushnumber(L, mvc->weapon);
+
+		return 1;
+	};
+
 	return getters;
 
 }
@@ -98,6 +125,48 @@ Core::ComponentSetters Core::TargetingComponentBinding::GetSetters()
 		else
 		{
 			luaL_error(L, "Unable to set target for ent %d, value is not number", entity);
+		}
+	};
+
+	setters["isAttacking"] = [](Core::Entity entity, lua_State * L, int valueindex)
+	{
+		TargetingComponent *mvc = WGETC<TargetingComponent>(entity);
+
+		if (lua_isnumber(L, valueindex))
+		{
+			mvc->isAttacking = static_cast<float>(lua_toboolean(L, valueindex));
+		}
+		else
+		{
+			luaL_error(L, "Unable to set isAttacking for ent %d, value is not number", entity);
+		}
+	};
+
+	setters["hasAttacked"] = [](Core::Entity entity, lua_State * L, int valueindex)
+	{
+		TargetingComponent *mvc = WGETC<TargetingComponent>(entity);
+
+		if (lua_isnumber(L, valueindex))
+		{
+			mvc->hasAttacked = static_cast<float>(lua_toboolean(L, valueindex));
+		}
+		else
+		{
+			luaL_error(L, "Unable to set hasAttacked for ent %d, value is not number", entity);
+		}
+	};
+
+	setters["weapon"] = [](Core::Entity entity, lua_State * L, int valueindex)
+	{
+		TargetingComponent *mvc = WGETC<TargetingComponent>(entity);
+
+		if (lua_isnumber(L, valueindex))
+		{
+			mvc->weapon = static_cast<float>(lua_tonumber(L, valueindex));
+		}
+		else
+		{
+			luaL_error(L, "Unable to set weapon for ent %d, value is not number", entity);
 		}
 	};
 

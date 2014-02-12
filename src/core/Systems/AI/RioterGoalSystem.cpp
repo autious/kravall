@@ -1,0 +1,55 @@
+#include "RioterGoalSystem.hpp"
+#include "World.hpp"
+#include <gfx/GFXInterface.hpp>
+#include <logger/Logger.hpp>
+
+#include <GameUtility/PathfindingUtility.hpp>
+
+#include <Systems/AI/MovementSystem.hpp>
+
+#include <GameUtility/GameData.hpp>
+
+#define RIOTER_GOAL_ARRIVAL_THRESHOLD 0.2f
+
+
+Core::RioterGoalSystem::RioterGoalSystem()
+	: BaseSystem( EntityHandler::GenerateAspect< WorldPositionComponent, MovementComponent, 
+		UnitTypeComponent, AttributeComponent, FlowfieldComponent >(), 0ULL )
+{
+}
+
+
+
+
+
+void Core::RioterGoalSystem::Update( float delta )
+{
+
+	Core::NavigationMesh* instance = Core::GetNavigationMesh();
+	if( !instance )
+		return;
+
+	for( std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); it++ )
+	{
+		UnitTypeComponent* utc = WGETC<UnitTypeComponent>(*it);
+		if( utc->type != Core::UnitType::Rioter )
+			continue;
+		
+		Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>( *it );
+		glm::vec3 goal = glm::vec3( mvmc->goal[0], mvmc->goal[1], mvmc->goal[2] );
+		
+		// continue if rioters don't have a specific goal
+		if( goal.x == std::numeric_limits<float>::max() )
+			continue;
+
+		Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>( *it );
+		glm::vec3 position = glm::vec3( wpc->position[0], wpc->position[1], wpc->position[2] );
+		glm::vec3 delta = goal - position;
+
+		if( glm::dot( delta, delta ) > RIOTER_GOAL_ARRIVAL_THRESHOLD )
+		{
+			delta = glm::normalize( delta );
+			MovementComponent::SetDirection( mvmc, delta.x, 0, delta.z );
+		}
+	}
+}

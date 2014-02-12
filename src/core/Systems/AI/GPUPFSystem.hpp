@@ -1,7 +1,8 @@
 #ifndef SRC_CORE_SYSTEMS_GPUPF_SYSTEM_HPP
 #define SRC_CORE_SYSTEMS_GPUPF_SYSTEM_HPP
 
-#include <SystemDef.hpp>
+#include <ComponentFramework/BaseSystem.hpp>
+#include <glm/glm.hpp>
 #include <GL/glew.h>
 
 namespace Core

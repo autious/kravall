@@ -1,6 +1,6 @@
 #include "LuaSquadBridge.hpp"
 
-#include <Systems/SquadSystem.hpp>
+#include <Systems/AI/SquadSystem.hpp>
 
 #include <Lua/LuaUtility.hpp>
 #include <Lua/LuaMetatableTypes.hpp>

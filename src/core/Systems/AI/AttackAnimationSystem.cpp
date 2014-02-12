@@ -1,4 +1,4 @@
-#include "WeaponAnimationSystem.hpp"
+#include "AttackAnimationSystem.hpp"
 
 #include <Input/InputManager.hpp>
 #include <GameUtility/GameData.hpp>
@@ -6,15 +6,15 @@
 #include <SystemDef.hpp>
 #include <Animation/AnimationManager.hpp>
 
-Core::WeaponAnimationSystem::WeaponAnimationSystem() : 
+Core::AttackAnimationSystem::AttackAnimationSystem() : 
 	BaseSystem(EntityHandler::GenerateAspect<WorldPositionComponent, TargetingComponent, AnimationComponent, UnitTypeComponent, 
-	AttributeComponent, FlowfieldComponent>(), 0ULL)
+	AttributeComponent, MovementComponent, FlowfieldComponent>(), 0ULL)
 {
 }
 
 
 
-void Core::WeaponAnimationSystem::Update(float delta)
+void Core::AttackAnimationSystem::Update(float delta)
 {
 	for (std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); it++)
 	{
@@ -37,12 +37,11 @@ void Core::WeaponAnimationSystem::Update(float delta)
 			// if attacking, handle animation and dmg
 			if( tc->isAttacking )
 			{
+				mvmc->SetDesiredSpeed( 0.0f, Core::DesiredSpeedSetPriority::CombatAnimationDesiredSpeedPriority );
+
 				Core::AnimationComponent* animac = WGETC<Core::AnimationComponent>(*it);
 				if( animac->animationID != weapon.animationID )
-				{
 					Core::AnimationManager::PlayAnimation( *it, weapon.animationID );
-					mvmc->desiredSpeed = 0.0f;
-				}
 
 				if( animac->currentTime > weapon.animationDmgDealingtime && !tc->hasAttacked )
 				{
@@ -63,7 +62,6 @@ void Core::WeaponAnimationSystem::Update(float delta)
 					Core::AnimationManager::LoopAnimation( *it, 0 );
 					tc->isAttacking = false;
 					tc->hasAttacked = false;
-					mvmc->desiredSpeed = Core::GameData::GetMovementDataWithState( mvmc->state ).speedToDesire;
 				}
 			}
 
@@ -83,7 +81,8 @@ void Core::WeaponAnimationSystem::Update(float delta)
 				tc->hasAttacked = false;
 
 				Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>(*it);
-				mvmc->desiredSpeed = Core::GameData::GetMovementDataWithState( mvmc->state ).speedToDesire;
+				mvmc->SetDesiredSpeed( Core::GameData::GetMovementDataWithState( mvmc->state ).speedToDesire, 
+						Core::DesiredSpeedSetPriority::CombatAnimationDesiredSpeedPriority );
 			}
 		}		
 	}

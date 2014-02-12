@@ -8,8 +8,9 @@
 #define MAX_TARGETING_TIME 2.0f
 #define MAX_SQR_DISTANCE 441.0f
 
-Core::TargetingSystem::TargetingSystem() : BaseSystem(EntityHandler::GenerateAspect<WorldPositionComponent, UnitTypeComponent, AttributeComponent>(), 0ULL),
-	m_lastClickedEntity(INVALID_ENTITY), m_wasFPressed(false), m_currentTarget(INVALID_ENTITY)
+Core::TargetingSystem::TargetingSystem() : BaseSystem(EntityHandler::GenerateAspect<WorldPositionComponent, UnitTypeComponent, 
+		AttributeComponent, MovementComponent, FlowfieldComponent>(), 0ULL), m_lastClickedEntity(INVALID_ENTITY), 
+		m_wasFPressed(false), m_currentTarget(INVALID_ENTITY)
 {}
 
 void Core::TargetingSystem::Update(float delta)
@@ -29,27 +30,32 @@ void Core::TargetingSystem::Update(float delta)
 
 void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police, float delta)
 {
+	Core::TargetingComponent* tc = WGETC<Core::TargetingComponent>(police);
+
+	// return if the unit does not have a weapon
+	if( tc->weapon < 0 )
+		return; 
+
 	Core::AttributeComponent* ac = WGETC<Core::AttributeComponent>(police);
 	Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(police);
-	Core::TargetingComponent* tc = WGETC<Core::TargetingComponent>(police);
 	Core::MovementComponent* mc = WGETC<Core::MovementComponent>(police);
+	const Core::WeaponData& weapon = Core::GameData::GetWeaponDataFromWeapon( tc->weapon );
 
 	Core::WorldPositionComponent* targetPos;
 
-	GFXColor colour = GFXColor(1.0f, 1.0f, 1.0f, 1.0f);
+	GFXColor colour = GFXColor(1.0f, 1.0f, 1.0f, 1.0f);	
 
 	if (tc->target != INVALID_ENTITY)
 	{
-		Core::WorldPositionComponent* twpc = WGETC<Core::WorldPositionComponent>(tc->target);
 		Core::TargetingComponent* tcTarget = WGETC<Core::TargetingComponent>(tc->target);
-
+		Core::WorldPositionComponent* twpc = WGETC<Core::WorldPositionComponent>(tc->target);
+		
 		float dx = twpc->position[0] - wpc->position[0];
 		float dy = twpc->position[1] - wpc->position[1];
 		float dz = twpc->position[2] - wpc->position[2];
 
 		float distSqr = dx * dx + dy * dy + dz * dz;
 
-		const Core::WeaponData& weapon = Core::GameData::GetWeaponDataFromWeapon( tc->weapon );
 		if (distSqr < weapon.range * weapon.range )
 		{
 			if (TargetingComponent::Attack(police, *tcTarget))
@@ -62,7 +68,7 @@ void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police, float del
 		{
 			tc->target = INVALID_ENTITY;
 		}
-		else
+		else if( ac->police.stance != PoliceStance::Passive )
 			return;
 	}
 
@@ -76,11 +82,6 @@ void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police, float del
 			}
 			else
 			{
-				//targetPos = WGETC<Core::WorldPositionComponent>(tc->target);
-				//
-				//mc->goal[0] = targetPos->position[0];
-				//mc->goal[1] = targetPos->position[1];
-				//mc->goal[2] = targetPos->position[2];
 
 				colour = GFXColor(1.0f, 0.0f, 0.0f, 1.0f);
 			}
@@ -94,18 +95,14 @@ void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police, float del
 
 			tc->target = FindClosestAttacker(tc, wpc);
 
-			//targetPos = WGETC<Core::WorldPositionComponent>(tc->target);
-			//mc->goal[0] = targetPos->position[0];
-			//mc->goal[1] = targetPos->position[1];
-			//mc->goal[2] = targetPos->position[2];
-
 			break;
 		case PoliceStance::Passive:
 			if (tc->target != INVALID_ENTITY)
 			{
 				TargetingComponent* tcTarget = WGETC<Core::TargetingComponent>(tc->target);
 				TargetingComponent::StopAttacking(police, *tcTarget);
-			}
+			}			
+
 			tc->target = INVALID_ENTITY;
 			break;
 	}
@@ -126,10 +123,16 @@ void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police, float del
 
 void Core::TargetingSystem::HandleRioterTargeting(Core::Entity rioter, float delta)
 {
+	Core::TargetingComponent* tc = WGETC<Core::TargetingComponent>(rioter);
+
+	// return if the unit does not have a weapon
+	if( tc->weapon < 0 )
+		return; 
+
 	Core::AttributeComponent* ac = WGETC<Core::AttributeComponent>(rioter);
 	Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(rioter);
-	Core::TargetingComponent* tc = WGETC<Core::TargetingComponent>(rioter);
 	Core::MovementComponent* mc = WGETC<Core::MovementComponent>(rioter);
+	const Core::WeaponData& weapon = Core::GameData::GetWeaponDataFromWeapon( tc->weapon );
 
 	if (ac->rioter.stance != RioterStance::Attacking)
 		return;

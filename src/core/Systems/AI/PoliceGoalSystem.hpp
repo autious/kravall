@@ -1,7 +1,7 @@
 #ifndef SRC_CORE_SYSTEMS_POLICEGOALSYSTEM_HPP
 #define SRC_CORE_SYSTEMS_POLICEGOALSYSTEM_HPP
 
-#include <SystemDef.hpp>
+#include <ComponentFramework/BaseSystem.hpp>
 
 
 namespace Core

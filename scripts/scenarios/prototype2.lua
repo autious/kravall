@@ -40,18 +40,18 @@ local gFour = core.system.groups.createGroup()
 
 for i = -side / 2, -1 do
 	for p = -side / 2, -1 do
-		rioter( scen, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], gOne )
+		rioter( scen, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], gOne, fists )
 	end                         
 	for p = 1, side / 2 do      
-		rioter( scen, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], gTwo )
+		rioter( scen, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], gTwo, fists )
 	end                         
 end                             
 for i = 1, side / 2 do          
 	for p = -side / 2, -1 do    
-		rioter( scen, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], gThree )
+		rioter( scen, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], gThree, fists )
 	end                         
 	for p = 1, side / 2 do      
-		rioter( scen, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], gFour )
+		rioter( scen, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], gFour, fists )
 	end
 end
 

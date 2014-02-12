@@ -96,7 +96,7 @@ function scen:load()
     local policeGroup = core.system.groups.createGroup();
 
 
-    local squadOne = squad(scen, -4, 0, -21, 0);
+    local squadOne = squad(scen, -4, 0, -21, 0, fists);
 
     --local centerPoint = { -4, 0, -21}
     --for i = -4, 3 do
@@ -124,7 +124,7 @@ function scen:load()
     local centerPoint = { 49, 0, 5 }		
     for i = -7, 6 do
         for p = -6, 6 do
-            rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rGroup)
+            rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rGroup, fists)
         end
     end
     core.system.groups.setGroupGoal(rGroup, -43, 0, 4)
@@ -135,7 +135,7 @@ function scen:load()
     local centerPoint = { 20.5, 0, -40 }		
     for i = -4, 4 do
         for p = -5, 5 do
-            rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rioterGroup)
+            rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rioterGroup, fists)
         end
     end
     core.system.groups.setGroupGoal(rioterGroup, -21, 0, 36)

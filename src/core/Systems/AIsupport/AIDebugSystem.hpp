@@ -1,7 +1,7 @@
 #ifndef SRC_CORE_SYSTEMS_AIDEBUGGSYSTEM_HPP
 #define SRC_CORE_SYSTEMS_AIDEBUGGSYSTEM_HPP
 
-#include <SystemDef.hpp>
+#include <ComponentFramework/BaseSystem.hpp>
 
 
 namespace Core
@@ -15,8 +15,7 @@ namespace Core
     public:
         virtual void Update( float delta ) override;
 
-        AIDebugSystem() : BaseSystem( EntityHandler::GenerateAspect< WorldPositionComponent, BoundingVolumeComponent >(), 0ULL )
-        {}
+        AIDebugSystem();
 
         virtual const char* GetHumanName() { return "AIDebugSystem"; }
 

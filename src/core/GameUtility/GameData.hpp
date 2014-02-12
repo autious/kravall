@@ -3,6 +3,7 @@
 
 #include <Components/MovementComponent.hpp>
 #include <Components/TargetingComponent.hpp>
+#include <vector>
 
 struct TempInitGameData;
 
@@ -74,7 +75,7 @@ namespace Core
 		/*!
 			Will return the respective data for the weapon.
 		*/
-		static const WeaponData& Core::GameData::GetWeaponDataFromWeapon( WeaponType weapon );
+		static const WeaponData& Core::GameData::GetWeaponDataFromWeapon( int weapon );
 
 		/*!
 			Will set the MovementData for the respective state. Should not be used carelessly form C.
@@ -82,15 +83,15 @@ namespace Core
 		static void SetMovementDataForState( MovementState state, float speedToDesire, float acceleration, float deceleration );
 		
 		/*!
-			Will set the WeaponData for the respective weapon. Should not be used carelessly form C.
+			Will push weaponData to the list and return the id for the weapon. This function is meant to be used form lua.
 		*/
-		static void SetWeaponDataForWeapon( WeaponType weapon, float range, float weaponDamage, float moraleDamage, float animationDmgDealingtime, int animationID );
+		static int PushWeaponData( float range, float weaponDamage, float moraleDamage, float animationDmgDealingtime, int animationID );
 
 
 	private:
 
 		static MovementData m_movementData[ MovementState::MOVEMENTSTATE_COUNT ];
-		static WeaponData m_weaponData[ WeaponType::WEAPONTYPE_COUNT ];
+		static std::vector< WeaponData > m_weaponData;
 
 		friend TempInitGameData;
 	};

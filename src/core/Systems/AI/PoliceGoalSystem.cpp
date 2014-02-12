@@ -6,7 +6,7 @@
 #include <GameUtility/PathfindingUtility.hpp>
 
 #include <DebugMacros.hpp>
-#include <Systems/MovementSystem.hpp>
+#include <Systems/AI/MovementSystem.hpp>
 
 #include <GameUtility/GameData.hpp>
 
@@ -107,15 +107,12 @@ void Core::PoliceGoalSystem::Update( float delta )
 
 		if( move )
 		{
-			Core::TargetingComponent* tc = WGETC<Core::TargetingComponent>(*it);
-			if( tc == nullptr || !tc->isAttacking )
-				// set speed according to state...
-				mvmc->desiredSpeed = Core::GameData::GetMovementDataWithState( mvmc->state ).speedToDesire; 
-
+			// set speed according to state...
+			mvmc->SetDesiredSpeed( Core::GameData::GetMovementDataWithState( mvmc->state ).speedToDesire, Core::DesiredSpeedSetPriority::PoliceGoalSytemDesiredSpeedPriority ); 
 		}
 		else
 		{
-			mvmc->desiredSpeed = 0.0f;
+			mvmc->SetDesiredSpeed( 0.0f, Core::DesiredSpeedSetPriority::PoliceGoalSytemDesiredSpeedPriority ); 
 		}
 	}
 }

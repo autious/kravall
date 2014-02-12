@@ -1,7 +1,7 @@
 #include "SquadSystem.hpp"
 
 #include <World.hpp>
-#include <Systems/GroupDataSystem.hpp>
+#include <Systems/AIsupport/GroupDataSystem.hpp>
 #include <glm/glm.hpp>
 #include <GameUtility/GameData.hpp>
 
@@ -373,8 +373,9 @@ namespace Core
             }
 
             Core::WorldPositionComponent* leader_wpc = WGETC<Core::WorldPositionComponent>(sqdc->squadLeader);                
-
-            glm::vec3 leaderPosition = Core::WorldPositionComponent::GetVec3(*leader_wpc);
+			sqdc->waitForStraggler = false;
+            
+			glm::vec3 leaderPosition = Core::WorldPositionComponent::GetVec3(*leader_wpc);
 
             float rotation = 0.0f;            
             if(sqdc->squadMoveInFormation)
@@ -423,7 +424,7 @@ namespace Core
                     }
 
 					formationPosition.y = 0.0f;
-					mc->SetGoal( formationPosition, goalNode, Core::MovementGoalPriority::FormationPriority );
+					mc->SetGoal( formationPosition, goalNode, Core::MovementGoalPriority::FormationGoalPriority );
                 }
                 else
                 {
@@ -439,7 +440,7 @@ namespace Core
                     navMesh->GetClosestPointInsideMesh(formationPosition, squadTargetPosition, goalNode, 0.2f);
 
                     formationPosition.y = 0.0f;
-					mc->SetGoal( formationPosition, goalNode, Core::MovementGoalPriority::FormationPriority );
+					mc->SetGoal( formationPosition, goalNode, Core::MovementGoalPriority::FormationGoalPriority );
                 }
             }
 
@@ -458,15 +459,18 @@ namespace Core
                 sqdc->squadStamina += atrbc->stamina;
                 sqdc->squadMorale += atrbc->morale;
 
-                if(!frmc->isStraggler)
-                {
-                    mc->desiredSpeed = 0.0f;                
-                }
-                else
-                {
-                    //TODO: If the unit had another desiredSpeed than walking it needs to be taken into account here                        
-                    mc->desiredSpeed = Core::GameData::GetMovementDataWithState( mc->state ).speedToDesire; 
-                }
+				if( sqdc->waitForStraggler )
+				{
+					if(!frmc->isStraggler)
+					{
+						mc->SetDesiredSpeed( 0.0f, Core::DesiredSpeedSetPriority::SquadMoveInFormationDesiredSpeedPriority );
+					}
+					else
+					{
+						// PoliceGoalSystem will make sure that they move to the goal and that they stop there as well.
+						//mc->SetDesiredSpeed( Core::GameData::GetMovementDataWithState( mc->state ).speedToDesire, Core::DesiredSpeedSetPriority::SquadMoveInFormationDesiredSpeedPriority );
+					}
+				}
             }
         }
     }

@@ -10,9 +10,6 @@ struct TempInitGameData
 	{
 		for( int i = 0; i < Core::MovementState::MOVEMENTSTATE_COUNT; i++ )
 			Core::GameData::m_movementData[ i ] = Core::MovementData();
-
-		for( int i = 0; i < Core::WeaponType::WEAPONTYPE_COUNT; i++ )
-			Core::GameData::m_weaponData[ i ] = Core::WeaponData();
 	}
 
 } dummyInit;
@@ -21,7 +18,7 @@ struct TempInitGameData
 namespace Core
 {
 	MovementData GameData::m_movementData[ Core::MovementState::MOVEMENTSTATE_COUNT ];
-	WeaponData GameData::m_weaponData[ Core::WeaponType::WEAPONTYPE_COUNT ];
+	std::vector< WeaponData > GameData::m_weaponData;
 
 
 	const MovementData& Core::GameData::GetMovementDataWithState( MovementState state )
@@ -29,8 +26,9 @@ namespace Core
 		return m_movementData[ state ];
 	}
 
-	const WeaponData& Core::GameData::GetWeaponDataFromWeapon( Core::WeaponType weapon )
+	const WeaponData& Core::GameData::GetWeaponDataFromWeapon( int weapon )
 	{
+		assert( weapon >= 0 && weapon < m_weaponData.size() );
 		return m_weaponData[ weapon ];
 	}
 
@@ -42,13 +40,17 @@ namespace Core
 		m_movementData[ state ].deceleration	= deceleration;
 	}
 
-	void Core::GameData::SetWeaponDataForWeapon( WeaponType weapon, float range, float weaponDamage, float moraleDamage, float animationDmgDealingtime, int animationID )
+	int Core::GameData::PushWeaponData( float range, float weaponDamage, float moraleDamage, float animationDmgDealingtime, int animationID )
 	{
-		m_weaponData[ weapon ].range					= range;
-		m_weaponData[ weapon ].weaponDamage				= weaponDamage;
-		m_weaponData[ weapon ].moraleDamage				= moraleDamage;
-		m_weaponData[ weapon ].animationDmgDealingtime	= animationDmgDealingtime;
-		m_weaponData[ weapon ].animationID				= animationID;
+		m_weaponData.push_back( WeaponData() );
+
+		m_weaponData.back().range					= range;
+		m_weaponData.back().weaponDamage			= weaponDamage;
+		m_weaponData.back().moraleDamage			= moraleDamage;
+		m_weaponData.back().animationDmgDealingtime	= animationDmgDealingtime;
+		m_weaponData.back().animationID				= animationID;
+
+		return m_weaponData.size() - 1;
 	}
 
 

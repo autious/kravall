@@ -1,6 +1,6 @@
 #include "LuaAreaSystemBridge.hpp"
 
-#include <Systems/AreaSystem.hpp>
+#include <Systems/AIsupport/AreaSystem.hpp>
 
 #include <World.hpp>
 #include <Lua/LuaMetatableTypes.hpp>

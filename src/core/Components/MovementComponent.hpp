@@ -21,21 +21,33 @@ namespace Core
 		MOVEMENTSTATE_COUNT,
 	};
 
-	
-	enum MovementGoalPriority
+	/*!
+		Used to determine who has the stonger case when several systems want to change the goal in the same frame.
+	*/
+	enum MovementGoalPriority : short
 	{
 		NoGoalPriority,
-		FlowfieldGoalPriority,
+		FormationGoalPriority,
 		AttackGoalPriority,
-		FormationPriority,
 	};
 
 	/*!
-	Component holding a moving object's speed, maximum speed and direction of movement.
+		Used to determine who has the stronger case when several systems want to change desiredSpeed in the same frame.
+	*/
+	enum DesiredSpeedSetPriority : short
+	{
+		NoDesiredSpeedPriority,
+		PoliceGoalSytemDesiredSpeedPriority,
+		SquadMoveInFormationDesiredSpeedPriority,
+		CombatAnimationDesiredSpeedPriority,
+	};
+
+	/*!
+		Component holding a moving object's speed, maximum speed and direction of movement.
 	*/
 	struct MovementComponent
 	{
-		/*! The object's current speed. Represented by a floating point and should never exceed maxSpeed. */
+		/*! The object's current speed. */
 		float speed;
 
 		/*! The object's desired speed. The speed will attempt to reach this speed. */
@@ -53,6 +65,9 @@ namespace Core
 		/*! Priority value for the current set goal. If new value has higher priority the current value may be repalced. */
 		MovementGoalPriority currentGoalPriority;
 
+		/*! Priority value for the current desiredSpeed. If new value has higher priority the current value may be repalced. */
+		DesiredSpeedSetPriority currentDesiredSpeedPriority;
+
 		/*!
 			An array specifying the object's goal, ceasing movement when the goal is reached. The index 0 corresponds
 			to the x component, 1 to y and 2 to z. An x-value of FLT_MAX disables the goal.
@@ -66,7 +81,8 @@ namespace Core
 		MovementState state;
 
 		/*! Default constructor. Initialising all members to 0. */
-		MovementComponent() : speed(0.0f), desiredSpeed(0.0f), currentGoalPriority( MovementGoalPriority::NoGoalPriority )
+		MovementComponent() : speed(0.0f), desiredSpeed(0.0f), currentGoalPriority( MovementGoalPriority::NoGoalPriority ), 
+			currentDesiredSpeedPriority( DesiredSpeedSetPriority::NoDesiredSpeedPriority )
 		{
 			direction[0] = 0.0f;
 			direction[1] = 0.0f;
@@ -146,6 +162,15 @@ namespace Core
 				goal[1] = newGoal[1];
 				goal[2] = newGoal[2];
 				NavMeshGoalNodeIndex = node;
+			}
+		}
+
+		inline void SetDesiredSpeed( float speed, DesiredSpeedSetPriority prio )
+		{
+			if( currentDesiredSpeedPriority <= prio )
+			{
+				desiredSpeed = speed;
+				currentDesiredSpeedPriority = prio;
 			}
 		}
 
