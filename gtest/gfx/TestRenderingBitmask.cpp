@@ -25,8 +25,8 @@ namespace
 		GFX::SetBitmaskValue(bitmask, GFX::BITMASK::MESH_ID, 1);
 		GFX::SetBitmaskValue(bitmask, GFX::BITMASK::MATERIAL_ID, 1);
 		GFX::SetBitmaskValue(bitmask, GFX::BITMASK::DEPTH, 1);
-		
-		ASSERT_EQ(bitmask, 0x4940008001000001ULL);
+	    	
+		ASSERT_EQ(bitmask, 0x121400080010001ULL);
 
 		GFX::SetBitmaskValue(bitmask, GFX::BITMASK::MESH_ID, 1337);
 		GFX::SetBitmaskValue(bitmask, GFX::BITMASK::TYPE, 2);

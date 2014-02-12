@@ -183,14 +183,16 @@ namespace Core
         
         for(Core::ParticleContainer* prc = m_particleContainer; prc != nullptr; prc = prc->m_prev)
         {
-            GFX::Content::BufferParticleData(prc->particleBufferId, prc->particles);
-            GFXBitmask bitmask;
-            GFX::SetBitmaskValue(bitmask, GFX::BITMASK::TYPE, GFX::OBJECT_TYPE::PARTICLE_GEOMETRY);
+            /*
+            GFX::Content::BufferParticleData(prc->m_particleBufferId, prc->m_particles);
+            GFX::GFXBitmask bitmask;
+            GFX::SetBitmaskValue(bitmask, GFX::BITMASK::TYPE, GFX::OBJECT_TYPES::PARTICLE_GEOMETRY);
             GFX::SetBitmaskValue(bitmask, GFX::BITMASK::MESH_ID, prc->m_particleBufferId);
             GFX::SetBitmaskValue(bitmask, GFX::BITMASK::MATERIAL_ID, prc->m_materialId);
             GFX::SetBitmaskValue(bitmask, GFX::BITMASK::LAYER, GFX::LAYER_TYPES::MESH_LAYER);
 
             GFX::Draw(bitmask, nullptr);
+            */
         }
     }
 
@@ -204,7 +206,7 @@ namespace Core
     ParticleHandle ParticleSystem::CreateParticle(int numberOfParticles, unsigned long long int m_materialId)
     {
         ParticleContainer* next = Core::world.m_levelHeap.NewObject<Core::ParticleContainer>();
-        next->m_numberOfParticles = m_numberOfParticles;
+        next->m_numberOfParticles = numberOfParticles;
         next->m_particlePointer = 0;
         next->m_materialId = m_materialId;
         next->m_particles = Core::world.m_levelHeap.NewPODArray<GFX::Particle>(numberOfParticles);
