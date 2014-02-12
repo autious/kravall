@@ -3,7 +3,6 @@
 
 #include <ComponentFramework/BaseSystem.hpp>
 #include <Components/EmitterComponent.hpp>
-#include <gfx/Particle.hpp>
 #include <random>
 
 namespace Core

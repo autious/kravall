@@ -43,6 +43,7 @@ extern "C"
 
 	static unsigned int m_outlineThickness = 0;
 }
+
 namespace GFX
 {    
 

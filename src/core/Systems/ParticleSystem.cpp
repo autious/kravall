@@ -5,6 +5,10 @@
 #include <glm/gtc/quaternion.hpp>
 #include <cstring>
 
+#include <gfx/Particle.hpp>
+#include <gfx/GFXInterface.hpp>
+#include <gfx/BitmaskDefinitions.hpp>
+
 namespace 
 {
     class ParticleSystemReseter
@@ -35,15 +39,22 @@ namespace Core
         float lifeReduction;
     };
 
-    struct ParticleContainer
+    class ParticleContainer
     {
-        int numberOfParticles;
-        int particlePointer;
-        unsigned long long int materialId;
-        GFX::Particle* particles;
-        Core::ParticleData* particleData;
+    public:
+        ~ParticleContainer()
+        {
+            GFX::Content::DeleteParticleBuffer(m_particleBufferId);        
+        }
 
-        Core::ParticleContainer* prev;
+        int m_numberOfParticles;
+        int m_particlePointer;
+        unsigned int m_particleBufferId;
+        unsigned long long int m_materialId;
+
+        GFX::Particle* m_particles;
+        Core::ParticleData* m_particleData;
+        Core::ParticleContainer* m_prev;
     };
 }
 
@@ -78,7 +89,7 @@ namespace Core
 
             for(int i=0; i < emc->rate; ++i)
             {
-                int k = prc->particlePointer;
+                int k = prc->m_particlePointer;
                 std::uniform_real_distribution<float> distributor(0.0f, 1.0f);
                 switch (emc->type)
                 {
@@ -88,16 +99,16 @@ namespace Core
                             + glm::vec3(emc->surface.directionOne[0], emc->surface.directionOne[1], emc->surface.directionOne[2]) * distributor(generator) 
                             + glm::vec3(emc->surface.directionTwo[0], emc->surface.directionTwo[1],emc->surface.directionTwo[2]) * distributor(generator);
 
-                        prc->particles[k].position[0] = position.x; 
-                        prc->particles[k].position[1] = position.y; 
-                        prc->particles[k].position[2] = position.z; 
+                        prc->m_particles[k].position[0] = position.x; 
+                        prc->m_particles[k].position[1] = position.y; 
+                        prc->m_particles[k].position[2] = position.z; 
 
                         glm::vec3 velocity = glm::vec3(emc->velocity[0], emc->velocity[1], emc->velocity[2]) 
                             + glm::vec3(emc->velocityVariance[0] * distributor(generator), emc->velocityVariance[1] * distributor(generator), emc->velocityVariance[2] * distributor(generator)); 
 
-                        prc->particleData[k].velocity[0] = velocity.x;
-                        prc->particleData[k].velocity[1] = velocity.y;
-                        prc->particleData[k].velocity[2] = velocity.z;
+                        prc->m_particleData[k].velocity[0] = velocity.x;
+                        prc->m_particleData[k].velocity[1] = velocity.y;
+                        prc->m_particleData[k].velocity[2] = velocity.z;
                         break;
                     }
 
@@ -126,51 +137,61 @@ namespace Core
                             + glm::vec3(emc->velocityVariance[0] * distributor(generator), emc->velocityVariance[1] * distributor(generator), emc->velocityVariance[2] * distributor(generator)); 
                         velocity = quatRotation * velocity * glm::conjugate(quatRotation);
 
-                        prc->particleData[k].velocity[0] = velocity.x;
-                        prc->particleData[k].velocity[1] = velocity.y;
-                        prc->particleData[k].velocity[2] = velocity.z;
+                        prc->m_particleData[k].velocity[0] = velocity.x;
+                        prc->m_particleData[k].velocity[1] = velocity.y;
+                        prc->m_particleData[k].velocity[2] = velocity.z;
 
                         glm::vec3 position = Core::WorldPositionComponent::GetVec3(*wpc) + glm::vec3(emc->offset[0], emc->offset[1], emc->offset[2]);
-                        prc->particles[k].position[0] = position.x;
-                        prc->particles[k].position[1] = position.y;
-                        prc->particles[k].position[2] = position.z;
+                        prc->m_particles[k].position[0] = position.x;
+                        prc->m_particles[k].position[1] = position.y;
+                        prc->m_particles[k].position[2] = position.z;
                         break;
                     }
                 }
 
-                prc->particleData[k].acceleration[0] = emc->acceleration[0];
-                prc->particleData[k].acceleration[1] = emc->acceleration[1];
-                prc->particleData[k].acceleration[2] = emc->acceleration[2];
+                prc->m_particleData[k].acceleration[0] = emc->acceleration[0];
+                prc->m_particleData[k].acceleration[1] = emc->acceleration[1];
+                prc->m_particleData[k].acceleration[2] = emc->acceleration[2];
                 
-                prc->particles[k].life = emc->life + distributor(generator) * emc->lifeVariance;
-                prc->particleData[k].lifeReduction = emc->lifeReduction + distributor(generator) * emc->lifeReductionVariance;                          
+                prc->m_particles[k].life = emc->life + distributor(generator) * emc->lifeVariance;
+                prc->m_particleData[k].lifeReduction = emc->lifeReduction + distributor(generator) * emc->lifeReductionVariance;                          
 
-                prc->particlePointer += 1;
-                if(prc->particlePointer >= prc->numberOfParticles)
+                prc->m_particlePointer += 1;
+                if(prc->m_particlePointer >= prc->m_numberOfParticles)
                 {
-                    prc->particlePointer = 0;
+                    prc->m_particlePointer = 0;
                 }
             }
         }
 
-        for(Core::ParticleContainer* prc = m_particleContainer; prc != nullptr; prc = prc->prev)
+        for(Core::ParticleContainer* prc = m_particleContainer; prc != nullptr; prc = prc->m_prev)
         {
-            for(int i=0; i < prc->numberOfParticles; ++i)
+            for(int i=0; i < prc->m_numberOfParticles; ++i)
             {
-                prc->particles[i].position[0] += ((prc->particleData[i].velocity[0] += (prc->particleData[i].acceleration[0] * delta)) * delta);
-                prc->particles[i].position[1] += ((prc->particleData[i].velocity[1] += (prc->particleData[i].acceleration[1] * delta)) * delta);
-                prc->particles[i].position[2] += ((prc->particleData[i].velocity[2] += (prc->particleData[i].acceleration[2] * delta)) * delta);
+                prc->m_particles[i].position[0] += ((prc->m_particleData[i].velocity[0] += (prc->m_particleData[i].acceleration[0] * delta)) * delta);
+                prc->m_particles[i].position[1] += ((prc->m_particleData[i].velocity[1] += (prc->m_particleData[i].acceleration[1] * delta)) * delta);
+                prc->m_particles[i].position[2] += ((prc->m_particleData[i].velocity[2] += (prc->m_particleData[i].acceleration[2] * delta)) * delta);
 
-                prc->particles[i].life -= (prc->particleData[i].lifeReduction * delta);
+                prc->m_particles[i].life -= (prc->m_particleData[i].lifeReduction * delta);
 
-                if(prc->particles[i].life < 0.0f)
+                if(prc->m_particles[i].life < 0.0f)
                 {
-                    prc->particles[i].life = 0.0f;
+                    prc->m_particles[i].life = 0.0f;
                 }
             }
         }
+        
+        for(Core::ParticleContainer* prc = m_particleContainer; prc != nullptr; prc = prc->m_prev)
+        {
+            GFX::Content::BufferParticleData(prc->particleBufferId, prc->particles);
+            GFXBitmask bitmask;
+            GFX::SetBitmaskValue(bitmask, GFX::BITMASK::TYPE, GFX::OBJECT_TYPE::PARTICLE_GEOMETRY);
+            GFX::SetBitmaskValue(bitmask, GFX::BITMASK::MESH_ID, prc->m_particleBufferId);
+            GFX::SetBitmaskValue(bitmask, GFX::BITMASK::MATERIAL_ID, prc->m_materialId);
+            GFX::SetBitmaskValue(bitmask, GFX::BITMASK::LAYER, GFX::LAYER_TYPES::MESH_LAYER);
 
-        //Buffer particles and render them
+            GFX::Draw(bitmask, nullptr);
+        }
     }
 
     void ParticleSystem::Reset()
@@ -180,17 +201,18 @@ namespace Core
         m_reseterCreated = false;
     }
 
-    ParticleHandle ParticleSystem::CreateParticle(int numberOfParticles, unsigned long long int materialId)
+    ParticleHandle ParticleSystem::CreateParticle(int numberOfParticles, unsigned long long int m_materialId)
     {
-        ParticleContainer* next = Core::world.m_levelHeap.NewPOD<Core::ParticleContainer>();
-        next->numberOfParticles = numberOfParticles;
-        next->particlePointer = 0;
-        next->materialId = materialId;
-        next->particles = Core::world.m_levelHeap.NewPODArray<GFX::Particle>(numberOfParticles);
-        memset(next->particles, 0, numberOfParticles * sizeof(GFX::Particle));
-        next->particleData = Core::world.m_levelHeap.NewPODArray<Core::ParticleData>(numberOfParticles);
-        memset(next->particleData, 0, numberOfParticles * sizeof(Core::ParticleData));
-        next->prev = m_particleContainer;
+        ParticleContainer* next = Core::world.m_levelHeap.NewObject<Core::ParticleContainer>();
+        next->m_numberOfParticles = m_numberOfParticles;
+        next->m_particlePointer = 0;
+        next->m_materialId = m_materialId;
+        next->m_particles = Core::world.m_levelHeap.NewPODArray<GFX::Particle>(numberOfParticles);
+        GFX::Content::CreateParticleBuffer(next->m_particleBufferId, next->m_numberOfParticles);
+        memset(next->m_particles, 0, numberOfParticles * sizeof(GFX::Particle));
+        next->m_particleData = Core::world.m_levelHeap.NewPODArray<Core::ParticleData>(numberOfParticles);
+        memset(next->m_particleData, 0, numberOfParticles * sizeof(Core::ParticleData));
+        next->m_prev = m_particleContainer;
 
         m_particleContainer = next;
 

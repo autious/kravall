@@ -25,7 +25,8 @@ namespace GFX
 	
 	namespace OBJECT_TYPES
 	{
-		static const unsigned int OPAQUE_GEOMETRY = 3;
+		static const unsigned int OPAQUE_GEOMETRY = 4;
+        static const unsigned int PARTICLE_GEOMETRY = 3;
 		static const unsigned int LIGHT = 2;
 		static const unsigned int TRANSPARENT_GEOMETRY = 1;
 		static const unsigned int OVERLAY_GEOMETRY = 0;
