@@ -76,6 +76,7 @@ namespace Core
 					data->orientation = glm::vec3(	RotationComponent::GetQuat(rc->rotation).x,
 													RotationComponent::GetQuat(rc->rotation).y,
 													RotationComponent::GetQuat(rc->rotation).z );
+
 					data->position = WorldPositionComponent::GetVec3(*wpc);
 					data->radius_length = sc->scale[0];
 
