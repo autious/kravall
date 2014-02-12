@@ -324,7 +324,6 @@ namespace GFX
 	} \
 }
 
-#include <Windows.h>
 	void RenderCore::Render(const double& delta)
 	{
 		if (m_playSplash)
@@ -386,33 +385,6 @@ namespace GFX
 		// Draw shadow map geometry
 		CT(m_shadowPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_viewMatrix, m_projMatrix, 0, renderJobIndex, m_shadowMapTexture, m_windowWidth, m_windowHeight), "Shadowmap");
 			
-#ifdef WIN32
-		// Draw frustum
-		if (GetAsyncKeyState(VK_F1))
-		{
-			for (int i = 0; i < ShadowDataContainer::numDirLights; i++)
-				m_debugLightFrustum = ShadowDataContainer::data[i].lightMatrix;
-			//m_debugCameraFrustum = m_projMatrix * m_viewMatrix;
-			m_debugCameraFrustum = glm::perspective<float>(45.0f, 1280.0f/720.0f, 25.0f, 150.0f) * m_viewMatrix;
-
-			// Fit debug light frustum to camera frustum
-			// Get points in view frustum
-			// 
-			m_debugFitFrustum = glm::ortho<float>(-10.0f, 10.0f, -10.0f, 10.0f, -10.0f, 10.0f) * glm::lookAt<float>(glm::vec3(10.0f, 10.0f, 10.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-
-		}
-		DebugDrawing().AddFrustum(m_debugLightFrustum, Colors::Blue, true);
-		DebugDrawing().AddFrustum(m_debugCameraFrustum, Colors::Red, true);
-		DebugDrawing().AddFrustum(m_debugFitFrustum, Colors::White, true);
-#endif
-
-		//for (int i = 0; i < ShadowDataContainer::numSpotLights; i++)
-		//{
-		//}
-		//for (int i = 0; i < ShadowDataContainer::numDirLights; i++)
-		//{
-		//}
-
 		// Do global illumination / ssao
 		CT(m_GIPainter->Render(delta, m_normalDepth, m_diffuse, m_viewMatrix, m_projMatrix), "GI");
 
