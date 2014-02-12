@@ -41,10 +41,6 @@ function KravallControl:new(o)
 
     o.eventGUI = EventListerGUI:new( {x=0,y=0, width=200, height=200, anchor="SouthWest"} )
 
-    o.eventGUI:addComponent( TextLabel:new( {label="Status: Cool", anchor="SouthEast"} ) )
-    o.eventGUI:addComponent( TextLabel:new( {label="Status: Cool", anchor="SouthEast"} ) )
-    o.eventGUI:addComponent( TextLabel:new( {label="Status: Cool", anchor="SouthEast"} ) )
-    o.eventGUI:addComponent( TextLabel:new( {label="Status: Cool", anchor="SouthEast"} ) )
     o.eventGUI:addPlacementHandler( EventLister )
 
     o.gui:addComponent( o.statusGUI )
@@ -55,7 +51,7 @@ function KravallControl:new(o)
 end
 
 function KravallControl:addEvent( component )
-
+    self.eventGUI:addComponent( component )
 end
 
 function KravallControl:init()
@@ -66,6 +62,21 @@ function KravallControl:update( delta )
     self.gui:update( delta )
     self.eventGUI:update( delta )
     self.statusGUI:update( delta )
+
+    self.count = self.count or 5
+    self.count = self.count + delta
+
+    if self.count > 1 then
+        self.ind = self.ind or 0
+        self.ind = self.ind + 1
+        
+        if self.ind % 2 == 1 then
+            self:addEvent(TextLabel:new( {label="Status: " .. self.ind} ))
+        else
+            self:addEvent(Button:new( {onClick=function() print( "JOEL" ) end }))
+        end
+        self.count = 0
+    end
 
     -- constrict each frame to give animation like results.
     self.eventGUI:constrict( delta )
