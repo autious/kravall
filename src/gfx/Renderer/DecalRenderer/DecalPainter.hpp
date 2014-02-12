@@ -62,8 +62,7 @@ namespace GFX
 		\param specular Rendertarget for specular
 		\param glowMatID Rendertarget for glow and materialID
 		*/
-		void BindGBuffer(FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID);
-
+		void BindGBuffer(FBOTexture* depthBuffer, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID);
 
 		RenderJobManager* m_renderJobManager;
 		MeshManager* m_meshManager;
@@ -73,6 +72,8 @@ namespace GFX
 		InstanceData* m_staticInstances;
 		const unsigned int MAX_INSTANCES = 1024;
 		GLuint m_instanceBuffer;
+
+	
 	};
 }
 

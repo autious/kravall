@@ -47,10 +47,7 @@ namespace Core
 				instanceData->outlineColor[2] = gc->outlineColor[2];
 				instanceData->outlineColor[3] = gc->outlineColor[3];
 
-				if (i % 2 == 0)
-					GFX::SetBitmaskValue(gc->bitmask, GFX::BITMASK::LAYER, GFX::LAYER_TYPES::DECAL_LAYER);
-				i++;
-
+				
                 if (ac != nullptr)
                 {
                     instanceData->animationIndex = ac->animationID;

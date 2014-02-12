@@ -17,11 +17,13 @@
 // causes no problems since there is only one instance of DeferredPainter anyway.
 extern "C"
 {
-	static GLuint m_uniformTexture0;
-	static GLuint m_normalDepthUniform;
-	static GLuint m_gammaUniform;
-
-	static GLuint m_modelMatrixUniform;
+	static GLint m_modelMatrixUniform;
+	static GLint m_invModelMatrixUniform;
+	static GLint m_decalSizeUniform;
+	static GLint m_diffuseTextureUniform;
+	static GLint m_normalDepthUniform;
+	static GLint m_gammaUniform;
+	static GLint m_invViewProjUniform;
 
 	static const unsigned int MAX_INSTANCES = 1024;
 	static GLuint m_instanceBuffer;
@@ -47,29 +49,44 @@ namespace GFX
 	void DecalPainter::Initialize(GLuint FBO, GLuint dummyVAO)
 	{
 		BasePainter::Initialize(FBO, dummyVAO);
+
+		m_shaderManager->CreateProgram("DecalShader");
+		m_shaderManager->LoadShader("shaders/decals/DecalsVS.glsl", "DecalsVS", GL_VERTEX_SHADER);
+		m_shaderManager->LoadShader("shaders/decals/DecalsFS.glsl", "DecalsFS", GL_FRAGMENT_SHADER);
+		m_shaderManager->AttachShader("DecalsVS", "DecalShader");
+		m_shaderManager->AttachShader("DecalsFS", "DecalShader");
+		m_shaderManager->LinkProgram("DecalShader");
+
+		m_modelMatrixUniform = m_shaderManager->GetUniformLocation("DecalShader", "modelMatrix");
+		m_decalSizeUniform = m_shaderManager->GetUniformLocation("DecalShader", "decalSize");
+
+		m_invModelMatrixUniform = m_shaderManager->GetUniformLocation("DecalShader", "invModelMatrix");
+		m_invViewProjUniform = m_shaderManager->GetUniformLocation("DecalShader", "invProjView");
+
+		m_diffuseTextureUniform = m_shaderManager->GetUniformLocation("DecalShader", "gDiffuse");
+		m_normalDepthUniform = m_shaderManager->GetUniformLocation("DecalShader", "gNormalDepth");
+		m_gammaUniform = m_shaderManager->GetUniformLocation("DecalShader", "gGamma");
+		
 	}
 
 	void DecalPainter::Render(AnimationManagerGFX* animationManager, unsigned int& renderIndex,
 		FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix, const float& gamma)
 	{
-		//BasePainter::Render();
-		/*
-		BindGBuffer(depthBuffer, normalDepth, diffuse, specular, glowMatID);
-		glEnable(GL_DEPTH_TEST);
+		BasePainter::Render();
+
+		BindGBuffer(depthBuffer, diffuse, specular, glowMatID);
+
+		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		// Clear depth RT
-		float c[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-		glClearBufferfv(GL_COLOR, 1, &glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)[0]);
+		m_shaderManager->UseProgram("DecalShader");
 
-		m_shaderManager->UseProgram("StaticNormal");
+		m_textureManager->BindTexture(normalDepth->GetTextureHandle(), m_normalDepthUniform, 0, GL_TEXTURE_2D);
+	
+		glm::mat4 invProjView = glm::inverse(projMatrix * viewMatrix);
+		m_shaderManager->SetUniform(1, invProjView, m_invViewProjUniform);
 
-		BasicCamera bc;
-		bc.viewMatrix = viewMatrix;
-		bc.projMatrix = projMatrix;
-
-		m_uniformBufferManager->SetBasicCameraUBO(bc);
+		m_shaderManager->SetUniform(gamma, m_gammaUniform);
 
 		std::vector<RenderJobManager::RenderJob> renderJobs = m_renderJobManager->GetJobs();
 
@@ -85,25 +102,29 @@ namespace GFX
 		unsigned int material = std::numeric_limits<decltype(material)>::max();
 		unsigned int depth = std::numeric_limits<decltype(depth)>::max();
 
-		GLenum error;
-
 		Material mat;
 		Mesh mesh;
 		GFXBitmask bitmask;
 
-		unsigned int i;
-		for (i = 0; i < renderJobs.size(); i++)
+		//Loop over all decals
+		//Set their texture, modelmatrix, inverse model matrix and decal size
+		//Render da cube
+
+		for (int i = 0; i < renderJobs.size(); i++)
 		{
 			bitmask = renderJobs[i].bitmask;
 
 			objType = GetBitmaskValue(bitmask, BITMASK::TYPE);
 
-			// Break if no opaque object
-			if (objType != GFX::OBJECT_TYPES::OPAQUE_GEOMETRY)
-			{
-				break;
-			}
+			//IF NOT DECAL
+			//CONTINUE
+			//if (objType != GFX::OBJECT_TYPES::DECAL)
+			//{
+			//	continue;
+			//}
 
+			
+			//GET ALL SHIT FROM BITMASK
 			viewport = GetBitmaskValue(bitmask, BITMASK::VIEWPORT_ID);
 			layer = GetBitmaskValue(bitmask, BITMASK::LAYER);
 			translucency = GetBitmaskValue(bitmask, BITMASK::TRANSLUCENCY_TYPE);
@@ -111,11 +132,15 @@ namespace GFX
 			material = GetBitmaskValue(bitmask, BITMASK::MATERIAL_ID);
 			depth = GetBitmaskValue(bitmask, BITMASK::DEPTH);
 
+			//TEMP SHITFACE
+			if (layer != GFX::LAYER_TYPES::DECAL_LAYER)
+			{
+				continue;
+			}
+
+
 			if (material != currentMaterial)
 			{
-				mat = m_materialManager->GetMaterial(material);
-
-				
 				currentMaterial = material;
 
 				//compare shader
@@ -126,7 +151,10 @@ namespace GFX
 				}
 
 				//set textures
-				m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[0]).textureHandle, m_uniformTexture0, 0, GL_TEXTURE_2D);
+				m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[0]).textureHandle, m_diffuseTextureUniform, 1, GL_TEXTURE_2D);
+				//m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[1]).textureHandle, m_uniformTexture1, 2, GL_TEXTURE_2D);
+				//m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[2]).textureHandle, m_uniformTexture2, 3, GL_TEXTURE_2D);
+				//m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[3]).textureHandle, m_uniformTexture3, 4, GL_TEXTURE_2D);
 			}
 
 			if (meshID != currentMesh)
@@ -137,18 +165,25 @@ namespace GFX
 				glBindVertexArray(mesh.VAO);
 			}
 
-			m_shaderManager->SetUniform(1, *(glm::mat4*)renderJobs.at(i).value, m_modelMatrixUniform);
+			InstanceData smid = *(InstanceData*)renderJobs.at(i).value;
 			
+			m_shaderManager->SetUniform(1, smid.modelMatrix, m_modelMatrixUniform);
+			m_shaderManager->SetUniform(1, glm::inverse(smid.modelMatrix), m_invModelMatrixUniform);
+			m_shaderManager->SetUniform(1, smid.outlineColor, m_decalSizeUniform);
+
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IBO);
-			//glDrawElements(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0);
+			glDrawElements(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0);
 		}
 
+		
+
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
 		m_shaderManager->ResetProgram();
-		*/
-		//ClearFBO();
+		ClearFBO();
 	}
 
-	void DecalPainter::BindGBuffer(FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID)
+	void DecalPainter::BindGBuffer(FBOTexture* depthBuffer, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID)
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 

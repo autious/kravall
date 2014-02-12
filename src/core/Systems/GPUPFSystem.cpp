@@ -28,7 +28,7 @@ namespace Core
 			
 			glGenBuffers(1, &m_inDataBuffer);
 			glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_inDataBuffer);
-			glBufferData(GL_SHADER_STORAGE_BUFFER, MAXIMUM_ENTITIES * sizeof(DataIN), NULL, GL_STREAM_COPY);
+			glBufferData(GL_SHADER_STORAGE_BUFFER, MAXIMUM_ENTITIES * sizeof(DataIN), NULL, GL_STATIC_COPY);
 			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_inDataBuffer);
 			glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 			
