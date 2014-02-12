@@ -144,6 +144,8 @@ void run( GLFWwindow * window )
 
     Core::world.m_luaState.Init();
 
+	Core::world.threadHandler.Initialize( CONF.GetInt( "numberOfSystemCoresToUse", 1 ) );
+
 	//inputline.resize(1);
 	Core::HighresTimer timer;
 	long long lastFrameTime = timer.GetTotal();

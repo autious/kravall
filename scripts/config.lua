@@ -26,5 +26,6 @@ toggleConsoleButton = core.input.keyboard.key.GRAVE_ACCENT,
 cameraScrollingSpeed = 0,
 consoleOutputLevel = "warning", -- debug, warning, error, fatal
 stickySelection = false,
-boxSelectionGraceDistance = 0.5
+boxSelectionGraceDistance = 0.5,
+numberOfSystemCoresToUse = 4
 }
