@@ -25,24 +25,44 @@ function KravallControl:new(o)
 
     o.gui = GUI:new()
      
-    o.statusGUI = GUI:new( {x=0,y=0, width=200, height=150, anchor="SouthEast"} )
-
+    ------------------
     local labelName = TextLabel:new( {label="Name: Greger"} )
     local labelMorale = TextLabel:new( {label="Morale: Bad"} )
     local labelHealth = TextLabel:new( {label="Health: Good"} )
     local labelStatus = TextLabel:new( {label="Status: Cool"} )
 
+    o.statusGUI = GUI:new( {x=0,y=0, width=200, height=150, anchor="SouthEast"} )
+    
     o.statusGUI:addComponent( labelName   )
     o.statusGUI:addComponent( labelMorale )
     o.statusGUI:addComponent( labelHealth )
     o.statusGUI:addComponent( labelStatus )
 
     o.statusGUI:addPlacementHandler( WestPlacer )
-
+    --------------
     o.eventGUI = EventListerGUI:new( {x=0,y=0, width=200, height=200, anchor="SouthWest"} )
 
     o.eventGUI:addPlacementHandler( EventLister )
+    ----------
+    o.stanceGUI = GUI:new{width=100,height=150,anchor="North"}
+    o.stanceGUI:addPlacementHandler(AnchorPlacer)
+    
+    o.abilitiesGUI = GUI:new{width=100,height=150,anchor="Center"}
+    o.abilitiesGUI:addPlacementHandler(AnchorPlacer)
 
+    o.formationGUI = GUI:new{width=100,height=150,anchor="South"}
+    o.formationGUI:addPlacementHandler(AnchorPlacer)
+
+
+    o.rightControlGUI = GUI:new{x=0,y=0, width=150,height=500, anchor="NorthEast"}
+    o.rightControlGUI:addPlacementHandler( AnchorPlacer )
+
+    o.rightControlGUI:addComponent( o.stanceGUI )
+    o.rightControlGUI:addComponent( o.abilitiesGUI )
+    o.rightControlGUI:addComponent( o.formationGUI )
+    -------
+
+    o.gui:addComponent( o.rightControlGUI )
     o.gui:addComponent( o.statusGUI )
     o.gui:addComponent( o.eventGUI )
     o.gui:addPlacementHandler( AnchorPlacer )
@@ -62,6 +82,10 @@ function KravallControl:update( delta )
     self.gui:update( delta )
     self.eventGUI:update( delta )
     self.statusGUI:update( delta )
+    self.stanceGUI:update(delta)
+    self.abilitiesGUI:update(delta )
+    self.formationGUI:update(delta )
+    self.rightControlGUI:update(delta )
 
     self.count = self.count or 5
     self.count = self.count + delta
