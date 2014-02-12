@@ -36,6 +36,7 @@ function GUI:addComponent( comp )
 end
 
 function GUI:addPlacementHandler( handler )
+    assert( handler ~= nil, "Given placer is nil" )
     self.placers[#(self.placers)+1] = handler
     self:constrict( )
 end
