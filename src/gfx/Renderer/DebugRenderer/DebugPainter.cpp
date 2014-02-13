@@ -110,24 +110,12 @@ namespace GFX
 			glClear(GL_COLOR_BUFFER_BIT);
 
 			//DetachTextures();
-			GLenum err = 0;
-			err = glGetError();
         
-            if( err )
-            {
-                LOG_ERROR << "Got GL error: " << err << std::endl;
-                err = 0;
-            }
 
 			glBindVertexArray(m_dummyVAO);
 			glDisable(GL_PROGRAM_POINT_SIZE);
 			glEnable(GL_BLEND);
-			err = glGetError();
             
-            if( err )
-            {
-                LOG_ERROR << "Got GL error: " << err << std::endl;
-            }
 
 			// Draw 3D
 			//Disable depth for debug
@@ -245,11 +233,8 @@ namespace GFX
 				DebugPoint dp = DebugDrawing().GetPoints()[i];
 
 				m_shaderManager->SetUniform(1, dp.color, m_pointColorUniform);
-				err = glGetError();
 				m_shaderManager->SetUniform(1, dp.position, m_pointPositionUniform);
-				err = glGetError();
 				m_shaderManager->SetUniform(dp.size, m_pointSizeUniform);
-				err = glGetError();
 
 				glPointSize(dp.size);
 				glDrawArrays(GL_POINTS, 0, 1);

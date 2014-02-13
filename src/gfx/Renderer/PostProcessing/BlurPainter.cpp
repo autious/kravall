@@ -71,7 +71,6 @@ namespace GFX
 
 	void BlurPainter::GaussianBlur(FBOTexture* texture)
 	{
-		GLenum err;
 		int texWidth = texture->GetWidth();
 		int texHeight = texture->GetHeight();
 		m_intermediateTexture->UpdateResolution(texWidth, texHeight);
@@ -86,7 +85,6 @@ namespace GFX
 		
 		TextureManager::BindTexture(texture->GetTextureHandle(), m_shaderManager->GetUniformLocation("GaussianBlurHorizontal", "gTexture"), 0, GL_TEXTURE_2D);
 		m_shaderManager->SetUniform((GLfloat)texWidth, (GLfloat)texHeight, m_shaderManager->GetUniformLocation("GaussianBlurHorizontal", "gScreenDimensions"));
-		err = glGetError();
 		
 		glBindVertexArray(m_dummyVAO);
 		glDrawArrays(GL_POINTS, 0, 1);

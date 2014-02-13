@@ -134,7 +134,7 @@ namespace GFX
 
 	void ShaderManager::UseProgram(std::string shaderProgramKey)
 	{
-		glGetError();
+		//glGetError();
 
 		GLuint shaderProgramID = m_shaderData->GetShaderProgram(shaderProgramKey);
 
@@ -147,10 +147,10 @@ namespace GFX
 			std::cout << ("ERROR: No shader-program with associated key does exist!");
 		}
 
-		if (glGetError() != GL_NO_ERROR)
-		{
-			std::cout << "ERROR: Could not use shaderProgram " + shaderProgramKey + "!\n";
-		}
+		//if (glGetError() != GL_NO_ERROR)
+		//{
+		//	std::cout << "ERROR: Could not use shaderProgram " + shaderProgramKey + "!\n";
+		//}
 	}
 
 	void ShaderManager::LinkProgram(std::string shaderProgramKey)
