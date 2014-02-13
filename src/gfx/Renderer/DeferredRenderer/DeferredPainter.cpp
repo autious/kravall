@@ -185,7 +185,6 @@ namespace GFX
 		unsigned int material = std::numeric_limits<decltype(material)>::max();
 		unsigned int depth = std::numeric_limits<decltype(depth)>::max();
 
-		GLenum error;
 
 		Material mat;
 		Mesh mesh;
@@ -248,8 +247,6 @@ namespace GFX
 					}
 
 					glDrawElementsInstanced(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0, instanceCount);
-
-					instanceCount = 0;
 
 					if (currentLayer == LAYER_TYPES::OUTLINE_LAYER)
 					{
@@ -327,7 +324,6 @@ namespace GFX
 					currentMesh = meshID;
 
 					glBindVertexArray(mesh.VAO);
-					error = glGetError();
 
 
 					if (mesh.skeletonID >= 0)

@@ -65,6 +65,10 @@ namespace GFX
 		BlurPainter* m_blurPainter;
 
 		GLuint m_matricesUniform;
+		
+		glm::mat4x4 m_dbgmat1;
+		glm::mat4x4 m_dbgmat2;
+		glm::mat4x4 m_dbgmat3;
 
 	};
 }

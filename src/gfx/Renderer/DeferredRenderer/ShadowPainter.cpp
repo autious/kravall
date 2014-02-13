@@ -5,7 +5,9 @@
 #include <glm/ext.hpp>
 #include <gfx/LightData.hpp>
 #include "../ShadowData.hpp"
+#include <algorithm>
 
+#include "../DebugRenderer/DebugManager.hpp"
 namespace GFX
 {
 	ShadowPainter::ShadowPainter(ShaderManager* shaderManager, UniformBufferManager* uniformBufferManager, RenderJobManager* renderJobManager, 
@@ -68,6 +70,55 @@ namespace GFX
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_instanceBuffer);
 		glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_INSTANCES * sizeof(InstanceData), NULL, GL_STREAM_COPY);
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_instanceBuffer);
+	}
+
+	glm::mat4x4 FitFrustum(const glm::mat4x4& camera, const glm::mat4x4& lightViewMat)
+	{
+		// Get view frustum corner points
+		glm::mat4x4 invViewProj = glm::inverse(camera);
+		glm::vec3 corners[8];
+		corners[0] = glm::vec3(-1.0f, -1.0f, 1.0f);
+		corners[1] = glm::vec3(-1.0f, -1.0f, -1.0f);
+		corners[2] = glm::vec3(-1.0f, 1.0f, 1.0f);
+		corners[3] = glm::vec3(-1.0f, 1.0f, -1.0f);
+		corners[4] = glm::vec3(1.0f, -1.0f, 1.0f);
+		corners[5] = glm::vec3(1.0f, -1.0f, -1.0f);
+		corners[6] = glm::vec3(1.0f, 1.0f, 1.0f);
+		corners[7] = glm::vec3(1.0f, 1.0f, -1.0f);
+		for (unsigned int i = 0; i < 8; i++)
+		{
+			glm::vec4 worldPos = invViewProj * glm::vec4(corners[i], 1.0f);
+			worldPos.x /= worldPos.w;
+			worldPos.y /= worldPos.w;
+			worldPos.z /= worldPos.w;
+			worldPos.w = 1.0f;
+			worldPos = lightViewMat * worldPos;
+
+			//eyePos = m_debugLightFrustum * eyePos;
+			//corners[i] = glm::vec3(eyePos);
+			// Convert view frustum corners to light space
+
+			corners[i] = glm::vec3(worldPos);
+		}
+
+		// Chack corners to finx min/max x/y
+		float minX = 1000000.0f, maxX = -1000000.0f;
+		float minY = 1000000.0f, maxY = -1000000.0f;
+		float minZ = 1000000.0f, maxZ = -1000000.0f;
+		for (unsigned int i = 0; i < 8; i++)
+		{
+			minX = std::min(minX, corners[i].x);
+			minY = std::min(minY, corners[i].y);
+			minZ = std::min(minZ, corners[i].z);
+
+			maxX = std::max(maxX, corners[i].x);
+			maxY = std::max(maxY, corners[i].y);
+			maxZ = std::max(maxZ, corners[i].z);
+		}
+		// Set ortho matrix to use the calculated corner points
+		return glm::ortho<float>(minX, maxX, minY, maxY, -200, -minZ);
+		//return glm::ortho<float>(minX, maxX, minY, maxY, -maxZ, -minZ);
+
 	}
 
 	void ShadowPainter::Render(AnimationManagerGFX* animationManager, const unsigned int& renderIndex, FBOTexture* depthBuffer, glm::mat4 viewMatrix, glm::mat4 projMatrix,
@@ -134,20 +185,31 @@ namespace GFX
 					lightData.orientation.x = 0.0001f;
 				}
 				// Create matrices for the lights
-				// TODO: Make light frustum fit the camera frustum
-				//bc.viewMatrix = viewMatrix;d
-				//bc.viewMatrix = glm::lookAt<float>(-lightData.orientation, lightData.orientation, glm::vec3(0.0f, 1.0f, 0.0f));
 				bc.viewMatrix = glm::lookAt<float>(-glm::normalize(lightData.orientation) * 50.0f, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 				//bc.projMatrix = projMatrix;
-				bc.projMatrix = glm::ortho<float>(-50.0f, 50.0f, -50.0f, 50.0f, -0.0f, 125.0f);
+				glm::mat4x4 dummyProjMat = glm::perspective<float>(45.0f, 1280.0f/720.0f, 5.0f, 125.0f);
+				bc.projMatrix = FitFrustum(dummyProjMat * viewMatrix, bc.viewMatrix);
 				//bc.projMatrix = glm::perspective<float>(45.0f, 1.0f, 20.0f, 100.0f);
 
 				// Add the data to the global array of shadow data for use in LightPainter
+				
 				ShadowData shadowData;
 				shadowData.lightMatrix = bc.projMatrix * bc.viewMatrix;
+				//shadowData.lightMatrix = bc.projMatrix * bc.viewMatrix;
 				shadowData.atlasCoords = glm::vec4(0.0f);
 				ShadowDataContainer::data[totalShadowcasters] = shadowData;
 				ShadowDataContainer::numDirLights++;
+
+
+				//if (GetAsyncKeyState(VK_F1))
+				//{
+				//	m_dbgmat1 = dummyProjMat * viewMatrix;
+				//	m_dbgmat2 = bc.projMatrix * bc.viewMatrix;
+				//	m_dbgmat3 = shadowData.lightMatrix;
+				//}
+				//DebugDrawing().AddFrustum(m_dbgmat1, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), true);
+				////DebugDrawing().AddFrustum(m_dbgmat2, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f), true);
+				//DebugDrawing().AddFrustum(m_dbgmat3, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), true);
 				
 			}
 			else if (lightType == GFX::LIGHT_TYPES::SPOT_SHADOW)
@@ -210,7 +272,6 @@ namespace GFX
 				// Bind mesh for drawing
 				Mesh mesh = m_meshManager->GetMesh(currentMesh);
 				glBindVertexArray(mesh.VAO);
-				GLenum error = glGetError();
 
 				if (mesh.skeletonID >= 0)
 				{
@@ -238,11 +299,12 @@ namespace GFX
 		}
 
 		m_shaderManager->ResetProgram();
-
+		
+		glBindRenderbuffer(GL_RENDERBUFFER, 0);
 		ClearFBO();
 
 		// Apply gaussain blur to the shadowmap
-		m_blurPainter->GaussianBlur(shadowMap);
+		//m_blurPainter->GaussianBlur(shadowMap);
 
 		glViewport(0, 0, width, height);
 		

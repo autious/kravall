@@ -11,7 +11,7 @@ return function(asm, dirX, dirY, dirZ, r, g, b, intens)
 							color = { r, g, b },
 							intensity = intens,
 							type = core.gfx.objectTypes.Light,
-							lighttype = core.gfx.lightTypes.Dir,
+							lighttype = core.gfx.lightTypes.DirShadow,
 							speccolor = { r, g, b }
 						},
 						ignoreHard = true
