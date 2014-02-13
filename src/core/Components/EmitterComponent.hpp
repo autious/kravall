@@ -1,9 +1,15 @@
 #ifndef CORE_COMPONENTS_EMITTER_COMPONENT_HPP
 #define CORE_COMPONENTS_EMITTER_COMPONENT_HPP
 
+
 namespace Core
 {
-    typedef void* ParticleHandle;
+    class ParticleContainer;
+}
+
+namespace Core
+{
+    typedef ParticleContainer* ParticleHandle;
 
     enum EmitterType
     {
@@ -13,20 +19,20 @@ namespace Core
 
     struct ConeEmitter
     {
-        float direction[3];
-        float angle;
-        float angleVariance;
+        float coneDirection[3];        
+        float coneAngle;
+        float coneAngleVariance;
     };
 
     struct SurfaceEmitter
     {
-        float directionOne[3];
-        float directionTwo[3];
+        float surfaceDirectionOne[3];
+        float surfaceDirectionTwo[3];
     };
 
     struct EmitterComponent
     {
-        float rate;
+        int rate;
         float offset[3]; 
         float life;
         float lifeVariance;

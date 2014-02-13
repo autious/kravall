@@ -19,6 +19,8 @@
 #define ATTRIBUTE_RIOTER_COMPONENT_META_TYPE "attribute_rioter_component_meta_type"
 #define LOG_META_TYPE "metatype_log"
 #define HOVER_TEXT_META_TYPE "metatype_hover_text"
+#define PARTICLE_DEFINITION_META_TYPE "particle_definition_meta_type"
+#define EMITTER_TYPE_META_TYPE "emitter_type_meta_type"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
@@ -34,6 +36,7 @@
 #include <ComponentFramework/SystemTypes.hpp>
 #include <Components/UnitTypeComponent.hpp>
 #include <Components/SquadComponent.hpp>
+#include <Components/EmitterComponent.hpp>
 #include <Camera/Camera.hpp>
 
 #include <logger/Logger.hpp>
@@ -60,6 +63,11 @@ struct LuaHoverText
     int hoverTextId;
 };
 
+struct LuaParticleDefinition
+{
+    Core::ParticleHandle handle;
+};
+
 inline glm::vec2* luau_checkglmvec2( lua_State* state, int pos ) { return static_cast<glm::vec2*>(luaL_checkudata( state, pos, GLMVEC2_META_TYPE )); }
 inline glm::vec3* luau_checkglmvec3( lua_State* state, int pos ) { return static_cast<glm::vec3*>(luaL_checkudata( state, pos, GLMVEC3_META_TYPE )); }
 inline glm::vec4* luau_checkglmvec4( lua_State* state, int pos ) { return static_cast<glm::vec4*>(luaL_checkudata( state, pos, GLMVEC4_META_TYPE )); }
@@ -74,6 +82,8 @@ inline Core::SquadFormation* luau_checksquadformation( lua_State * state, int po
 inline LuaLog* luau_checklog( lua_State * state, int pos ) { return static_cast<LuaLog*>(luaL_checkudata( state, pos, LOG_META_TYPE ) ); }
 inline LuaHoverText* luau_checkhovertext( lua_State * state, int pos ) { return static_cast<LuaHoverText*>(luaL_checkudata( state, pos, HOVER_TEXT_META_TYPE )); }
 inline Core::PoliceStance* luau_checkpolicestance( lua_State* state, int pos) { return static_cast<Core::PoliceStance*>(luaL_checkudata(state, pos, POLICE_STANCE_META_TYPE) ); }
+inline LuaParticleDefinition* luau_checkparticledefinition( lua_State* state, int pos) { return static_cast<LuaParticleDefinition*>(luaL_checkudata(state, pos, PARTICLE_DEFINITION_META_TYPE)); }
+inline Core::EmitterType* luau_checkemittertype( lua_State* state, int pos) { return static_cast<Core::EmitterType*>(luaL_checkudata(state, pos, EMITTER_TYPE_META_TYPE)); }
 
 namespace Core
 {
@@ -85,6 +95,9 @@ namespace Core
     Core::SquadFormation* LuaUNewSquadFormation( lua_State * L );
     Core::SquadFormation* LuaUNewSquadFormation(lua_State * L);
     Core::PoliceStance* LuaUNewPoliceStance(lua_State* L);
+
+    LuaParticleDefinition* LuaUNewParticleDefinition(lua_State* L);
+    Core::EmitterType* LuaUNewEmitterType(lua_State* L);
 
     uint64_t* LuaUNewBitmask( lua_State * L );
 

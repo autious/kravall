@@ -5,6 +5,9 @@
 #include <glm/gtc/quaternion.hpp>
 #include <cstring>
 
+#include <Particle/ParticleContainer.hpp>
+#include <Particle/ParticleData.hpp>
+
 #include <gfx/Particle.hpp>
 #include <gfx/GFXInterface.hpp>
 #include <gfx/BitmaskDefinitions.hpp>
@@ -26,35 +29,6 @@ namespace
 
     private:
         Core::ParticleSystem* m_particleSystem;
-    };
-}
-
-namespace Core
-{
-    struct ParticleData
-    {
-        float velocity[3];       
-        float acceleration[3];
-
-        float lifeReduction;
-    };
-
-    class ParticleContainer
-    {
-    public:
-        ~ParticleContainer()
-        {
-            GFX::Content::DeleteParticleBuffer(m_particleBufferId);        
-        }
-
-        int m_numberOfParticles;
-        int m_particlePointer;
-        unsigned int m_particleBufferId;
-        unsigned long long int m_materialId;
-
-        GFX::Particle* m_particles;
-        Core::ParticleData* m_particleData;
-        Core::ParticleContainer* m_prev;
     };
 }
 
@@ -96,8 +70,8 @@ namespace Core
                     case Core::EmitterType::SURFACE_EMITTER:
                     {
                         glm::vec3 position = Core::WorldPositionComponent::GetVec3(*wpc) + glm::vec3(emc->offset[0], emc->offset[1], emc->offset[2]) 
-                            + glm::vec3(emc->surface.directionOne[0], emc->surface.directionOne[1], emc->surface.directionOne[2]) * distributor(generator) 
-                            + glm::vec3(emc->surface.directionTwo[0], emc->surface.directionTwo[1],emc->surface.directionTwo[2]) * distributor(generator);
+                            + glm::vec3(emc->surface.surfaceDirectionOne[0], emc->surface.surfaceDirectionOne[1], emc->surface.surfaceDirectionOne[2]) * distributor(generator) 
+                            + glm::vec3(emc->surface.surfaceDirectionTwo[0], emc->surface.surfaceDirectionTwo[1],emc->surface.surfaceDirectionTwo[2]) * distributor(generator);
 
                         prc->m_particles[k].position[0] = position.x; 
                         prc->m_particles[k].position[1] = position.y; 
@@ -119,12 +93,12 @@ namespace Core
                         float sinVal = glm::sin(rotation);
                         glm::quat q_1 = glm::quat(cosVal, 0.0f, 0.0f, -sinVal); 
 
-                        rotation = glm::radians(emc->cone.angle + emc->cone.angleVariance * distributor(generator)) / 2.0f;
+                        rotation = glm::radians(emc->cone.coneAngle + emc->cone.coneAngleVariance * distributor(generator)) / 2.0f;
                         cosVal = glm::cos(rotation);
                         sinVal = glm::sin(rotation);
                         glm::quat q_2 = glm::quat(cosVal, sinVal, 0.0f, 0.0f);
 
-                        glm::vec3 target = glm::normalize(glm::vec3(emc->cone.direction[0], emc->cone.direction[1], emc->cone.direction[2]));
+                        glm::vec3 target = glm::normalize(glm::vec3(emc->cone.coneDirection[0], emc->cone.coneDirection[1], emc->cone.coneDirection[2]));
                         glm::vec3 axis = glm::cross(target, glm::vec3(0.0f, 0.0f, -1.0f));
                         rotation = glm::acos(glm::dot(target, axis)) / 2.0f;
                         cosVal = glm::cos(rotation);
@@ -216,6 +190,6 @@ namespace Core
 
         m_particleContainer = next;
 
-        return static_cast<ParticleHandle>(m_particleContainer);
+        return static_cast<ParticleHandle>(next);
     }
 }
