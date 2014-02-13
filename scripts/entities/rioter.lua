@@ -1,14 +1,8 @@
-return function(asm, posX, posY, posZ, group)
-	return asm:loadAssembly( 
-		{
-			{
-				type = core.componentType.GraphicsComponent,
-				data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1} },
-				load = { 
-							mesh = { core.loaders.GnomeLoader, "assets/model/animated/rioter/rioter-male_00.bgnome" },
-							material = { core.loaders.MaterialLoader, "assets/material/rioter_00.material" },
-					   }
-			},
+return function(asm, posX, posY, posZ, group, male)
+    male = male or (math.random(1,2) == 1)
+
+    local base = 
+       {
 			{
 				type = core.componentType.WorldPositionComponent,
 				data = { position = { posX, posY, posZ} }
@@ -19,7 +13,7 @@ return function(asm, posX, posY, posZ, group)
 			},
 			{
 				type = core.componentType.ScaleComponent,
-				data = { scale = 3.0 }
+				data = { scale = 1.0 }
 			},
 			{
 				type = core.componentType.UnitTypeComponent,
@@ -66,7 +60,29 @@ return function(asm, posX, posY, posZ, group)
 				type = core.componentType.FlowfieldComponent,
 				data = { node = -1 }
 			}
-			
-		}
-	)
+        }
+
+    if male then
+        base[#base+1] = 
+			{
+				type = core.componentType.GraphicsComponent,
+				data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1} },
+				load = { 
+							mesh = { core.loaders.GnomeLoader, "assets/model/animated/rioter/rioter-male_00.bgnome" },
+							material = { core.loaders.MaterialLoader, "assets/material/rioter_00.material" },
+					   }
+			}
+    else
+        base[#base+1] = 
+			{
+				type = core.componentType.GraphicsComponent,
+				data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1} },
+				load = { 
+							mesh = { core.loaders.GnomeLoader, "assets/model/animated/rioter/rioter-female_00.bgnome" },
+							material = { core.loaders.MaterialLoader, "assets/material/rioter_00.material" },
+					   }
+			}
+    end
+
+    return asm:loadAssembly( base )
 end
