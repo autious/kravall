@@ -11,11 +11,11 @@ extern "C"
 
 	static int LuaPushWeaponType(lua_State * L)
     {
-		float range						= luaL_checknumber( L,	1 );
-		float healthDmg					= luaL_checkint( L,		2 );
-		float moraleDmg					= luaL_checknumber( L,	3 );
-		float animationDmgDealingTime	= luaL_checknumber( L,	4 );
-		float animationID				= luaL_checkint( L,		5 );
+		float range						= static_cast<float>(luaL_checknumber( L, 1 ));
+		float healthDmg					= static_cast<float>(luaL_checknumber( L, 2 ));
+		float moraleDmg					= static_cast<float>(luaL_checknumber( L, 3 ));
+		float animationDmgDealingTime	= static_cast<float>(luaL_checknumber( L, 4 ));
+		int animationID					= luaL_checkint( L,	5 );
 
 		int weapon = Core::GameData::PushWeaponData( range, healthDmg, moraleDmg, animationDmgDealingTime, animationID );
         lua_pushnumber(L, weapon );

@@ -86,8 +86,8 @@ namespace Core
                 if(!navMesh->CheckPointInsideNavigationMesh(center))
                     return;
 
-                navMesh->GetClosestPointInsideMesh(start, center, goalNode, world.m_config.GetDouble("squadFormationRowSpacing", FORMATION_ROW_SPACING) / 2.0f);                
-                navMesh->GetClosestPointInsideMesh(end, center, goalNode, world.m_config.GetDouble("squadFormationRowSpacing", FORMATION_ROW_SPACING) / 2.0f);
+                navMesh->GetClosestPointInsideMesh(start, center, goalNode, (float)world.m_config.GetDouble("squadFormationRowSpacing", FORMATION_ROW_SPACING) / 2.0f);                
+                navMesh->GetClosestPointInsideMesh(end, center, goalNode, (float)world.m_config.GetDouble("squadFormationRowSpacing", FORMATION_ROW_SPACING) / 2.0f);
 
                 leftDistance = glm::distance(start, center);
                 rightDistance = glm::distance(end, center);

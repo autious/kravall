@@ -51,7 +51,7 @@ void Core::AttackAnimationSystem::Update(float delta)
 					if (distSqr < weapon.range * weapon.range )
 					{
 						Core::AttributeComponent* attribc = WGETC<Core::AttributeComponent>( tc->target );
-						attribc->health -= weapon.weaponDamage;
+						attribc->health -= (int)weapon.weaponDamage;
 						attribc->morale -= weapon.moraleDamage;
 					}
 				}

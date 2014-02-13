@@ -30,7 +30,7 @@ Core::ComponentSetters Core::FlowfieldComponentBinding::GetSetters()
         
         if( lua_isnumber(  L, valueindex ) )
         {
-            ffc->node = static_cast<float>(lua_tonumber( L, valueindex ));
+            ffc->node = static_cast<int>(lua_tonumber( L, valueindex ));
         }
         else
         {

@@ -42,7 +42,7 @@ extern "C"
                 lua_pushnil(L);
                 for(int i=0; lua_next(L, 1); ++i)
                 {
-                    squads[i] = luaL_checknumber(L, -1);
+                    squads[i] = static_cast<int>(luaL_checknumber(L, -1));
                     lua_pop(L, 1);
                 }                
 
@@ -86,7 +86,7 @@ extern "C"
                 lua_pushnil(L);
                 for(int i=0; lua_next(L, 1); ++i)
                 {
-                    squads[i] = luaL_checknumber(L, -1);
+                    squads[i] = static_cast<int>(luaL_checknumber(L, -1));
                     lua_pop(L, 1);
                 }
 
@@ -133,7 +133,7 @@ extern "C"
                 lua_pushnil(L);
                 for(int i=0; lua_next(L, 1); ++i)
                 {
-                    squads[i] = luaL_checknumber(L, -1);
+                    squads[i] = static_cast<int>(luaL_checknumber(L, -1));
                     lua_pop(L, 1);
                 }
 
@@ -181,7 +181,7 @@ extern "C"
                 lua_pushnil(L);
                 for(int i=0; lua_next(L, 1); ++i)
                 {
-                    squads[i] = luaL_checknumber(L, -1);
+                    squads[i] = static_cast<int>(luaL_checknumber(L, -1));
                     lua_pop(L, 1);
                 }
 
@@ -241,7 +241,7 @@ extern "C"
                 lua_pushnil(L);
                 for(int i=0; lua_next(L, 1); ++i)
                 {
-                    squads[i] = luaL_checknumber(L, -1);
+                    squads[i] = static_cast<int>(luaL_checknumber(L, -1));
                     lua_pop(L, 1);
                 }
 
@@ -286,7 +286,7 @@ extern "C"
                 lua_pushnil(L);
                 for(int i=0; lua_next(L, 1); ++i)
                 {
-                    squads[i] = luaL_checknumber(L, -1);
+                    squads[i] = static_cast<int>(luaL_checknumber(L, -1));
                     lua_pop(L, 1);
                 }
 

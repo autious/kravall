@@ -67,8 +67,8 @@ void Core::CollisionSystem2D::Update( float delta )
 	{
 		Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(*it);
 
-		cullingList[cullIndex].x = ( wpc->position[0] / gridNodeSize ) + (wpc->position[0] > 0 ?  0 : -1);
-		cullingList[cullIndex].z = ( wpc->position[2] / gridNodeSize ) + (wpc->position[2] > 0 ?  0 : -1);
+		cullingList[cullIndex].x = (int)(( wpc->position[0] / gridNodeSize ) + (wpc->position[0] > 0 ?  0 : -1));
+		cullingList[cullIndex].z = (int)(( wpc->position[2] / gridNodeSize ) + (wpc->position[2] > 0 ?  0 : -1));
 
 		cullingList[cullIndex].ent = *it;
 	}

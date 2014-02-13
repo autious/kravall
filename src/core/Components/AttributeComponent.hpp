@@ -120,8 +120,8 @@ namespace Core
 		\param rioterPressure The initial pressure for the rioter.
 		*/
 		AttributeComponent(const int& startHealth, const int& startStamina, const float& startMorale,
-			const RioterAlignment& rioterAlignment, const int& rioterGroupID, const int& rioterRage,
-			const int& rioterPressure, const RioterStance& rioterStance) : health(startHealth), stamina(startStamina),
+			const RioterAlignment& rioterAlignment, const int& rioterGroupID, const float& rioterRage,
+			const float& rioterPressure, const RioterStance& rioterStance) : health(startHealth), stamina(startStamina),
 			morale(startMorale)
 		{
 			rioter.alignment = rioterAlignment;

@@ -134,7 +134,7 @@ Core::ComponentSetters Core::TargetingComponentBinding::GetSetters()
 
 		if (lua_isnumber(L, valueindex))
 		{
-			mvc->isAttacking = static_cast<float>(lua_toboolean(L, valueindex));
+			mvc->isAttacking = static_cast<bool>(lua_toboolean(L, valueindex));
 		}
 		else
 		{
@@ -148,7 +148,7 @@ Core::ComponentSetters Core::TargetingComponentBinding::GetSetters()
 
 		if (lua_isnumber(L, valueindex))
 		{
-			mvc->hasAttacked = static_cast<float>(lua_toboolean(L, valueindex));
+			mvc->hasAttacked = static_cast<bool>(lua_toboolean(L, valueindex));
 		}
 		else
 		{
@@ -162,7 +162,7 @@ Core::ComponentSetters Core::TargetingComponentBinding::GetSetters()
 
 		if (lua_isnumber(L, valueindex))
 		{
-			mvc->weapon = static_cast<float>(lua_tonumber(L, valueindex));
+			mvc->weapon = static_cast<int>(lua_tonumber(L, valueindex));
 		}
 		else
 		{

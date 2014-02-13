@@ -32,7 +32,7 @@ Core::ThreadPool::~ThreadPool()
 	
 	m_condition.notify_all();
 
-	for( int i = 0; i < m_threads.size(); i++ )
+	for( unsigned int i = 0; i < m_threads.size(); i++ )
 		m_threads[i].join();
 }
 
@@ -78,7 +78,7 @@ void Core::ThreadPool::KillThreads()
 	
 	m_condition.notify_all();
 
-	for( int i = 0; i < m_threads.size(); i++ )
+	for( unsigned int i = 0; i < m_threads.size(); i++ )
 		m_threads[i].join();
 }
 

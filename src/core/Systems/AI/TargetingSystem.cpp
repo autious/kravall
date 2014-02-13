@@ -41,8 +41,6 @@ void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police, float del
 	Core::MovementComponent* mc = WGETC<Core::MovementComponent>(police);
 	const Core::WeaponData& weapon = Core::GameData::GetWeaponDataFromWeapon( tc->weapon );
 
-	Core::WorldPositionComponent* targetPos;
-
 	GFXColor colour = GFXColor(1.0f, 1.0f, 1.0f, 1.0f);	
 
 	if (tc->target != INVALID_ENTITY)
