@@ -10,7 +10,6 @@ namespace GFX
         GLuint VBO;
         GLuint VAO;
         unsigned int particleCount;
-        unsigned int id;
     };
 }
 

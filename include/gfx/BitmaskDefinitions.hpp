@@ -25,12 +25,20 @@ namespace GFX
 	
 	namespace OBJECT_TYPES
 	{
-		static const unsigned int OPAQUE_GEOMETRY = 3;
-        static const unsigned int PARTICLE_GEOMETRY = 4;
-		static const unsigned int LIGHT = 2;
+		static const unsigned int OPAQUE_GEOMETRY = 4;
+		static const unsigned int LIGHT = 3;
+        static const unsigned int PARTICLE_GEOMETRY = 2;
 		static const unsigned int TRANSPARENT_GEOMETRY = 1;
 		static const unsigned int OVERLAY_GEOMETRY = 0;
 	}
+
+    namespace TRANSLUCENCY_TYPES
+    {
+        static const unsigned int OPAQUE = 1;
+        static const unsigned int ADDITIVE = 2;
+        static const unsigned int SUBTRACTIVE = 3;
+        static const unsigned int MULTIPLICATIVE = 4;
+    }
 
 	namespace LIGHT_TYPES
 	{

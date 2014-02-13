@@ -183,7 +183,6 @@ namespace Core
         
         for(Core::ParticleContainer* prc = m_particleContainer; prc != nullptr; prc = prc->m_prev)
         {
-            /*
             GFX::Content::BufferParticleData(prc->m_particleBufferId, prc->m_particles);
             GFX::GFXBitmask bitmask;
             GFX::SetBitmaskValue(bitmask, GFX::BITMASK::TYPE, GFX::OBJECT_TYPES::PARTICLE_GEOMETRY);
@@ -192,7 +191,6 @@ namespace Core
             GFX::SetBitmaskValue(bitmask, GFX::BITMASK::LAYER, GFX::LAYER_TYPES::MESH_LAYER);
 
             GFX::Draw(bitmask, nullptr);
-            */
         }
     }
 

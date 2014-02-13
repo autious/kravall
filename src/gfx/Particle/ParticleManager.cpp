@@ -6,7 +6,6 @@ namespace GFX
 {
     ParticleManager::ParticleManager()
     {
-        m_idCounter = 0;
     }
 
     ParticleManager::~ParticleManager()
@@ -22,8 +21,6 @@ namespace GFX
     {
         GFX::ParticleData particleData;
         particleData.particleCount = particleCount;
-        particleData.id = static_cast<unsigned int>(m_idCounter++);
-        bufferId = particleData.id;
 
         glGenBuffers(1, &particleData.VBO);
         glBindBuffer(GL_ARRAY_BUFFER, particleData.VBO);
@@ -44,6 +41,7 @@ namespace GFX
         
         glBindVertexArray(0);
 
+        bufferId = particleData.VAO;
         m_particles.push_back(particleData);
     }
 
@@ -71,18 +69,13 @@ namespace GFX
         }
     }
 
-    void ParticleManager::BindParticle(unsigned int bufferId)
+    const GFX::ParticleData* ParticleManager::GetParticleData(unsigned int bufferId)
     {
         unsigned int index = FindParticle(bufferId);
-
         if(index != std::numeric_limits<decltype(index)>::max())
         {
-            glBindVertexArray(m_particles[index].VAO);    
+            return &m_particles[index];
         }
-    }
-
-    void ParticleManager::UnbindParticle()
-    {
-        glBindVertexArray(0);
+        return nullptr;
     }
 }

@@ -25,18 +25,16 @@ namespace GFX
 
         void BufferParticleData(unsigned int bufferId, GFX::Particle* data);
 
-        void BindParticle(unsigned int bufferId);
-        void UnbindParticle();
-            
+        const GFX::ParticleData* GetParticleData(unsigned int bufferId);            
+
     private:
         std::vector<GFX::ParticleData> m_particles;
-        unsigned long long int m_idCounter;
         
-        inline const unsigned int FindParticle(unsigned long long int id)
+        inline const unsigned int FindParticle(unsigned int id)
         {
             for(unsigned int i=0;i < m_particles.size(); ++i)
             {
-                if(m_particles[i].id == static_cast<unsigned int>(id))
+                if(m_particles[i].VAO == static_cast<unsigned int>(id))
                 {
                     return i;
                 }
