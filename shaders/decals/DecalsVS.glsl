@@ -21,7 +21,7 @@ out vec2 uvFS;
 void main()
 {
 	//Move position to clip space
-	posFS = gProjection * gView * modelMatrix * vec4(positionIN.xyz * decalSize, positionIN.w);
-
+	posFS = gProjection * gView * modelMatrix * vec4(positionIN.xyz * 1, positionIN.w);
+	uvFS = uvIN;
 	gl_Position = posFS;
 }

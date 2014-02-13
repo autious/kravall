@@ -57,6 +57,8 @@ namespace GFX
 		m_shaderManager->AttachShader("DecalsFS", "DecalShader");
 		m_shaderManager->LinkProgram("DecalShader");
 
+		m_shaderManager->UseProgram("DecalShader");
+
 		m_modelMatrixUniform = m_shaderManager->GetUniformLocation("DecalShader", "modelMatrix");
 		m_decalSizeUniform = m_shaderManager->GetUniformLocation("DecalShader", "decalSize");
 
@@ -66,6 +68,8 @@ namespace GFX
 		m_diffuseTextureUniform = m_shaderManager->GetUniformLocation("DecalShader", "gDiffuse");
 		m_normalDepthUniform = m_shaderManager->GetUniformLocation("DecalShader", "gNormalDepth");
 		m_gammaUniform = m_shaderManager->GetUniformLocation("DecalShader", "gGamma");
+
+		m_shaderManager->ResetProgram();
 		
 	}
 
@@ -76,8 +80,10 @@ namespace GFX
 
 		BindGBuffer(depthBuffer, diffuse, specular, glowMatID);
 
-		glDisable(GL_DEPTH_TEST);
-		glDisable(GL_BLEND);
+		glEnable(GL_DEPTH_TEST);
+		//glDepthMask(false);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		m_shaderManager->UseProgram("DecalShader");
 
@@ -118,10 +124,10 @@ namespace GFX
 
 			//IF NOT DECAL
 			//CONTINUE
-			//if (objType != GFX::OBJECT_TYPES::DECAL)
-			//{
-			//	continue;
-			//}
+			if (objType != GFX::OBJECT_TYPES::DECAL_GEOMETRY)
+			{
+				continue;
+			}
 
 			
 			//GET ALL SHIT FROM BITMASK
@@ -132,24 +138,10 @@ namespace GFX
 			material = GetBitmaskValue(bitmask, BITMASK::MATERIAL_ID);
 			depth = GetBitmaskValue(bitmask, BITMASK::DEPTH);
 
-			//TEMP SHITFACE
-			if (layer != GFX::LAYER_TYPES::DECAL_LAYER)
-			{
-				continue;
-			}
-
-
 			if (material != currentMaterial)
 			{
 				currentMaterial = material;
-
-				//compare shader
-				if (mat.shaderProgramID != currentShader)
-				{
-					glUseProgram(mat.shaderProgramID);
-					currentShader = mat.shaderProgramID;
-				}
-
+				mat = m_materialManager->GetMaterial(currentMaterial);
 				//set textures
 				m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[0]).textureHandle, m_diffuseTextureUniform, 1, GL_TEXTURE_2D);
 				//m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[1]).textureHandle, m_uniformTexture1, 2, GL_TEXTURE_2D);
@@ -169,16 +161,15 @@ namespace GFX
 			
 			m_shaderManager->SetUniform(1, smid.modelMatrix, m_modelMatrixUniform);
 			m_shaderManager->SetUniform(1, glm::inverse(smid.modelMatrix), m_invModelMatrixUniform);
-			m_shaderManager->SetUniform(1, smid.outlineColor, m_decalSizeUniform);
-
+			m_shaderManager->SetUniform(1, 1, 0.1, m_decalSizeUniform);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IBO);
 			glDrawElements(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0);
 		}
 
 		
-
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_BLEND);
+		//glDepthMask(true);
+		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_BLEND);
 		m_shaderManager->ResetProgram();
 		ClearFBO();
 	}
@@ -188,9 +179,9 @@ namespace GFX
 		glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depthBuffer->GetTextureHandle(), 0);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, diffuse->GetTextureHandle(), 0);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, specular->GetTextureHandle(), 0);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, glowMatID->GetTextureHandle(), 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, diffuse->GetTextureHandle(), 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, specular->GetTextureHandle(), 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, glowMatID->GetTextureHandle(), 0);
 
 		// define outputs
 		GLenum drawBuffers[] = { GL_NONE, GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
