@@ -16,7 +16,7 @@ local StanceGUI = require "gui/kravall_control/subgui/StanceGUI"
 local AbilityGUI = require "gui/kravall_control/subgui/AbilityGUI" 
 local FormationGUI = require "gui/kravall_control/subgui/FormationGUI"
 
-local KravallControl = { onFormationChange = function() core.log.error("No handler set for onFormationChange in KravallControl") end }
+local KravallControl = { onFormationSelect = function() core.log.error("No handler set for onFormationChange in KravallControl") end }
 
 function KravallControl:new(o)
     o = o or {}
@@ -47,7 +47,7 @@ function KravallControl:new(o)
     ----------
     o.stanceGUI = StanceGUI:new()
     o.abilitiesGUI = AbilityGUI:new()
-    o.formationGUI = FormationGUI:new( { onFormationChange = function(form) o.onFormationChange(form) end } )
+    o.formationGUI = FormationGUI:new( { onFormationSelect = function(form) o.onFormationSelect(form) end } )
 
     o.rightControlGUI = GUI:new{x=0,y=0, width=150,height=500, anchor="NorthEast"}
     o.rightControlGUI:addPlacementHandler( AnchorPlacer )
@@ -66,7 +66,7 @@ function KravallControl:new(o)
 end
 
 function KravallControl:setFormation( formation )
-    o.formationGUI:setFormation( formation )
+    self.formationGUI:setFormation( formation )
 end
 
 function KravallControl:addEvent( component )

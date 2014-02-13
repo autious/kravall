@@ -29,8 +29,17 @@ function T:new(o)
 end
 
 function T:init()
-    self.gui = KravallControl:new()
-    self.policeHandler = PoliceSquadHandler:new()
+
+    local function onFormationSelect(formation )
+        self.policeHandler:setFormation( formation )
+    end
+
+    self.gui = KravallControl:new( {onFormationSelect = onFormationSelect} )
+
+    local function onFormationChange(formation)
+        self.gui:setFormation( formation ) 
+    end 
+    self.policeHandler = PoliceSquadHandler:new( {onFormationChange = onFormationChange} )
 end
 
 function T:update( delta )

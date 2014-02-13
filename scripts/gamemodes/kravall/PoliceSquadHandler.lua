@@ -4,6 +4,8 @@ local keyboard = core.input.keyboard
 local mouse = core.input.mouse
 local s_squad = core.system.squad
 
+local input = require "input"
+
 function PoliceSquadHandler:new(o)
     o = o or {}
     setmetatable( o, self )
@@ -13,20 +15,44 @@ function PoliceSquadHandler:new(o)
     o.previousGroupSelectedByBox = {}
     o.selectedSquads = {}
 
+    input.registerOnButton( function( button, action, mods, consumed )
+        if action == core.input.action.Press then
+            --Only allow press if UI element hasn't been pressed
+            if not consumed then
+                if button == mouse.button.Left then
+                    o.leftPressed = true   
+                    o.leftClicked = true
+                elseif button == mouse.button.Right then
+                    o.rightPressed = true
+                    o.rightClicked = true
+                end
+            end
+        elseif action == core.input.action.Release then
+            if button == mouse.button.Left then
+                o.leftPressed = false
+            elseif button == mouse.button.Right then
+                o.rightPressed = false
+            end
+        end
+    end, "GAME")
+
     return o
-end
-
-function PoliceSquadHandler:setFormation( formation )
-
 end
 
 function PoliceSquadHandler:DeselectAllSquads()
     s_squad.disableOutline(self.selectedSquads)    
-    selectedSquads = {}
+    self.selectedSquads = {}
+end
+
+function PoliceSquadHandler:getFormation( )
+    return 
 end
 
 function PoliceSquadHandler:setFormation( formation )
+   
+    assert( type(formation) == "userdata" )
     local doEvent = (self.selectedFormation ~= formation)
+
     self.selectedFormation = formation
 
     if doEvent and self.onFormationChange then
@@ -36,7 +62,7 @@ end
 
 function PoliceSquadHandler:update( delta )
     --Formations
-    if mouse.isButtonDownOnce(mouse.button.Left) then        
+    if self.leftClicked then        
 		self.boxStartX, self.boxStartY = mouse.getPosition()
         selectedEntity = core.system.picking.getLastHitEntity()
         if selectedEntity then
@@ -82,7 +108,7 @@ function PoliceSquadHandler:update( delta )
             self.isClick = false
         end
 
-	elseif mouse.isButtonDown(mouse.button.Left) then
+	elseif self.leftPressed then
 		self.boxEndX, self.boxEndY = mouse.getPosition()
 		self.groupsSelectedByBox = core.system.picking.getPoliceGroupsInsideBox( self.boxStartX, self.boxStartY, self.boxEndX, self.boxEndY, core.config.boxSelectionGraceDistance )
         
@@ -151,7 +177,7 @@ function PoliceSquadHandler:update( delta )
     end
 	
 	-- box select
-	if self.boxStartX and self.boxStartY and self.boxEndX and self.boxEndY and mouse.isButtonUp(mouse.button.Left) then
+	if self.boxStartX and self.boxStartY and self.boxEndX and self.boxEndY and not self.leftPressed then
 		if self.boxStartX ~= self.boxEndX and self.boxStartY ~= self.boxEndY then
 			if not keyboard.isKeyDown(keyboard.key.Left_shift) then
 				self:DeselectAllSquads()
@@ -191,6 +217,9 @@ function PoliceSquadHandler:update( delta )
     if self.selectedSquads and #(self.selectedSquads) >= 1 then
         s_squad.enableOutline(self.selectedSquads, 0.1, 0.9, 0.3, 1.0)
     end
+
+    self.leftClicked = false
+    self.rightClicked = false
 end
 
 return PoliceSquadHandler
