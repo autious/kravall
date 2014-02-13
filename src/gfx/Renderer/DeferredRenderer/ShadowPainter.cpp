@@ -120,7 +120,7 @@ namespace GFX
 		//return glm::ortho<float>(minX, maxX, minY, maxY, -maxZ, -minZ);
 
 	}
-#include <Windows.h>
+
 	void ShadowPainter::Render(AnimationManagerGFX* animationManager, const unsigned int& renderIndex, FBOTexture* depthBuffer, glm::mat4 viewMatrix, glm::mat4 projMatrix,
 			const unsigned int& geometryStartIndex, const unsigned int& geometryEndIndex, FBOTexture* shadowMap, const unsigned int& width, const unsigned int& height)
 	{
@@ -201,16 +201,15 @@ namespace GFX
 				ShadowDataContainer::numDirLights++;
 
 
-				if (GetAsyncKeyState(VK_F1))
-				{
-					m_dbgmat1 = dummyProjMat * viewMatrix;
-					m_dbgmat2 = bc.projMatrix * bc.viewMatrix;
-					m_dbgmat3 = shadowData.lightMatrix;
-				}
-
-				DebugDrawing().AddFrustum(m_dbgmat1, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), true);
-				//DebugDrawing().AddFrustum(m_dbgmat2, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f), true);
-				DebugDrawing().AddFrustum(m_dbgmat3, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), true);
+				//if (GetAsyncKeyState(VK_F1))
+				//{
+				//	m_dbgmat1 = dummyProjMat * viewMatrix;
+				//	m_dbgmat2 = bc.projMatrix * bc.viewMatrix;
+				//	m_dbgmat3 = shadowData.lightMatrix;
+				//}
+				//DebugDrawing().AddFrustum(m_dbgmat1, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), true);
+				////DebugDrawing().AddFrustum(m_dbgmat2, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f), true);
+				//DebugDrawing().AddFrustum(m_dbgmat3, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), true);
 				
 			}
 			else if (lightType == GFX::LIGHT_TYPES::SPOT_SHADOW)
@@ -300,7 +299,8 @@ namespace GFX
 		}
 
 		m_shaderManager->ResetProgram();
-
+		
+		glBindRenderbuffer(GL_RENDERBUFFER, 0);
 		ClearFBO();
 
 		// Apply gaussain blur to the shadowmap
