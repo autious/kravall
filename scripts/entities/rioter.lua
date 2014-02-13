@@ -19,7 +19,7 @@ return function(asm, posX, posY, posZ, group)
 			},
 			{
 				type = core.componentType.ScaleComponent,
-				data = { scale = 3.0 }
+				data = { scale = 1.0 }
 			},
 			{
 				type = core.componentType.UnitTypeComponent,
