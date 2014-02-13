@@ -1,5 +1,8 @@
-return function(asm, posX, posY, posZ, group, male)
-    male = male or (math.random(1,2) == 1)
+return function(asm, posX, posY, posZ, group, gender, material)
+    local meshes = {"assets/model/animated/rioter/rioter-male_00.bgnome","assets/model/animated/rioter/rioter-female_00.bgnome" }
+    local materials = {"assets/texture/animated/rioter/rioter_00.material","assets/texture/animated/rioter/rioter_01.material","assets/texture/animated/rioter/rioter_02.material" }
+    gender = gender or (math.random(1,#meshes))
+    material = material or (math.random(1,#materials))
 
     local base = 
        {
@@ -62,27 +65,16 @@ return function(asm, posX, posY, posZ, group, male)
 			}
         }
 
-    if male then
+
         base[#base+1] = 
 			{
 				type = core.componentType.GraphicsComponent,
 				data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1} },
 				load = { 
-							mesh = { core.loaders.GnomeLoader, "assets/model/animated/rioter/rioter-male_00.bgnome" },
-							material = { core.loaders.MaterialLoader, "assets/material/rioter_00.material" },
+							mesh = { core.loaders.GnomeLoader, meshes[gender] },
+							material = { core.loaders.MaterialLoader, materials[material]  },
 					   }
 			}
-    else
-        base[#base+1] = 
-			{
-				type = core.componentType.GraphicsComponent,
-				data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1} },
-				load = { 
-							mesh = { core.loaders.GnomeLoader, "assets/model/animated/rioter/rioter-female_00.bgnome" },
-							material = { core.loaders.MaterialLoader, "assets/material/rioter_00.material" },
-					   }
-			}
-    end
 
     return asm:loadAssembly( base )
 end
