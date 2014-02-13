@@ -1,4 +1,4 @@
-local PoliceSquadHandler = {}
+local PoliceSquadHandler = { onFormationChange = function() core.log.error( "No function set for onFormationChange in PoliceSquadHandler") end  }
 
 local keyboard = core.input.keyboard
 local mouse = core.input.mouse
@@ -23,6 +23,15 @@ end
 function PoliceSquadHandler:DeselectAllSquads()
     s_squad.disableOutline(self.selectedSquads)    
     selectedSquads = {}
+end
+
+function PoliceSquadHandler:setFormation( formation )
+    local doEvent = (self.selectedFormation ~= formation)
+    self.selectedFormation = formation
+
+    if doEvent and self.onFormationChange then
+        self.onFormationChange( formation ) 
+    end
 end
 
 function PoliceSquadHandler:update( delta )
@@ -51,17 +60,17 @@ function PoliceSquadHandler:update( delta )
                         if not found then
                             self.selectedSquads[#(self.selectedSquads)+1] = attributeComponent.squadID
                             if #(self.selectedSquads) == 1 then                                
-                                self.selectedFormation = squadComponent.squadFormation
+                                self:setFormation( squadComponent.squadFormation )
                             end
                         end
                     else
                         self:DeselectAllSquads()
                         self.selectedSquads[#(self.selectedSquads)+1] = attributeComponent.squadID
-                        self.selectedFormation = squadComponent.squadFormation
+                        self:setFormation( squadComponent.squadFormation )
                     end
 
                     if squadComponent.squadFormation ~= self.selectedFormation then
-                        self.selectedFormation = s_squad.formations.NoFormation
+                        self:setFormation( s_squad.formations.NoFormation )
                     end
                 end
             end
@@ -119,11 +128,11 @@ function PoliceSquadHandler:update( delta )
 
     --Formation selectiong
     if keyboard.isKeyDown(keyboard.key.H) then
-        self.selectedFormation = s_squad.formations.HalfCircleFormation
+        self:setFormation( s_squad.formations.HalfCircleFormation )
     elseif keyboard.isKeyDown(keyboard.key.C) then
-        self.selectedFormation = s_squad.formations.CircleFormation
+        self:setFormation( s_squad.formations.CircleFormation )
     elseif keyboard.isKeyDown(keyboard.key.L) then
-        self.selectedFormation = s_squad.formations.LineFormation
+        self:setFormation( s_squad.formations.LineFormation)
     end
 
     --Stances
@@ -163,11 +172,11 @@ function PoliceSquadHandler:update( delta )
 
 						self.selectedSquads[#(self.selectedSquads)+1] = self.groupsSelectedByBox[p]
                         if #(self.selectedSquads) == 1 then
-                            self.selectedFormation = squadComponent.squadFormation
+                            self:setFormation( squadComponent.squadFormation )
                         end
 
                         if self.selectedFormation ~= squadComponent.squadFormation then
-                            self.selectedFormation = s_squad.formations.NoFormation
+                            self:setFormation(s_squad.formations.NoFormation)
                         end
 					end			
 				end
