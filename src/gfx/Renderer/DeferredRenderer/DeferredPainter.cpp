@@ -247,8 +247,6 @@ namespace GFX
 
 					glDrawElementsInstanced(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0, instanceCount);
 
-					instanceCount = 0;
-
 					if (currentLayer == LAYER_TYPES::OUTLINE_LAYER)
 					{
 						glDisable(GL_DEPTH_TEST);
