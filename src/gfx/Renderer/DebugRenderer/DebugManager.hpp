@@ -63,6 +63,7 @@ namespace GFX
 		void AddBox(DebugBox box, bool filled);
 		void AddSphere(DebugSphere sphere);
 		void AddCircle(DebugRect circle);
+		void AddFrustum(glm::mat4x4 frustum, glm::vec4 color, bool useDepth);
 
 		inline std::vector<DebugPoint>& GetPoints(){ return m_points; }
 		inline std::vector<DebugLine>& GetLines(){ return m_lines; }

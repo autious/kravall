@@ -343,6 +343,14 @@ namespace GFX
 		\param color Color of the circle
 		*/
 		DLL_API void DrawCircle(GFXVec2 position, float radius, unsigned int lineWidth, GFXColor color);
+		
+		/*!
+		Draws a frustum
+		\param cameraMatrix The matrix representing the frustum to draw
+		\param color The color to draw the frustum
+		\param useDepth If true, the depth buffer is used to occlude if behind an object, else draws on top of existing geometry regardless of depth
+		*/
+		DLL_API void DrawFrustum(GFXMat4x4 cameraMatrix, GFXColor color, bool useDepth);
 
 
         /*!
@@ -367,103 +375,24 @@ namespace GFX
 
 	namespace Settings
 	{
-		enum GFXAAMode
-		{
-			AA_2X = 0,
-			AA_4X,
-			AA_8X,
-			AA_16X,
-			AA_DISABLED
-		};
-
-		enum GFXSSAOMode
-		{
-			SSAO_LOW = 0,
-			SSAO_MED,
-			SSAO_HIGH,
-			SSAO_HBAO,
-			SSAO_DISABLED
-		};
-
-		enum GFXShadowQuality
-		{
-			SHADOWS_LOW = 0,
-			SHADOWS_MED,
-			SHADOWS_HIGH,
-			SHADOWS_DISABLED
-		};
-
-		enum GFXTextureQuality
-		{
-			TEXTURES_LOW = 0,
-			TEXTURES_MED,
-			TEXTURES_HIGH
-		}; 
-		
-		enum GFXParticleDensity
-		{
-			PARTICLES_LOW = 0,
-			PARTICLES_MED,
-			PARTICLES_HIGH,
-			PARTICLES_VERY_HIGH,
-			PARTICLES_EXTREME,
-			PARTICLES_DISABLED
-		};
-
-		/*!
-		Sets antialiasing.
-		\param mode Anti-Aliasing mode to use.
-		*/
-		DLL_API void SetAntiAliasing(GFXAAMode mode);
-
-		/*!
-		Enables or disables anisotropic filtering.
-		\param enabled If true, anisotropic is set to ON, else anisotropic filtering is disabled
-		*/
-		DLL_API void SetAnisotropic(bool enabled);
-
-		/*!
-		Sets SSAO mode.
-		\param mode SSAO mode to use
-		*/
-		DLL_API void SetSSAO(GFXSSAOMode mode);
-
-		/*!
-		Sets the shadowmapping quality.
-		\param quality The quality of shadow maps
-		*/
-		DLL_API void SetShadowQuality(GFXShadowQuality quality);
-
-		/*!
-		Sets texture quality. Lower quality should only use lower mip levels of textures.
-		\param quality The texture quality to be used
-		*/
-		DLL_API void SetTextureQuality(GFXTextureQuality quality);
-
-		/*!
-		Sets the density of particles.
-		\param density Density to use when particles are rendered
-		*/
-		DLL_API void SetParticleDensity(GFXParticleDensity density);
-
-		/*!
-		Enables or disables High Dynamic Range shading. 
-		\param enabled If true, HDR is set to ON, else HDR is disabled
-		*/
-		DLL_API void SetHDR(bool enabled);
-
-		/*!
-		Enables or disables Depth of Field shading. 
-		\param enabled If true, Depth of Field will be enabled, else Depth of Field is disabled
-		*/
-		DLL_API void SetDoF(bool enabled);
-
 		/*!
 		Sets gamma
 		\param gamma
 		*/
 		DLL_API void SetGamma(float gamma);
+		
 
+		/*!
+		Sets a setting to the specified value
+		\return Returns either GFX_SUCCESS or GFX_FAIL
+		*/
+		int SetConfiguration(const int setting, const int value);
+
+		/*!
+		Gets the value of a setting
+		\return Returns either GFX_SUCCESS or GFX_FAIL
+		*/
+		int GetConfiguration(const int setting, int& out_value);
 
 
 		/*!
