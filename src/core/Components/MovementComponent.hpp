@@ -53,6 +53,9 @@ namespace Core
 		/*! The object's desired speed. The speed will attempt to reach this speed. */
 		float desiredSpeed;
 
+		/*! The position from the previos frame. Used to calculate perceived speed. */
+		float prevPos[3];
+
 		/*! 
 			Should NEVER be set directly - use the static function SetDirection instead. An array specifying the 
 			object's direction of movement where index 0 = x, index 1 = y and index 2 = z. 
@@ -97,6 +100,10 @@ namespace Core
 			goal[2] = 0.0f;
 
 			NavMeshGoalNodeIndex = -1;
+
+			prevPos[0] = std::numeric_limits<float>::max();
+			prevPos[1] = 0.0f;
+			prevPos[2] = 0.0f;
 
 			state = MovementState::Movement_Walking;
 		}

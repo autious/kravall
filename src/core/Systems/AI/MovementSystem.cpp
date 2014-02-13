@@ -62,7 +62,6 @@ void Core::MovementSystem::Update(float delta)
 									   wpc->position[1] + mc->direction[1],
 									   wpc->position[2] + mc->direction[2]),
 							 GFXColor(1.0f, 0.0f, 0.0f, 1.0f), false);*/
-
 	}
 }
 

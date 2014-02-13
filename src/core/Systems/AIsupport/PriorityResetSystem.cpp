@@ -7,17 +7,18 @@
 
 
 Core::PriorityResetSystem::PriorityResetSystem() : 
-BaseSystem( EntityHandler::GenerateAspect<MovementComponent>(), 0ULL)
+BaseSystem( {{EntityHandler::GenerateAspect<MovementComponent>()}}, 0ULL)
 {
 }
 
 void Core::PriorityResetSystem::Update(float delta)
 {
 	// reset goal-priority values...
-	for (std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); it++)
+	for (std::vector<Entity>::iterator it = m_bags[0].m_entities.begin(); it != m_entities.end(); it++)
 	{
 		Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>(*it);
 		mvmc->currentGoalPriority = Core::MovementGoalPriority::NoGoalPriority;
 		mvmc->currentDesiredSpeedPriority = Core::DesiredSpeedSetPriority::NoDesiredSpeedPriority;
 	}
+
 }
