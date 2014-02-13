@@ -15,6 +15,7 @@ local EventListerGUI = require "gui/kravall_control/EventListerGUI"
 local StanceGUI = require "gui/kravall_control/subgui/StanceGUI"
 local AbilityGUI = require "gui/kravall_control/subgui/AbilityGUI" 
 local FormationGUI = require "gui/kravall_control/subgui/FormationGUI"
+local UnitStatGUI = require "gui/kravall_control/subgui/UnitStatGUI"
 
 local KravallControl = { onFormationSelect = function() core.log.error("No handler set for onFormationChange in KravallControl") end }
 
@@ -29,19 +30,7 @@ function KravallControl:new(o)
     o.gui = GUI:new()
      
     ------------------
-    local labelName = TextLabel:new( {label="Name: Greger"} )
-    local labelMorale = TextLabel:new( {label="Morale: Bad"} )
-    local labelHealth = TextLabel:new( {label="Health: Good"} )
-    local labelStatus = TextLabel:new( {label="Status: Cool"} )
-
-    o.statusGUI = GUI:new( {x=0,y=0, width=200, height=150, anchor="SouthEast"} )
-    
-    o.statusGUI:addComponent( labelName   )
-    o.statusGUI:addComponent( labelMorale )
-    o.statusGUI:addComponent( labelHealth )
-    o.statusGUI:addComponent( labelStatus )
-
-    o.statusGUI:addPlacementHandler( WestPlacer )
+    o.statusGUI = UnitStatGUI:new( {} )
     --------------
     o.eventGUI = EventListerGUI:new( {x=0,y=0, width=200, height=200, anchor="SouthWest"} )
     ----------

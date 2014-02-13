@@ -15,7 +15,6 @@ core.movementData.setMovementMetaData( core.movementData.Idle, 0, 17, 17 )
 core.movementData.setMovementMetaData( core.movementData.Walking, 5.8, 17, 17 )
 core.movementData.setMovementMetaData( core.movementData.Sprinting, 8.8, 17, 14 )
 
-
 function T:new(o)
     o = o or {}
 
@@ -29,7 +28,6 @@ function T:new(o)
 end
 
 function T:init()
-
     local function onFormationSelect(formation )
         self.policeHandler:setFormation( formation )
     end
