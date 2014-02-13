@@ -5,11 +5,18 @@ local Checkbox = require "gui/component/Checkbox"
 local TextSelectList = require "gui/component/TextSelectList"
 local TextLabel = require "gui/component/TextLabel"
 local TextBox = require "gui/component/TextBox"
+
 local AnchorPlacer = require "gui/placement/AnchorPlacer"
+local EastPlacer = require "gui/placement/EastPlacer"
+local NorthPlacer = require "gui/placement/NorthPlacer"
+local WestPlacer = require "gui/placement/WestPlacer"
 
-local EventLister = require "gui/kravall_control/EventLister"
+local EventListerGUI = require "gui/kravall_control/EventListerGUI"
+local StanceGUI = require "gui/kravall_control/subgui/StanceGUI"
+local AbilityGUI = require "gui/kravall_control/subgui/AbilityGUI" 
+local FormationGUI = require "gui/kravall_control/subgui/FormationGUI"
 
-local KravallControl = {}
+local KravallControl = { onFormationSelect = function() core.log.error("No handler set for onFormationChange in KravallControl") end }
 
 function KravallControl:new(o)
     o = o or {}
@@ -20,35 +27,82 @@ function KravallControl:new(o)
     self.__index = self
 
     o.gui = GUI:new()
-    
-    o.eventLister = EventLister:new({anchor = "NorthEast"})
      
-    o.gui:addComponent( o.eventLister )
-    local statusGUI = GUI:new( {x=0,y=0, width=200, height=200, anchor="SouthEast"} )
-    statusGUI:addComponent( o.eventLister )
-    statusGUI:addPlacementHandler( AnchorPlacer:new() )
+    ------------------
+    local labelName = TextLabel:new( {label="Name: Greger"} )
+    local labelMorale = TextLabel:new( {label="Morale: Bad"} )
+    local labelHealth = TextLabel:new( {label="Health: Good"} )
+    local labelStatus = TextLabel:new( {label="Status: Cool"} )
 
-    local labelName = TextLabel:new( {label="Name: Greger", anchor="SouthEast"} )
-    local labelMorale = TextLabel:new( {label="Morale: Bad", anchor="SouthEast"} )
-    local labelHealth = TextLabel:new( {label="Health: Good", anchor="SouthEast"} )
-    local labelStatus = TextLabel:new( {label="Status: Cool", anchor="SouthEast"} )
+    o.statusGUI = GUI:new( {x=0,y=0, width=200, height=150, anchor="SouthEast"} )
+    
+    o.statusGUI:addComponent( labelName   )
+    o.statusGUI:addComponent( labelMorale )
+    o.statusGUI:addComponent( labelHealth )
+    o.statusGUI:addComponent( labelStatus )
 
-    o.gui:addComponent( labelName   )
-    o.gui:addComponent( labelMorale )
-    o.gui:addComponent( labelHealth )
-    o.gui:addComponent( labelStatus )
-    o.gui:addComponent( statusGUI )
+    o.statusGUI:addPlacementHandler( WestPlacer )
+    --------------
+    o.eventGUI = EventListerGUI:new( {x=0,y=0, width=200, height=200, anchor="SouthWest"} )
+    ----------
+    o.stanceGUI = StanceGUI:new()
+    o.abilitiesGUI = AbilityGUI:new()
+    o.formationGUI = FormationGUI:new( { onFormationSelect = function(form) o.onFormationSelect(form) end } )
 
-    o.gui:addPlacementHandler( AnchorPlacer:new() )
+    o.rightControlGUI = GUI:new{x=0,y=0, width=150,height=500, anchor="NorthEast"}
+    o.rightControlGUI:addPlacementHandler( AnchorPlacer )
+
+    o.rightControlGUI:addComponent( o.stanceGUI )
+    o.rightControlGUI:addComponent( o.abilitiesGUI )
+    o.rightControlGUI:addComponent( o.formationGUI )
+    -------
+
+    o.gui:addComponent( o.rightControlGUI )
+    o.gui:addComponent( o.statusGUI )
+    o.gui:addComponent( o.eventGUI )
+    o.gui:addPlacementHandler( AnchorPlacer )
 
     return o
+end
+
+function KravallControl:setFormation( formation )
+    self.formationGUI:setFormation( formation )
+end
+
+function KravallControl:addEvent( component )
+    self.eventGUI:addComponent( component )
 end
 
 function KravallControl:init()
 end
 
 function KravallControl:update( delta )
-    self.eventLister:update( delta )
+    -- For debug writing
+    self.gui:update( delta )
+    self.eventGUI:update( delta )
+    self.statusGUI:update( delta )
+    self.stanceGUI:update(delta)
+    self.abilitiesGUI:update(delta )
+    self.formationGUI:update(delta )
+    self.rightControlGUI:update(delta )
+
+    self.count = self.count or 5
+    self.count = self.count + delta
+
+    if self.count > 1 then
+        self.ind = self.ind or 0
+        self.ind = self.ind + 1
+        
+        if self.ind % 2 == 1 then
+            self:addEvent(TextLabel:new( {label="Status: " .. self.ind} ))
+        else
+            self:addEvent(Button:new( {onClick=function() print( "JOEL" ) end }))
+        end
+        self.count = 0
+    end
+
+    -- constrict each frame to give animation like results.
+    self.eventGUI:constrict( delta )
 end
 
 function KravallControl:destroy()

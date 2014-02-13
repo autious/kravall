@@ -1,37 +1,14 @@
-local SouthEastPlacer = {leftOffset = 20, padding = 10}
+local PU = require "gui/placement/util"
+local padding = 10
 
-function SouthEastPlacer:new(o)
-    o = o or {}
-
-    setmetatable( o, self )
-    self.__index = self
-
-    return o
-end
-
-function SouthEastPlacer:constrict( components, winWidth, winHeight, posx, posy )
+return function( components, winWidth, winHeight, posx, posy )
     posx = posx or 0
     posy = posy or 0
-    local tw,th = self:getTotalDim( components )
-    local startx = winWidth
-    local starty = winHeight - th
+    local tw,th = PU.getTotalDimHeight( components, padding, padding )
+    local startx = winWidth + posx + padding
+    local starty = winHeight - th + padding + posy
     for _,c in pairs( components ) do 
-        c:setPosition( startx + c.xoffset - c.width - self.padding + posx, starty + c.yoffset + posy )
-        starty = starty + c.height + self.padding
+        c:setPosition( startx + c.xoffset - c.width - padding * 2, starty + c.yoffset )
+        starty = starty + c.height + padding
     end 
 end
-
-function SouthEastPlacer:getTotalDim( components )
-    local tw = 0
-    local th = 0
-    for _,c in pairs( components ) do     
-        if tw < c.width then
-            tw = c.width
-        end
-        th = th + c.height + self.padding
-    end
-    
-    return tw, th
-end
-
-return SouthEastPlacer
