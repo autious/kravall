@@ -23,8 +23,6 @@ local KravallControl = { onFormationSelect = function() core.log.error("No handl
 function KravallControl:new(o)
     o = o or {}
 
-    print( "KravallControl" )
-
     setmetatable( o, self )
     self.__index = self
 
