@@ -132,9 +132,9 @@ namespace GFX
 		Renderer().SetViewMatrix(matrix);
 	}
 
-	void SetProjectionMatrix(GFXMat4x4 matrix)
+	void SetProjectionMatrix(GFXMat4x4 matrix, float nearZ, float farZ)
 	{
-		Renderer().SetProjMatrix(matrix);
+		Renderer().SetProjMatrix(matrix, nearZ, farZ);
 	}
 
 	void SetOverlayViewMatrix(GFXMat4x4 matrix)

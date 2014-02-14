@@ -122,7 +122,7 @@ namespace GFX
 		Set the local projection matrix
 		\param proj New projection matrix
 		*/
-		void SetProjMatrix(glm::mat4 proj);
+		void SetProjMatrix(glm::mat4 proj, float nearZ, float farZ);
 
         /*!
         Sets the view matrix used by the overlay camera
@@ -232,7 +232,7 @@ namespace GFX
 		FBOTexture* m_specular;
 		FBOTexture* m_glowMatID;
 		
-		FBOTexture* m_shadowMapTexture;
+		FBOTexture** m_shadowMapTextures;
 
 		GLuint m_dummyVAO;
 
@@ -272,6 +272,9 @@ namespace GFX
 
         glm::mat4 m_overlayViewMatrix;
         glm::mat4 m_overlayProjMatrix;
+
+		float m_nearZ;
+		float m_farZ;
 
 		bool m_playSplash;
 

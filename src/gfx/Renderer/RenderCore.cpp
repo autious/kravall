@@ -120,17 +120,25 @@ namespace GFX
 		
 		// Set default settings
 		m_settings[GFX_SHADOW_QUALITY] = GFX_SHADOWS_VARIANCE; // TODO: Implement basic shadow mapping as low res option
-		m_settings[GFX_SHADOW_RESOLUTION] = 2048;
+		m_settings[GFX_SHADOW_RESOLUTION] = 512;
 
 		m_normalDepth = new FBOTexture();
 		m_diffuse = new FBOTexture();
 		m_specular = new FBOTexture();
 		m_glowMatID = new FBOTexture();
 		m_depthBuffer = new FBOTexture();
-		m_shadowMapTexture = new FBOTexture();
+
+		m_shadowMapTextures = new FBOTexture*[4];
+		m_shadowMapTextures[0] = new FBOTexture();
+		m_shadowMapTextures[1] = new FBOTexture();
+		m_shadowMapTextures[2] = new FBOTexture();
+		m_shadowMapTextures[3] = new FBOTexture();
 
 		// Fill shadowmap with reds!
-		m_shadowMapTexture->CreateShadowmap(m_settings[GFX_SHADOW_RESOLUTION], m_settings[GFX_SHADOW_QUALITY]);
+		m_shadowMapTextures[0]->CreateShadowmap(m_settings[GFX_SHADOW_RESOLUTION], m_settings[GFX_SHADOW_QUALITY]);
+		m_shadowMapTextures[1]->CreateShadowmap(m_settings[GFX_SHADOW_RESOLUTION], m_settings[GFX_SHADOW_QUALITY]);
+		m_shadowMapTextures[2]->CreateShadowmap(m_settings[GFX_SHADOW_RESOLUTION], m_settings[GFX_SHADOW_QUALITY]);
+		m_shadowMapTextures[3]->CreateShadowmap(m_settings[GFX_SHADOW_RESOLUTION], m_settings[GFX_SHADOW_QUALITY]);
 
 
 
@@ -383,14 +391,14 @@ namespace GFX
 		CT(m_deferredPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix, m_gamma), "Geometry");
 
 		// Draw shadow map geometry
-		CT(m_shadowPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_viewMatrix, m_projMatrix, 0, renderJobIndex, m_shadowMapTexture, m_windowWidth, m_windowHeight), "Shadowmap");
+		CT(m_shadowPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_viewMatrix, m_projMatrix, 0, renderJobIndex, m_shadowMapTextures, m_windowWidth, m_windowHeight, glm::vec2(m_nearZ, m_farZ)), "Shadowmap");
 
 		// Do global illumination / ssao
 		CT(m_GIPainter->Render(delta, m_normalDepth, m_diffuse, m_viewMatrix, m_projMatrix), "GI");
 
 		// Do lighting calculations
 		CT(m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_GIPainter->m_SSDOTexture,
-			m_shadowMapTexture, m_viewMatrix, m_projMatrix, m_exposure, m_gamma, m_whitePoint, m_toneMappedTexture), "Lighting");
+			m_shadowMapTextures, m_viewMatrix, m_projMatrix, m_exposure, m_gamma, m_whitePoint, m_toneMappedTexture), "Lighting");
 
 		// Do post processing
 		CT(m_postProcessingPainter->Render(delta, m_toneMappedTexture, m_currentLUT, m_exposure, m_gamma, m_whitePoint), "PostProcessing");
@@ -400,7 +408,7 @@ namespace GFX
 			
 		// Draw fbo previews
 		if (m_showFBO != 0)
-			CT(m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, m_shadowMapTexture, m_showFBO), "FBO");
+			CT(m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, m_shadowMapTextures, m_showFBO), "FBO");
 
 		// Draw debug information
 		CT(m_debugPainter->Render(m_depthBuffer, m_normalDepth, m_viewMatrix, m_projMatrix), "Debug");
@@ -518,9 +526,11 @@ namespace GFX
 		m_viewMatrix = view;
 	}
 
-	void RenderCore::SetProjMatrix(glm::mat4 proj)
+	void RenderCore::SetProjMatrix(glm::mat4 proj, float nearZ, float farZ)
 	{
 		m_projMatrix = proj;
+		m_nearZ = nearZ;
+		m_farZ = farZ;
 	}
 
     void RenderCore::SetOverlayViewMatrix( glm::mat4 view )

@@ -244,9 +244,9 @@ local x = 200
 local y = 300
 local offs = 0.0
 local function Update(delta)
-	--if keyboard.isKeyDown( key.R ) then
-	--	rot = rot + delta;
-	--end
+	if keyboard.isKeyDown( key.R ) then
+		rot = rot + delta;
+	end
 	
 	if keyboard.isKeyDown( key.Left ) then
 		x = x - 100*delta;
@@ -268,18 +268,18 @@ local function Update(delta)
 	if keyboard.isKeyDown( key.E ) then
 		offs = offs + 100*delta
 	end
-	--
-	--local rc;
-    --rc = light:get(core.componentType.RotationComponent)
-	--rc.rotation = { math.cos(rot), -1 - (0.1 + math.sin(rot)), math.sin(rot), 0 }
-	--light:set(core.componentType.RotationComponent, rc)
 	
-	core.draw.drawTextbox( 100, 100, 100, 300, 0, "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890" )
-	core.draw.drawRectangle( 100, 100, 100, 300, false )
-	core.draw.drawTextbox( 300, 100, 100, 300, 0, "FIRST. This is a really long text repeated many times. This is a really long text repeated many times. LAST." )
-	core.draw.drawRectangle( 300, 100, 100, 300, false )
-	core.draw.drawTextbox( 500, 100, x, y, offs, "FIRST. ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 This is a really long text repeated many times. ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 This is a really long text repeated many times. LAST." )
-	core.draw.drawRectangle( 500, 100, x, y, false )
+	local rc;
+    rc = light:get(core.componentType.RotationComponent)
+	rc.rotation = { math.cos(rot), -1 - (0.1 + math.sin(rot)), math.sin(rot), 0 }
+	light:set(core.componentType.RotationComponent, rc)
+	
+	--core.draw.drawTextbox( 100, 100, 100, 300, 0, "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890" )
+	--core.draw.drawRectangle( 100, 100, 100, 300, false )
+	--core.draw.drawTextbox( 300, 100, 100, 300, 0, "FIRST. This is a really long text repeated many times. This is a really long text repeated many times. LAST." )
+	--core.draw.drawRectangle( 300, 100, 100, 300, false )
+	--core.draw.drawTextbox( 500, 100, x, y, offs, "FIRST. ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 This is a really long text repeated many times. ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 This is a really long text repeated many times. LAST." )
+	--core.draw.drawRectangle( 500, 100, x, y, false )
 	
 	
 	
