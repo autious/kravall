@@ -62,7 +62,7 @@ namespace GFX
 	Sets the projection matrix used by the main camera.
 	\param matrix Pointer to a 4x4 matrix
 	*/
-	DLL_API void SetProjectionMatrix(GFXMat4x4 matrix);
+	DLL_API void SetProjectionMatrix(GFXMat4x4 matrix, float nearZ, float farZ);
 
 	/*!
 	Sets the view matrix used by the overlay cam

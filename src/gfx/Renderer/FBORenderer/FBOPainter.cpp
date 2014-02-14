@@ -34,7 +34,7 @@ namespace GFX
 		m_textureUniform = m_shaderManager->GetUniformLocation("TQ", "textureIN");
 	}
 
-	void FBOPainter::Render(FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, int screenWidth, int screenHeight, FBOTexture* shadowMap, int current )
+	void FBOPainter::Render(FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, int screenWidth, int screenHeight, FBOTexture** shadowMaps, int current )
 	{
 		m_shaderManager->UseProgram("TQ");
 
@@ -96,10 +96,29 @@ namespace GFX
 		}
 		else if (current == 6) // Draw shadowmap
 		{
-			glViewport(0, 0, 256, 256);
-			TextureManager::BindTexture(shadowMap->GetTextureHandle(), m_textureUniform, 0, GL_TEXTURE_2D);
+			glViewport(0, 0, 128, 128);
+			TextureManager::BindTexture(shadowMaps[0]->GetTextureHandle(), m_textureUniform, 0, GL_TEXTURE_2D);
 			glBindVertexArray(m_dummyVAO);
 			glDrawArrays(GL_POINTS, 0, 1);
+
+			
+			glViewport(128, 0, 128, 128);
+			TextureManager::BindTexture(shadowMaps[1]->GetTextureHandle(), m_textureUniform, 0, GL_TEXTURE_2D);
+			glBindVertexArray(m_dummyVAO);
+			glDrawArrays(GL_POINTS, 0, 1);
+			
+			
+			glViewport(256, 0, 128, 128);
+			TextureManager::BindTexture(shadowMaps[2]->GetTextureHandle(), m_textureUniform, 0, GL_TEXTURE_2D);
+			glBindVertexArray(m_dummyVAO);
+			glDrawArrays(GL_POINTS, 0, 1);
+			
+			
+			glViewport(384, 0, 128, 128);
+			TextureManager::BindTexture(shadowMaps[3]->GetTextureHandle(), m_textureUniform, 0, GL_TEXTURE_2D);
+			glBindVertexArray(m_dummyVAO);
+			glDrawArrays(GL_POINTS, 0, 1);
+
 			glViewport(0, 0, screenWidth, screenHeight);
 		}
 		

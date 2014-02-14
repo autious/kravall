@@ -49,7 +49,7 @@ const float kernel[]=float[21] (
 
 void main()
 {
-	vec2 delta = 1.0/textureSize(gTexture,0);
+	vec2 delta = 0.3/textureSize(gTexture,0);
 	vec4 color = vec4(0);
 	int  index = 20;
 
