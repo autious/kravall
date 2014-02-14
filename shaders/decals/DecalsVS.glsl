@@ -19,6 +19,7 @@ layout ( location = 5 ) in vec2 uvIN;
 out vec4 posFS;
 out vec4 posW;
 out vec2 uvFS;
+
 void main()
 {
 	posW = modelMatrix * vec4(positionIN.xyz * 1, positionIN.w);

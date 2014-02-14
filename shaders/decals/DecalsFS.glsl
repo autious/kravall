@@ -40,22 +40,23 @@ void main()
 	float depth = texture2D(gNormalDepth, depthUV).w;
 
 	vec4 worldPos = reconstruct_pos(depth, depthUV);
+	//worldPos.w = 0;
 	vec4 localPos = invModelMatrix * worldPos;
 
-	float dist = 0.5f - abs(localPos.y);
+	float dist = 0.5f - abs(localPos.z);
 	float dist2 = 0.5f - abs(localPos.x);
 
-	if (dist > 0.0f && dist2 > 0.0f)
+	if (dist > 0.0f && dist2 > 0)
 	{
-		vec2 uv = vec2(localPos.x, localPos.y) + 0.5f;// * 0.5f + 0.5f;
+		vec2 uv = vec2(localPos.x, localPos.z) + 0.5f;
 		vec4 diffuseColor = texture2D(gDiffuse, uv);
-		//diffuseRT = vec4(worldPos.xyz, 1.0f);
+		diffuseRT = vec4(worldPos.xyz, 1.0f);
 		//diffuseRT = vec4(uv, 0, 1);
 		//diffuseRT = vec4(screenPosition, 0, 1);
-		//diffuseRT = diffuseColor;
+		diffuseRT = diffuseColor;
 	}
 	else
-		diffuseRT = vec4(localPos.xyz, 1.0f);
+		diffuseRT = vec4(1.0f, 0, 0, 1);
 
 	//diffuseRT = vec4(depthUV, 0, 1);
 	//diffuseRT = vec4(depth, 0, 0, 1.0f);

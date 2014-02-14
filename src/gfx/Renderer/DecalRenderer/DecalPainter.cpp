@@ -11,7 +11,7 @@
 #include "../../Buffers/UniformBufferManager.hpp"
 #include "../RenderJobManager.hpp"
 #include <Shaders/ShaderManager.hpp>
-
+#include <glm/ext.hpp>
 
 //Ugly fix for something that messed up OpenGL on GCC.
 // causes no problems since there is only one instance of DeferredPainter anyway.
@@ -82,6 +82,7 @@ namespace GFX
 
 		glEnable(GL_DEPTH_TEST);
 		//glDepthMask(false);
+		//glCullFace(GL_FRONT);
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -162,8 +163,21 @@ namespace GFX
 			InstanceData smid = *(InstanceData*)renderJobs.at(i).value;
 			
 			m_shaderManager->SetUniform(1, smid.modelMatrix, m_modelMatrixUniform);
-			m_shaderManager->SetUniform(1, glm::inverse(smid.modelMatrix), m_invModelMatrixUniform);
-			m_shaderManager->SetUniform(1, 1, 0.1, m_decalSizeUniform);
+
+			glm::mat4 trans = glm::translate(glm::mat4(1.0f), glm::vec3(-smid.modelMatrix[3][0], -smid.modelMatrix[3][1], -smid.modelMatrix[3][2]));
+			glm::mat4 rot = glm::toMat4(glm::conjugate(glm::quat(0, 0, 0, 1)));
+			glm::mat4 scaleMatrix = glm::scale(1.0f / 10.0f, 1.0f / 10.0f, 1.0f / 10.0f);
+
+			//Send the data through a drawcall to GFX
+			glm::mat4 mod = (trans * rot * scaleMatrix);
+			
+			std::cout << mod[3][0] << std::endl;
+			std::cout << mod[3][1] << std::endl;
+			std::cout << mod[3][2] << std::endl;
+
+
+			m_shaderManager->SetUniform(1, mod, m_invModelMatrixUniform);
+			m_shaderManager->SetUniform(10, 10, 10.1, m_decalSizeUniform);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IBO);
 			glDrawElements(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0);
 		}
@@ -172,6 +186,7 @@ namespace GFX
 		//glDepthMask(true);
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
+		glCullFace(GL_BACK);
 		m_shaderManager->ResetProgram();
 		ClearFBO();
 	}
