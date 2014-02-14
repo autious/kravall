@@ -47,20 +47,18 @@ namespace Core
 		{
 			// remove this entity form its attackers...
 			Core::TargetingComponent* tc = WGETC<Core::TargetingComponent>(rioterEntities[i]);
-			
 			Core::TargetingComponent* attackerTc = WGETC<Core::TargetingComponent>(tc->target);
 			if( attackerTc )
 				Core::TargetingComponent::StopAttacking( rioterEntities[i], *attackerTc );
 
-			for( int p = 0; p < MAX_ATTACKERS; p++ )
+			for( int p = 0; p < tc->numberOfAttackers; p++ )
 			{
 				Core::TargetingComponent* attackerTcomp = WGETC<Core::TargetingComponent>(tc->attackers[p]);
 				if( attackerTcomp )
-				{
-					if( attackerTcomp->target == rioterEntities[i] )
-						attackerTcomp->target = INVALID_ENTITY;
-				}
+					attackerTcomp->target = INVALID_ENTITY;
 			}
+
+
 			world.m_entityHandler.RemoveComponents<UnitTypeComponent, MovementComponent, AttributeComponent, TargetingComponent, BoundingVolumeComponent, FlowfieldComponent>(rioterEntities[i]);
 		}
 
@@ -69,17 +67,17 @@ namespace Core
 		{
 			// remove this entity form its attackers...
 			Core::TargetingComponent* tc = WGETC<Core::TargetingComponent>(policeEntities[i]);
-			
 			Core::TargetingComponent* attackerTc = WGETC<Core::TargetingComponent>(tc->target);
 			if( attackerTc )
 				Core::TargetingComponent::StopAttacking( policeEntities[i], *attackerTc );
 
-			for( int p = 0; p < MAX_ATTACKERS; p++ )
+			for( int p = 0; p < tc->numberOfAttackers; p++ )
 			{
 				Core::TargetingComponent* attackerTcomp = WGETC<Core::TargetingComponent>(tc->attackers[p]);
 				if( attackerTcomp )
 					attackerTcomp->target = INVALID_ENTITY;
 			}
+
 
 			world.m_entityHandler.RemoveComponents<UnitTypeComponent, MovementComponent, AttributeComponent, TargetingComponent, BoundingVolumeComponent, FlowfieldComponent>(policeEntities[i]);
 		}

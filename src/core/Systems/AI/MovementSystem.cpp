@@ -57,6 +57,8 @@ void Core::MovementSystem::Update(float delta)
 			*rc = RotationComponent::GetComponentRotateY(-angle - 3.141592f * 1.5f); 
 		}
 
+		GFX::Debug::DrawSphere( glm::vec3( mc->goal[0], 0, mc->goal[2] ), 2.0f, GFXColor(), false );
+
 		// Draw the debug lines showing the rioter's direction.
 		/*GFX::Debug::DrawLine(Core::WorldPositionComponent::GetVec3(*wpc),
 							 glm::vec3(wpc->position[0] + mc->direction[0],

@@ -43,9 +43,9 @@ void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police, float del
 
 	GFXColor colour = GFXColor(1.0f, 1.0f, 1.0f, 1.0f);	
 
-	if (tc->target != INVALID_ENTITY)
-	{
-		Core::TargetingComponent* tcTarget = WGETC<Core::TargetingComponent>(tc->target);
+	Core::TargetingComponent* tcTarget = WGETC<Core::TargetingComponent>(tc->target);
+	if( tcTarget )
+	{		
 		Core::WorldPositionComponent* twpc = WGETC<Core::WorldPositionComponent>(tc->target);
 		
 		float dx = twpc->position[0] - wpc->position[0];
@@ -69,6 +69,8 @@ void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police, float del
 		else if( ac->police.stance != PoliceStance::Passive )
 			return;
 	}
+	else
+		tc->target = INVALID_ENTITY;
 
 	switch (ac->police.stance)
 	{
@@ -80,7 +82,6 @@ void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police, float del
 			}
 			else
 			{
-
 				colour = GFXColor(1.0f, 0.0f, 0.0f, 1.0f);
 			}
 			break;

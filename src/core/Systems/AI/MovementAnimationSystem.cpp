@@ -23,7 +23,6 @@ namespace Core
 
 		for(std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); ++it)
 		{
-			//Core::UnitTypeComponent* utc = WGETC<Core::UnitTypeComponent>(*it);
 
 			Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(*it);
 			Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>(*it);
@@ -48,13 +47,16 @@ namespace Core
 
 
 			if( frameSpeed < 0.05f )
-				Core::AnimationManager::QueueAnimation( *it, "", true ); // still
+				//Core::AnimationManager::QueueAnimation( *it, "walk-normal", true ); // still
+				LOG_WARNING << "idle" << std::endl;
 
 			else if( frameSpeed > walkingData.speedToDesire + GRACE_THRESHOLD )
-				Core::AnimationManager::QueueAnimation( *it, "", true ); // running
+				//Core::AnimationManager::QueueAnimation( *it, "", true ); // running
+				LOG_WARNING << "running" << std::endl;
 
 			else 
-				Core::AnimationManager::QueueAnimation( *it, "", true ); // walking
+				//Core::AnimationManager::QueueAnimation( *it, "", true ); // walking
+				LOG_WARNING << "walking" << std::endl;
 
 
 

@@ -6,6 +6,7 @@ scen.asm:specific_content( core.contentmanager.load(
 
 
 scen.gamemode = require "gamemodes/kravall":new()
+scen.gamemode:init()
 
 local mouse = core.input.mouse
 local squad = ent.get "policeSquad"
@@ -40,7 +41,7 @@ local centerPoint = { 110, 0, 0 }
 local side = math.sqrt( 10 )
 for i = -side/2, side/2 do
 	for p = -side/2, side/2 do
-		rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rGroup, fists)
+		rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rGroup, nil, nil, fists)
 	end
 end
 --rioter( scen, 0, 0, 0, rGroup, fists)
