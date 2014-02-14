@@ -34,9 +34,9 @@ namespace GFX
         BasePainter::Initialize(FBO, VAO);
          
         m_shaderManager->CreateProgram("SmokeGrenade");
-        m_shaderManager->LoadShader("shaders/particle/smoke_grenade.vertex", "SmokeGrenadeVS", GL_VERTEX_SHADER);
-        m_shaderManager->LoadShader("shaders/particle/smoke_grenade.geometry", "SmokeGrenadeGS", GL_GEOMETRY_SHADER);
-        m_shaderManager->LoadShader("shaders/particle/smoke_grenade.fragment", "SmokeGrenadeFS", GL_FRAGMENT_SHADER);
+        m_shaderManager->LoadShader("shaders/particle/SmokeGrenadeVS.glsl", "SmokeGrenadeVS", GL_VERTEX_SHADER);
+        m_shaderManager->LoadShader("shaders/particle/SmokeGrenadeGS.glsl", "SmokeGrenadeGS", GL_GEOMETRY_SHADER);
+        m_shaderManager->LoadShader("shaders/particle/SmokeGrenadeFS.glsl", "SmokeGrenadeFS", GL_FRAGMENT_SHADER);
         m_shaderManager->AttachShader("SmokeGrenadeVS", "SmokeGrenade");
         m_shaderManager->AttachShader("SmokeGrenadeGS", "SmokeGrenade");
         m_shaderManager->AttachShader("SmokeGrenadeFS", "SmokeGrenade");

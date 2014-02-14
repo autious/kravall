@@ -60,6 +60,7 @@ namespace GFX
     class PostProcessingPainter;
     class GIPainter;
     class BlurPainter;
+    class ParticlePainter;
 
     class FontData;
     class Vertex;
@@ -263,6 +264,7 @@ namespace GFX
 		GIPainter* m_GIPainter;
 		BlurPainter* m_blurPainter;
 		ShadowPainter* m_shadowPainter;
+        ParticlePainter* m_particlePainter;
 
 		void SubSystemTimeRender();
         std::vector<std::pair<const char*, std::chrono::microseconds>> m_subsystemTimes;

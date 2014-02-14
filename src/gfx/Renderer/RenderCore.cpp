@@ -24,6 +24,7 @@ unsigned int ShadowDataContainer::numPointLights = 0;
 #include "PostProcessing/PostProcessingPainter.hpp"
 #include "GlobalIlluminationRenderer/GIPainter.hpp"
 #include "PostProcessing/BlurPainter.hpp"
+#include <Renderer/Particle/ParticlePainter.hpp>
 
 #include <Shaders/ShaderManager.hpp>
 #include <Buffers/UniformBufferManager.hpp>
@@ -88,6 +89,7 @@ namespace GFX
         delete(m_overlayPainter);
 		delete(m_blurPainter);
 		delete(m_shadowPainter);
+        delete(m_particlePainter);
 	}
 
 	int RenderCore::SetConfiguration(const int setting, const int value)
@@ -150,6 +152,9 @@ namespace GFX
 		m_deferredPainter = new DeferredPainter(m_shaderManager, m_uniformBufferManager, 
 		m_renderJobManager, m_meshManager, m_textureManager, m_materialManager);
 
+        m_particlePainter = new ParticlePainter(m_shaderManager, m_uniformBufferManager
+                ,m_renderJobManager, m_materialManager, m_textureManager, m_particleManager);
+
 		m_shadowPainter = new ShadowPainter(m_shaderManager, m_uniformBufferManager, m_renderJobManager, m_meshManager);
 
 		m_lightPainter = new LightPainter(m_shaderManager, m_uniformBufferManager, m_renderJobManager);
@@ -158,6 +163,7 @@ namespace GFX
 
 		m_GIPainter = new GIPainter(m_shaderManager, m_uniformBufferManager, m_renderJobManager);
 		m_blurPainter = new BlurPainter(m_shaderManager, m_uniformBufferManager);
+
 
 		m_debugPainter = new DebugPainter(m_shaderManager, m_uniformBufferManager);
 		m_textPainter = new TextPainter(m_shaderManager, m_uniformBufferManager);
@@ -177,6 +183,7 @@ namespace GFX
 
 
 		m_deferredPainter->Initialize(m_FBO, m_dummyVAO);
+        m_particlePainter->Initialize(m_FBO, m_dummyVAO);
 		m_shadowPainter->Initialize(m_FBO, m_dummyVAO, m_blurPainter, m_settings[GFX_SHADOW_RESOLUTION]);
 		m_lightPainter->Initialize(m_FBO, m_dummyVAO, m_windowWidth, m_windowHeight);
 		m_debugPainter->Initialize(m_FBO, m_dummyVAO);
