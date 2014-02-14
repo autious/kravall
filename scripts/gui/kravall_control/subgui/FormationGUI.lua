@@ -40,7 +40,7 @@ function FormationGUI:new(o)
                             onChange            = function(value) if value then o.onFormationSelect( f_circle ) else o.onFormationSelect( f_no ) end end 
                         }
 
-    o:addPlacementHandler( require "gui/placement/AnchorPlacer" )
+    o:addPlacementHandler( require "gui/placement/CenterPlacer" )
 
     for _,v in pairs( o.formations ) do
         o:addComponent( v )

@@ -10,6 +10,7 @@ local AnchorPlacer = require "gui/placement/AnchorPlacer"
 local EastPlacer = require "gui/placement/EastPlacer"
 local NorthPlacer = require "gui/placement/NorthPlacer"
 local WestPlacer = require "gui/placement/WestPlacer"
+local CenterPlacer = require "gui/placement/CenterPlacer"
 
 local EventListerGUI = require "gui/kravall_control/EventListerGUI"
 local StanceGUI = require "gui/kravall_control/subgui/StanceGUI"
@@ -32,7 +33,10 @@ function KravallControl:new(o)
     ------------------
     o.statusGUI = UnitStatGUI:new( {} )
     --------------
+    o.eventGUIPadder = GUI:new( {width=220,height=220, anchor="SouthWest"} )
+    o.eventGUIPadder:addPlacementHandler( CenterPlacer )
     o.eventGUI = EventListerGUI:new( {x=0,y=0, width=200, height=200, anchor="SouthWest"} )
+    o.eventGUIPadder:addComponent( o.eventGUI )
     ----------
     o.stanceGUI = StanceGUI:new()
     o.abilitiesGUI = AbilityGUI:new()
@@ -48,7 +52,7 @@ function KravallControl:new(o)
 
     o.gui:addComponent( o.rightControlGUI )
     o.gui:addComponent( o.statusGUI )
-    o.gui:addComponent( o.eventGUI )
+    o.gui:addComponent( o.eventGUIPadder )
     o.gui:addPlacementHandler( AnchorPlacer )
 
     return o

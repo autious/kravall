@@ -34,7 +34,7 @@ function StanceGUI:new(o)
     local buttonPassive = Checkbox:new( stancePassiveDATA )
     local buttonAggressive = Checkbox:new( stanceAggressiveDATA )
 
-    o:addPlacementHandler(require "gui/placement/AnchorPlacer")
+    o:addPlacementHandler(require "gui/placement/CenterPlacer")
     o:addComponent( buttonDefensive )
     o:addComponent( buttonPassive )
     o:addComponent( buttonAggressive )
