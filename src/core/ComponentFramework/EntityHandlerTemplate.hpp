@@ -194,17 +194,17 @@ namespace Core
 
 			static const int componentType = GetComponentType<Component>();
 
-			int componentId = m_entities.GetComponentId(entity, componentType);
+            if(entity != INVALID_ENTITY )
+            {
+			    int componentId = m_entities.GetComponentId(entity, componentType);
 
+                if( componentId >= 0 )
+                {
+                    return (Component*)m_components[componentType]->Get(componentId);
+                }
+            }
 
-			if (componentId >= 0 && entity != INVALID_ENTITY )
-			{
-				return (Component*)m_components[componentType]->Get(componentId);
-			}
-			else
-			{
-				return nullptr;
-			}
+            return nullptr;
         }
 
         /*!

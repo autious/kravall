@@ -81,7 +81,7 @@ namespace Core
 		/*!
 			Will return the respective data for the weapon.
 		*/
-		static const WeaponData& Core::GameData::GetWeaponDataFromWeapon( int weapon );
+		static const WeaponData& GetWeaponDataFromWeapon( int weapon );
 
 		/*!
 			Will set the MovementData for the respective state. Should not be used carelessly form C.
