@@ -83,7 +83,9 @@ namespace GFX
 		glEnable(GL_DEPTH_TEST);
 		//glDepthMask(false);
 		glEnable(GL_BLEND);
+		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 
 		m_shaderManager->UseProgram("DecalShader");
 

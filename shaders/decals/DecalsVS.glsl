@@ -17,11 +17,13 @@ layout ( location = 4 ) in vec4 boneWeights;
 layout ( location = 5 ) in vec2 uvIN;
 
 out vec4 posFS;
+out vec4 posW;
 out vec2 uvFS;
 void main()
 {
+	posW = modelMatrix * vec4(positionIN.xyz * 1, positionIN.w);
 	//Move position to clip space
-	posFS = gProjection * gView * modelMatrix * vec4(positionIN.xyz * 1, positionIN.w);
+	posFS = gProjection * gView * posW;
 	uvFS = uvIN;
 	gl_Position = posFS;
 }

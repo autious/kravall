@@ -64,7 +64,7 @@ scen:loadAssembly(
 {
 	{
 		type = core.componentType.WorldPositionComponent,
-		data = { position = { 0, 9.5, 0 } }
+		data = { position = { 10, 9.5, 0 } }
 	},
 	{
 		type = core.componentType.GraphicsComponent,
@@ -76,7 +76,7 @@ scen:loadAssembly(
 	},
 	{
 		type = core.componentType.ScaleComponent,
-		data = { scale = 1.0 }
+		data = { scale = 10.0 }
 	},
 	{
 		type = core.componentType.RotationComponent,
