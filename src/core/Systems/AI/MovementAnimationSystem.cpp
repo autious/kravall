@@ -11,7 +11,8 @@
 namespace Core
 {
     MovementAnimationSystem::MovementAnimationSystem() : BaseSystem(EntityHandler::GenerateAspect<
-		Core::MovementComponent, Core::GraphicsComponent, Core::AnimationComponent, Core::AttributeComponent, Core::WorldPositionComponent>(), 0ULL)
+		Core::MovementComponent, TargetingComponent, Core::GraphicsComponent, Core::AnimationComponent, 
+		Core::AttributeComponent, Core::WorldPositionComponent, GraphicsComponent>(), 0ULL)
     {
     }
 
@@ -19,7 +20,6 @@ namespace Core
 
 	void MovementAnimationSystem::Update(float delta)
 	{
-		return; // dont have any animations yet
 
 		for(std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); ++it)
 		{
@@ -27,6 +27,8 @@ namespace Core
 			Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(*it);
 			Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>(*it);
 			Core::AnimationComponent* ac = WGETC<Core::AnimationComponent>(*it);
+			Core::TargetingComponent* tc = WGETC<Core::TargetingComponent>(*it);
+			Core::GraphicsComponent* grc = WGETC<Core::GraphicsComponent>(*it);
 
 			// if prevPos has yet to be calculated, copy from wpc...
 			if( mvmc->prevPos[0] == std::numeric_limits<float>::max() )
@@ -43,23 +45,20 @@ namespace Core
 			if( frameSpeed > MOVEDTHISFRAME_THRESHOLD )
 				mvmc->movedThisFrame = true;
 
+			// Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID), "idle" )) == ac->animationID )
 
+			ac->loop = false;
+			if( !tc->isAttacking && !ac->playing )
+			{
+				if( frameSpeed < 0.05f && !ac->playing )
+					Core::AnimationManager::PlayAnimation( *it, "idle" ); // still
 
+				else if( frameSpeed > walkingData.speedToDesire + GRACE_THRESHOLD  )
+					Core::AnimationManager::PlayAnimation( *it, "walk-straight" ); // running
 
-			if( frameSpeed < 0.05f )
-				//Core::AnimationManager::QueueAnimation( *it, "walk-normal", true ); // still
-				LOG_WARNING << "idle" << std::endl;
-
-			else if( frameSpeed > walkingData.speedToDesire + GRACE_THRESHOLD )
-				//Core::AnimationManager::QueueAnimation( *it, "", true ); // running
-				LOG_WARNING << "running" << std::endl;
-
-			else 
-				//Core::AnimationManager::QueueAnimation( *it, "", true ); // walking
-				LOG_WARNING << "walking" << std::endl;
-
-
-
+				else 
+					Core::AnimationManager::PlayAnimation( *it, "walk-straight" ); // walking
+			}
 
 			// update prevPos...
 			for( char i = 0; i < 3; i++ )
