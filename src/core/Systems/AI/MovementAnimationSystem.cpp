@@ -1,4 +1,4 @@
-#include "RioterAnimationSystem.hpp"
+#include "MovementAnimationSystem.hpp"
 
 #include <World.hpp>
 #include <logger/Logger.hpp>
@@ -6,24 +6,24 @@
 #include <Animation/AnimationManager.hpp>
 #include <GameUtility/GameData.hpp>
 
+#define GRACE_THRESHOLD 0.2f
+
 namespace Core
 {
-    RioterAnimationSystem::RioterAnimationSystem() : BaseSystem(EntityHandler::GenerateAspect<
-		Core::MovementComponent, Core::GraphicsComponent, Core::AnimationComponent, Core::UnitTypeComponent, Core::AttributeComponent, Core::WorldPositionComponent>(), 0ULL)
+    MovementAnimationSystem::MovementAnimationSystem() : BaseSystem(EntityHandler::GenerateAspect<
+		Core::MovementComponent, Core::GraphicsComponent, Core::AnimationComponent, Core::AttributeComponent, Core::WorldPositionComponent>(), 0ULL)
     {
     }
 
 
 
-	void RioterAnimationSystem::Update(float delta)
+	void MovementAnimationSystem::Update(float delta)
 	{
 		return; // dont have any animations yet
 
 		for(std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); ++it)
 		{
-			Core::UnitTypeComponent* utc = WGETC<Core::UnitTypeComponent>(*it);
-			if( utc->type == Core::UnitType::Police )
-				continue;
+			//Core::UnitTypeComponent* utc = WGETC<Core::UnitTypeComponent>(*it);
 
 			Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(*it);
 			Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>(*it);
@@ -40,63 +40,36 @@ namespace Core
 
 			const Core::MovementData& walkingData = Core::GameData::GetMovementDataWithState( Core::MovementState::Movement_Walking );
 			
+			mvmc->movedThisFrame = false;
+			if( frameSpeed > MOVEDTHISFRAME_THRESHOLD )
+				mvmc->movedThisFrame = true;
+
+
+
 
 			if( frameSpeed < 0.05f )
-				Core::AnimationManager::QueueAnimation( *it, "", true ); // still			
-			else if( frameSpeed > walkingData.speedToDesire )
-				Core::AnimationManager::QueueAnimation( *it, "", true ); // running			
+				Core::AnimationManager::QueueAnimation( *it, "", true ); // still
+
+			else if( frameSpeed > walkingData.speedToDesire + GRACE_THRESHOLD )
+				Core::AnimationManager::QueueAnimation( *it, "", true ); // running
+
 			else 
 				Core::AnimationManager::QueueAnimation( *it, "", true ); // walking
+
+
+
 
 			// update prevPos...
 			for( char i = 0; i < 3; i++ )
 				mvmc->prevPos[i] = wpc->position[i];
-
-
-			//switch( mvmc->state )
-			//{
-			//case Core::MovementState::Movement_Idle :
-			//
-			//	if( frameSpeed > 0.05 )
-			//		Core::AnimationManager::QueueAnimation( *it, "", true ); // not moving
-			//	else
-			//		Core::AnimationManager::QueueAnimation( *it, "", true ); // moveing
-			//
-			//	break;
-			//	
-			//case Core::MovementState::Movement_Walking :
-			//	
-			//	if( frameSpeed < 0.05 )
-			//		Core::AnimationManager::QueueAnimation( *it, "", true ); // not moving
-			//	else
-			//		Core::AnimationManager::QueueAnimation( *it, "", true );
-			//	
-			//
-			//
-			//	Core::AnimationManager::QueueAnimation( *it, "", true );
-			//	break;
-			//
-			//case Core::MovementState::Movement_Sprinting :
-			//	Core::AnimationManager::LoopAnimation( *it, "" );
-			//	break;
-			//
-			//default :
-			//	break;
-			//}
-
-
-			//glm::vec3 temp = glm::vec3( mvmc->direction[0], mvmc->direction[1], mvmc->direction[2] );
-			//if( mvmc->speed < 0.01f || glm::dot( temp, temp ) == 0.0f )
-			//{
-			//	//ac->currentTime = 0.33f;
-			//	ac->speed = 0.0f;
-			//}
-			//else
-			//{
-			//	ac->speed = 1.0f;
-			//}
 		}
 	}
+
+
+
+
+
+
 
 
 

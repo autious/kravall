@@ -33,6 +33,8 @@ void Core::AttackAnimationSystem::Update(float delta)
 			if (distSqr < weapon.range * weapon.range )
 				tc->isAttacking = true;
 		
+			GFX::Debug::DrawSphere( wpc->GetVec3( *wpc ), 1.0f, GFXColor( 0.5, 1, 0.5, 1 ), false );
+			GFX::Debug::DrawLine( targetWpc->GetVec3( *targetWpc ), wpc->GetVec3( *wpc ), GFXColor( 0.5, 1, 0.5, 1 ), false );
 
 			// if attacking, handle animation and dmg
 			if( tc->isAttacking )
@@ -46,13 +48,19 @@ void Core::AttackAnimationSystem::Update(float delta)
 				if( animac->currentTime > weapon.animationDmgDealingtime && !tc->hasAttacked )
 				{
 					tc->hasAttacked = true;
+					Core::AttributeComponent* attribc = WGETC<Core::AttributeComponent>( tc->target );
+
+					attribc->stamina -= weapon.staminaCost;
 
 					// deal dmg if target is still in range
 					if (distSqr < weapon.range * weapon.range )
 					{
-						Core::AttributeComponent* attribc = WGETC<Core::AttributeComponent>( tc->target );
 						attribc->health -= (int)weapon.weaponDamage;
 						attribc->morale -= weapon.moraleDamage;
+					}
+					else
+					{
+						attribc->morale -= weapon.moralDamageOnMiss;
 					}
 				}
 

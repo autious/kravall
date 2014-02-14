@@ -146,7 +146,7 @@ void Core::TargetingSystem::HandleRioterTargeting(Core::Entity rioter, float del
 
 		float distSqr = dx * dx + dy * dy + dz * dz;
 
-		if (distSqr < 5.0f) // Attack
+		if (distSqr < weapon.range * weapon.range ) // Attack
 		{
 			if (TargetingComponent::Attack(rioter, *tcTarget))
 				std::cout << "Rioter: " << rioter << " is attacking police " << tc->target << std::endl;

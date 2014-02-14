@@ -14,14 +14,14 @@ namespace Core
     /*!
         Game logic system that calculates various data regarding groups of entities.
     */
-    class RioterAnimationSystem : public  Core::BaseSystem
+    class MovementAnimationSystem : public  Core::BaseSystem
     {
     public:
-        RioterAnimationSystem();
+        MovementAnimationSystem();
 
         virtual void Update( float delta ) override;
 
-        virtual const char* GetHumanName() { return "RioterAnimationSystem"; }
+        virtual const char* GetHumanName() { return "MovementAnimationSystem"; }
 
     private:
 

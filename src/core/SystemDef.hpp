@@ -34,7 +34,7 @@
 #include <Systems/AI/MoodStateSystem.hpp>
 #include <Systems/AIsupport/RemovalSystem.hpp>
 #include <Systems/EngineSupport/HoverTextSystem.hpp>
-#include <Systems/AI/RioterAnimationSystem.hpp>
+#include <Systems/AI/MovementAnimationSystem.hpp>
 #include <Systems/AI/AttackAnimationSystem.hpp>
 #include <Systems/AIsupport/PriorityResetSystem.hpp>
 #include <Systems/AI/RioterGoalSystem.hpp>
@@ -55,7 +55,7 @@ namespace Core
 
     typedef SystemHandlerTemplate<PriorityResetSystem, LightSystem, FlowfieldPositioningSystem, PoliceGoalSystem, NavMeshCollisionSystem, 
 	CollisionSystem2D, PickingSystem, TargetingSystem, AttackAnimationSystem, AIDebugSystem, FlowfieldSystem, /*FieldReactionSystem,*/ GPUPFSystem,
-	RioterGoalSystem, MovementSystem, NameSystem, GroupDataSystem, AreaSystem, NavMeshBlockingSystem, MoodStateSystem, RioterAnimationSystem, 
+	RioterGoalSystem, MovementSystem, NameSystem, GroupDataSystem, AreaSystem, NavMeshBlockingSystem, MoodStateSystem, MovementAnimationSystem, 
 	AnimationSystem, SquadSystem, RemovalSystem, HoverTextSystem, RenderingSystem> SystemHandler;
 
     typedef EntityHandlerTemplate<SystemHandler, WorldPositionComponent, RotationComponent, ScaleComponent, 
