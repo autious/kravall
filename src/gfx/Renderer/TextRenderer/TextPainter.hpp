@@ -42,7 +42,7 @@ namespace GFX
 		/*!
 		Main text rendering loop
 		*/
-		void Render();
+		void Render(int screenWidth, int screenHeight);
 
 	private:
 

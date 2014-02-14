@@ -32,7 +32,7 @@ function T:new(o)
 end
 
 function T:init()
-
+    print"NOT HERE"
     local function onFormationSelect(formation )
         self.policeHandler:setFormation( formation )
     end

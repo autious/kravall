@@ -148,8 +148,12 @@ namespace GFX
 	}
 	void RenderText(GFX::FontData* fontData, GFXVec2 position, float size, GFXVec4 color, const char* text)
 	{
-        GFX::Text t(position.x, position.y, size, size, fontData, color, text, Renderer().GetWindowWidth(), Renderer().GetWindowHeight());
+        GFX::Text t(position.x, position.y, size, size, fontData, color, text);
 		GetTextManager().AddText(t);
+	}
+	void RenderTextbox(GFX::FontData* fontData, GFXVec4 rectangle, float offset, float size, GFXVec4 color, const char* text)
+	{
+		GetTextManager().AddTextbox(fontData, rectangle, offset, size, color, text);
 	}
 	void ShowConsole()
 	{

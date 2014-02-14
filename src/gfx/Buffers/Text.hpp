@@ -22,7 +22,7 @@ namespace GFX
         GFX::FontData* m_fontData;
 
 		Text(float posx, float posy, float sizex, float sizey, GFX::FontData* fontData,
-			glm::vec4 color, std::string text, int screenWidth, int screenHeight);
+			glm::vec4 color, std::string text);
 	};
 }
 
