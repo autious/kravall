@@ -16,17 +16,25 @@ extern "C"
 		return 0;
     }
 
-    static int LuaDrawTextbox( lua_State *L )
-    {
-        GFX::RenderTextbox( 
-							localFontData, 
-							glm::vec4( luaL_checkinteger(L ,1 ), luaL_checkinteger( L, 2 ), luaL_checkinteger(L ,3 ), luaL_checkinteger( L, 4 ) ),
-							luaL_checknumber(L, 5),
-							1.0f, 
-							Colors::White, 
-							luaL_checkstring( L, 6 ) 
+	static int LuaDrawTextbox(lua_State *L)
+	{
+		GFX::RenderTextbox(
+			localFontData,
+			glm::vec4(luaL_checkinteger(L, 1), luaL_checkinteger(L, 2), luaL_checkinteger(L, 3), luaL_checkinteger(L, 4)),
+			luaL_checknumber(L, 5),
+			1.0f,
+			Colors::White,
+			luaL_checkstring(L, 6)
 			);
 		return 0;
+
+	}
+
+    static int LuaDrawRectangle( lua_State * L )
+    {
+        GFX::Debug::DrawRectangle( glm::vec2( luau_tofloat( L, 1 ), luau_tofloat( L, 2 ) ), glm::vec2( luau_tofloat( L, 3 ), luau_tofloat( L , 4 ) ), lua_toboolean( L, 5 ), Colors::Blue );
+
+        return 0;
     }
 }
 
@@ -36,8 +44,11 @@ namespace Core
     {
         lua_getglobal( L, "core" );
             lua_newtable( L );
+
                 luau_setfunction( L, "drawText", LuaDrawText ); 
-                luau_setfunction( L, "drawTextbox", LuaDrawTextbox );    
+                luau_setfunction( L, "drawTextbox", LuaDrawTextbox );   
+                luau_setfunction( L, "drawRectangle", LuaDrawRectangle );
+
             lua_setfield( L, -2, "draw" );
         lua_pop( L,1 );
     }

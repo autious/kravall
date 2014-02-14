@@ -51,7 +51,7 @@ function ScenarioMenu:new(o,menuState)
         selectionList:setActive( o.scenarios[1] )
     end
 
-    o.gui:addPlacementHandler( AnchorPlacer:new() )
+    o.gui:addPlacementHandler( AnchorPlacer )
 
     return o
 end

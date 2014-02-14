@@ -42,11 +42,13 @@ function GUIComponent:new(o)
     
     end
     function o.callbacks.onButton( button, action, mods )
+        local consumed = false
         if button == mouse.button.Left then
             if action == core.input.action.Press then
                 if o.inside == true then
                     o.onPress( curr_mouse_x, curr_mouse_y ) 
                     o.press = true
+                    consumed = true -- we assume that this is consumed, so game can ignore
                 end
             elseif action == core.input.action.Release then
                 if o.inside == true then
@@ -56,9 +58,10 @@ function GUIComponent:new(o)
                 o.drag = false
             end 
         end
+        return consumed
     end
 
-    input.registerOnButton(o.callbacks.onButton)
+    input.registerOnButton(o.callbacks.onButton, "GUI")
     input.registerOnPosition(o.callbacks.onPosition)
 
     return o

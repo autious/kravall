@@ -3,7 +3,7 @@ local scen = require "scenario":new()
 local keyboard = core.input.keyboard
 local key = keyboard.key
 
-scen.gamemode = require "gamemodes/kravall":new()
+scen.gamemode = require "gamemodes/empty":new()
 
 scen:registerUpdateCallback( function(delta) scen.gamemode:update(delta) end )
 scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
@@ -242,6 +242,7 @@ light = scen.asm:loadAssembly(
 local rot = 10
 local x = 200
 local y = 300
+local offs = 0.0
 local function Update(delta)
 	--if keyboard.isKeyDown( key.R ) then
 	--	rot = rot + delta;
@@ -255,16 +256,18 @@ local function Update(delta)
 		x = x + 100*delta;
 	end
 	if keyboard.isKeyDown( key.Down ) then
+		y = y + 100*delta;
+	end
+	if keyboard.isKeyDown( key.Up ) then
 		y = y - 100*delta;
 		if y < 25 then y = 25 end
 	end
-	if keyboard.isKeyDown( key.Up ) then
-		y = y + 100*delta;
+	if keyboard.isKeyDown( key.Q ) then
+		offs = offs - 100*delta
 	end
-	--if keyboard.isKeyDown( key.Q ) then
-	--	core.animations.queue(dude, "rioter-male-wave-walk_00", true)
-	--	core.animations.queue(dude2, "rioter-male-wave-walk_00", false)
-	--end
+	if keyboard.isKeyDown( key.E ) then
+		offs = offs + 100*delta
+	end
 	--
 	--local rc;
     --rc = light:get(core.componentType.RotationComponent)
@@ -272,8 +275,15 @@ local function Update(delta)
 	--light:set(core.componentType.RotationComponent, rc)
 	
 	core.draw.drawTextbox( 100, 100, 100, 300, 0, "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890" )
+	core.draw.drawRectangle( 100, 100, 100, 300, false )
 	core.draw.drawTextbox( 300, 100, 100, 300, 0, "FIRST. This is a really long text repeated many times. This is a really long text repeated many times. LAST." )
-	core.draw.drawTextbox( 500, 100, x, y, 0, "FIRST. ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 This is a really long text repeated many times. ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 This is a really long text repeated many times. LAST." )
+	core.draw.drawRectangle( 300, 100, 100, 300, false )
+	core.draw.drawTextbox( 500, 100, x, y, offs, "FIRST. ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 This is a really long text repeated many times. ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 This is a really long text repeated many times. LAST." )
+	core.draw.drawRectangle( 500, 100, x, y, false )
+	
+	
+	
+	
 	core.draw.drawText( 300, 35, "METERS TRAVELLED: " )
 end
 

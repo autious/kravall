@@ -39,8 +39,8 @@ namespace GFX
 		std::string::iterator it = str.begin();
 		for (int i = 0; it < str.end(); it++, i++)
 		{
-			width += fontData->characters[static_cast<unsigned char>(*it)].advanceX * size + 1.0f * size;
-			if (width >= rectangle.z && l_off >= 0.0f)
+			width += fontData->characters[static_cast<unsigned char>(*it)].advanceX * size;
+			if (width + 5.0f * size >= rectangle.z)
 			{
 				std::string line = std::string(start, it);
 				unsigned int lineLength = line.length();
@@ -68,28 +68,35 @@ namespace GFX
 		{
 			if (*it == '\n')
 			{
+
 				l_off += 20.0f * size;
-				std::string line = std::string(start, it);
+				if (l_off >= 20.0f && l_off < rectangle.w)
+				{
+					std::string line = std::string(start, it);
 
-				// Remove leading whitespaces
-				std::size_t pos;
-				while (pos = line.find_first_of(trim) == 0)
-					line.erase(line.begin());
+					// Remove leading whitespaces
+					std::size_t pos;
+					while (pos = line.find_first_of(trim) == 0)
+						line.erase(line.begin());
 
-				GFX::Text t(rectangle.x, rectangle.y + l_off, size, size, fontData, color, line.c_str());
-				m_text.push_back(t);
+					GFX::Text t(rectangle.x, rectangle.y + l_off, size, size, fontData, color, line.c_str());
+					m_text.push_back(t);
+				}
 				start = it + 1;
 			}
 		}
 		l_off += 20.0f * size;
-		std::string line = std::string(start, str.end());
+		if (l_off >= 20.0f && l_off < rectangle.w)
+		{
+			std::string line = std::string(start, str.end());
 
-		// Remove leading whitespaces
-		std::size_t pos;
-		while (pos = line.find_first_of(trim) == 0)
-			line.erase(line.begin());
+			// Remove leading whitespaces
+			std::size_t pos;
+			while (pos = line.find_first_of(trim) == 0)
+				line.erase(line.begin());
 
-		GFX::Text t(rectangle.x, rectangle.y + l_off, size, size, fontData, color, line.c_str());
-		m_text.push_back(t);
+			GFX::Text t(rectangle.x, rectangle.y + l_off, size, size, fontData, color, line.c_str());
+			m_text.push_back(t);
+		}
 	}
 }
