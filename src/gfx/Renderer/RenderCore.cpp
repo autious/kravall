@@ -409,7 +409,7 @@ namespace GFX
 		CT(m_consolePainter->Render(), "Console");
 
 		// Draw debug text
-		CT(m_textPainter->Render(), "Text");
+		CT(m_textPainter->Render(m_windowWidth, m_windowHeight), "Text");
 
 		m_renderJobManager->Clear();
 
@@ -427,7 +427,7 @@ namespace GFX
 				ss << m_subsystemTimes[i].first << ": " << std::fixed << std::setw( 7 ) << std::setprecision(4) << std::setfill( '0' ) << m_subsystemTimes[i].second.count() / 1000.0f << "ms";
 				glm::vec2 position = glm::vec2(m_windowWidth-200+5, m_windowHeight + 12 - 20 * m_subsystemTimes.size() + 20 * i);
 
-				Text t(position.x, position.y, 1.0f, 1.0f, m_font, Colors::White, ss.str().c_str(), m_windowWidth, m_windowHeight);
+				Text t(position.x, position.y, 1.0f, 1.0f, m_font, Colors::White, ss.str().c_str());
 			    GetTextManager().AddText(t);
 			}
 
