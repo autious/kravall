@@ -9,7 +9,7 @@
 
 extern "C"
 {
-    static int LuaEq(lua_State* L)
+    static int LuaSquadFormationEq(lua_State* L)
     {
         Core::SquadFormation* lhs = luau_checksquadformation(L, 1);
         Core::SquadFormation* rhs = luau_checksquadformation(L, 2);
@@ -313,7 +313,7 @@ namespace Core
         int sanity = lua_gettop(L);
 
         luaL_newmetatable(L, SQUAD_FORMATION_META_TYPE);
-            luau_setfunction(L, "__eq", LuaEq);
+            luau_setfunction(L, "__eq", LuaSquadFormationEq);
         lua_pop(L, 1);
 
         lua_getglobal(L, "core");

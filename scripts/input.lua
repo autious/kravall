@@ -1,9 +1,11 @@
 local input = {}
 local onpositions = {}
 local onscroll = {}
-local onbutton = {}
+local onbutton = {DEFAULT = {}, GUI = {}, GAME = {}}
 local onchar = {}
 local onkey = {}
+
+local onbutton_groups = { "DEFAULT", "GUI", "GAME" }
 
 function core.input.mouse.onPosition( x,y )
     for k,v in pairs( onpositions ) do
@@ -18,8 +20,17 @@ function core.input.mouse.onScroll( x, y )
 end
 
 function core.input.mouse.onButton( button, action, mods )
-    for k,v in pairs( onbutton ) do
-       k( button, action, mods )
+    local consumed = false
+    for k,v in pairs( onbutton["GUI"] ) do
+       consumed = consumed or k( button, action, mods, consumed ) or false
+    end 
+
+    for k,v in pairs( onbutton["GAME"] ) do
+       consumed = consumed or k( button, action, mods, consumed ) or false
+    end 
+
+    for k,v in pairs( onbutton["DEFAULT"] ) do
+       consumed = consumed or k( button, action, mods, consumed ) or false
     end 
 end
 
@@ -51,8 +62,20 @@ function input.deregisterOnScroll( func )
     onscroll[func] = nil
 end
 
-function input.registerOnButton( func )
-    onbutton[func] = true
+function input.registerOnButton( func, group )
+
+    if group then
+        local exist = false
+        for _,v in pairs( onbutton_groups ) do
+            if v == group then
+                exist = true
+            end 
+        end
+        assert( exist, "Given group is not valid" )
+        onbutton[group][func] = true   
+    else 
+        onbutton["DEFAULT"][func] = true
+    end
 end
 
 function input.deregisterOnButton( func )

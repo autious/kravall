@@ -256,7 +256,7 @@ function scen:load()
     gui:addComponent(slider)
     gui:addComponent(checkbox)
 
-    gui:addPlacementHandler( WestPlacer:new() )
+    gui:addPlacementHandler( WestPlacer )
 
     scen.gui = gui
     scen:registerDestroyCallback( function() scen.gui:destroy() end )
