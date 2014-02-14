@@ -6,10 +6,10 @@ return function( components, winWidth, winHeight, posx, posy )
     posy = posy or 0
 
     local tw,th = PU.getTotalDimHeight( components, padding, padding )
-    local startx = winWidth + posx + padding
-    local starty = posy + padding
+    local startx = winWidth + posx
+    local starty = posy
     for _,c in pairs( components ) do 
-        c:setPosition( startx - c.width + c.xoffset - padding * 2, starty + c.yoffset )
+        c:setPosition( startx - c.width + c.xoffset, starty + c.yoffset )
         starty = starty + c.height + padding
     end 
 end

@@ -63,7 +63,7 @@ function Button:onRelease()
     self.releasedImg:show(false)
     self.hoverImg:show(true)
 
-    self.onClick() 
+    self:onClick()
 end
 
 function Button:onEnter()

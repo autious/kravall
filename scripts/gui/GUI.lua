@@ -7,7 +7,7 @@ local GUI = {
                 xoffset = 0,
                 yoffset = 0 }
 
-window.registerWindowSizeCallback( function( width, height ) 
+window.registerFramebufferSizeCallback( function( width, height ) 
     GUI.winWidth, GUI.winHeight = width, height
 end)
 
