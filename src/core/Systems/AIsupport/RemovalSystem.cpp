@@ -1,6 +1,8 @@
 #include "RemovalSystem.hpp"
 #include <World.hpp>
 
+#include <Animation/AnimationManager.hpp>
+
 namespace Core
 {
 
@@ -47,24 +49,47 @@ namespace Core
 		{
 			// remove this entity form its attackers...
 			Core::TargetingComponent* tc = WGETC<Core::TargetingComponent>(rioterEntities[i]);
+			Core::TargetingComponent* attackerTc = WGETC<Core::TargetingComponent>(tc->target);
+			if( attackerTc )
+				Core::TargetingComponent::StopAttacking( rioterEntities[i], *attackerTc );
+
 			for( int p = 0; p < tc->numberOfAttackers; p++ )
 			{
-				Core::TargetingComponent* attackerTc = WGETC<Core::TargetingComponent>(tc->attackers[p]);
-				attackerTc->target = INVALID_ENTITY;
+				Core::TargetingComponent* attackerTcomp = WGETC<Core::TargetingComponent>(tc->attackers[p]);
+				if( attackerTcomp )
+					attackerTcomp->target = INVALID_ENTITY;
 			}
+
+			Core::AnimationComponent* animc = WGETC<Core::AnimationComponent>( rioterEntities[i] );
+			if( animc )
+				Core::AnimationManager::PlayAnimation( rioterEntities[i], "die" );
 
 			world.m_entityHandler.RemoveComponents<UnitTypeComponent, MovementComponent, AttributeComponent, TargetingComponent, BoundingVolumeComponent, FlowfieldComponent>(rioterEntities[i]);
 		}
 
-		for (int i = 0; i < policeCount; i++)
+
+		for(int i = 0; i < policeCount; i++)
 		{
+			
 			// remove this entity form its attackers...
-			Core::TargetingComponent* tc = WGETC<Core::TargetingComponent>(rioterEntities[i]);
+			Core::TargetingComponent* tc = WGETC<Core::TargetingComponent>(policeEntities[i]);
+			Core::TargetingComponent* attackerTc = WGETC<Core::TargetingComponent>(tc->target);
+			if( attackerTc )
+				Core::TargetingComponent::StopAttacking( policeEntities[i], *attackerTc );
+
+			//LOG_WARNING << "police " << policeEntities[i] << " died, having " << tc->attackers << " number of attackers" << std::endl;
+			std::cout << "police " << policeEntities[i] << " died, attacked by " << tc->attackers[0] << "  " << tc->attackers[1] << "  " << tc->attackers[2] << "  " << tc->attackers[3] << "  " << tc->attackers[4] << ", attacking " << tc->target << std::endl;
+
 			for( int p = 0; p < tc->numberOfAttackers; p++ )
 			{
-				Core::TargetingComponent* attackerTc = WGETC<Core::TargetingComponent>(tc->attackers[p]);
-				attackerTc->target = INVALID_ENTITY;
+				Core::TargetingComponent* attackerTcomp = WGETC<Core::TargetingComponent>(tc->attackers[p]);
+				if( attackerTcomp )
+					attackerTcomp->target = INVALID_ENTITY;
 			}
+
+			Core::AnimationComponent* animc = WGETC<Core::AnimationComponent>( policeEntities[i] );
+			if( animc )
+				Core::AnimationManager::PlayAnimation( policeEntities[i], "die" );
 
 			world.m_entityHandler.RemoveComponents<UnitTypeComponent, MovementComponent, AttributeComponent, TargetingComponent, BoundingVolumeComponent, FlowfieldComponent>(policeEntities[i]);
 		}

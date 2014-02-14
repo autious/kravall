@@ -50,6 +50,9 @@ void Core::RioterGoalSystem::Update( float delta )
 		{
 			delta = glm::normalize( delta );
 			MovementComponent::SetDirection( mvmc, delta.x, 0, delta.z );
+
+			mvmc->SetDesiredSpeed( Core::GameData::GetMovementDataWithState( mvmc->state ).speedToDesire, Core::DesiredSpeedSetPriority::RioterGoalSystemDesiredSpeedPriority );
+
 		}
 	}
 }

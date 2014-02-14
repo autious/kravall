@@ -14,10 +14,12 @@ extern "C"
 		float range						= static_cast<float>(luaL_checknumber( L, 1 ));
 		float healthDmg					= static_cast<float>(luaL_checknumber( L, 2 ));
 		float moraleDmg					= static_cast<float>(luaL_checknumber( L, 3 ));
-		float animationDmgDealingTime	= static_cast<float>(luaL_checknumber( L, 4 ));
-		int animationID					= luaL_checkint( L,	5 );
+		float moralDmgOnMiss			= static_cast<float>(luaL_checknumber( L, 4 ));
+		float staminacost				= static_cast<float>(luaL_checknumber( L, 5 ));
+		float animationDmgDealingTime	= static_cast<float>(luaL_checknumber( L, 6 ));
+		int animationID					= luaL_checkint( L,						  7 );
 
-		int weapon = Core::GameData::PushWeaponData( range, healthDmg, moraleDmg, animationDmgDealingTime, animationID );
+		int weapon = Core::GameData::PushWeaponData( range, healthDmg, moraleDmg, moralDmgOnMiss, staminacost, animationDmgDealingTime, animationID );
         lua_pushnumber(L, weapon );
 
         return 1;

@@ -11,12 +11,11 @@ local keyboard = core.input.keyboard
 local mouse = core.input.mouse
 local s_squad = core.system.squad
 
-core.movementData.setMovementMetaData( core.movementData.Idle, 0, 17, 17 )
-core.movementData.setMovementMetaData( core.movementData.Walking, 5.8, 17, 17 )
-core.movementData.setMovementMetaData( core.movementData.Sprinting, 8.8, 17, 14 )
+core.movementData.setMovementMetaData( core.movementData.Walking, 5.8, 17, 17, 0.0 )
+core.movementData.setMovementMetaData( core.movementData.Sprinting, 8.8, 17, 14, 0.2 )
 
 -- usual weapons...
-fists = core.weaponData.pushWeapon( 1.5, 20, 0.2, 0.5, 1 )
+fists = core.weaponData.pushWeapon( 1.0, 20, 0.2, 0.05, 0.05, 0.5, 3 )
 
 
 function T:new(o)

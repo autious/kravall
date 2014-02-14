@@ -6,6 +6,7 @@ scen.asm:specific_content( core.contentmanager.load(
 
 
 scen.gamemode = require "gamemodes/kravall":new()
+scen.gamemode:init()
 
 local mouse = core.input.mouse
 local squad = ent.get "policeSquad"
@@ -26,7 +27,35 @@ scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
 
 
 --scen.gamemode.camera:lookAt( core.glm.vec3.new( 50, 25, 50 ), core.glm.vec3.new( 0, 0, 0 ) )
-
+---- Ambient light
+scen:loadAssembly( 
+{
+	{
+		type = core.componentType.LightComponent,
+		data =  { 
+					color = { 1.0, 1.0, 1.0 },
+					intensity = 1.0,
+					type = core.gfx.objectTypes.Light,
+					lighttype = core.gfx.lightTypes.Ambient,
+					spotangle = 0,
+					spotpenumbra = 0,
+					speccolor = {0,0,0}
+				}
+	},
+	{
+		type = core.componentType.WorldPositionComponent,
+		data = { position = { 0, 0, 0 } }
+	},
+	{
+		type = core.componentType.ScaleComponent,
+		data = { scale = 1.0 }
+	},
+	{
+		type = core.componentType.RotationComponent,
+		data = { rotation = { 0,0,0,0 } }
+	}
+} 
+)
 
 
 
@@ -37,20 +66,20 @@ local building = ent.get "building"
 
 local rGroup = core.system.groups.createGroup();
 local centerPoint = { 110, 0, 0 }
-local side = math.sqrt( 50 )
+local side = math.sqrt( 20 )
 for i = -side/2, side/2 do
 	for p = -side/2, side/2 do
-		--rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rGroup, fists)
+		rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rGroup, nil, nil, fists)
 	end
 end
 --rioter( scen, 0, 0, 0, rGroup, fists)
 core.system.groups.setGroupGoal(rGroup, 0, 0, 0)
 
-for i = 0, 40 do
-	squad(scen, 20, 0, 0, math.pi/2, fists);
-end
+--for i = 0, 40 do
+--	squad(scen, 20, 0, 0, math.pi/2, fists);
+--end
 	
---local squadOne = squad(scen, 20, 0, 0, math.pi/2, fists);
+local squadOne = squad(scen, 20, 0, 0, math.pi/2, fists);
 --local squadTwo = squad(scen, 77, 0, 43, math.pi/2, fists);
 
 

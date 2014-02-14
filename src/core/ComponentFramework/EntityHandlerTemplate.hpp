@@ -197,7 +197,7 @@ namespace Core
 			int componentId = m_entities.GetComponentId(entity, componentType);
 
 
-			if (componentId >= 0)
+			if (componentId >= 0 && entity != INVALID_ENTITY )
 			{
 				return (Component*)m_components[componentType]->Get(componentId);
 			}

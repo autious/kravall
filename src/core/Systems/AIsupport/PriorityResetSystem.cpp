@@ -7,7 +7,7 @@
 
 
 Core::PriorityResetSystem::PriorityResetSystem() : 
-BaseSystem( EntityHandler::GenerateAspect<MovementComponent>(), 0ULL)
+BaseSystem( EntityHandler::GenerateAspect<MovementComponent>(), 0ULL )
 {
 }
 
@@ -20,4 +20,5 @@ void Core::PriorityResetSystem::Update(float delta)
 		mvmc->currentGoalPriority = Core::MovementGoalPriority::NoGoalPriority;
 		mvmc->currentDesiredSpeedPriority = Core::DesiredSpeedSetPriority::NoDesiredSpeedPriority;
 	}
+
 }

@@ -43,9 +43,9 @@ void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police, float del
 
 	GFXColor colour = GFXColor(1.0f, 1.0f, 1.0f, 1.0f);	
 
-	if (tc->target != INVALID_ENTITY)
-	{
-		Core::TargetingComponent* tcTarget = WGETC<Core::TargetingComponent>(tc->target);
+	Core::TargetingComponent* tcTarget = WGETC<Core::TargetingComponent>(tc->target);
+	if( tcTarget )
+	{		
 		Core::WorldPositionComponent* twpc = WGETC<Core::WorldPositionComponent>(tc->target);
 		
 		float dx = twpc->position[0] - wpc->position[0];
@@ -69,6 +69,8 @@ void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police, float del
 		else if( ac->police.stance != PoliceStance::Passive )
 			return;
 	}
+	else
+		tc->target = INVALID_ENTITY;
 
 	switch (ac->police.stance)
 	{
@@ -80,7 +82,6 @@ void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police, float del
 			}
 			else
 			{
-
 				colour = GFXColor(1.0f, 0.0f, 0.0f, 1.0f);
 			}
 			break;
@@ -105,6 +106,7 @@ void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police, float del
 			break;
 	}
 
+	
 
 	if (tc->target != INVALID_ENTITY)
 	{
@@ -135,10 +137,10 @@ void Core::TargetingSystem::HandleRioterTargeting(Core::Entity rioter, float del
 	if (ac->rioter.stance != RioterStance::Attacking)
 		return;
 
-	if (tc->target != INVALID_ENTITY)
+	Core::TargetingComponent* tcTarget = WGETC<Core::TargetingComponent>(tc->target);
+	if( tcTarget )
 	{
 		Core::WorldPositionComponent* twpc = WGETC<Core::WorldPositionComponent>(tc->target);
-		Core::TargetingComponent* tcTarget = WGETC<Core::TargetingComponent>(tc->target);
 
 		float dx = twpc->position[0] - wpc->position[0];
 		float dy = twpc->position[1] - wpc->position[1];
@@ -146,10 +148,10 @@ void Core::TargetingSystem::HandleRioterTargeting(Core::Entity rioter, float del
 
 		float distSqr = dx * dx + dy * dy + dz * dz;
 
-		if (distSqr < 5.0f) // Attack
+		if (distSqr < weapon.range * weapon.range ) // Attack
 		{
 			if (TargetingComponent::Attack(rioter, *tcTarget))
-				std::cout << "Rioter: " << rioter << " is attacking police " << tc->target << std::endl;
+				;//std::cout << "Rioter: " << rioter << " is attacking police " << tc->target << std::endl;
 		}
 
 		tc->attackTime += delta;
@@ -161,6 +163,8 @@ void Core::TargetingSystem::HandleRioterTargeting(Core::Entity rioter, float del
 		else
 			return;
 	}
+	else
+		tc->target = INVALID_ENTITY;
 
 	tc->target = FindClosestAttacker(tc, wpc);
 	if (tc->target != INVALID_ENTITY)
@@ -169,6 +173,7 @@ void Core::TargetingSystem::HandleRioterTargeting(Core::Entity rioter, float del
 	tc->target = FindClosestTarget(wpc, UnitType::Police);
 	if (tc->target != INVALID_ENTITY)
 		return;
+
 
 	// 1. Attacker
 	// 2. Closest police
@@ -233,7 +238,12 @@ Core::Entity Core::TargetingSystem::FindClosestAttacker(Core::TargetingComponent
 	}
 
 	if (minDist < MAX_SQR_DISTANCE)
+	{
+		Core::TargetingComponent* tcTarget12 = WGETC<Core::TargetingComponent>(target);
+		if( !tcTarget12 )
+			int oo = 0;
 		return target;
+	}
 	else
 		return INVALID_ENTITY;
 }

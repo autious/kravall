@@ -7,6 +7,7 @@
 #include <limits>
 #include <glm/glm.hpp>
 
+#define MOVEDTHISFRAME_THRESHOLD 0.1f
 
 namespace Core
 {
@@ -15,7 +16,6 @@ namespace Core
 	*/
 	enum MovementState
 	{
-		Movement_Idle,
 		Movement_Walking,
 		Movement_Sprinting,
 		MOVEMENTSTATE_COUNT,
@@ -37,6 +37,7 @@ namespace Core
 	enum DesiredSpeedSetPriority : short
 	{
 		NoDesiredSpeedPriority,
+		RioterGoalSystemDesiredSpeedPriority,
 		PoliceGoalSytemDesiredSpeedPriority,
 		SquadMoveInFormationDesiredSpeedPriority,
 		CombatAnimationDesiredSpeedPriority,
@@ -52,6 +53,12 @@ namespace Core
 
 		/*! The object's desired speed. The speed will attempt to reach this speed. */
 		float desiredSpeed;
+
+		/*! The position from the previos frame. Used to calculate perceived speed. */
+		float prevPos[3];
+
+		/*! If the entity has moved more than a certain distance in the last frame this value will be true. See macro MOVEDTHISFRAME_THRESHOLD */
+		bool movedThisFrame;
 
 		/*! 
 			Should NEVER be set directly - use the static function SetDirection instead. An array specifying the 
@@ -82,7 +89,7 @@ namespace Core
 
 		/*! Default constructor. Initialising all members to 0. */
 		MovementComponent() : speed(0.0f), desiredSpeed(0.0f), currentGoalPriority( MovementGoalPriority::NoGoalPriority ), 
-			currentDesiredSpeedPriority( DesiredSpeedSetPriority::NoDesiredSpeedPriority )
+			currentDesiredSpeedPriority( DesiredSpeedSetPriority::NoDesiredSpeedPriority ), movedThisFrame( false )
 		{
 			direction[0] = 0.0f;
 			direction[1] = 0.0f;
@@ -97,6 +104,10 @@ namespace Core
 			goal[2] = 0.0f;
 
 			NavMeshGoalNodeIndex = -1;
+
+			prevPos[0] = std::numeric_limits<float>::max();
+			prevPos[1] = 0.0f;
+			prevPos[2] = 0.0f;
 
 			state = MovementState::Movement_Walking;
 		}

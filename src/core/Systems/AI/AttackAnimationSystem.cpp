@@ -19,11 +19,11 @@ void Core::AttackAnimationSystem::Update(float delta)
 	for (std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); it++)
 	{
 		Core::TargetingComponent* tc = WGETC<Core::TargetingComponent>(*it);	
-
-		if( tc->target != INVALID_ENTITY )
+		Core::WorldPositionComponent* targetWpc = WGETC<Core::WorldPositionComponent>( tc->target );
+		if( targetWpc )
 		{
 			Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(*it);
-			Core::WorldPositionComponent* targetWpc = WGETC<Core::WorldPositionComponent>( tc->target );
+			
 			Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>(*it);
 			const Core::WeaponData& weapon = Core::GameData::GetWeaponDataFromWeapon( tc->weapon );
 
@@ -33,6 +33,9 @@ void Core::AttackAnimationSystem::Update(float delta)
 			if (distSqr < weapon.range * weapon.range )
 				tc->isAttacking = true;
 		
+			// draw range and target...
+			//GFX::Debug::DrawSphere( wpc->GetVec3( *wpc ), weapon.range, GFXColor( 0.5, 1, 0.5, 1 ), false );
+			//GFX::Debug::DrawLine( targetWpc->GetVec3( *targetWpc ), wpc->GetVec3( *wpc ), GFXColor( 0.5, 1, 0.5, 1 ), false );
 
 			// if attacking, handle animation and dmg
 			if( tc->isAttacking )
@@ -46,20 +49,25 @@ void Core::AttackAnimationSystem::Update(float delta)
 				if( animac->currentTime > weapon.animationDmgDealingtime && !tc->hasAttacked )
 				{
 					tc->hasAttacked = true;
+					Core::AttributeComponent* attribc = WGETC<Core::AttributeComponent>( tc->target );
+
+					attribc->stamina -= weapon.staminaCost;
 
 					// deal dmg if target is still in range
 					if (distSqr < weapon.range * weapon.range )
 					{
-						Core::AttributeComponent* attribc = WGETC<Core::AttributeComponent>( tc->target );
 						attribc->health -= (int)weapon.weaponDamage;
 						attribc->morale -= weapon.moraleDamage;
+					}
+					else
+					{
+						attribc->morale -= weapon.moralDamageOnMiss;
 					}
 				}
 
 				// attack is done, reset the chace
 				if( !animac->playing )
 				{
-					Core::AnimationManager::LoopAnimation( *it, 0 );
 					tc->isAttacking = false;
 					tc->hasAttacked = false;
 				}

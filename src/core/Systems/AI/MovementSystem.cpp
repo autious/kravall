@@ -8,7 +8,9 @@
 const float Core::MovementSystem::TURN_FACTOR = 7.5f;
 
 Core::MovementSystem::MovementSystem()  
-		: BaseSystem(EntityHandler::GenerateAspect<WorldPositionComponent, MovementComponent>(), 0ULL)
+: BaseSystem( {
+	{ EntityHandler::GenerateAspect<WorldPositionComponent, MovementComponent>(), 0ULL}, 
+	{ EntityHandler::GenerateAspect<AttributeComponent, MovementComponent, UnitTypeComponent>(), 0ULL } })
 {
 }
 
@@ -18,8 +20,8 @@ void Core::MovementSystem::Update(float delta)
 {
 
 
-	for (std::vector<Entity>::iterator it = m_entities.begin();
-		it != m_entities.end();
+	for (std::vector<Entity>::iterator it = m_bags[0].m_entities.begin();
+		it != m_bags[0].m_entities.end();
 		it++)
 	{
 		WorldPositionComponent* wpc = WGETC<WorldPositionComponent>(*it);
@@ -51,10 +53,11 @@ void Core::MovementSystem::Update(float delta)
 
 			RotationComponent* rc = WGETC<RotationComponent>(*it);
 
-
 			// We need to solve this, model might be wrong or something :) // johan sais wait and see ;) -> blame maya? yes. fin.
 			*rc = RotationComponent::GetComponentRotateY(-angle - 3.141592f * 1.5f); 
 		}
+
+		GFX::Debug::DrawSphere( glm::vec3( mc->goal[0], 0, mc->goal[2] ), 2.0f, GFXColor(), false );
 
 		// Draw the debug lines showing the rioter's direction.
 		/*GFX::Debug::DrawLine(Core::WorldPositionComponent::GetVec3(*wpc),
@@ -62,8 +65,33 @@ void Core::MovementSystem::Update(float delta)
 									   wpc->position[1] + mc->direction[1],
 									   wpc->position[2] + mc->direction[2]),
 							 GFXColor(1.0f, 0.0f, 0.0f, 1.0f), false);*/
-
 	}
+
+
+	// update police movement state...
+	for (std::vector<Entity>::iterator it = m_bags[1].m_entities.begin(); it != m_bags[1].m_entities.end(); it++)
+	{
+		UnitTypeComponent* utc = WGETC<UnitTypeComponent>(*it);
+		if( utc->type != Core::Police )
+			continue;
+
+		AttributeComponent* attribc = WGETC<AttributeComponent>(*it);
+		MovementComponent* mvmc = WGETC<MovementComponent>(*it);
+
+		if( attribc->stamina > 30.0f )
+		{
+			mvmc->state = Core::MovementState::Movement_Sprinting;
+		}
+		else
+		{
+			mvmc->state = Core::MovementState::Movement_Walking;
+		}
+
+		if( mvmc->movedThisFrame )
+			attribc->stamina -= Core::GameData::GetMovementDataWithState( mvmc->state ).staminaCostPerSecond;
+	}
+
+
 }
 
 void Core::MovementSystem::InterpolateDirections(MovementComponent* mc, float delta)
