@@ -23,7 +23,7 @@ function CreditsMenu:new(o,menuState)
                                     matHover = "assets/texture/ui/back-button-hover.material",
                                     anchor="SouthWest",xoffset=0,yoffset=0,onClick = menuState.goMain }))
 
-    o.gui:addPlacementHandler( AnchorPlacer:new() )
+    o.gui:addPlacementHandler( AnchorPlacer )
 
     return o
 end
