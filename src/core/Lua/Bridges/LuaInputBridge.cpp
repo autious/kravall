@@ -217,19 +217,32 @@ namespace Core
 
     void LuaInputHandler::OnButtonEvent( const Core::ButtonEvent &e ) 
     {
+        lua_getglobal( m_luaState, "errorHandler" );
+        int errorHandler = lua_gettop( m_luaState );
+
         lua_getglobal( m_luaState, "core" );
         lua_getfield( m_luaState, -1, "input" );
         lua_getfield( m_luaState, -1, "mouse" );
         lua_getfield( m_luaState, -1, "onButton" );
+
         if( lua_isfunction( m_luaState, -1 ) )
         {
-            lua_pushvalue( m_luaState, -1 );
+            lua_pushvalue( m_luaState, -1 ); //Repush function
             lua_pushinteger( m_luaState, e.button );
             lua_pushinteger( m_luaState, e.action );
             uint64_t * modMask = LuaUNewBitmask( m_luaState ); 
             *modMask = e.mods;
 
-            int error = lua_pcall(m_luaState, 3, 0, 0);
+            int error;
+            if( lua_isfunction(m_luaState,  errorHandler ) )
+            {
+                error = lua_pcall(m_luaState, 3, 0, errorHandler );
+            }
+            else
+            {
+                error = lua_pcall(m_luaState, 3, 0, 0);
+            }
+
             if(error)
             {
                 LOG_ERROR << "Unable to call lua function onbutton: " << lua_tostring(m_luaState, -1) << std::endl;
@@ -240,7 +253,7 @@ namespace Core
         {
             LOG_ERROR << "Unable to call lua function onbutton: value is nonfunctional value." << std::endl;
         }
-        lua_pop( m_luaState, 4);
+        lua_pop( m_luaState, 5);
     }
 
     void LuaInputHandler::OnPositionEvent( const Core::PositionEvent &e ) 

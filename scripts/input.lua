@@ -79,7 +79,9 @@ function input.registerOnButton( func, group )
 end
 
 function input.deregisterOnButton( func )
-    onbutton[func] = nil
+    for _,v in pairs(onbutton_groups) do
+        onbutton[v][func] = nil
+    end
 end
 
 function input.registerOnChar( func )
