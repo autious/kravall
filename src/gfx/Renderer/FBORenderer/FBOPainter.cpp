@@ -34,7 +34,7 @@ namespace GFX
 		m_textureUniform = m_shaderManager->GetUniformLocation("TQ", "textureIN");
 	}
 
-	void FBOPainter::Render(FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, int screenWidth, int screenHeight, int current )
+	void FBOPainter::Render(FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, int screenWidth, int screenHeight, FBOTexture* shadowMap, int current )
 	{
 		m_shaderManager->UseProgram("TQ");
 
@@ -66,7 +66,7 @@ namespace GFX
 			glDepthMask(GL_TRUE);
 		}
 
-		if (current == 1)
+		else if (current == 1)
 		{
 			int x = screenWidth / 4;
 			int y = screenHeight / 4;
@@ -91,16 +91,23 @@ namespace GFX
 			glBindVertexArray(m_dummyVAO);
 			glDrawArrays(GL_POINTS, 0, 1);
 
-			m_shaderManager->ResetProgram();
-
-			glEnable(GL_DEPTH_TEST);
-			glEnable(GL_BLEND);
-
 			glViewport(0, 0, screenWidth, screenHeight);
 
 		}
+		else if (current == 6) // Draw shadowmap
+		{
+			glViewport(0, 0, 256, 256);
+			TextureManager::BindTexture(shadowMap->GetTextureHandle(), m_textureUniform, 0, GL_TEXTURE_2D);
+			glBindVertexArray(m_dummyVAO);
+			glDrawArrays(GL_POINTS, 0, 1);
+			glViewport(0, 0, screenWidth, screenHeight);
+		}
+		
 		BasePainter::ClearFBO();
 		TextureManager::UnbindTexture();
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+		m_shaderManager->ResetProgram();
 	}
 
 }

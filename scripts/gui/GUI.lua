@@ -36,6 +36,7 @@ function GUI:addComponent( comp )
 end
 
 function GUI:addPlacementHandler( handler )
+    assert( handler ~= nil, "Given placer is nil" )
     self.placers[#(self.placers)+1] = handler
     self:constrict( )
 end
@@ -53,9 +54,6 @@ end
 
 -- Can be called with nil-values to reactivate automatic window resizing
 function GUI:setPosition(x,y)
-    if x ~= nil then
-        print( "GUISET" .. x .. " " .. y )
-    end
     self.x = x
     self.y = y
 
@@ -88,7 +86,7 @@ end
 
 function GUI:constrict()
     for _,v in pairs( self.placers ) do
-        v:constrict( self.components, self.width, self.height, self.x, self.y )
+        v( self.components, self.width, self.height, self.x, self.y )
     end
 end
 
@@ -116,6 +114,9 @@ function GUI:destroy()
 end
 
 function GUI:update(delta)
+    if core.config.debugDrawGUIBorders then 
+        core.draw.drawRectangle( self.x, self.y, self.width, self.height, false )
+    end
 end
 
 return GUI

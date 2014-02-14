@@ -13,7 +13,8 @@ local Checkbox =
                     matOpen = "assets/texture/ui/checkbox-open_00.material",
                     matSelected = "assets/texture/ui/checkbox-selected_00.material",
                     matHoverOpen = "assets/texture/ui/checkbox-hover-open_00.material",
-                    matHoverSelected = "assets/texture/ui/checkbox-hover-selected_00.material"
+                    matHoverSelected = "assets/texture/ui/checkbox-hover-selected_00.material",
+                    onChange = nil
                 }
 
 
@@ -67,6 +68,20 @@ function Checkbox:setPosition( x,y )
     self.selectedImg:setPosition( x,y )
     self.hoverOpenImg:setPosition( x,y )
     self.hoverSelectedImg:setPosition( x,y )
+
+    if self.checked then
+        if self.inside then
+            self:active( self.hoverSelectedImg )
+        else
+            self:active( self.selectedImg )
+        end
+    else
+        if self.inside then
+            self:active( self.hoverOpenImg )
+        else
+            self:active( self.openImg )
+        end
+    end
 end
 
 function Checkbox:onPress() 
@@ -85,6 +100,7 @@ function Checkbox:onRelease()
 end
 
 function Checkbox:onEnter()
+    self.inside = true
     if self.checked then
         self:active( self.hoverSelectedImg )
     else
@@ -93,6 +109,7 @@ function Checkbox:onEnter()
 end
 
 function Checkbox:onExit()
+    self.inside = false
     if self.checked then
         self:active(self.selectedImg )
     else

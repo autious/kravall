@@ -1,38 +1,15 @@
-local NorthPlacer = {leftOffset = 20, padding = 10}
+local PU = require "gui/placement/util"
+local padding = 10
 
-function NorthPlacer:new(o)
-    o = o or {}
-
-    setmetatable( o, self )
-    self.__index = self
-
-    return o
-end
-
-function NorthPlacer:constrict( components, winWidth, winHeight, posx, posy )
+return function( components, winWidth, winHeight, posx, posy )
     posx = posx or 0
     posy = posy or 0
 
-    local tw,th = self:getTotalDim( components )
-    local startx = winWidth/2
-    local starty = 0
+    local tw,th = PU.getTotalDimHeight( components, padding, padding )
+    local startx = winWidth/2 + posx + padding 
+    local starty = 0 + padding + posy
     for _,c in pairs( components ) do 
-        c:setPosition( startx - c.width/2 + c.xoffset + posx, starty + c.yoffset + posy )
-        starty = starty + c.height + self.padding
+        c:setPosition( startx - c.width/2 + c.xoffset, starty + c.yoffset )
+        starty = starty + c.height + padding
     end 
 end
-
-function NorthPlacer:getTotalDim( components )
-    local tw = 0
-    local th = 0
-    for _,c in pairs( components ) do     
-        if tw < c.width then
-            tw = c.width
-        end
-        th = th + c.height + self.padding
-    end
-    
-    return tw, th
-end
-
-return NorthPlacer
