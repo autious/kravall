@@ -23,7 +23,7 @@ namespace Core
 			currentTime = 0.0f;
 			loop = false;
 			playing = false;
-			speed = 0.0f;
+			speed = 1.0f;
 			currentFrame = 0;
 		}
 		inline static const char * GetName()

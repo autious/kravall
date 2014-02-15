@@ -6,7 +6,10 @@
 
 struct ShadowData
 {
-	glm::mat4x4 lightMatrix;
+	glm::mat4x4 lightMatrix1;
+	glm::mat4x4 lightMatrix2;
+	glm::mat4x4 lightMatrix3;
+	glm::mat4x4 lightMatrix4;
 	glm::vec4 atlasCoords;
 };
 

@@ -1,6 +1,6 @@
 #include "LuaSquadBridge.hpp"
 
-#include <Systems/SquadSystem.hpp>
+#include <Systems/AI/SquadSystem.hpp>
 
 #include <Lua/LuaUtility.hpp>
 #include <Lua/LuaMetatableTypes.hpp>
@@ -9,7 +9,7 @@
 
 extern "C"
 {
-    static int LuaEq(lua_State* L)
+    static int LuaSquadFormationEq(lua_State* L)
     {
         Core::SquadFormation* lhs = luau_checksquadformation(L, 1);
         Core::SquadFormation* rhs = luau_checksquadformation(L, 2);
@@ -42,7 +42,7 @@ extern "C"
                 lua_pushnil(L);
                 for(int i=0; lua_next(L, 1); ++i)
                 {
-                    squads[i] = luaL_checknumber(L, -1);
+                    squads[i] = static_cast<int>(luaL_checknumber(L, -1));
                     lua_pop(L, 1);
                 }                
 
@@ -86,7 +86,7 @@ extern "C"
                 lua_pushnil(L);
                 for(int i=0; lua_next(L, 1); ++i)
                 {
-                    squads[i] = luaL_checknumber(L, -1);
+                    squads[i] = static_cast<int>(luaL_checknumber(L, -1));
                     lua_pop(L, 1);
                 }
 
@@ -133,7 +133,7 @@ extern "C"
                 lua_pushnil(L);
                 for(int i=0; lua_next(L, 1); ++i)
                 {
-                    squads[i] = luaL_checknumber(L, -1);
+                    squads[i] = static_cast<int>(luaL_checknumber(L, -1));
                     lua_pop(L, 1);
                 }
 
@@ -181,7 +181,7 @@ extern "C"
                 lua_pushnil(L);
                 for(int i=0; lua_next(L, 1); ++i)
                 {
-                    squads[i] = luaL_checknumber(L, -1);
+                    squads[i] = static_cast<int>(luaL_checknumber(L, -1));
                     lua_pop(L, 1);
                 }
 
@@ -241,7 +241,7 @@ extern "C"
                 lua_pushnil(L);
                 for(int i=0; lua_next(L, 1); ++i)
                 {
-                    squads[i] = luaL_checknumber(L, -1);
+                    squads[i] = static_cast<int>(luaL_checknumber(L, -1));
                     lua_pop(L, 1);
                 }
 
@@ -286,7 +286,7 @@ extern "C"
                 lua_pushnil(L);
                 for(int i=0; lua_next(L, 1); ++i)
                 {
-                    squads[i] = luaL_checknumber(L, -1);
+                    squads[i] = static_cast<int>(luaL_checknumber(L, -1));
                     lua_pop(L, 1);
                 }
 
@@ -313,7 +313,7 @@ namespace Core
         int sanity = lua_gettop(L);
 
         luaL_newmetatable(L, SQUAD_FORMATION_META_TYPE);
-            luau_setfunction(L, "__eq", LuaEq);
+            luau_setfunction(L, "__eq", LuaSquadFormationEq);
         lua_pop(L, 1);
 
         lua_getglobal(L, "core");

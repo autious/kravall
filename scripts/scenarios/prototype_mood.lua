@@ -84,7 +84,7 @@ local building = ent.get "building"
 
 local dist = 1.8
 
-local squadOne = squad(scen, -5, 0, 0, math.pi/2);
+local squadOne = squad(scen, -5, 0, 0, math.pi/2, fists);
 
 --local policeGroup = core.system.groups.createGroup();
 --local centerPoint = { -4, 0, -21}
@@ -113,7 +113,7 @@ local centerPoint = { 20.5, 0, -40 }
 for i = -4, 4 do
 	for p = -5, 5 do
 		local r = {}
-		r.instance = rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rioterGroup)
+		r.instance = rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rioterGroup, fists)
 		table.insert(rioters, r)
 	end
 end

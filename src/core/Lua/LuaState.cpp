@@ -36,6 +36,7 @@
 #include <Lua/Bridges/LuaSquadBridge.hpp>
 #include <Lua/Bridges/LuaAnimationBridge.hpp>
 #include <Lua/Bridges/LuaHoverTextSystemBridge.hpp>
+#include <Lua/Bridges/LuaWeaponBridge.hpp>
 
 namespace Core
 {
@@ -64,7 +65,8 @@ namespace Core
 		lmmdb(L),
         lsqdb(L),
 		lanb(L),
-        lhtsb(L)
+        lhtsb(L),
+		lwp(L)
         {}
             
         LuaBitmask lb;
@@ -90,6 +92,7 @@ namespace Core
         LuaSquadBridge lsqdb;
 		LuaAnimationBridge lanb;
         LuaHoverTextSystemBridge lhtsb;
+		LuaWeaponBridge lwp;
     };
 }
 
@@ -285,11 +288,23 @@ void Core::LuaState::Update( float delta )
 { 
     if( m_activeUpdate )
     {
+        lua_getglobal( m_state, "errorHandler" );
+        int error;
+        int errorHandler = lua_gettop( m_state );
+
         lua_rawgeti( m_state, LUA_REGISTRYINDEX, m_coreUpdateFunctionReg );
         lua_pushnumber( m_state, delta );
-		this->
         m_timer.Start();   
-        int error = lua_pcall( m_state, 1,0,0 );
+
+        if( lua_isfunction( m_state, errorHandler ) )
+        {
+             error = lua_pcall( m_state, 1,0, errorHandler );
+        }
+        else
+        {
+             error = lua_pcall( m_state, 1,0,0 );
+        }
+
         m_timer.Stop();
         m_lastFrameTime = m_timer.GetDelta();
 
@@ -300,6 +315,8 @@ void Core::LuaState::Update( float delta )
             m_activeUpdate = false;
             lua_pop( m_state, 1 );
         }
+
+        lua_pop( m_state, 1 );
     } 
 }
 

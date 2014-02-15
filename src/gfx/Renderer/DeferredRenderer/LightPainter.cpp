@@ -95,7 +95,7 @@ namespace GFX
 
 
 	void LightPainter::Render(unsigned int& renderIndex, FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, FBOTexture* SSDOTexture,
-		FBOTexture* shadowMap, glm::mat4 viewMatrix, glm::mat4 projMatrix, float exposure, float gamma, glm::vec3 whitePoint, GLuint& toneMappedTexture)
+		FBOTexture** shadowMaps, glm::mat4 viewMatrix, glm::mat4 projMatrix, float exposure, float gamma, glm::vec3 whitePoint, GLuint& toneMappedTexture)
 	{
 		m_shaderManager->UseProgram("ComputeLighting");
 
@@ -211,9 +211,26 @@ namespace GFX
 		glBindImageTexture(5, SSDOTexture->GetTextureHandle(), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
 
 		
-		m_shadowMapUniform = m_shaderManager->GetUniformLocation("ComputeLighting", "shadowMap");
+		m_shadowMapUniform = m_shaderManager->GetUniformLocation("ComputeLighting", "shadowMap1");
+		glUniform1i(m_shadowMapUniform, 0);
+		m_shadowMapUniform = m_shaderManager->GetUniformLocation("ComputeLighting", "shadowMap2");
+		glUniform1i(m_shadowMapUniform, 1);
+		m_shadowMapUniform = m_shaderManager->GetUniformLocation("ComputeLighting", "shadowMap3");
+		glUniform1i(m_shadowMapUniform, 2);
+		m_shadowMapUniform = m_shaderManager->GetUniformLocation("ComputeLighting", "shadowMap4");
+		glUniform1i(m_shadowMapUniform, 3);
+
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, shadowMap->GetTextureHandle());
+		glBindTexture(GL_TEXTURE_2D, shadowMaps[0]->GetTextureHandle());
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, shadowMaps[1]->GetTextureHandle());
+
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, shadowMaps[2]->GetTextureHandle());
+
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, shadowMaps[3]->GetTextureHandle());
 		//glBindImageTexture(6, shadowMap->GetTextureHandle(), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RG32F);
 
 

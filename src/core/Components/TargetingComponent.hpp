@@ -7,6 +7,17 @@
 
 namespace Core
 {
+	//enum WeaponType
+	//{
+	//	Melee,
+	//	Baton,
+	//	Gun,
+	//	Rifle,
+	//	WEAPONTYPE_COUNT
+	//};
+
+
+
 	/*!
 		Component holding a moving object's speed, maximum speed and direction of movement.
 	*/
@@ -21,14 +32,21 @@ namespace Core
 		/*! The entity that is the current target. */
 		Entity target;
 
+		/*! The type of weapon used by this unit. -1 indicates that the unit can't attack, not even by melee. All attack are pushed from lua. */
+		int weapon;
+		
 		/*! How long the unit has tried to attack the current target. */
 		float attackTime;
 
 		/*! Whether the unit is currently attacking its target. */
 		bool isAttacking;
 
+		/*! Is true if the unit isAttacking and has passed the damage dealing time of the animation ( as to not deal damage several times ). */
+		bool hasAttacked;
+
 		/*! Default constructor. Initialising all members to 0. */
-		TargetingComponent() : numberOfAttackers(0), target(INVALID_ENTITY), attackTime(0.0f), isAttacking(false)
+		TargetingComponent() : numberOfAttackers(0), target(INVALID_ENTITY), attackTime(0.0f), isAttacking(false), 
+			weapon( -1 ), hasAttacked(false)
 		{
 			for (int i = 0; i < MAX_ATTACKERS; ++i)
 			{

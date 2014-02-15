@@ -60,6 +60,25 @@ namespace Core
 		}
 	}
 
+	void AnimationManager::PlayAnimation(const Entity& entity, int animationID )
+	{
+		Core::AnimationComponent* ac = WGETC<Core::AnimationComponent>(entity);
+		Core::GraphicsComponent* gc = WGETC<Core::GraphicsComponent>(entity);
+		if (ac != nullptr && gc != nullptr)
+		{
+			unsigned int meshID = GFX::GetBitmaskValue(gc->bitmask, GFX::BITMASK::MESH_ID);
+			
+			ac->animationID = animationID;
+			ac->currentTime = 0.0;
+			ac->playing = true;
+			ac->loop = false;			
+		}
+		else
+		{
+			LOG_WARNING << "Failed to play animation with index \'" << animationID << "\': No animation component attached to entity";
+		}
+	}
+
 	void AnimationManager::LoopAnimation(const Entity& entity, const std::string& animationName)
 	{
 		Core::AnimationComponent* ac = WGETC<Core::AnimationComponent>(entity);
@@ -83,6 +102,24 @@ namespace Core
 		else
 		{
 			LOG_WARNING << "Failed to loop animation \'" << animationName << "\': No animation component attached to entity";
+		}
+	}
+	
+	void AnimationManager::LoopAnimation(const Entity& entity, int animationID )
+	{
+		Core::AnimationComponent* ac = WGETC<Core::AnimationComponent>(entity);
+		Core::GraphicsComponent* gc = WGETC<Core::GraphicsComponent>(entity);
+		if (ac != nullptr && gc != nullptr)
+		{
+			unsigned int meshID = GFX::GetBitmaskValue(gc->bitmask, GFX::BITMASK::MESH_ID);
+			ac->animationID = animationID;
+			ac->currentTime = 0.0;
+			ac->playing = true;
+			ac->loop = true;
+		}
+		else
+		{
+			LOG_WARNING << "Failed to loop animation with index \'" << animationID << "\': No animation component attached to entity";
 		}
 	}
 	
@@ -110,6 +147,24 @@ namespace Core
 			LOG_WARNING << "Failed to queue animation \'" << animationName << "\': No animation component attached to entity";
 		}
 	}
+
+	void AnimationManager::QueueAnimation(const Entity& entity, const int animationID, bool loop)
+	{
+		Core::AnimationComponent* ac = WGETC<Core::AnimationComponent>(entity);
+		Core::GraphicsComponent* gc = WGETC<Core::GraphicsComponent>(entity);
+		if (ac != nullptr && gc != nullptr)
+		{
+			unsigned int meshID = GFX::GetBitmaskValue(gc->bitmask, GFX::BITMASK::MESH_ID);
+			ac->queuedAnimationID = animationID;
+			ac->playing = true;
+			ac->loop = loop;
+		}
+		else
+		{
+			LOG_WARNING << "Failed to queue animationID with index \'" << animationID << "\': No animation component attached to entity";
+		}
+	}
+
 
 	void AnimationManager::PauseAnimation(const Entity& entity)
 	{

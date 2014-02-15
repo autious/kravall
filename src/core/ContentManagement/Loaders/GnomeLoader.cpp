@@ -252,7 +252,7 @@ namespace Core
 					float time = duration * (f/float(numFrames-1));
 					std::vector<glm::mat4x4> transforms;
 					GetFinalTransforms(a, gnome, time, transforms);
-					for (int t = 0; t < transforms.size(); t++)
+					for (unsigned int t = 0; t < transforms.size(); t++)
 						frames.push_back(transforms[t]);
 				}
 				

@@ -62,7 +62,7 @@ namespace GFX
 	Sets the projection matrix used by the main camera.
 	\param matrix Pointer to a 4x4 matrix
 	*/
-	DLL_API void SetProjectionMatrix(GFXMat4x4 matrix);
+	DLL_API void SetProjectionMatrix(GFXMat4x4 matrix, float nearZ, float farZ);
 
 	/*!
 	Sets the view matrix used by the overlay cam
@@ -82,7 +82,7 @@ namespace GFX
 	\param data A pointer to the data used for rendering
 	*/
 	DLL_API void Draw(GFXBitmask bitmask, void* data);
-
+	
 	/*!
 	Issues a draw  text command to the graphics engine.
 	\param position Position of the starting letter
@@ -91,6 +91,16 @@ namespace GFX
 	\param text The text to be rendered
 	*/
 	DLL_API void RenderText(GFX::FontData* fontData, GFXVec2 position, float size, GFXVec4 color, const char* text);
+
+	/*!
+	Issues a draw  text command to the graphics engine.
+	\param rectangle Rectangle (x, y, w, h) in which to draw the text
+	\param offset Scroll offset in pixels, if offset is zero, the text is scrolled all the way to the top
+	\param size Vertical size of each letter
+	\param color The color of the text
+	\param text The text to be rendered
+	*/
+	DLL_API void RenderTextbox(GFX::FontData* fontData, GFXVec4 rectangle, float offset, float size, GFXVec4 color, const char* text);
 
 	/*!
 	Shows the console window

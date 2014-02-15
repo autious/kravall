@@ -28,7 +28,10 @@ struct LightData
 
 struct ShadowData
 {
-	mat4x4 lightMatrix;
+	mat4x4 lightMatrix1;
+	mat4x4 lightMatrix2;
+	mat4x4 lightMatrix3;
+	mat4x4 lightMatrix4;
 	vec4 reserved_for_atlas_coordinates;
 };
 
@@ -57,7 +60,10 @@ layout (binding = 5, rgba32f) uniform readonly image2D occlusion;
 
 //layout (binding = 6, rg32f) uniform readonly image2D shadowMap;
 
-uniform sampler2D shadowMap;
+uniform sampler2D shadowMap1;
+uniform sampler2D shadowMap2;
+uniform sampler2D shadowMap3;
+uniform sampler2D shadowMap4;
 
 layout (std430, binding = 5) readonly buffer LightBuffer
 {
@@ -194,7 +200,55 @@ float linstep(float low, float high, float v)
 	return clamp((v-low)/(high-low), 0.0, 1.0);
 }
 
-vec4 CalculateDirlightShadow(mat4x4 lightMatrix, LightData light, SurfaceData surface, vec4 wPos, vec3 eyePosition, inout float occlusion)
+vec3 GetDepthData(ShadowData shadowData, float dist, vec4 wPos, float farZ)
+{
+	vec2 moments;
+	float depth;
+	if(dist < farZ/10.0f)
+	{
+		vec4 shadowCoords = shadowData.lightMatrix1 * vec4(wPos.xyz, 1.0);
+		shadowCoords.xyz /= shadowCoords.w;
+		shadowCoords.xyz = shadowCoords.xyz * 0.5 + 0.5;
+		vec2 uv = shadowCoords.xy;
+		moments = texture2D(shadowMap1, uv).xy;
+		depth = (shadowCoords.z);
+		//return vec3(1.0, 0.0, 0.0);
+	}
+	else if(dist < farZ/5.0f)
+	{
+		vec4 shadowCoords = shadowData.lightMatrix2 * vec4(wPos.xyz, 1.0);
+		shadowCoords.xyz /= shadowCoords.w;
+		shadowCoords.xyz = shadowCoords.xyz * 0.5 + 0.5;
+		vec2 uv = shadowCoords.xy;
+		moments = texture2D(shadowMap2, uv).xy;
+		depth = (shadowCoords.z);
+		//return vec3(0.0, 1.0, 0.0);
+	}
+	else if(dist < farZ/2.0f)
+	{
+		vec4 shadowCoords = shadowData.lightMatrix3 * vec4(wPos.xyz, 1.0);
+		shadowCoords.xyz /= shadowCoords.w;
+		shadowCoords.xyz = shadowCoords.xyz * 0.5 + 0.5;
+		vec2 uv = shadowCoords.xy;
+		moments = texture2D(shadowMap3, uv).xy;
+		depth = (shadowCoords.z);
+		//return vec3(0.0, 0.0, 1.0);
+	}
+	else
+	{
+		vec4 shadowCoords = shadowData.lightMatrix4 * vec4(wPos.xyz, 1.0);
+		shadowCoords.xyz /= shadowCoords.w;
+		shadowCoords.xyz = shadowCoords.xyz * 0.5 + 0.5;
+		vec2 uv = shadowCoords.xy;
+		moments = texture2D(shadowMap4, uv).xy;
+		depth = (shadowCoords.z);
+		//return vec3(1.0, 1.0, 0.0);
+	}
+
+	return vec3(moments, depth);
+}
+
+vec4 CalculateDirlightShadow(float viewDepth, ShadowData shadowData, LightData light, SurfaceData surface, vec4 wPos, vec3 eyePosition, inout float occlusion, float farZ)
 {
 	//vec4 shadowCoords = lightMatrix * vec4(wPos.xyz, 1.0);
 	//shadowCoords.xyz /= shadowCoords.w;
@@ -204,14 +258,11 @@ vec4 CalculateDirlightShadow(mat4x4 lightMatrix, LightData light, SurfaceData su
 	//
 	//float shadowFactor = float(shadowmapDepth + 0.005 > shadowCoords.z);
 
+	vec3 dd = GetDepthData(shadowData, viewDepth, wPos, farZ);
+	//return vec4(dd, 1.0);
+	vec2 moments = dd.xy;
+	float depth = dd.z;
 
-	vec4 shadowCoords = lightMatrix * vec4(wPos.xyz, 1.0);
-	shadowCoords.xyz /= shadowCoords.w;
-	shadowCoords.xyz = shadowCoords.xyz * 0.5 + 0.5;
-	
-	vec2 uv = shadowCoords.xy;
-	float depth = (shadowCoords.z);
-	vec2 moments = texture2D(shadowMap, uv).xy;
 	float shadowFactor;
 	if(depth <= moments.x || depth >= 1.0)
 	{
@@ -423,7 +474,7 @@ void main()
 		{
 			float localOcclusion = 0.0f;
 			mat4x4 mat = mat4x4(1.0);
-			color += CalculateDirlightShadow(shadowData[0].lightMatrix, lights[i], surface, wPos, eyePos, localOcclusion);
+			color += CalculateDirlightShadow((0.5*normalColor.w+0.5)/wPos.w, shadowData[i], lights[i], surface, wPos, eyePos, localOcclusion, zFar);
 			sumOcclusion += localOcclusion;
 		}
 
@@ -466,7 +517,6 @@ void main()
 
 		//Add glow
 		color += surface.glow;
-		
 		//Add occlusion
 		//color.xyz *= sumOcclusion;
 

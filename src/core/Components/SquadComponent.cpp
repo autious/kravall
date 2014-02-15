@@ -1,5 +1,4 @@
 #include "SquadComponent.hpp"
-#undef max
 
 Core::SquadComponent::SquadComponent()
 {

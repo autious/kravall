@@ -1,4 +1,4 @@
-return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, groupID)
+return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, groupID, weaponType)
 	asm:loadAssembly( 
 		{
 			{
@@ -34,14 +34,14 @@ return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, group
 			{
 				type = core.componentType.AttributeComponent,
 				data = { health = 100, stamina = 0, morale = 2.0, 
-					   stancePolice = core.PoliceStance.Aggressive,
+					   stancePolice = core.PoliceStance.Passive,
 					   statePolice = core.PoliceState.Attacking, 
 					   defense = 0, mobility = 0, squadID = groupID },
                 ignoreHard = true
 			},
 			{
 				type = core.componentType.TargetingComponent,
-				data = { },
+				data = { weapon = weaponType or fists },
 				ignoreHard = true
 			},
 			{
