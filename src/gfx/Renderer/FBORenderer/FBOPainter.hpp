@@ -34,7 +34,7 @@ namespace GFX
 		/*!
 		Main rendering loop
 		*/
-		void Render(FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, int screenWidth, int screenHeight, int current);
+		void Render(FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, int screenWidth, int screenHeight, FBOTexture** shadowMaps, int current);
 		
 	private:
 

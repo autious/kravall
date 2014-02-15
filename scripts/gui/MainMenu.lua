@@ -40,7 +40,7 @@ function MainMenu:new(o,menuState)
                                     xoffset=-10,yoffset=20,onClick = menuState.goCredits
                                     }))
 
-    o.gui:addPlacementHandler( CenterPlacer:new() )
+    o.gui:addPlacementHandler( CenterPlacer )
 
     setmetatable( o, self )
     self.__index = self

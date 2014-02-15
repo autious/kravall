@@ -86,8 +86,8 @@ local squad = ent.get "policeSquad"
 local building = ent.get "building"
 
 
-local squadOne = squad(scen, -5, 0, 0, -math.pi/4);
---local squadTwo = squad(scen, -5, 0, -10, math.pi/2);
+local squadOne = squad(scen, -5, 0, 0, -math.pi/4, fists);
+--local squadTwo = squad(scen, -5, 0, -10, math.pi/2, fists);
 --core.system.groups.setGroupGoal(policeGroup, -43, 0, 4)
    
 
@@ -101,7 +101,7 @@ local rGroup = core.system.groups.createGroup();
 local centerPoint = { 49, 0, 5 }		
 for i = -7, 6 do
 	for p = -6, 6 do
-		rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rGroup)
+		rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rGroup, fists)
 	end
 end
 core.system.groups.setGroupGoal(rGroup, -43, 0, 4)
@@ -112,7 +112,7 @@ local rioterGroup = core.system.groups.createGroup()
 local centerPoint = { 20.5, 0, -40 }		
 for i = -4, 4 do
 	for p = -5, 5 do
-		rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rioterGroup)
+		rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rioterGroup, fists)
 	end
 end
 core.system.groups.setGroupGoal(rioterGroup, -21, 0, 36)

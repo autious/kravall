@@ -6,6 +6,7 @@
 #include <Lua/ConfigurationHandler.hpp>
 #include <Memory/LinearHeap.hpp>
 #include <ContentManagement/ContentManager.hpp>
+#include <CoreUtility/Threadpool.hpp>
 
 #define WGETC Core::world.m_entityHandler.GetComponentTmpPointer
 #define CONF Core::world.m_config
@@ -45,6 +46,8 @@ namespace Core
 
         LuaState m_luaState;
         ConfigurationHandler m_config;
+
+		ThreadPool threadHandler;
     };
 
     extern World world;

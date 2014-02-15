@@ -39,6 +39,8 @@ namespace GFX
 		*/
 		void Initialize(GLenum textureTarget, GLint magFilter, GLint minFilter, GLint wrapModeS, 
 			GLint wrapModeT, GLint internalFormat, GLint format);
+
+		void CreateShadowmap(int resolution, int quality);
 		
 		/*!
 		Updates the resolution of the FBO texture

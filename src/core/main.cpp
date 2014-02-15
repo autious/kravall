@@ -101,7 +101,7 @@ void run( GLFWwindow * window )
 
     Core::ContentManager CM;
 	
-	GFX::SetProjectionMatrix(Core::gameCamera.GetProjectionMatrix());
+	GFX::SetProjectionMatrix(Core::gameCamera.GetProjectionMatrix(), Core::gameCamera.GetNear(), Core::gameCamera.GetFar());
 
 	std::vector<Core::Entity> rioters;
 
@@ -143,6 +143,8 @@ void run( GLFWwindow * window )
     SetCLOPLevel( consoleOutputLevel.c_str() );
 
     Core::world.m_luaState.Init();
+
+	Core::world.threadHandler.Initialize( CONF.GetInt( "numberOfSystemCoresToUse", 1 ) );
 
 	//inputline.resize(1);
 	Core::HighresTimer timer;
@@ -186,7 +188,7 @@ void run( GLFWwindow * window )
             GFX::SetOverlayViewMatrix( Core::overlayCamera.GetViewMatrix() );
             GFX::SetOverlayProjectionMatrix( Core::overlayCamera.GetProjectionMatrix() );
             GFX::SetViewMatrix(Core::gameCamera.GetViewMatrix());
-            GFX::SetProjectionMatrix(Core::gameCamera.GetProjectionMatrix());
+            GFX::SetProjectionMatrix(Core::gameCamera.GetProjectionMatrix(), Core::gameCamera.GetNear(), Core::gameCamera.GetFar());
 
             //TestRendering();
 

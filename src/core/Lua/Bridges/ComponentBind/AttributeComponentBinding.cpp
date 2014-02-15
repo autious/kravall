@@ -250,7 +250,7 @@ Core::ComponentSetters Core::AttributeComponentBinding::GetSetters()
         
         if( lua_isnumber(  L, valueindex ) )
         {
-            atrbc->rioter.rage = static_cast<int>(lua_tonumber( L, valueindex ));
+            atrbc->rioter.rage = static_cast<float>(lua_tonumber( L, valueindex ));
         }
         else
         {
@@ -264,7 +264,7 @@ Core::ComponentSetters Core::AttributeComponentBinding::GetSetters()
         
         if( lua_isnumber(  L, valueindex ) )
         {
-            atrbc->rioter.pressure = static_cast<int>(lua_tonumber( L, valueindex ));
+            atrbc->rioter.pressure = static_cast<float>(lua_tonumber( L, valueindex ));
         }
         else
         {

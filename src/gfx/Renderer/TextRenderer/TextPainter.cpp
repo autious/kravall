@@ -38,7 +38,7 @@ namespace GFX
 		glGenVertexArrays(1, &m_textVAO);
 	}
 
-	void TextPainter::Render()
+	void TextPainter::Render(int screenWidth, int screenHeight)
 	{
 		m_text = GetTextManager().GetText();
 
@@ -47,10 +47,10 @@ namespace GFX
 			RenderText(
 				m_text[i].m_text.c_str(),
                 m_text[i].m_fontData,
-				m_text[i].m_posX,
-				m_text[i].m_posY,
-				m_text[i].m_sizeX,
-				m_text[i].m_sizeY,
+				((2 * m_text[i].m_posX) / static_cast<float>(screenWidth)) - 1.0f,
+				((2 * m_text[i].m_posY) / static_cast<float>(screenHeight)) - 1.0f,
+				m_text[i].m_sizeX * (2 / static_cast<float>(screenWidth)),
+				-m_text[i].m_sizeY * (2 / static_cast<float>(screenHeight)),
 				m_text[i].m_color
 				);
 		}

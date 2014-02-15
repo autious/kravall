@@ -484,9 +484,9 @@ scen:loadAssembly(
 		data =  { 
 					color = { 1.0, 1.0, 1.0 },
 					speccolor = { 1.0, 1.0, 1.0 },
-					intensity = 0.05,
+					intensity = 0.0,
 					type = core.gfx.objectTypes.Light,
-					lighttype = core.gfx.lightTypes.Dir
+					lighttype = core.gfx.lightTypes.DirShadow
 				},
 		ignoreHard = true
 	},

@@ -17,16 +17,21 @@ namespace Core
         const glm::mat4& GetViewMatrix() const;
 
         void SetViewMatrix( const glm::mat4 & view );
-        void SetProjectionMatrix( const glm::mat4 & proj );
+        void SetProjectionMatrix( const glm::mat4 & proj, float nearZ, float farZ );
 
         glm::vec3 GetForward() const;
         glm::vec3 GetUp() const;
         glm::vec3 GetRight() const;
         glm::vec3 GetPosition() const;
+		
+		float GetNear() const;
+		float GetFar() const;
 
     private:
 		glm::mat4x4 m_viewMatrix;
 		glm::mat4x4 m_projectionMatrix;
+		float m_nearZ;
+		float m_farZ;
 
 	};
 

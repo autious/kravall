@@ -70,7 +70,7 @@ function C:update( dt )
 
     local proj = self:getProjection()
     local view = self:getView()
-    camera:setProjection( proj )
+    camera:setProjection( proj, 0.1, 200 )
     camera:setView( view )
 end
 

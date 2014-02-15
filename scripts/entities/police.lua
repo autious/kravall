@@ -1,4 +1,4 @@
-return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, groupID)
+return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, groupID, weaponType)
 	asm:loadAssembly( 
 		{
 			{
@@ -9,13 +9,13 @@ return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, group
 				type = core.componentType.GraphicsComponent,
 				data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 1, 0, 1} },
 				load = { 
-							mesh = { core.loaders.GnomeLoader, "assets/model/animated/rioter/rioter_00.bgnome" },
+							mesh = { core.loaders.GnomeLoader, "assets/model/animated/rioter/rioter-male_00.bgnome" },
 							material = { core.loaders.MaterialLoader, "assets/material/cop.material" }
 					   }
 			},
 			{
 				type = core.componentType.ScaleComponent,
-				data = { scale = 3.0 }
+				data = { scale = 1.0 }
 			},
 			{
 				type = core.componentType.RotationComponent,
@@ -34,14 +34,14 @@ return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, group
 			{
 				type = core.componentType.AttributeComponent,
 				data = { health = 100, stamina = 0, morale = 2.0, 
-					   stancePolice = core.PoliceStance.Aggressive,
+					   stancePolice = core.PoliceStance.Passive,
 					   statePolice = core.PoliceState.Attacking, 
 					   defense = 0, mobility = 0, squadID = groupID },
                 ignoreHard = true
 			},
 			{
 				type = core.componentType.TargetingComponent,
-				data = { },
+				data = { weapon = weaponType or fists },
 				ignoreHard = true
 			},
 			{

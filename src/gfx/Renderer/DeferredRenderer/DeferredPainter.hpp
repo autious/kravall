@@ -5,6 +5,7 @@
 #include "FBOTexture.hpp"
 #include <GL/glew.h>
 #include <vector>
+#include "../Defines.hpp"
 
 #include <Animation/AnimationManagerGFX.hpp>
 
@@ -71,7 +72,6 @@ namespace GFX
         TextureManager* m_textureManager;
 
 		InstanceData* m_staticInstances;
-		const unsigned int MAX_INSTANCES = 1024;
 		GLuint m_instanceBuffer;
 
 		GLint m_animatedBlend;

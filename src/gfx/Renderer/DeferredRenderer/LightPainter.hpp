@@ -44,14 +44,14 @@ namespace GFX
 		\param glowMatID Rendertarget for glow and materialID
 		*/
 		void Render(unsigned int& renderIndex, FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, FBOTexture* SSDOTexture,
-			glm::mat4 viewMatrix, glm::mat4 projMatrix, float exposure, float gamma, glm::vec3 whitePoint, GLuint& toneMappedTexture);
+			FBOTexture** shadowMaps, glm::mat4 viewMatrix, glm::mat4 projMatrix, float exposure, float gamma, glm::vec3 whitePoint, GLuint& toneMappedTexture);
 
 		void Resize(int screenWidth, int screenHeight);
 
 	private:
 		RenderJobManager* m_renderJobManager;
 
-		GLint alphaUniform;
+		GLint m_alphaUniform;
 		GLint m_invProjViewUniform;
 		GLint m_invProjUniform;
 		GLint m_viewUniform;
@@ -63,8 +63,10 @@ namespace GFX
 		GLint m_whitePointUniform;
 
 		GLint m_frambufferSizeUniform;
-		GLint numActiveLightsUniform;
-		GLint textureUniform;
+		GLint m_numActiveLightsUniform;
+		GLint m_textureUniform;
+		GLint m_shadowMapUniform;
+
 		GLuint m_textureHandle;
 
 		GLint m_numPointLightsUniform;
@@ -72,8 +74,13 @@ namespace GFX
 		GLint m_numDirLightsUniform;
 		GLint m_numAmbientLightsUniform;
 
+		GLint m_numPointShadowsUniform;
+		GLint m_numSpotShadowsUniform;
+		GLint m_numDirShadowsUniform;
+
 
 		GLuint m_pointLightBuffer;
+		GLuint m_shadowDataBuffer;
 
 		const unsigned int MAXIMUM_LIGHTS = 1024;
 		const unsigned int WORK_GROUP_SIZE = 16;

@@ -5,6 +5,9 @@
 #include <cassert>
 #include <cmath>
 #include <limits>
+#include <glm/glm.hpp>
+
+#define MOVEDTHISFRAME_THRESHOLD 0.1f
 
 namespace Core
 {
@@ -13,22 +16,49 @@ namespace Core
 	*/
 	enum MovementState
 	{
-		Idle,
-		Walking,
-		Sprinting,
-		COUNT,
+		Movement_Walking,
+		Movement_Sprinting,
+		MOVEMENTSTATE_COUNT,
 	};
 
 	/*!
-	Component holding a moving object's speed, maximum speed and direction of movement.
+		Used to determine who has the stonger case when several systems want to change the goal in the same frame.
+	*/
+	enum MovementGoalPriority : short
+	{
+		NoGoalPriority,
+		FormationGoalPriority,
+		AttackGoalPriority,
+	};
+
+	/*!
+		Used to determine who has the stronger case when several systems want to change desiredSpeed in the same frame.
+	*/
+	enum DesiredSpeedSetPriority : short
+	{
+		NoDesiredSpeedPriority,
+		RioterGoalSystemDesiredSpeedPriority,
+		PoliceGoalSytemDesiredSpeedPriority,
+		SquadMoveInFormationDesiredSpeedPriority,
+		CombatAnimationDesiredSpeedPriority,
+	};
+
+	/*!
+		Component holding a moving object's speed, maximum speed and direction of movement.
 	*/
 	struct MovementComponent
 	{
-		/*! The object's current speed. Represented by a floating point and should never exceed maxSpeed. */
+		/*! The object's current speed. */
 		float speed;
 
 		/*! The object's desired speed. The speed will attempt to reach this speed. */
 		float desiredSpeed;
+
+		/*! The position from the previos frame. Used to calculate perceived speed. */
+		float prevPos[3];
+
+		/*! If the entity has moved more than a certain distance in the last frame this value will be true. See macro MOVEDTHISFRAME_THRESHOLD */
+		bool movedThisFrame;
 
 		/*! 
 			Should NEVER be set directly - use the static function SetDirection instead. An array specifying the 
@@ -39,24 +69,27 @@ namespace Core
 		/*! An array specifying the object's new direction of movement where index 0 = x, index 1 = y and index 2 = z. */
 		float newDirection[3];
 
+		/*! Priority value for the current set goal. If new value has higher priority the current value may be repalced. */
+		MovementGoalPriority currentGoalPriority;
+
+		/*! Priority value for the current desiredSpeed. If new value has higher priority the current value may be repalced. */
+		DesiredSpeedSetPriority currentDesiredSpeedPriority;
+
 		/*!
 			An array specifying the object's goal, ceasing movement when the goal is reached. The index 0 corresponds
 			to the x component, 1 to y and 2 to z. An x-value of FLT_MAX disables the goal.
 		*/
 		float goal[3];
 
-		/*!
-			The Navigation mesh node index in which the goal resides.
-		*/
+		/*! The Navigation mesh node index in which the goal resides. */
 		int NavMeshGoalNodeIndex;
 
-		/*!
-			State used when resetting movement data, eg. when changing states. 
-		*/
+		/*! State used when resetting movement data, eg. when changing states. */
 		MovementState state;
 
 		/*! Default constructor. Initialising all members to 0. */
-		MovementComponent() : speed(0.0f), desiredSpeed(0.0f)
+		MovementComponent() : speed(0.0f), desiredSpeed(0.0f), currentGoalPriority( MovementGoalPriority::NoGoalPriority ), 
+			currentDesiredSpeedPriority( DesiredSpeedSetPriority::NoDesiredSpeedPriority ), movedThisFrame( false )
 		{
 			direction[0] = 0.0f;
 			direction[1] = 0.0f;
@@ -72,7 +105,11 @@ namespace Core
 
 			NavMeshGoalNodeIndex = -1;
 
-			state = MovementState::Walking;
+			prevPos[0] = std::numeric_limits<float>::max();
+			prevPos[1] = 0.0f;
+			prevPos[2] = 0.0f;
+
+			state = MovementState::Movement_Walking;
 		}
 
 		/*!
@@ -97,7 +134,7 @@ namespace Core
 			goal[1] = 0.0f;
 			goal[2] = 0.0f;
 
-			state = MovementState::Walking;
+			state = MovementState::Movement_Walking;
 		}
 
 		inline static const char* GetName()
@@ -114,6 +151,40 @@ namespace Core
 			mc->newDirection[1] = newY;
 			mc->newDirection[2] = newZ;
 		}
+
+		inline void SetGoal( glm::vec3 newGoal, int node, MovementGoalPriority prio )
+		{
+			if( currentGoalPriority <= prio )
+			{
+				currentGoalPriority = prio; 
+				goal[0] = newGoal.x;
+				goal[1] = newGoal.y;
+				goal[2] = newGoal.z;
+				NavMeshGoalNodeIndex = node;
+			}
+		}
+
+		inline void SetGoal( float newGoal[3], int node, MovementGoalPriority prio )
+		{
+			if( currentGoalPriority <= prio )
+			{
+				currentGoalPriority = prio;
+				goal[0] = newGoal[0];
+				goal[1] = newGoal[1];
+				goal[2] = newGoal[2];
+				NavMeshGoalNodeIndex = node;
+			}
+		}
+
+		inline void SetDesiredSpeed( float speed, DesiredSpeedSetPriority prio )
+		{
+			if( currentDesiredSpeedPriority <= prio )
+			{
+				desiredSpeed = speed;
+				currentDesiredSpeedPriority = prio;
+			}
+		}
+
 	};
 }
 #endif

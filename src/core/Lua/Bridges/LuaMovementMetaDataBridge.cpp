@@ -20,11 +20,12 @@ extern "C"
         
 		Core::MovementState state = *(Core::MovementState*)luaL_checkudata( L, 1, UNIT_MOVEMENT_META_DATA_TYPE_META );
 
-		float speedToDesire = luaL_checknumber( L, 2 );
-		float acceleration = luaL_checknumber( L, 3 );
-		float deceleration = luaL_checknumber( L, 4 );
+		float speedToDesire =			static_cast<float>(luaL_checknumber( L, 2 ));
+		float acceleration =			static_cast<float>(luaL_checknumber( L, 3 ));
+		float deceleration =			static_cast<float>(luaL_checknumber( L, 4 ));
+		float staminaCostPerSecond =	static_cast<float>(luaL_checknumber( L, 5 ));
 
-		Core::GameData::SetMovementDataForState( state, speedToDesire, acceleration, deceleration );
+		Core::GameData::SetMovementDataForState( state, speedToDesire, acceleration, deceleration, staminaCostPerSecond );
 		
 		return 0;
     }
@@ -56,9 +57,8 @@ Core::LuaMovementMetaDataBridge::LuaMovementMetaDataBridge( lua_State * L )
         lua_newtable( L ); // new table
         int movementDataTable = lua_gettop( L );
 
-            PushObjectType( L, Core::MovementState::Walking, "Walking" , movementDataTable );
-			PushObjectType( L, Core::MovementState::Sprinting, "Sprinting" , movementDataTable );
-			PushObjectType( L, Core::MovementState::Idle, "Idle" , movementDataTable );
+            PushObjectType( L, Core::MovementState::Movement_Walking, "Walking",		movementDataTable );
+			PushObjectType( L, Core::MovementState::Movement_Sprinting, "Sprinting",	movementDataTable );
 
 			luau_setfunction( L, "setMovementMetaData", LuaSetMovememntTypeData );
 

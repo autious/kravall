@@ -1,6 +1,34 @@
 #ifndef SRC_GFX_RENDERER_RENDER_CORE_HPP
 #define SRC_GFX_RENDERER_RENDER_CORE_HPP
 
+#include <Shaders/ShaderManager.hpp>
+#include <Buffers/UniformBufferManager.hpp>
+#include <Animation/AnimationManagerGFX.hpp>
+
+#include "DeferredRenderer/FBOTexture.hpp"
+#include "DeferredRenderer/DeferredPainter.hpp"
+#include "DeferredRenderer/LightPainter.hpp"
+
+#include "Console/ConsolePainter.hpp"
+#include "OverlayRenderer/OverlayPainter.hpp"
+#include "DebugRenderer/DebugPainter.hpp"
+#include "TextRenderer/TextPainter.hpp"
+#include "SplashRenderer/SplashPainter.hpp"
+#include "FBORenderer/FBOPainter.hpp"
+#include "PostProcessing/PostProcessingPainter.hpp"
+#include "GlobalIlluminationRenderer/GIPainter.hpp"
+#include "PostProcessing/BlurPainter.hpp"
+#include "DeferredRenderer/ShadowPainter.hpp"
+
+#include "TextRenderer/TextManager.hpp"
+#include "DebugRenderer/DebugManager.hpp"
+#include "RenderJobManager.hpp"
+#include "../Buffers/MeshManager.hpp"
+#include "../Textures/TextureManager.hpp"
+#include "../Material/MaterialManager.hpp"
+
+#include <GFXSettings.hpp>
+
 #include <GL/glew.h>
 #include <iostream>
 #include <array>
@@ -8,17 +36,6 @@
 #include <glm/glm.hpp>
 #include <BitmaskDefinitions.hpp>
 #include "../Utility/Timer.hpp"
-
-#include "Animation/AnimationManagerGFX.hpp"
-
-#define GFX_CHECKTIME(x, y)\
-{\
-	Timer().Start(); \
-	x; \
-	Timer().Stop(); \
-	std::chrono::microseconds ms = Timer().GetDelta(); \
-	m_subsystemTimes.push_back(std::pair<const char*, std::chrono::microseconds>(y, ms)); \
-}
 
 namespace GFX
 {
@@ -47,15 +64,18 @@ namespace GFX
     class FontData;
     class Vertex;
     class FBOTexture;
-}                          
-                           
-namespace GFX              
-{                          
-	class RenderCore       
-	{                      
-	public:                
-                           
-		/*!                BlurPainter*
+}                 
+
+namespace GFX
+{
+	class RenderCore
+	{
+	private:
+		/* Holds settings data for the graphics system */
+		unsigned int m_settings[GFX_SETTINGS_COUNT];
+
+	public:
+		/*!     
 		Friend function to get singleton
 		\return RenderCore Returns the RenderCore instance
 		*/
@@ -67,6 +87,19 @@ namespace GFX
 		\param windowHeight Width of the window when the RenderCore is initialized
 		*/
 		void Initialize(int windowWidth, int windowHeight);
+
+		/*!
+		Sets a setting to the specified value
+		\return Returns either GFX_SUCCESS or GFX_FAIL
+		*/
+		int SetConfiguration(const int setting, const int value);
+
+		/*!
+		Gets the value of a setting
+		\return Returns either GFX_SUCCESS or GFX_FAIL
+		*/
+		int GetConfiguration(const int setting, int& out_value);
+
 
 		/*!
 		Main rendering loop, calls all painters
@@ -90,7 +123,7 @@ namespace GFX
 		Set the local projection matrix
 		\param proj New projection matrix
 		*/
-		void SetProjMatrix(glm::mat4 proj);
+		void SetProjMatrix(glm::mat4 proj, float nearZ, float farZ);
 
         /*!
         Sets the view matrix used by the overlay camera
@@ -164,7 +197,7 @@ namespace GFX
         */
         inline void SetStatisticsFont(GFX::FontData* font) { m_font = font; }
 		inline void ShowStatistics(bool enabled){ m_showStatistics = enabled; }
-		inline void ShowFBO(int which){ m_showFBO = ( which >= 0 && which <= 5 ) ? which : 0; }
+		inline void ShowFBO(int which){ m_showFBO = ( which >= 0 && which <= 6 ) ? which : 0; }
 		
 		void SetAnimationFramerate(unsigned int framerate);
 		inline unsigned int GetAnimationFramerate(){ return m_animationFramerate; }
@@ -189,7 +222,6 @@ namespace GFX
 
 		void LoadGPUPF();
 
-
 		int m_windowWidth;
 		int m_windowHeight;
 
@@ -200,6 +232,8 @@ namespace GFX
 		FBOTexture* m_diffuse;
 		FBOTexture* m_specular;
 		FBOTexture* m_glowMatID;
+		
+		FBOTexture** m_shadowMapTextures;
 
 		GLuint m_dummyVAO;
 
@@ -224,6 +258,7 @@ namespace GFX
 		GIPainter* m_GIPainter;
 		BlurPainter* m_blurPainter;
 		DecalPainter* m_decalPainter;
+		ShadowPainter* m_shadowPainter;
 
 		void SubSystemTimeRender();
         std::vector<std::pair<const char*, std::chrono::microseconds>> m_subsystemTimes;
@@ -240,6 +275,9 @@ namespace GFX
         glm::mat4 m_overlayViewMatrix;
         glm::mat4 m_overlayProjMatrix;
 
+		float m_nearZ;
+		float m_farZ;
+
 		bool m_playSplash;
 
 		float m_gamma;
@@ -250,6 +288,10 @@ namespace GFX
 		std::string m_currentLUT;
 
 		unsigned int m_animationFramerate;
+		
+		glm::mat4x4 m_debugLightFrustum;
+		glm::mat4x4 m_debugCameraFrustum;
+		glm::mat4x4 m_debugFitFrustum;
 
 	};
 

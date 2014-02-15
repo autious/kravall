@@ -40,7 +40,7 @@ namespace Core
             GFX::Content::LoadMesh(modelData->meshID, gnome->numberOfVertices, gnome->numberOfIndices, gnome->vertices, gnome->indices);
 
             m_modelData.push_back(modelData);   
-			LOG_ERROR << "NO ASYNC ANIMATION LOADING YET, PLEASE IMPLEMENT THIS! BLAME JAOEL /Jaoel";
+			LOG_FATAL << "NO ASYNC ANIMATION LOADING YET, PLEASE IMPLEMENT THIS! BLAME JAOEL /Jaoel";
 
             //delete[] gnome->materials;
             delete[] gnome->indices;
@@ -252,7 +252,7 @@ namespace Core
 					float time = duration * (f/float(numFrames-1));
 					std::vector<glm::mat4x4> transforms;
 					GetFinalTransforms(a, gnome, time, transforms);
-					for (int t = 0; t < transforms.size(); t++)
+					for (unsigned int t = 0; t < transforms.size(); t++)
 						frames.push_back(transforms[t]);
 				}
 				
@@ -262,6 +262,12 @@ namespace Core
 
 				if (result == GFX_INVALID_ANIMATION)
 					LOG_ERROR << "Could not add animation \'" << gnome->animations[a].name << "\' Animation is invalid.";
+				else if (result == GFX_INVALID_NR_FRAMES)
+					LOG_ERROR << "Could not add animation \'" << gnome->animations[a].name << "\' Animation contains no keyframes.";
+				else if (result == GFX_INVALID_NR_BONES)
+					LOG_ERROR << "Could not add animation \'" << gnome->animations[a].name << "\' Animation contains no bones.";
+				else if (result == GFX_INVALID_MAX_FRAMES)
+					LOG_ERROR << "Could not add animation \'" << gnome->animations[a].name << "\' Reached maximum keyframe limit.";
 				else if (result == GFX_INVALID_SKELETON)
 					LOG_ERROR << "Could not add animation \'" << gnome->animations[a].name << "\' Skeleton with ID " << skeletonID << " does not exist.";
 				else

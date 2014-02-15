@@ -4,6 +4,12 @@
 #include <iomanip>
 #include <utility/Colors.hpp>
 #include <GFXDefines.hpp>
+#include "ShadowData.hpp"
+ShadowData ShadowDataContainer::data[MAXIMUM_SHADOWCASTERS];
+
+unsigned int ShadowDataContainer::numDirLights = 0;
+unsigned int ShadowDataContainer::numSpotLights = 0;
+unsigned int ShadowDataContainer::numPointLights = 0;
 
 
 #include "DeferredRenderer/FBOTexture.hpp"
@@ -80,18 +86,64 @@ namespace GFX
         delete(m_overlayPainter);
 		delete(m_blurPainter);
 		delete(m_decalPainter);
+		delete(m_shadowPainter);
+	}
+
+	int RenderCore::SetConfiguration(const int setting, const int value)
+	{
+		if (setting >= 0 && setting < GFX_SETTINGS_COUNT)
+		{
+			m_settings[setting] = value;
+			return GFX_SUCCESS;
+		}
+		else
+		{
+			return GFX_FAIL;
+		}
+	}
+
+	int RenderCore::GetConfiguration(const int setting, int& out_value)
+	{
+		if (setting >= 0 && setting < GFX_SETTINGS_COUNT)
+		{
+			out_value = m_settings[setting];
+			return GFX_SUCCESS;
+		}
+		else
+		{
+			return GFX_FAIL;
+		}
 	}
 
 	void RenderCore::Initialize(int windowWidth, int windowHeight)
 	{
 		m_windowWidth = 0;
 		m_windowHeight = 0;
+		
+		// Set default settings
+		m_settings[GFX_SHADOW_QUALITY] = GFX_SHADOWS_VARIANCE; // TODO: Implement basic shadow mapping as low res option
+		m_settings[GFX_SHADOW_RESOLUTION] = 512;
 
 		m_normalDepth = new FBOTexture();
 		m_diffuse = new FBOTexture();
 		m_specular = new FBOTexture();
 		m_glowMatID = new FBOTexture();
 		m_depthBuffer = new FBOTexture();
+
+		m_shadowMapTextures = new FBOTexture*[4];
+		m_shadowMapTextures[0] = new FBOTexture();
+		m_shadowMapTextures[1] = new FBOTexture();
+		m_shadowMapTextures[2] = new FBOTexture();
+		m_shadowMapTextures[3] = new FBOTexture();
+
+		// Fill shadowmap with reds!
+		m_shadowMapTextures[0]->CreateShadowmap(m_settings[GFX_SHADOW_RESOLUTION], m_settings[GFX_SHADOW_QUALITY]);
+		m_shadowMapTextures[1]->CreateShadowmap(m_settings[GFX_SHADOW_RESOLUTION], m_settings[GFX_SHADOW_QUALITY]);
+		m_shadowMapTextures[2]->CreateShadowmap(m_settings[GFX_SHADOW_RESOLUTION], m_settings[GFX_SHADOW_QUALITY]);
+		m_shadowMapTextures[3]->CreateShadowmap(m_settings[GFX_SHADOW_RESOLUTION], m_settings[GFX_SHADOW_QUALITY]);
+
+
+
 
 		m_shaderManager = new ShaderManager();
 		m_uniformBufferManager = new UniformBufferManager();
@@ -103,6 +155,8 @@ namespace GFX
 
 		m_deferredPainter = new DeferredPainter(m_shaderManager, m_uniformBufferManager, 
 		m_renderJobManager, m_meshManager, m_textureManager, m_materialManager);
+
+		m_shadowPainter = new ShadowPainter(m_shaderManager, m_uniformBufferManager, m_renderJobManager, m_meshManager);
 
 		m_lightPainter = new LightPainter(m_shaderManager, m_uniformBufferManager, m_renderJobManager);
 
@@ -130,6 +184,7 @@ namespace GFX
 
 
 		m_deferredPainter->Initialize(m_FBO, m_dummyVAO);
+		m_shadowPainter->Initialize(m_FBO, m_dummyVAO, m_blurPainter, m_settings[GFX_SHADOW_RESOLUTION]);
 		m_lightPainter->Initialize(m_FBO, m_dummyVAO, m_windowWidth, m_windowHeight);
 		m_debugPainter->Initialize(m_FBO, m_dummyVAO);
 		m_textPainter->Initialize(m_FBO, m_dummyVAO);
@@ -263,6 +318,23 @@ namespace GFX
 		return m_materialManager->SetShader(materialID, shaderID);
 	}
 
+
+#define CT(x, y)\
+{\
+	if (updateStats && m_showStatistics) \
+	{ \
+		Timer().Start(); \
+			x; \
+			Timer().Stop(); \
+			std::chrono::microseconds ms = Timer().GetDelta(); \
+			m_subsystemTimes.push_back(std::pair<const char*, std::chrono::microseconds>(y, ms)); \
+	} \
+	else \
+	{ \
+		x; \
+	} \
+}
+
 	void RenderCore::Render(const double& delta)
 	{
 		if (m_playSplash)
@@ -304,69 +376,55 @@ namespace GFX
 		// Apply lighting for lights with shadow
 		// Apply lighting for lights without shadow
 
+		// Reset shadow data
+		ShadowDataContainer::numDirLights = 0;
+		ShadowDataContainer::numSpotLights = 0;
+		ShadowDataContainer::numPointLights = 0;
+
 		// renderJobIndex is the index of the current render job
 		unsigned int renderJobIndex = 0;
 
-		if (updateStats && m_showStatistics)
-		{
-			GFX_CHECKTIME(glFinish(), "glFinish");
+		// Finish gl calls to get better timings
+		CT(glFinish(), "glFinish");
 
-			GFX_CHECKTIME(m_renderJobManager->Sort(), "Sorting");
+		// Sort the list of draw calls
+		CT(m_renderJobManager->Sort(), "Sorting");
 
-			GFX_CHECKTIME(m_deferredPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix, m_gamma), "Geometry");
+		// Draw geometry to G-buffers
+		CT(m_deferredPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix, m_gamma), "Geometry");
 
-			GFX_CHECKTIME(m_decalPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix, m_gamma), "Decals");
-			
-			GFX_CHECKTIME(m_GIPainter->Render(delta, m_normalDepth, m_diffuse, m_viewMatrix, m_projMatrix), "GI");
+		CT(m_decalPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix, m_gamma), "Decals");
 
-			GFX_CHECKTIME(m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_GIPainter->m_SSDOTexture,
-				m_viewMatrix, m_projMatrix, m_exposure, m_gamma, m_whitePoint, m_toneMappedTexture), "Lighting");
+		// Draw shadow map geometry
+		CT(m_shadowPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_viewMatrix, m_projMatrix, 0, renderJobIndex, m_shadowMapTextures, m_windowWidth, m_windowHeight, glm::vec2(m_nearZ, m_farZ)), "Shadowmap");
 
-			GFX_CHECKTIME(m_postProcessingPainter->Render(delta, m_toneMappedTexture, m_currentLUT, m_exposure, m_gamma, m_whitePoint), "PostProcessing");
+		// Do global illumination / ssao
+		CT(m_GIPainter->Render(delta, m_normalDepth, m_diffuse, m_viewMatrix, m_projMatrix), "GI");
 
-			GFX_CHECKTIME( m_overlayPainter->Render( renderJobIndex, m_overlayViewMatrix, m_overlayProjMatrix ), "Console");
-			//Render FBO
-			
-			if (m_showFBO != 0)
-				GFX_CHECKTIME(m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, m_showFBO), "FBO");
+		// Do lighting calculations
+		CT(m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_GIPainter->m_SSDOTexture,
+			m_shadowMapTextures, m_viewMatrix, m_projMatrix, m_exposure, m_gamma, m_whitePoint, m_toneMappedTexture), "Lighting");
 
+		// Do post processing
+		CT(m_postProcessingPainter->Render(delta, m_toneMappedTexture, m_currentLUT, m_exposure, m_gamma, m_whitePoint), "PostProcessing");
 
-			GFX_CHECKTIME(m_debugPainter->Render(m_depthBuffer, m_normalDepth, m_viewMatrix, m_projMatrix), "Debug");
+		// Draw overlays/ui
+		CT(m_overlayPainter->Render(renderJobIndex, m_overlayViewMatrix, m_overlayProjMatrix), "Console");
 
-			GFX_CHECKTIME(m_consolePainter->Render(), "Console");
+		// Draw fbo previews
+		if (m_showFBO != 0)
+			CT(m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, m_shadowMapTextures, m_showFBO), "FBO");
 
-			GFX_CHECKTIME(m_textPainter->Render(), "Text");
-		}
-		else
-		{
-			m_renderJobManager->Sort();
+		// Draw debug information
+		CT(m_debugPainter->Render(m_depthBuffer, m_normalDepth, m_viewMatrix, m_projMatrix), "Debug");
 
-			m_deferredPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix, m_gamma);
+		// Draw the console
+		CT(m_consolePainter->Render(), "Console");
 
-			m_decalPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix, m_gamma);
-
-			m_GIPainter->Render(delta, m_normalDepth, m_diffuse, m_viewMatrix, m_projMatrix);
-
-			m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_GIPainter->m_SSDOTexture,
-				m_viewMatrix, m_projMatrix, m_exposure, m_gamma, m_whitePoint, m_toneMappedTexture);
-
-			m_postProcessingPainter->Render(delta, m_toneMappedTexture, m_currentLUT, m_exposure, m_gamma, m_whitePoint);
-			
-			m_overlayPainter->Render( renderJobIndex, m_overlayViewMatrix, m_overlayProjMatrix );
-			//Render FBO
-			
-			if (m_showFBO != 0)
-				m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, m_showFBO);
-
-			m_debugPainter->Render(m_depthBuffer, m_normalDepth, m_viewMatrix, m_projMatrix);
-
-			m_consolePainter->Render();
-			m_textPainter->Render();
-
-		}
+		// Draw debug text
+		CT(m_textPainter->Render(m_windowWidth, m_windowHeight), "Text");
 
 		m_renderJobManager->Clear();
-
 	}
 
 	void RenderCore::SubSystemTimeRender()
@@ -381,7 +439,7 @@ namespace GFX
 				ss << m_subsystemTimes[i].first << ": " << std::fixed << std::setw( 7 ) << std::setprecision(4) << std::setfill( '0' ) << m_subsystemTimes[i].second.count() / 1000.0f << "ms";
 				glm::vec2 position = glm::vec2(m_windowWidth-200+5, m_windowHeight + 12 - 20 * m_subsystemTimes.size() + 20 * i);
 
-				Text t(position.x, position.y, 1.0f, 1.0f, m_font, Colors::White, ss.str().c_str(), m_windowWidth, m_windowHeight);
+				Text t(position.x, position.y, 1.0f, 1.0f, m_font, Colors::White, ss.str().c_str());
 			    GetTextManager().AddText(t);
 			}
 
@@ -472,9 +530,11 @@ namespace GFX
 		m_viewMatrix = view;
 	}
 
-	void RenderCore::SetProjMatrix(glm::mat4 proj)
+	void RenderCore::SetProjMatrix(glm::mat4 proj, float nearZ, float farZ)
 	{
 		m_projMatrix = proj;
+		m_nearZ = nearZ;
+		m_farZ = farZ;
 	}
 
     void RenderCore::SetOverlayViewMatrix( glm::mat4 view )
