@@ -25,7 +25,7 @@ namespace GFX
                 ,GFX::TextureManager* textureManager, GFX::ParticleManager* particleManager);
         ~ParticlePainter();
         void Initialize(GLuint FBO, GLuint VAO) override;
-        void Render(unsigned int& renderIndex, GFX::FBOTexture* depthBuffer, GFX::FBOTexture* color, const glm::mat4& viewMatrix, const glm::mat4& projMatrix);
+        void Render(unsigned int& renderIndex, GFX::FBOTexture* depthBuffer, GFX::FBOTexture* normalDepth, GFX::FBOTexture* specular, GFX::FBOTexture* glowMatId, GLuint toneMappedTexture, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix);
 
     private:
         GFX::RenderJobManager* m_renderJobManager;

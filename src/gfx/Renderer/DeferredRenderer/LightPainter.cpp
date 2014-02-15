@@ -270,6 +270,6 @@ namespace GFX
 		TextureManager::UnbindTexture();
 
 		toneMappedTexture = m_textureHandle;
-		renderIndex = 0;
+		//renderIndex = 0;
 	}
 }

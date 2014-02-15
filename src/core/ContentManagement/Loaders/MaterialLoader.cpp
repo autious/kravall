@@ -380,7 +380,7 @@ namespace Core
         unsigned char* texturedata = stbi_load(textureFileName, &data->width, &data->height, &data->bitsPerPixel, 4);
         if(texturedata == nullptr)
         {
-            LOG_WARNING << "Failed to load image with name: " << textureFileName << std::endl;
+            LOG_WARNING << "Failed to load image with name: " << textureFileName << ". images are requried to be of 32bit color"<< std::endl;
         }
         return texturedata;
     }

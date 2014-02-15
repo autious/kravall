@@ -135,7 +135,14 @@ namespace GFX
 		m_shaderManager->AttachShader("StaticOutlineFS", "StaticOutline");
 		m_shaderManager->LinkProgram("StaticOutline");
 
-		m_uniformBufferManager->CreateBasicCameraUBO(m_shaderManager->GetShaderProgramID("StaticBlend"));
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("StaticMesh"), "PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("NormalMappedStatic"), "PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("StaticNormal"), "PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("AnimatedNormal"), "PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("StaticBlend"), "PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("AnimatedBlend"), "PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("AnimatedOutline"), "PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("StaticOutline"), "PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
 
 		m_outlineThickness = 2;
 		m_staticInstances = new InstanceData[1024];

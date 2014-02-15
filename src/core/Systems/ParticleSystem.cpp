@@ -61,7 +61,7 @@ namespace Core
             Core::EmitterComponent* emc = WGETC<Core::EmitterComponent>(*it);
             Core::ParticleContainer* prc = static_cast<Core::ParticleContainer*>(emc->handle);
 
-            for(int i=0; i < emc->rate; ++i)
+            for(int i=0; i < static_cast<int>(emc->rate * delta); ++i)
             {
                 int k = prc->m_particlePointer;
                 std::uniform_real_distribution<float> distributor(0.0f, 1.0f);
@@ -163,7 +163,7 @@ namespace Core
             GFX::SetBitmaskValue(bitmask, GFX::BITMASK::MESH_ID, prc->m_particleBufferId);
             GFX::SetBitmaskValue(bitmask, GFX::BITMASK::MATERIAL_ID, prc->m_materialId);
             GFX::SetBitmaskValue(bitmask, GFX::BITMASK::LAYER, GFX::LAYER_TYPES::MESH_LAYER);
-
+            
             GFX::Draw(bitmask, nullptr);
         }
     }

@@ -8,6 +8,8 @@
 #include <Textures/TextureManager.hpp>
 #include <Particle/ParticleManager.hpp>
 
+#include <logger/Logger.hpp>
+
 #include <limits>
 
 namespace GFX
@@ -41,10 +43,35 @@ namespace GFX
         m_shaderManager->AttachShader("SmokeGrenadeGS", "SmokeGrenade");
         m_shaderManager->AttachShader("SmokeGrenadeFS", "SmokeGrenade");
         m_shaderManager->LinkProgram("SmokeGrenade");
+
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("SmokeGrenade"), "PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
     }
 
-    void ParticlePainter::Render(unsigned int& renderIndex, GFX::FBOTexture* depthBufer, GFX::FBOTexture* colorBuffer, const glm::mat4& viewMatrix, const glm::mat4& projMatrix)
+    void ParticlePainter::Render(unsigned int& renderIndex, GFX::FBOTexture* depthBuffer, GFX::FBOTexture* normalDepth, GFX::FBOTexture* specular, GFX::FBOTexture* glowMatID, GLuint toneMappedTexture, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
     {
+		BasePainter::Render();
+
+        glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
+
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depthBuffer->GetTextureHandle(), 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, normalDepth->GetTextureHandle(), 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, toneMappedTexture, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, specular->GetTextureHandle(), 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, glowMatID->GetTextureHandle(), 0);
+
+        GLenum drawBuffers[] = { GL_NONE, GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
+        glDrawBuffers(5, drawBuffers);
+
+        glDepthMask(GL_FALSE);
+
+	    BasicCamera bc;
+		bc.viewMatrix = viewMatrix;
+		bc.projMatrix = projectionMatrix;
+
+		m_uniformBufferManager->SetBasicCameraUBO(bc);
+
+        std::vector<GFX::RenderJobManager::RenderJob> renderJobs = m_renderJobManager->GetJobs();
+
         unsigned int currentShader = std::numeric_limits<decltype(currentShader)>::max();
         unsigned int currentMesh = std::numeric_limits<decltype(currentMesh)>::max();
         unsigned int currentMaterial = std::numeric_limits<decltype(currentMaterial)>::max();
@@ -57,9 +84,9 @@ namespace GFX
         unsigned int translucency = 0;
         unsigned int objectType = 0;
 
-        std::vector<GFX::RenderJobManager::RenderJob> renderJobs = m_renderJobManager->GetJobs();
         const GFX::ParticleData* particleData;
         GFX::GFXBitmask renderJob;
+
 
         for(unsigned int i=0; renderIndex < renderJobs.size(); ++i, ++renderIndex)        
         {
@@ -69,6 +96,7 @@ namespace GFX
 
             if(objectType != GFX::OBJECT_TYPES::PARTICLE_GEOMETRY)
             {
+                renderIndex--;
                 break;
             }            
 
@@ -106,6 +134,7 @@ namespace GFX
             {
                 currentMesh = mesh;
                 particleData = m_particleManager->GetParticleData(currentMesh);
+                glBindBuffer(GL_ARRAY_BUFFER, particleData->VBO);
                 glBindVertexArray(particleData->VAO);
             }
             
@@ -171,9 +200,10 @@ namespace GFX
                     }
                 }
             }
-
             glDrawArrays(GL_POINTS, 0, particleData->particleCount);
         }
+
         glDisable(GL_BLEND);
+        glDepthMask(GL_TRUE);
     }
 }

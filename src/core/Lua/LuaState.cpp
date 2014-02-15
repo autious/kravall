@@ -36,6 +36,7 @@
 #include <Lua/Bridges/LuaSquadBridge.hpp>
 #include <Lua/Bridges/LuaAnimationBridge.hpp>
 #include <Lua/Bridges/LuaHoverTextSystemBridge.hpp>
+#include <Lua/Bridges/LuaParticleBridge.hpp>
 
 namespace Core
 {
@@ -64,7 +65,8 @@ namespace Core
 		lmmdb(L),
         lsqdb(L),
 		lanb(L),
-        lhtsb(L)
+        lhtsb(L),
+        lprtb(L)
         {}
             
         LuaBitmask lb;
@@ -90,6 +92,7 @@ namespace Core
         LuaSquadBridge lsqdb;
 		LuaAnimationBridge lanb;
         LuaHoverTextSystemBridge lhtsb;
+        LuaParticleBridge lprtb;
     };
 }
 
