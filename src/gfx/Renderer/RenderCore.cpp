@@ -219,9 +219,9 @@ namespace GFX
 		m_meshManager->LoadMesh(meshID, sizeVerts, sizeIndices, verts, indices);
 	}
 
-	void RenderCore::LoadTexture(unsigned int& id, unsigned char* data, int width, int height)
+	void RenderCore::LoadTexture(unsigned int& id, unsigned char* data, int width, int height, bool decal)
 	{
-		m_textureManager->LoadTexture(id, data, width, height);
+		m_textureManager->LoadTexture(id, data, width, height, decal);
 	}
 
 	void RenderCore::DeleteTexture(unsigned long long int id)

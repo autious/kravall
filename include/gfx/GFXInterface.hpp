@@ -137,7 +137,7 @@ namespace GFX
 		\param width Width of the texture
 		\param height Height of the texture
 		*/
-		DLL_API void LoadTexture2DFromMemory(unsigned int& out_id, unsigned char* data, int width, int height);
+		DLL_API void LoadTexture2DFromMemory(unsigned int& out_id, unsigned char* data, int width, int height, bool decal);
 
 		/*!
 		Deletes a texture from the GPU

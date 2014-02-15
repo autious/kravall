@@ -42,7 +42,7 @@ namespace Core
         bool ParseFile(const char* assetFileName, std::string& shaderName, std::string& diffuseTexture, std::string& specularTexture, std::string& normalBlendTexture, std::string& glowTexture);
 
         unsigned char* LoadTextureData(const char* textureFileName, Core::TextureData* &data);
-        void BufferTextureData(unsigned char* textureData, Core::TextureData* data);
+        void BufferTextureData(unsigned char* textureData, Core::TextureData* data, bool decal);
         void AddTextureToMaterial(const unsigned long long int materialId, const unsigned textureId);
 
         int AddUserOfTexture(const Core::TextureData* texture);
