@@ -142,9 +142,6 @@ namespace GFX
 		m_shadowMapTextures[2]->CreateShadowmap(m_settings[GFX_SHADOW_RESOLUTION], m_settings[GFX_SHADOW_QUALITY]);
 		m_shadowMapTextures[3]->CreateShadowmap(m_settings[GFX_SHADOW_RESOLUTION], m_settings[GFX_SHADOW_QUALITY]);
 
-
-
-
 		m_shaderManager = new ShaderManager();
 		m_uniformBufferManager = new UniformBufferManager();
 		m_renderJobManager = new RenderJobManager();

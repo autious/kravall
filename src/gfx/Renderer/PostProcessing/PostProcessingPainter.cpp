@@ -217,13 +217,13 @@ namespace GFX
 
 			glClear(GL_COLOR_BUFFER_BIT);
 
-			m_shaderManager->UseProgram("GaussianBlurHorizontal");
+			m_shaderManager->UseProgram("GaussianBlurHorizontal_old");
 
 			if (i == 0)
-				TextureManager::BindTexture(m_brightPassTexture->GetTextureHandle(), m_shaderManager->GetUniformLocation("GaussianBlurHorizontal", "gTexture"), 0, GL_TEXTURE_2D);
+				TextureManager::BindTexture(m_brightPassTexture->GetTextureHandle(), m_shaderManager->GetUniformLocation("GaussianBlurHorizontal_old", "gTexture"), 0, GL_TEXTURE_2D);
 			else
-				TextureManager::BindTexture(m_bloomTextures[i - 1]->GetTextureHandle(), m_shaderManager->GetUniformLocation("GaussianBlurHorizontal", "gTexture"), 0, GL_TEXTURE_2D);
-			m_shaderManager->SetUniform((GLfloat)size.x, (GLfloat)size.y, m_shaderManager->GetUniformLocation("GaussianBlurHorizontal", "gScreenDimensions"));
+				TextureManager::BindTexture(m_bloomTextures[i - 1]->GetTextureHandle(), m_shaderManager->GetUniformLocation("GaussianBlurHorizontal_old", "gTexture"), 0, GL_TEXTURE_2D);
+			m_shaderManager->SetUniform((GLfloat)size.x, (GLfloat)size.y, m_shaderManager->GetUniformLocation("GaussianBlurHorizontal_old", "gScreenDimensions"));
 
 			glBindVertexArray(m_dummyVAO);
 			glDrawArrays(GL_POINTS, 0, 1);
@@ -231,11 +231,11 @@ namespace GFX
 			m_shaderManager->ResetProgram();
 
 			BindTextureToFBO(m_bloomTextures[i], false);
-			m_shaderManager->UseProgram("GaussianBlurVertical");
+			m_shaderManager->UseProgram("GaussianBlurVertical_old");
 			glClear(GL_COLOR_BUFFER_BIT);
 
-			TextureManager::BindTexture(m_intermediateBlurTextures[i]->GetTextureHandle(), m_shaderManager->GetUniformLocation("GaussianBlurVertical", "gTexture"), 0, GL_TEXTURE_2D);
-			m_shaderManager->SetUniform((GLfloat)size.x, (GLfloat)size.y, m_shaderManager->GetUniformLocation("GaussianBlurHorizontal", "gScreenDimensions"));
+			TextureManager::BindTexture(m_intermediateBlurTextures[i]->GetTextureHandle(), m_shaderManager->GetUniformLocation("GaussianBlurVertical_old", "gTexture"), 0, GL_TEXTURE_2D);
+			m_shaderManager->SetUniform((GLfloat)size.x, (GLfloat)size.y, m_shaderManager->GetUniformLocation("GaussianBlurHorizontal_old", "gScreenDimensions"));
 
 			glBindVertexArray(m_dummyVAO);
 			glDrawArrays(GL_POINTS, 0, 1);

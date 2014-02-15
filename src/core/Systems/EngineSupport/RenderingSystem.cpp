@@ -33,7 +33,12 @@ namespace Core
                 rot = RotationComponent::GetQuat(rc->rotation);
                 rotationMatrix = glm::toMat4(rot);
                 translationMatrix = glm::translate(glm::mat4(1.0f), WorldPositionComponent::GetVec3(*wpc));
-                scaleMatrix = glm::scale(sc->scale[0], sc->scale[1], sc->scale[2]);
+
+				//ugly hack, outline color is used as scale for decals
+				if (GFX::GetBitmaskValue(gc->bitmask, GFX::BITMASK::TYPE) == GFX::OBJECT_TYPES::DECAL_GEOMETRY)
+					scaleMatrix = glm::scale(gc->outlineColor[0], gc->outlineColor[1], gc->outlineColor[2]);
+				else
+					scaleMatrix = glm::scale(sc->scale[0], sc->scale[1], sc->scale[2]);
 				
                 //Send the data through a drawcall to GFX
                 GFX::InstanceData* instanceData = Core::world.m_frameHeap.NewObject<GFX::InstanceData>();

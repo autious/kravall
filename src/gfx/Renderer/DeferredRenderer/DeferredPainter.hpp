@@ -72,15 +72,6 @@ namespace GFX
         TextureManager* m_textureManager;
 
 		InstanceData* m_staticInstances;
-		GLuint m_instanceBuffer;
-
-		GLint m_animatedBlend;
-		GLint m_animatedNormal;
-
-		GLint m_staticBlend;
-		GLint m_staticNormal;
-
-		unsigned int m_outlineThickness;
 	};
 }
 

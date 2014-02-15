@@ -65,8 +65,6 @@ namespace GFX
 		m_shaderManager->AttachShader("SMAV_FS", "SMAV");
 		m_shaderManager->LinkProgram("SMAV");
 
-
-
 		m_staticInstances = new InstanceData[1024];
 
 		glGenBuffers(1, &m_instanceBuffer);
