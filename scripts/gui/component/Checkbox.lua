@@ -15,7 +15,8 @@ local Checkbox =
                     matSelected = "assets/texture/ui/checkbox-selected_00.material",
                     matHoverOpen = "assets/texture/ui/checkbox-hover-open_00.material",
                     matHoverSelected = "assets/texture/ui/checkbox-hover-selected_00.material",
-                    onChange = nil,
+                    onChange = function(self, value) end,
+                    onClick = function(self, value) end,
                     doStateSwitchOnPress = true
                 }
 
@@ -39,8 +40,6 @@ function Checkbox:new(o)
     
     o.width = o.openImg.width
     o.height = o.openImg.height
-
-    o.onChange = o.onChange or function() end
 
     o.GUIComponent = GUIComponent:new
                                         {
@@ -73,6 +72,7 @@ function Checkbox:setChecked( checked )
     assert( type(checked) == "boolean" )
     self.checked = checked
     self:updateVisual()
+    self:onChange(self.checked)
 end
 
 function Checkbox:setInside( inside )
@@ -101,14 +101,21 @@ function Checkbox:onPress()
 end
 
 function Checkbox:onRelease()
+
+    if self.checked then
+        self:onClick( false )
+    else
+        self:onClick( true )
+    end 
+
     if self.doStateSwitchOnPress then
         if self.checked then
-            self.checked = false
+            self:setChecked( false )
         else
-            self.checked = true
+            self:setChecked( true )
         end
     end
-    self.onChange( self.checked )
+
     self:updateVisual()
 end
 

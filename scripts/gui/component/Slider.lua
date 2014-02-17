@@ -13,7 +13,8 @@ local Slider =
                     matReleased = "assets/texture/ui/slider-knob-release_00.material",
                     matPressed = "assets/texture/ui/slider-knob-press_00.material",
                     matHover = "assets/texture/ui/slider-knob-hover_00.material",
-                    matBackground = "assets/texture/ui/slider-background_00.material"
+                    matBackground = "assets/texture/ui/slider-background_00.material",
+                    onChange = function ( self, value ) end
                 
                 }
 
@@ -33,8 +34,6 @@ function Slider:new(o)
     o.bgHeight = o.bg.height
     o.width = o.bg.width
     o.height = o.bg.height
-
-    o.onChange  = o.onChange or function() end
 
     o.GUIComponent = GUIComponent:new
                                         {
@@ -82,7 +81,7 @@ function Slider:onDrag( x, y )
 
     self.a = fact
 
-    self.onChange( fact ) 
+    self:onChange( fact ) 
 
     self:setPosition(self.x,self.y)
 end

@@ -29,6 +29,12 @@ function GUI:new(o)
     return o
 end
 
+function GUI:addComponents( components )
+    for _,v in pairs( components ) do
+        self:addComponent( v )
+    end
+end
+
 function GUI:addComponent( comp )
     assert( comp ~= nil, "Component is nil" )
     self.components[#(self.components)+1] = comp 

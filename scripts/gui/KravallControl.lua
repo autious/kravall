@@ -60,6 +60,10 @@ function KravallControl:setFormation( formation )
     self.formationGUI:setFormation( formation )
 end
 
+function KravallControl:setStance( stance )
+    self.stanceGUI:setStance( stance )
+end
+
 function KravallControl:addEvent( component )
     self.eventGUI:addComponent( component )
 end
