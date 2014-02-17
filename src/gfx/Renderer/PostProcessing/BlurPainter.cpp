@@ -47,6 +47,24 @@ namespace GFX
 		m_shaderManager->AttachShader("GBVGS", "GaussianBlurVertical");
 		m_shaderManager->AttachShader("GBVFS", "GaussianBlurVertical");
 		m_shaderManager->LinkProgram("GaussianBlurVertical");
+
+		m_shaderManager->CreateProgram("GaussianBlurHorizontal_old");
+		m_shaderManager->LoadShader("shaders/RenderToQuad/Quad.vertex", "GBHVS_old", GL_VERTEX_SHADER);
+		m_shaderManager->LoadShader("shaders/FSQuadGS.glsl", "GBHGS_old", GL_GEOMETRY_SHADER);
+		m_shaderManager->LoadShader("shaders/PostProcessing/GaussianBlurHorizontalFS_old.glsl", "GBHFS_old", GL_FRAGMENT_SHADER);
+		m_shaderManager->AttachShader("GBHVS_old", "GaussianBlurHorizontal_old");
+		m_shaderManager->AttachShader("GBHGS_old", "GaussianBlurHorizontal_old");
+		m_shaderManager->AttachShader("GBHFS_old", "GaussianBlurHorizontal_old");
+		m_shaderManager->LinkProgram("GaussianBlurHorizontal_old");
+
+		m_shaderManager->CreateProgram("GaussianBlurVertical_old");
+		m_shaderManager->LoadShader("shaders/RenderToQuad/Quad.vertex", "GBVVS_old", GL_VERTEX_SHADER);
+		m_shaderManager->LoadShader("shaders/FSQuadGS.glsl", "GBVGS_old", GL_GEOMETRY_SHADER);
+		m_shaderManager->LoadShader("shaders/PostProcessing/GaussianBlurVerticalFS_old.glsl", "GBVFS_old", GL_FRAGMENT_SHADER);
+		m_shaderManager->AttachShader("GBVVS_old", "GaussianBlurVertical_old");
+		m_shaderManager->AttachShader("GBVGS_old", "GaussianBlurVertical_old");
+		m_shaderManager->AttachShader("GBVFS_old", "GaussianBlurVertical_old");
+		m_shaderManager->LinkProgram("GaussianBlurVertical_old");
 		
 	}
 

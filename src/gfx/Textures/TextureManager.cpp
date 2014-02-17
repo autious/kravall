@@ -12,15 +12,23 @@ namespace GFX
 
 	}
 
-	void TextureManager::LoadTexture(unsigned int& id, unsigned char* data, int width, int height)
+	void TextureManager::LoadTexture(unsigned int& id, unsigned char* data, int width, int height, bool decal)
 	{
         /*
 		LoadTexture(id, data, GL_TEXTURE_2D, GL_RGBA, GL_RGBA, GL_LINEAR, GL_LINEAR,
 			GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, width, height);
         */
 
-		LoadTexture(id, data, GL_TEXTURE_2D, GL_RGBA, GL_RGBA, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR,
-			GL_REPEAT, GL_REPEAT, width, height);
+		if (decal)
+		{
+			LoadTexture(id, data, GL_TEXTURE_2D, GL_RGBA, GL_RGBA, GL_LINEAR, GL_LINEAR,
+				GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, width, height);
+		}
+		else
+		{
+			LoadTexture(id, data, GL_TEXTURE_2D, GL_RGBA, GL_RGBA, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR,
+				GL_REPEAT, GL_REPEAT, width, height);
+		}
 	}
 		
 	void TextureManager::LoadTexture(unsigned int& id, unsigned char* data, const GLenum& target,

@@ -59,6 +59,7 @@ namespace GFX
     class PostProcessingPainter;
     class GIPainter;
     class BlurPainter;
+	class DecalPainter;
 
     class FontData;
     class Vertex;
@@ -174,7 +175,7 @@ namespace GFX
 		void DeleteMesh(unsigned long long id);
 		void LoadMesh(unsigned int& meshID, int& sizeVerts, int& sizeIndices, GFX::Vertex* verts, int* indices);
 
-		void LoadTexture(unsigned int& id, unsigned char* data, int width, int height);
+		void LoadTexture(unsigned int& id, unsigned char* data, int width, int height, bool decal);
 		void DeleteTexture(unsigned long long int id);
 		
 		void CreateMaterial(unsigned long long int& id);
@@ -256,6 +257,7 @@ namespace GFX
 		PostProcessingPainter* m_postProcessingPainter;
 		GIPainter* m_GIPainter;
 		BlurPainter* m_blurPainter;
+		DecalPainter* m_decalPainter;
 		ShadowPainter* m_shadowPainter;
 
 		void SubSystemTimeRender();

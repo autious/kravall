@@ -1,28 +1,27 @@
-#ifndef SRC_GFX_RENDERER_DEFERRED_PAINTER_HPP
-#define SRC_GFX_RENDERER_DEFERRED_PAINTER_HPP
+#ifndef SRC_GFX_RENDERER_DECAL_PAINTER_HPP
+#define SRC_GFX_RENDERER_DECAL_PAINTER_HPP
 
 #include "../BasePainter.hpp"
-#include "FBOTexture.hpp"
+#include "../DeferredRenderer/FBOTexture.hpp"
 #include <GL/glew.h>
 #include <vector>
-#include "../Defines.hpp"
 
 #include <Animation/AnimationManagerGFX.hpp>
 
 namespace GFX
 {
-    class InstanceData;
-    class MeshManager;
-    class TextureManager;
-    class MaterialManager;
-    class UniformBufferManager;
-    class RenderJobManager;
-    class ShaderManager;
+	class InstanceData;
+	class MeshManager;
+	class TextureManager;
+	class MaterialManager;
+	class UniformBufferManager;
+	class RenderJobManager;
+	class ShaderManager;
 }
 
 namespace GFX
 {
-	class DeferredPainter : public BasePainter
+	class DecalPainter : public BasePainter
 	{
 	public:
 
@@ -31,10 +30,10 @@ namespace GFX
 		\param shaderManager Pointer to ShaderManager present in RenderCore
 		\param bufferManager Pointer to BufferManager present in RenderCore
 		*/
-		DeferredPainter(ShaderManager* shaderManager, UniformBufferManager* uniformBufferManager, RenderJobManager* renderJobManager, 
+		DecalPainter(ShaderManager* shaderManager, UniformBufferManager* uniformBufferManager, RenderJobManager* renderJobManager,
 			MeshManager* meshManager, TextureManager* textureManager, MaterialManager* materialManager);
 
-		~DeferredPainter();
+		~DecalPainter();
 
 		/*!
 		Initialization function which sets the dummyVAO and FBO for later use in the painter.
@@ -51,11 +50,11 @@ namespace GFX
 		\param specular Rendertarget for specular
 		\param glowMatID Rendertarget for glow and materialID
 		*/
-		void Render(AnimationManagerGFX* animationManager, unsigned int& renderIndex, FBOTexture* depthBuffer, FBOTexture* normalDepth, 
+		void Render(AnimationManagerGFX* animationManager, unsigned int& renderIndex, FBOTexture* depthBuffer, FBOTexture* normalDepth,
 			FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix, const float& gamma);
 
 	private:
-		
+
 		/*!
 		Binds all the rendertargets to the FBO and GPU
 		\param normalDepth Rendertarget for normals and depth
@@ -63,15 +62,18 @@ namespace GFX
 		\param specular Rendertarget for specular
 		\param glowMatID Rendertarget for glow and materialID
 		*/
-		void BindGBuffer(FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID);
+		void BindGBuffer(FBOTexture* depthBuffer, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID);
 
-        
-        RenderJobManager* m_renderJobManager;
-        MeshManager* m_meshManager;
-        MaterialManager* m_materialManager;
-        TextureManager* m_textureManager;
+		RenderJobManager* m_renderJobManager;
+		MeshManager* m_meshManager;
+		MaterialManager* m_materialManager;
+		TextureManager* m_textureManager;
 
 		InstanceData* m_staticInstances;
+		const unsigned int MAX_INSTANCES = 1024;
+		GLuint m_instanceBuffer;
+
+	
 	};
 }
 
