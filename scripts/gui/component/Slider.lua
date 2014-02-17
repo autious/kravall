@@ -86,6 +86,36 @@ function Slider:onDrag( x, y )
     self:setPosition(self.x,self.y)
 end
 
+function Slider:setToMiddle()
+    local fact = 0.5
+
+    self.a = fact
+
+    self:onChange( fact ) 
+
+    self:setPosition(self.x,self.y)
+end
+
+function Slider:setToMinimum()
+    local fact = 0
+
+    self.a = fact
+
+    self:onChange( fact ) 
+
+    self:setPosition(self.x,self.y)
+end
+
+function Slider:setToMaximum()
+    local fact = 1
+
+    self.a = fact
+
+    self:onChange( fact ) 
+
+    self:setPosition(self.x,self.y)
+end
+
 function Slider:onPress() 
     self.pressedKnob:show(true)
     self.releasedKnob:show(false)

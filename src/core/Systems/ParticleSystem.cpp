@@ -60,81 +60,86 @@ namespace Core
             Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(*it);
             Core::EmitterComponent* emc = WGETC<Core::EmitterComponent>(*it);
             Core::ParticleContainer* prc = static_cast<Core::ParticleContainer*>(emc->handle);
-
-            for(int i=0; i < static_cast<int>(emc->rate * delta); ++i)
+            emc->rateAccumulator += static_cast<float>(emc->rate) * delta;
+            int rate = static_cast<int>(emc->rateAccumulator);
+            if(rate > 0)
             {
-                int k = prc->m_particlePointer;
-                std::uniform_real_distribution<float> distributor(0.0f, 1.0f);
-                switch (emc->type)
+                for(int i=0; i < rate; ++i)
                 {
-                    case Core::EmitterType::SURFACE_EMITTER:
+                    int k = prc->m_particlePointer;
+                    std::uniform_real_distribution<float> distributor(0.0f, 1.0f);
+                    switch (emc->type)
                     {
-                        glm::vec3 position = Core::WorldPositionComponent::GetVec3(*wpc) + glm::vec3(emc->offset[0], emc->offset[1], emc->offset[2]) 
-                            + glm::vec3(emc->surface.surfaceDirectionOne[0], emc->surface.surfaceDirectionOne[1], emc->surface.surfaceDirectionOne[2]) * distributor(generator) 
-                            + glm::vec3(emc->surface.surfaceDirectionTwo[0], emc->surface.surfaceDirectionTwo[1],emc->surface.surfaceDirectionTwo[2]) * distributor(generator);
+                        case Core::EmitterType::SURFACE_EMITTER:
+                        {
+                            glm::vec3 position = Core::WorldPositionComponent::GetVec3(*wpc) + glm::vec3(emc->offset[0], emc->offset[1], emc->offset[2]) 
+                                + glm::vec3(emc->surface.surfaceDirectionOne[0], emc->surface.surfaceDirectionOne[1], emc->surface.surfaceDirectionOne[2]) * distributor(generator) 
+                                + glm::vec3(emc->surface.surfaceDirectionTwo[0], emc->surface.surfaceDirectionTwo[1],emc->surface.surfaceDirectionTwo[2]) * distributor(generator);
 
-                        prc->m_particles[k].position[0] = position.x; 
-                        prc->m_particles[k].position[1] = position.y; 
-                        prc->m_particles[k].position[2] = position.z; 
+                            prc->m_particles[k].position[0] = position.x; 
+                            prc->m_particles[k].position[1] = position.y; 
+                            prc->m_particles[k].position[2] = position.z; 
 
-                        glm::vec3 velocity = glm::vec3(emc->velocity[0], emc->velocity[1], emc->velocity[2]) 
-                            + glm::vec3(emc->velocityVariance[0] * distributor(generator), emc->velocityVariance[1] * distributor(generator), emc->velocityVariance[2] * distributor(generator)); 
+                            glm::vec3 velocity = glm::vec3(emc->velocity[0], emc->velocity[1], emc->velocity[2]) 
+                                + glm::vec3(emc->velocityVariance[0] * distributor(generator), emc->velocityVariance[1] * distributor(generator), emc->velocityVariance[2] * distributor(generator)); 
 
-                        prc->m_particleData[k].velocity[0] = velocity.x;
-                        prc->m_particleData[k].velocity[1] = velocity.y;
-                        prc->m_particleData[k].velocity[2] = velocity.z;
-                        break;
+                            prc->m_particleData[k].velocity[0] = velocity.x;
+                            prc->m_particleData[k].velocity[1] = velocity.y;
+                            prc->m_particleData[k].velocity[2] = velocity.z;
+                            break;
+                        }
+
+                        case Core::EmitterType::CONE_EMITTER:
+                        {
+                            float rotation = 3.14f * distributor(generator);
+                            float cosVal = glm::cos(rotation);
+                            float sinVal = glm::sin(rotation);
+                            glm::quat q_1 = glm::quat(cosVal, 0.0f, 0.0f, -sinVal); 
+
+                            rotation = glm::radians(emc->cone.coneAngle + emc->cone.coneAngleVariance * distributor(generator)) / 2.0f;
+                            cosVal = glm::cos(rotation);
+                            sinVal = glm::sin(rotation);
+                            glm::quat q_2 = glm::quat(cosVal, sinVal, 0.0f, 0.0f);
+
+                            glm::vec3 target = glm::normalize(glm::vec3(emc->cone.coneDirection[0], emc->cone.coneDirection[1], emc->cone.coneDirection[2]));
+                            glm::vec3 axis = glm::cross(target, glm::vec3(0.0f, 0.0f, -1.0f));
+                            rotation = glm::acos(glm::dot(target, axis)) / 2.0f;
+                            cosVal = glm::cos(rotation);
+                            sinVal = glm::sin(rotation);
+                            glm::quat q_3 = glm::quat(cosVal, axis.x * sinVal, axis.y * sinVal, axis.z * sinVal);
+
+                            glm::quat quatRotation = glm::cross(q_3, glm::cross(q_2, q_1));
+                           
+                            glm::vec3 velocity = glm::vec3(emc->velocity[0], emc->velocity[1], emc->velocity[2]) 
+                                + glm::vec3(emc->velocityVariance[0] * distributor(generator), emc->velocityVariance[1] * distributor(generator), emc->velocityVariance[2] * distributor(generator)); 
+                            velocity = quatRotation * velocity * glm::conjugate(quatRotation);
+
+                            prc->m_particleData[k].velocity[0] = velocity.x;
+                            prc->m_particleData[k].velocity[1] = velocity.y;
+                            prc->m_particleData[k].velocity[2] = velocity.z;
+
+                            glm::vec3 position = Core::WorldPositionComponent::GetVec3(*wpc) + glm::vec3(emc->offset[0], emc->offset[1], emc->offset[2]);
+                            prc->m_particles[k].position[0] = position.x;
+                            prc->m_particles[k].position[1] = position.y;
+                            prc->m_particles[k].position[2] = position.z;
+                            break;
+                        }
                     }
 
-                    case Core::EmitterType::CONE_EMITTER:
+                    prc->m_particleData[k].acceleration[0] = emc->acceleration[0];
+                    prc->m_particleData[k].acceleration[1] = emc->acceleration[1];
+                    prc->m_particleData[k].acceleration[2] = emc->acceleration[2];
+                    
+                    prc->m_particles[k].life = emc->life + distributor(generator) * emc->lifeVariance;
+                    prc->m_particleData[k].lifeReduction = emc->lifeReduction + distributor(generator) * emc->lifeReductionVariance;                          
+
+                    prc->m_particlePointer += 1;
+                    if(prc->m_particlePointer >= prc->m_numberOfParticles)
                     {
-                        float rotation = 3.14f * distributor(generator);
-                        float cosVal = glm::cos(rotation);
-                        float sinVal = glm::sin(rotation);
-                        glm::quat q_1 = glm::quat(cosVal, 0.0f, 0.0f, -sinVal); 
-
-                        rotation = glm::radians(emc->cone.coneAngle + emc->cone.coneAngleVariance * distributor(generator)) / 2.0f;
-                        cosVal = glm::cos(rotation);
-                        sinVal = glm::sin(rotation);
-                        glm::quat q_2 = glm::quat(cosVal, sinVal, 0.0f, 0.0f);
-
-                        glm::vec3 target = glm::normalize(glm::vec3(emc->cone.coneDirection[0], emc->cone.coneDirection[1], emc->cone.coneDirection[2]));
-                        glm::vec3 axis = glm::cross(target, glm::vec3(0.0f, 0.0f, -1.0f));
-                        rotation = glm::acos(glm::dot(target, axis)) / 2.0f;
-                        cosVal = glm::cos(rotation);
-                        sinVal = glm::sin(rotation);
-                        glm::quat q_3 = glm::quat(cosVal, axis.x * sinVal, axis.y * sinVal, axis.z * sinVal);
-
-                        glm::quat quatRotation = glm::cross(q_3, glm::cross(q_2, q_1));
-                       
-                        glm::vec3 velocity = glm::vec3(emc->velocity[0], emc->velocity[1], emc->velocity[2]) 
-                            + glm::vec3(emc->velocityVariance[0] * distributor(generator), emc->velocityVariance[1] * distributor(generator), emc->velocityVariance[2] * distributor(generator)); 
-                        velocity = quatRotation * velocity * glm::conjugate(quatRotation);
-
-                        prc->m_particleData[k].velocity[0] = velocity.x;
-                        prc->m_particleData[k].velocity[1] = velocity.y;
-                        prc->m_particleData[k].velocity[2] = velocity.z;
-
-                        glm::vec3 position = Core::WorldPositionComponent::GetVec3(*wpc) + glm::vec3(emc->offset[0], emc->offset[1], emc->offset[2]);
-                        prc->m_particles[k].position[0] = position.x;
-                        prc->m_particles[k].position[1] = position.y;
-                        prc->m_particles[k].position[2] = position.z;
-                        break;
+                        prc->m_particlePointer = 0;
                     }
                 }
-
-                prc->m_particleData[k].acceleration[0] = emc->acceleration[0];
-                prc->m_particleData[k].acceleration[1] = emc->acceleration[1];
-                prc->m_particleData[k].acceleration[2] = emc->acceleration[2];
-                
-                prc->m_particles[k].life = emc->life + distributor(generator) * emc->lifeVariance;
-                prc->m_particleData[k].lifeReduction = emc->lifeReduction + distributor(generator) * emc->lifeReductionVariance;                          
-
-                prc->m_particlePointer += 1;
-                if(prc->m_particlePointer >= prc->m_numberOfParticles)
-                {
-                    prc->m_particlePointer = 0;
-                }
+                emc->rateAccumulator = 0.0f;
             }
         }
 

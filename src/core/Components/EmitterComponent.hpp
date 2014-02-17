@@ -33,6 +33,7 @@ namespace Core
     struct EmitterComponent
     {
         int rate;
+        float rateAccumulator;
         float offset[3]; 
         float life;
         float lifeVariance;
@@ -44,6 +45,11 @@ namespace Core
 
         Core::EmitterType type;
         Core::ParticleHandle handle;
+
+        EmitterComponent()
+        {
+            rateAccumulator = 0;
+        }
 
         union
         {

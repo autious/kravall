@@ -102,12 +102,6 @@ end
 
 function Checkbox:onRelease()
 
-    if self.checked then
-        self:onClick( false )
-    else
-        self:onClick( true )
-    end 
-
     if self.doStateSwitchOnPress then
         if self.checked then
             self:setChecked( false )
@@ -115,6 +109,12 @@ function Checkbox:onRelease()
             self:setChecked( true )
         end
     end
+
+    if self.checked then
+        self:onClick( false )
+    else
+        self:onClick( true )
+    end 
 
     self:updateVisual()
 end
