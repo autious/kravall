@@ -27,11 +27,6 @@ extern "C"
 
     static GLuint m_gammaUniform;
 
-    static GLint m_cameraPosUniform;
-
-    static unsigned int testCubeMap;
-    static GLint cubemapUniform;
-
     static GLuint m_instanceBuffer;
 
     static GLint m_animatedBlend;
@@ -214,7 +209,6 @@ namespace GFX
 				depth = GetBitmaskValue(bitmask, BITMASK::DEPTH);
 			}
 
-
 			if (material == currentMaterial && meshID == currentMesh && !endMe && instanceCount < MAX_INSTANCES && layer == currentLayer)
 			{
 				InstanceData smid = *(InstanceData*)renderJobs.at(i).value;
@@ -233,7 +227,7 @@ namespace GFX
 					glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
 					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IBO);
-
+				
 					if (mesh.skeletonID >= 0)
 						animationManager->BindSkeleton(mesh.skeletonID);
 
@@ -292,7 +286,6 @@ namespace GFX
 
 					currentMaterial = material;
 
-
 					//compare shader
 					if (mat.shaderProgramID != currentShader)
 					{
@@ -323,8 +316,7 @@ namespace GFX
 					currentMesh = meshID;
 
 					glBindVertexArray(mesh.VAO);
-
-
+					
 					if (mesh.skeletonID >= 0)
 						animationManager->BindSkeletonData(mesh.skeletonID);
 				}

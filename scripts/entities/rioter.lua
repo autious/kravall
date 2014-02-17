@@ -71,7 +71,7 @@ return function(asm, posX, posY, posZ, group, gender, material, weaponType)
 				type = core.componentType.GraphicsComponent,
 				data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1} },
 				load = { 
-							mesh = { core.loaders.GnomeLoader, meshes[gender] },
+							mesh = { core.loaders.GnomeLoader, meshes[2] },
 							material = { core.loaders.MaterialLoader, materials[material]  },
 					   }
 			}

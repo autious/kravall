@@ -34,7 +34,7 @@ namespace GFX
 		TextureManager();
 		~TextureManager();
 
-		void LoadTexture(unsigned int& id, unsigned char* data, int width, int height);
+		void LoadTexture(unsigned int& id, unsigned char* data, int width, int height, bool decal);
 		
 		void LoadTexture(unsigned int& id, unsigned char* data, const GLenum& target,
 			const GLenum& internalFormat, const GLenum& format,

@@ -24,6 +24,7 @@ unsigned int ShadowDataContainer::numPointLights = 0;
 #include "PostProcessing/PostProcessingPainter.hpp"
 #include "GlobalIlluminationRenderer/GIPainter.hpp"
 #include "PostProcessing/BlurPainter.hpp"
+#include "DecalRenderer/DecalPainter.hpp"
 
 #include <Shaders/ShaderManager.hpp>
 #include <Buffers/UniformBufferManager.hpp>
@@ -84,6 +85,7 @@ namespace GFX
 		delete(m_fboPainter);
         delete(m_overlayPainter);
 		delete(m_blurPainter);
+		delete(m_decalPainter);
 		delete(m_shadowPainter);
 	}
 
@@ -140,9 +142,6 @@ namespace GFX
 		m_shadowMapTextures[2]->CreateShadowmap(m_settings[GFX_SHADOW_RESOLUTION], m_settings[GFX_SHADOW_QUALITY]);
 		m_shadowMapTextures[3]->CreateShadowmap(m_settings[GFX_SHADOW_RESOLUTION], m_settings[GFX_SHADOW_QUALITY]);
 
-
-
-
 		m_shaderManager = new ShaderManager();
 		m_uniformBufferManager = new UniformBufferManager();
 		m_renderJobManager = new RenderJobManager();
@@ -160,8 +159,9 @@ namespace GFX
 
 		m_postProcessingPainter = new PostProcessingPainter(m_shaderManager, m_uniformBufferManager, m_textureManager);
 
-		m_GIPainter = new GIPainter(m_shaderManager, m_uniformBufferManager, m_renderJobManager);
+		//m_GIPainter = new GIPainter(m_shaderManager, m_uniformBufferManager, m_renderJobManager);
 		m_blurPainter = new BlurPainter(m_shaderManager, m_uniformBufferManager);
+		m_decalPainter = new DecalPainter(m_shaderManager, m_uniformBufferManager, m_renderJobManager, m_meshManager, m_textureManager, m_materialManager);
 
 		m_debugPainter = new DebugPainter(m_shaderManager, m_uniformBufferManager);
 		m_textPainter = new TextPainter(m_shaderManager, m_uniformBufferManager);
@@ -191,8 +191,8 @@ namespace GFX
         m_overlayPainter->Initialize(m_FBO, m_dummyVAO);
 		m_blurPainter->Initialize(m_FBO, m_dummyVAO);
 		m_postProcessingPainter->Initialize(m_FBO, m_dummyVAO, m_windowWidth, m_windowHeight, m_blurPainter);
-		m_GIPainter->Initialize(m_FBO, m_dummyVAO, m_windowWidth, m_windowHeight);
-		
+		//m_GIPainter->Initialize(m_FBO, m_dummyVAO, m_windowWidth, m_windowHeight);
+		m_decalPainter->Initialize(m_FBO, m_dummyVAO);
 
 		// Set console width
 		m_consolePainter->SetConsoleHeight(m_windowHeight);
@@ -271,9 +271,9 @@ namespace GFX
 		m_meshManager->LoadMesh(meshID, sizeVerts, sizeIndices, verts, indices);
 	}
 
-	void RenderCore::LoadTexture(unsigned int& id, unsigned char* data, int width, int height)
+	void RenderCore::LoadTexture(unsigned int& id, unsigned char* data, int width, int height, bool decal)
 	{
-		m_textureManager->LoadTexture(id, data, width, height);
+		m_textureManager->LoadTexture(id, data, width, height, decal);
 	}
 
 	void RenderCore::DeleteTexture(unsigned long long int id)
@@ -390,22 +390,24 @@ namespace GFX
 		// Draw geometry to G-buffers
 		CT(m_deferredPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix, m_gamma), "Geometry");
 
+		CT(m_decalPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix, m_gamma), "Decals");
+
 		// Draw shadow map geometry
 		CT(m_shadowPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_viewMatrix, m_projMatrix, 0, renderJobIndex, m_shadowMapTextures, m_windowWidth, m_windowHeight, glm::vec2(m_nearZ, m_farZ)), "Shadowmap");
 
 		// Do global illumination / ssao
-		CT(m_GIPainter->Render(delta, m_normalDepth, m_diffuse, m_viewMatrix, m_projMatrix), "GI");
+		//CT(m_GIPainter->Render(delta, m_normalDepth, m_diffuse, m_viewMatrix, m_projMatrix), "GI");
 
 		// Do lighting calculations
-		CT(m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_GIPainter->m_SSDOTexture,
+		CT(m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, nullptr,
 			m_shadowMapTextures, m_viewMatrix, m_projMatrix, m_exposure, m_gamma, m_whitePoint, m_toneMappedTexture), "Lighting");
 
 		// Do post processing
 		CT(m_postProcessingPainter->Render(delta, m_toneMappedTexture, m_currentLUT, m_exposure, m_gamma, m_whitePoint), "PostProcessing");
 
 		// Draw overlays/ui
-		CT( m_overlayPainter->Render( renderJobIndex, m_overlayViewMatrix, m_overlayProjMatrix ), "Console");
-			
+		CT(m_overlayPainter->Render(renderJobIndex, m_overlayViewMatrix, m_overlayProjMatrix), "Console");
+
 		// Draw fbo previews
 		if (m_showFBO != 0)
 			CT(m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, m_shadowMapTextures, m_showFBO), "FBO");
@@ -420,7 +422,6 @@ namespace GFX
 		CT(m_textPainter->Render(m_windowWidth, m_windowHeight), "Text");
 
 		m_renderJobManager->Clear();
-
 	}
 
 	void RenderCore::SubSystemTimeRender()
