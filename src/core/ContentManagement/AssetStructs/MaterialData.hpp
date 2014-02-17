@@ -12,6 +12,7 @@ namespace Core
         Core::TextureData* normalBlendTexture;
         Core::TextureData* glowTexture;
         unsigned long long int materialId;
+		bool isDecal;
     };
 }
 
