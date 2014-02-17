@@ -9,7 +9,8 @@ local Button =
                     yoffset=0,
                     matReleased = "assets/texture/ui/button-release_00.material",
                     matPressed = "assets/texture/ui/button-press_00.material",
-                    matHover = "assets/texture/ui/button-hover_00.material"
+                    matHover = "assets/texture/ui/button-hover_00.material",
+                    onClick = function( self ) end
                 }
 
 function Button:new(o)
@@ -23,8 +24,6 @@ function Button:new(o)
     
     o.width = o.pressedImg.width
     o.height = o.pressedImg.height
-
-    o.onClick = o.onClick or function()  end
 
     o.GUIComponent = GUIComponent:new
                                         {
@@ -63,7 +62,7 @@ function Button:onRelease()
     self.releasedImg:show(false)
     self.hoverImg:show(true)
 
-    self.onClick() 
+    self:onClick()
 end
 
 function Button:onEnter()

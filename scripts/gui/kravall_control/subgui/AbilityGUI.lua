@@ -30,7 +30,7 @@ function AbilityGUI:new(o)
                             matHoverSelected    = "assets/texture/ui/power-extra_00.material"
                         }
 
-    o:addPlacementHandler( require "gui/placement/AnchorPlacer" )
+    o:addPlacementHandler( require "gui/placement/CenterPlacer" )
 
     o:addComponent( abilityGrenade )
     o:addComponent( abilityArrest )

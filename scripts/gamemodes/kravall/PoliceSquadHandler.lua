@@ -1,4 +1,5 @@
-local PoliceSquadHandler = { onFormationChange = function() core.log.error( "No function set for onFormationChange in PoliceSquadHandler") end  }
+local PoliceSquadHandler = { onFormationChange = function() core.log.error( "No function set for onFormationChange in PoliceSquadHandler") end,
+onStanceChange = function(stance) core.log.error( "No functionset for StanceChange in PoliceSquadHandler") end }
 
 local keyboard = core.input.keyboard
 local mouse = core.input.mouse
@@ -44,12 +45,7 @@ function PoliceSquadHandler:DeselectAllSquads()
     self.selectedSquads = {}
 end
 
-function PoliceSquadHandler:getFormation( )
-    return 
-end
-
 function PoliceSquadHandler:setFormation( formation )
-   
     assert( type(formation) == "userdata" )
     local doEvent = (self.selectedFormation ~= formation)
 
@@ -60,20 +56,61 @@ function PoliceSquadHandler:setFormation( formation )
     end
 end
 
+-- If given non-nil, sets the stance to given value on selection
+-- and calls callback informing gui and other systems about change.
+-- If given nil, ignores value for squad set, but
+-- does a callback with nil to inform other systems and gui that
+-- there is no current valid selection (because theres a mixxed selection or no selection)
+function PoliceSquadHandler:setStance( stance )
+    if #(self.selectedSquads) > 0 then
+        core.log.debug( "PoliceSquadHandler: Settings stance of squad to ", stance )
+
+        if stance then
+            s_squad.setSquadStance(self.selectedSquads, stance)
+        end
+
+        self.onStanceChange( stance )  
+    end
+end
+
+-- Check if given group has any differing stances, if so, return nil
+-- otherwise, return the shared stance
+function PoliceSquadHandler:evaluateStanceForGroups( policeGroup )
+    local firstStance = nil
+    for _,v in pairs(policeGroup) do
+        local s_ent = core.system.squad.getSquadEntity( v )
+        local s_utc = s_ent:get(core.componentType.SquadComponent)
+
+        if firstStance then
+            if s_utc.squadStance ~= firstStance then
+                return nil 
+            end 
+        else
+            firstStance = s_utc.squadStance
+        end 
+    end
+    
+    return firstStance
+end
+
 function PoliceSquadHandler:update( delta )
     --Formations
+    --Click Selection
     if self.leftClicked then        
 		self.boxStartX, self.boxStartY = mouse.getPosition()
         selectedEntity = core.system.picking.getLastHitEntity()
         if selectedEntity then
             local unitTypeComponent = selectedEntity:get(core.componentType.UnitTypeComponent);
             local attributeComponent = selectedEntity:get(core.componentType.AttributeComponent);
+
             if attributeComponent and unitTypeComponent then                 
+                --Selected normal police unit
                 if unitTypeComponent.unitType == core.UnitType.Police then
 
                     local squadEntity = s_squad.getSquadEntity(attributeComponent.squadID)
                     local squadComponent = squadEntity:get(core.componentType.SquadComponent)
 
+                    --Append units
                     if keyboard.isKeyDown(keyboard.key.Left_shift) then
                         local found = false
 
@@ -89,15 +126,20 @@ function PoliceSquadHandler:update( delta )
                                 self:setFormation( squadComponent.squadFormation )
                             end
                         end
-                    else
+                    else --Select new group of units
                         self:DeselectAllSquads()
                         self.selectedSquads[#(self.selectedSquads)+1] = attributeComponent.squadID
+
                         self:setFormation( squadComponent.squadFormation )
                     end
 
                     if squadComponent.squadFormation ~= self.selectedFormation then
                         self:setFormation( s_squad.formations.NoFormation )
                     end
+
+                    -- Called so that we set the gui squad button to current selection.
+                    -- (Or to nothing if current selection has mixxed stances)
+                    self:setStance( self:evaluateStanceForGroups( self.selectedSquads ) )
                 end
             end
 		elseif not keyboard.isKeyDown(keyboard.key.Left_shift) and not core.config.stickySelection and not self.isClick then
@@ -164,15 +206,15 @@ function PoliceSquadHandler:update( delta )
     --Stances
     if keyboard.isKeyDown(keyboard.key.I)  then        
         if #(self.selectedSquads) > 0 then
-            s_squad.setSquadStance(self.selectedSquads, core.PoliceStance.Aggressive)
+            self:setStance( core.PoliceStance.Aggressive )
         end   
     elseif keyboard.isKeyDown(keyboard.key.O) then
         if #(self.selectedSquads) > 0 then
-            s_squad.setSquadStance(self.selectedSquads, core.PoliceStance.Defensive)
+            self:setStance( core.PoliceStance.Defensive )
         end   
     elseif keyboard.isKeyDown(keyboard.key.P) then
         if #(self.selectedSquads) > 0 then
-            s_squad.setSquadStance(self.selectedSquads, core.PoliceStance.Passive)
+            self:setStance( core.PoliceStance.Passive )
         end
     end
 	
@@ -205,6 +247,10 @@ function PoliceSquadHandler:update( delta )
                             self:setFormation(s_squad.formations.NoFormation)
                         end
 					end			
+
+                    -- Called so that we set the gui squad button to current selection.
+                    -- (Or to nothing if current selection has mixxed stances)
+                    self:setStance( self:evaluateStanceForGroups( self.selectedSquads ) )
 				end
 				self.groupsSelectedByBox = {}
 			elseif not core.config.stickySelection and not keyboard.isKeyDown(keyboard.key.Left_shift) then

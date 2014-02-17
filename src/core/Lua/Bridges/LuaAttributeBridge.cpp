@@ -22,6 +22,29 @@ extern "C"
 
         return 1;
     }
+
+    static int LuaStanceToString( lua_State * L )
+    {
+        Core::PoliceStance* lhs = luau_checkpolicestance(L, 1);
+
+        switch( *lhs )
+        {
+            case Core::PoliceStance::Passive:
+                lua_pushstring( L, "PoliceStance.Passive" );
+                break;
+            case Core::PoliceStance::Aggressive:
+                lua_pushstring( L, "PoliceStance.Aggressive" );
+                break;
+            case Core::PoliceStance::Defensive:
+                lua_pushstring( L, "PoliceStance.Defensive" );
+                break;
+            default:
+                lua_pushstring( L, "PoliceStance.NOT_IN_TABLE" );
+                break;
+        }
+
+        return 1;
+    }
 }
 
 static void PushPoliceObjectType( lua_State * L, const unsigned int value, const char * name, int table )
@@ -53,6 +76,7 @@ Core::LuaAttributeComponentBridge::LuaAttributeComponentBridge( lua_State * L )
 
     luaL_newmetatable(L, POLICE_STANCE_META_TYPE);
         luau_setfunction(L, "__eq", LuaStanceEq);
+        luau_setfunction(L, "__tostring", LuaStanceToString );
     lua_pop(L, 1);
 
     lua_getglobal( L, "core" );
