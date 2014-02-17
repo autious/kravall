@@ -160,7 +160,7 @@ Core::ComponentSetters Core::AttributeComponentBinding::GetSetters()
         
         if( lua_isnumber(  L, valueindex ) )
         {
-            atrbc->stamina = static_cast<int>(lua_tonumber( L, valueindex ));
+            atrbc->stamina = static_cast<float>(lua_tonumber( L, valueindex ));
         }
         else
         {

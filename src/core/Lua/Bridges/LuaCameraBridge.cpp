@@ -14,9 +14,7 @@ extern "C"
     {
         Core::Camera ** cam = luau_checkcamera( L, 1 );
         glm::mat4 * mat4 = luau_checkglmmat4( L, 2);
-		float nearZ = luaL_checknumber(L, 3);
-		float farZ = luaL_checknumber(L, 4);
-        (*cam)->SetProjectionMatrix( *mat4, nearZ, farZ ); 
+        (*cam)->SetProjectionMatrix( *mat4 ); 
         return 0;
     }
 

@@ -17,7 +17,7 @@ namespace Core
         const glm::mat4& GetViewMatrix() const;
 
         void SetViewMatrix( const glm::mat4 & view );
-        void SetProjectionMatrix( const glm::mat4 & proj, float nearZ, float farZ );
+        void SetProjectionMatrix( const glm::mat4 & proj );
 
         glm::vec3 GetForward() const;
         glm::vec3 GetUp() const;

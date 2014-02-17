@@ -314,7 +314,7 @@ void main()
 		}
 
 		barrier();
-
+		
 		uint totalShadowcasters = numPointShadows + numSpotShadows + numDirShadows;
 
         ivec2 pixel = ivec2(gl_GlobalInvocationID.xy);
@@ -478,8 +478,6 @@ void main()
 			sumOcclusion += localOcclusion;
 		}
 
-
-		// Do shadowcasters
 // Do regular lights
 		for(i = 0; i < pointLightCount; i++)
 		{
@@ -498,7 +496,7 @@ void main()
 
 		//Directional lights
 		uint ofst = numPointLights + numSpotLights + totalShadowcasters;
-		for(i = i + numDirShadows; i < numDirLights + ofst; i++)
+		for(i = ofst; i < numDirLights + ofst; i++)
 		{
 			float localOcclusion = 0.0f;
 			color += CalculateDirlight(lights[i],  surface, wPos.xyz, eyePos, localOcclusion);
