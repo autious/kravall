@@ -38,6 +38,7 @@ namespace GFX
 		if (index != std::numeric_limits<decltype(index)>::max())
 		{
 			glDeleteVertexArrays(1, &m_meshes[index].VAO);
+			glDeleteBuffers(1, &m_meshes[index].IBO);
 			m_meshes.erase(m_meshes.begin() + index);
 		}
 	
