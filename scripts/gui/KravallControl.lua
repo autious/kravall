@@ -10,18 +10,20 @@ local AnchorPlacer = require "gui/placement/AnchorPlacer"
 local EastPlacer = require "gui/placement/EastPlacer"
 local NorthPlacer = require "gui/placement/NorthPlacer"
 local WestPlacer = require "gui/placement/WestPlacer"
+local CenterPlacer = require "gui/placement/CenterPlacer"
 
 local EventListerGUI = require "gui/kravall_control/EventListerGUI"
 local StanceGUI = require "gui/kravall_control/subgui/StanceGUI"
 local AbilityGUI = require "gui/kravall_control/subgui/AbilityGUI" 
 local FormationGUI = require "gui/kravall_control/subgui/FormationGUI"
+local UnitStatGUI = require "gui/kravall_control/subgui/UnitStatGUI"
 
-local KravallControl = { onFormationSelect = function() core.log.error("No handler set for onFormationChange in KravallControl") end }
+local KravallControl = { 
+                        onFormationSelect = function(formation) core.log.error("No handler set for onFormationChange in KravallControl") end,
+                        onStanceSelect = function(stance) core.log.error("No handler set for onStanceChange in KravallControl") end }
 
 function KravallControl:new(o)
     o = o or {}
-
-    print( "KravallControl" )
 
     setmetatable( o, self )
     self.__index = self
@@ -29,23 +31,14 @@ function KravallControl:new(o)
     o.gui = GUI:new()
      
     ------------------
-    local labelName = TextLabel:new( {label="Name: Greger"} )
-    local labelMorale = TextLabel:new( {label="Morale: Bad"} )
-    local labelHealth = TextLabel:new( {label="Health: Good"} )
-    local labelStatus = TextLabel:new( {label="Status: Cool"} )
-
-    o.statusGUI = GUI:new( {x=0,y=0, width=200, height=150, anchor="SouthEast"} )
-    
-    o.statusGUI:addComponent( labelName   )
-    o.statusGUI:addComponent( labelMorale )
-    o.statusGUI:addComponent( labelHealth )
-    o.statusGUI:addComponent( labelStatus )
-
-    o.statusGUI:addPlacementHandler( WestPlacer )
+    o.statusGUI = UnitStatGUI:new( {} )
     --------------
+    o.eventGUIPadder = GUI:new( {width=220,height=220, anchor="SouthWest"} )
+    o.eventGUIPadder:addPlacementHandler( CenterPlacer )
     o.eventGUI = EventListerGUI:new( {x=0,y=0, width=200, height=200, anchor="SouthWest"} )
+    o.eventGUIPadder:addComponent( o.eventGUI )
     ----------
-    o.stanceGUI = StanceGUI:new()
+    o.stanceGUI = StanceGUI:new( {onStanceSelect = function(stance) o.onStanceSelect( stance ) end })
     o.abilitiesGUI = AbilityGUI:new()
     o.formationGUI = FormationGUI:new( { onFormationSelect = function(form) o.onFormationSelect(form) end } )
 
@@ -59,7 +52,7 @@ function KravallControl:new(o)
 
     o.gui:addComponent( o.rightControlGUI )
     o.gui:addComponent( o.statusGUI )
-    o.gui:addComponent( o.eventGUI )
+    o.gui:addComponent( o.eventGUIPadder )
     o.gui:addPlacementHandler( AnchorPlacer )
 
     return o
@@ -67,6 +60,10 @@ end
 
 function KravallControl:setFormation( formation )
     self.formationGUI:setFormation( formation )
+end
+
+function KravallControl:setStance( stance )
+    self.stanceGUI:setStance( stance )
 end
 
 function KravallControl:addEvent( component )

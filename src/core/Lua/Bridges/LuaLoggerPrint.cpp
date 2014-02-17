@@ -36,7 +36,7 @@ extern "C"
             }
             else if( lua_istable( L, i ) )
             {
-                ss << "table";
+                ss << "table:" << lua_topointer( L, i );
             }
             else if( lua_isuserdata( L, i ) )
             {

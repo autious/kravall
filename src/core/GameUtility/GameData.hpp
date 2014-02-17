@@ -4,6 +4,7 @@
 #include <Components/MovementComponent.hpp>
 #include <Components/TargetingComponent.hpp>
 #include <vector>
+#include <string>
 
 struct TempInitGameData;
 

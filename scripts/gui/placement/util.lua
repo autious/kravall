@@ -10,8 +10,8 @@ function U.getTotalDimHeight( components, paddingx, paddingy )
         th = th + c.height + paddingy
     end
 
-    th = th + paddingy 
-    tw = tw + paddingx * 2
+    th = th - paddingy
+    tw = tw
     
     return tw, th
 end
@@ -26,8 +26,8 @@ function U.getTotalDimWidth( component, paddingx, paddingy )
         tw = tw + c.width + paddingx
     end
 
-    th = th + paddingy * 2  
-    tw = tw + paddingx
+    th = th 
+    tw = tw - paddingx
     
     return tw, th
 end
