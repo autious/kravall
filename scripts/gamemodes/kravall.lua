@@ -49,8 +49,21 @@ function T:init()
             self.gui:setFormation( formation ) 
         end,
         -- Called when the currently active stance is changed logically.
-        onStanceChange = function(stance)
+        onStanceChange = function( stance )
             self.gui:setStance( stance )
+        end,
+
+        -- Called whenever the selection changes
+        -- might contain previously sent units.
+        -- Could be empty
+        onSelectedSquadsChange = function( squads )
+            self.gui:setSelectedSquads( squads )
+        end,
+
+        -- Called when the currently active unit changes
+        -- or when the state of the unit might have changes (like health)
+        onSelectedUnitInformationChange = function( data )
+            self.gui:setUnitInformation( data ) 
         end
     })
 

@@ -38,9 +38,14 @@ function KravallControl:new(o)
     o.eventGUI = EventListerGUI:new( {x=0,y=0, width=200, height=200, anchor="SouthWest"} )
     o.eventGUIPadder:addComponent( o.eventGUI )
     ----------
-    o.stanceGUI = StanceGUI:new( {onStanceSelect = function(stance) o.onStanceSelect( stance ) end })
+    o.stanceGUI = StanceGUI:new( {
+        onStanceSelect = function(stance) o.onStanceSelect( stance ) end 
+        })
+
     o.abilitiesGUI = AbilityGUI:new()
-    o.formationGUI = FormationGUI:new( { onFormationSelect = function(form) o.onFormationSelect(form) end } )
+    o.formationGUI = FormationGUI:new( { 
+        onFormationSelect = function(form) o.onFormationSelect(form) end 
+        } )
 
     o.rightControlGUI = GUI:new{x=0,y=0, width=150,height=500, anchor="NorthEast"}
     o.rightControlGUI:addPlacementHandler( AnchorPlacer )
@@ -60,10 +65,23 @@ end
 
 function KravallControl:setFormation( formation )
     self.formationGUI:setFormation( formation )
+    self.statusGUI:setFormation( formation )
 end
 
 function KravallControl:setStance( stance )
     self.stanceGUI:setStance( stance )
+    self.statusGUI:setStance( stance )
+end
+
+function KravallControl:setUnitInformation( data )
+    self.statusGUI:setName( data.name )
+    self.statusGUI:setHealth( data.health )
+    self.statusGUI:setMorale( data.morale )
+    self.statusGUI:setStamina( data.stamina )
+end
+
+function KravallControl:setSelectedSquads( squads )
+    --TODO: show/hide the status field depending on selection.
 end
 
 function KravallControl:addEvent( component )

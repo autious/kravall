@@ -1,5 +1,18 @@
-local PoliceSquadHandler = { onFormationChange = function() core.log.error( "No function set for onFormationChange in PoliceSquadHandler") end,
-onStanceChange = function(stance) core.log.error( "No functionset for StanceChange in PoliceSquadHandler") end }
+local PoliceSquadHandler =  { 
+
+                                onFormationChange = function() 
+                                    core.log.error( "No function set for onFormationChange in PoliceSquadHandler") 
+                                end,
+                                onStanceChange = function(stance) 
+                                    core.log.error( "No functionset for StanceChange in PoliceSquadHandler")   
+                                end,
+                                onSelectedSquadsChange = function(squads)
+                                    core.log.error( "No function set for onSelectedSquadsChange" )
+                                end,
+                                onSelectedUnitInformationChange = function(data)
+                                    core.log.error( "No function set for onSelectedUnitInformationChange")
+                                end
+                            }
 
 local keyboard = core.input.keyboard
 local mouse = core.input.mouse
@@ -54,6 +67,46 @@ function PoliceSquadHandler:setFormation( formation )
     if doEvent and self.onFormationChange then
         self.onFormationChange( formation ) 
     end
+end
+
+--The two following functions are used to manipulate
+-- the current squad selection, and are responsible for calling
+-- and callbacks relevant to such a modification
+-- Both functions take tables contianing a continous
+-- list of squads, nil is not allowed, instead to
+-- deselect use an empty list
+function PoliceSquadHandler:addSquadsToSelection( squads )
+    for _,v in pairs( squads ) do
+        self.selectedSquads[#(self.selectedSquads)+1] = v
+    end    
+
+    self:setSquadSelection( self.selectedSquads )
+end
+
+function PoliceSquadHandler:setSquadSelection( squads )
+    self.selectedSquads = squads     
+    self.onSelectedSquadsChange( squads )
+
+    if #(self.selectedSquads) > 0 then
+        self.onSelectedUnitInformationChange( self:evaluateSquadInformation( self.selectedSquads[1] ))
+    end
+end
+
+-- Generates a table containing information about the given
+-- squad, to be sent to the gui components.
+function PoliceSquadHandler:evaluateSquadInformation( squad )
+    local squadEntity = core.system.squad.getSquadEntity( squad )
+
+    local sq = squadEntity:get( core.componentType.SquadComponent )
+
+    local data = { 
+                    health = sq.squadHealth,
+                    morale = sq.squadMorale, 
+                    stamina = sq.squadHealth, 
+                    name = "Police Squad" 
+                }
+
+    return data
 end
 
 -- If given non-nil, sets the stance to given value on selection
@@ -121,14 +174,14 @@ function PoliceSquadHandler:update( delta )
                         end
 
                         if not found then
-                            self.selectedSquads[#(self.selectedSquads)+1] = attributeComponent.squadID
+                            self:addSquadsToSelection( {attributeComponent.squadID} )
                             if #(self.selectedSquads) == 1 then                                
                                 self:setFormation( squadComponent.squadFormation )
                             end
                         end
                     else --Select new group of units
                         self:DeselectAllSquads()
-                        self.selectedSquads[#(self.selectedSquads)+1] = attributeComponent.squadID
+                        self:addSquadsToSelection( {attributeComponent.squadID} )
 
                         self:setFormation( squadComponent.squadFormation )
                     end
@@ -238,7 +291,7 @@ function PoliceSquadHandler:update( delta )
                         local squadEntity = s_squad.getSquadEntity(self.groupsSelectedByBox[p])
                         local squadComponent = squadEntity:get(core.componentType.SquadComponent)
 
-						self.selectedSquads[#(self.selectedSquads)+1] = self.groupsSelectedByBox[p]
+						self:addSquadsToSelection( {self.groupsSelectedByBox[p]} )
                         if #(self.selectedSquads) == 1 then
                             self:setFormation( squadComponent.squadFormation )
                         end
@@ -266,6 +319,16 @@ function PoliceSquadHandler:update( delta )
 
     self.leftClicked = false
     self.rightClicked = false
+
+    -- Update the data each frame, should probably be changed to only update
+    -- when relevant. TODO: Fix aforementioned thing
+    if #(self.selectedSquads) > 0 then
+        self.onSelectedUnitInformationChange( self:evaluateSquadInformation( self.selectedSquads[1] ))
+    else
+        -- This can be seen as relatively temp or redundant, 
+        -- as the gui elements should hide when there is no selection.
+        self.onSelectedUnitInformationChange( {name = "", health=0, morale=0, stamina=0} )
+    end
 end
 
 return PoliceSquadHandler
