@@ -459,7 +459,7 @@ void main()
 		surface.diffuse = imageLoad(diffuse, pixel);
 		surface.specular = imageLoad(specular, pixel);
 		surface.glow = imageLoad(glowMatID, pixel);
-		surface.occlusion = imageLoad(occlusion, pixel) * 2.0f - 1.0f;
+		//surface.occlusion = imageLoad(occlusion, pixel) * 2.0f - 1.0f;
 
 		vec4 color = vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
