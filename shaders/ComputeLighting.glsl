@@ -514,7 +514,7 @@ void main()
 		}
 
 		//Add glow
-		color += surface.glow;
+		color += 10.0 * surface.glow;
 		//Add occlusion
 		//color.xyz *= sumOcclusion;
 
