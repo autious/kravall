@@ -7,7 +7,7 @@ local GUI = {
                 xoffset = 0,
                 yoffset = 0 }
 
-window.registerWindowSizeCallback( function( width, height ) 
+window.registerFramebufferSizeCallback( function( width, height ) 
     GUI.winWidth, GUI.winHeight = width, height
 end)
 
@@ -27,6 +27,12 @@ function GUI:new(o)
     o:setPosition( o.x, o.y )
 
     return o
+end
+
+function GUI:addComponents( components )
+    for _,v in pairs( components ) do
+        self:addComponent( v )
+    end
 end
 
 function GUI:addComponent( comp )

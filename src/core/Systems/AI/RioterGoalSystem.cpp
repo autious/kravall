@@ -3,10 +3,6 @@
 #include <gfx/GFXInterface.hpp>
 #include <logger/Logger.hpp>
 
-#include <GameUtility/PathfindingUtility.hpp>
-
-#include <Systems/AI/MovementSystem.hpp>
-
 #include <GameUtility/GameData.hpp>
 
 #define RIOTER_GOAL_ARRIVAL_THRESHOLD 0.2f
@@ -24,10 +20,7 @@ Core::RioterGoalSystem::RioterGoalSystem()
 
 void Core::RioterGoalSystem::Update( float delta )
 {
-
 	Core::NavigationMesh* instance = Core::GetNavigationMesh();
-	if( !instance )
-		return;
 
 	for( std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); it++ )
 	{
@@ -37,8 +30,8 @@ void Core::RioterGoalSystem::Update( float delta )
 		
 		Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>( *it );
 		glm::vec3 goal = glm::vec3( mvmc->goal[0], mvmc->goal[1], mvmc->goal[2] );
-		
-		// continue if rioters don't have a specific goal
+
+		// if rioters are following nav-mesh, check if they can go directly to the target...
 		if( goal.x == std::numeric_limits<float>::max() )
 			continue;
 

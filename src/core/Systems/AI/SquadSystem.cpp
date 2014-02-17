@@ -359,7 +359,8 @@ namespace Core
             Core::SquadComponent* sqdc = WGETC<Core::SquadComponent>(*squad_it);
             std::vector<Core::Entity> squad = Core::world.m_systemHandler.GetSystem<Core::GroupDataSystem>()->GetMembersInGroup(sqdc->squadID);
 
-            if(sqdc->squadLeader == INVALID_ENTITY)
+			Core::AttributeComponent* attribc = WGETC<Core::AttributeComponent>(sqdc->squadLeader);
+            if(sqdc->squadLeader == INVALID_ENTITY || !attribc)
             {
                 if(squad.size() > 0)
                 {
