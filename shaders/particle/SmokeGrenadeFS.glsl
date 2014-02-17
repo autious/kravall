@@ -23,6 +23,6 @@ void main()
     vec4 glow = texture2D(gGlow, FragmentIn.UV);
 
     normalDepthRT = vec4(vec3(0.0f, 0.0f, 1.0f), FragmentIn.Position.z / FragmentIn.Position.w);
-    diffuseRT = diffuse;
+    diffuseRT = diffuse * vec4(1.0f, 1.0f, 1.0f, min(1.0f, FragmentIn.life));
     glowMatIDRT = glow;
 }
