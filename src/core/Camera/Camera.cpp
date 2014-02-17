@@ -21,11 +21,11 @@ namespace Core
         m_viewMatrix = view;
     }
 
-    void Camera::SetProjectionMatrix( const glm::mat4 & proj, float nearZ, float farZ )
+    void Camera::SetProjectionMatrix( const glm::mat4 & proj )
     {
         m_projectionMatrix = proj;
-		m_nearZ = nearZ;
-		m_farZ = farZ;
+		m_nearZ = proj[3][2] / (proj[2][2] - 1.0);
+		m_farZ = proj[3][2] / (proj[2][2] + 1.0);
     }
 
     glm::vec3 Camera::GetForward() const
