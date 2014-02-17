@@ -159,7 +159,7 @@ namespace GFX
 
 		m_postProcessingPainter = new PostProcessingPainter(m_shaderManager, m_uniformBufferManager, m_textureManager);
 
-		m_GIPainter = new GIPainter(m_shaderManager, m_uniformBufferManager, m_renderJobManager);
+		//m_GIPainter = new GIPainter(m_shaderManager, m_uniformBufferManager, m_renderJobManager);
 		m_blurPainter = new BlurPainter(m_shaderManager, m_uniformBufferManager);
 		m_decalPainter = new DecalPainter(m_shaderManager, m_uniformBufferManager, m_renderJobManager, m_meshManager, m_textureManager, m_materialManager);
 
@@ -191,7 +191,7 @@ namespace GFX
         m_overlayPainter->Initialize(m_FBO, m_dummyVAO);
 		m_blurPainter->Initialize(m_FBO, m_dummyVAO);
 		m_postProcessingPainter->Initialize(m_FBO, m_dummyVAO, m_windowWidth, m_windowHeight, m_blurPainter);
-		m_GIPainter->Initialize(m_FBO, m_dummyVAO, m_windowWidth, m_windowHeight);
+		//m_GIPainter->Initialize(m_FBO, m_dummyVAO, m_windowWidth, m_windowHeight);
 		m_decalPainter->Initialize(m_FBO, m_dummyVAO);
 
 		// Set console width
@@ -396,10 +396,10 @@ namespace GFX
 		CT(m_shadowPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_viewMatrix, m_projMatrix, 0, renderJobIndex, m_shadowMapTextures, m_windowWidth, m_windowHeight, glm::vec2(m_nearZ, m_farZ)), "Shadowmap");
 
 		// Do global illumination / ssao
-		CT(m_GIPainter->Render(delta, m_normalDepth, m_diffuse, m_viewMatrix, m_projMatrix), "GI");
+		//CT(m_GIPainter->Render(delta, m_normalDepth, m_diffuse, m_viewMatrix, m_projMatrix), "GI");
 
 		// Do lighting calculations
-		CT(m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_GIPainter->m_SSDOTexture,
+		CT(m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, nullptr,
 			m_shadowMapTextures, m_viewMatrix, m_projMatrix, m_exposure, m_gamma, m_whitePoint, m_toneMappedTexture), "Lighting");
 
 		// Do post processing
