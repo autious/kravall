@@ -237,18 +237,18 @@ function scen:load()
 
     scen.lastCreated = rioter( scen, 25, 0, 0, groupOneGroupId)
     local button = Button:new({x=1000,y=100})
-    function button.onClick()
+    function button:onClick()
             scen.lastCreated = rioter( scen, 25, 0, 0, groupOneGroupId)
     end
 
     local slider = Slider:new({x=1000,y=300}) 
-    function slider.onChange( value )
+    function slider:onChange(  value )
         local s = 1+value*10
         scen.lastCreated:set( core.componentType.ScaleComponent, {scale = {s,s,s}}, true )
     end
 
     local checkbox = Checkbox:new({x=100,y=400,checked=true})
-    function checkbox.onChange( value )
+    function checkbox:onChange( value )
         core.config.debugRenderAreas = value
     end
 

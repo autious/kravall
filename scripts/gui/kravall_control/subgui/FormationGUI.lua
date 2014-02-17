@@ -14,33 +14,36 @@ function FormationGUI:new(o)
     o.selectedFormation = f_no
     o.formations = {}
     o.formations[f_line]= Checkbox:new {  
+                            doStateSwitchOnPress = false,
                             checked = false,
                             matOpen             = "assets/texture/ui/form-line-unselected_00.material",
                             matSelected         = "assets/texture/ui/form-line-selected_00.material",
                             matHoverOpen        = "assets/texture/ui/form-line-hover_00.material",
                             matHoverSelected    = "assets/texture/ui/form-line-extra_00.material",
-                            onChange            = function(value) if value then o.onFormationSelect( f_line ) else o.onFormationSelect( f_no ) end end 
+                            onClick            = function(self,value) if value then o.onFormationSelect( f_line ) else o.onFormationSelect( f_no ) end end 
                         }
 
     o.formations[f_halfcircle] = Checkbox:new {  
+                            doStateSwitchOnPress = false,
                             checked = false,
                             matOpen             = "assets/texture/ui/form-circle-unselected_00.material",
                             matSelected         = "assets/texture/ui/form-circle-selected_00.material",
                             matHoverOpen        = "assets/texture/ui/form-circle-hover_00.material",
                             matHoverSelected    = "assets/texture/ui/form-circle-extra_00.material",
-                            onChange            = function(value) if value then o.onFormationSelect( f_halfcircle ) else o.onFormationSelect( f_no ) end end 
+                            onClick            = function(self,value) if value then o.onFormationSelect( f_halfcircle ) else o.onFormationSelect( f_no ) end end 
                         }
 
     o.formations[f_circle] = Checkbox:new {  
+                            doStateSwitchOnPress = false,
                             checked = false,
                             matOpen             = "assets/texture/ui/form-square-unselected_00.material",
                             matSelected         = "assets/texture/ui/form-square-selected_00.material",
                             matHoverOpen        = "assets/texture/ui/form-square-hover_00.material",
                             matHoverSelected    = "assets/texture/ui/form-square-extra_00.material",
-                            onChange            = function(value) if value then o.onFormationSelect( f_circle ) else o.onFormationSelect( f_no ) end end 
+                            onClick            = function(self,value) if value then o.onFormationSelect( f_circle ) else o.onFormationSelect( f_no ) end end 
                         }
 
-    o:addPlacementHandler( require "gui/placement/AnchorPlacer" )
+    o:addPlacementHandler( require "gui/placement/CenterPlacer" )
 
     for _,v in pairs( o.formations ) do
         o:addComponent( v )
@@ -51,7 +54,7 @@ end
 
 function FormationGUI:setFormation( formation )
     for _,v in pairs( self.formations ) do
-        v.checked = false
+        v:setChecked(false)
     end
 
     self.selectedFormation = formation
@@ -59,7 +62,7 @@ function FormationGUI:setFormation( formation )
     if self.selectedFormation and self.selectedFormation ~= f_no then
         for i,v in pairs( self.formations ) do
             if i == formation then
-                v.checked = true    
+                v:setChecked( true )
             end
         end
     end

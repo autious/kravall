@@ -44,12 +44,7 @@ function PoliceSquadHandler:DeselectAllSquads()
     self.selectedSquads = {}
 end
 
-function PoliceSquadHandler:getFormation( )
-    return 
-end
-
 function PoliceSquadHandler:setFormation( formation )
-   
     assert( type(formation) == "userdata" )
     local doEvent = (self.selectedFormation ~= formation)
 
@@ -58,6 +53,15 @@ function PoliceSquadHandler:setFormation( formation )
     if doEvent and self.onFormationChange then
         self.onFormationChange( formation ) 
     end
+end
+
+function PoliceSquadHandler:setStance( stance )
+    assert( type(stance) == "userdata" )
+
+    local doEvent = (self.selectedStance ~= stance )
+
+    core.log.info( "PoliceSquadHandler: Settings stance of squad to ", stance )
+    s_squad.setSquadStance(self.selectedSquads, stance)
 end
 
 function PoliceSquadHandler:update( delta )
@@ -164,15 +168,15 @@ function PoliceSquadHandler:update( delta )
     --Stances
     if keyboard.isKeyDown(keyboard.key.I)  then        
         if #(self.selectedSquads) > 0 then
-            s_squad.setSquadStance(self.selectedSquads, core.PoliceStance.Aggressive)
+            self:setStance( core.PoliceStance.Aggressive )
         end   
     elseif keyboard.isKeyDown(keyboard.key.O) then
         if #(self.selectedSquads) > 0 then
-            s_squad.setSquadStance(self.selectedSquads, core.PoliceStance.Defensive)
+            self:setStance( core.PoliceStance.Defensive )
         end   
     elseif keyboard.isKeyDown(keyboard.key.P) then
         if #(self.selectedSquads) > 0 then
-            s_squad.setSquadStance(self.selectedSquads, core.PoliceStance.Passive)
+            self:setStance( core.PoliceStance.Passive )
         end
     end
 	

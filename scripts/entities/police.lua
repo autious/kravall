@@ -1,3 +1,5 @@
+local standardPolice = (require "game_constants").standardPolice
+
 return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, groupID)
 	asm:loadAssembly( 
 		{
@@ -33,7 +35,7 @@ return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, group
 			},
 			{
 				type = core.componentType.AttributeComponent,
-				data = { health = 100, stamina = 0, morale = 2.0, 
+				data = { health = standardPolice.maxHealth, stamina = 0, morale = standardPolice.maxMorale, 
 					   stancePolice = core.PoliceStance.Aggressive,
 					   statePolice = core.PoliceState.Attacking, 
 					   defense = 0, mobility = 0, squadID = groupID },

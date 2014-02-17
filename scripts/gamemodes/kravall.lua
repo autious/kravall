@@ -15,7 +15,6 @@ core.movementData.setMovementMetaData( core.movementData.Idle, 0, 17, 17 )
 core.movementData.setMovementMetaData( core.movementData.Walking, 5.8, 17, 17 )
 core.movementData.setMovementMetaData( core.movementData.Sprinting, 8.8, 17, 14 )
 
-
 function T:new(o)
     o = o or {}
 
@@ -29,17 +28,30 @@ function T:new(o)
 end
 
 function T:init()
-    print"NOT HERE"
-    local function onFormationSelect(formation )
-        self.policeHandler:setFormation( formation )
-    end
+    self.gui = KravallControl:new( 
+    {
+        -- Called when the user is changing the formation from the gui.
+        onFormationSelect = function( formation )
+            self.policeHandler:setFormation( formation )
+        end,
+        -- Called when the user is changing stance from the gui.
+        onStanceSelect = function( stance )
+            self.policeHandler:setStance( stance )
+        end
+    })
 
-    self.gui = KravallControl:new( {onFormationSelect = onFormationSelect} )
+    self.policeHandler = PoliceSquadHandler:new( 
+    {
+        -- Called when the currently active formation is changed logically.
+        onFormationChange = function( formation )
+            self.gui:setFormation( formation ) 
+        end,
+        -- Called when the currently active stance is changed logically.
+        onStanceChange = function(stance)
+            self.gui:setStance( stance )
+        end
+    })
 
-    local function onFormationChange(formation)
-        self.gui:setFormation( formation ) 
-    end 
-    self.policeHandler = PoliceSquadHandler:new( {onFormationChange = onFormationChange} )
 end
 
 function T:update( delta )

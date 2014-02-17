@@ -191,7 +191,7 @@ extern "C"
             else
             {
 
-                return luaL_error(L, "argument 1 of previewSquadFormation is not a table");
+                return luaL_error(L, "argument 1 of setSquadStance is not a table");
             }
         }
         else
