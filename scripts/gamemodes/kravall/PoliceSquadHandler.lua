@@ -60,11 +60,10 @@ end
 -- and calls callback informing gui and other systems about change.
 -- If given nil, ignores value for squad set, but
 -- does a callback with nil to inform other systems and gui that
-
 -- there is no current valid selection (because theres a mixxed selection or no selection)
 function PoliceSquadHandler:setStance( stance )
     if #(self.selectedSquads) > 0 then
-        core.log.info( "PoliceSquadHandler: Settings stance of squad to ", stance )
+        core.log.debug( "PoliceSquadHandler: Settings stance of squad to ", stance )
 
         if stance then
             s_squad.setSquadStance(self.selectedSquads, stance)
