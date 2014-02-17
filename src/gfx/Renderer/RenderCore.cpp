@@ -190,7 +190,7 @@ namespace GFX
 		m_fboPainter->Initialize(m_FBO, m_dummyVAO);
         m_overlayPainter->Initialize(m_FBO, m_dummyVAO);
 		m_blurPainter->Initialize(m_FBO, m_dummyVAO);
-		m_postProcessingPainter->Initialize(m_FBO, m_dummyVAO, m_windowWidth, m_windowHeight, m_blurPainter);
+		m_postProcessingPainter->Initialize(m_FBO, m_dummyVAO, m_windowWidth, m_windowHeight, m_blurPainter, m_specular, m_glowMatID);
 		//m_GIPainter->Initialize(m_FBO, m_dummyVAO, m_windowWidth, m_windowHeight);
 		m_decalPainter->Initialize(m_FBO, m_dummyVAO);
 
@@ -403,7 +403,7 @@ namespace GFX
 			m_shadowMapTextures, m_viewMatrix, m_projMatrix, m_exposure, m_gamma, m_whitePoint, m_toneMappedTexture), "Lighting");
 
 		// Do post processing
-		CT(m_postProcessingPainter->Render(delta, m_toneMappedTexture, m_currentLUT, m_exposure, m_gamma, m_whitePoint), "PostProcessing");
+		CT(m_postProcessingPainter->Render(delta, m_toneMappedTexture, m_currentLUT, m_exposure, m_gamma, m_whitePoint, m_diffuse), "PostProcessing");
 
 		// Draw overlays/ui
 		CT(m_overlayPainter->Render(renderJobIndex, m_overlayViewMatrix, m_overlayProjMatrix), "Console");
