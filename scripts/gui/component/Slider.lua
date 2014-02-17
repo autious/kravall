@@ -60,16 +60,16 @@ function Slider:setPosition(x,y)
     self.x = x
     self.y = y
 
-    local newXPos = self.a * self.bgWidth + self.x - self.knobWidth/2
+    local newXPos = self.a * (self.bgWidth - self.knobWidth) + self.x 
     self.GUIComponent:setPosition(newXPos,y)
-    self.pressedKnob:setPosition( newXPos, self.y )
-    self.releasedKnob:setPosition(newXPos , self.y )
-    self.hoverKnob:setPosition( newXPos , self.y )
+    self.pressedKnob:setPosition( newXPos, self.y + self.bgHeight / 2 - self.knobHeight / 2)
+    self.releasedKnob:setPosition(newXPos , self.y + self.bgHeight / 2 - self.knobHeight / 2)
+    self.hoverKnob:setPosition( newXPos , self.y + self.bgHeight / 2 - self.knobHeight / 2)
     self.bg:setPosition( self.x, self.y )
 end
 
 function Slider:onDrag( x, y )
-    local fact = (x - self.x) / self.bgWidth
+    local fact = (x - (self.x + self.knobWidth / 2) ) / (self.bgWidth - self.knobWidth)
         
     if fact > 1 then
         fact = 1
