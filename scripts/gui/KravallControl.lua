@@ -18,7 +18,9 @@ local AbilityGUI = require "gui/kravall_control/subgui/AbilityGUI"
 local FormationGUI = require "gui/kravall_control/subgui/FormationGUI"
 local UnitStatGUI = require "gui/kravall_control/subgui/UnitStatGUI"
 
-local KravallControl = { onFormationSelect = function() core.log.error("No handler set for onFormationChange in KravallControl") end }
+local KravallControl = { 
+                        onFormationSelect = function(formation) core.log.error("No handler set for onFormationChange in KravallControl") end,
+                        onStanceSelect = function(stance) core.log.error("No handler set for onStanceChange in KravallControl") end }
 
 function KravallControl:new(o)
     o = o or {}
@@ -36,7 +38,7 @@ function KravallControl:new(o)
     o.eventGUI = EventListerGUI:new( {x=0,y=0, width=200, height=200, anchor="SouthWest"} )
     o.eventGUIPadder:addComponent( o.eventGUI )
     ----------
-    o.stanceGUI = StanceGUI:new()
+    o.stanceGUI = StanceGUI:new( {onStanceSelect = function(stance) o.onStanceSelect( stance ) end })
     o.abilitiesGUI = AbilityGUI:new()
     o.formationGUI = FormationGUI:new( { onFormationSelect = function(form) o.onFormationSelect(form) end } )
 
