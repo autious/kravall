@@ -56,8 +56,10 @@ void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police, float del
 
 		if (distSqr < weapon.range * weapon.range )
 		{
-			if (TargetingComponent::Attack(police, *tcTarget))
-				std::cout << "Police: " << police << " is attacking rioter " << tc->target << std::endl;
+			TargetingComponent::Attack(police, *tcTarget);
+
+			//if (TargetingComponent::Attack(police, *tcTarget))
+			//	std::cout << "Police: " << police << " is attacking rioter " << tc->target << std::endl;
 		}
 
 		tc->attackTime += delta;
@@ -239,10 +241,15 @@ Core::Entity Core::TargetingSystem::FindClosestAttacker(Core::TargetingComponent
 
 	if (minDist < MAX_SQR_DISTANCE)
 	{
+		// check if target is still alive...
 		Core::TargetingComponent* tcTarget12 = WGETC<Core::TargetingComponent>(target);
 		if( !tcTarget12 )
-			int oo = 0;
-		return target;
+		{
+			Core::TargetingComponent::StopAttacking( target, *originTC );
+			return INVALID_ENTITY;
+		}
+		else
+			return target;
 	}
 	else
 		return INVALID_ENTITY;

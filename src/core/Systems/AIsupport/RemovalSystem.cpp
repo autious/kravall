@@ -78,7 +78,7 @@ namespace Core
 				Core::TargetingComponent::StopAttacking( policeEntities[i], *attackerTc );
 
 			//LOG_WARNING << "police " << policeEntities[i] << " died, having " << tc->attackers << " number of attackers" << std::endl;
-			std::cout << "police " << policeEntities[i] << " died, attacked by " << tc->attackers[0] << "  " << tc->attackers[1] << "  " << tc->attackers[2] << "  " << tc->attackers[3] << "  " << tc->attackers[4] << ", attacking " << tc->target << std::endl;
+			//std::cout << "police " << policeEntities[i] << " died, attacked by " << tc->attackers[0] << "  " << tc->attackers[1] << "  " << tc->attackers[2] << "  " << tc->attackers[3] << "  " << tc->attackers[4] << ", attacking " << tc->target << std::endl;
 
 			for( int p = 0; p < tc->numberOfAttackers; p++ )
 			{

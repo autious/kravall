@@ -55,8 +55,8 @@ return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, group
 				data = { 
 					animationID = 0,
 					currentTime = 0.0,
-					loop = true,
-					playing = true,
+					loop = false,
+					playing = false,
 					speed = 1.6,
 					currentFrame = 0,
 					queuedAnimationID = 0

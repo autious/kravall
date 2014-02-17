@@ -15,7 +15,7 @@ core.movementData.setMovementMetaData( core.movementData.Walking, 5.8, 17, 17, 0
 core.movementData.setMovementMetaData( core.movementData.Sprinting, 8.8, 17, 14, 0.2 )
 
 -- usual weapons...
-fists = core.weaponData.pushWeapon( 1.0, 20, 0.2, 0.05, 0.05, 0.5, 3 )
+fists = core.weaponData.pushWeapon( 1.0, 20, 0.2, 0.05, 0.05, 0.5, "punch" )
 
 
 function T:new(o)
