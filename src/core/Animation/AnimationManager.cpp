@@ -216,6 +216,5 @@ namespace Core
 		{
 			LOG_WARNING << "Failed to set animation speed: No animation component attached to entity";
 		}
-	}
-	
+	}	
 }

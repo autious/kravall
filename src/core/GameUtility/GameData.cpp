@@ -41,7 +41,7 @@ namespace Core
 		m_movementData[ state ].staminaCostPerSecond	= staminaCostPerSecond;
 	}
 
-	int Core::GameData::PushWeaponData( float range, float weaponDamage, float moraleDamage, float moralDamageOnMiss, float staminaCost, float animationDmgDealingtime, int animationID )
+	int Core::GameData::PushWeaponData( float range, float weaponDamage, float moraleDamage, float moralDamageOnMiss, float staminaCost, float animationDmgDealingtime, std::string animationName )
 	{
 		m_weaponData.push_back( WeaponData() );
 
@@ -51,7 +51,7 @@ namespace Core
 		m_weaponData.back().moralDamageOnMiss		= moralDamageOnMiss;
 		m_weaponData.back().staminaCost				= staminaCost;
 		m_weaponData.back().animationDmgDealingtime	= animationDmgDealingtime;
-		m_weaponData.back().animationID				= animationID;
+		m_weaponData.back().animationName			= animationName;
 
 		return m_weaponData.size() - 1;
 	}
