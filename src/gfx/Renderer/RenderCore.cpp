@@ -388,19 +388,51 @@ namespace GFX
 		CT(m_renderJobManager->Sort(), "Sorting");
 
 		// Draw geometry to G-buffers
+		GLuint64 startTime, stopTime;
+		unsigned int queryID[2];
+		glGenQueries(2, queryID);
+		glQueryCounter(queryID[0], GL_TIMESTAMP);
+
+
 		CT(m_deferredPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix, m_gamma), "Geometry");
 
+		glQueryCounter(queryID[1], GL_TIMESTAMP);
+		// wait until the results are available
+		GLint stopTimerAvailable = 0;
+		while (!stopTimerAvailable)
+		{
+			glGetQueryObjectiv(queryID[1],
+				GL_QUERY_RESULT_AVAILABLE,
+				&stopTimerAvailable);
+		}
+
+		// get query results
+		glGetQueryObjectui64v(queryID[0], GL_QUERY_RESULT, &startTime);
+		glGetQueryObjectui64v(queryID[1], GL_QUERY_RESULT, &stopTime);
+
+		printf("Deferred: %f ms\n", (stopTime - startTime) / 1000000.0);
+
 		CT(m_decalPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix, m_gamma), "Decals");
+
+	
 
 		// Draw shadow map geometry
 		CT(m_shadowPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_viewMatrix, m_projMatrix, 0, renderJobIndex, m_shadowMapTextures, m_windowWidth, m_windowHeight, glm::vec2(m_nearZ, m_farZ)), "Shadowmap");
 
+		
+
+
 		// Do global illumination / ssao
 		//CT(m_GIPainter->Render(delta, m_normalDepth, m_diffuse, m_viewMatrix, m_projMatrix), "GI");
+
+
+		
 
 		// Do lighting calculations
 		CT(m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, nullptr,
 			m_shadowMapTextures, m_viewMatrix, m_projMatrix, m_exposure, m_gamma, m_whitePoint, m_toneMappedTexture), "Lighting");
+
+		
 
 		// Draw fbo previews
 		if (m_showFBO != 0)

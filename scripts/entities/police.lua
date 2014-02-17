@@ -1,4 +1,9 @@
 return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, groupID, weaponType)
+
+	local meshes = {"assets/model/animated/rioter/rioter-male_00.bgnome", "assets/model/animated/rioter/rioter-female_00.bgnome" }
+    local gender = math.random(1, #meshes)
+   
+
 	asm:loadAssembly( 
 		{
 			{
@@ -9,7 +14,8 @@ return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, group
 				type = core.componentType.GraphicsComponent,
 				data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 1, 0, 1} },
 				load = { 
-							mesh = { core.loaders.GnomeLoader, "assets/model/animated/rioter/rioter-male_00.bgnome" },
+							mesh = { core.loaders.GnomeLoader, meshes[gender] },
+							--mesh = { core.loaders.GnomeLoader, "assets/model/animated/rioter/rioter-male_00.bgnome" },
 							material = { core.loaders.MaterialLoader, "assets/texture/animated/police/cop/cop-light_00.material" }
 					   }
 			},
