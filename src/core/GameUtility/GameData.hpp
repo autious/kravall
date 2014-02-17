@@ -49,7 +49,7 @@ namespace Core
 			staminaCost = 0.0f;
 			moralDamageOnMiss = 0.0f;
 			animationDmgDealingtime = 0.5f;
-			animationID = 1;
+			animationName = "";
 		}
 		
 		float range;
@@ -58,7 +58,7 @@ namespace Core
 		float moralDamageOnMiss;
 		float staminaCost;
 		float animationDmgDealingtime;
-		int animationID;
+		std::string animationName;
 	};
 
 
@@ -91,7 +91,7 @@ namespace Core
 		/*!
 			Will push weaponData to the list and return the id for the weapon. This function is meant to be used form lua.
 		*/
-		static int PushWeaponData( float range, float weaponDamage, float moraleDamage, float moralDamageOnMiss, float staminaCost, float animationDmgDealingtime, int animationID );
+		static int PushWeaponData( float range, float weaponDamage, float moraleDamage, float moralDamageOnMiss, float staminaCost, float animationDmgDealingtime, std::string animationName );
 
 
 	private:

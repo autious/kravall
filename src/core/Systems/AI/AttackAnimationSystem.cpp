@@ -8,7 +8,7 @@
 
 Core::AttackAnimationSystem::AttackAnimationSystem() : 
 	BaseSystem(EntityHandler::GenerateAspect<WorldPositionComponent, TargetingComponent, AnimationComponent, UnitTypeComponent, 
-	AttributeComponent, MovementComponent, FlowfieldComponent>(), 0ULL)
+	AttributeComponent, MovementComponent, FlowfieldComponent, GraphicsComponent>(), 0ULL)
 {
 }
 
@@ -43,8 +43,12 @@ void Core::AttackAnimationSystem::Update(float delta)
 				mvmc->SetDesiredSpeed( 0.0f, Core::DesiredSpeedSetPriority::CombatAnimationDesiredSpeedPriority );
 
 				Core::AnimationComponent* animac = WGETC<Core::AnimationComponent>(*it);
-				if( animac->animationID != weapon.animationID )
-					Core::AnimationManager::PlayAnimation( *it, weapon.animationID );
+				Core::GraphicsComponent* grc = WGETC<Core::GraphicsComponent>(*it);
+
+				int weaponAnimation = Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), weapon.animationName );
+
+				if( animac->animationID != weaponAnimation )
+					Core::AnimationManager::PlayAnimation( *it, weaponAnimation );
 
 				if( animac->currentTime > weapon.animationDmgDealingtime && !tc->hasAttacked )
 				{
@@ -79,12 +83,16 @@ void Core::AttackAnimationSystem::Update(float delta)
 		}
 		else
 		{
-			// attack is done, reset the chace
+			// the unit no longer has a target...
 			Core::AnimationComponent* animac = WGETC<Core::AnimationComponent>(*it);
+			Core::GraphicsComponent* grc = WGETC<Core::GraphicsComponent>(*it);
+
 			const Core::WeaponData& weapon = Core::GameData::GetWeaponDataFromWeapon( tc->weapon );
-			if( animac->animationID == weapon.animationID )
+			int weaponAnimation = Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), weapon.animationName );
+
+			if( animac->animationID == weaponAnimation )
 			{
-				Core::AnimationManager::LoopAnimation( *it, 0 );
+				//Core::AnimationManager::LoopAnimation( *it, 0 );
 				tc->isAttacking = false;
 				tc->hasAttacked = false;
 
@@ -94,5 +102,4 @@ void Core::AttackAnimationSystem::Update(float delta)
 			}
 		}		
 	}
-
 }
