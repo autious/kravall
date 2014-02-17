@@ -56,8 +56,10 @@ void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police, float del
 
 		if (distSqr < weapon.range * weapon.range )
 		{
-			if (TargetingComponent::Attack(police, *tcTarget))
-				std::cout << "Police: " << police << " is attacking rioter " << tc->target << std::endl;
+			TargetingComponent::Attack(police, *tcTarget);
+
+			//if (TargetingComponent::Attack(police, *tcTarget))
+			//	std::cout << "Police: " << police << " is attacking rioter " << tc->target << std::endl;
 		}
 
 		tc->attackTime += delta;
