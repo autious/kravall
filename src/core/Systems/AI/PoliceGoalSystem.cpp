@@ -99,7 +99,9 @@ void Core::PoliceGoalSystem::Update( float delta )
 			{
 				// is inside edges...
 				targetPosition = path.point;
-			}				
+			}
+
+			//GFX::Debug::DrawLine( position, targetPosition, GFXColor( 1, 1, 0, 1 ), false );
 
 			glm::vec3 flowfieldDirection = glm::normalize( targetPosition - position );
 			MovementComponent::SetDirection( mvmc, flowfieldDirection.x, 0, flowfieldDirection.z );

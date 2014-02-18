@@ -9,7 +9,7 @@
 namespace Core
 {
 	GPUPFSystem::GPUPFSystem() : BaseSystem(EntityHandler::GenerateAspect<WorldPositionComponent, MovementComponent,
-		UnitTypeComponent, AttributeComponent>(), 0ULL)
+		UnitTypeComponent, AttributeComponent, FlowfieldComponent>(), 0ULL)
 	{
 		m_foundShader = false;
 		m_readBack = false;
@@ -62,21 +62,37 @@ namespace Core
 				{
 					WorldPositionComponent* wpc = WGETC<WorldPositionComponent>(*it);
 					MovementComponent* mc = WGETC<MovementComponent>(*it);
-					UnitTypeComponent* utc = WGETC<UnitTypeComponent>(*it);
+					UnitTypeComponent* utc = WGETC<UnitTypeComponent>(*it); 
 					AttributeComponent* ac = WGETC<AttributeComponent>(*it);
+					FlowfieldComponent* ffc = WGETC<FlowfieldComponent>(*it);
 			
+					// did not know glsl had bitwise operations, derp
+					// pack rough vector to closest edge of the navmesh and distance to it into one float
+					float navMeshValue = (ffc->wallDirX * 1000);
+					navMeshValue += navMeshValue < 0 ? ffc->wallDirY == 0 ? -200.0f : ffc->wallDirY < 0 ? -ffc->wallDirY * 100.0f : -ffc->wallDirY * 300.0f : ffc->wallDirY == 0 ? 200.0f : ffc->wallDirY * 300.0f;
+					navMeshValue += navMeshValue < 0 ? -ffc->distance * 1.000f : ffc->distance * 1.000f;
+					
+					/* this is how to unpack it...
+					glm::vec3 navMeshWallVector;
+					navMeshWallVector.x = int(navMeshValue * 0.001);
+					navMeshWallVector.y = 0;
+					navMeshWallVector.z = abs( int((navMeshValue - navMeshWallVector.x * 1000) * 0.01) ) - 2;
+					float navMeshWallDistance = abs( navMeshValue - navMeshWallVector.x * 1000 ) - abs( navMeshWallVector.z * 100 ) - 200;
+					*/
+
+
 					in[i].position_unitType = glm::vec4(wpc->position[0], wpc->position[1], wpc->position[2], utc->type);
-					in[i].newDirection_empty = glm::vec4(mc->newDirection[0], mc->newDirection[1], mc->newDirection[2], mc->speed);
+					in[i].newDirection_speed = glm::vec4(mc->newDirection[0], mc->newDirection[1], mc->newDirection[2], mc->speed);
 					
 					if (utc->type == UnitType::Rioter)
 					{
 						in[i].health_stamina_morale_stancealignment = glm::vec4(ac->health, ac->stamina, ac->morale, ac->rioter.stance);
-						in[i].groupSquadID_defenseRage_mobilityPressure_empty = glm::vec4(ac->rioter.groupID, ac->rioter.rage, ac->rioter.pressure, 0);
+						in[i].groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance = glm::vec4(ac->rioter.groupID, ac->rioter.rage, ac->rioter.pressure, navMeshValue);
 					}
 					else if (utc->type == UnitType::Police)
 					{
 						in[i].health_stamina_morale_stancealignment = glm::vec4(ac->health, ac->stamina, ac->morale, ac->rioter.stance); //Attacking state should override stance here
-						in[i].groupSquadID_defenseRage_mobilityPressure_empty = glm::vec4(ac->rioter.groupID, 1, 1, 0);
+						in[i].groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance = glm::vec4(ac->rioter.groupID, 1, 1, navMeshValue);
 					}
 						
 					i++;

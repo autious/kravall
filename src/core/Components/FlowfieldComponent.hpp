@@ -15,10 +15,16 @@ namespace Core
 		*/
 		int node;
 
+		int wallDirX;
+		int wallDirY;
+		float distance;
 
 		FlowfieldComponent()
 			: node(0)
 		{
+			wallDirX = 0;
+			wallDirY = 0;
+			distance = 0;
 		}
 
 		inline static const char* GetName()
