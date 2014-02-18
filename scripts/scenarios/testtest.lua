@@ -66,15 +66,15 @@ local building = ent.get "building"
 
 local rGroup = core.system.groups.createGroup();
 --local centerPoint = { 110, 0, 0 }
-local centerPoint = { 80, 0, 0 }
-local side = math.sqrt( 300 )
+local centerPoint = { -110, 0, 0 }
+local side = math.sqrt( 700 )
 for i = -side/2, side/2 do
 	for p = -side/2, side/2 do
 		rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rGroup, nil, nil, fists)
 	end
 end
 --rioter( scen, 0, 0, 0, rGroup, fists)
-core.system.groups.setGroupGoal(rGroup, 0, 0, -300)
+core.system.groups.setGroupGoal(rGroup, 0, 0, 0)
 
 --for i = 0, 40 do
 --	squad(scen, 20, 0, 0, math.pi/2, fists);

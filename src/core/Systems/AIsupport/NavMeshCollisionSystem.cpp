@@ -66,33 +66,36 @@ void Core::NavMeshCollisionSystem::Update( float delta )
 				// check if collided with line...
 				glm::vec3 cross = glm::normalize( glm::cross( (lineEnd - lineStart), glm::vec3( 0.0f, 1.0f, 0.0f ) ) );
 				float distanceToLine = glm::dot( cross, fromStartToObject );
+				
+				if( distanceToLine < sphere.radius )
+					position += cross * (sphere.radius - distanceToLine);
 
-
+				// pf utility...
 				if( distanceToLine < ffc->distance )
 				{
 					ffc->distance = distanceToLine;
 					ffc->wallDirX = abs( cross.z ) < 0.7853981633f ? cross.x > 0 ? 1.0f : -1.0f : 0.0f;
 					ffc->wallDirY = abs( cross.x ) < 0.7853981633f ? cross.z > 0 ? 1.0f : -1.0f : 0.0f;
-				}
-				
-				if( distanceToLine < sphere.radius )
-					position += cross * (sphere.radius - distanceToLine);
+				}				
 			}
 
-			#define WallCurDeclineVal 10.0f
-
+			// pf utility...
+			#define WallCurDeclineVal 1.0f
 			if( ffc->distance == std::numeric_limits<float>::max() )
 				ffc->distance = 0.0f;
 			else
 				ffc->distance = WallCurDeclineVal / ( WallCurDeclineVal + ffc->distance * ffc->distance );
 			
+
 			//glm::vec3 tempVec = glm::vec3(0.0f);
 			//tempVec = glm::vec3( 0, 0, 1.0f ) * (float)ffc->wallDirY + glm::vec3( 1.0f, 0, 0 ) * (float)ffc->wallDirX;
 			//GFX::Debug::DrawLine( position, position + tempVec, GFXColor( 1, 1, 0.5, 1 ), false );
 
 
 
-			// check vs corner
+
+
+			// check vs corners
 			for( int i = 0; i < 4; i++ )
 			{
 				// check for last corner of triangle
