@@ -37,6 +37,10 @@ function Text:setColor( r,g,b,a )
     self.ent:set( core.componentType.HoverTextComponent, {color = {r,g,b,a} }, true )
 end
 
+function Text:show( flag )
+    self.ent:set( core.componentType.HoverTextComponent, {render = flag}, true )
+end
+
 Text.__index = Text
 
 return function( x,y, string, color )
@@ -52,7 +56,7 @@ return function( x,y, string, color )
     self.string = string
     self.textId = core.system.hoverText.string.new( string )
 
-    self.ent:set( core.componentType.HoverTextComponent, {hoverTextId = self.textId, color = color} )
+    self.ent:set( core.componentType.HoverTextComponent, {hoverTextId = self.textId, color = color, render = true} )
 
     self:setPosition( x,y )
 

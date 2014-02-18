@@ -35,6 +35,14 @@ namespace Core
             return 1;
         };
 
+        getters["render"] = []( Core::Entity entity, lua_State * L )
+        {
+            HoverTextComponent *htc = WGETC<HoverTextComponent>( entity );
+
+            lua_pushboolean( L, htc->render );
+            return 1;
+        };
+
         return getters;
     }
 
@@ -66,6 +74,19 @@ namespace Core
             else
             {
                 luaL_error( L, "Value color in HoverTextComponent is not table" );
+            }
+        };
+
+        setters["render"] = [](Core::Entity entity, lua_State * L, int valueindex )
+        {
+            if( lua_isboolean( L, valueindex ) )
+            {
+                HoverTextComponent *htc = WGETC<HoverTextComponent>( entity );
+                htc->render = lua_toboolean( L, valueindex );
+            }
+            else
+            {
+                luaL_error( L, "Value hide in HoverTextComponent is not boolean" );
             }
         };
 
