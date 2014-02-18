@@ -316,6 +316,37 @@ namespace GFX
 	}
 
 
+#define GPUTIME
+#ifdef GPUTIME
+#define CT(x, y)\
+{\
+	if (updateStats && m_showStatistics) \
+	{ \
+		GLuint64 startTime, stopTime;\
+		unsigned int queryID[2];\
+		glGenQueries(2, queryID);\
+		glQueryCounter(queryID[0], GL_TIMESTAMP);\
+		x;\
+		glQueryCounter(queryID[1], GL_TIMESTAMP);\
+		GLint stopTimerAvailable = 0;\
+		while (!stopTimerAvailable)\
+		{\
+				glGetQueryObjectiv(queryID[1],\
+						GL_QUERY_RESULT_AVAILABLE,\
+						&stopTimerAvailable);\
+		}\
+		glGetQueryObjectui64v(queryID[0], GL_QUERY_RESULT, &startTime);\
+		glGetQueryObjectui64v(queryID[1], GL_QUERY_RESULT, &stopTime);\
+		GLuint64 result = (stopTime - startTime)/1000.0;\
+		std::chrono::duration<GLuint64, std::micro> ms(result);\
+		m_subsystemTimes.push_back(std::pair<const char*, std::chrono::microseconds>(y, ms)); \
+	} \
+	else \
+	{ \
+		x; \
+	} \
+}
+#else
 #define CT(x, y)\
 {\
 	if (updateStats && m_showStatistics) \
@@ -331,6 +362,10 @@ namespace GFX
 		x; \
 	} \
 }
+#endif
+
+
+
 
 	void RenderCore::Render(const double& delta)
 	{
