@@ -293,6 +293,8 @@ namespace GFX
 		glm::mat4x4 m_debugCameraFrustum;
 		glm::mat4x4 m_debugFitFrustum;
 
+		bool m_reloadAnimationData;
+
 	};
 
 	/*!

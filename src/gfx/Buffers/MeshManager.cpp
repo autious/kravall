@@ -11,7 +11,12 @@ namespace GFX
 
 	MeshManager::~MeshManager()
 	{
-
+		for (auto it = m_meshes.begin(); it != m_meshes.end(); it++)
+		{
+			glDeleteVertexArrays(1, &it->VAO);
+			glDeleteBuffers(1, &it->IBO);
+		}
+		m_meshes.clear();
 	}
 
 	void MeshManager::BindMesh(const int& ibo, const int& vao)
@@ -38,6 +43,7 @@ namespace GFX
 		if (index != std::numeric_limits<decltype(index)>::max())
 		{
 			glDeleteVertexArrays(1, &m_meshes[index].VAO);
+			glDeleteBuffers(1, &m_meshes[index].IBO);
 			m_meshes.erase(m_meshes.begin() + index);
 		}
 	

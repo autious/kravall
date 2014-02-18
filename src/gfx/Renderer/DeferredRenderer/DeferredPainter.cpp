@@ -227,9 +227,6 @@ namespace GFX
 					glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
 					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IBO);
-				
-					if (mesh.skeletonID >= 0)
-						animationManager->BindSkeleton(mesh.skeletonID);
 
 					if (currentLayer == LAYER_TYPES::OUTLINE_LAYER)
 					{
@@ -316,9 +313,6 @@ namespace GFX
 					currentMesh = meshID;
 
 					glBindVertexArray(mesh.VAO);
-					
-					if (mesh.skeletonID >= 0)
-						animationManager->BindSkeletonData(mesh.skeletonID);
 				}
 
 				if (layer != currentLayer)
