@@ -31,7 +31,7 @@ function KravallControl:new(o)
     o.gui = GUI:new()
      
     ------------------
-    o.statusGUI = UnitStatGUI:new( {} )
+    o.statusGUI = UnitStatGUI:new( { show = false } )
     --------------
     o.eventGUIPadder = GUI:new( {width=220,height=220, anchor="SouthWest"} )
     o.eventGUIPadder:addPlacementHandler( CenterPlacer )
@@ -81,6 +81,11 @@ function KravallControl:setUnitInformation( data )
 end
 
 function KravallControl:setSelectedSquads( squads )
+    if squads and #squads > 0 then
+        self.statusGUI:setShow( true )
+    else
+        self.statusGUI:setShow( false )
+    end
     --TODO: show/hide the status field depending on selection.
 end
 

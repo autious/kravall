@@ -7,6 +7,7 @@ local Button =
                     y=0,
                     xoffset=0,
                     yoffset=0,
+                    show = true,
                     matReleased = "assets/texture/ui/button-release_00.material",
                     matPressed = "assets/texture/ui/button-press_00.material",
                     matHover = "assets/texture/ui/button-hover_00.material",
@@ -41,7 +42,20 @@ function Button:new(o)
     o.releasedImg:show(true)
     o.hoverImg:show(false)
 
+    o:setShow( o.show )
+
     return o
+end
+
+function Button:setShow( flag )
+    self.show = flag
+    self.GUIComponent:setShow(flag)
+    self.releasedImg:show(flag)
+
+    if flag == false then
+        self.pressedImg:show(false)
+        self.hoverImg:show(false)
+    end
 end
 
 function Button:setPosition(x,y)
@@ -52,29 +66,37 @@ function Button:setPosition(x,y)
 end
 
 function Button:onPress() 
-    self.pressedImg:show(true)
-    self.releasedImg:show(false)
-    self.hoverImg:show(false)
+    if self.show then
+        self.pressedImg:show(true)
+        self.releasedImg:show(false)
+        self.hoverImg:show(false)
+    end
 end
 
 function Button:onRelease()
-    self.pressedImg:show(false)
-    self.releasedImg:show(false)
-    self.hoverImg:show(true)
+    if self.show then
+        self.pressedImg:show(false)
+        self.releasedImg:show(false)
+        self.hoverImg:show(true)
 
-    self:onClick()
+        self:onClick()
+    end
 end
 
 function Button:onEnter()
-    self.pressedImg:show( false )
-    self.releasedImg:show( false )
-    self.hoverImg:show( true )
+    if self.show then
+        self.pressedImg:show( false )
+        self.releasedImg:show( false )
+        self.hoverImg:show( true )
+    end
 end
 
 function Button:onExit()
-    self.pressedImg:show(false)
-    self.releasedImg:show(true)
-    self.hoverImg:show(false)
+    if self.show then
+        self.pressedImg:show(false)
+        self.releasedImg:show(true)
+        self.hoverImg:show(false)
+    end
 end
 
 function Button:destroy()

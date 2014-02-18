@@ -65,7 +65,7 @@ end
 function PoliceSquadHandler:DeselectAllSquads()
     s_squad.disableOutline(self.selectedSquads)    
     self:setFormation( core.system.squad.formations.NoFormation )
-    self.selectedSquads = {}
+    self:setSquadSelection( {} )
 end
 
 function PoliceSquadHandler:setFormation( formation )
