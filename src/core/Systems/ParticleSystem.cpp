@@ -91,28 +91,24 @@ namespace Core
 
                         case Core::EmitterType::CONE_EMITTER:
                         {
-                            float rotation = 3.14f * distributor(generator);
-                            float cosVal = glm::cos(rotation);
-                            float sinVal = glm::sin(rotation);
-                            glm::quat q_1 = glm::quat(cosVal, 0.0f, 0.0f, -sinVal); 
+                            float rotation = glm::radians(emc->cone.coneAngle + emc->cone.coneAngleVariance * distributor(generator)) / 2.0f;
+                            glm::quat q_1 = glm::rotate(glm::quat(1.0,0,0,0), rotation * 360.0f / 3.14f, glm::vec3(1, 0, 0)); 
 
-                            rotation = glm::radians(emc->cone.coneAngle + emc->cone.coneAngleVariance * distributor(generator)) / 2.0f;
-                            cosVal = glm::cos(rotation);
-                            sinVal = glm::sin(rotation);
-                            glm::quat q_2 = glm::quat(cosVal, sinVal, 0.0f, 0.0f);
-
+                            rotation = 2.0f * 3.14f * distributor(generator);
+                            glm::quat q_2 = glm::rotate(glm::quat(1.0,0,0,0), rotation * 180.0f / 3.14f,glm::vec3(0, 0, -1));
+                            
+                            glm::quat q_3 = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
                             glm::vec3 target = glm::normalize(glm::vec3(emc->cone.coneDirection[0], emc->cone.coneDirection[1], emc->cone.coneDirection[2]));
-                            glm::vec3 axis = glm::cross(target, glm::vec3(0.0f, 0.0f, -1.0f));
-                            rotation = glm::acos(glm::dot(target, axis)) / 2.0f;
-                            cosVal = glm::cos(rotation);
-                            sinVal = glm::sin(rotation);
-                            glm::quat q_3 = glm::quat(cosVal, axis.x * sinVal, axis.y * sinVal, axis.z * sinVal);
-
-                            glm::quat quatRotation = glm::cross(q_3, glm::cross(q_2, q_1));
-                           
+                            glm::vec3 axis = glm::normalize(glm::cross(target, glm::vec3(0.0f, 0.0f, 1.0f)));
+                            if(glm::dot(axis, axis) > 0.0f)                            
+                            {
+                                rotation = glm::acos(glm::dot(target, axis));
+                                q_3 = glm::rotate(q_3, rotation * 180.0f / 3.14f, axis);//glm::quat(cosVal, axis.x * sinVal, axis.y * sinVal, axis.z * sinVal);       
+                            }
+                            
                             glm::vec3 velocity = glm::vec3(emc->velocity[0], emc->velocity[1], emc->velocity[2]) 
-                                + glm::vec3(emc->velocityVariance[0] * distributor(generator), emc->velocityVariance[1] * distributor(generator), emc->velocityVariance[2] * distributor(generator)); 
-                            velocity = quatRotation * velocity * glm::conjugate(quatRotation);
+                               + glm::vec3(emc->velocityVariance[0] * distributor(generator), emc->velocityVariance[1] * distributor(generator), emc->velocityVariance[2] * distributor(generator)); 
+                            velocity = glm::cross(q_3, glm::cross( q_2,  q_1 )) * velocity;
 
                             prc->m_particleData[k].velocity[0] = velocity.x;
                             prc->m_particleData[k].velocity[1] = velocity.y;
