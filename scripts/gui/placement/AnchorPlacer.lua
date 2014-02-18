@@ -1,7 +1,7 @@
 local padding = 10
 local defaultAnchor = "North"
 
-local validPlacements = { "Center", "North", "West", "East", "South", "SouthEast", "SouthWest", "NorthEast" }
+local validPlacements = { "Center", "North", "West", "East", "South", "SouthEast", "SouthWest", "NorthEast", "NorthWest" }
 
 local placers = {}
 for _,v in pairs( validPlacements ) do

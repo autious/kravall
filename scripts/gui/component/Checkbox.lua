@@ -10,11 +10,14 @@ local Checkbox =
                     width=0,
                     height=0,
                     checked = false,
+                    inside = false,
                     matOpen = "assets/texture/ui/checkbox-open_00.material",
                     matSelected = "assets/texture/ui/checkbox-selected_00.material",
                     matHoverOpen = "assets/texture/ui/checkbox-hover-open_00.material",
                     matHoverSelected = "assets/texture/ui/checkbox-hover-selected_00.material",
-                    onChange = nil
+                    onChange = function(self, value) end,
+                    onClick = function(self, value) end,
+                    doStateSwitchOnPress = true
                 }
 
 
@@ -38,8 +41,6 @@ function Checkbox:new(o)
     o.width = o.openImg.width
     o.height = o.openImg.height
 
-    o.onChange = o.onChange or function() end
-
     o.GUIComponent = GUIComponent:new
                                         {
                                             x=o.x,
@@ -52,13 +53,8 @@ function Checkbox:new(o)
                                             onExit = function() o:onExit() end
                                         }
 
-    if o.checked then
-        o:active( o.selectedImg )
-    else
-        o:active( o.openImg )  
-    end
-
     o.openImg.ent:set( core.componentType.GraphicsComponent, { render = true }, true )
+    o:updateVisual()
     return o
 end
 
@@ -69,6 +65,23 @@ function Checkbox:setPosition( x,y )
     self.hoverOpenImg:setPosition( x,y )
     self.hoverSelectedImg:setPosition( x,y )
 
+    self:updateVisual()
+end
+
+function Checkbox:setChecked( checked )
+    assert( type(checked) == "boolean" )
+    self.checked = checked
+    self:updateVisual()
+    self:onChange(self.checked)
+end
+
+function Checkbox:setInside( inside )
+    assert( type(checked) == "boolean" )
+    self.inside = inside
+    self:updateVisual()
+end
+
+function Checkbox:updateVisual()
     if self.checked then
         if self.inside then
             self:active( self.hoverSelectedImg )
@@ -88,33 +101,32 @@ function Checkbox:onPress()
 end
 
 function Checkbox:onRelease()
+
     if self.checked then
-        self.checked = false
-        self:active( self.hoverOpenImg )
+        self:onClick( false )
     else
-        self.checked = true
-        self:active( self.hoverSelectedImg )
+        self:onClick( true )
+    end 
+
+    if self.doStateSwitchOnPress then
+        if self.checked then
+            self:setChecked( false )
+        else
+            self:setChecked( true )
+        end
     end
 
-    self.onChange( self.checked )
+    self:updateVisual()
 end
 
 function Checkbox:onEnter()
     self.inside = true
-    if self.checked then
-        self:active( self.hoverSelectedImg )
-    else
-        self:active( self.hoverOpenImg )
-    end
+    self:updateVisual()
 end
 
 function Checkbox:onExit()
     self.inside = false
-    if self.checked then
-        self:active(self.selectedImg )
-    else
-        self:active( self.openImg )
-    end
+    self:updateVisual()
 end
 
 function Checkbox:destroy()
