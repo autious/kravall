@@ -1,5 +1,7 @@
 #include "AnimationManagerGFX.hpp"
 
+#include <cstring>
+
 AnimationManagerGFX::AnimationManagerGFX()
 {
 	glGenBuffers(1, &m_animationBuffer);

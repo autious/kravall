@@ -75,7 +75,7 @@ void Core::ThreadPool::KillThreads()
 		std::unique_lock<std::mutex> lock(m_queueMutex);
         m_stop = true;
     }
-	
+
 	m_condition.notify_all();
 
 	for( unsigned int i = 0; i < m_threads.size(); i++ )

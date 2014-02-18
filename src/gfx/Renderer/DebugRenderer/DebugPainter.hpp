@@ -38,7 +38,7 @@ namespace GFX
 		\param viewMatrix View matrix for the shader
 		\param projMatrix Projection matrix for the shader
 		*/
-		void Render(FBOTexture* depthBuffer, FBOTexture* color, glm::mat4 viewMatrix, glm::mat4 projMatrix);
+		void Render(FBOTexture* depthBuffer, FBOTexture* color, glm::mat4 viewMatrix, glm::mat4 projMatrix, bool draw);
 
 	private:
 

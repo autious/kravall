@@ -81,7 +81,7 @@ namespace GFX
 		BindGBuffer(depthBuffer, diffuse, specular, glowMatID);
 
 		glEnable(GL_DEPTH_TEST);
-		//glDepthMask(false);
+		glDepthMask(false);
 		//glCullFace(GL_FRONT);
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
@@ -172,7 +172,7 @@ namespace GFX
 		}
 
 		
-		//glDepthMask(true);
+		glDepthMask(true);
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
 		glCullFace(GL_BACK);

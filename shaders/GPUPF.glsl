@@ -516,21 +516,23 @@ void main()
 				if (length(pfVector) > 0.1f)
 					pfVector = normalize(pfVector);
 			}
-			
-			float dirDot = dot(vec2(gInput[index].newDirection_speed.x, gInput[index].newDirection_speed.z), vec2(pfVector.x, pfVector.z));
-			
-			vec3 FFDirection = gInput[index].newDirection_speed.xyz;
-			FFDirection = FFDirection * float(!(dirDot < 0.0f));
 
-			vec3 newDir = vec3(
-			FFDirection.x * FF_FACTOR + pfVector.x * PF_FACTOR, 
-			FFDirection.y * FF_FACTOR + pfVector.y * PF_FACTOR,
-			FFDirection.z * FF_FACTOR + pfVector.z * PF_FACTOR);
+			gOutput[index].newDirection_speed = vec4(pfVector.x, 0, pfVector.z, gInput[index].newDirection_speed.w );
 			
-			if (length(newDir) > 0.1f)
-				newDir = normalize(newDir);
-
-			gOutput[index].newDirection_speed = vec4(newDir, gInput[index].newDirection_speed.w);
+			//float dirDot = dot(vec2(gInput[index].newDirection_speed.x, gInput[index].newDirection_speed.z), vec2(pfVector.x, pfVector.z));
+			//
+			//vec3 FFDirection = gInput[index].newDirection_speed.xyz;
+			//FFDirection = FFDirection * float(!(dirDot < 0.0f));
+			//
+			//vec3 newDir = vec3(
+			//FFDirection.x * FF_FACTOR + pfVector.x * PF_FACTOR, 
+			//FFDirection.y * FF_FACTOR + pfVector.y * PF_FACTOR,
+			//FFDirection.z * FF_FACTOR + pfVector.z * PF_FACTOR);
+			//
+			//if (length(newDir) > 0.1f)
+			//	newDir = normalize(newDir);
+			//
+			//gOutput[index].newDirection_speed = vec4(newDir, gInput[index].newDirection_speed.w);
 		}											
 	}												
 	

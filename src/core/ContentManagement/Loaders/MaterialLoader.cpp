@@ -44,7 +44,7 @@ namespace Core
         std::string glowTexture;
 		bool isDecal = false;
 
-        if(ParseFile(assetName, shaderName, diffuseTexture, specularTexture, normalBlendTexture, glowTexture))
+        if(ParseFile(assetName, shaderName, diffuseTexture, specularTexture, normalBlendTexture, glowTexture, isDecal))
         {
             data = new Core::MaterialData;
             Core::TextureData* texture = nullptr;
@@ -133,8 +133,9 @@ namespace Core
         std::string specularTexture;
         std::string normalBlendTexture;
         std::string glowTexture;
+		bool isDecal = false;
 
-        if(ParseFile(assetName, shaderName, diffuseTexture, specularTexture, normalBlendTexture, glowTexture))
+        if(ParseFile(assetName, shaderName, diffuseTexture, specularTexture, normalBlendTexture, glowTexture, isDecal))
         {
             data = new Core::MaterialLoader::MaterialLoadingData;
             data->materialData                      = new Core::MaterialData;
@@ -142,6 +143,7 @@ namespace Core
             data->materialData->specularTexture     = nullptr;
             data->materialData->normalBlendTexture  = nullptr;
             data->materialData->glowTexture         = nullptr;
+			data->materialData->isDecal				= false;
             data->diffuseData                       = nullptr;
             data->specularData                      = nullptr;
             data->normalBlendData                   = nullptr;
@@ -150,6 +152,9 @@ namespace Core
             data->shaderName                        = shaderName;
 
             unsigned int textureHash;
+
+
+			data->materialData->isDecal = isDecal;
 
             if(diffuseTexture.size())
             {
@@ -194,6 +199,8 @@ namespace Core
                 }
                 data->materialData->glowTexture = texture;
             }
+
+
         }
 
         return data;
@@ -217,22 +224,22 @@ namespace Core
 
         if(loadingData->materialData->diffuseTexture)
         {
-			BufferTextureData(loadingData->diffuseData, loadingData->materialData->diffuseTexture, isDecal);
+			BufferTextureData(loadingData->diffuseData, loadingData->materialData->diffuseTexture, loadingData->materialData->isDecal);
             AddTextureToMaterial(loadingData->materialData->materialId, loadingData->materialData->diffuseTexture->textureId);
         }
         if(loadingData->materialData->specularTexture)
         {
-			BufferTextureData(loadingData->specularData, loadingData->materialData->specularTexture, isDecal);
+			BufferTextureData(loadingData->specularData, loadingData->materialData->specularTexture, loadingData->materialData->isDecal);
             AddTextureToMaterial(loadingData->materialData->materialId, loadingData->materialData->specularTexture->textureId);
         }
         if(loadingData->materialData->normalBlendTexture)
         {
-			BufferTextureData(loadingData->normalBlendData, loadingData->materialData->normalBlendTexture, isDecal);
+			BufferTextureData(loadingData->normalBlendData, loadingData->materialData->normalBlendTexture, loadingData->materialData->isDecal);
             AddTextureToMaterial(loadingData->materialData->materialId, loadingData->materialData->normalBlendTexture->textureId);
         }
         if(loadingData->materialData->glowTexture)
         {
-			BufferTextureData(loadingData->glowData, loadingData->materialData->glowTexture, isDecal);
+			BufferTextureData(loadingData->glowData, loadingData->materialData->glowTexture, loadingData->materialData->isDecal);
             AddTextureToMaterial(loadingData->materialData->materialId, loadingData->materialData->glowTexture->textureId);
         }
 
@@ -292,7 +299,7 @@ namespace Core
     }
 
     bool MaterialLoader::ParseFile(const char* assetFileName, std::string& shaderName, std::string& diffuseTexture,
-            std::string& specularTexture, std::string& normalBlendTexture, std::string& glowTexture)
+            std::string& specularTexture, std::string& normalBlendTexture, std::string& glowTexture, bool& isDecal)
     {
         std::ifstream file(assetFileName, std::ios::in);
 
@@ -360,6 +367,17 @@ namespace Core
                     std::string::size_type end = value.find_last_of("\"");
                     glowTexture = value.substr(start + 1, end - start - 1);
                 }
+				else if (key == "decal")
+				{
+					std::getline(file, value, '\n');
+
+					std::string::size_type start = value.find_first_of("\"");
+					std::string::size_type end = value.find_last_of("\"");
+					std::string decalVal = value.substr(start + 1, end - start - 1);
+
+					if (decalVal == "true")
+						isDecal = true;
+				}
                 else
                 {
                     if(value.size() > 0)
