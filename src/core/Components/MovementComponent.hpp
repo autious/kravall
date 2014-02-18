@@ -69,6 +69,8 @@ namespace Core
 		/*! An array specifying the object's new direction of movement where index 0 = x, index 1 = y and index 2 = z. */
 		float newDirection[3];
 
+		float oldPFDir[3];
+
 		/*! Priority value for the current set goal. If new value has higher priority the current value may be repalced. */
 		MovementGoalPriority currentGoalPriority;
 
