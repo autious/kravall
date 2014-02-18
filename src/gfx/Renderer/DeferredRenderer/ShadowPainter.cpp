@@ -340,7 +340,6 @@ namespace GFX
 
 				if (mesh.skeletonID >= 0)
 				{
-					animationManager->BindSkeletonData(mesh.skeletonID);
 					m_shaderManager->UseProgram("SMAV");
 				}
 				else

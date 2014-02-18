@@ -331,6 +331,7 @@ namespace Core
                 break;
             }
         }
+		GFX::Content::DeleteSkeleton(GFX::Content::GetSkeletonID(modelData->meshID));
         GFX::Content::DeleteMesh(modelData->meshID);        
         delete modelData;        
     }
