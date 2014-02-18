@@ -12,6 +12,7 @@ local TextSelectList =
                     width=0,
                     height=0,
                     padding=4,
+                    show=true,
                     elements = {{name = "default"}, {name = "default2"}},
                     onSelect = function() end
                 }
@@ -37,9 +38,20 @@ function TextSelectList:new(o)
                                             onExit = function() o:onExit() end
                                         }
 
+    o:setShow( o.show )
     o:updateList()
 
     return o
+end
+
+function TextSelectList:setShow( flag )
+    self.show = flag
+
+    self.GUIComponent:setShow(flag)
+
+    for _,v in pairs( self.textElements ) do
+        v:show(flag)
+    end
 end
 
 function TextSelectList:updateList()
@@ -49,12 +61,13 @@ function TextSelectList:updateList()
     end
 
     self.textElements = {}
-
+     
     local heightOffset = 0
     local widest = 0
 
     for k,v in pairs( self.elements ) do
         local text1 = text(self.x,self.y,v.name)
+        text1:show(self.show)
         local width, height = text1:getDim()
         
         text1:setPosition( self.x, self.y + heightOffset )
@@ -89,17 +102,19 @@ function TextSelectList:setPosition(x,y)
 end
 
 function TextSelectList:onPress(x,y) 
-    local newActive = nil
+    if self.show then
+        local newActive = nil
 
-    for k,v in pairs( self.textElements ) do
-        local width,height = v:getDim()
-        if AABB:new({v.x,v.y,width,height}):collides( x, y ) then
-            newActive = v.object
+        for k,v in pairs( self.textElements ) do
+            local width,height = v:getDim()
+            if AABB:new({v.x,v.y,width,height}):collides( x, y ) then
+                newActive = v.object
+            end
         end
-    end
 
-    if newActive ~= nil and newActive ~= self.activeObject then
-        self:setActive( newActive )
+        if newActive ~= nil and newActive ~= self.activeObject then
+            self:setActive( newActive )
+        end
     end
 end
 

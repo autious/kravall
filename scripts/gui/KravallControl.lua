@@ -31,16 +31,21 @@ function KravallControl:new(o)
     o.gui = GUI:new()
      
     ------------------
-    o.statusGUI = UnitStatGUI:new( {} )
+    o.statusGUI = UnitStatGUI:new( { show = false } )
     --------------
     o.eventGUIPadder = GUI:new( {width=220,height=220, anchor="SouthWest"} )
     o.eventGUIPadder:addPlacementHandler( CenterPlacer )
     o.eventGUI = EventListerGUI:new( {x=0,y=0, width=200, height=200, anchor="SouthWest"} )
     o.eventGUIPadder:addComponent( o.eventGUI )
     ----------
-    o.stanceGUI = StanceGUI:new( {onStanceSelect = function(stance) o.onStanceSelect( stance ) end })
+    o.stanceGUI = StanceGUI:new( {
+        onStanceSelect = function(stance) o.onStanceSelect( stance ) end 
+        })
+
     o.abilitiesGUI = AbilityGUI:new()
-    o.formationGUI = FormationGUI:new( { onFormationSelect = function(form) o.onFormationSelect(form) end } )
+    o.formationGUI = FormationGUI:new( { 
+        onFormationSelect = function(form) o.onFormationSelect(form) end 
+        } )
 
     o.rightControlGUI = GUI:new{x=0,y=0, width=150,height=500, anchor="NorthEast"}
     o.rightControlGUI:addPlacementHandler( AnchorPlacer )
@@ -66,6 +71,24 @@ function KravallControl:setStance( stance )
     self.stanceGUI:setStance( stance )
 end
 
+function KravallControl:setUnitInformation( data )
+    self.statusGUI:setFormation( data.formation )
+    self.statusGUI:setStance( data.stance )
+    self.statusGUI:setName( data.name )
+    self.statusGUI:setHealth( data.health )
+    self.statusGUI:setMorale( data.morale )
+    self.statusGUI:setStamina( data.stamina )
+end
+
+function KravallControl:setSelectedSquads( squads )
+    if squads and #squads > 0 then
+        self.statusGUI:setShow( true )
+    else
+        self.statusGUI:setShow( false )
+    end
+    --TODO: show/hide the status field depending on selection.
+end
+
 function KravallControl:addEvent( component )
     self.eventGUI:addComponent( component )
 end
@@ -83,10 +106,10 @@ function KravallControl:update( delta )
     self.formationGUI:update(delta )
     self.rightControlGUI:update(delta )
 
-    self.count = self.count or 5
+    self.count = self.count or 0
     self.count = self.count + delta
 
-    if self.count > 1 then
+    if self.count > 10 then
         self.ind = self.ind or 0
         self.ind = self.ind + 1
         
