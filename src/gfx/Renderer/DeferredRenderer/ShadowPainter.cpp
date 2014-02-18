@@ -76,7 +76,7 @@ namespace GFX
 
 	}
 
-	glm::mat4x4 FitFrustum(const glm::mat4x4& camera, const glm::mat4x4& lightViewMat)
+	glm::mat4x4 FitFrustum(const glm::mat4x4& camera, const glm::mat4x4& lightViewMat, int shadowmapRes)
 	{
 		// Get view frustum corner points
 		glm::mat4x4 invViewProj = glm::inverse(camera);
@@ -119,8 +119,22 @@ namespace GFX
 			maxY = std::max(maxY, corners[i].y);
 			maxZ = std::max(maxZ, corners[i].z);
 		}
+
+		// Clamp minmax to texels to avoid swimming shadowmaps
+		glm::vec2 min = glm::vec2(minX, minY);
+		glm::vec2 max = glm::vec2(maxX, maxY);
+		glm::vec2 unitsPerTexel = glm::vec2(max-min) / float(shadowmapRes);
+		
+		min /= unitsPerTexel;
+		min = glm::floor(min);
+		min *= unitsPerTexel;
+		
+		max /= unitsPerTexel;
+		max = glm::floor(max);
+		max *= unitsPerTexel;
+
 		// Set ortho matrix to use the calculated corner points
-		return glm::ortho<float>(minX, maxX, minY, maxY, -200, -minZ);
+		return glm::ortho<float>(min.x, max.x, min.y, max.y, -200, -minZ);
 		//return glm::ortho<float>(minX, maxX, minY, maxY, -maxZ, -minZ);
 
 	}
@@ -171,7 +185,9 @@ namespace GFX
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_RBO[3]);
 		glClear(GL_DEPTH_BUFFER_BIT);
 
-		glViewport(0, 0, shadowMaps[0]->GetWidth(), shadowMaps[0]->GetHeight());
+
+		int shadowmapRes = shadowMaps[0]->GetWidth();
+		glViewport(0, 0, shadowmapRes, shadowmapRes);
 
 		
 
@@ -230,14 +246,14 @@ namespace GFX
 				matrices[3] = glm::perspective<float>(45.0f, 1280.0f/720.0f, fz/2.0f, fz);
 
 
-				matrices[4] = FitFrustum(matrices[0] * viewMatrix, bc.viewMatrix);
-				matrices[5] = FitFrustum(matrices[1] * viewMatrix, bc.viewMatrix);
-				matrices[6] = FitFrustum(matrices[2] * viewMatrix, bc.viewMatrix);
-				matrices[7] = FitFrustum(matrices[3] * viewMatrix, bc.viewMatrix);
+				matrices[4] = FitFrustum(matrices[0] * viewMatrix, bc.viewMatrix, shadowmapRes);
+				matrices[5] = FitFrustum(matrices[1] * viewMatrix, bc.viewMatrix, shadowmapRes);
+				matrices[6] = FitFrustum(matrices[2] * viewMatrix, bc.viewMatrix, shadowmapRes);
+				matrices[7] = FitFrustum(matrices[3] * viewMatrix, bc.viewMatrix, shadowmapRes);
 
 				
 				glm::mat4x4 dummyProjMat = glm::perspective<float>(45.0f, 1280.0f/720.0f, 5.0f, 125.0f);
-				bc.projMatrix = FitFrustum(dummyProjMat * viewMatrix, bc.viewMatrix);
+				bc.projMatrix = FitFrustum(dummyProjMat * viewMatrix, bc.viewMatrix, shadowmapRes);
 				//bc.projMatrix = glm::perspective<float>(45.0f, 1.0f, 20.0f, 100.0f);
 
 				// Add the data to the global array of shadow data for use in LightPainter
