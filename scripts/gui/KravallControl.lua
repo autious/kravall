@@ -65,15 +65,15 @@ end
 
 function KravallControl:setFormation( formation )
     self.formationGUI:setFormation( formation )
-    self.statusGUI:setFormation( formation )
 end
 
 function KravallControl:setStance( stance )
     self.stanceGUI:setStance( stance )
-    self.statusGUI:setStance( stance )
 end
 
 function KravallControl:setUnitInformation( data )
+    self.statusGUI:setFormation( data.formation )
+    self.statusGUI:setStance( data.stance )
     self.statusGUI:setName( data.name )
     self.statusGUI:setHealth( data.health )
     self.statusGUI:setMorale( data.morale )
@@ -101,10 +101,10 @@ function KravallControl:update( delta )
     self.formationGUI:update(delta )
     self.rightControlGUI:update(delta )
 
-    self.count = self.count or 5
+    self.count = self.count or 0
     self.count = self.count + delta
 
-    if self.count > 1 then
+    if self.count > 10 then
         self.ind = self.ind or 0
         self.ind = self.ind + 1
         
