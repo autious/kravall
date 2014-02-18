@@ -55,6 +55,7 @@ namespace GFX
         m_font = nullptr;
 		m_showFBO = 0;
 		m_animationFramerate = 24;
+		m_reloadAnimationData = true;
 	}
 
 	RenderCore::~RenderCore()
@@ -316,6 +317,37 @@ namespace GFX
 	}
 
 
+#define GPUTIME
+#ifdef GPUTIME
+#define CT(x, y)\
+{\
+	if (updateStats && m_showStatistics) \
+	{ \
+		GLuint64 startTime, stopTime;\
+		unsigned int queryID[2];\
+		glGenQueries(2, queryID);\
+		glQueryCounter(queryID[0], GL_TIMESTAMP);\
+		x;\
+		glQueryCounter(queryID[1], GL_TIMESTAMP);\
+		GLint stopTimerAvailable = 0;\
+		while (!stopTimerAvailable)\
+		{\
+				glGetQueryObjectiv(queryID[1],\
+						GL_QUERY_RESULT_AVAILABLE,\
+						&stopTimerAvailable);\
+		}\
+		glGetQueryObjectui64v(queryID[0], GL_QUERY_RESULT, &startTime);\
+		glGetQueryObjectui64v(queryID[1], GL_QUERY_RESULT, &stopTime);\
+		GLuint64 result = (stopTime - startTime)/1000.0;\
+		std::chrono::duration<GLuint64, std::micro> ms(result);\
+		m_subsystemTimes.push_back(std::pair<const char*, std::chrono::microseconds>(y, ms)); \
+	} \
+	else \
+	{ \
+		x; \
+	} \
+}
+#else
 #define CT(x, y)\
 {\
 	if (updateStats && m_showStatistics) \
@@ -331,6 +363,10 @@ namespace GFX
 		x; \
 	} \
 }
+#endif
+
+
+
 
 	void RenderCore::Render(const double& delta)
 	{
@@ -357,6 +393,13 @@ namespace GFX
 				m_subsystemTimes.clear();
 				updateStats = true;
 			}
+		}
+
+		// Reload animations data if changed
+		if (m_reloadAnimationData)
+		{
+			m_animationManager->BindBufferData();
+			m_reloadAnimationData = false;
 		}
 
 		// Build GBuffers for all geometry										\
@@ -390,6 +433,7 @@ namespace GFX
 		// Draw geometry to G-buffers
 		CT(m_deferredPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix, m_gamma), "Geometry");
 
+		//Draw decals to Gbuffer
 		CT(m_decalPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix, m_gamma), "Decals");
 
 		// Draw shadow map geometry
@@ -402,18 +446,18 @@ namespace GFX
 		CT(m_lightPainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, nullptr,
 			m_shadowMapTextures, m_viewMatrix, m_projMatrix, m_exposure, m_gamma, m_whitePoint, m_toneMappedTexture), "Lighting");
 
+		// Draw fbo previews
+		if (m_showFBO != 0)
+			CT(m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, m_shadowMapTextures, m_showFBO), "FBO");
+
 		// Do post processing
 		CT(m_postProcessingPainter->Render(delta, m_toneMappedTexture, m_currentLUT, m_exposure, m_gamma, m_whitePoint, m_diffuse), "PostProcessing");
 
 		// Draw overlays/ui
 		CT(m_overlayPainter->Render(renderJobIndex, m_overlayViewMatrix, m_overlayProjMatrix), "Console");
 
-		// Draw fbo previews
-		if (m_showFBO != 0)
-			CT(m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, m_shadowMapTextures, m_showFBO), "FBO");
-
 		// Draw debug information
-		CT(m_debugPainter->Render(m_depthBuffer, m_normalDepth, m_viewMatrix, m_projMatrix), "Debug");
+		CT(m_debugPainter->Render(m_depthBuffer, m_normalDepth, m_viewMatrix, m_projMatrix, true), "Debug");
 
 		// Draw the console
 		CT(m_consolePainter->Render(), "Console");
@@ -581,6 +625,7 @@ namespace GFX
 
 	int RenderCore::AddAnimationToSkeleton(const int& skeletonID, glm::mat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame)
 	{
+		m_reloadAnimationData = true;
 		return m_animationManager->AddAnimationToSkeleton(skeletonID, frames, numFrames, numBonesPerFrame);
 	}
 

@@ -61,6 +61,9 @@ namespace Core
 
 		bool m_foundShader;
 		bool m_readBack;
+		bool m_dispatch;
+
+		GLsync m_sync;
 	};
 }
 

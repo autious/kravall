@@ -19,7 +19,6 @@ Core::MovementSystem::MovementSystem()
 void Core::MovementSystem::Update(float delta)
 {
 
-
 	for (std::vector<Entity>::iterator it = m_bags[0].m_entities.begin();
 		it != m_bags[0].m_entities.end();
 		it++)
