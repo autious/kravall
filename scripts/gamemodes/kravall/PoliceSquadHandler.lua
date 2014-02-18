@@ -198,7 +198,6 @@ function PoliceSquadHandler:update( delta )
             
         for i,v in ipairs( squads ) do 
             if i == 1 then
-                print( standardPolice.selectionPrimaryOutline:get() )
                 s_squad.enableOutline( {v}, standardPolice.selectionPrimaryOutline:get() )
             else
                 notPrimary[#notPrimary+1] = v    

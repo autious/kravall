@@ -14,11 +14,13 @@ namespace Core
         int hoverTextId;
         float size;
         float color[4];
+        bool render;
         
         HoverTextComponent()
         {
             hoverTextId = -1;
             size = 1;
+            render = true;
             SetColor( *this, Colors::White );
         }
 
