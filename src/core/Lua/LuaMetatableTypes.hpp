@@ -19,6 +19,7 @@
 #define ATTRIBUTE_RIOTER_COMPONENT_META_TYPE "attribute_rioter_component_meta_type"
 #define LOG_META_TYPE "metatype_log"
 #define HOVER_TEXT_META_TYPE "metatype_hover_text"
+#define TTF_FONT_META_TYPE "metatype_ttf_font"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
@@ -35,6 +36,8 @@
 #include <Components/UnitTypeComponent.hpp>
 #include <Components/SquadComponent.hpp>
 #include <Camera/Camera.hpp>
+
+#include <gfx/GFXInterface.hpp>
 
 #include <logger/Logger.hpp>
 
@@ -60,6 +63,11 @@ struct LuaHoverText
     int hoverTextId;
 };
 
+struct LuaTTFFont
+{
+    GFX::FontData * fontPtr;
+};
+
 inline glm::vec2* luau_checkglmvec2( lua_State* state, int pos ) { return static_cast<glm::vec2*>(luaL_checkudata( state, pos, GLMVEC2_META_TYPE )); }
 inline glm::vec3* luau_checkglmvec3( lua_State* state, int pos ) { return static_cast<glm::vec3*>(luaL_checkudata( state, pos, GLMVEC3_META_TYPE )); }
 inline glm::vec4* luau_checkglmvec4( lua_State* state, int pos ) { return static_cast<glm::vec4*>(luaL_checkudata( state, pos, GLMVEC4_META_TYPE )); }
@@ -74,6 +82,7 @@ inline Core::SquadFormation* luau_checksquadformation( lua_State * state, int po
 inline LuaLog* luau_checklog( lua_State * state, int pos ) { return static_cast<LuaLog*>(luaL_checkudata( state, pos, LOG_META_TYPE ) ); }
 inline LuaHoverText* luau_checkhovertext( lua_State * state, int pos ) { return static_cast<LuaHoverText*>(luaL_checkudata( state, pos, HOVER_TEXT_META_TYPE )); }
 inline Core::PoliceStance* luau_checkpolicestance( lua_State* state, int pos) { return static_cast<Core::PoliceStance*>(luaL_checkudata(state, pos, POLICE_STANCE_META_TYPE) ); }
+inline LuaTTFFont* luau_checkttffont( lua_State* state, int pos ) { return static_cast<LuaTTFFont*>(luaL_checkudata( state, pos, TTF_FONT_META_TYPE ) ); }
 
 namespace Core
 {
@@ -99,6 +108,8 @@ namespace Core
     LuaHoverText* LuaUNewHoverText( lua_State * L );
     
     Camera** LuaUNewCamera( lua_State * L );
+
+    LuaTTFFont* LuaUNewTTFFont( lua_State * L );
 }
 
 #endif

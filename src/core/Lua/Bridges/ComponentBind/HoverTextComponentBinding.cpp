@@ -43,6 +43,24 @@ namespace Core
             return 1;
         };
 
+        getters["font"] = []( Core::Entity entity, lua_State * L )
+        {
+            HoverTextComponent *htc = WGETC<HoverTextComponent>( entity );
+
+            if( htc->font != nullptr )
+            {
+                LuaTTFFont *luaFont = LuaUNewTTFFont( L );
+                luaFont->fontPtr = htc->font;
+            }
+            else
+            {
+                lua_pushnil( L ); 
+            }
+            
+            return 1;
+        };
+        
+
         return getters;
     }
 
@@ -87,6 +105,20 @@ namespace Core
             else
             {
                 luaL_error( L, "Value hide in HoverTextComponent is not boolean" );
+            }
+        };
+
+        setters["font"] = [](Core::Entity entity, lua_State * L, int valueindex )
+        {
+            if( lua_isuserdata( L, valueindex ) )
+            {
+                HoverTextComponent *htc = WGETC<HoverTextComponent>( entity );
+                LuaTTFFont *luaFont = luau_checkttffont( L, valueindex );
+                htc->font = luaFont->fontPtr;
+            }
+            else
+            {
+                luaL_error( L, "Value font in HoverTextComponent is not font data" );
             }
         };
 

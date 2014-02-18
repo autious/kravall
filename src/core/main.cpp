@@ -84,11 +84,18 @@ GLFWwindow* init( int argc, char** argv )
 	if (GFX::Init(initScreenWidth,initScreenHeight) == GFX_FAIL)
 		return nullptr;
 
-    Core::world.m_contentManager.Load<Core::TTFLoader>(Core::world.m_config.GetString("consoleFont", "assets/Fonts/ConsoleFont.font").c_str(), [](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+    Core::world.m_contentManager.Load<Core::TTFLoader>(Core::world.m_config.GetString("consoleFont", "assets/font/ConsoleFont.font").c_str(), [](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
             {
-                localFontData = static_cast<GFX::FontData*>(handle);
-                Core::Console().Init(localFontData);  
-                GFX::Debug::SetStatisticsFont(localFontData);
+                if( handle == nullptr )
+                {
+                    LOG_FATAL << "Unable to load main font" << std::endl;
+                }
+                else
+                { 
+                    localFontData = static_cast<GFX::FontData*>(handle);
+                    Core::Console().Init(localFontData);  
+                    GFX::Debug::SetStatisticsFont(localFontData);
+                }
             });
 
     RegisterCLOPLogger();

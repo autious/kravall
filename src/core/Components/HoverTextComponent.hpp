@@ -2,6 +2,7 @@
 #define SRC_CORE_COMPONENTS_HOVERTEXTCOMPONENT_H
 
 #include <utility/Colors.hpp>
+#include <gfx/GFXInterface.hpp>
 
 namespace Core
 {
@@ -15,12 +16,14 @@ namespace Core
         float size;
         float color[4];
         bool render;
+        GFX::FontData * font;
         
         HoverTextComponent()
         {
             hoverTextId = -1;
             size = 1;
             render = true;
+            font = nullptr;
             SetColor( *this, Colors::White );
         }
 
