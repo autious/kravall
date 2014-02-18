@@ -54,6 +54,7 @@ namespace Core
 
 			glUseProgram(m_shaderID);
 			
+			//We've read back data, dispatch new data to GPU
 			if (m_dispatch)
 			{
 				//Set data in shader
@@ -91,21 +92,30 @@ namespace Core
 
 				//Set entity count
 				glUniform1ui(m_entityCount, i);
-				//glDeleteSync(sync);
+
+				//Delete the old fence
+				glDeleteSync(m_sync);
 				
 				//Run the shader
 				glDispatchCompute(GLuint(1), GLuint(1), GLuint(1));
-				sync = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+
+				//Create a new fence that will finish after the dispatch
+				m_sync = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+
+				//No dispatch or readback until dispatch is complete
 				m_dispatch = false;
 				m_readBack = false;
 
 			}
 
-			glGetSynciv(sync, GL_SYNC_STATUS, sizeof(GLint), NULL, &result);
+			//Get the status of our sync fence
+			glGetSynciv(m_sync, GL_SYNC_STATUS, sizeof(GLint), NULL, &result);
 
+			//Sync is done, read back data from GPU
 			if (result == GL_SIGNALED)
 				m_readBack = true;
 
+			//Dispatch is not complete, use the old PF vector to calculate our position
 			if (m_readBack == false)
 			{
 				int i = 0;
@@ -115,13 +125,8 @@ namespace Core
 					AttributeComponent* ac = WGETC<AttributeComponent>(*it);
 					UnitTypeComponent* utc = WGETC<UnitTypeComponent>(*it);
 
-					//mc->newDirection[0] = out[i].newDirection_speed.x;
-					//mc->newDirection[1] = out[i].newDirection_speed.y;
-					//mc->newDirection[2] = out[i].newDirection_speed.z;
-
 					#define PF_FACTOR 0.5f
 					#define FF_FACTOR 0.5f
-
 
 					float dirDot = glm::dot(glm::vec2(mc->newDirection[0], mc->newDirection[2]), glm::vec2(mc->oldPFDir[0], mc->oldPFDir[1]));
 
@@ -145,6 +150,7 @@ namespace Core
 			}
 			
 
+			//Dispatch is done, read data from GPU and use it for direction
 			if (m_readBack)
 			{
 				//glMemoryBarrier(GL_ALL_BARRIER_BITS);
@@ -159,10 +165,6 @@ namespace Core
 					MovementComponent* mc = WGETC<MovementComponent>(*it);
 					AttributeComponent* ac = WGETC<AttributeComponent>(*it);
 					UnitTypeComponent* utc = WGETC<UnitTypeComponent>(*it);
-
-					//mc->newDirection[0] = out[i].newDirection_speed.x;
-					//mc->newDirection[1] = out[i].newDirection_speed.y;
-					//mc->newDirection[2] = out[i].newDirection_speed.z;
 
 					#define PF_FACTOR 0.5f
 					#define FF_FACTOR 0.5f

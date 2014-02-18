@@ -63,7 +63,7 @@ namespace Core
 		bool m_readBack;
 		bool m_dispatch;
 
-		GLsync sync;
+		GLsync m_sync;
 	};
 }
 
