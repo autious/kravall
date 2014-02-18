@@ -55,6 +55,7 @@ namespace GFX
         m_font = nullptr;
 		m_showFBO = 0;
 		m_animationFramerate = 24;
+		m_reloadAnimationData = true;
 	}
 
 	RenderCore::~RenderCore()
@@ -394,6 +395,13 @@ namespace GFX
 			}
 		}
 
+		// Reload animations data if changed
+		if (m_reloadAnimationData)
+		{
+			m_animationManager->BindBufferData();
+			m_reloadAnimationData = false;
+		}
+
 		// Build GBuffers for all geometry										\
 		// When a call to light source is next in the render jobs list			|
 		//	- Save index of last geometry/first light in the render jobs list	 > DeferredPainter
@@ -616,6 +624,7 @@ namespace GFX
 
 	int RenderCore::AddAnimationToSkeleton(const int& skeletonID, glm::mat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame)
 	{
+		m_reloadAnimationData = true;
 		return m_animationManager->AddAnimationToSkeleton(skeletonID, frames, numFrames, numBonesPerFrame);
 	}
 

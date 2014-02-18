@@ -7,10 +7,11 @@
 #include <GFXDefines.hpp>
 #include "AnimationInfo.hpp"
 
+const unsigned int MAX_FRAMES = 512 * 512;
+
 class Skeleton
 {
 private:
-	const unsigned int MAX_FRAMES = 512 * 512;
 
 	struct AnimationInfo
 	{
@@ -23,13 +24,13 @@ public:
 	~Skeleton();
 
 	/*!
-	Adds an animation to a skeleton. The data must contain the same number of bones for all frames
-	\param frames Array of bone matrices sorted by frame
+	Adds info about an animation to a skeleton.
+	\param offset Offset describing where the animation is stored
 	\param numFrames Number of bone matrices in the array
 	\param numBonesPerFrame Number of bone matrices per frame
 	\return Returns the animation ID if successful, else returns #GFX_INVALID_ANIMATION or #GFX_INVALID_SKELETON
 	*/
-	int AddAnimation(glm::mat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame);
+	int AddAnimationInfo(const unsigned int& offset, const unsigned int& numFrames, const unsigned int& numBonesPerFrame);
 	
 	/*!
 	Gets the number of frames in a particular animation.
@@ -52,16 +53,13 @@ public:
 	*/
 	inline int GetTotalFrames(){ return m_numFrames; }
 	
-	void BindBuffersData();
-	void BindBuffers();
+	//void BindBuffersData();
+	//void BindBuffers();
 
 private:
-	std::vector<glm::mat4x4> m_animations;
 	std::vector<AnimationInfo> m_animationInfo;
 	unsigned int m_numAnimations;
 	unsigned int m_numFrames;
-
-	GLuint m_animationBuffer;
 };
 
 #endif

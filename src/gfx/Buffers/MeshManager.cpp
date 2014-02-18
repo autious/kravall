@@ -11,7 +11,12 @@ namespace GFX
 
 	MeshManager::~MeshManager()
 	{
-
+		for (auto it = m_meshes.begin(); it != m_meshes.end(); it++)
+		{
+			glDeleteVertexArrays(1, &it->VAO);
+			glDeleteBuffers(1, &it->IBO);
+		}
+		m_meshes.clear();
 	}
 
 	void MeshManager::BindMesh(const int& ibo, const int& vao)
