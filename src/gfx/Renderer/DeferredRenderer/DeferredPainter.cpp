@@ -243,7 +243,7 @@ namespace GFX
 						glDisable(GL_DEPTH_TEST);
 						glStencilFunc(GL_NOTEQUAL, 1, -1);
 						glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-						glLineWidth(m_outlineThickness);
+						glLineWidth(m_staticInstances[0].outlineColor[3]);
 						glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 						if (currentShader == m_staticBlend || currentShader == m_staticNormal)
