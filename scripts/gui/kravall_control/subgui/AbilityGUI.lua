@@ -27,6 +27,17 @@ function AbilityGUI:new(o)
         o.labelWrapperGUI:constrict()
     end
 
+    local function onExit(self)
+        if o.currentActiveAbility then
+            meta = getmetatable( o.currentActiveAbility )
+            o.selectionLabel:setLabel( meta.__tostring(o.currentActiveAbility) )
+        else
+            o.selectionLabel:setLabel( "" )
+        end
+        -- Rencenter the label.
+        o.labelWrapperGUI:constrict()
+    end
+
     local function onClickAbility(self, value)
         for i,v in pairs(o.localComponents) do
             if v == self then
@@ -34,7 +45,6 @@ function AbilityGUI:new(o)
                 o.onAbilitySelect(i)
             end
         end
-
     end
 
     self.localComponents = {}
@@ -47,7 +57,8 @@ function AbilityGUI:new(o)
                             matHoverOpen        = "assets/texture/ui/grenade-hover_00.material",
                             matHoverSelected    = "assets/texture/ui/grenade-extra_00.material",
                             onHover             = onHoverAbility,
-                            onClick             = onClickAbility
+                            onClick             = onClickAbility,
+                            onExit              = onExit
                         }
 
     self.localComponents[s_ability.Rout] = Checkbox:new {  
@@ -58,7 +69,8 @@ function AbilityGUI:new(o)
                             matHoverOpen        = "assets/texture/ui/rout-hover_00.material",
                             matHoverSelected    = "assets/texture/ui/rout-extra_00.material",
                             onHover             = onHoverAbility,
-                            onClick             = onClickAbility
+                            onClick             = onClickAbility,
+                            onExit              = onExit
                         }
      
 
@@ -70,7 +82,8 @@ function AbilityGUI:new(o)
                             matHoverOpen        = "assets/texture/ui/power-hover_00.material",
                             matHoverSelected    = "assets/texture/ui/power-extra_00.material",
                             onHover             = onHoverAbility,
-                            onClick             = onClickAbility
+                            onClick             = onClickAbility,
+                            onExit              = onExit
                         }
 
     self.localComponents[s_ability.Attack] = Checkbox:new {  
@@ -81,7 +94,8 @@ function AbilityGUI:new(o)
                             matHoverOpen        = "assets/texture/ui/attack-hover_00.material",
                             matHoverSelected    = "assets/texture/ui/attack-extra_00.material",
                             onHover             = onHoverAbility,
-                            onClick             = onClickAbility
+                            onClick             = onClickAbility,
+                            onExit              = onExit
                         }
 
     self.localComponents[s_ability.ArrestIndividual] = Checkbox:new {  
@@ -92,7 +106,8 @@ function AbilityGUI:new(o)
                             matHoverOpen        = "assets/texture/ui/arrest-individual-hover_00.material",
                             matHoverSelected    = "assets/texture/ui/arrest-individual-extra_00.material",
                             onHover             = onHoverAbility,
-                            onClick             = onClickAbility
+                            onClick             = onClickAbility,
+                            onExit              = onExit
                         }
 
     self.localComponents[s_ability.ArrestGroup] = Checkbox:new {  
@@ -103,7 +118,8 @@ function AbilityGUI:new(o)
                             matHoverOpen        = "assets/texture/ui/arrest-group-hover_00.material",
                             matHoverSelected    = "assets/texture/ui/arrest-group-extra_00.material",
                             onHover             = onHoverAbility,
-                            onClick             = onClickAbility
+                            onClick             = onClickAbility,
+                            onExit              = onExit
                         }
 
     self.localComponents[s_ability.TearGas] = Checkbox:new {  
@@ -114,7 +130,8 @@ function AbilityGUI:new(o)
                             matHoverOpen        = "assets/texture/ui/tear-gas-hover_00.material",
                             matHoverSelected    = "assets/texture/ui/tear-gas-extra_00.material",
                             onHover             = onHoverAbility,
-                            onClick             = onClickAbility
+                            onClick             = onClickAbility,
+                            onExit              = onExit
                         }
 
     self.localComponents[s_ability.Taze] = Checkbox:new {  
@@ -125,7 +142,8 @@ function AbilityGUI:new(o)
                             matHoverOpen        = "assets/texture/ui/taze-hover_00.material",
                             matHoverSelected    = "assets/texture/ui/taze-extra_00.material",
                             onHover             = onHoverAbility,
-                            onClick             = onClickAbility
+                            onClick             = onClickAbility,
+                            onExit              = onExit
                         }
 
     self.localComponents[s_ability.Blitz] = Checkbox:new {  
@@ -136,7 +154,8 @@ function AbilityGUI:new(o)
                             matHoverOpen        = "assets/texture/ui/blitz-hover_00.material",
                             matHoverSelected    = "assets/texture/ui/blitz-extra_00.material",
                             onHover             = onHoverAbility,
-                            onClick             = onClickAbility
+                            onClick             = onClickAbility,
+                            onExit              = onExit
                         }
 
     local standardAbilities = 
@@ -213,6 +232,7 @@ function AbilityGUI:new(o)
 end
 
 function AbilityGUI:setAbility( ability )
+    self.currentActiveAbility = ability
     for i,v in pairs( self.localComponents ) do
         if i == ability then
             v:setChecked( true )
