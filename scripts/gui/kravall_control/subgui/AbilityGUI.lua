@@ -3,17 +3,21 @@ local Checkbox = require "gui/component/Checkbox"
 local TextLabel = require "gui/component/TextLabel" 
 local U = require "gui/placement/util"
 
-local AbilityGUI = GUI:new{width=100,height=175,anchor="Center"}
+local AbilityGUI = GUI:new
+{
+    width=100,height=175,anchor="Center",
+    onAbilitySelect = function( ability ) 
+        print( ability )
+    end
+}
 
 s_ability = core.system.squad.abilities
+
 function AbilityGUI:new(o)
     o = GUI.new(self,o)
 
-
-    local components = {}
-
     local function onHoverAbility(self)
-        for i,v in pairs(components) do
+        for i,v in pairs(o.localComponents) do
             if v == self then
                 meta = getmetatable( i )
                 o.selectionLabel:setLabel( meta.__tostring(i) )
@@ -23,87 +27,116 @@ function AbilityGUI:new(o)
         o.labelWrapperGUI:constrict()
     end
 
+    local function onClickAbility(self, value)
+        for i,v in pairs(o.localComponents) do
+            if v == self then
+                meta = getmetatable( i )
+                o.onAbilitySelect(i)
+            end
+        end
 
-    components[s_ability.Flee] = Checkbox:new {  
+    end
+
+    self.localComponents = {}
+
+    self.localComponents[s_ability.Flee] = Checkbox:new {  
+                            doStateSwitchOnPress = false,
                             checked = false,
                             matOpen             = "assets/texture/ui/grenade-unselected_00.material",
                             matSelected         = "assets/texture/ui/grenade-selected_00.material",
                             matHoverOpen        = "assets/texture/ui/grenade-hover_00.material",
                             matHoverSelected    = "assets/texture/ui/grenade-extra_00.material",
-                            onHover             = onHoverAbility
+                            onHover             = onHoverAbility,
+                            onClick             = onClickAbility
                         }
 
-    components[s_ability.Rout] = Checkbox:new {  
+    self.localComponents[s_ability.Rout] = Checkbox:new {  
+                            doStateSwitchOnPress = false,
                             checked = false,
                             matOpen             = "assets/texture/ui/rout-unselected_00.material",
                             matSelected         = "assets/texture/ui/rout-selected_00.material",
                             matHoverOpen        = "assets/texture/ui/rout-hover_00.material",
                             matHoverSelected    = "assets/texture/ui/rout-extra_00.material",
-                            onHover             = onHoverAbility
+                            onHover             = onHoverAbility,
+                            onClick             = onClickAbility
                         }
      
 
-    components[s_ability.Sprint] = Checkbox:new {  
+    self.localComponents[s_ability.Sprint] = Checkbox:new {  
+                            doStateSwitchOnPress = false,
                             checked = false,
                             matOpen             = "assets/texture/ui/power-unselected_00.material",
                             matSelected         = "assets/texture/ui/power-selected_00.material",
                             matHoverOpen        = "assets/texture/ui/power-hover_00.material",
                             matHoverSelected    = "assets/texture/ui/power-extra_00.material",
-                            onHover             = onHoverAbility
+                            onHover             = onHoverAbility,
+                            onClick             = onClickAbility
                         }
 
-    components[s_ability.Attack] = Checkbox:new {  
+    self.localComponents[s_ability.Attack] = Checkbox:new {  
+                            doStateSwitchOnPress = false,
                             checked = false,
                             matOpen             = "assets/texture/ui/attack-unselected_00.material",
                             matSelected         = "assets/texture/ui/attack-selected_00.material",
                             matHoverOpen        = "assets/texture/ui/attack-hover_00.material",
                             matHoverSelected    = "assets/texture/ui/attack-extra_00.material",
-                            onHover             = onHoverAbility
+                            onHover             = onHoverAbility,
+                            onClick             = onClickAbility
                         }
 
-    components[s_ability.ArrestIndividual] = Checkbox:new {  
+    self.localComponents[s_ability.ArrestIndividual] = Checkbox:new {  
+                            doStateSwitchOnPress = false,
                             checked = false,
                             matOpen             = "assets/texture/ui/arrest-individual-unselected_00.material",
                             matSelected         = "assets/texture/ui/arrest-individual-selected_00.material",
                             matHoverOpen        = "assets/texture/ui/arrest-individual-hover_00.material",
                             matHoverSelected    = "assets/texture/ui/arrest-individual-extra_00.material",
-                            onHover             = onHoverAbility
+                            onHover             = onHoverAbility,
+                            onClick             = onClickAbility
                         }
 
-    components[s_ability.ArrestGroup] = Checkbox:new {  
+    self.localComponents[s_ability.ArrestGroup] = Checkbox:new {  
+                            doStateSwitchOnPress = false,
                             checked = false,
                             matOpen             = "assets/texture/ui/arrest-group-unselected_00.material",
                             matSelected         = "assets/texture/ui/arrest-group-selected_00.material",
                             matHoverOpen        = "assets/texture/ui/arrest-group-hover_00.material",
                             matHoverSelected    = "assets/texture/ui/arrest-group-extra_00.material",
-                            onHover             = onHoverAbility
+                            onHover             = onHoverAbility,
+                            onClick             = onClickAbility
                         }
 
-    components[s_ability.TearGas] = Checkbox:new {  
+    self.localComponents[s_ability.TearGas] = Checkbox:new {  
+                            doStateSwitchOnPress = false,
                             checked = false,
                             matOpen             = "assets/texture/ui/tear-gas-unselected_00.material",
                             matSelected         = "assets/texture/ui/tear-gas-selected_00.material",
                             matHoverOpen        = "assets/texture/ui/tear-gas-hover_00.material",
                             matHoverSelected    = "assets/texture/ui/tear-gas-extra_00.material",
-                            onHover             = onHoverAbility
+                            onHover             = onHoverAbility,
+                            onClick             = onClickAbility
                         }
 
-    components[s_ability.Taze] = Checkbox:new {  
+    self.localComponents[s_ability.Taze] = Checkbox:new {  
+                            doStateSwitchOnPress = false,
                             checked = false,
                             matOpen             = "assets/texture/ui/taze-unselected_00.material",
                             matSelected         = "assets/texture/ui/taze-selected_00.material",
                             matHoverOpen        = "assets/texture/ui/taze-hover_00.material",
                             matHoverSelected    = "assets/texture/ui/taze-extra_00.material",
-                            onHover             = onHoverAbility
+                            onHover             = onHoverAbility,
+                            onClick             = onClickAbility
                         }
 
-    components[s_ability.Blitz] = Checkbox:new {  
+    self.localComponents[s_ability.Blitz] = Checkbox:new {  
+                            doStateSwitchOnPress = false,
                             checked = false,
                             matOpen             = "assets/texture/ui/blitz-unselected_00.material",
                             matSelected         = "assets/texture/ui/blitz-selected_00.material",
                             matHoverOpen        = "assets/texture/ui/blitz-hover_00.material",
                             matHoverSelected    = "assets/texture/ui/blitz-extra_00.material",
-                            onHover             = onHoverAbility
+                            onHover             = onHoverAbility,
+                            onClick             = onClickAbility
                         }
 
     local standardAbilities = 
@@ -132,7 +165,7 @@ function AbilityGUI:new(o)
 
     local standardComponents = {}
     for _,v in ipairs( standardAbilities ) do
-        standardComponents[#standardComponents+1] = components[v]
+        standardComponents[#standardComponents+1] = self.localComponents[v]
     end
     width,height = U.getTotalDimHeight( standardComponents, 10, 10 )
     o.standard = GUI:new({width=width,height=height})
@@ -141,7 +174,7 @@ function AbilityGUI:new(o)
 
     local policeSpecificComponents = {}
     for _,v in ipairs( specialAbilities ) do
-        policeSpecificComponents[#policeSpecificComponents+1] = components[v]
+        policeSpecificComponents[#policeSpecificComponents+1] = self.localComponents[v]
     end
     width,height = U.getTotalDimHeight( standardComponents, 10, 10 )
     o.policeSpecific = GUI:new({width=width,height=height})
@@ -150,7 +183,7 @@ function AbilityGUI:new(o)
 
     local policeSpecificComponents2 = {}
     for _,v in ipairs( specialAbilities2 ) do
-        policeSpecificComponents2[#policeSpecificComponents2+1] = components[v]
+        policeSpecificComponents2[#policeSpecificComponents2+1] = self.localComponents[v]
     end
     width,height = U.getTotalDimHeight( standardComponents, 10, 10 )
     o.policeSpecific2 = GUI:new({width=width,height=height})
@@ -168,7 +201,6 @@ function AbilityGUI:new(o)
     o.buttonGUI:addComponents( buttonGUIComponents )
     o.buttonGUI:addPlacementHandler( require "gui/placement/EastHorizontalPlacer" )
 
-
     o.labelWrapperGUI:addPlacementHandler( require "gui/placement/CenterPlacer" )
     o.selectionLabel = TextLabel:new({label=""})
     o.labelWrapperGUI:addComponent( o.selectionLabel )
@@ -178,6 +210,16 @@ function AbilityGUI:new(o)
     o:addPlacementHandler( require "gui/placement/EastPlacer" )
 
     return o
+end
+
+function AbilityGUI:setAbility( ability )
+    for i,v in pairs( self.localComponents ) do
+        if i == ability then
+            v:setChecked( true )
+        else
+            v:setChecked( false )
+        end 
+    end
 end
 
 return AbilityGUI

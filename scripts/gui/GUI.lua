@@ -142,4 +142,8 @@ function GUI:renderDebug(delta)
     end
 end
 
+function GUI:update()
+    print( "GUI:update(): WARNING THIS FUNCTION IS NO LONGER IN ACTIVE USE I REFER TO renderDebug(delta) instead")
+end
+
 return GUI
