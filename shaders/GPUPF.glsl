@@ -1,7 +1,7 @@
 #version 430 core
 
 #define WORK_GROUP_SIZE 1024
-#define MAXIMUM_ENTITIES 1024
+#define MAXIMUM_ENTITIES 2048
 #define MAX_CURVES 1024;
 
 #define RIOTER_TYPE 0
@@ -449,7 +449,7 @@ void main()
 			float chargeSum = 0;
 			int groupID =  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance.x);
 
-#define navMeshWallRepellVal -1000.0
+			#define navMeshWallRepellVal -1000.0
 
 			vec3 navMeshWallVector;
 			navMeshWallVector.x = int(gInput[index].groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance.w * 0.001);

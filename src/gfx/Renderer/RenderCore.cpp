@@ -123,7 +123,7 @@ namespace GFX
 		
 		// Set default settings
 		m_settings[GFX_SHADOW_QUALITY] = GFX_SHADOWS_VARIANCE; // TODO: Implement basic shadow mapping as low res option
-		m_settings[GFX_SHADOW_RESOLUTION] = 1024;
+		m_settings[GFX_SHADOW_RESOLUTION] = 512;
 
 		m_normalDepth = new FBOTexture();
 		m_diffuse = new FBOTexture();
@@ -457,7 +457,7 @@ namespace GFX
 		CT(m_overlayPainter->Render(renderJobIndex, m_overlayViewMatrix, m_overlayProjMatrix), "Console");
 
 		// Draw debug information
-		CT(m_debugPainter->Render(m_depthBuffer, m_normalDepth, m_viewMatrix, m_projMatrix, true), "Debug");
+		CT(m_debugPainter->Render(m_depthBuffer, m_normalDepth, m_viewMatrix, m_projMatrix, false), "Debug");
 
 		// Draw the console
 		CT(m_consolePainter->Render(), "Console");
