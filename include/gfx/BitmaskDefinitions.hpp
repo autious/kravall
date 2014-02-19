@@ -34,10 +34,10 @@ namespace GFX
 
     namespace TRANSLUCENCY_TYPES
     {
-        static const unsigned int OPAQUE = 1;
-        static const unsigned int ADDITIVE = 2;
-        static const unsigned int SUBTRACTIVE = 3;
-        static const unsigned int MULTIPLICATIVE = 4;
+		static const unsigned int OPAQUE_TRANSLUCENCY = 1;
+		static const unsigned int ADDITIVE_TRANSLUCENCY = 2;
+		static const unsigned int SUBTRACTIVE_TRANSLUCENCY = 3;
+		static const unsigned int MULTIPLICATIVE_TRANSLUCENCY = 4;
     }
 
 	namespace LIGHT_TYPES

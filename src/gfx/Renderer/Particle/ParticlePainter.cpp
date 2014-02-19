@@ -152,7 +152,7 @@ namespace GFX
                 currentTranslucency = translucency;
                 switch (currentTranslucency)
                 {
-                    case GFX::TRANSLUCENCY_TYPES::OPAQUE:
+				case GFX::TRANSLUCENCY_TYPES::OPAQUE_TRANSLUCENCY:
                     {
                         glDisable(GL_BLEND);
                         glBlendEquation(GL_FUNC_ADD);
@@ -160,7 +160,7 @@ namespace GFX
                         break;
                     }
 
-                    case GFX::TRANSLUCENCY_TYPES::ADDITIVE:
+				case GFX::TRANSLUCENCY_TYPES::ADDITIVE_TRANSLUCENCY:
                     {
                         glEnable(GL_BLEND);
                         glBlendEquation(GL_FUNC_ADD);
@@ -168,7 +168,7 @@ namespace GFX
                         break;
                     }
 
-                    case GFX::TRANSLUCENCY_TYPES::SUBTRACTIVE:
+				case GFX::TRANSLUCENCY_TYPES::SUBTRACTIVE_TRANSLUCENCY:
                     {
                         glEnable(GL_BLEND);
                         glBlendEquation(GL_FUNC_SUBTRACT);
@@ -176,7 +176,7 @@ namespace GFX
                         break;
                     }
 
-                    case GFX::TRANSLUCENCY_TYPES::MULTIPLICATIVE:
+				case GFX::TRANSLUCENCY_TYPES::MULTIPLICATIVE_TRANSLUCENCY:
                     {
                         glEnable(GL_BLEND);
                         glBlendEquation(GL_FUNC_ADD);

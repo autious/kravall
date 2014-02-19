@@ -32,22 +32,22 @@ void main()
         scale = GeometryIn[0].life;
     }
 
-    gl_Position = GeometryOut.Position = gProjection * (viewSpacePointPos + vec4(vec3(1.0f, 1.0f, 0.0f) * scale, 1.0f));
+    gl_Position = GeometryOut.Position = gProjection * (viewSpacePointPos + vec4(vec3(1.0f, 1.0f, 0.0f) * scale, 0.0f));
     GeometryOut.UV = vec2(1.0f, 1.0f);
     GeometryOut.life = GeometryIn[0].life;
     EmitVertex();
 
-    gl_Position = GeometryOut.Position = gProjection * (viewSpacePointPos + vec4(vec3(-1.0f, 1.0f, 0.0f) * scale, 1.0f));
+    gl_Position = GeometryOut.Position = gProjection * (viewSpacePointPos + vec4(vec3(-1.0f, 1.0f, 0.0f) * scale, 0.0f));
     GeometryOut.UV = vec2(0.0f, 1.0f);
     GeometryOut.life = GeometryIn[0].life;
     EmitVertex();
 
-    gl_Position = GeometryOut.Position = gProjection * (viewSpacePointPos + vec4(vec3(1.0f, -1.0f, 0.0f) * scale, 1.0f));
+    gl_Position = GeometryOut.Position = gProjection * (viewSpacePointPos + vec4(vec3(1.0f, -1.0f, 0.0f) * scale, 0.0f));
     GeometryOut.UV = vec2(1.0f, 0.0f);
     GeometryOut.life = GeometryIn[0].life;
     EmitVertex();
 
-    gl_Position = GeometryOut.Position = gProjection * (viewSpacePointPos + vec4(vec3(-1.0f, -1.0f, 0.0f) * scale, 1.0f));
+    gl_Position = GeometryOut.Position = gProjection * (viewSpacePointPos + vec4(vec3(-1.0f, -1.0f, 0.0f) * scale, 0.0f));
     GeometryOut.UV = vec2(0.0f, 0.0f);
     GeometryOut.life = GeometryIn[0].life;
     EmitVertex();
