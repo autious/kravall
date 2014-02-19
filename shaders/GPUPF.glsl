@@ -458,9 +458,6 @@ void main()
 			float navMeshWallDistance = abs( gInput[index].groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance.w - navMeshWallVector.x * 1000 ) - abs( navMeshWallVector.z * 100 ) - 200;
 			navMeshWallVector = normalize( navMeshWallVector ) * navMeshWallDistance;
 
-			//navMeshWallVector.z *= -1;
-			navMeshWallVector.x *= -1;
-
 			// ---------------------------------------- -1, 0 ----------------------------------------
 			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x - 1, offsetPos.z + 0), groupID) + dot( navMeshWallVector, normalize( vec3( -1, 0, 0))) * navMeshWallRepellVal;
 			chargeSums[0].x = -1;																									    

@@ -74,7 +74,7 @@ void Core::NavMeshCollisionSystem::Update( float delta )
 				if( distanceToLine < ffc->distance )
 				{
 					ffc->distance = distanceToLine;
-					ffc->wallDirX = abs( cross.z ) < 0.7853981633f ? cross.x > 0 ? 1.0f : -1.0f : 0.0f;
+					ffc->wallDirX = abs( cross.z ) < 0.7853981633f ? cross.x > 0 ? -1.0f : 1.0f : 0.0f;
 					ffc->wallDirZ = abs( cross.x ) < 0.7853981633f ? cross.z > 0 ? 1.0f : -1.0f : 0.0f;
 				}				
 			}
