@@ -13,7 +13,6 @@ function AbilityGUI:new(o)
     local components = {}
 
     local function onHoverAbility(self)
-        print( "Woah" )
         for i,v in pairs(components) do
             if v == self then
                 meta = getmetatable( i )
