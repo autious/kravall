@@ -53,12 +53,16 @@ namespace Core
 			if( attackerTc )
 				Core::TargetingComponent::StopAttacking( rioterEntities[i], *attackerTc );
 
-			for( int p = 0; p < tc->numberOfAttackers; p++ )
-			{
-				Core::TargetingComponent* attackerTcomp = WGETC<Core::TargetingComponent>(tc->attackers[p]);
-				if( attackerTcomp )
-					attackerTcomp->target = INVALID_ENTITY;
-			}
+			//for( int p = 0; p < tc->numberOfAttackers; p++ )
+			//{
+			//	Core::TargetingComponent* attackerTcomp = WGETC<Core::TargetingComponent>(tc->attackers[p]);
+			//	if( attackerTcomp )
+			//		attackerTcomp->target = INVALID_ENTITY;
+			//}
+
+			Core::GraphicsComponent* gfxc = WGETC<Core::GraphicsComponent>( rioterEntities[i] );
+			if( gfxc )
+				gfxc->outlineColor[3] = 0.0f;
 
 			Core::AnimationComponent* animc = WGETC<Core::AnimationComponent>( rioterEntities[i] );
 			if( animc )
@@ -80,12 +84,18 @@ namespace Core
 			//LOG_WARNING << "police " << policeEntities[i] << " died, having " << tc->attackers << " number of attackers" << std::endl;
 			//std::cout << "police " << policeEntities[i] << " died, attacked by " << tc->attackers[0] << "  " << tc->attackers[1] << "  " << tc->attackers[2] << "  " << tc->attackers[3] << "  " << tc->attackers[4] << ", attacking " << tc->target << std::endl;
 
-			for( int p = 0; p < tc->numberOfAttackers; p++ )
-			{
-				Core::TargetingComponent* attackerTcomp = WGETC<Core::TargetingComponent>(tc->attackers[p]);
-				if( attackerTcomp )
-					attackerTcomp->target = INVALID_ENTITY;
-			}
+			//for( int p = 0; p < tc->numberOfAttackers; p++ )
+			//{
+			//	Core::TargetingComponent* attackerTcomp = WGETC<Core::TargetingComponent>(tc->attackers[p]);
+			//	if( attackerTcomp )
+			//		attackerTcomp->target = INVALID_ENTITY;
+			//}
+
+
+			Core::GraphicsComponent* gfxc = WGETC<Core::GraphicsComponent>( policeEntities[i] );
+			if( gfxc )
+				gfxc->outlineColor[3] = 0.0f;
+
 
 			Core::AnimationComponent* animc = WGETC<Core::AnimationComponent>( policeEntities[i] );
 			if( animc )

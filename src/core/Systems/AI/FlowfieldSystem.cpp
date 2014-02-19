@@ -51,10 +51,14 @@ void Core::FlowfieldSystem::Update( float delta )
 				
 			if( !Core::PathFinder::CheckLineVsNavMesh( position, navGoal, 3.0f, ffc->node ) )
 			{
-				glm::vec3 newDir = glm::normalize( navGoal - position );
-				glm::vec3 currentDir = glm::vec3( mvmc->newDirection[0], mvmc->newDirection[1], mvmc->newDirection[2] ); 
-				
-				Core::MovementComponent::SetDirection( mvmc, newDir.x, 0.0f, newDir.z );
+				if( glm::dot( navGoal - position, navGoal - position ) == 0.0f )
+					MovementComponent::SetDirection( mvmc, 0.0f, 0.0f, 0.0f );
+				else
+				{
+					glm::vec3 newDir = glm::normalize( navGoal - position );
+					glm::vec3 currentDir = glm::vec3( mvmc->newDirection[0], mvmc->newDirection[1], mvmc->newDirection[2] ); 
+					Core::MovementComponent::SetDirection( mvmc, newDir.x, 0.0f, newDir.z );
+				}
 			}
 			else
 			{
