@@ -5,7 +5,7 @@
 #include <Lua/Bridges/ContentLoading/ContentHandle.hpp>
 
 #include <World.hpp>
-#include <Systems/ParticleSystem.hpp>
+#include <Systems/EngineSupport/ParticleSystem.hpp>
 
 extern "C"
 {

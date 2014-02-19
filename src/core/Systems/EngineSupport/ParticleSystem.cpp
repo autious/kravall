@@ -169,6 +169,7 @@ namespace Core
             GFX::SetBitmaskValue(bitmask, GFX::BITMASK::MESH_ID, prc->m_particleBufferId);
             GFX::SetBitmaskValue(bitmask, GFX::BITMASK::MATERIAL_ID, prc->m_materialId);
             GFX::SetBitmaskValue(bitmask, GFX::BITMASK::LAYER, GFX::LAYER_TYPES::MESH_LAYER);
+            GFX::SetBitmaskValue(bitmask, GFX::BITMASK::TRANSLUCENCY_TYPE, GFX::TRANSLUCENCY_TYPES::ADDITIVE_TRANSLUCENCY);
             
             GFX::Draw(bitmask, nullptr);
         }

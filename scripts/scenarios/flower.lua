@@ -10,7 +10,7 @@ scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
 scen:registerInitCallback( function() scen.gamemode:init() end )
 
 scen.gamemode.camera:lookAt( core.glm.vec3.new( 0, 60, 120 ), core.glm.vec3.new( 0, 20, 50 ) )
-core.gfx.setWhitepoint(1.0, 1.0, 1.0)
+core.gfx.setWhitepoint(2.0, 2.0, 2.0)
 --Plane
 function scen:load()
 
@@ -50,7 +50,7 @@ function scen:load()
                         spotangle = 3.14/4.0,
                         spotpenumbra = 0.03,
                         type = core.gfx.objectTypes.Light,
-                        lighttype = core.gfx.lightTypes.DirShadow
+                        lighttype = core.gfx.lightTypes.Dir
                     }
         },
         {
@@ -65,8 +65,8 @@ function scen:load()
             type = core.componentType.RotationComponent,
             data = { rotation = {1,-0.7,-1,0 } }
         }
-    } 
-    )
+    })
+    
 end
 
 local function Update(delta)

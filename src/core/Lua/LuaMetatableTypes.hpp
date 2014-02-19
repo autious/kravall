@@ -67,15 +67,14 @@ struct LuaHoverText
     int hoverTextId;
 };
 
-<<<<<<< HEAD
 struct LuaParticleDefinition
 {
     Core::ParticleHandle handle;
-=======
+};
+
 struct LuaTTFFont
 {
     GFX::FontData * fontPtr;
->>>>>>> development
 };
 
 inline glm::vec2* luau_checkglmvec2( lua_State* state, int pos ) { return static_cast<glm::vec2*>(luaL_checkudata( state, pos, GLMVEC2_META_TYPE )); }
