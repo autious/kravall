@@ -61,7 +61,8 @@ namespace GFX
 
         GLenum drawBuffers[] = { GL_NONE, GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
         glDrawBuffers(5, drawBuffers);
-
+        
+        glEnable(GL_DEPTH_TEST);
         glDepthMask(GL_FALSE);
 
 	    BasicCamera bc;
@@ -134,6 +135,14 @@ namespace GFX
             {
                 currentMesh = mesh;
                 particleData = m_particleManager->GetParticleData(currentMesh);
+
+                //TODO: Remove this check once the level heap is destroyed in a finalizer in the content manager
+                //This check is needed since the level heap is destroyed before calling render. The particle data is destroyed when the level heap is cleared.
+                if(particleData == nullptr)
+                {
+                    continue;
+                }
+                
                 glBindBuffer(GL_ARRAY_BUFFER, particleData->VBO);
                 glBindVertexArray(particleData->VAO);
             }

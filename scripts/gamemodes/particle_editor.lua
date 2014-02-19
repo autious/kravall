@@ -89,7 +89,7 @@ function T:init()
     local yAccelerationSlider = Slider:new(genNewSliderTable())
     local zAccelerationSlider = Slider:new(genNewSliderTable())
 
-    local coneEmitterCheckbox = Checkbox:new({checked=false})
+    local coneEmitterCheckbox = Checkbox:new({checked=true})
     local surfaceEmitterCheckbox = Checkbox:new({checked=false})
 
     function rateSlider.onChange(rateSlider, value )
@@ -198,11 +198,6 @@ function T:init()
         self.emitterEntity:set(core.componentType.EmitterComponent, {velocityVariance={currentVelocityVariance[1], currentVelocityVariance[2], zVelocityVariance}}, true)
         self.velocityVarianceLabel:setLabel( "Velocity Variance " .. string.format("%+6.2f %+6.2f %+6.2f", currentVelocityVariance[1], currentVelocityVariance[2], zVelocityVariance))
     end
-    local function onClick(self, value )
-        coneEmitterCheckbox:setChecked(false)
-        surfaceEmitterCheckbox:setChecked(false)
-        self:setChecked(true)
-    end
 
     function xAccelerationSlider.onChange(xAccelerationSlider, value)
         local xAcceleration = ((value > 0) and value*100 or 0) - 50
@@ -227,6 +222,26 @@ function T:init()
         self.emitterEntity:set(core.componentType.EmitterComponent, {acceleration={currentAcceleration[1], currentAcceleration[2], zAcceleration}}, true)
         self.accelerationLabel:setLabel( "Acceleration " .. string.format("%+6.2f %+6.2f %+6.2f", currentAcceleration[1], currentAcceleration[2], zAcceleration))
     end
+
+    local function onClick(self, value )
+        local wasChecked = self.checked
+        coneEmitterCheckbox:setChecked(false)
+        surfaceEmitterCheckbox:setChecked(false)
+        self:setChecked(true)
+
+        if wasChecked then
+            self:createControlls()
+        end        
+    end
+
+    function coneEmitterCheckbox.createControlls(coneEmitterCheckbox)
+        self:CreateConeEmitterControlls()
+    end
+
+    function surfaceEmitterCheckbox.createControlls(coneEmitterCheckbox)
+       self:CreateSurfaceEmitterControlls()
+    end
+
     rateSlider:setToMiddle()
     xOffsetSlider:setToMiddle()
     yOffsetSlider:setToMiddle()
@@ -291,18 +306,31 @@ function T:init()
     self.westGuiContainer = westGuiContainer
     self.westGuiContainer:addPlacementHandler(WestPlacer)
     self.westGuiContainer:addComponent(westGui)
-    
+
     self:CreateConeEmitterControlls()
 end
 
 function T:update( delta )
-    local emitterComponent = self.emitterEntity:get(core.componentType.EmitterComponent)
+    local emc = self.emitterEntity:get(core.componentType.EmitterComponent)
+    if emc.type == core.system.particle.emitters.Cone then
+        local offset = emc.offset
+        local direction = emc.coneDirection
+        core.draw.drawLine(offset[1], offset[2], offset[3], offset[1] + direction[1]*10 , offset[2] + direction[2] * 10, offset[3] + direction[3] * 10, 1, 0, 0, 1 )
+    elseif emc.type == core.system.particle.emitters.Surface then
+        local offset = emc.offset
+        local directionOne = emc.surfaceDirectionOne
+        local directionTwo = emc.surfaceDirectionTwo
+        core.draw.drawLine(offset[1], offset[2], offset[3], offset[1] + directionOne[1] , offset[2] + directionOne[2], offset[3] + directionOne[3], 0, 0, 1, 1 )
+        core.draw.drawLine(offset[1], offset[2], offset[3], offset[1] + directionTwo[1] , offset[2] + directionTwo[2], offset[3] + directionTwo[3], 0, 1, 0, 1 )
+    end
+
     self.camera:update( delta )
 end
 
 function T:destroy()
     self.asm:destroy()
     self.westGuiContainer:destroy()
+    self.eastGuiContainer:destroy()
     core.entity.destroy(self.emitterEntity)
 end
 
@@ -320,6 +348,7 @@ function T:CreateConeEmitterControlls()
     self.eastGuiContainer = GUI:new()
     local eastGui = GUI:new()
 
+    self.emitterEntity:set(core.componentType.EmitterComponent, {type = core.system.particle.emitters.Cone }, true )
     self.coneDirectionLabel = Label:new({label = "Direction"})
     self.coneAngleLabel = Label:new({label = "Angle"})
     self.coneAngleVarianceLabel = Label:new({label = "Angle Variance"})
@@ -333,8 +362,8 @@ function T:CreateConeEmitterControlls()
     local coneAngleVarianceSlider = Slider:new(genNewSliderTable())
 
     function pitchConeDirectionSlider.onChange(pitchConeDirectionSlider, value)
-        local pitchRotation =  value*2*3.14 
-        local yawRotation = yawConeDirectionSlider.a*2*3.14
+        local pitchRotation =  value*360 - 180
+        local yawRotation = yawConeDirectionSlider.a*180 - 90
         local emitterComponent = self.emitterEntity:get(core.componentType.EmitterComponent)      
         
         local pitchMat = core.glm.mat4.new()
@@ -346,7 +375,7 @@ function T:CreateConeEmitterControlls()
         pitchMat = core.glm.mat4.rotate(pitchMat, pitchRotation, yAxis)
         yawMat = core.glm.mat4.rotate(yawMat, yawRotation, xAxis)
 
-        local finalRotation = core.glm.mat4.multiply(yawMat, pitchMat)
+        local finalRotation = core.glm.mat4.multiply(pitchMat, yawMat)
 
         local direction = finalRotation:multiply(forward) 
         local direction = {direction:get()}
@@ -355,8 +384,8 @@ function T:CreateConeEmitterControlls()
     end
 
     function yawConeDirectionSlider.onChange(yawConeDirectionSlider, value)
-        local yawRotation =  value*2*3.14 
-        local pitchRotation = pitchConeDirectionSlider.a*2*3.14
+        local yawRotation =  value*180 - 90
+        local pitchRotation = pitchConeDirectionSlider.a*360 - 180
         local emitterComponent = self.emitterEntity:get(core.componentType.EmitterComponent)      
         
         local pitchMat = core.glm.mat4.new()
@@ -368,7 +397,7 @@ function T:CreateConeEmitterControlls()
         pitchMat = core.glm.mat4.rotate(pitchMat, pitchRotation, yAxis)
         yawMat = core.glm.mat4.rotate(yawMat, yawRotation, xAxis)
 
-        local finalRotation = core.glm.mat4.multiply(yawMat, pitchMat)
+        local finalRotation = core.glm.mat4.multiply(pitchMat, yawMat)
 
         local direction = finalRotation:multiply(forward) 
         local direction = {direction:get()}
@@ -383,13 +412,13 @@ function T:CreateConeEmitterControlls()
     end
 
     function coneAngleVarianceSlider.onChange(coneAngleVarianceSlider, value )
-        local newConeAngleVariance = value*180
+        local newConeAngleVariance = value*180 
         self.emitterEntity:set(core.componentType.EmitterComponent, {coneAngleVariance = newConeAngleVariance}, true)        
         self.coneAngleVarianceLabel:setLabel( "Cone Angle Variance " .. string.format("%i degrees", newConeAngleVariance))
     end
 
-    pitchConeDirectionSlider:setToMinimum()
-    yawConeDirectionSlider:setToMinimum()
+    pitchConeDirectionSlider:setToMiddle()
+    yawConeDirectionSlider:setToMiddle()
     coneAngleSlider:setToMinimum()
     coneAngleVarianceSlider:setToMinimum()
 
@@ -409,6 +438,163 @@ function T:CreateConeEmitterControlls()
     self.eastGuiContainer:addComponent(eastGui)
 end
 
+function T:CreateSurfaceEmitterControlls()
+    local GUI = require "gui/GUI"
+    local Slider = require "gui/component/Slider"
+    local Label = require "gui/component/TextLabel"
+
+    local EastPlacer = require "gui/placement/EastPlacer"
+
+    if self.eastGuiContainer ~= nil then
+        self.eastGuiContainer:destroy()
+    end
+
+    self.eastGuiContainer = GUI:new()
+    local eastGui = GUI:new()
+
+    self.emitterEntity:set(core.componentType.EmitterComponent, {type = core.system.particle.emitters.Surface }, true )
+    self.surfaceDirectionOneLabel = Label:new({label = "Direction"})
+    self.surfaceLengthOneLabel = Label:new({label = "Length"})
+    self.surfaceDirectionTwoLabel = Label:new({label = "Direction"})
+    self.surfaceLengthTwoLabel = Label:new({label = "Length"})
+
+    local folder = "assets/texture/ui/"
+    local function genNewSliderTable() return {matReleased=folder .. "slider-knob-release_01.material", matPressed=folder .. "slider-knob-press_01.material", matHover=folder .. "slider-knob-hover_01.material", matBackground=folder .. "slider-background_01.material", x=0, y=0, xoffset=0, yoffset=0, a=0, onChange = function(self, value) end } end
+
+    local pitchSurfaceDirectionOneSlider = Slider:new(genNewSliderTable())
+    local yawSurfaceDirectionOneSlider = Slider:new(genNewSliderTable())
+    local lengthSurfaceDirectionOneSlider = Slider:new(genNewSliderTable())
+    local pitchSurfaceDirectionTwoSlider = Slider:new(genNewSliderTable())
+    local yawSurfaceDirectionTwoSlider = Slider:new(genNewSliderTable())
+    local lengthSurfaceDirectionTwoSlider = Slider:new(genNewSliderTable())
+
+    function pitchSurfaceDirectionOneSlider.onChange(pitchSurfaceDirectionOneSlider, value)
+        local pitchRotation =  value*360 - 180
+        local yawRotation = yawSurfaceDirectionOneSlider.a*180 - 90
+        local emitterComponent = self.emitterEntity:get(core.componentType.EmitterComponent)      
+        local length = lengthSurfaceDirectionOneSlider.a * 50
+        
+        local pitchMat = core.glm.mat4.new()
+        local yawMat = core.glm.mat4.new()
+        local yAxis = core.glm.vec3.new(0, 1, 0)
+        local xAxis = core.glm.vec3.new(1, 0, 0)
+        local forward = core.glm.vec4.new(0, 0, -length, 0)
+
+        pitchMat = core.glm.mat4.rotate(pitchMat, pitchRotation, yAxis)
+        yawMat = core.glm.mat4.rotate(yawMat, yawRotation, xAxis)
+
+        local finalRotation = core.glm.mat4.multiply(pitchMat, yawMat)
+
+        local direction = finalRotation:multiply(forward) 
+        local direction = {direction:get()}
+        self.emitterEntity:set(core.componentType.EmitterComponent, {surfaceDirectionOne={direction[1], direction[2], direction[3] }}, true)
+        self.surfaceDirectionOneLabel:setLabel( "Direction One " .. string.format("%+6.2f %+6.2f %+6.2f", direction[1], direction[2], direction[3]))
+    end
+
+    function yawSurfaceDirectionOneSlider.onChange(yawSurfaceDirectionOneSlider, value)
+        local yawRotation =  value*180 - 90
+        local pitchRotation = pitchSurfaceDirectionOneSlider.a*360 - 180
+        local emitterComponent = self.emitterEntity:get(core.componentType.EmitterComponent)      
+        local length = lengthSurfaceDirectionOneSlider.a * 50
+        
+        local pitchMat = core.glm.mat4.new()
+        local yawMat = core.glm.mat4.new()
+        local yAxis = core.glm.vec3.new(0, 1, 0)
+        local xAxis = core.glm.vec3.new(1, 0, 0)
+        local forward = core.glm.vec4.new(0, 0, -length, 0)
+
+        pitchMat = core.glm.mat4.rotate(pitchMat, pitchRotation, yAxis)
+        yawMat = core.glm.mat4.rotate(yawMat, yawRotation, xAxis)
+
+        local finalRotation = core.glm.mat4.multiply(pitchMat, yawMat)
+
+        local direction = finalRotation:multiply(forward) 
+        local direction = {direction:get()}
+        self.emitterEntity:set(core.componentType.EmitterComponent, {surfaceDirectionOne={direction[1], direction[2], direction[3] }}, true)
+        self.surfaceDirectionOneLabel:setLabel( "Direction One " .. string.format("%+6.2f %+6.2f %+6.2f", direction[1], direction[2], direction[3]))
+    end
+
+    function lengthSurfaceDirectionOneSlider.onChange(lengthSurfaceDirectionOneSlider, value)
+        pitchSurfaceDirectionOneSlider:onChange(pitchSurfaceDirectionOneSlider.a)
+        self.surfaceLengthOneLabel:setLabel( "Length One " .. string.format("%+6.2f", value*50))
+    end
+
+    function pitchSurfaceDirectionTwoSlider.onChange(pitchSurfaceDirectionTwoSlider, value)
+        local pitchRotation =  value*360 - 180
+        local yawRotation = yawSurfaceDirectionTwoSlider.a*180 - 90
+        local emitterComponent = self.emitterEntity:get(core.componentType.EmitterComponent)      
+        local length = lengthSurfaceDirectionTwoSlider.a * 50
+        
+        local pitchMat = core.glm.mat4.new()
+        local yawMat = core.glm.mat4.new()
+        local yAxis = core.glm.vec3.new(0, 1, 0)
+        local xAxis = core.glm.vec3.new(1, 0, 0)
+        local forward = core.glm.vec4.new(0, 0, -length, 0)
+
+        pitchMat = core.glm.mat4.rotate(pitchMat, pitchRotation, yAxis)
+        yawMat = core.glm.mat4.rotate(yawMat, yawRotation, xAxis)
+
+        local finalRotation = core.glm.mat4.multiply(pitchMat, yawMat)
+
+        local direction = finalRotation:multiply(forward) 
+        local direction = {direction:get()}
+        self.emitterEntity:set(core.componentType.EmitterComponent, {surfaceDirectionTwo={direction[1], direction[2], direction[3] }}, true)
+        self.surfaceDirectionTwoLabel:setLabel( "Direction Two " .. string.format("%+6.2f %+6.2f %+6.2f", direction[1], direction[2], direction[3]))
+    end
+
+    function yawSurfaceDirectionTwoSlider.onChange(yawSurfaceDirectionTwoSlider, value)
+        local yawRotation =  value*180 - 90
+        local pitchRotation = pitchSurfaceDirectionTwoSlider.a*360 - 180
+        local emitterComponent = self.emitterEntity:get(core.componentType.EmitterComponent)      
+        local length = lengthSurfaceDirectionTwoSlider.a * 50
+        
+        local pitchMat = core.glm.mat4.new()
+        local yawMat = core.glm.mat4.new()
+        local yAxis = core.glm.vec3.new(0, 1, 0)
+        local xAxis = core.glm.vec3.new(1, 0, 0)
+        local forward = core.glm.vec4.new(0, 0, -length, 0)
+
+        pitchMat = core.glm.mat4.rotate(pitchMat, pitchRotation, yAxis)
+        yawMat = core.glm.mat4.rotate(yawMat, yawRotation, xAxis)
+
+        local finalRotation = core.glm.mat4.multiply(pitchMat, yawMat)
+
+        local direction = finalRotation:multiply(forward) 
+        local direction = {direction:get()}
+        self.emitterEntity:set(core.componentType.EmitterComponent, {surfaceDirectionTwo={direction[1], direction[2], direction[3] }}, true)
+        self.surfaceDirectionTwoLabel:setLabel( "Direction Two " .. string.format("%+6.2f %+6.2f %+6.2f", direction[1], direction[2], direction[3]))
+    end
+
+    function lengthSurfaceDirectionTwoSlider.onChange(lengthSurfaceDirectionTwoSlider, value)
+        pitchSurfaceDirectionTwoSlider:onChange(pitchSurfaceDirectionTwoSlider.a)
+        self.surfaceLengthTwoLabel:setLabel( "Length Two " .. string.format("%+6.2f", value*50))
+    end
+    pitchSurfaceDirectionOneSlider:setToMiddle()
+    yawSurfaceDirectionOneSlider:setToMiddle()
+    lengthSurfaceDirectionOneSlider:setToMiddle()
+    pitchSurfaceDirectionTwoSlider:setToMiddle()
+    yawSurfaceDirectionTwoSlider:setToMiddle()
+    lengthSurfaceDirectionTwoSlider:setToMiddle()
+
+    eastGui:addComponent(self.surfaceDirectionOneLabel)
+    eastGui:addComponent(pitchSurfaceDirectionOneSlider)
+    eastGui:addComponent(yawSurfaceDirectionOneSlider)
+    eastGui:addComponent(self.surfaceLengthOneLabel)
+    eastGui:addComponent(lengthSurfaceDirectionOneSlider)
+
+    eastGui:addComponent(self.surfaceDirectionTwoLabel)
+    eastGui:addComponent(pitchSurfaceDirectionTwoSlider)
+    eastGui:addComponent(yawSurfaceDirectionTwoSlider)
+    eastGui:addComponent(self.surfaceLengthTwoLabel)
+    eastGui:addComponent(lengthSurfaceDirectionTwoSlider)
+    eastGui:addPlacementHandler(EastPlacer)
+
+    eastGui.xoffset = -12
+    eastGui.height = 1
+    eastGui.width = 1
+    self.eastGuiContainer:addPlacementHandler(EastPlacer)
+    self.eastGuiContainer:addComponent(eastGui)
+end
 function T:name()
     return "ParticleEditor"
 end

@@ -9,12 +9,21 @@
 
 extern "C"
 {
-    static int LuaEq(lua_State* L)  
+    static int LuaParticleEq(lua_State* L)  
     {
         LuaParticleDefinition* rhs = luau_checkparticledefinition(L, 1);
         LuaParticleDefinition* lhs = luau_checkparticledefinition(L, 2);
         
         lua_pushboolean(L, rhs->handle == lhs->handle);
+        return 1;
+    }
+
+    static int LuaEmitterEq(lua_State* L)
+    {
+        Core::EmitterType* rhs = luau_checkemittertype(L, 1);
+        Core::EmitterType* lhs = luau_checkemittertype(L, 2);
+
+        lua_pushboolean(L, (*rhs) == (*lhs));
         return 1;
     }
 
@@ -44,8 +53,13 @@ namespace Core
         int sanity = lua_gettop(L);
 
         luaL_newmetatable(L, PARTICLE_DEFINITION_META_TYPE);
-            luau_setfunction(L, "__eq", LuaEq);
+            luau_setfunction(L, "__eq", LuaParticleEq);
         lua_pop(L, 1);
+
+        luaL_newmetatable(L, EMITTER_TYPE_META_TYPE);
+            luau_setfunction(L, "__eq", LuaEmitterEq);
+        lua_pop(L, 1);
+
 
         lua_getglobal(L, "core");
             lua_getfield(L, -1, "system");

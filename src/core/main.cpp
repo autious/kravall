@@ -117,7 +117,7 @@ void run( GLFWwindow * window )
                 const Core::ModelData* data = gnomeLoader->getData(handle);
 				meshID = data->meshID;
             });
-/*
+
 	Core::world.m_contentManager.Load<Core::MaterialLoader>("assets/material/cop.material", [&copMaterialID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
             {
                 Core::MaterialData* data = static_cast<Core::MaterialData*>(handle);
@@ -129,7 +129,7 @@ void run( GLFWwindow * window )
 				Core::MaterialData* data = static_cast<Core::MaterialData*>(handle);
 				rioterMaterialID = static_cast<unsigned int>(data->materialId);
 			}, false);
-*/
+
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));	
 
 	clop::Register( "showMesh", Core::ToggleDrawOfNavigationMesh );
