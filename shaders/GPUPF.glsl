@@ -1,7 +1,7 @@
 #version 430 core
 
 #define WORK_GROUP_SIZE 1024
-#define MAXIMUM_ENTITIES 1024
+#define MAXIMUM_ENTITIES 2048
 #define MAX_CURVES 1024;
 
 #define RIOTER_TYPE 0

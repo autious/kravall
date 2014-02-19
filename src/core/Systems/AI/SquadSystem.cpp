@@ -171,6 +171,8 @@ namespace Core
         if(glm::dot(startPos-endPos, startPos-endPos) < 0.25f)
             return;
 
+		std::cout << "AM I RUNNING ALL THE TIME?" << std::endl;
+
         //Retrieve units
         std::vector<Core::Entity> units;
 
