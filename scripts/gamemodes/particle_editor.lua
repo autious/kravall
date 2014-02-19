@@ -22,7 +22,7 @@ end
 
 function T:init()
     self.asm = ASM.loadPack({})
-    particleDefinition = PDC:createParticleDefinition(self.asm, 2000, "assets/texture/particle/smoke.material")
+    particleDefinition = PDC:createParticleDefinition(self.asm, 10000, "assets/texture/particle/smoke.material")
 
     self.emitterEntity = core.entity.create(core.componentType.EmitterComponent, core.componentType.WorldPositionComponent)
     
@@ -99,7 +99,7 @@ function T:init()
     end
 
     function xOffsetSlider.onChange(xOffsetSlider, value)
-        local xOffset = ((value > 0) and value*100 or 0) - 50
+        local xOffset = ((value > 0) and value*200 or 0) - 100
         local emitterComponent = self.emitterEntity:get(core.componentType.EmitterComponent)      
         local currentOffset = emitterComponent.offset
         self.emitterEntity:set(core.componentType.EmitterComponent, {offset={xOffset, currentOffset[2], currentOffset[3]}}, true)
@@ -107,7 +107,7 @@ function T:init()
     end
 
     function yOffsetSlider.onChange(yOffsetSlider, value)
-        local yOffset = ((value > 0) and value*100 or 0) - 50
+        local yOffset = ((value > 0) and value*200 or 0) - 100
         local emitterComponent = self.emitterEntity:get(core.componentType.EmitterComponent)      
         local currentOffset = emitterComponent.offset
         self.emitterEntity:set(core.componentType.EmitterComponent, {offset={currentOffset[1], yOffset, currentOffset[3]}}, true)
@@ -115,7 +115,7 @@ function T:init()
     end
 
     function zOffsetSlider.onChange(zOffsetSlider, value)
-        local zOffset = ((value > 0) and value*100 or 0) - 50
+        local zOffset = ((value > 0) and value*200 or 0) - 100
         local emitterComponent = self.emitterEntity:get(core.componentType.EmitterComponent)      
         local currentOffset = emitterComponent.offset
         self.emitterEntity:set(core.componentType.EmitterComponent, {offset={currentOffset[1], currentOffset[2], zOffset}}, true)
@@ -151,7 +151,7 @@ function T:init()
     end
 
     function xVelocitySlider.onChange(xVelocitySlider, value)
-        local xVelocity = ((value > 0) and value*50 or 0) 
+        local xVelocity = value*100 - 50 
         local emitterComponent = self.emitterEntity:get(core.componentType.EmitterComponent)      
         local currentVelocity = emitterComponent.velocity
         self.emitterEntity:set(core.componentType.EmitterComponent, {velocity={xVelocity, currentVelocity[2], currentVelocity[3]}}, true)
@@ -159,7 +159,7 @@ function T:init()
     end
 
     function yVelocitySlider.onChange(yVelocitySlider, value)
-        local yVelocity = ((value > 0) and value*50 or 0)
+        local yVelocity = value*100 - 50 
         local emitterComponent = self.emitterEntity:get(core.componentType.EmitterComponent)      
         local currentVelocity = emitterComponent.velocity
         self.emitterEntity:set(core.componentType.EmitterComponent, {velocity={currentVelocity[1], yVelocity, currentVelocity[3]}}, true)
@@ -167,7 +167,7 @@ function T:init()
     end
 
     function zVelocitySlider.onChange(zVelocitySlider, value)
-        local zVelocity = ((value > 0) and value*50 or 0)
+        local zVelocity = value*100 - 50 
         local emitterComponent = self.emitterEntity:get(core.componentType.EmitterComponent)      
         local currentVelocity = emitterComponent.velocity
         self.emitterEntity:set(core.componentType.EmitterComponent, {velocity={currentVelocity[1], currentVelocity[2], zVelocity}}, true)
@@ -250,9 +250,9 @@ function T:init()
     lifeVarianceSlider:setToMinimum()
     lifeReductionSlider:setToMinimum()
     lifeReductionVarianceSlider:setToMinimum()
-    xVelocitySlider:setToMinimum()
-    yVelocitySlider:setToMinimum()
-    zVelocitySlider:setToMinimum()
+    xVelocitySlider:setToMiddle()
+    yVelocitySlider:setToMiddle()
+    zVelocitySlider:setToMiddle()
     xVelocityVarianceSlider:setToMinimum()
     yVelocityVarianceSlider:setToMinimum()
     zVelocityVarianceSlider:setToMinimum()
@@ -472,7 +472,7 @@ function T:CreateSurfaceEmitterControlls()
         local pitchRotation =  value*360 - 180
         local yawRotation = yawSurfaceDirectionOneSlider.a*180 - 90
         local emitterComponent = self.emitterEntity:get(core.componentType.EmitterComponent)      
-        local length = lengthSurfaceDirectionOneSlider.a * 50
+        local length = lengthSurfaceDirectionOneSlider.a * 100
         
         local pitchMat = core.glm.mat4.new()
         local yawMat = core.glm.mat4.new()
@@ -495,7 +495,7 @@ function T:CreateSurfaceEmitterControlls()
         local yawRotation =  value*180 - 90
         local pitchRotation = pitchSurfaceDirectionOneSlider.a*360 - 180
         local emitterComponent = self.emitterEntity:get(core.componentType.EmitterComponent)      
-        local length = lengthSurfaceDirectionOneSlider.a * 50
+        local length = lengthSurfaceDirectionOneSlider.a * 100
         
         local pitchMat = core.glm.mat4.new()
         local yawMat = core.glm.mat4.new()
@@ -516,14 +516,14 @@ function T:CreateSurfaceEmitterControlls()
 
     function lengthSurfaceDirectionOneSlider.onChange(lengthSurfaceDirectionOneSlider, value)
         pitchSurfaceDirectionOneSlider:onChange(pitchSurfaceDirectionOneSlider.a)
-        self.surfaceLengthOneLabel:setLabel( "Length One " .. string.format("%+6.2f", value*50))
+        self.surfaceLengthOneLabel:setLabel( "Length One " .. string.format("%+6.2f", value*100))
     end
 
     function pitchSurfaceDirectionTwoSlider.onChange(pitchSurfaceDirectionTwoSlider, value)
         local pitchRotation =  value*360 - 180
         local yawRotation = yawSurfaceDirectionTwoSlider.a*180 - 90
         local emitterComponent = self.emitterEntity:get(core.componentType.EmitterComponent)      
-        local length = lengthSurfaceDirectionTwoSlider.a * 50
+        local length = lengthSurfaceDirectionTwoSlider.a * 100
         
         local pitchMat = core.glm.mat4.new()
         local yawMat = core.glm.mat4.new()
@@ -546,7 +546,7 @@ function T:CreateSurfaceEmitterControlls()
         local yawRotation =  value*180 - 90
         local pitchRotation = pitchSurfaceDirectionTwoSlider.a*360 - 180
         local emitterComponent = self.emitterEntity:get(core.componentType.EmitterComponent)      
-        local length = lengthSurfaceDirectionTwoSlider.a * 50
+        local length = lengthSurfaceDirectionTwoSlider.a * 100
         
         local pitchMat = core.glm.mat4.new()
         local yawMat = core.glm.mat4.new()
@@ -567,7 +567,7 @@ function T:CreateSurfaceEmitterControlls()
 
     function lengthSurfaceDirectionTwoSlider.onChange(lengthSurfaceDirectionTwoSlider, value)
         pitchSurfaceDirectionTwoSlider:onChange(pitchSurfaceDirectionTwoSlider.a)
-        self.surfaceLengthTwoLabel:setLabel( "Length Two " .. string.format("%+6.2f", value*50))
+        self.surfaceLengthTwoLabel:setLabel( "Length Two " .. string.format("%+6.2f", value*100))
     end
     pitchSurfaceDirectionOneSlider:setToMiddle()
     yawSurfaceDirectionOneSlider:setToMiddle()

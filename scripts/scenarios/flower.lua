@@ -10,7 +10,7 @@ scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
 scen:registerInitCallback( function() scen.gamemode:init() end )
 
 scen.gamemode.camera:lookAt( core.glm.vec3.new( 0, 60, 120 ), core.glm.vec3.new( 0, 20, 50 ) )
-core.gfx.setWhitepoint(10.0, 10.0, 10.0)
+core.gfx.setWhitepoint(1.0, 1.0, 1.0)
 --Plane
 function scen:load()
 
@@ -18,19 +18,19 @@ function scen:load()
     {
         {
             type = core.componentType.WorldPositionComponent,
-            data = { position = { 0, -10, 0 } }
+            data = { position = { 0, 0, 0 } }
         },
         {
             type = core.componentType.GraphicsComponent,
             data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
             load = { 
-                        mesh = { core.loaders.GnomeLoader, "assets/cube.bgnome", false },
+                        mesh = { core.loaders.GnomeLoader, "assets/plane.bgnome", false },
                         material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
                    }
         },
         {
             type = core.componentType.ScaleComponent,
-            data = { scale = 10.0 }
+            data = { scale = 150.0 }
         },
         {
             type = core.componentType.RotationComponent,
