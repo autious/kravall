@@ -15,15 +15,26 @@ namespace Core
 		*/
 		int node;
 
+		/*!
+			The direction index to the closest wall in the navigation mesh. -1 to 1.
+		*/
 		int wallDirX;
-		int wallDirY;
+
+		/*!
+			The direction index to the closest wall in the navigation mesh. -1 to 1.
+		*/
+		int wallDirZ;
+
+		/*!
+			The projected distance to the closest wall in the navigation mesh for use in the pf system. This value is recalculated and should not be used as a actual distance.
+		*/
 		float distance;
 
 		FlowfieldComponent()
 			: node(0)
 		{
 			wallDirX = 0;
-			wallDirY = 0;
+			wallDirZ = 0;
 			distance = 0;
 		}
 
