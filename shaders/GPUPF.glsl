@@ -451,58 +451,56 @@ void main()
 
 			#define navMeshWallRepellVal -1000.0
 
-			// y = 0.01 for normalizing when the other two are zero
-			vec3 navMeshWallVector = 
-				vec3(	(uint(gInput[index].groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance.w) >> 30) - 1, 
-						0.01, 
-						((uint(gInput[index].groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance.w) >> 28) & 0x3) - 1 );			
-			navMeshWallVector = normalize( navMeshWallVector ) * float((uint(gInput[index].groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance.w) & 0xFFFFFFF)) * 0.0001;
+			vec2 navMeshWallVector = 
+				vec2(	float((uint(gInput[index].groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance.w) >> 30)) - 0.9999, 
+						float((uint(gInput[index].groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance.w) >> 28) & 0x3) - 1 );			
+			navMeshWallVector = normalize( navMeshWallVector ) * float((uint(gInput[index].groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance.w) & 0xFFFFFFF)) * 0.0001 * navMeshWallRepellVal;
 
 
 			// ---------------------------------------- -1, 0 ----------------------------------------
-			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x - 1, offsetPos.z + 0), groupID) + dot( navMeshWallVector, normalize( vec3( 1, 0, 0))) * navMeshWallRepellVal;
-			chargeSums[0].x = -1;																									    
-			chargeSums[0].y = 0;																									    
-			chargeSums[0].chargeSum = chargeSum;																					    
-																																	    
-			// ---------------------------------------- 1, 0 ----------------------------------------								    
-			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 1, offsetPos.z + 0), groupID) + dot( navMeshWallVector, normalize( vec3( 1, 0, 0))) * navMeshWallRepellVal;
-			chargeSums[1].x = 1;																									    
-			chargeSums[1].y = 0;																									    
-			chargeSums[1].chargeSum = chargeSum;																					    
-																																	    
-			// ---------------------------------------- 0, -1 ----------------------------------------								    
-			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 0, offsetPos.z - 1), groupID) + dot( navMeshWallVector, normalize( vec3( 0, 0, 1))) * navMeshWallRepellVal;
-			chargeSums[2].x = 0;																									    
-			chargeSums[2].y = -1;																									    
-			chargeSums[2].chargeSum = chargeSum;																					    
-																																	    
-			// ---------------------------------------- 0, 1 ----------------------------------------								    
-			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 0, offsetPos.z + 1), groupID) + dot( navMeshWallVector, normalize( vec3( 0, 0, 1))) * navMeshWallRepellVal;
-			chargeSums[3].x = 0;																									    
-			chargeSums[3].y = 1;																									    
-			chargeSums[3].chargeSum = chargeSum;																					    
-																																	    
-			// ---------------------------------------- -1, -1 ----------------------------------------								    
-			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x - 1, offsetPos.z - 1), groupID) + dot( navMeshWallVector, normalize( vec3( 1, 0, 1))) * navMeshWallRepellVal;
-			chargeSums[4].x = -1;																									    
-			chargeSums[4].y = -1;																									    
-			chargeSums[4].chargeSum = chargeSum;																					    
-																																	    
-			// ---------------------------------------- 1, -1 ----------------------------------------								    
-			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 1, offsetPos.z - 1), groupID) + dot( navMeshWallVector, normalize( vec3( 1, 0, 1))) * navMeshWallRepellVal;
-			chargeSums[5].x = 1;																									    
-			chargeSums[5].y = -1;																									    
-			chargeSums[5].chargeSum = chargeSum;																					    
-																																	    
-			// ---------------------------------------- -1, 1 ----------------------------------------								    
-			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x - 1, offsetPos.z + 1), groupID) + dot( navMeshWallVector, normalize( vec3( 1, 0, 1))) * navMeshWallRepellVal;
-			chargeSums[6].x = -1;																									    
-			chargeSums[6].y = 1;																									    
-			chargeSums[6].chargeSum = chargeSum;																					    
-																																	    
-			// ---------------------------------------- 1, 1 ----------------------------------------								    
-			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 1, offsetPos.z + 1), groupID) + dot( navMeshWallVector, normalize( vec3( 1, 0, 1))) * navMeshWallRepellVal;
+			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x - 1, offsetPos.z + 0), groupID) + dot( navMeshWallVector, ( vec2( 1, 0)));
+			chargeSums[0].x = -1;																								  
+			chargeSums[0].y = 0;																								  
+			chargeSums[0].chargeSum = chargeSum;																				  
+																																  
+			// ---------------------------------------- 1, 0 ----------------------------------------							  
+			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 1, offsetPos.z + 0), groupID) + dot( navMeshWallVector, ( vec2( 1, 0)));
+			chargeSums[1].x = 1;																								  
+			chargeSums[1].y = 0;																								  
+			chargeSums[1].chargeSum = chargeSum;																				  
+																																  
+			// ---------------------------------------- 0, -1 ----------------------------------------							  
+			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 0, offsetPos.z - 1), groupID) + dot( navMeshWallVector, ( vec2( 0, 1)));
+			chargeSums[2].x = 0;																								  
+			chargeSums[2].y = -1;																								  
+			chargeSums[2].chargeSum = chargeSum;																				  
+																																  
+			// ---------------------------------------- 0, 1 ----------------------------------------							  
+			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 0, offsetPos.z + 1), groupID) + dot( navMeshWallVector, ( vec2( 0, 1)));
+			chargeSums[3].x = 0;																								  
+			chargeSums[3].y = 1;																								  
+			chargeSums[3].chargeSum = chargeSum;																				  
+																																  
+			// ---------------------------------------- -1, -1 ----------------------------------------							  
+			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x - 1, offsetPos.z - 1), groupID) + dot( navMeshWallVector, ( vec2( 1, 1)));
+			chargeSums[4].x = -1;																								  
+			chargeSums[4].y = -1;																								  
+			chargeSums[4].chargeSum = chargeSum;																				  
+																																  
+			// ---------------------------------------- 1, -1 ----------------------------------------							  
+			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 1, offsetPos.z - 1), groupID) + dot( navMeshWallVector, ( vec2( 1, 1)));
+			chargeSums[5].x = 1;																								  
+			chargeSums[5].y = -1;																								  
+			chargeSums[5].chargeSum = chargeSum;																				  
+																																  
+			// ---------------------------------------- -1, 1 ----------------------------------------							  
+			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x - 1, offsetPos.z + 1), groupID) + dot( navMeshWallVector, ( vec2( 1, 1)));
+			chargeSums[6].x = -1;																								  
+			chargeSums[6].y = 1;																								  
+			chargeSums[6].chargeSum = chargeSum;																				  
+																																  
+			// ---------------------------------------- 1, 1 ----------------------------------------							  
+			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 1, offsetPos.z + 1), groupID) + dot( navMeshWallVector, ( vec2( 1, 1)));
 			chargeSums[7].x = 1;
 			chargeSums[7].y = 1;
 			chargeSums[7].chargeSum = chargeSum;
