@@ -20,7 +20,7 @@
 #pragma optionNV(ifcvt none) 
 #pragma optionNV(inline all) 
 #pragma optionNV(strict on) 
-#pragma optionNV(unroll all)
+#pragma optionNV(unroll none)
 
 
 layout (local_size_x = WORK_GROUP_SIZE) in;
