@@ -25,6 +25,9 @@ namespace Core
         ATTACK,
         ARREST_INDIVIDUAL,
         ARREST_GROUP,
+        TEAR_GAS,
+        TAZE,
+        BLITZ
     };
 
 	/*!

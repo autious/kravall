@@ -18,6 +18,7 @@ local Checkbox =
                     matHoverSelected = "assets/texture/ui/checkbox-hover-selected_00.material",
                     onChange = function(self, value) end,
                     onClick = function(self, value) end,
+                    onHover = function(self) end,
                     doStateSwitchOnPress = true
                 }
 
@@ -137,6 +138,7 @@ end
 
 function Checkbox:onEnter()
     self.inside = true
+    self:onHover()
     self:updateVisual()
 end
 
