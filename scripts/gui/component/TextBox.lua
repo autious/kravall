@@ -11,7 +11,8 @@ local TextBox =
                     width=0,
                     height=0,
                     padding=4,
-                    body = "default" 
+                    body = "default",
+                    show = true
                 }
 
 function TextBox:new(o)
@@ -37,7 +38,15 @@ function TextBox:new(o)
     o.text = text( o.x, o.y, o.body)
     o:setPosition( o.x, o.y )
 
+    o.text:show( show )
+
     return o
+end
+
+function TextBox:setShow( flag )
+    self.show = flag 
+   
+    self.text:show(flag)     
 end
 
 function TextBox:setText( string )

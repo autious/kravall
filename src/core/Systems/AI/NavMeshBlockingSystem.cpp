@@ -14,6 +14,8 @@ Core::NavMeshBlockingSystem::NavMeshBlockingSystem()
 
 void Core::NavMeshBlockingSystem::CalculateBlockedNodes( int targetRioterGroup )
 {
+	return; // turning this off for the moment / John
+
 	Core::NavigationMesh* instance = Core::GetNavigationMesh();
 	if( instance )
 	{

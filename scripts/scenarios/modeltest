@@ -1,0 +1,33 @@
+local entities = require "entities"
+local scenario = require "scenario"
+local scen = scenario.new()
+
+local ambient = entities.get "ambientLight"
+local directional = entities.get "directionalLight"
+local pointLight = entities.get "pointLight"
+local spotLight = entities.get "spotLight"
+local area = entities.get "area"
+local rioter = entities.get "rioter"
+local staticModel = entities.get "staticModel"
+
+local script = dofile "scripts/scenarios/_scriptmodeltest"( scen )
+
+local function genF( e, f )
+    if type( script[f] ) == "function"  then
+        return function() script[ f ]( e ) end
+    else
+        error( "Function " .. f .. " does not exist in script file" )
+    end
+end
+
+directional( scen, 1.5707963705062866, -0.0, 0.0, 1.0, 1.0, 1.0, 1.0 )
+ambient( scen, 1.0, 1.0, 1.0, 0.5 )
+
+scen.cameras = scen.cameras or {}
+
+local ent = staticModel( scen, 0.0, 0.0, -0.0, 0.0, 0.0, 0.0, 1.0, 1.0, "assets/model/static/building/apartment/s00-a/1-roof_00.bgnome", "assets/material/static/building/apartment/s00-a/1-roof_00.material", "" )
+local ent = staticModel( scen, 0.0, 0.0, -0.0, 0.0, 0.0, 0.0, 1.0, 1.0, "assets/model/static/building/apartment/s00-a/1-main_00.bgnome", "assets/material/static/building/apartment/s00-a/1-main_00.material", "" )
+local ent = staticModel( scen, 0.0, 0.0, -0.0, 0.0, 0.0, 0.0, 1.0, 1.0, "assets/model/static/building/apartment/s00-a/1-corners_00.bgnome", "assets/material/static/building/apartment/s00-a/1-corners_00.material", "" )
+
+
+return scen

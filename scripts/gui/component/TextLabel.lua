@@ -11,6 +11,7 @@ local TextLabel =
                     width=0,
                     height=0,
                     padding=4,
+                    show = true,
                     label = "default" 
                 }
 
@@ -38,7 +39,14 @@ function TextLabel:new(o)
     o.width, o.height = o.text:getDim()
     o:setPosition( o.x, o.y )
 
+    o:setShow( o.show )
+
     return o
+end
+
+function TextLabel:setShow( flag )
+    self.show = flag
+    self.text:show( flag )
 end
 
 function TextLabel:setLabel( string )
