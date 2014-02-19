@@ -91,7 +91,8 @@ void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police, float del
 			if (tc->target != INVALID_ENTITY)
 			{
 				TargetingComponent* tcTarget = WGETC<Core::TargetingComponent>(tc->target);
-				TargetingComponent::StopAttacking(police, *tcTarget);
+				if( tcTarget )
+					TargetingComponent::StopAttacking(police, *tcTarget);
 			}
 
 			tc->target = FindClosestAttacker(tc, wpc);
