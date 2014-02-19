@@ -74,10 +74,17 @@ namespace Core
 			
 					// did not know glsl had bitwise operations, derp
 					// pack rough vector to closest edge of the navmesh and distance to it into one float
-					float navMeshValue = (ffc->wallDirX * 1000);
-					navMeshValue += navMeshValue < 0 ? ffc->wallDirZ == 0 ? -200.0f : ffc->wallDirZ < 0 ? -ffc->wallDirZ * 100.0f : 
-						-ffc->wallDirZ * 300.0f : ffc->wallDirZ == 0 ? 200.0f : ffc->wallDirZ * 300.0f;
-					navMeshValue += navMeshValue < 0 ? -ffc->distance * 1.000f : ffc->distance * 1.000f;
+					//float navMeshValue = (ffc->wallDirX * 1000);
+					//navMeshValue += navMeshValue < 0 ? ffc->wallDirZ == 0 ? -200.0f : ffc->wallDirZ < 0 ? -ffc->wallDirZ * 100.0f : 
+					//	-ffc->wallDirZ * 300.0f : ffc->wallDirZ == 0 ? 200.0f : ffc->wallDirZ * 300.0f;
+					//navMeshValue += navMeshValue < 0 ? -ffc->distance * 1.000f : ffc->distance * 1.000f;
+
+					unsigned int navMeshValue = ( (ffc->wallDirX + 1) << 30 ) | ( (ffc->wallDirZ + 1) << 28 ) | (unsigned int)(ffc->distance * 10000);
+
+					// how to unpack the navMesh data...
+					//int x = (navMeshVal2 >> 30) - 1;
+					//int y = ((navMeshVal2 >> 28) & 0x3) - 1;
+					//float distance = (navMeshVal2 & 0xFFFFFFF) * 0.0001;
 
 					/* this is how to unpack it...
 					glm::vec3 navMeshWallVector;
