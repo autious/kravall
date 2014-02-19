@@ -94,6 +94,14 @@ function print_env( table, prefix)
     end
 end
 
+function print_test()
+    for _,v in pairs( core.system.squad.getPossibleAbilities(1) ) do
+        print(v)
+    end
+end
+
+
+
 function print_loaded()
     for k,v in pairs( package.loaded ) do
         print( k )

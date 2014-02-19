@@ -15,5 +15,9 @@
 
 #define STREQ( str1, str2 ) strcmp(str1,str2)==0
 
-
+#define luau_assert(L, expr) { \
+    if ( !expr ){ \
+        luaL_error(L, "%s:%d:%s(): Assert! \"%s\" failed in evaluation",__FILE__,  __LINE__, __FUNCTION__, #expr );\
+    }\
+}
 #endif
