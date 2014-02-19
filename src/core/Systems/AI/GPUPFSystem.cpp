@@ -75,7 +75,8 @@ namespace Core
 					// did not know glsl had bitwise operations, derp
 					// pack rough vector to closest edge of the navmesh and distance to it into one float
 					float navMeshValue = (ffc->wallDirX * 1000);
-					navMeshValue += navMeshValue < 0 ? ffc->wallDirY == 0 ? -200.0f : ffc->wallDirY < 0 ? -ffc->wallDirY * 100.0f : -ffc->wallDirY * 300.0f : ffc->wallDirY == 0 ? 200.0f : ffc->wallDirY * 300.0f;
+					navMeshValue += navMeshValue < 0 ? ffc->wallDirZ == 0 ? -200.0f : ffc->wallDirZ < 0 ? -ffc->wallDirZ * 100.0f : 
+						-ffc->wallDirZ * 300.0f : ffc->wallDirZ == 0 ? 200.0f : ffc->wallDirZ * 300.0f;
 					navMeshValue += navMeshValue < 0 ? -ffc->distance * 1.000f : ffc->distance * 1.000f;
 
 					/* this is how to unpack it...

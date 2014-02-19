@@ -40,7 +40,7 @@ void Core::NavMeshCollisionSystem::Update( float delta )
 
 			ffc->distance = std::numeric_limits<float>::max();
 			ffc->wallDirX = 0;
-			ffc->wallDirY = 0;
+			ffc->wallDirZ = 0;
 
 			// check vs line
 			for( int i = 0; i < 4; i++ )
@@ -75,7 +75,7 @@ void Core::NavMeshCollisionSystem::Update( float delta )
 				{
 					ffc->distance = distanceToLine;
 					ffc->wallDirX = abs( cross.z ) < 0.7853981633f ? cross.x > 0 ? 1.0f : -1.0f : 0.0f;
-					ffc->wallDirY = abs( cross.x ) < 0.7853981633f ? cross.z > 0 ? 1.0f : -1.0f : 0.0f;
+					ffc->wallDirZ = abs( cross.x ) < 0.7853981633f ? cross.z > 0 ? 1.0f : -1.0f : 0.0f;
 				}				
 			}
 
