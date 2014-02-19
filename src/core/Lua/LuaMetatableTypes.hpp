@@ -95,6 +95,7 @@ namespace Core
 
     Core::SquadFormation* LuaUNewSquadFormation( lua_State * L );
     Core::SquadAbility* LuaUNewSquadAbility( lua_State * L );
+    Core::SquadAbility* LuaUNewSquadAbility( lua_State * L, Core::SquadAbility ability );
     Core::PoliceStance* LuaUNewPoliceStance(lua_State* L);
 
     uint64_t* LuaUNewBitmask( lua_State * L );

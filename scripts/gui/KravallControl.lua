@@ -98,13 +98,7 @@ end
 
 function KravallControl:update( delta )
     -- For debug writing
-    self.gui:update( delta )
-    self.eventGUI:update( delta )
-    self.statusGUI:update( delta )
-    self.stanceGUI:update(delta)
-    self.abilitiesGUI:update(delta )
-    self.formationGUI:update(delta )
-    self.rightControlGUI:update(delta )
+    self.gui:renderDebug( delta )
 
     self.count = self.count or 0
     self.count = self.count + delta

@@ -6,7 +6,7 @@ local GUI = {
                 winHeight = core.config.initScreenHeight,
                 xoffset = 0,
                 yoffset = 0,
-                show = true  
+                show = true,
             }
 
 window.registerFramebufferSizeCallback( function( width, height ) 
@@ -130,9 +130,15 @@ function GUI:destroy()
     end
 end
 
-function GUI:update(delta)
+function GUI:renderDebug(delta)
     if core.config.debugDrawGUIBorders then 
         core.draw.drawRectangle( self.x, self.y, self.width, self.height, false )
+    end
+
+    for k,v in pairs( self.components ) do
+        if v.renderDebug then
+            v:renderDebug( delta )
+        end
     end
 end
 
