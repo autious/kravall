@@ -1,6 +1,10 @@
 local standardPolice = (require "game_constants").standardPolice
 
-return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, groupID)
+return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, groupID, weaponType)
+
+	local meshes = {"assets/model/animated/rioter/rioter-male_00.bgnome", "assets/model/animated/rioter/rioter-female_00.bgnome" }
+    local gender = math.random(1, #meshes)
+
 	asm:loadAssembly( 
 		{
 			{
@@ -9,15 +13,15 @@ return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, group
 			},
 			{
 				type = core.componentType.GraphicsComponent,
-				data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.OutlineLayer, outlineColor = {0, 1, 0, 1} },
+				data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 1, 0, 1} },
 				load = { 
-							mesh = { core.loaders.GnomeLoader, "assets/model/animated/rioter/rioter-male_00.bgnome" },
-							material = { core.loaders.MaterialLoader, "assets/material/cop.material" }
+							mesh = { core.loaders.GnomeLoader, meshes[1] },
+							material = { core.loaders.MaterialLoader, "assets/texture/animated/police/cop/cop-light_00.material" }
 					   }
 			},
 			{
 				type = core.componentType.ScaleComponent,
-				data = { scale = 3.0 }
+				data = { scale = 1.0 }
 			},
 			{
 				type = core.componentType.RotationComponent,
@@ -35,15 +39,23 @@ return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, group
 			},
 			{
 				type = core.componentType.AttributeComponent,
-				data = { health = standardPolice.maxHealth, stamina = 0, morale = standardPolice.maxMorale, 
-					   stancePolice = core.PoliceStance.Aggressive,
-					   statePolice = core.PoliceState.Attacking, 
-					   defense = 0, mobility = 0, squadID = groupID },
+				data = 
+                    { 
+                        health = standardPolice.maxHealth, 
+                        stamina = 0, 
+                        morale = standardPolice.maxMorale, 
+                        stancePolice = core.PoliceStance.Passive,
+                        statePolice = core.PoliceState.Attacking, 
+                        defense = 0, 
+                        mobility = 0, 
+                        squadID = groupID 
+                    },
+
                 ignoreHard = true
 			},
 			{
 				type = core.componentType.TargetingComponent,
-				data = { },
+				data = { weapon = weaponType or fists },
 				ignoreHard = true
 			},
 			{
@@ -57,8 +69,8 @@ return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, group
 				data = { 
 					animationID = 0,
 					currentTime = 0.0,
-					loop = true,
-					playing = true,
+					loop = false,
+					playing = false,
 					speed = 1.6,
 					currentFrame = 0,
 					queuedAnimationID = 0

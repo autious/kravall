@@ -31,12 +31,12 @@ namespace GFX
 		\param FBO ID of FBO used for rendertargets
 		\param dummyVAO ID of an empty VAO used for screenspace rendering
 		*/
-		void Initialize(GLuint FBO, GLuint dummyVAO, int screenWidth, int screenHeight, BlurPainter* blurPainter);
+		void Initialize(GLuint FBO, GLuint dummyVAO, int screenWidth, int screenHeight, BlurPainter* blurPainter, FBOTexture* specular, FBOTexture* glow);
 
 		/*!
 		Main rendering loop
 		*/
-		void Render(const double& delta, const GLuint& tonemappedTexture, std::string LUT, float exposure, float gamma, glm::vec3 whitePoint);
+		void Render(const double& delta, const GLuint& tonemappedTexture, std::string LUT, float exposure, float gamma, glm::vec3 whitePoint, FBOTexture* diffuse);
 
 		void ReloadLUT();
 
@@ -44,8 +44,8 @@ namespace GFX
 
 	private:
 		void ColorGrading(const GLuint& tonemappedTexture, std::string LUT);
-		void HDRBloom(const GLuint& tonemappedTexture, float exposure, float gamma, glm::vec3 whitePoint);
-		void Composite(const GLuint& tonemappedTexture, float exposure, float gamma, glm::vec3 whitePoint);
+		void HDRBloom(const GLuint& tonemappedTexture, float exposure, float gamma, glm::vec3 whitePoint, FBOTexture* diffuse);
+		void Composite(const GLuint& tonemappedTexture, float exposure, float gamma, glm::vec3 whitePoint, FBOTexture* diffuse);
 
 		void OutputTexture(const GLuint& texturehandle);
 
@@ -66,8 +66,6 @@ namespace GFX
 		TextureManager* m_textureManager;
 		LUTManager* m_LUTManager;
 
-		//FBOTexture* m_brightPassTexture;
-
 		GLint m_gammaUniform;
 	
 		GLuint m_pingFBO;
@@ -77,7 +75,6 @@ namespace GFX
 		GLint m_textureUniformBP;
 		GLint m_exposureUniformBP;
 
-		FBOTexture* m_brightPassTexture;
 		std::vector<FBOTexture*> m_bloomTextures;
 		std::vector<FBOTexture*> m_intermediateBlurTextures;
 

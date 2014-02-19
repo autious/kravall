@@ -13,7 +13,7 @@ namespace GFX
 	{
 	}
 
-	void PostProcessingPainter::Initialize(GLuint FBO, GLuint dummyVAO, int screenWidth, int screenHeight, BlurPainter* blurPainter)
+	void PostProcessingPainter::Initialize(GLuint FBO, GLuint dummyVAO, int screenWidth, int screenHeight, BlurPainter* blurPainter, FBOTexture* specular, FBOTexture* glow)
 	{
 		BasePainter::Initialize(FBO, dummyVAO);
 
@@ -54,9 +54,6 @@ namespace GFX
 		m_exposureUniformBP = m_shaderManager->GetUniformLocation("BrightPass", "gExposure");
 		m_textureUniformBP = m_shaderManager->GetUniformLocation("BrightPass", "gSourceTexture");
 
-		m_brightPassTexture = new FBOTexture();
-		m_brightPassTexture->Initialize(GL_TEXTURE_2D, GL_LINEAR, GL_LINEAR, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, GL_RGBA32F, GL_RGBA);
-
 		m_shaderManager->CreateProgram("Composite");
 		m_shaderManager->LoadShader("shaders/RenderToQuad/Quad.vertex", "CVS", GL_VERTEX_SHADER);
 		m_shaderManager->LoadShader("shaders/FSQuadGS.glsl", "CGS", GL_GEOMETRY_SHADER);
@@ -72,17 +69,24 @@ namespace GFX
 		m_textureUniformC = m_shaderManager->GetUniformLocation("Composite", "gSourceTexture");
 		m_gammaUniformC = m_shaderManager->GetUniformLocation("Composite", "gGamma");
 
-		for (int i = 0; i < 8; i++)
+		m_bloomTextures.push_back(specular);
+		m_intermediateBlurTextures.push_back(glow);
+
+		for (int i = 1; i < 8; i++)
 		{
 			m_bloomTextures.push_back(new FBOTexture());
 			m_bloomTextures[i]->Initialize(GL_TEXTURE_2D, GL_LINEAR, GL_LINEAR, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, GL_RGBA32F, GL_RGBA);
 
 			m_intermediateBlurTextures.push_back(new FBOTexture());
 			m_intermediateBlurTextures[i]->Initialize(GL_TEXTURE_2D, GL_LINEAR, GL_LINEAR, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, GL_RGBA32F, GL_RGBA);
+		}
 
+		for (int i = 0; i < 8; i++)
+		{
 			GLint temp = m_shaderManager->GetUniformLocation("Composite", "gBloomTextures[" + std::to_string(i) + "]");
 			m_bloomSamplerUniforms.push_back(temp);
 		}
+		
 		Resize(m_screenWidth, m_screenHeight);
 
 		InitFBO();
@@ -93,7 +97,7 @@ namespace GFX
 		glGenFramebuffers(1, &m_pingFBO);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_pingFBO);
 
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_bloomTextures.at(0)->GetTextureHandle(), 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_bloomTextures.at(1)->GetTextureHandle(), 0);
 
 		GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0 };
 		glDrawBuffers(1, drawBuffers);
@@ -104,7 +108,7 @@ namespace GFX
 		glGenFramebuffers(1, &m_pongFBO);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_pongFBO);
 		
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_bloomTextures.at(1)->GetTextureHandle(), 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_bloomTextures.at(2)->GetTextureHandle(), 0);
 		
 		GLenum drawBuffers2[] = { GL_COLOR_ATTACHMENT0 };
 		glDrawBuffers(1, drawBuffers2);
@@ -134,15 +138,13 @@ namespace GFX
 	{
 		m_screenWidth = width;
 		m_screenHeight = height;
-		glm::vec2 size = glm::vec2(width, height);
-		for (int i = 0; i < m_bloomTextures.size(); i++)
+		glm::vec2 size = glm::vec2(width, height) * 0.5f;
+		for (int i = 1; i < m_bloomTextures.size(); i++)
 		{
 			m_bloomTextures[i]->UpdateResolution(size.x, size.y);
 			m_intermediateBlurTextures[i]->UpdateResolution(size.x, size.y);
 			size *= 0.5f;
 		}
-
-		m_brightPassTexture->UpdateResolution(width, height);
 	}
 
 	void PostProcessingPainter::ReloadLUT()
@@ -150,18 +152,18 @@ namespace GFX
 		m_LUTManager->Reload();
 	}
 
-	void PostProcessingPainter::Render(const double& delta, const GLuint& tonemappedTexture, std::string LUT, float exposure, float gamma, glm::vec3 whitePoint)
+	void PostProcessingPainter::Render(const double& delta, const GLuint& tonemappedTexture, std::string LUT, float exposure, float gamma, glm::vec3 whitePoint, FBOTexture* diffuse)
 	{
-		HDRBloom(tonemappedTexture, exposure, gamma, whitePoint);
-		Composite(tonemappedTexture, exposure, gamma, whitePoint);
-		ColorGrading(m_brightPassTexture->GetTextureHandle(), LUT);
+		HDRBloom(tonemappedTexture, exposure, gamma, whitePoint, diffuse);
+		Composite(tonemappedTexture, exposure, gamma, whitePoint, diffuse);
+		ColorGrading(diffuse->GetTextureHandle(), LUT);
 	}
 
-	void PostProcessingPainter::Composite(const GLuint& tonemappedTexture, float exposure, float gamma, glm::vec3 whitePoint)
+	void PostProcessingPainter::Composite(const GLuint& tonemappedTexture, float exposure, float gamma, glm::vec3 whitePoint, FBOTexture* diffuse)
 	{
 		BasePainter::ClearFBO();
 
-		BindTextureToFBO(m_brightPassTexture, false);
+		BindTextureToFBO(diffuse, false);
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		m_shaderManager->UseProgram("Composite");
@@ -186,12 +188,12 @@ namespace GFX
 		BasePainter::ClearFBO();
 	}
 
-	void PostProcessingPainter::HDRBloom(const GLuint& tonemappedTexture, float exposure, float gamma, glm::vec3 whitePoint)
+	void PostProcessingPainter::HDRBloom(const GLuint& tonemappedTexture, float exposure, float gamma, glm::vec3 whitePoint, FBOTexture* diffuse)
 	{
 		BasePainter::ClearFBO();
 		m_shaderManager->UseProgram("BrightPass");
 
-		BindTextureToFBO(m_brightPassTexture, false);
+		BindTextureToFBO(diffuse, false);
 
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
@@ -217,13 +219,13 @@ namespace GFX
 
 			glClear(GL_COLOR_BUFFER_BIT);
 
-			m_shaderManager->UseProgram("GaussianBlurHorizontal");
+			m_shaderManager->UseProgram("GaussianBlurHorizontal_old");
 
 			if (i == 0)
-				TextureManager::BindTexture(m_brightPassTexture->GetTextureHandle(), m_shaderManager->GetUniformLocation("GaussianBlurHorizontal", "gTexture"), 0, GL_TEXTURE_2D);
+				TextureManager::BindTexture(diffuse->GetTextureHandle(), m_shaderManager->GetUniformLocation("GaussianBlurHorizontal_old", "gTexture"), 0, GL_TEXTURE_2D);
 			else
-				TextureManager::BindTexture(m_bloomTextures[i - 1]->GetTextureHandle(), m_shaderManager->GetUniformLocation("GaussianBlurHorizontal", "gTexture"), 0, GL_TEXTURE_2D);
-			m_shaderManager->SetUniform((GLfloat)size.x, (GLfloat)size.y, m_shaderManager->GetUniformLocation("GaussianBlurHorizontal", "gScreenDimensions"));
+				TextureManager::BindTexture(m_bloomTextures[i - 1]->GetTextureHandle(), m_shaderManager->GetUniformLocation("GaussianBlurHorizontal_old", "gTexture"), 0, GL_TEXTURE_2D);
+			m_shaderManager->SetUniform((GLfloat)size.x, (GLfloat)size.y, m_shaderManager->GetUniformLocation("GaussianBlurHorizontal_old", "gScreenDimensions"));
 
 			glBindVertexArray(m_dummyVAO);
 			glDrawArrays(GL_POINTS, 0, 1);
@@ -231,11 +233,11 @@ namespace GFX
 			m_shaderManager->ResetProgram();
 
 			BindTextureToFBO(m_bloomTextures[i], false);
-			m_shaderManager->UseProgram("GaussianBlurVertical");
+			m_shaderManager->UseProgram("GaussianBlurVertical_old");
 			glClear(GL_COLOR_BUFFER_BIT);
 
-			TextureManager::BindTexture(m_intermediateBlurTextures[i]->GetTextureHandle(), m_shaderManager->GetUniformLocation("GaussianBlurVertical", "gTexture"), 0, GL_TEXTURE_2D);
-			m_shaderManager->SetUniform((GLfloat)size.x, (GLfloat)size.y, m_shaderManager->GetUniformLocation("GaussianBlurHorizontal", "gScreenDimensions"));
+			TextureManager::BindTexture(m_intermediateBlurTextures[i]->GetTextureHandle(), m_shaderManager->GetUniformLocation("GaussianBlurVertical_old", "gTexture"), 0, GL_TEXTURE_2D);
+			m_shaderManager->SetUniform((GLfloat)size.x, (GLfloat)size.y, m_shaderManager->GetUniformLocation("GaussianBlurHorizontal_old", "gScreenDimensions"));
 
 			glBindVertexArray(m_dummyVAO);
 			glDrawArrays(GL_POINTS, 0, 1);

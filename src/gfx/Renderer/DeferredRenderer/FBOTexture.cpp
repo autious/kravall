@@ -80,6 +80,10 @@ namespace GFX
 
 	void FBOTexture::UpdateResolution(int width, int height)
 	{
+		//No need to resize if they're the same size
+		if (m_width == width && m_height == height)
+			return;
+
 		//glActiveTexture(GL_TEXTURE0 + m_textureHandle);
 		glBindTexture(m_textureTarget, m_textureHandle);
 

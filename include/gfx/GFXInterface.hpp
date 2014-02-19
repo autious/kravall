@@ -67,7 +67,7 @@ namespace GFX
 	Sets the projection matrix used by the main camera.
 	\param matrix Pointer to a 4x4 matrix
 	*/
-	DLL_API void SetProjectionMatrix(GFXMat4x4 matrix);
+	DLL_API void SetProjectionMatrix(GFXMat4x4 matrix, float nearZ, float farZ);
 
 	/*!
 	Sets the view matrix used by the overlay cam
@@ -152,7 +152,7 @@ namespace GFX
 		\param width Width of the texture
 		\param height Height of the texture
 		*/
-		DLL_API void LoadTexture2DFromMemory(unsigned int& out_id, unsigned char* data, int width, int height);
+		DLL_API void LoadTexture2DFromMemory(unsigned int& out_id, unsigned char* data, int width, int height, bool decal);
 
 		/*!
 		Deletes a texture from the GPU

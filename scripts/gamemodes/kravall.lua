@@ -11,9 +11,11 @@ local keyboard = core.input.keyboard
 local mouse = core.input.mouse
 local s_squad = core.system.squad
 
-core.movementData.setMovementMetaData( core.movementData.Idle, 0, 17, 17 )
-core.movementData.setMovementMetaData( core.movementData.Walking, 5.8, 17, 17 )
-core.movementData.setMovementMetaData( core.movementData.Sprinting, 8.8, 17, 14 )
+core.movementData.setMovementMetaData( core.movementData.Walking, 5.8, 17, 17, 0.0 )
+core.movementData.setMovementMetaData( core.movementData.Sprinting, 8.8, 17, 14, 0.2 )
+
+-- usual weapons...
+fists = core.weaponData.pushWeapon( 1.0, 20, 0.2, 0.05, 0.05, 0.5, "punch" )
 
 function T:new(o)
     o = o or {}
@@ -47,8 +49,21 @@ function T:init()
             self.gui:setFormation( formation ) 
         end,
         -- Called when the currently active stance is changed logically.
-        onStanceChange = function(stance)
+        onStanceChange = function( stance )
             self.gui:setStance( stance )
+        end,
+
+        -- Called whenever the selection changes
+        -- might contain previously sent units.
+        -- Could be empty
+        onSelectedSquadsChange = function( squads )
+            self.gui:setSelectedSquads( squads )
+        end,
+
+        -- Called when the currently active unit changes
+        -- or when the state of the unit might have changes (like health)
+        onSelectedUnitInformationChange = function( data )
+            self.gui:setUnitInformation( data ) 
         end
     })
 

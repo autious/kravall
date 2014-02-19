@@ -41,6 +41,15 @@ namespace Core
         return formation;
     }
 
+    Core::SquadAbility* LuaUNewSquadAbility( lua_State * L )
+    {
+        Core::SquadAbility* ability = static_cast<Core::SquadAbility*>(lua_newuserdata(L, sizeof(Core::SquadAbility)));
+        luaL_newmetatable( L, SQUAD_ABILITY_META_TYPE );
+        lua_setmetatable(L, -2);
+        
+        return ability;
+    }
+
     Core::PoliceStance* LuaUNewPoliceStance(lua_State* L)
     {
         Core::PoliceStance* stance = static_cast<Core::PoliceStance*>(lua_newuserdata(L, sizeof(Core::PoliceStance)));                  
@@ -156,12 +165,24 @@ namespace Core
 
     LuaHoverText* LuaUNewHoverText( lua_State * L )
     {
-        LuaHoverText* hover = static_cast<LuaHoverText*>( lua_newuserdata( L, sizeof( LuaHoverText*) ) );
+        LuaHoverText* hover = static_cast<LuaHoverText*>( lua_newuserdata( L, sizeof( LuaHoverText) ) );
         hover->hoverTextId = -1;
            
         luaL_getmetatable( L, HOVER_TEXT_META_TYPE );
         lua_setmetatable( L, -2 );
 
         return hover;
+    }
+
+    LuaTTFFont* LuaUNewTTFFont( lua_State * L )
+    {
+        LuaTTFFont* font = static_cast<LuaTTFFont*>( lua_newuserdata( L, sizeof(LuaTTFFont) ) );
+        font->fontPtr = nullptr;
+
+        //Needs to be new, because no-one else will define and add functions.
+        luaL_newmetatable( L, TTF_FONT_META_TYPE );
+        lua_setmetatable( L, -2 );
+
+        return font;
     }
 }

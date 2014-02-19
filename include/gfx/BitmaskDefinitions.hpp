@@ -21,13 +21,15 @@ namespace GFX
 	{
 		static const unsigned int MESH_LAYER = 3;
 		static const unsigned int OUTLINE_LAYER = 2;
+		static const unsigned int DECAL_LAYER = 1;
 	}
-	
+
 	namespace OBJECT_TYPES
 	{
-		static const unsigned int OPAQUE_GEOMETRY = 4;
-		static const unsigned int LIGHT = 3;
-        static const unsigned int PARTICLE_GEOMETRY = 2;
+		static const unsigned int OPAQUE_GEOMETRY = 5;
+		static const unsigned int LIGHT = 4;
+		static const unsigned int DECAL_GEOMETRY = 2;
+		static const unsigned int PARTICLE_GEOMETRY = 3;
 		static const unsigned int TRANSPARENT_GEOMETRY = 1;
 		static const unsigned int OVERLAY_GEOMETRY = 0;
 	}

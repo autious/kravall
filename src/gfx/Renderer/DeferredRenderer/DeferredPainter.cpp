@@ -27,11 +27,6 @@ extern "C"
 
     static GLuint m_gammaUniform;
 
-    static GLint m_cameraPosUniform;
-
-    static unsigned int testCubeMap;
-    static GLint cubemapUniform;
-
     static GLuint m_instanceBuffer;
 
     static GLint m_animatedBlend;
@@ -222,7 +217,6 @@ namespace GFX
 				depth = GetBitmaskValue(bitmask, BITMASK::DEPTH);
 			}
 
-
 			if (material == currentMaterial && meshID == currentMesh && !endMe && instanceCount < MAX_INSTANCES && layer == currentLayer)
 			{
 				InstanceData smid = *(InstanceData*)renderJobs.at(i).value;
@@ -242,9 +236,6 @@ namespace GFX
 
 					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IBO);
 
-					if (mesh.skeletonID >= 0)
-						animationManager->BindSkeleton(mesh.skeletonID);
-
 					if (currentLayer == LAYER_TYPES::OUTLINE_LAYER)
 					{
 						glEnable(GL_STENCIL_TEST);
@@ -260,7 +251,7 @@ namespace GFX
 						glDisable(GL_DEPTH_TEST);
 						glStencilFunc(GL_NOTEQUAL, 1, -1);
 						glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-						glLineWidth(m_outlineThickness);
+						glLineWidth(m_staticInstances[0].outlineColor[3]);
 						glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 						if (currentShader == m_staticBlend || currentShader == m_staticNormal)
@@ -300,7 +291,6 @@ namespace GFX
 
 					currentMaterial = material;
 
-
 					//compare shader
 					if (mat.shaderProgramID != currentShader)
 					{
@@ -331,10 +321,6 @@ namespace GFX
 					currentMesh = meshID;
 
 					glBindVertexArray(mesh.VAO);
-
-
-					if (mesh.skeletonID >= 0)
-						animationManager->BindSkeletonData(mesh.skeletonID);
 				}
 
 				if (layer != currentLayer)

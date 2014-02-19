@@ -1,4 +1,4 @@
-return function(asm, posX, posY, posZ, group, gender, material)
+return function(asm, posX, posY, posZ, group, gender, material, weaponType)
     local meshes = {"assets/model/animated/rioter/rioter-male_00.bgnome","assets/model/animated/rioter/rioter-female_00.bgnome" }
     local materials = {"assets/texture/animated/rioter/rioter_00.material","assets/texture/animated/rioter/rioter_01.material","assets/texture/animated/rioter/rioter_02.material" }
     gender = gender or (math.random(1,#meshes))
@@ -37,7 +37,7 @@ return function(asm, posX, posY, posZ, group, gender, material)
 			},
 			{
 				type = core.componentType.TargetingComponent,
-				data = { },
+				data = { weapon = weaponType or fists },
 				ignoreHard = true
 			},
 			{
@@ -71,7 +71,7 @@ return function(asm, posX, posY, posZ, group, gender, material)
 				type = core.componentType.GraphicsComponent,
 				data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1} },
 				load = { 
-							mesh = { core.loaders.GnomeLoader, meshes[gender] },
+							mesh = { core.loaders.GnomeLoader, meshes[1] },
 							material = { core.loaders.MaterialLoader, materials[material]  },
 					   }
 			}

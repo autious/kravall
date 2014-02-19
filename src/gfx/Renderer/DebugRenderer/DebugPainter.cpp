@@ -89,11 +89,11 @@ namespace GFX
         m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("DebugBox"), "PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
 	}
 
-	void DebugPainter::Render(FBOTexture* depthBuffer, FBOTexture* color, glm::mat4 viewMatrix, glm::mat4 projMatrix)
+	void DebugPainter::Render(FBOTexture* depthBuffer, FBOTexture* color, glm::mat4 viewMatrix, glm::mat4 projMatrix, bool draw)
 	{
 		BasePainter::Render();
 
-		if (DebugDrawing().ShouldRender())
+		if (DebugDrawing().ShouldRender() && draw)
 		{
 
 			glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
@@ -262,10 +262,10 @@ namespace GFX
 
 			TextureManager::UnbindTexture();
 
-			DebugDrawing().Clear();
+			//DebugDrawing().Clear();
 		}
 		
-
+		DebugDrawing().Clear();
 		
 
 	}

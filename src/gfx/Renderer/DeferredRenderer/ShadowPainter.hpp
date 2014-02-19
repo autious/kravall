@@ -49,7 +49,8 @@ namespace GFX
 		Main rendering function
 		*/
 		void Render(AnimationManagerGFX* animationManager, const unsigned int& renderIndex, FBOTexture* depthBuffer, glm::mat4 viewMatrix, glm::mat4 projMatrix,
-			const unsigned int& geometryStartIndex, const unsigned int& geometryEndIndex, FBOTexture* shadowMap, const unsigned int& width, const unsigned int& height);
+			const unsigned int& geometryStartIndex, const unsigned int& geometryEndIndex, FBOTexture** shadowMaps, const unsigned int& width, const unsigned int& height,
+			const glm::vec2& nearFar);
 
 	private:
 
@@ -60,7 +61,7 @@ namespace GFX
 
 		InstanceData* m_staticInstances;
 		GLuint m_instanceBuffer;
-		GLuint m_RBO;
+		GLuint* m_RBO;
 
 		BlurPainter* m_blurPainter;
 
@@ -69,6 +70,11 @@ namespace GFX
 		glm::mat4x4 m_dbgmat1;
 		glm::mat4x4 m_dbgmat2;
 		glm::mat4x4 m_dbgmat3;
+		glm::mat4x4 m_dbgmat4;
+		glm::mat4x4 m_dbgmat5;
+		glm::mat4x4 m_dbgmat6;
+		glm::mat4x4 m_dbgmat7;
+		glm::mat4x4 m_dbgmat8;
 
 	};
 }

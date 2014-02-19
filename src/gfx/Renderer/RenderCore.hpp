@@ -61,6 +61,7 @@ namespace GFX
     class GIPainter;
     class BlurPainter;
     class ParticlePainter;
+	class DecalPainter;
 
     class FontData;
     class Vertex;
@@ -125,7 +126,7 @@ namespace GFX
 		Set the local projection matrix
 		\param proj New projection matrix
 		*/
-		void SetProjMatrix(glm::mat4 proj);
+		void SetProjMatrix(glm::mat4 proj, float nearZ, float farZ);
 
         /*!
         Sets the view matrix used by the overlay camera
@@ -177,7 +178,7 @@ namespace GFX
 		void DeleteMesh(unsigned long long id);
 		void LoadMesh(unsigned int& meshID, int& sizeVerts, int& sizeIndices, GFX::Vertex* verts, int* indices);
 
-		void LoadTexture(unsigned int& id, unsigned char* data, int width, int height);
+		void LoadTexture(unsigned int& id, unsigned char* data, int width, int height, bool decal);
 		void DeleteTexture(unsigned long long int id);
 		
 		void CreateMaterial(unsigned long long int& id);
@@ -238,7 +239,7 @@ namespace GFX
 		FBOTexture* m_specular;
 		FBOTexture* m_glowMatID;
 		
-		FBOTexture* m_shadowMapTexture;
+		FBOTexture** m_shadowMapTextures;
 
 		GLuint m_dummyVAO;
 
@@ -263,6 +264,7 @@ namespace GFX
 		PostProcessingPainter* m_postProcessingPainter;
 		GIPainter* m_GIPainter;
 		BlurPainter* m_blurPainter;
+		DecalPainter* m_decalPainter;
 		ShadowPainter* m_shadowPainter;
         ParticlePainter* m_particlePainter;
 
@@ -281,6 +283,9 @@ namespace GFX
         glm::mat4 m_overlayViewMatrix;
         glm::mat4 m_overlayProjMatrix;
 
+		float m_nearZ;
+		float m_farZ;
+
 		bool m_playSplash;
 
 		float m_gamma;
@@ -295,6 +300,8 @@ namespace GFX
 		glm::mat4x4 m_debugLightFrustum;
 		glm::mat4x4 m_debugCameraFrustum;
 		glm::mat4x4 m_debugFitFrustum;
+
+		bool m_reloadAnimationData;
 
 	};
 

@@ -133,9 +133,9 @@ namespace GFX
 		Renderer().SetViewMatrix(matrix);
 	}
 
-	void SetProjectionMatrix(GFXMat4x4 matrix)
+	void SetProjectionMatrix(GFXMat4x4 matrix, float nearZ, float farZ)
 	{
-		Renderer().SetProjMatrix(matrix);
+		Renderer().SetProjMatrix(matrix, nearZ, farZ);
 	}
 
 	void SetOverlayViewMatrix(GFXMat4x4 matrix)
@@ -199,9 +199,9 @@ namespace GFX
 {
 	namespace Content
 	{
-		void LoadTexture2DFromMemory(unsigned int& id, unsigned char* data, int width, int height)
+		void LoadTexture2DFromMemory(unsigned int& id, unsigned char* data, int width, int height, bool decal)
 		{
-			Renderer().LoadTexture(id, data, width, height);
+			Renderer().LoadTexture(id, data, width, height, decal);
 		}
 
 		void DeleteTexture(unsigned int id)

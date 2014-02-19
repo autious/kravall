@@ -37,8 +37,8 @@ namespace Core
 		/*! The police's health represented by an integer with range [0, 100]. */
 		int health;
 
-		/*! The police's stamina represented by an integer with range [0, 100]. */
-		int stamina;
+		/*! The police's stamina represented by a float with range [0, 100]. */
+		float stamina;
 
 		/*! The police's morale represented by a float with range [0.0f, 2.0f]. */
 		float morale;
@@ -84,7 +84,7 @@ namespace Core
 		/*!
 		Default constructor. Initialises all members to 0 except stance which is defaulted to Passive.
 		*/
-		AttributeComponent() : health(0), stamina(0), morale(0.0f)
+		AttributeComponent() : health(0), stamina(0.0f), morale(0.0f)
 		{
 			police.stance = PoliceStance::Passive;
 			police.defense = 0;
@@ -100,7 +100,7 @@ namespace Core
 		\param policeDefense The initial defence for the police unit.
 		\param policeMobility The initial mobility for the police unit.
 		*/
-		AttributeComponent(const int& startHealth, const int& startStamina, const float& startMorale,
+		AttributeComponent(const int& startHealth, const float& startStamina, const float& startMorale,
 			const PoliceStance& policeStance, const int& policeSquad, const int& policeDefense,
 			const float& policeMobility) : health(startHealth), stamina(startStamina), morale(startMorale)
 		{
@@ -119,9 +119,9 @@ namespace Core
 		\param rioterRage The rioter's initial rage.
 		\param rioterPressure The initial pressure for the rioter.
 		*/
-		AttributeComponent(const int& startHealth, const int& startStamina, const float& startMorale,
-			const RioterAlignment& rioterAlignment, const int& rioterGroupID, const int& rioterRage,
-			const int& rioterPressure, const RioterStance& rioterStance) : health(startHealth), stamina(startStamina),
+		AttributeComponent(const int& startHealth, const float& startStamina, const float& startMorale,
+			const RioterAlignment& rioterAlignment, const int& rioterGroupID, const float& rioterRage,
+			const float& rioterPressure, const RioterStance& rioterStance) : health(startHealth), stamina(startStamina),
 			morale(startMorale)
 		{
 			rioter.alignment = rioterAlignment;

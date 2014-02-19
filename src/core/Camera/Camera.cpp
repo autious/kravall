@@ -24,6 +24,8 @@ namespace Core
     void Camera::SetProjectionMatrix( const glm::mat4 & proj )
     {
         m_projectionMatrix = proj;
+		m_nearZ = proj[3][2] / (proj[2][2] - 1.0);
+		m_farZ = proj[3][2] / (proj[2][2] + 1.0);
     }
 
     glm::vec3 Camera::GetForward() const
@@ -48,6 +50,16 @@ namespace Core
         //return glm::vec3( f[0],f[1],f[2] );
 		return glm::vec3( inv[3][0], inv[3][1], inv[3][2] );
     }
+
+	float Camera::GetNear() const
+	{
+		return m_nearZ;
+	}
+
+	float Camera::GetFar() const
+	{
+		return m_farZ;
+	}
 
     /*
 	Camera::Camera(const float& fov, const float& nearZ, const float& farZ)

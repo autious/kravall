@@ -4,9 +4,10 @@ local scen = require "scenario":new()
 scen.asm:specific_content( core.contentmanager.load( 
 		core.loaders.NavigationMeshLoader, "extremeScenario.txt", function( value ) end, false ) )
 
---asm.gamemode =  require "gamemodes/normal":new()
+--scen.gamemode =  require "gamemodes/normal":new()
 scen.gamemode = require "gamemodes/kravall":new()
 
+scen:registerInitCallback(function() scen.gamemode:init() end)
 scen:registerUpdateCallback( function( delta ) scen.gamemode:update(delta) end )
 scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
 
@@ -40,18 +41,18 @@ local gFour = core.system.groups.createGroup()
 
 for i = -side / 2, -1 do
 	for p = -side / 2, -1 do
-		rioter( scen, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], gOne )
+		rioter( scen, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], gOne, nil, nil, fists )
 	end                         
 	for p = 1, side / 2 do      
-		rioter( scen, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], gTwo )
+		rioter( scen, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], gTwo, nil, nil, fists )
 	end                         
 end                             
 for i = 1, side / 2 do          
 	for p = -side / 2, -1 do    
-		rioter( scen, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], gThree )
+		rioter( scen, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], gThree, nil, nil, fists )
 	end                         
 	for p = 1, side / 2 do      
-		rioter( scen, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], gFour )
+		rioter( scen, p * 2.0 + centerPoint[1], 0  + centerPoint[2], i * 2.0  + centerPoint[3], gFour, nil, nil, fists )
 	end
 end
 

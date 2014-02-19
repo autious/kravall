@@ -23,10 +23,15 @@ namespace Core
         glm::vec3 GetUp() const;
         glm::vec3 GetRight() const;
         glm::vec3 GetPosition() const;
+		
+		float GetNear() const;
+		float GetFar() const;
 
     private:
 		glm::mat4x4 m_viewMatrix;
 		glm::mat4x4 m_projectionMatrix;
+		float m_nearZ;
+		float m_farZ;
 
 	};
 

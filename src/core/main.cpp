@@ -84,11 +84,18 @@ GLFWwindow* init( int argc, char** argv )
 	if (GFX::Init(initScreenWidth,initScreenHeight) == GFX_FAIL)
 		return nullptr;
 
-    Core::world.m_contentManager.Load<Core::TTFLoader>(Core::world.m_config.GetString("consoleFont", "assets/Fonts/ConsoleFont.font").c_str(), [](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+    Core::world.m_contentManager.Load<Core::TTFLoader>(Core::world.m_config.GetString("consoleFont", "assets/font/ConsoleFont.font").c_str(), [](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
             {
-                localFontData = static_cast<GFX::FontData*>(handle);
-                Core::Console().Init(localFontData);  
-                GFX::Debug::SetStatisticsFont(localFontData);
+                if( handle == nullptr )
+                {
+                    LOG_FATAL << "Unable to load main font" << std::endl;
+                }
+                else
+                { 
+                    localFontData = static_cast<GFX::FontData*>(handle);
+                    Core::Console().Init(localFontData);  
+                    GFX::Debug::SetStatisticsFont(localFontData);
+                }
             });
 
     RegisterCLOPLogger();
@@ -101,7 +108,7 @@ void run( GLFWwindow * window )
 
     Core::ContentManager CM;
 	
-	GFX::SetProjectionMatrix(Core::gameCamera.GetProjectionMatrix());
+	GFX::SetProjectionMatrix(Core::gameCamera.GetProjectionMatrix(), Core::gameCamera.GetNear(), Core::gameCamera.GetFar());
 
 	std::vector<Core::Entity> rioters;
 
@@ -110,25 +117,6 @@ void run( GLFWwindow * window )
     unsigned int meshID; 
     unsigned int copMaterialID;
 	unsigned int rioterMaterialID;
-
-    Core::world.m_contentManager.Load<Core::GnomeLoader>("assets/model/animated/police/cop/police-female_00.bgnome", [&meshID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
-            {
-                Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
-                const Core::ModelData* data = gnomeLoader->getData(handle);
-				meshID = data->meshID;
-            });
-
-	Core::world.m_contentManager.Load<Core::MaterialLoader>("assets/material/cop.material", [&copMaterialID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
-            {
-                Core::MaterialData* data = static_cast<Core::MaterialData*>(handle);
-				copMaterialID = static_cast<unsigned int>(data->materialId);
-            }, false);
-
-	Core::world.m_contentManager.Load<Core::MaterialLoader>("assets/material/rioter.material", [&rioterMaterialID](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
-			{ 
-				Core::MaterialData* data = static_cast<Core::MaterialData*>(handle);
-				rioterMaterialID = static_cast<unsigned int>(data->materialId);
-			}, false);
 
 	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));	
 
@@ -143,6 +131,8 @@ void run( GLFWwindow * window )
     SetCLOPLevel( consoleOutputLevel.c_str() );
 
     Core::world.m_luaState.Init();
+
+	//Core::world.threadHandler.Initialize( CONF.GetInt( "numberOfSystemCoresToUse", 1 ) );
 
 	//inputline.resize(1);
 	Core::HighresTimer timer;
@@ -186,7 +176,7 @@ void run( GLFWwindow * window )
             GFX::SetOverlayViewMatrix( Core::overlayCamera.GetViewMatrix() );
             GFX::SetOverlayProjectionMatrix( Core::overlayCamera.GetProjectionMatrix() );
             GFX::SetViewMatrix(Core::gameCamera.GetViewMatrix());
-            GFX::SetProjectionMatrix(Core::gameCamera.GetProjectionMatrix());
+            GFX::SetProjectionMatrix(Core::gameCamera.GetProjectionMatrix(), Core::gameCamera.GetNear(), Core::gameCamera.GetFar());
 
             //TestRendering();
 

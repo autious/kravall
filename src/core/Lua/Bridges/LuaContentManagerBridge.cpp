@@ -5,10 +5,12 @@
 #include <Lua/Bridges/ContentLoadingBind/GnomeLoaderBridge.hpp>
 #include <Lua/Bridges/ContentLoadingBind/NavigationMeshBridge.hpp>
 #include <Lua/Bridges/ContentLoadingBind/MaterialLoaderBridge.hpp>
+#include <Lua/Bridges/ContentLoadingBind/TTFLoaderBridge.hpp>
+
 
 namespace Core
 {
-    typedef LuaContentManagerBridgeTemplate<GnomeLoaderBridge, NavigationMeshBridge,MaterialLoaderBridge> ContentManagerBridge;
+    typedef LuaContentManagerBridgeTemplate<GnomeLoaderBridge, NavigationMeshBridge,MaterialLoaderBridge,TTFLoaderBridge> ContentManagerBridge;
 }
 
 extern "C"

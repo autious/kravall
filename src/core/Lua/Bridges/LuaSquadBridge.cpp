@@ -1,6 +1,6 @@
 #include "LuaSquadBridge.hpp"
 
-#include <Systems/SquadSystem.hpp>
+#include <Systems/AI/SquadSystem.hpp>
 
 #include <Lua/LuaUtility.hpp>
 #include <Lua/LuaMetatableTypes.hpp>
@@ -42,7 +42,7 @@ extern "C"
                 lua_pushnil(L);
                 for(int i=0; lua_next(L, 1); ++i)
                 {
-                    squads[i] = luaL_checknumber(L, -1);
+                    squads[i] = static_cast<int>(luaL_checknumber(L, -1));
                     lua_pop(L, 1);
                 }                
 
@@ -86,7 +86,7 @@ extern "C"
                 lua_pushnil(L);
                 for(int i=0; lua_next(L, 1); ++i)
                 {
-                    squads[i] = luaL_checknumber(L, -1);
+                    squads[i] = static_cast<int>(luaL_checknumber(L, -1));
                     lua_pop(L, 1);
                 }
 
@@ -133,7 +133,7 @@ extern "C"
                 lua_pushnil(L);
                 for(int i=0; lua_next(L, 1); ++i)
                 {
-                    squads[i] = luaL_checknumber(L, -1);
+                    squads[i] = static_cast<int>(luaL_checknumber(L, -1));
                     lua_pop(L, 1);
                 }
 
@@ -181,7 +181,7 @@ extern "C"
                 lua_pushnil(L);
                 for(int i=0; lua_next(L, 1); ++i)
                 {
-                    squads[i] = luaL_checknumber(L, -1);
+                    squads[i] = static_cast<int>(luaL_checknumber(L, -1));
                     lua_pop(L, 1);
                 }
 
@@ -241,7 +241,7 @@ extern "C"
                 lua_pushnil(L);
                 for(int i=0; lua_next(L, 1); ++i)
                 {
-                    squads[i] = luaL_checknumber(L, -1);
+                    squads[i] = static_cast<int>(luaL_checknumber(L, -1));
                     lua_pop(L, 1);
                 }
 
@@ -286,7 +286,7 @@ extern "C"
                 lua_pushnil(L);
                 for(int i=0; lua_next(L, 1); ++i)
                 {
-                    squads[i] = luaL_checknumber(L, -1);
+                    squads[i] = static_cast<int>(luaL_checknumber(L, -1));
                     lua_pop(L, 1);
                 }
 
@@ -342,8 +342,32 @@ namespace Core
                         formation = LuaUNewSquadFormation(L);
                         *formation = Core::SquadFormation::HALF_CIRCLE_FORMATION;
                         lua_setfield(L, -2, "HalfCircleFormation");
-
                     lua_setfield(L, -2, "formations");
+                    lua_newtable( L );
+                        Core::SquadAbility* ability = LuaUNewSquadAbility(L);    
+                        *ability = Core::SquadAbility::SPRINT;
+                        lua_setfield(L, -2, "Sprint" );
+                    
+                        ability = LuaUNewSquadAbility(L);
+                        *ability = Core::SquadAbility::FLEE;
+                        lua_setfield(L, -2, "Flee" );
+    
+                        ability = LuaUNewSquadAbility(L);
+                        *ability = Core::SquadAbility::ROUT;
+                        lua_setfield(L, -2, "Rout" );
+
+                        ability = LuaUNewSquadAbility(L);
+                        *ability = Core::SquadAbility::ATTACK;
+                        lua_setfield( L, -2, "Attack" );
+
+                        ability = LuaUNewSquadAbility(L);
+                        *ability = Core::SquadAbility::ARREST_INDIVIDUAL;            
+                        lua_setfield( L, -2, "ArrestIndividual" );
+
+                        ability = LuaUNewSquadAbility(L);
+                        *ability = Core::SquadAbility::ARREST_GROUP;
+                        lua_setfield( L, -2, "ArrestGroup" );
+                    lua_setfield(L, -2, "abilities");
                 lua_setfield(L, -2, "squad");
         lua_pop(L, 2);
 

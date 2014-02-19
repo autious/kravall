@@ -23,61 +23,48 @@
 #include <Components/HoverTextComponent.hpp>
 #include <Components/EmitterComponent.hpp>
 
-/* TODO: Put your system up here instead of the end of the header. noobs */
-#include <Systems/RenderingSystem.hpp>
-#include <Systems/NameSystem.hpp>
-#include <Systems/AreaSystem.hpp>
-#include <Systems/GroupDataSystem.hpp>
-#include <Systems/NavMeshBlockingSystem.hpp>
-#include <Systems/AnimationSystem.hpp>
-#include <Systems/SquadSystem.hpp>
-#include <Systems/TargetingSystem.hpp>
-#include <Systems/MoodStateSystem.hpp>
-#include <Systems/RemovalSystem.hpp>
-#include <Systems/HoverTextSystem.hpp>
-#include <Systems/RioterAnimationSystem.hpp>
-#include <Systems/ParticleSystem.hpp>
+/**********All systems after this line************/
+#include <Systems/EngineSupport/RenderingSystem.hpp>
+#include <Systems/EngineSupport/NameSystem.hpp>
+#include <Systems/AIsupport/AreaSystem.hpp>
+#include <Systems/AIsupport/GroupDataSystem.hpp>
+#include <Systems/AI/NavMeshBlockingSystem.hpp>
+#include <Systems/EngineSupport/AnimationSystem.hpp>
+#include <Systems/AI/SquadSystem.hpp>
+#include <Systems/AI/TargetingSystem.hpp>
+#include <Systems/AI/MoodStateSystem.hpp>
+#include <Systems/AIsupport/RemovalSystem.hpp>
+#include <Systems/EngineSupport/HoverTextSystem.hpp>
+#include <Systems/AI/MovementAnimationSystem.hpp>
+#include <Systems/AI/AttackAnimationSystem.hpp>
+#include <Systems/AIsupport/PriorityResetSystem.hpp>
+#include <Systems/AI/RioterGoalSystem.hpp>
+#include <Systems/AIsupport/AIDebugSystem.hpp>
+#include <Systems/AIsupport/CollisionSystem2D.hpp>
+#include <Systems/AIsupport/NavMeshCollisionSystem.hpp>
+#include <Systems/AIsupport/FlowfieldPositioningSystem.hpp>
+#include <Systems/AI/MovementSystem.hpp>
+#include <Systems/AI/FieldReactionSystem.hpp>
+#include <Systems/AI/GPUPFSystem.hpp>
+#include <Systems/AIsupport/PickingSystem.hpp>
+#include <Systems/EngineSupport/LightSystem.hpp>
+#include <Systems/AI/FlowfieldSystem.hpp>
+#include <Systems/AI/PoliceGoalSystem.hpp>
+#include <Systems/EngineSupport/ParticleSystem.hpp>
 
 namespace Core
 {
-	class MovementSystem;
-	class FieldReactionSystem;
-	class GPUPFSystem;
-	class PickingSystem;
-	class AIDebugSystem;
-	class LightSystem;
-	class CollisionSystem2D;
-	class FlowfieldSystem;
-	class NavMeshCollisionSystem;
-    class GroupDataSystem;
-	class FlowfieldPositioningSystem;
-	class PoliceGoalSystem;
-	class MoodStateSystem;
-	class RemovalSystem;
-	
-
-    typedef SystemHandlerTemplate<LightSystem, FlowfieldPositioningSystem, PoliceGoalSystem, NavMeshCollisionSystem, 
-	    CollisionSystem2D, PickingSystem, TargetingSystem, AIDebugSystem, FlowfieldSystem, GPUPFSystem, ParticleSystem,
-	    MovementSystem, NameSystem, GroupDataSystem, AreaSystem, NavMeshBlockingSystem, MoodStateSystem, RioterAnimationSystem,
-        AnimationSystem, SquadSystem, RemovalSystem, HoverTextSystem, RenderingSystem> SystemHandler;
+    typedef SystemHandlerTemplate<PriorityResetSystem, LightSystem, FlowfieldPositioningSystem, PoliceGoalSystem, NavMeshCollisionSystem, 
+	CollisionSystem2D, PickingSystem, TargetingSystem, AttackAnimationSystem, AIDebugSystem, FlowfieldSystem, GPUPFSystem, ParticleSystem,
+	RioterGoalSystem, MovementSystem, NameSystem, GroupDataSystem, AreaSystem, NavMeshBlockingSystem, MoodStateSystem, MovementAnimationSystem, 
+	AnimationSystem, SquadSystem, RemovalSystem, HoverTextSystem, RenderingSystem> SystemHandler;
 
     typedef EntityHandlerTemplate<SystemHandler, WorldPositionComponent, RotationComponent, ScaleComponent, 
 		GraphicsComponent, LightComponent, MovementComponent, UnitTypeComponent, AttributeComponent,
-		BoundingVolumeComponent, FlowfieldComponent, AreaComponent,NameComponent, AnimationComponent,
+		BoundingVolumeComponent, FlowfieldComponent, AreaComponent, NameComponent, AnimationComponent,
         SquadComponent, FormationComponent, TargetingComponent, HoverTextComponent, EmitterComponent> EntityHandler;
 }
 
-/**********All systems after this line************/
-#include <Systems/MovementSystem.hpp>
-#include <Systems/FieldReactionSystem.hpp>
-#include <Systems/GPUPFSystem.hpp>
-#include <Systems/PickingSystem.hpp>
-#include <Systems/AIDebugSystem.hpp>
-#include <Systems/LightSystem.hpp>
-#include <Systems/CollisionSystem2D.hpp>
-#include <Systems/FlowfieldSystem.hpp>
-#include <Systems/NavMeshCollisionSystem.hpp>
-#include <Systems/FlowfieldPositioningSystem.hpp>
-#include <Systems/PoliceGoalSystem.hpp>
+
 
 #endif

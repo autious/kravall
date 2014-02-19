@@ -11,8 +11,8 @@ layout ( location = 4 ) out vec4 gGlowMatRT;
 
 void main()
 {
-	gNormalDepthRT = vec4(0);//vec4(finalNormal, );
+	gNormalDepthRT = vec4(0);
 	gDiffuseRT	= outlineColor;
 	gSpecularRT = vec4(0);
-	gGlowMatRT = outlineColor;//vec4(0);//outlineColor;
+	gGlowMatRT = outlineColor;
 }

@@ -6,7 +6,7 @@ namespace
 {
 	TEST(RenderingBitmaskTest, CorrectPackingUnpacking)
 	{
-		GFX::GFXBitmask bitmask;
+		ASSERT_TRUE( true );
 
 		GFX::SetBitmaskValue(bitmask, GFX::BITMASK::TYPE, 0);
 		GFX::SetBitmaskValue(bitmask, GFX::BITMASK::VIEWPORT_ID, 0);

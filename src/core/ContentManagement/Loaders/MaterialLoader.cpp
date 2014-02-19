@@ -42,8 +42,9 @@ namespace Core
         std::string specularTexture;
         std::string normalBlendTexture;
         std::string glowTexture;
+		bool isDecal = false;
 
-        if(ParseFile(assetName, shaderName, diffuseTexture, specularTexture, normalBlendTexture, glowTexture))
+        if(ParseFile(assetName, shaderName, diffuseTexture, specularTexture, normalBlendTexture, glowTexture, isDecal))
         {
             data = new Core::MaterialData;
             Core::TextureData* texture = nullptr;
@@ -75,7 +76,7 @@ namespace Core
                 if(!GetTextureCacheStatus(textureHash, texture))
                 {
                     texture = new Core::TextureData;
-                    BufferTextureData(LoadTextureData(diffuseTexture.c_str(), texture), texture);
+					BufferTextureData(LoadTextureData(diffuseTexture.c_str(), texture), texture, isDecal);
                     AddTextureToMaterial(data->materialId, texture->textureId);
                 }
                 data->diffuseTexture = texture;
@@ -87,7 +88,7 @@ namespace Core
 				if (!GetTextureCacheStatus(textureHash, texture))
 				{
 					texture = new Core::TextureData;
-					BufferTextureData(LoadTextureData(normalBlendTexture.c_str(), texture), texture);
+					BufferTextureData(LoadTextureData(normalBlendTexture.c_str(), texture), texture, isDecal);
 					AddTextureToMaterial(data->materialId, texture->textureId);
 				}
 				data->normalBlendTexture = texture;
@@ -99,7 +100,7 @@ namespace Core
                 if(!GetTextureCacheStatus(textureHash, texture))
                 {
                     texture = new Core::TextureData;
-                    BufferTextureData(LoadTextureData(specularTexture.c_str(), texture), texture);
+					BufferTextureData(LoadTextureData(specularTexture.c_str(), texture), texture, isDecal);
                     AddTextureToMaterial(data->materialId, texture->textureId);
                 }
                 data->specularTexture = texture;
@@ -111,7 +112,7 @@ namespace Core
                 if(!GetTextureCacheStatus(textureHash, texture))
                 {
                     texture = new Core::TextureData;
-                    BufferTextureData(LoadTextureData(glowTexture.c_str(), texture), texture);
+					BufferTextureData(LoadTextureData(glowTexture.c_str(), texture), texture, isDecal);
                     AddTextureToMaterial(data->materialId, texture->textureId);
                 }
                 data->glowTexture = texture;
@@ -132,8 +133,9 @@ namespace Core
         std::string specularTexture;
         std::string normalBlendTexture;
         std::string glowTexture;
+		bool isDecal = false;
 
-        if(ParseFile(assetName, shaderName, diffuseTexture, specularTexture, normalBlendTexture, glowTexture))
+        if(ParseFile(assetName, shaderName, diffuseTexture, specularTexture, normalBlendTexture, glowTexture, isDecal))
         {
             data = new Core::MaterialLoader::MaterialLoadingData;
             data->materialData                      = new Core::MaterialData;
@@ -141,6 +143,7 @@ namespace Core
             data->materialData->specularTexture     = nullptr;
             data->materialData->normalBlendTexture  = nullptr;
             data->materialData->glowTexture         = nullptr;
+			data->materialData->isDecal				= false;
             data->diffuseData                       = nullptr;
             data->specularData                      = nullptr;
             data->normalBlendData                   = nullptr;
@@ -149,6 +152,9 @@ namespace Core
             data->shaderName                        = shaderName;
 
             unsigned int textureHash;
+
+
+			data->materialData->isDecal = isDecal;
 
             if(diffuseTexture.size())
             {
@@ -193,6 +199,8 @@ namespace Core
                 }
                 data->materialData->glowTexture = texture;
             }
+
+
         }
 
         return data;
@@ -207,6 +215,8 @@ namespace Core
         GFX::Content::GetShaderId(shaderId, loadingData->shaderName.c_str());
         GFX::Content::AttachShaderToMaterial(loadingData->materialData->materialId, shaderId);
 
+		bool isDecal = false;
+
         if(shaderId == std::numeric_limits<decltype(shaderId)>::max())
         {            
             LOG_WARNING << "Failed to retrieve shader with name: " << loadingData->shaderName << std::endl;
@@ -214,22 +224,22 @@ namespace Core
 
         if(loadingData->materialData->diffuseTexture)
         {
-            BufferTextureData(loadingData->diffuseData, loadingData->materialData->diffuseTexture);
+			BufferTextureData(loadingData->diffuseData, loadingData->materialData->diffuseTexture, loadingData->materialData->isDecal);
             AddTextureToMaterial(loadingData->materialData->materialId, loadingData->materialData->diffuseTexture->textureId);
         }
         if(loadingData->materialData->specularTexture)
         {
-            BufferTextureData(loadingData->specularData, loadingData->materialData->specularTexture);
+			BufferTextureData(loadingData->specularData, loadingData->materialData->specularTexture, loadingData->materialData->isDecal);
             AddTextureToMaterial(loadingData->materialData->materialId, loadingData->materialData->specularTexture->textureId);
         }
         if(loadingData->materialData->normalBlendTexture)
         {
-            BufferTextureData(loadingData->normalBlendData, loadingData->materialData->normalBlendTexture);
+			BufferTextureData(loadingData->normalBlendData, loadingData->materialData->normalBlendTexture, loadingData->materialData->isDecal);
             AddTextureToMaterial(loadingData->materialData->materialId, loadingData->materialData->normalBlendTexture->textureId);
         }
         if(loadingData->materialData->glowTexture)
         {
-            BufferTextureData(loadingData->glowData, loadingData->materialData->glowTexture);
+			BufferTextureData(loadingData->glowData, loadingData->materialData->glowTexture, loadingData->materialData->isDecal);
             AddTextureToMaterial(loadingData->materialData->materialId, loadingData->materialData->glowTexture->textureId);
         }
 
@@ -289,7 +299,7 @@ namespace Core
     }
 
     bool MaterialLoader::ParseFile(const char* assetFileName, std::string& shaderName, std::string& diffuseTexture,
-            std::string& specularTexture, std::string& normalBlendTexture, std::string& glowTexture)
+            std::string& specularTexture, std::string& normalBlendTexture, std::string& glowTexture, bool& isDecal)
     {
         std::ifstream file(assetFileName, std::ios::in);
 
@@ -357,6 +367,17 @@ namespace Core
                     std::string::size_type end = value.find_last_of("\"");
                     glowTexture = value.substr(start + 1, end - start - 1);
                 }
+				else if (key == "decal")
+				{
+					std::getline(file, value, '\n');
+
+					std::string::size_type start = value.find_first_of("\"");
+					std::string::size_type end = value.find_last_of("\"");
+					std::string decalVal = value.substr(start + 1, end - start - 1);
+
+					if (decalVal == "true")
+						isDecal = true;
+				}
                 else
                 {
                     if(value.size() > 0)
@@ -385,11 +406,11 @@ namespace Core
         return texturedata;
     }
 
-    void MaterialLoader::BufferTextureData(unsigned char* textureData, Core::TextureData* data)
+    void MaterialLoader::BufferTextureData(unsigned char* textureData, Core::TextureData* data, bool decal)
     {
         if(textureData != nullptr)
         {
-            GFX::Content::LoadTexture2DFromMemory(data->textureId, textureData, data->width, data->height);
+            GFX::Content::LoadTexture2DFromMemory(data->textureId, textureData, data->width, data->height, decal);
             stbi_image_free(textureData);
         }
     }
