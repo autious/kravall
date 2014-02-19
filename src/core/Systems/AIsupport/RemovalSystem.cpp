@@ -62,7 +62,7 @@ namespace Core
 
 			Core::GraphicsComponent* gfxc = WGETC<Core::GraphicsComponent>( rioterEntities[i] );
 			if( gfxc )
-				gfxc->outlineColor[3] = 0.0f;
+                GFX::SetBitmaskValue(gfxc->bitmask, GFX::BITMASK::LAYER, GFX::LAYER_TYPES::MESH_LAYER);
 
 			Core::AnimationComponent* animc = WGETC<Core::AnimationComponent>( rioterEntities[i] );
 			if( animc )
@@ -91,10 +91,9 @@ namespace Core
 			//		attackerTcomp->target = INVALID_ENTITY;
 			//}
 
-
 			Core::GraphicsComponent* gfxc = WGETC<Core::GraphicsComponent>( policeEntities[i] );
 			if( gfxc )
-				gfxc->outlineColor[3] = 0.0f;
+                GFX::SetBitmaskValue(gfxc->bitmask, GFX::BITMASK::LAYER, GFX::LAYER_TYPES::MESH_LAYER);
 
 
 			Core::AnimationComponent* animc = WGETC<Core::AnimationComponent>( policeEntities[i] );
