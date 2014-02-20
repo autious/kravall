@@ -23,8 +23,6 @@ void Core::ThreadPool::Initialize( int nrThreads )
 		std::thread( Worker( *this ) ).detach();
 }
 
-#include <Windows.h>
-
 Core::ThreadPool::~ThreadPool()
 {
 	if( m_nrThreads == 0 )
