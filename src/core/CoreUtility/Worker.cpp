@@ -3,6 +3,7 @@
 
 #include <functional>
 
+#include <iostream>
 
 
 void Core::Worker::operator()()

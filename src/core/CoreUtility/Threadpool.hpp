@@ -58,7 +58,7 @@ namespace Core
 	private:
 		friend class Worker;
 
-		std::vector< std::thread > m_threads;
+		int m_nrThreads;
 
 		std::deque< std::function<void()> > m_tasks;
 
