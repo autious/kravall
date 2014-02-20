@@ -42,7 +42,7 @@ return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, group
 				data = 
                     { 
                         health = standardPolice.maxHealth, 
-                        stamina = 0, 
+                        stamina = 100, 
                         morale = standardPolice.maxMorale, 
                         stancePolice = core.PoliceStance.Passive,
                         statePolice = core.PoliceState.Attacking, 

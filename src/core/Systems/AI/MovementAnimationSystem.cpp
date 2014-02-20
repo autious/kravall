@@ -62,16 +62,16 @@ namespace Core
 
 				// if moving faster than walking but not already playing running animation or if not playing any animation...
 				if( frameSpeed > walkingData.speedToDesire + GRACE_THRESHOLD &&
-						( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "walk-straight" ) != ac->animationID
+						( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle" ) == ac->animationID
 						|| !ac->playing ))
 				{
 					hasAlteredAnimation = true;
-					Core::AnimationManager::PlayAnimation( *it, "walk-straight" ); // running
+					Core::AnimationManager::PlayAnimation( *it, "agitated-run" ); // running
 				}
 
 				// if moving but not running and not already playing walk-animation or if not playing any animation
 				else if( frameSpeed > 0.05f &&  
-						( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "walk-straight" ) != ac->animationID 
+						( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle" ) == ac->animationID 
 						|| !ac->playing ))
 				{
 					hasAlteredAnimation = true;
@@ -87,11 +87,10 @@ namespace Core
 					Core::AnimationManager::PlayAnimation( *it, "idle" ); // still
 				}
 
+				// try to make animations less unified
 				if( hasAlteredAnimation )
 				{
-					// try to make animations less unifie
-					//ac->currentTime += ((std::rand() % 1000) / 1000.0f) * 0.2f;
-					ac->speed = 1 + ((std::rand() % 1000) / 1000.0f) * 0.1f;
+					//ac->speed = 1 + ((std::rand() % 1000) / 1000.0f) * 0.1f;
 				}
 			}
 

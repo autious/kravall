@@ -89,7 +89,7 @@ void Core::MovementSystem::Update(float delta)
 		}
 
 		if( mvmc->movedThisFrame )
-			attribc->stamina -= Core::GameData::GetMovementDataWithState( mvmc->state ).staminaCostPerSecond;
+			attribc->stamina -= Core::GameData::GetMovementDataWithState( mvmc->state ).staminaCostPerSecond * delta;
 	}
 
 
