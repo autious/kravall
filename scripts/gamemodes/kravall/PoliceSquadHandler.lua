@@ -6,6 +6,9 @@ local PoliceSquadHandler =  {
                                 onStanceChange = function(stance) 
                                     core.log.error( "No functionset for StanceChange in PoliceSquadHandler")   
                                 end,
+                                onAbilityChange= function( ability )
+                                    core.log.error( "No functionset for AbilityChange in PoliceSquadHandler")   
+                                end,
                                 onSelectedSquadsChange = function(squads)
                                     core.log.error( "No function set for onSelectedSquadsChange" )
                                 end,
@@ -148,6 +151,10 @@ function PoliceSquadHandler:setStance( stance )
 
         self.onStanceChange( stance )  
     end
+end
+
+function PoliceSquadHandler:setAbility( ability )
+    self.onAbilityChange( ability )
 end
 
 -- Check if given group has any differing stances, if so, return nil

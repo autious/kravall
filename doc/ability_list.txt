@@ -1,0 +1,28 @@
+Common Abilities
+
+Sprint
+Flee
+Rout
+
+Special (Context) Abilities
+
+Police Squad
+
+- Attacking
+- Arresting (Group)
+- Arresting (Individual)
+- Tear Gas
+- Taze
+
+K-9 Unit
+
+- Attacking
+- Arresting
+- Blitz
+
+Mounted Police
+
+- Attacking
+- Arresting
+
+

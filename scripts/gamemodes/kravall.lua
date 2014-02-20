@@ -39,6 +39,11 @@ function T:init()
         -- Called when the user is changing stance from the gui.
         onStanceSelect = function( stance )
             self.policeHandler:setStance( stance )
+        end,
+
+        -- Called when the user is changing the current active ability in the gui.
+        onAbilitySelect = function( ability )
+            self.policeHandler:setAbility( ability )
         end
     })
 
@@ -51,6 +56,10 @@ function T:init()
         -- Called when the currently active stance is changed logically.
         onStanceChange = function( stance )
             self.gui:setStance( stance )
+        end,
+
+        onAbilityChange = function( ability )
+            self.gui:setAbility( ability )
         end,
 
         -- Called whenever the selection changes
