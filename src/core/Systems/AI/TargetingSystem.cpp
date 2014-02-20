@@ -169,7 +169,7 @@ void Core::TargetingSystem::HandleRioterTargeting(Core::Entity rioter, float del
 
 		if (tc->attackTime > MAX_TARGETING_TIME) // Reset target, attack time is reset upon aquiring new target.
 		{
-			//Core::TargetingComponent::StopAttacking( rioter, *tcTarget );
+			Core::TargetingComponent::StopAttacking( rioter, *tcTarget );
 			tc->target = INVALID_ENTITY;
 		}
 		else
