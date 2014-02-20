@@ -356,6 +356,21 @@ namespace Core
         }
     }
 
+    std::vector<Core::SquadAbility> SquadSystem::GetPossibleAbilities( int squadId )
+    {
+        std::vector<Core::SquadAbility> abilities;
+
+        abilities.push_back( Core::SquadAbility::SPRINT );
+        abilities.push_back( Core::SquadAbility::FLEE );
+        abilities.push_back( Core::SquadAbility::ROUT );
+        abilities.push_back( Core::SquadAbility::ATTACK );
+        abilities.push_back( Core::SquadAbility::ARREST_INDIVIDUAL );
+        abilities.push_back( Core::SquadAbility::ARREST_GROUP );
+        abilities.push_back( Core::SquadAbility::TEAR_GAS );
+
+        return abilities;
+    }
+
     void SquadSystem::Update(float delta)
     {
         for(std::vector<Entity>::iterator squad_it = m_entities.begin(); squad_it != m_entities.end(); ++squad_it)        

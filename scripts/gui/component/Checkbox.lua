@@ -18,6 +18,8 @@ local Checkbox =
                     matHoverSelected = "assets/texture/ui/checkbox-hover-selected_00.material",
                     onChange = function(self, value) end,
                     onClick = function(self, value) end,
+                    onHover = function(self) end,
+                    onExit = function(self) end,
                     doStateSwitchOnPress = true
                 }
 
@@ -51,7 +53,7 @@ function Checkbox:new(o)
                                             onPress = function()  o:onPress() end,
                                             onRelease = function() o:onRelease() end,
                                             onEnter = function() o:onEnter() end,
-                                            onExit = function() o:onExit() end
+                                            onExit = function() o:onExtExit() end
                                         }
 
     o.openImg.ent:set( core.componentType.GraphicsComponent, { render = true }, true )
@@ -137,11 +139,13 @@ end
 
 function Checkbox:onEnter()
     self.inside = true
+    self:onHover()
     self:updateVisual()
 end
 
-function Checkbox:onExit()
+function Checkbox:onExtExit()
     self.inside = false
+    self:onExit()
     self:updateVisual()
 end
 

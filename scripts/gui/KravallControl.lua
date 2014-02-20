@@ -18,9 +18,13 @@ local AbilityGUI = require "gui/kravall_control/subgui/AbilityGUI"
 local FormationGUI = require "gui/kravall_control/subgui/FormationGUI"
 local UnitStatGUI = require "gui/kravall_control/subgui/UnitStatGUI"
 
-local KravallControl = { 
-                        onFormationSelect = function(formation) core.log.error("No handler set for onFormationChange in KravallControl") end,
-                        onStanceSelect = function(stance) core.log.error("No handler set for onStanceChange in KravallControl") end }
+local KravallControl = 
+{ 
+    onFormationSelect = function(formation) core.log.error("No handler set for onFormationChange in KravallControl") end,
+    onStanceSelect = function(stance) core.log.error("No handler set for onStanceChange in KravallControl") end,
+    onAbilitySelect = function(ability) end
+}
+                            
 
 function KravallControl:new(o)
     o = o or {}
@@ -40,12 +44,13 @@ function KravallControl:new(o)
     ----------
     o.stanceGUI = StanceGUI:new( {
         onStanceSelect = function(stance) o.onStanceSelect( stance ) end 
-        })
-
-    o.abilitiesGUI = AbilityGUI:new()
+    })
+    o.abilitiesGUI = AbilityGUI:new( {
+        onAbilitySelect = function(ability) o.onAbilitySelect( ability ) end 
+    })
     o.formationGUI = FormationGUI:new( { 
         onFormationSelect = function(form) o.onFormationSelect(form) end 
-        } )
+    })
 
     o.rightControlGUI = GUI:new{x=0,y=0, width=150,height=500, anchor="NorthEast"}
     o.rightControlGUI:addPlacementHandler( AnchorPlacer )
@@ -69,6 +74,10 @@ end
 
 function KravallControl:setStance( stance )
     self.stanceGUI:setStance( stance )
+end
+
+function KravallControl:setAbility( ability )
+    self.abilitiesGUI:setAbility( ability ) 
 end
 
 function KravallControl:setUnitInformation( data )
@@ -98,13 +107,7 @@ end
 
 function KravallControl:update( delta )
     -- For debug writing
-    self.gui:update( delta )
-    self.eventGUI:update( delta )
-    self.statusGUI:update( delta )
-    self.stanceGUI:update(delta)
-    self.abilitiesGUI:update(delta )
-    self.formationGUI:update(delta )
-    self.rightControlGUI:update(delta )
+    self.gui:renderDebug( delta )
 
     self.count = self.count or 0
     self.count = self.count + delta

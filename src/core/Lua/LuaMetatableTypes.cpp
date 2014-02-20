@@ -50,9 +50,29 @@ namespace Core
         return ability;
     }
 
+    Core::SquadAbility* LuaUNewSquadAbility( lua_State * L, Core::SquadAbility value )
+    {
+        Core::SquadAbility* ability = static_cast<Core::SquadAbility*>(lua_newuserdata(L, sizeof(Core::SquadAbility)));
+        *ability = value;
+        luaL_newmetatable( L, SQUAD_ABILITY_META_TYPE );
+        lua_setmetatable(L, -2);
+        
+        return ability;
+    }
+
     Core::PoliceStance* LuaUNewPoliceStance(lua_State* L)
     {
         Core::PoliceStance* stance = static_cast<Core::PoliceStance*>(lua_newuserdata(L, sizeof(Core::PoliceStance)));                  
+        luaL_newmetatable(L, POLICE_STANCE_META_TYPE);
+        lua_setmetatable(L, -2);
+        
+        return stance;
+    }
+
+    Core::PoliceStance* LuaUNewPoliceStance(lua_State* L, Core::PoliceStance value )
+    {
+        Core::PoliceStance* stance = static_cast<Core::PoliceStance*>(lua_newuserdata(L, sizeof(Core::PoliceStance)));                  
+        *stance = value;
         luaL_newmetatable(L, POLICE_STANCE_META_TYPE);
         lua_setmetatable(L, -2);
         
