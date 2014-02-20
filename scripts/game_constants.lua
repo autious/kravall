@@ -10,5 +10,9 @@ return
         selectionOutline = "#b2c44110",
         selectionBoxHoverOutline = "#ffe61410",
         selectionBoxHoverPrimaryOutline = "#ffe61420"
+    },
+    guiBehaviour = 
+    {
+        damageBlinkingLinger = 5
     }
 }

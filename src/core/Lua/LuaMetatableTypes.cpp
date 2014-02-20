@@ -23,6 +23,15 @@ namespace Core
         return ent;
     }
 
+    LuaEntity* LuaUNewLightEntity( lua_State * L, Core::Entity entity )
+    {
+        LuaEntity* ent = LuaUNewEntity( L );
+        ent->entity = entity;
+        ent->light = true;
+
+        return ent;
+    }
+
     LuaAspect* LuaUNewAspect( lua_State * L )
     {
         LuaAspect* asp = (LuaAspect*)lua_newuserdata(L, sizeof(LuaAspect));

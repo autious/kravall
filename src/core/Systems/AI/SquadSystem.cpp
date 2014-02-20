@@ -367,6 +367,24 @@ namespace Core
         return abilities;
     }
 
+    std::vector<int> SquadSystem::GetAllSquads()
+    {
+        std::vector<int> ids;
+        for(std::vector<Entity>::iterator squad_it = m_entities.begin();
+             squad_it != m_entities.end();
+              ++squad_it)
+        {
+            Core::SquadComponent* sqdc = WGETC<Core::SquadComponent>(*squad_it);
+            ids.push_back( sqdc->squadID );
+        }
+        return ids;
+    }
+
+    std::vector<Entity> SquadSystem::GetAllSquadEntities()
+    {
+        return m_entities;
+    }
+
     void SquadSystem::Update(float delta)
     {
         for(std::vector<Entity>::iterator squad_it = m_entities.begin(); squad_it != m_entities.end(); ++squad_it)        

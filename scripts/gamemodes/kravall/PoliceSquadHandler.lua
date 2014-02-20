@@ -23,6 +23,7 @@ local mouse = core.input.mouse
 local s_squad = core.system.squad
 
 local standardPolice = U.convertToUsefulConstants( (require "game_constants").standardPolice )
+local guiBehaviour = U.convertToUsefulConstants( (require "game_constants").guiBehaviour )
 
 local input = require "input"
 
@@ -58,7 +59,11 @@ function PoliceSquadHandler:new(o)
     o.previousGroupSelectedByBox = {}
     o.selectedSquads = {}
 
+    -- List for units recently damaged, with ttl.
     o.squadDamageQueue = {}
+
+    -- List of total health in previous frame
+    o.prevFrameSquadHealth = {}
     
     registerCallbacks(o)
 
@@ -131,9 +136,45 @@ function PoliceSquadHandler:evaluateSquadInformation( squad )
                     stance = sq.squadStance,
                     formation = sq.squadFormation,
                     name = "Police Squad" 
-                }
+                 }
 
     return data
+end
+
+function PoliceSquadHandler:updateSquadDamageStatus( delta )
+    local allSquads = core.system.squad.getAllSquadEntities()
+
+    for i,v in pairs( allSquads ) do 
+        local squadComponent = v:get( core.componentType.SquadComponent )
+
+        if self.prevFrameSquadHealth[v] ~= nil
+            and self.prevFrameSquadHealth[v] > squadComponent.squadHealth then
+
+            self.squadDamageQueue[squadComponent.squadID] = {ttl=guiBehaviour.damageBlinkingLinger}
+        end 
+
+        self.prevFrameSquadHealth[v] = squadComponent.squadHealth
+    end
+
+    local savedSquadDamageQueue = {}
+    for i,v in pairs( self.squadDamageQueue ) do
+        print( "DAMAGE" )
+        if v.ttl > 0 then
+            savedSquadDamageQueue[i] = v
+        end
+        v.ttl = v.ttl - delta
+
+        if not v.hasLived then
+            v.hasLived = 0
+        end
+
+        --if v.hasLived % 0.5 > 0.25 then
+        core.system.squd.enableOutline( i, standardPolice.damageOutline )
+        --end
+        v.hasLived = v.hasLived + delta 
+    end
+
+    self.squadDamageQueue = savedSquadDamageQueue
 end
 
 -- If given non-nil, sets the stance to given value on selection
@@ -388,6 +429,7 @@ function PoliceSquadHandler:update( delta )
     if self.selectedSquads and #(self.selectedSquads) >= 1 then
         applySelectionOutline(self.selectedSquads)
     end
+    self:updateSquadDamageStatus( delta )
 
     self.leftClicked = false
     self.rightClicked = false

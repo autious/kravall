@@ -90,6 +90,7 @@ namespace Core
 {
     LuaEntity* LuaUNewEntity( lua_State * L );
     LuaEntity* LuaUNewLightEntity( lua_State * L );
+    LuaEntity* LuaUNewLightEntity( lua_State * L, Core::Entity entity );
 
     LuaAspect* LuaUNewAspect( lua_State * L );
 
