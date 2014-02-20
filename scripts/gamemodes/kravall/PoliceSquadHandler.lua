@@ -147,18 +147,20 @@ function PoliceSquadHandler:updateSquadDamageStatus( delta )
     for i,v in pairs( allSquads ) do 
         local squadComponent = v:get( core.componentType.SquadComponent )
 
-        if self.prevFrameSquadHealth[v] ~= nil
-            and self.prevFrameSquadHealth[v] > squadComponent.squadHealth then
-
-            self.squadDamageQueue[squadComponent.squadID] = {ttl=guiBehaviour.damageBlinkingLinger}
+        if self.prevFrameSquadHealth[squadComponent.squadID] ~= nil
+            and self.prevFrameSquadHealth[squadComponent.squadID] > squadComponent.squadHealth then
+            if self.squadDamageQueue[squadComponent.squadID] then
+                self.squadDamageQueue[squadComponent.squadID].ttl = guiBehaviour.damageBlinkingLinger
+            else
+                self.squadDamageQueue[squadComponent.squadID] = {ttl=guiBehaviour.damageBlinkingLinger}
+            end
         end 
 
-        self.prevFrameSquadHealth[v] = squadComponent.squadHealth
+        self.prevFrameSquadHealth[squadComponent.squadID] = squadComponent.squadHealth
     end
 
     local savedSquadDamageQueue = {}
     for i,v in pairs( self.squadDamageQueue ) do
-        print( "DAMAGE" )
         if v.ttl > 0 then
             savedSquadDamageQueue[i] = v
         end
@@ -168,9 +170,9 @@ function PoliceSquadHandler:updateSquadDamageStatus( delta )
             v.hasLived = 0
         end
 
-        --if v.hasLived % 0.5 > 0.25 then
-        core.system.squd.enableOutline( i, standardPolice.damageOutline )
-        --end
+        if v.hasLived % 1.0 > 0.5 then
+            core.system.squad.enableOutline( {i}, standardPolice.damageOutline:get() )
+        end
         v.hasLived = v.hasLived + delta 
     end
 
@@ -254,6 +256,17 @@ function PoliceSquadHandler:update( delta )
         s_squad.enableOutline(notPrimary, standardPolice.selectionOutline:get())
         
     end
+
+    local function clearOutlines()
+        local allSquads = core.system.squad.getAllSquadEntities()
+
+        for i,v in pairs( allSquads ) do 
+            local squadComponent = v:get( core.componentType.SquadComponent )
+            core.system.squad.disableOutline( {squadComponent.squadID} )
+        end
+    end
+
+    clearOutlines()
 
     --Formations
     --Click Selection
