@@ -9,6 +9,7 @@
 #include <Renderer/DebugRenderer/DebugManager.hpp>
 
 #include <gfx/Vertex.hpp>
+#include <gfx/Particle.hpp>
 #include <GFXInterface.hpp>
 #include <FontData.hpp>
 #include <Buffers/Text.hpp>
@@ -277,6 +278,21 @@ namespace GFX
 		{
 			return Renderer().GetAnimationInfo(skeletonID, animationID, out_frameCount, out_bonesPerFrame, out_animationOffset);
 		}
+
+        void CreateParticleBuffer(unsigned int& bufferId, unsigned int particleCount)
+        {
+            Renderer().CreateParticleBuffer(bufferId, particleCount);
+        }
+
+        void DeleteParticleBuffer(unsigned int bufferId)
+        {
+            Renderer().DeleteParticleBuffer(bufferId);
+        }
+
+        void BufferParticleData(unsigned int bufferId, GFX::Particle* const data)
+        {
+            Renderer().BufferParticleData(bufferId, data);
+        }
 
 		void ReloadLUT()
 		{

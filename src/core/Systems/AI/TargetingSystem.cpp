@@ -9,7 +9,7 @@
 #define MAX_SQR_DISTANCE 441.0f
 
 Core::TargetingSystem::TargetingSystem() : BaseSystem(EntityHandler::GenerateAspect<WorldPositionComponent, UnitTypeComponent, 
-		AttributeComponent, MovementComponent, FlowfieldComponent>(), 0ULL), m_lastClickedEntity(INVALID_ENTITY), 
+		AttributeComponent, MovementComponent>(), 0ULL), m_lastClickedEntity(INVALID_ENTITY), 
 		m_wasFPressed(false), m_currentTarget(INVALID_ENTITY)
 {}
 
@@ -66,13 +66,17 @@ void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police, float del
 
 		if (tc->attackTime > MAX_TARGETING_TIME) // Reset target, attack time is reset upon aquiring new target.
 		{
+			Core::TargetingComponent::StopAttacking( police, *tcTarget );
 			tc->target = INVALID_ENTITY;
 		}
 		else if( ac->police.stance != PoliceStance::Passive )
 			return;
 	}
-	else
+	else if( tc->target != INVALID_ENTITY )
+	{
+		mc->SetGoal( glm::vec3( std::numeric_limits<float>::max() ), -1, Core::MovementGoalPriority::TargetingGoalPriority );
 		tc->target = INVALID_ENTITY;
+	}
 
 	switch (ac->police.stance)
 	{
@@ -138,7 +142,11 @@ void Core::TargetingSystem::HandleRioterTargeting(Core::Entity rioter, float del
 	const Core::WeaponData& weapon = Core::GameData::GetWeaponDataFromWeapon( tc->weapon );
 
 	if (ac->rioter.stance != RioterStance::Attacking)
+	{
+		mc->SetGoal( glm::vec3( std::numeric_limits<float>::max() ), -1, Core::MovementGoalPriority::TargetingGoalPriority );
+		tc->target = INVALID_ENTITY;
 		return;
+	}
 
 	Core::TargetingComponent* tcTarget = WGETC<Core::TargetingComponent>(tc->target);
 	if( tcTarget )
@@ -161,21 +169,29 @@ void Core::TargetingSystem::HandleRioterTargeting(Core::Entity rioter, float del
 
 		if (tc->attackTime > MAX_TARGETING_TIME) // Reset target, attack time is reset upon aquiring new target.
 		{
+			Core::TargetingComponent::StopAttacking( rioter, *tcTarget );
 			tc->target = INVALID_ENTITY;
 		}
 		else
 			return;
 	}
-	else
+	else if( tc->target != INVALID_ENTITY )
+	{
+		mc->SetGoal( glm::vec3( std::numeric_limits<float>::max() ), -1, Core::MovementGoalPriority::TargetingGoalPriority );
 		tc->target = INVALID_ENTITY;
+	}
 
 	tc->target = FindClosestAttacker(tc, wpc);
-	if (tc->target != INVALID_ENTITY)
-		return;
+	if (tc->target == INVALID_ENTITY)
+		tc->target = FindClosestTarget(wpc, UnitType::Police);
 
-	tc->target = FindClosestTarget(wpc, UnitType::Police);
-	if (tc->target != INVALID_ENTITY)
-		return;
+	Core::TargetingComponent* tcNewTarget = WGETC<Core::TargetingComponent>(tc->target);
+	if( !tcNewTarget )
+	{
+		mc->SetGoal( glm::vec3( std::numeric_limits<float>::max() ), -1, Core::MovementGoalPriority::TargetingGoalPriority );
+		tc->target = INVALID_ENTITY;
+	}
+
 
 
 	// 1. Attacker

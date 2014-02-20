@@ -36,6 +36,13 @@ extern "C"
 
         return 0;
     }
+
+    static int LuaDrawLine( lua_State * L )
+    {
+        GFX::Debug::DrawLine( glm::vec3( luau_tofloat( L, 1 ), luau_tofloat( L, 2 ), luau_tofloat( L, 3 )), glm::vec3( luau_tofloat( L, 4 ), luau_tofloat( L , 5 ), luau_tofloat( L, 6 )), Color(luau_tofloat(L, 7), luau_tofloat(L, 8), luau_tofloat(L, 9), 1.0f), luau_tofloat(L, 10), true );
+        
+        return 0;
+    }
 }
 
 namespace Core
@@ -48,6 +55,7 @@ namespace Core
                 luau_setfunction( L, "drawText", LuaDrawText ); 
                 luau_setfunction( L, "drawTextbox", LuaDrawTextbox );   
                 luau_setfunction( L, "drawRectangle", LuaDrawRectangle );
+                luau_setfunction( L, "drawLine", LuaDrawLine );
 
             lua_setfield( L, -2, "draw" );
         lua_pop( L,1 );

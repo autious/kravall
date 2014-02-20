@@ -6,23 +6,26 @@
 
 Core::ThreadPool::ThreadPool()
 {
+	m_nrThreads = 0;
 }
 
 void Core::ThreadPool::Initialize( int nrThreads )
 {
-	if( m_threads.size() != 0 )
+	if( m_nrThreads != 0 )
 		return;
 
 	m_nrJobsInProgress = nrThreads;
 	m_stop = false;
 	
+	m_nrThreads = nrThreads;
+
 	for( int i = 0; i < nrThreads; i++ )
-		m_threads.push_back( std::thread( Worker( *this ) ) );
+		std::thread( Worker( *this ) ).detach();
 }
 
 Core::ThreadPool::~ThreadPool()
 {
-	if( m_threads.size() == 0 )
+	if( m_nrThreads == 0 )
 		return;
 
 	{
@@ -32,14 +35,14 @@ Core::ThreadPool::~ThreadPool()
 	
 	m_condition.notify_all();
 
-	for( unsigned int i = 0; i < m_threads.size(); i++ )
-		m_threads[i].join();
+	// kill yourselves, threads! ... and then kill the lock. Such beautiful!
+	std::this_thread::sleep_for( std::chrono::milliseconds( 10 ) );
 }
 
 
 void Core::ThreadPool::Enqueue( std::function<void()> job )
 {
-	if( m_threads.size() == 0 )
+	if( m_nrThreads == 0 )
 		return;
 
 	{
@@ -57,7 +60,7 @@ bool Core::ThreadPool::IsDone()
 
 void Core::ThreadPool::Wait()
 {
-	if( m_threads.size() == 0 )
+	if( m_nrThreads == 0 )
 		return;
 
 	while( m_nrJobsInProgress != 0 )
@@ -68,7 +71,7 @@ void Core::ThreadPool::Wait()
 
 void Core::ThreadPool::KillThreads()
 {
-	if( m_threads.size() == 0 )
+	if( m_nrThreads == 0 )
 		return;
 
 	{
@@ -78,12 +81,11 @@ void Core::ThreadPool::KillThreads()
 
 	m_condition.notify_all();
 
-	for( unsigned int i = 0; i < m_threads.size(); i++ )
-		m_threads[i].join();
+	m_nrThreads = 0;
 }
 
 
 bool Core::ThreadPool::HasThreads()
 {
-	return m_threads.size() != 0;
+	return m_nrThreads != 0;
 }

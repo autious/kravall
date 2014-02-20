@@ -20,6 +20,8 @@
 #define ATTRIBUTE_RIOTER_COMPONENT_META_TYPE "attribute_rioter_component_meta_type"
 #define LOG_META_TYPE "metatype_log"
 #define HOVER_TEXT_META_TYPE "metatype_hover_text"
+#define PARTICLE_DEFINITION_META_TYPE "particle_definition_meta_type"
+#define EMITTER_TYPE_META_TYPE "emitter_type_meta_type"
 #define TTF_FONT_META_TYPE "metatype_ttf_font"
 
 #include <glm/glm.hpp>
@@ -36,6 +38,7 @@
 #include <ComponentFramework/SystemTypes.hpp>
 #include <Components/UnitTypeComponent.hpp>
 #include <Components/SquadComponent.hpp>
+#include <Components/EmitterComponent.hpp>
 #include <Camera/Camera.hpp>
 
 #include <gfx/GFXInterface.hpp>
@@ -64,6 +67,11 @@ struct LuaHoverText
     int hoverTextId;
 };
 
+struct LuaParticleDefinition
+{
+    Core::ParticleHandle handle;
+};
+
 struct LuaTTFFont
 {
     GFX::FontData * fontPtr;
@@ -84,12 +92,15 @@ inline Core::SquadAbility* luau_checksquadability( lua_State * state, int pos ) 
 inline LuaLog* luau_checklog( lua_State * state, int pos ) { return static_cast<LuaLog*>(luaL_checkudata( state, pos, LOG_META_TYPE ) ); }
 inline LuaHoverText* luau_checkhovertext( lua_State * state, int pos ) { return static_cast<LuaHoverText*>(luaL_checkudata( state, pos, HOVER_TEXT_META_TYPE )); }
 inline Core::PoliceStance* luau_checkpolicestance( lua_State* state, int pos) { return static_cast<Core::PoliceStance*>(luaL_checkudata(state, pos, POLICE_STANCE_META_TYPE) ); }
+inline LuaParticleDefinition* luau_checkparticledefinition( lua_State* state, int pos) { return static_cast<LuaParticleDefinition*>(luaL_checkudata(state, pos, PARTICLE_DEFINITION_META_TYPE)); }
+inline Core::EmitterType* luau_checkemittertype( lua_State* state, int pos) { return static_cast<Core::EmitterType*>(luaL_checkudata(state, pos, EMITTER_TYPE_META_TYPE)); }
 inline LuaTTFFont* luau_checkttffont( lua_State* state, int pos ) { return static_cast<LuaTTFFont*>(luaL_checkudata( state, pos, TTF_FONT_META_TYPE ) ); }
 
 namespace Core
 {
     LuaEntity* LuaUNewEntity( lua_State * L );
     LuaEntity* LuaUNewLightEntity( lua_State * L );
+    LuaEntity* LuaUNewLightEntity( lua_State * L, Core::Entity entity );
 
     LuaAspect* LuaUNewAspect( lua_State * L );
 
@@ -97,6 +108,9 @@ namespace Core
     Core::SquadAbility* LuaUNewSquadAbility( lua_State * L );
     Core::SquadAbility* LuaUNewSquadAbility( lua_State * L, Core::SquadAbility ability );
     Core::PoliceStance* LuaUNewPoliceStance(lua_State* L);
+
+    LuaParticleDefinition* LuaUNewParticleDefinition(lua_State* L);
+    Core::EmitterType* LuaUNewEmitterType(lua_State* L);
 
     uint64_t* LuaUNewBitmask( lua_State * L );
 

@@ -1,28 +1,47 @@
 local U = {}
 
 local HEX_PATTERN = "^#%x+$"
---Converts all hex in table to glm vec4
-function U.convertToUsefulConstants( table )
-    local new = {}
 
-    for i,v in pairs( table ) do
-        if type( v ) == "string" then 
-            if  v:match( HEX_PATTERN ) then
-                if not (v:len() == 7 or v:len() == 9) then
+function U.expandMixxedHexToVec4(data)
+    local function hextolist( string )
+        if type(string) == "string" then
+            if  string:match( HEX_PATTERN ) then
+                if not (string:len() == 7 or string:len() == 9) then
                     core.log.warning( "The element: " .. i .. " which has the value :" .. v ..
-                                        " is expected to be hexadecimal but has an invalid length." )
+                                        " is expected to be hexadecimal but has a weird length." )
                 end
-                new[i] = core.glm.vec4.new(U.fromHtmlHex(v))
-            else
-                new[i] = v
+                return {U.fromHtmlHexVariable(string)}
+            end
+        end
+        return nil
+    end
+
+    local val = {}
+    local currentIndex = 1
+    for i,v in ipairs( data ) do
+        local tmp = hextolist( v )
+        if tmp then
+            for i2,v2 in ipairs( tmp ) do
+                val[currentIndex] = v2
+                currentIndex = currentIndex + 1 
             end
         else
-            new[i] = v
+            val[currentIndex] = v
+            currentIndex = currentIndex + 1 
         end
     end
 
-    return new
-end 
+    return core.glm.vec4.new(unpack(val))
+end
+
+function U.fromHtmlHexVariable( str, fourthDefault )
+    local returns ={}
+    --Loop over, 2 hex signs at at time, expecting a # in the beginning
+    for i=1,math.floor(((string.len(str))-1)/2),1 do 
+        returns[#returns+1] = tonumber( string.sub( str, i*2,i*2+1), 16 )/255  
+    end
+    return unpack( returns )
+end
 
 function U.fromHtmlHex( str )
     local fourth = 255
@@ -51,6 +70,16 @@ function U.ripairs(t)
     end
   end
   return ripairs_it, t, max
+end
+
+function U.tableTrueCount( table )
+    local count = 0
+
+    for _,_ in pairs(table) do 
+        count = count + 1
+    end
+
+    return count
 end
 
 return U

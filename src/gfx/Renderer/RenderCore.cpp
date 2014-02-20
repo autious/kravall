@@ -5,6 +5,7 @@
 #include <utility/Colors.hpp>
 #include <GFXDefines.hpp>
 #include "ShadowData.hpp"
+
 ShadowData ShadowDataContainer::data[MAXIMUM_SHADOWCASTERS];
 
 unsigned int ShadowDataContainer::numDirLights = 0;
@@ -24,6 +25,7 @@ unsigned int ShadowDataContainer::numPointLights = 0;
 #include "PostProcessing/PostProcessingPainter.hpp"
 #include "GlobalIlluminationRenderer/GIPainter.hpp"
 #include "PostProcessing/BlurPainter.hpp"
+#include "Particle/ParticlePainter.hpp"
 #include "DecalRenderer/DecalPainter.hpp"
 
 #include <Shaders/ShaderManager.hpp>
@@ -31,12 +33,14 @@ unsigned int ShadowDataContainer::numPointLights = 0;
 #include "TextRenderer/TextManager.hpp"
 #include "DebugRenderer/DebugManager.hpp"
 #include "RenderJobManager.hpp"
-#include "../Buffers/MeshManager.hpp"
-#include "../Textures/TextureManager.hpp"
-#include "../Material/MaterialManager.hpp"
+#include <Buffers/MeshManager.hpp>
+#include <Textures/TextureManager.hpp>
+#include <Material/MaterialManager.hpp>
+#include <Particle/ParticleManager.hpp>
 
 #include <FontData.hpp>
 #include <Vertex.hpp>
+#include <Particle.hpp>
 
 namespace GFX
 {
@@ -76,6 +80,7 @@ namespace GFX
 		delete(m_textureManager);
 		delete(m_materialManager);
 		delete(m_animationManager);
+        delete(m_particleManager);
 
 		delete(m_deferredPainter);
 		delete(m_lightPainter);
@@ -88,6 +93,7 @@ namespace GFX
 		delete(m_blurPainter);
 		delete(m_decalPainter);
 		delete(m_shadowPainter);
+        delete(m_particlePainter);
 	}
 
 	int RenderCore::SetConfiguration(const int setting, const int value)
@@ -150,9 +156,13 @@ namespace GFX
 		m_textureManager = new TextureManager();
 		m_materialManager = new MaterialManager();
 		m_animationManager = new AnimationManagerGFX();
+        m_particleManager = new ParticleManager();
 
 		m_deferredPainter = new DeferredPainter(m_shaderManager, m_uniformBufferManager, 
 		m_renderJobManager, m_meshManager, m_textureManager, m_materialManager);
+
+        m_particlePainter = new ParticlePainter(m_shaderManager, m_uniformBufferManager
+                ,m_renderJobManager, m_materialManager, m_textureManager, m_particleManager);
 
 		m_shadowPainter = new ShadowPainter(m_shaderManager, m_uniformBufferManager, m_renderJobManager, m_meshManager);
 
@@ -163,6 +173,7 @@ namespace GFX
 		//m_GIPainter = new GIPainter(m_shaderManager, m_uniformBufferManager, m_renderJobManager);
 		m_blurPainter = new BlurPainter(m_shaderManager, m_uniformBufferManager);
 		m_decalPainter = new DecalPainter(m_shaderManager, m_uniformBufferManager, m_renderJobManager, m_meshManager, m_textureManager, m_materialManager);
+
 
 		m_debugPainter = new DebugPainter(m_shaderManager, m_uniformBufferManager);
 		m_textPainter = new TextPainter(m_shaderManager, m_uniformBufferManager);
@@ -182,6 +193,7 @@ namespace GFX
 
 
 		m_deferredPainter->Initialize(m_FBO, m_dummyVAO);
+        m_particlePainter->Initialize(m_FBO, m_dummyVAO);
 		m_shadowPainter->Initialize(m_FBO, m_dummyVAO, m_blurPainter, m_settings[GFX_SHADOW_RESOLUTION]);
 		m_lightPainter->Initialize(m_FBO, m_dummyVAO, m_windowWidth, m_windowHeight);
 		m_debugPainter->Initialize(m_FBO, m_dummyVAO);
@@ -450,6 +462,9 @@ namespace GFX
 		if (m_showFBO != 0)
 			CT(m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, m_shadowMapTextures, m_showFBO), "FBO");
 
+        // Do particle rendering as forwarded pass
+		CT(m_particlePainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_specular, m_glowMatID, m_toneMappedTexture, m_viewMatrix, m_projMatrix), "Particle");
+
 		// Do post processing
 		CT(m_postProcessingPainter->Render(delta, m_toneMappedTexture, m_currentLUT, m_exposure, m_gamma, m_whitePoint, m_diffuse), "PostProcessing");
 
@@ -633,4 +648,19 @@ namespace GFX
 	{
 		return m_animationManager->GetFrameInfo(skeletonID, animationID, out_frameCount, out_bonesPerFrame, out_animationOffset);
 	}
+
+    void RenderCore::CreateParticleBuffer(unsigned int& bufferId, unsigned int particleCount)
+    {
+        m_particleManager->CreateParticleBuffer(bufferId, particleCount);
+    }
+
+    void RenderCore::DeleteParticleBuffer(unsigned int bufferId)
+    {
+        m_particleManager->DeleteParticleBuffer(bufferId);
+    }
+
+    void RenderCore::BufferParticleData(unsigned int bufferId, GFX::Particle* data)
+    {
+        m_particleManager->BufferParticleData(bufferId, data);
+    }
 }

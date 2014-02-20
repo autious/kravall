@@ -23,6 +23,15 @@ namespace Core
         return ent;
     }
 
+    LuaEntity* LuaUNewLightEntity( lua_State * L, Core::Entity entity )
+    {
+        LuaEntity* ent = LuaUNewEntity( L );
+        ent->entity = entity;
+        ent->light = true;
+
+        return ent;
+    }
+
     LuaAspect* LuaUNewAspect( lua_State * L )
     {
         LuaAspect* asp = (LuaAspect*)lua_newuserdata(L, sizeof(LuaAspect));
@@ -67,6 +76,24 @@ namespace Core
         lua_setmetatable(L, -2);
         
         return stance;
+    }
+
+    LuaParticleDefinition* LuaUNewParticleDefinition(lua_State* L)
+    {
+        LuaParticleDefinition* handle = static_cast<LuaParticleDefinition*>(lua_newuserdata(L, sizeof(LuaParticleDefinition)));
+        luaL_newmetatable(L, PARTICLE_DEFINITION_META_TYPE);
+        lua_setmetatable(L, -2);
+
+        return handle;
+    }
+
+    Core::EmitterType* LuaUNewEmitterType(lua_State* L)
+    {
+        Core::EmitterType* type = static_cast<Core::EmitterType*>(lua_newuserdata(L, sizeof(Core::EmitterType)));
+        luaL_newmetatable(L, EMITTER_TYPE_META_TYPE);
+        lua_setmetatable(L, -2);
+
+        return type;
     }
 
     Core::PoliceStance* LuaUNewPoliceStance(lua_State* L, Core::PoliceStance value )
