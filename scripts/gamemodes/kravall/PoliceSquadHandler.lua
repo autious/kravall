@@ -22,8 +22,8 @@ local keyboard = core.input.keyboard
 local mouse = core.input.mouse
 local s_squad = core.system.squad
 
-local standardPolice = U.convertToUsefulConstants( (require "game_constants").standardPolice )
-local guiBehaviour = U.convertToUsefulConstants( (require "game_constants").guiBehaviour )
+local standardPolice = (require "game_constants").standardPolice
+local guiBehaviour = (require "game_constants").guiBehaviour
 
 local input = require "input"
 
