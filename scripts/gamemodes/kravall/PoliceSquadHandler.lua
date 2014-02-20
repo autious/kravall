@@ -14,7 +14,11 @@ local PoliceSquadHandler =  {
                                 end,
                                 onSelectedUnitInformationChange = function(data)
                                     core.log.error( "No function set for onSelectedUnitInformationChange")
+                                end,
+                                onMoveToPosition = function( squads, position, success )
+                                    core.log.error( "No function set for onMoveToPosition" )
                                 end
+                                 
                             }
 local U = require "utility"
 
@@ -64,7 +68,7 @@ function PoliceSquadHandler:new(o)
 
     -- List of total health in previous frame
     o.prevFrameSquadHealth = {}
-    
+
     registerCallbacks(o)
 
     return o
@@ -371,8 +375,13 @@ function PoliceSquadHandler:update( delta )
             if self.clickEndX and self.clickEndY and self.clickEndZ and self.selectedFormation ~= s_squad.formations.CircleFormation then
 	            s_squad.setSquadGoal(self.selectedSquads, (self.clickStartX + self.clickEndX) / 2, (self.clickStartY + self.clickEndY) / 2, (self.clickStartZ + self.clickEndZ) / 2)
             else                
-	            s_squad.setSquadGoal(self.selectedSquads, self.clickStartX, self.clickStartY, self.clickStartZ)
+                --Tell other systems that we are telling things to move.
+                s_squad.setSquadGoal(self.selectedSquads, self.clickStartX, self.clickStartY, self.clickStartZ)
             end
+
+            local clickPos = core.glm.vec3.new(core.system.picking.getGroundHit(  mouseX, mouseY ))
+            print ("WHAT IS GOING ON" )
+            self.onMoveToPosition( self.selectedSquads, clickPos, core.system.picking.getIsInsideNavigationMesh(clickPos) )
 
 
             self.clickStartX, self.clickStartY, self.clickStartZ = nil, nil, nil
