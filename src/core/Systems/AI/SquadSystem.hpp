@@ -55,8 +55,9 @@ namespace Core
 
         void DisableOutline(int* squadIDs, int nSqauds);
 
+        std::vector<int> GetAllSquads( );
+        std::vector<Entity> GetAllSquadEntities();
         std::vector<Core::SquadAbility> GetPossibleAbilities( int squadId );
     };
 }
-
 #endif

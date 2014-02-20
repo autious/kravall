@@ -396,6 +396,38 @@ extern "C"
 
         return 1;
     }
+
+    static int LuaGetAllSquads( lua_State *L )
+    {
+        Core::SquadSystem* squadSystem = Core::world.m_systemHandler.GetSystem<Core::SquadSystem>();
+
+        std::vector<int> ids = squadSystem->GetAllSquads();  
+
+        lua_newtable( L );
+        for( int i = 0; i < ids.size(); i++ )
+        {
+            lua_pushinteger( L, ids[i] );
+            lua_rawseti( L, -2, i+1 );      
+        }  
+
+        return 1;
+    }
+
+    static int LuaGetAllSquadEntities( lua_State * L )
+    {
+        Core::SquadSystem* squadSystem = Core::world.m_systemHandler.GetSystem<Core::SquadSystem>();
+
+        std::vector<Core::Entity> ents = squadSystem->GetAllSquadEntities();
+
+        lua_newtable(L);
+        for( int i = 0; i < ents.size(); i++ )
+        {
+            Core::LuaUNewLightEntity( L, ents[i] ); 
+            lua_rawseti( L, -2, i+1 ); 
+        } 
+
+        return 1;
+    }
 }
 
 namespace Core
@@ -426,6 +458,8 @@ namespace Core
                     luau_setfunction(L, "enableOutline", LuaEnableOutline);
                     luau_setfunction(L, "disableOutline", LuaDisableOutline);
                     luau_setfunction(L, "getPossibleAbilities", LuaGetPossibleAbilities );
+                    luau_setfunction(L, "getAllSquads", LuaGetAllSquads );
+                    luau_setfunction(L, "getAllSquadEntities", LuaGetAllSquadEntities );
                         lua_newtable(L);
                         Core::SquadFormation* formation = LuaUNewSquadFormation(L);
                         *formation = Core::SquadFormation::NO_FORMATION;
