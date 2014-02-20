@@ -1,9 +1,9 @@
 #ifndef SRC_CORE_SYSTEMS_PICKINGSYSTEM_HPP
 #define SRC_CORE_SYSTEMS_PICKINGSYSTEM_HPP
 
+//#include <SystemDef.hpp>
 #include <ComponentFramework/BaseSystem.hpp>
 #include <glm/glm.hpp>
-
 
 namespace Core
 {

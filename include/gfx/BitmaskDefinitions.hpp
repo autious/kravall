@@ -34,6 +34,14 @@ namespace GFX
 		static const unsigned int OVERLAY_GEOMETRY = 0;
 	}
 
+    namespace TRANSLUCENCY_TYPES
+    {
+		static const unsigned int OPAQUE_TRANSLUCENCY = 1;
+		static const unsigned int ADDITIVE_TRANSLUCENCY = 2;
+		static const unsigned int SUBTRACTIVE_TRANSLUCENCY = 3;
+		static const unsigned int MULTIPLICATIVE_TRANSLUCENCY = 4;
+    }
+
 	namespace LIGHT_TYPES
 	{
 		static const unsigned int POINT_SHADOW = 6;

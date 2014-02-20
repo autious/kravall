@@ -18,13 +18,16 @@ namespace Core
             Core::FormationComponent* frmc = WGETC<Core::FormationComponent>(entity);
             if(frmc)
             {
-                lua_pushnumber(L, frmc->relativePosition[0]);
-                lua_pushnumber(L, frmc->relativePosition[1]);
-                return 2;
+                lua_newtable(L);
+                    lua_pushnumber(L, frmc->relativePosition[0]);
+                    lua_rawseti(L, -2, 1);
+                    lua_pushnumber(L, frmc->relativePosition[1]);
+                    lua_rawseti(L, -2, 2);
+                return 1;
             }
             else
             {
-                return luaL_error(L, "could not retrieve FormationComponent of entity: %d to get relativePosition. Component is null", entity);
+                return luaL_error(L, "could not retrieve FormationComponent of entity: %d to get 'relativePosition'. Component is null", entity);
             }
         };
 
@@ -54,7 +57,7 @@ namespace Core
                         }
                         else
                         {
-                            luaL_error(L, "unable to set relativePosition of entity: %d ,argument %d is not a number", entity, i+1);
+                            luaL_error(L, "unable to set 'relativePosition' of entity: %d ,argument %d is not a number", entity, i+1);
                         }
 
                         lua_pop(L, 1);
@@ -62,12 +65,12 @@ namespace Core
                 }
                 else
                 {
-                    luaL_error(L, "unable to set squadTargetForward of entity: %d ,assignment is not a table", entity);
+                    luaL_error(L, "unable to set 'relativePosition' of entity: %d ,assignment is not a table", entity);
                 }
             }
             else
             {
-                luaL_error(L, "could not retrieve FormationComponent of entity: %d to set relativePosition. Component is null", entity);
+                luaL_error(L, "could not retrieve FormationComponent of entity: %d to set 'relativePosition'. Component is null", entity);
             }
         };
 

@@ -134,6 +134,12 @@ function Checkbox:onRelease()
         end
     end
 
+    if self.checked then
+        self:onClick( false )
+    else
+        self:onClick( true )
+    end 
+
     self:updateVisual()
 end
 

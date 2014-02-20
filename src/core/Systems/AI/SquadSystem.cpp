@@ -328,12 +328,16 @@ namespace Core
 
             for(std::vector<Entity>::iterator it = squad.begin(); it != squad.end(); ++it)        
             {
-                Core::GraphicsComponent* gfxc = WGETC<Core::GraphicsComponent>(*it);
-                gfxc->outlineColor[0] = Color.x;
-                gfxc->outlineColor[1] = Color.y;
-                gfxc->outlineColor[2] = Color.z;
-                gfxc->outlineColor[3] = Color.w;
-                GFX::SetBitmaskValue(gfxc->bitmask, GFX::BITMASK::LAYER, GFX::LAYER_TYPES::OUTLINE_LAYER);
+				Core::TargetingComponent* tc = WGETC<Core::TargetingComponent>(*it);
+				if( tc )
+				{
+					Core::GraphicsComponent* gfxc = WGETC<Core::GraphicsComponent>(*it);
+					gfxc->outlineColor[0] = Color.x;
+					gfxc->outlineColor[1] = Color.y;
+					gfxc->outlineColor[2] = Color.z;
+					gfxc->outlineColor[3] = Color.w;
+					GFX::SetBitmaskValue(gfxc->bitmask, GFX::BITMASK::LAYER, GFX::LAYER_TYPES::OUTLINE_LAYER);
+				}
             }
         }
     }
@@ -346,8 +350,8 @@ namespace Core
 
             for(std::vector<Entity>::iterator it = squad.begin(); it != squad.end(); ++it)        
             {
-                Core::GraphicsComponent* gfxc = WGETC<Core::GraphicsComponent>(*it);
-                GFX::SetBitmaskValue(gfxc->bitmask, GFX::BITMASK::LAYER, GFX::LAYER_TYPES::MESH_LAYER);
+				Core::GraphicsComponent* gfxc = WGETC<Core::GraphicsComponent>(*it);
+				GFX::SetBitmaskValue(gfxc->bitmask, GFX::BITMASK::LAYER, GFX::LAYER_TYPES::MESH_LAYER);
             }
         }
     }
