@@ -331,33 +331,74 @@ namespace Core
 		// rig first node...		
 		for( int i = 0; i < 4; i++ )
 		{
+			int linksTo = nodes[ otherNode ].corners[i].linksTo;
+			if( linksTo < 0 || nodes[ otherNode ].corners[i].length < 0 )
+				continue;
+
 			int tt = i * 2;
 			int qq = ( tt + 2 ) % 8;
 			glm::vec3 lineStart = glm::vec3( nodes[ otherNode ].points[ tt ], 0.0f, nodes[ otherNode ].points[ tt + 1 ] );
 			glm::vec3 lineEnd	= glm::vec3( nodes[ otherNode ].points[ qq ], 0.0f, nodes[ otherNode ].points[ qq + 1 ] );
 			glm::vec3 mid = lineStart + (( lineEnd - lineStart ) * 0.5f );
 
-			float dist = glm::distance2( otherPosition, mid );
-			float distToGoal = glm::distance2( ownPosition, mid );
+			float dist = glm::distance( otherPosition, mid );
+			float distToGoal = glm::distance( ownPosition, mid );
 
-			int linksTo = nodes[ otherNode ].corners[i].linksTo;
-			if( linksTo >= 0 )
-				prioList.push_back( AStarData( linksTo, nodes[ otherNode ].corners[i].linksToEdge, -1, dist, distToGoal ) );
+			prioList.push_back( AStarData( linksTo, nodes[ otherNode ].corners[i].linksToEdge, -1, dist, distToGoal ) );
 		}
 		std::sort( prioList.begin(), prioList.end(), AstarSortingFunction );
 
-		
+		glm::vec3 aa = glm::vec3( 1, 0, 1 );
+		float dist = glm::dot( aa, aa );
 
 		// run algorithm
 		while( prioList.size() != 0 )
 		{
-			if( prioList[0].node == 0 )
-				int o = 0;
+			Core::NavigationMesh::Node& current = nodes[ prioList[0].node ];
 
 			if( prioList[0].node == ownNode )
-				break;
+			{
+				// if the goal in the adjacent, push special case to priolist...
+				if( prioList[0].parentNode < 0 )
+				{
+					glm::vec3 positions[3];
+					positions[0] = nodes[ownNode].GetLineStart( prioList[0].entryEdge ) + 
+						( nodes[ownNode].GetLineEnd( prioList[0].entryEdge ) - 
+						nodes[ownNode].GetLineStart( prioList[0].entryEdge ) ) * 0.25f;
 
-			Core::NavigationMesh::Node& current = nodes[ prioList[0].node ];
+					positions[1] = nodes[ownNode].GetMidPoint( prioList[0].entryEdge );
+					
+					positions[2] = nodes[ownNode].GetLineEnd( prioList[0].entryEdge ) + 
+						( nodes[ownNode].GetLineStart( prioList[0].entryEdge ) - 
+						nodes[ownNode].GetLineEnd( prioList[0].entryEdge ) ) * 0.25f;
+
+					glm::vec3 posFromParent = ownPosition;
+
+					// sort...
+					std::sort( &positions[0], &positions[3], 
+						[&posFromParent]( const glm::vec3& A, const glm::vec3& B )
+					{ 
+						if( glm::distance(A, posFromParent) < glm::distance( B, posFromParent ) ) 
+							return true; 
+						return false; 
+					} );
+
+					int o = 0;
+
+					return PathData( otherNode, prioList[0].entryEdge, positions[0] );
+				}
+
+				//if(  )
+				//glm::vec3 otherMid = nodes[ prioList[0].node ].GetMidPoint( prioList[0].entryEdge );
+				//
+				//// distance to the next node
+				//float dist = glm::distance( otherMid, mid );
+				//prioList.push_back( 
+				//				AStarData( current.corners[i].linksTo, current.corners[i].linksToEdge, prioList[0].node, 
+				//				dist + prioList[0].entryDistance,
+				//				glm::distance( mid, ownPosition ) ));
+				break;
+			}
 			
 			// redundancy check, if sorting is perfect, this should never have any effect
 			// note; this block kills of added nodes that are already visited. this is vital functionality.
@@ -401,7 +442,7 @@ namespace Core
 						otherMid = lineStart + (( lineEnd - lineStart ) * 0.5f );
 
 						// distance to the next node
-						float dist = glm::distance2( otherMid, mid );
+						float dist = glm::distance( otherMid, mid );
 				
 						// check so not the entry edge, otherwise add new node to priolist
 						if( i != prioList[0].entryEdge )
@@ -410,7 +451,7 @@ namespace Core
 							prioList.push_back( 
 								AStarData( current.corners[i].linksTo, current.corners[i].linksToEdge, prioList[0].node, 
 								dist + prioList[0].entryDistance,
-								glm::distance2( mid, ownPosition ) ));
+								glm::distance( mid, ownPosition ) ));
 						}
 					}
 				}
@@ -472,7 +513,7 @@ namespace Core
 			std::sort( &positions[0], &positions[3], 
 				[&posFromParent]( const glm::vec3& A, const glm::vec3& B )
 			{ 
-				if( glm::distance2(A, posFromParent) < glm::distance2( B, posFromParent ) ) 
+				if( glm::distance(A, posFromParent) < glm::distance( B, posFromParent ) ) 
 					return true; 
 				return false; 
 			} );
