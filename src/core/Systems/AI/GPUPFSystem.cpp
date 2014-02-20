@@ -17,6 +17,7 @@ namespace Core
 
 		m_inData = new DataIN[MAXIMUM_ENTITIES];
 		m_outData = new DataOUT[MAXIMUM_ENTITIES];
+		m_prevSize = 0;
 	}
 
 
@@ -50,6 +51,16 @@ namespace Core
 		}
 		else
 		{
+
+			if (m_entities.size() == 0 || m_entities.size() != m_prevSize)
+			{
+				m_dispatch = true;
+				m_readBack = false;
+				m_prevSize = m_entities.size();
+				return;
+			}
+
+			m_prevSize = m_entities.size();
 
 			//We've read back data, dispatch new data to GPU
 			if (m_dispatch)

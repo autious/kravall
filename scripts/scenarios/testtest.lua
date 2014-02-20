@@ -11,6 +11,8 @@ scen.gamemode:init()
 local mouse = core.input.mouse
 local squad = ent.get "policeSquad"
 
+scen:registerInitCallback( function() scen.gamemode:init(delta) end )
+
 scen:registerUpdateCallback( function(delta) scen.gamemode:update(delta) end )
 scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
 
@@ -22,8 +24,8 @@ ambient(scen, 1.0, 1.0, 1.0, 0.01)
 directional(scen, -1, -1, 0.5)
 
 
-scen:registerUpdateCallback( function( delta ) scen.gamemode:update(delta) end )
-scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
+--scen:registerUpdateCallback( function( delta ) scen.gamemode:update(delta) end )
+--scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
 
 
 --scen.gamemode.camera:lookAt( core.glm.vec3.new( 50, 25, 50 ), core.glm.vec3.new( 0, 0, 0 ) )
@@ -65,12 +67,12 @@ local building = ent.get "building"
 
 
 local rGroup = core.system.groups.createGroup();
---local centerPoint = { 110, 0, 0 }
+local centerPoint = { 110, 0, 0 }
 local centerPoint = { -0, 0, 0 }
-local side = math.sqrt( 100 )
+local side = math.sqrt( 32 )
 for i = -side/2, side/2 do
 	for p = -side/2, side/2 do
-		--rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rGroup, nil, nil, fists)
+		rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rGroup, nil, nil, fists)
 	end
 end
 --rioter( scen, 0, 0, 0, rGroup, fists)
