@@ -57,12 +57,12 @@ struct DataOUT
 	vec4 morale_rage_pressure_empty;
 };
 
-layout(std430, binding = 0) restrict readonly buffer InputBuffer
+layout(std430, binding = 0) readonly buffer InputBuffer
 {
 	DataIN gInput[];
 };
 
-layout (std430, binding = 1) restrict writeonly buffer OutputBuffer
+layout (std430, binding = 1) writeonly buffer OutputBuffer
 {
 	DataOUT gOutput[];
 };

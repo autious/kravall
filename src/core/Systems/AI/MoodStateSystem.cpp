@@ -178,7 +178,7 @@ namespace Core
 					break;
 				}
 
-				//GFX::Debug::DrawSphere(WorldPositionComponent::GetVec3(*WGETC<WorldPositionComponent>(*it)), 1, Colors::CornflowerBlue, false);
+				GFX::Debug::DrawSphere(WorldPositionComponent::GetVec3(*WGETC<WorldPositionComponent>(*it)), 1, Colors::CornflowerBlue, false);
 			}
 			break;
 
@@ -220,7 +220,7 @@ namespace Core
 					}
 					break;
 				}
-				//GFX::Debug::DrawSphere(WorldPositionComponent::GetVec3(*WGETC<WorldPositionComponent>(*it)), 1, Colors::Yellow, false);
+				GFX::Debug::DrawSphere(WorldPositionComponent::GetVec3(*WGETC<WorldPositionComponent>(*it)), 1, Colors::Yellow, false);
 			}
 			break;
 
@@ -255,7 +255,7 @@ namespace Core
 					break;
 				}
 
-				//GFX::Debug::DrawSphere(WorldPositionComponent::GetVec3(*WGETC<WorldPositionComponent>(*it)), 1, Colors::Red, false);
+				GFX::Debug::DrawSphere(WorldPositionComponent::GetVec3(*WGETC<WorldPositionComponent>(*it)), 1, Colors::Red, false);
 			}
 			break;
 
@@ -282,7 +282,7 @@ namespace Core
 					break;
 				}
 
-				//GFX::Debug::DrawSphere(WorldPositionComponent::GetVec3(*WGETC<WorldPositionComponent>(*it)), 1, Colors::White, false);
+				GFX::Debug::DrawSphere(WorldPositionComponent::GetVec3(*WGETC<WorldPositionComponent>(*it)), 1, Colors::White, false);
 			}
 			break;
 
@@ -303,7 +303,7 @@ namespace Core
 					}
 					break;
 				}
-				//GFX::Debug::DrawSphere(WorldPositionComponent::GetVec3(*WGETC<WorldPositionComponent>(*it)), 1, Colors::DeepPink, false);
+				GFX::Debug::DrawSphere(WorldPositionComponent::GetVec3(*WGETC<WorldPositionComponent>(*it)), 1, Colors::DeepPink, false);
 			}
 			break;
 		}
