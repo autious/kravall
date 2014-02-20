@@ -111,12 +111,17 @@ glm::vec3 Core::PickingSystem::GetGroundHit( int mouseX, int mouseY )
 	return targetPosition;
 }
 
-bool Core::PickingSystem::IsInsideNavMesh( glm::vec3 position )
+bool Core::PickingSystem::IsInsideNavigationMesh( const glm::vec3 & pos )
 {
-
+    if( Core::GetNavigationMesh() != nullptr )
+    {
+        return Core::GetNavigationMesh()->CheckPointInsideNavigationMesh( pos );
+    }
+    else
+    {
+        return false;
+    }
 }
-
-
 
 glm::vec3 Core::PickingSystem::GetRayFromCamera( int mouseX, int mouseY )
 {

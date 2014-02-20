@@ -34,7 +34,7 @@ namespace Core
 		*/
 		glm::vec3 GetGroundHit( int mouseX, int mouseY );
 
-        bool IsInsideNavMesh( glm::vec3 position );
+        bool IsInsideNavigationMesh( const glm::vec3 & pos );
 		/*!
 			Will return the current intersection of the mouse ray and X-Z plane.
 		*/
