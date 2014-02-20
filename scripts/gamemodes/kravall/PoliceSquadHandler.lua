@@ -159,6 +159,10 @@ function PoliceSquadHandler:updateSquadDamageStatus( delta )
         self.prevFrameSquadHealth[squadComponent.squadID] = squadComponent.squadHealth
     end
 
+    if not self.hasLived then
+        self.hasLived = 0
+    end
+
     local savedSquadDamageQueue = {}
     for i,v in pairs( self.squadDamageQueue ) do
         if v.ttl > 0 then
@@ -166,14 +170,17 @@ function PoliceSquadHandler:updateSquadDamageStatus( delta )
         end
         v.ttl = v.ttl - delta
 
-        if not v.hasLived then
-            v.hasLived = 0
-        end
-
-        if v.hasLived % 1.0 > 0.5 then
+        if self.hasLived % 1.0 > 0.5 then
             core.system.squad.enableOutline( {i}, standardPolice.damageOutline:get() )
         end
-        v.hasLived = v.hasLived + delta 
+    end
+
+    self.hasLived = self.hasLived + delta 
+
+    --Reset counter to counteract the noticable rounding error that will occur
+    --after ca 20 billion years of running the program
+    if self.hasLived > 1.0 then
+        self.hasLived = self.hasLived - 1.0
     end
 
     self.squadDamageQueue = savedSquadDamageQueue
