@@ -34,6 +34,15 @@ namespace GFX
     void ParticlePainter::Initialize(GLuint FBO, GLuint VAO)
     {
         BasePainter::Initialize(FBO, VAO);
+
+        m_shaderManager->CreateProgram("ParticleApply");
+        m_shaderManager->LoadShader("shaders/particle/ParticleApplyVS.glsl", "ApplyVS", GL_VERTEX_SHADER );
+        m_shaderManager->LoadShader("shaders/FSQuadGS.glsl", "ApplyGS", GL_GEOMETRY_SHADER );
+        m_shaderManager->LoadShader("shaders/particle/ParticleApplyFS.glsl", "ApplyFS", GL_FRAGMENT_SHADER );
+        m_shaderManager->AttachShader("ApplyVS", "ParticleApply");
+        m_shaderManager->AttachShader("ApplyGS", "ParticleApply");
+        m_shaderManager->AttachShader("ApplyFS", "ParticleApply");
+        m_shaderManager->LinkProgram("ParticleApply");
          
         m_shaderManager->CreateProgram("SmokeGrenade");
         m_shaderManager->LoadShader("shaders/particle/SmokeGrenadeVS.glsl", "SmokeGrenadeVS", GL_VERTEX_SHADER);
@@ -45,23 +54,35 @@ namespace GFX
         m_shaderManager->LinkProgram("SmokeGrenade");
 
         m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("SmokeGrenade"), "PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
+
+        GLint applyTextureLocation = m_shaderManager->GetUniformLocation("ParticleApply", "textureIN");
+        if(applyTextureLocation >= 0)
+        {
+            m_shaderManager->UseProgram("ParticleApply");
+            glUniform1i(applyTextureLocation, 0);
+        }
+    
     }
 
-    void ParticlePainter::Render(unsigned int& renderIndex, GFX::FBOTexture* depthBuffer, GFX::FBOTexture* normalDepth, GFX::FBOTexture* specular, GFX::FBOTexture* glowMatID, GLuint toneMappedTexture, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
+    void ParticlePainter::Render(unsigned int& renderIndex,GFX::FBOTexture* particleTarget, GFX::FBOTexture* depthBuffer, GFX::FBOTexture* normalDepth, GFX::FBOTexture* specular, GFX::FBOTexture* glowMatID, GLuint toneMappedTexture, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
     {
 		BasePainter::Render();
 
         glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depthBuffer->GetTextureHandle(), 0);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, normalDepth->GetTextureHandle(), 0);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, toneMappedTexture, 0);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, specular->GetTextureHandle(), 0);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, glowMatID->GetTextureHandle(), 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, particleTarget->GetTextureHandle(), 0);
 
-        GLenum drawBuffers[] = { GL_NONE, GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
-        glDrawBuffers(5, drawBuffers);
+        glDrawBuffer(GL_COLOR_ATTACHMENT0);
+
+        glClear(GL_COLOR_BUFFER_BIT);
         
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depthBuffer->GetTextureHandle(), 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, glowMatID->GetTextureHandle(), 0);
+
+        GLenum particleDrawBuffers[] = { GL_NONE, GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+
+        glDrawBuffers(3, particleDrawBuffers);
+
         glEnable(GL_DEPTH_TEST);
         glDepthMask(GL_FALSE);
 
@@ -121,6 +142,7 @@ namespace GFX
                     m_texture1Uniform = m_shaderManager->GetUniformLocation(currentShader, "gNormal");
                     m_texture2Uniform = m_shaderManager->GetUniformLocation(currentShader, "gSpecular");
                     m_texture3Uniform = m_shaderManager->GetUniformLocation(currentShader, "gGlow");
+                    m_depthBufferUniform = m_shaderManager->GetUniformLocation(currentShader, "gDepthBuffer");
                 }
                 
                 glUseProgram(currentShader);
@@ -129,6 +151,12 @@ namespace GFX
                 m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[1]).textureHandle, m_texture1Uniform, 1, GL_TEXTURE_2D);
                 m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[2]).textureHandle, m_texture2Uniform, 2, GL_TEXTURE_2D);
                 m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[3]).textureHandle, m_texture3Uniform, 3, GL_TEXTURE_2D);
+
+                if(m_depthBufferUniform >= 0)
+                {
+
+                    m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[3]).textureHandle, m_texture3Uniform, 3, GL_TEXTURE_2D);
+                }
             }
 
             if(mesh != currentMesh)
@@ -164,7 +192,7 @@ namespace GFX
                     {
                         glEnable(GL_BLEND);
                         glBlendEquation(GL_FUNC_ADD);
-                        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+                        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
                         break;
                     }
 
@@ -211,7 +239,29 @@ namespace GFX
             }
             glDrawArrays(GL_POINTS, 0, particleData->particleCount);
         }
+        
+        glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depthBuffer->GetTextureHandle(), 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, normalDepth->GetTextureHandle(), 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, toneMappedTexture, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, specular->GetTextureHandle(), 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, glowMatID->GetTextureHandle(), 0);
+
+        GLenum drawBuffers[] = { GL_NONE, GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
+
+        glDrawBuffers(5, drawBuffers);
+        glEnable(GL_BLEND);
+        glBlendEquation(GL_FUNC_ADD);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE);    
+       
+        m_shaderManager->UseProgram("ParticleApply");
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, particleTarget->GetTextureHandle());
+
+        glBindVertexArray(m_dummyVAO);
+        glDrawArrays(GL_POINTS, 0, 1);
+        
         glDisable(GL_BLEND);
         glDepthMask(GL_TRUE);
     }

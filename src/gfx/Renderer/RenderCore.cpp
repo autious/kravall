@@ -149,6 +149,8 @@ namespace GFX
 		m_shadowMapTextures[2]->CreateShadowmap(m_settings[GFX_SHADOW_RESOLUTION], m_settings[GFX_SHADOW_QUALITY]);
 		m_shadowMapTextures[3]->CreateShadowmap(m_settings[GFX_SHADOW_RESOLUTION], m_settings[GFX_SHADOW_QUALITY]);
 
+        m_particleTarget = new FBOTexture();
+
 		m_shaderManager = new ShaderManager();
 		m_uniformBufferManager = new UniformBufferManager();
 		m_renderJobManager = new RenderJobManager();
@@ -463,7 +465,7 @@ namespace GFX
 			CT(m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, m_shadowMapTextures, m_showFBO), "FBO");
 
         // Do particle rendering as forwarded pass
-		CT(m_particlePainter->Render(renderJobIndex, m_depthBuffer, m_normalDepth, m_specular, m_glowMatID, m_toneMappedTexture, m_viewMatrix, m_projMatrix), "Particle");
+		CT(m_particlePainter->Render(renderJobIndex, m_particleTarget, m_depthBuffer, m_normalDepth, m_specular, m_glowMatID, m_toneMappedTexture, m_viewMatrix, m_projMatrix), "Particle");
 
 		// Do post processing
 		CT(m_postProcessingPainter->Render(delta, m_toneMappedTexture, m_currentLUT, m_exposure, m_gamma, m_whitePoint, m_diffuse), "PostProcessing");
@@ -532,7 +534,8 @@ namespace GFX
 
 		m_glowMatID->Initialize(GL_TEXTURE_2D, GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, GL_RGBA32F, GL_RGBA);
 
-
+        m_particleTarget->Initialize(GL_TEXTURE_2D, GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, GL_RGBA32F, GL_RGBA);
+        
 		ResizeGBuffer();
 
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_depthBuffer->GetTextureHandle(), 0);
@@ -560,6 +563,7 @@ namespace GFX
 		m_diffuse->UpdateResolution(m_windowWidth, m_windowHeight);
 		m_specular->UpdateResolution(m_windowWidth, m_windowHeight);
 		m_glowMatID->UpdateResolution(m_windowWidth, m_windowHeight);
+        m_particleTarget->UpdateResolution(m_windowWidth, m_windowHeight);
 	}
 
 	void RenderCore::InitializeDummyVAO()
