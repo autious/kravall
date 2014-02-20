@@ -64,8 +64,6 @@ namespace GFX
 		m_lineEndUniform = m_shaderManager->GetUniformLocation("DebugLine", "pointPosition2");
 		m_lineColorUniform = m_shaderManager->GetUniformLocation("DebugLine", "inColor");
 
-		m_uniformBufferManager->CreateBasicCameraUBO(m_shaderManager->GetShaderProgramID("DebugLine"));
-
 		// Create and attach rect debug shaders
 		m_shaderManager->CreateProgram("DebugRect");
 		m_shaderManager->AttachShader("DebugVS", "DebugRect");
@@ -88,7 +86,7 @@ namespace GFX
 		m_boxDimUniform = m_shaderManager->GetUniformLocation("DebugBox", "pointPosition2");
 		m_boxColorUniform = m_shaderManager->GetUniformLocation("DebugBox", "inColor");
 
-		m_uniformBufferManager->CreateBasicCameraUBO(m_shaderManager->GetShaderProgramID("DebugBox"));
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("DebugBox"), "PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
 	}
 
 	void DebugPainter::Render(FBOTexture* depthBuffer, FBOTexture* color, glm::mat4 viewMatrix, glm::mat4 projMatrix, bool draw)

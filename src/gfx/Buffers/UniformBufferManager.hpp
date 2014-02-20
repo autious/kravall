@@ -7,6 +7,7 @@
 
 #include "UniformBuffers.hpp"
 
+
 namespace GFX
 {
 	class UniformBufferManager
@@ -16,11 +17,13 @@ namespace GFX
 		UniformBufferManager();
 		~UniformBufferManager();
 
-		/*!
-		Create the basic uniform block for the camera
-		\param programID id of the program to link to
-		*/
-		void CreateBasicCameraUBO(GLuint programID);
+        /*!
+        Binds the specified uniform block withing the specified shader program to the specified binding point.
+        \param programID The program that contains the uniform block to set the value of.
+        \param uniformBufferName A pointer to a null terminated string that contains the name of the uniform block.
+        \param bindinIndex An unsigned integer that specifies which binding point the uniform block should use. The UniformBufferManager contains defined values for binding points to use for certain uniform buffers. 
+        */
+        void SetUniformBlockBindingIndex(GLuint programID, const char* uniformBufferName, GLuint bindingIndex);
 
 		/*!
 		Set the basic camera uniform block
@@ -33,12 +36,12 @@ namespace GFX
 		\return basic camera ubo id
 		*/
 		GLuint GetBasicCameraUBO();
+        
+        static const GLuint CAMERA_BINDING_INDEX;
 
-		void CreateExampleBuffer(GLuint programID);
-		void SetExampleBufferData(const ExampleBuffer& eb);
-		GLuint GetExampleBuffer();
-		
 	private:
+		void CreateBasicCameraUBO();
+
 		GLuint m_exampleUBO;
 		GLuint m_basicCameraUBO;
 	};
