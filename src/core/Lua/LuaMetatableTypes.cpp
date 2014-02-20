@@ -23,6 +23,15 @@ namespace Core
         return ent;
     }
 
+    LuaEntity* LuaUNewLightEntity( lua_State * L, Core::Entity entity )
+    {
+        LuaEntity* ent = LuaUNewEntity( L );
+        ent->entity = entity;
+        ent->light = true;
+
+        return ent;
+    }
+
     LuaAspect* LuaUNewAspect( lua_State * L )
     {
         LuaAspect* asp = (LuaAspect*)lua_newuserdata(L, sizeof(LuaAspect));
@@ -44,6 +53,16 @@ namespace Core
     Core::SquadAbility* LuaUNewSquadAbility( lua_State * L )
     {
         Core::SquadAbility* ability = static_cast<Core::SquadAbility*>(lua_newuserdata(L, sizeof(Core::SquadAbility)));
+        luaL_newmetatable( L, SQUAD_ABILITY_META_TYPE );
+        lua_setmetatable(L, -2);
+        
+        return ability;
+    }
+
+    Core::SquadAbility* LuaUNewSquadAbility( lua_State * L, Core::SquadAbility value )
+    {
+        Core::SquadAbility* ability = static_cast<Core::SquadAbility*>(lua_newuserdata(L, sizeof(Core::SquadAbility)));
+        *ability = value;
         luaL_newmetatable( L, SQUAD_ABILITY_META_TYPE );
         lua_setmetatable(L, -2);
         
@@ -75,6 +94,16 @@ namespace Core
         lua_setmetatable(L, -2);
 
         return type;
+    }
+
+    Core::PoliceStance* LuaUNewPoliceStance(lua_State* L, Core::PoliceStance value )
+    {
+        Core::PoliceStance* stance = static_cast<Core::PoliceStance*>(lua_newuserdata(L, sizeof(Core::PoliceStance)));                  
+        *stance = value;
+        luaL_newmetatable(L, POLICE_STANCE_META_TYPE);
+        lua_setmetatable(L, -2);
+        
+        return stance;
     }
 
     uint64_t* LuaUNewBitmask( lua_State * L )

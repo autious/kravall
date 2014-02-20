@@ -16,7 +16,7 @@ function U.getTotalDimHeight( components, paddingx, paddingy )
     return tw, th
 end
 
-function U.getTotalDimWidth( component, paddingx, paddingy )
+function U.getTotalDimWidth( components, paddingx, paddingy )
     local tw = 0
     local th = 0
     for _,c in pairs( components ) do     

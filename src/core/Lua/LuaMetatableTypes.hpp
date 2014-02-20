@@ -100,11 +100,13 @@ namespace Core
 {
     LuaEntity* LuaUNewEntity( lua_State * L );
     LuaEntity* LuaUNewLightEntity( lua_State * L );
+    LuaEntity* LuaUNewLightEntity( lua_State * L, Core::Entity entity );
 
     LuaAspect* LuaUNewAspect( lua_State * L );
 
     Core::SquadFormation* LuaUNewSquadFormation( lua_State * L );
     Core::SquadAbility* LuaUNewSquadAbility( lua_State * L );
+    Core::SquadAbility* LuaUNewSquadAbility( lua_State * L, Core::SquadAbility ability );
     Core::PoliceStance* LuaUNewPoliceStance(lua_State* L);
 
     LuaParticleDefinition* LuaUNewParticleDefinition(lua_State* L);

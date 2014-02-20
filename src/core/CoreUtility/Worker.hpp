@@ -17,7 +17,6 @@ namespace Core
 
 	private:
 		ThreadPool& m_pool;
-
 	};
 
 }
