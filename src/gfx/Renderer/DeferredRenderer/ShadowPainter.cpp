@@ -408,10 +408,10 @@ namespace GFX
 		ClearFBO();
 
 		// Apply gaussain blur to the shadowmap
-		m_blurPainter->GaussianBlur(shadowMaps[0]);
-		m_blurPainter->GaussianBlur(shadowMaps[1]);
-		m_blurPainter->GaussianBlur(shadowMaps[2]);
-		m_blurPainter->GaussianBlur(shadowMaps[3]);
+		m_blurPainter->GaussianBlur(shadowMaps[0], 0.7);
+		m_blurPainter->GaussianBlur(shadowMaps[1], 0.5);
+		m_blurPainter->GaussianBlur(shadowMaps[2], 0.3);
+		m_blurPainter->GaussianBlur(shadowMaps[3], 0.1);
 
 		glViewport(0, 0, width, height);
 		
