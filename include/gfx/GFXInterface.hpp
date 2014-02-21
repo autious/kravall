@@ -82,6 +82,13 @@ namespace GFX
 	\param data A pointer to the data used for rendering
 	*/
 	DLL_API void Draw(GFXBitmask bitmask, void* data);
+
+	/*!
+	Sets the values needed to draw the selection box.
+	\param posDim This is a vec4 containing position and dimension (x, y, w, h)
+	\param color The color of the selectionbox
+	*/
+	DLL_API void DrawSelectionbox(const glm::vec4& posDim, const GFXColor& color );
 	
 	/*!
 	Issues a draw  text command to the graphics engine.

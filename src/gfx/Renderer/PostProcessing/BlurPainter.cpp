@@ -66,6 +66,10 @@ namespace GFX
 		m_shaderManager->AttachShader("GBVFS_old", "GaussianBlurVertical_old");
 		m_shaderManager->LinkProgram("GaussianBlurVertical_old");
 		
+		m_horizontalBlurFactorUniform = m_shaderManager->GetUniformLocation("GaussianBlurHorizontal", "gBlurFactor");
+		m_verticalBlurFactorUniform = m_shaderManager->GetUniformLocation("GaussianBlurVertical", "gBlurFactor");
+
+		
 	}
 
 	void BlurPainter::InitFBO()
@@ -87,7 +91,7 @@ namespace GFX
 
 	}
 
-	void BlurPainter::GaussianBlur(FBOTexture* texture)
+	void BlurPainter::GaussianBlur(FBOTexture* texture, float blurFactor)
 	{
 		int texWidth = texture->GetWidth();
 		int texHeight = texture->GetHeight();
@@ -103,6 +107,7 @@ namespace GFX
 		
 		TextureManager::BindTexture(texture->GetTextureHandle(), m_shaderManager->GetUniformLocation("GaussianBlurHorizontal", "gTexture"), 0, GL_TEXTURE_2D);
 		m_shaderManager->SetUniform((GLfloat)texWidth, (GLfloat)texHeight, m_shaderManager->GetUniformLocation("GaussianBlurHorizontal", "gScreenDimensions"));
+		m_shaderManager->SetUniform(blurFactor, m_horizontalBlurFactorUniform);
 		
 		glBindVertexArray(m_dummyVAO);
 		glDrawArrays(GL_POINTS, 0, 1);
@@ -117,6 +122,7 @@ namespace GFX
 
 		TextureManager::BindTexture(m_intermediateTexture->GetTextureHandle(), m_shaderManager->GetUniformLocation("GaussianBlurVertical", "gTexture"), 0, GL_TEXTURE_2D);
 		m_shaderManager->SetUniform((GLfloat)texWidth, (GLfloat)texHeight, m_shaderManager->GetUniformLocation("GaussianBlurVertical", "gScreenDimensions"));
+		m_shaderManager->SetUniform(blurFactor, m_verticalBlurFactorUniform);
 		
 		glBindVertexArray(m_dummyVAO);
 		glDrawArrays(GL_POINTS, 0, 1);
