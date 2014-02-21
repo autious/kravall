@@ -42,7 +42,21 @@ function MoveMarker:new(o)
 end
 
 function MoveMarker:update( delta )
-    --TODO:REMOVE MARKERS WHEN ANIMATION FINISHED PLAYING.    
+
+    local i = 1 
+    while i <= #(self.markerList) do 
+        local cur = self.markerList[i]
+
+        if core.animations.isPlaying( cur ) then
+            i = i + 1 
+        else
+            cur:destroy()
+            --Table remove will remove element and push down
+            --all other items to fill the hole, meaning
+            --we shouldn't increase i
+            table.remove( self.markerList, i )
+        end
+    end
 end
 
 local function createInstance(self,position, mesh, mat )
