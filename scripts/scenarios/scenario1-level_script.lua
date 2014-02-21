@@ -34,7 +34,7 @@ return function( scen )
 									plane(scen, 0, -1, 0, 900)
 									
 									-- load weapons...
-									fists = core.weaponData.pushWeapon( 1.0, 20, 0.2, 0.05, 0.05, 0.5, "punch" )
+									fists = core.weaponData.pushWeapon( 1.0, 20, 0.2, 0.05, 3.2, 2.9, 0.05, 0.5, "punch" )
 							   end)
 	
 	-- Just random helpful stuffzzz --
