@@ -4,6 +4,7 @@ in vec2 uv;
 
 uniform sampler2D gTexture;
 uniform vec2 gScreenDimensions;
+uniform float gBlurFactor;
 
 out vec4 resultColor;
 
@@ -19,7 +20,7 @@ const float kernel[]=float[21] (
 
 void main()
 {
-	vec2 delta = 0.3/textureSize(gTexture,0);
+	vec2 delta = gBlurFactor/textureSize(gTexture,0);
 	vec4 color = vec4(0);
 	int  index = 20;
 

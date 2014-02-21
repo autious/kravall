@@ -60,6 +60,8 @@ namespace GFX
 		m_showFBO = 0;
 		m_animationFramerate = 24;
 		m_reloadAnimationData = true;
+
+		m_drawSelectionbox = false;
 	}
 
 	RenderCore::~RenderCore()
@@ -90,6 +92,7 @@ namespace GFX
 		delete(m_splashPainter);
 		delete(m_fboPainter);
         delete(m_overlayPainter);
+		delete(m_boxPainter);
 		delete(m_blurPainter);
 		delete(m_decalPainter);
 		delete(m_shadowPainter);
@@ -182,6 +185,7 @@ namespace GFX
 		m_fboPainter = new FBOPainter(m_shaderManager, m_uniformBufferManager);
 		m_overlayPainter = new OverlayPainter(m_shaderManager, m_uniformBufferManager, 
 		m_renderJobManager, m_meshManager, m_textureManager, m_materialManager);
+		m_boxPainter = new BoxPainter(m_shaderManager, m_uniformBufferManager, m_renderJobManager, m_meshManager);
 		m_playSplash = false;
 
 
@@ -202,6 +206,7 @@ namespace GFX
 		m_splashPainter->Initialize(m_FBO, m_dummyVAO);
 		m_fboPainter->Initialize(m_FBO, m_dummyVAO);
         m_overlayPainter->Initialize(m_FBO, m_dummyVAO);
+		m_boxPainter->Initialize(m_FBO, m_dummyVAO);
 		m_blurPainter->Initialize(m_FBO, m_dummyVAO);
 		m_postProcessingPainter->Initialize(m_FBO, m_dummyVAO, m_windowWidth, m_windowHeight, m_blurPainter, m_specular, m_glowMatID);
 		//m_GIPainter->Initialize(m_FBO, m_dummyVAO, m_windowWidth, m_windowHeight);
@@ -382,6 +387,7 @@ namespace GFX
 
 	void RenderCore::Render(const double& delta)
 	{
+
 		if (m_playSplash)
 		{
 			m_splashPainter->Render(m_windowWidth, m_windowHeight, delta);
@@ -479,8 +485,12 @@ namespace GFX
 
 		// Draw debug text
 		CT(m_textPainter->Render(m_windowWidth, m_windowHeight), "Text");
+		
+		if( m_drawSelectionbox )
+			m_boxPainter->Render(m_selectionBoxPosDim, m_selectionBoxColor);
 
 		m_renderJobManager->Clear();
+		m_drawSelectionbox = false;
 	}
 
 	void RenderCore::SubSystemTimeRender()

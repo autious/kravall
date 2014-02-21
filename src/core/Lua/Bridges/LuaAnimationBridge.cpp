@@ -81,6 +81,14 @@ extern "C"
         return 0;
     }
 
+    static int LuaIsAnimationPlaying( lua_State *L )
+    {
+		LuaEntity* ent = luau_checkentity(L, 1);
+		
+		lua_pushboolean( L, Core::AnimationManager::IsAnimationPlaying(ent->entity));
+
+        return 1;
+    }
 }
 
 namespace Core
@@ -97,6 +105,7 @@ namespace Core
                 luau_setfunction( L, "resume", LuaResumeAnimation );
                 luau_setfunction( L, "setSpeed", LuaSetAnimationSpeed );
                 luau_setfunction( L, "setTime", LuaSetAnimationTime );
+                luau_setfunction( L, "isPlaying", LuaIsAnimationPlaying );
             lua_setfield(L, -2, "animations" );
         lua_pop( L, 1 );
 

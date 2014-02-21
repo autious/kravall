@@ -7,7 +7,6 @@ namespace Core
 {
 	std::map<int, std::map<std::string, int> > AnimationManager::m_skeletons;
 	
-
 	int AnimationManager::GetAnimationID(int meshID, const std::string& animationName)
 	{
 		if (m_skeletons[meshID].find(animationName) != m_skeletons[meshID].end())
@@ -217,4 +216,19 @@ namespace Core
 			LOG_WARNING << "Failed to set animation speed: No animation component attached to entity";
 		}
 	}	
+
+    bool AnimationManager::IsAnimationPlaying( const Entity& entity )
+    {
+		Core::AnimationComponent* ac = WGETC<Core::AnimationComponent>(entity);
+		if (ac != nullptr)
+		{
+            return ac->playing;
+		}
+		else
+		{
+			LOG_WARNING << "Failed to check animation, no animation component attached to entity";
+		}
+
+        return false;
+    }
 }
