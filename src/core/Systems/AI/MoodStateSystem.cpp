@@ -2,11 +2,12 @@
 #include <gfx/GFXInterface.hpp>
 #include <utility/Colors.hpp>
 #include <World.hpp>
+#include <GameUtility/GameData.hpp>
 
 namespace Core
 {
 
-	MoodStateSystem::MoodStateSystem() :BaseSystem(EntityHandler::GenerateAspect<AttributeComponent, UnitTypeComponent>(), 0ULL)
+	MoodStateSystem::MoodStateSystem() :BaseSystem(EntityHandler::GenerateAspect<WorldPositionComponent, AttributeComponent, UnitTypeComponent, FlowfieldComponent>(), 0ULL)
 	{}
 
 	void MoodStateSystem::Update(float delta)
@@ -293,13 +294,17 @@ namespace Core
 				{
 					case RioterAlignment::Anarchist:
 					{
-
+						int exitGroup = Core::GameData::GetEscapePointGroup( WGETC<FlowfieldComponent>(*it)->node );
+						if( exitGroup >= 0 )
+							atc->rioter.groupID = exitGroup;
 					}
 					break;
 
 					case RioterAlignment::Pacifist:
 					{
-
+						int exitGroup = Core::GameData::GetEscapePointGroup( WGETC<FlowfieldComponent>(*it)->node );
+						if( exitGroup >= 0 )
+							atc->rioter.groupID = exitGroup;
 					}
 					break;
 				}

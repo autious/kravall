@@ -39,10 +39,12 @@ namespace Core
 		flowfields[nrUsedFlowfields].blocked = Core::world.m_levelHeap.NewPODArray<float>( nrNodes * 4 );
         flowfields[nrUsedFlowfields].edges = Core::world.m_levelHeap.NewPODArray<int>( nrNodes );
 		flowfields[nrUsedFlowfields].list = (glm::vec3*)(Core::world.m_levelHeap.NewPODArray<float>( 3 * nrNodes ));
+		flowfields[nrUsedFlowfields].distanceToGoal = Core::world.m_levelHeap.NewPODArray<float>( nrNodes );
 
 		std::memset( flowfields[nrUsedFlowfields].blocked, 0, nrNodes * sizeof(float) * 4 );
 		std::memset( flowfields[nrUsedFlowfields].edges, 0, nrNodes * sizeof(int) );
 		std::memset( flowfields[nrUsedFlowfields].list, 0, nrNodes * sizeof(glm::vec3) );
+		std::memset( flowfields[nrUsedFlowfields].distanceToGoal, 0, nrNodes * sizeof(float) );
 
 		flowfields[nrUsedFlowfields].goal[ 0 ] = std::numeric_limits<float>::max();
 		flowfields[nrUsedFlowfields].goal[ 1 ] = std::numeric_limits<float>::max();

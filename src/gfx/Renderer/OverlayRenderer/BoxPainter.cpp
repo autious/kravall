@@ -47,7 +47,7 @@ namespace GFX
 		glDisable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
         glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
-
+		glLineWidth(1);
 		m_shaderManager->UseProgram("BoxSelect");
 		m_shaderManager->SetUniform(1, posdim, m_pointUniform);
 		m_shaderManager->SetUniform(1, color, m_colorUniform);

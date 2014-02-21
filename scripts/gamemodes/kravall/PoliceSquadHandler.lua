@@ -380,7 +380,6 @@ function PoliceSquadHandler:update( delta )
             end
 
             local clickPos = core.glm.vec3.new(core.system.picking.getGroundHit(  mouseX, mouseY ))
-            print ("WHAT IS GOING ON" )
             self.onMoveToPosition( self.selectedSquads, clickPos, core.system.picking.getIsInsideNavigationMesh(clickPos) )
 
 

@@ -32,14 +32,14 @@ void Core::PoliceGoalSystem::Update( float delta )
 	if( !instance )
 		return;
 
-	if( !instance->AllocateFrameMemoryForAstar(Core::world.threadHandler.GetNrThreads() ) )
+	if( !instance->AllocateFrameMemoryForAstar(Core::world.m_threadHandler.GetNrThreads() ) )
 		return;
 
 	int startIndex;
 	int endIndex;
 	int memoryIndex;
 
-	int nrCores = Core::world.threadHandler.GetNrThreads();
+	int nrCores = Core::world.m_threadHandler.GetNrThreads();
 	int nrPerCore = std::ceil((float)m_entities.size() / (float)nrCores);
 
 	for( int i = 0; i < nrCores; i++ )
@@ -51,7 +51,7 @@ void Core::PoliceGoalSystem::Update( float delta )
 		
 		memoryIndex = i;
 
-		Core::world.threadHandler.Enqueue( [ this, instance, startIndex, endIndex, memoryIndex ]()
+		Core::world.m_threadHandler.Enqueue( [ this, instance, startIndex, endIndex, memoryIndex ]()
 		{
 
 			for( std::vector<Entity>::iterator it = m_entities.begin() + startIndex; it != m_entities.begin() + endIndex; it++ )
@@ -142,5 +142,5 @@ void Core::PoliceGoalSystem::Update( float delta )
 	}
 	
 
-	Core::world.threadHandler.Wait();
+	Core::world.m_threadHandler.Wait();
 }

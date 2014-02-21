@@ -12,12 +12,6 @@ local keyboard = core.input.keyboard
 local mouse = core.input.mouse
 local s_squad = core.system.squad
 
-core.movementData.setMovementMetaData( core.movementData.Walking, 5.8, 17, 17, 0.0 )
-core.movementData.setMovementMetaData( core.movementData.Sprinting, 8.8, 17, 14, 0.2 )
-
--- usual weapons...
-fists = core.weaponData.pushWeapon( 1.0, 20, 0.2, 0.05, 0.05, 0.5, "punch" )
-
 function T:new(o)
     o = o or {}
 
@@ -26,6 +20,10 @@ function T:new(o)
 
     o.objectiveHandler = objective_handler:new()
     o.camera = Camera.new()
+	
+	-- set default movementData
+	core.movementData.setMovementMetaData( core.movementData.Walking, 5.8, 17, 17, 0.0 )
+	core.movementData.setMovementMetaData( core.movementData.Sprinting, 8.8, 17, 14, 0.2 )
 
     return o
 end
@@ -84,8 +82,7 @@ function T:init()
             end
         end,
         
-    })
-
+    })	
 end
 
 function T:update( delta )
@@ -111,6 +108,7 @@ function T:destroy()
         self.popup:destroy()
     end
     self.moveMarker:destroy()
+	core.gameMetaData.clearGameData()
 end
 
 function T:name()

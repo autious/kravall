@@ -19,6 +19,9 @@ void Core::AttackAnimationSystem::Update(float delta)
 	for (std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); it++)
 	{
 		Core::TargetingComponent* tc = WGETC<Core::TargetingComponent>(*it);	
+		if( tc->weapon < 0 )
+			continue;
+
 		Core::WorldPositionComponent* targetWpc = WGETC<Core::WorldPositionComponent>( tc->target );
 		Core::TargetingComponent* targetTc = WGETC<Core::TargetingComponent>( tc->target );
 		if( targetTc )
@@ -27,6 +30,7 @@ void Core::AttackAnimationSystem::Update(float delta)
 			
 			Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>(*it);
 			const Core::WeaponData& weapon = Core::GameData::GetWeaponDataFromWeapon( tc->weapon );
+			
 
 			// if the unit can attack its target, start the attack animation.
 			float distSqr = glm::dot( wpc->GetVec3( *wpc ) - targetWpc->GetVec3( *targetWpc ),
@@ -54,19 +58,27 @@ void Core::AttackAnimationSystem::Update(float delta)
 				if( animac->currentTime > weapon.animationDmgDealingtime && !tc->hasAttacked )
 				{
 					tc->hasAttacked = true;
-					Core::AttributeComponent* attribc = WGETC<Core::AttributeComponent>( tc->target );
+					Core::AttributeComponent* owmAttribc = WGETC<Core::AttributeComponent>( *it );
+					
+					Core::AttributeComponent* enemyAttribc = WGETC<Core::AttributeComponent>( tc->target );
+					Core::UnitTypeComponent* enemyUtc = WGETC<Core::UnitTypeComponent>( tc->target );
 
-					attribc->stamina -= weapon.staminaCost;
+					owmAttribc->stamina -= weapon.staminaCost;
+					if( enemyUtc->type == Core::UnitType::Rioter )
+					{
+						enemyAttribc->rioter.rage += weapon.rageBuff;
+						enemyAttribc->rioter.pressure += weapon.pressureBuff;
+					}
 
 					// deal dmg if target is still in range
 					if (distSqr < weapon.range * weapon.range )
 					{
-						attribc->health -= (int)weapon.weaponDamage;
-						attribc->morale -= weapon.moraleDamage;
+						enemyAttribc->health -= (int)weapon.weaponDamage;
+						enemyAttribc->morale -= weapon.moraleDamage;					
 					}
 					else
 					{
-						attribc->morale -= weapon.moralDamageOnMiss;
+						enemyAttribc->morale -= weapon.moralDamageOnMiss;
 					}
 				}
 

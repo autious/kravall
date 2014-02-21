@@ -208,6 +208,7 @@ namespace Core
 			{
 				flowfields[group].list[ prioList[0].node ] = ownMidLine;
 				flowfields[group].edges[ prioList[0].node ] = prioList[0].entryEdge;
+				flowfields[group].distanceToGoal[ prioList[0].node ] = prioList[0].entryDistance;
 				distances[ prioList[0].node ] = prioList[0].entryDistance;
 				points[ prioList[0].node ] = ownMidLine;
 
@@ -242,6 +243,7 @@ namespace Core
 			points[ prioList[0].node ] = positions[0];
 			flowfields[group].list[ prioList[0].node ] = points[ prioList[0].parentNode ];
 			flowfields[group].edges[ prioList[0].node ] = prioList[0].entryEdge;
+			flowfields[group].distanceToGoal[ prioList[0].node ] = prioList[0].entryDistance;
 
 			// utility
 			distances[ prioList[0].node ] = prioList[0].entryDistance;

@@ -157,6 +157,11 @@ namespace Core
 			/* ********* */
 
 			/*!
+				The calculated path distance from this node to the goal.
+			*/
+			float* distanceToGoal;
+
+			/*!
 				if above zero the respective edge cannot be traversed in the navmesh.
 			*/
 			float* blocked;

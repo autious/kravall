@@ -9,7 +9,11 @@ return function( components, winWidth, winHeight, posx, posy )
     local startx = winWidth + posx
     local starty = (winHeight - th)/2 + posy
     for _,c in pairs( components ) do 
-        c:setPosition( c.xoffset + startx - c.width, starty + c.yoffset )
+        if c.ignoreConstrict then
+            c:setPosition( posx + c.xoffset, posy + c.yoffset )
+        else
+            c:setPosition( c.xoffset + startx - c.width, starty + c.yoffset )
+        end
         starty = starty + c.height + padding
     end 
 end

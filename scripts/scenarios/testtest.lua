@@ -65,10 +65,14 @@ local rioter = ent.get "rioter"
 local police = ent.get "police"
 local building = ent.get "building"
 
+-- usual weapons...
+local fists = core.weaponData.pushWeapon( 1.0, 20, 0.2, 0.05, 3.2, 2.9, 0.05, 0.5, "punch" )
+
+core.gameMetaData.registerEscapePoint( 50, 0, 0 )
 
 local rGroup = core.system.groups.createGroup();
-local centerPoint = { 110, 0, 0 }
-local centerPoint = { -0, 0, 0 }
+--local centerPoint = { 110, 0, 0 }
+local centerPoint = { -50, 0, 0 }
 local side = math.sqrt( 32 )
 for i = -side/2, side/2 do
 	for p = -side/2, side/2 do
@@ -76,14 +80,14 @@ for i = -side/2, side/2 do
 	end
 end
 --rioter( scen, 0, 0, 0, rGroup, fists)
-core.system.groups.setGroupGoal(rGroup, 0, 0, 0)
+core.system.groups.setGroupGoal(rGroup, 0, 0, -300)
 
 --for i = 0, 40 do
 --	squad(scen, 20, 0, 0, math.pi/2, fists);
 --end
 
 local sqads = {}	
-for i = 0, 50 do
+for i = 0, 10 do
 	sqads[#sqads + 1] = squad(scen, 20, 0, 0, math.pi/2, fists);
 end
 

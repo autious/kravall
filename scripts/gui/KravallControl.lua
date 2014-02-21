@@ -52,7 +52,7 @@ function KravallControl:new(o)
         onFormationSelect = function(form) o.onFormationSelect(form) end 
     })
 
-    o.rightControlGUI = GUI:new{x=0,y=0, width=150,height=500, anchor="NorthEast"}
+    o.rightControlGUI = GUI:new{x=0,y=0, width=150,height=600, anchor="NorthEast"}
     o.rightControlGUI:addPlacementHandler( AnchorPlacer )
 
     o.rightControlGUI:addComponent( o.stanceGUI )
