@@ -53,6 +53,11 @@ namespace Core
 		*/
 		bool HasThreads();
 
+		/*!
+			Will return the current number of threads available.
+		*/
+		int GetNrThreads() { return m_nrThreads; }
+
 		~ThreadPool();
 
 	private:

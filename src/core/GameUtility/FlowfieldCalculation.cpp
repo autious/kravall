@@ -290,42 +290,71 @@ namespace Core
 			return false;
 	}
 
-	bool Core::NavigationMesh::AllocateFrameMemoryForAstar()
+	bool Core::NavigationMesh::AllocateFrameMemoryForAstar( int nrInstances )
 	{
 		// allocate memory
-		visited = Core::world.m_frameHeap.NewPODArray<bool>( nrNodes );
+		visited = Core::world.m_frameHeap.NewPODArray<bool*>( nrInstances );
 		if( visited == nullptr ) 
 		{ LOG_FATAL << "Memory allocation failed when calculating flowfield!" << std::endl; return false; }
-				
-		distances = Core::world.m_frameHeap.NewPODArray<float>( nrNodes );
-		if( distances == nullptr )
-		{ LOG_FATAL << "Memory allocation failed when calculating flowfield!" << std::endl; return false; }
+
+		for( int i = 0; i < nrInstances; i++ )
+		{
+			visited[i] = Core::world.m_frameHeap.NewPODArray<bool>( nrNodes );
+			if( visited[i] == nullptr ) 
+			{ LOG_FATAL << "Memory allocation failed when calculating flowfield!" << std::endl; return false; }
+		}
 		
-		points = (glm::vec3*)Core::world.m_frameHeap.NewPODArray<float>( nrNodes * sizeof( glm::vec3 ) );
-		if( points == nullptr )
+		distances = Core::world.m_frameHeap.NewPODArray<float*>( nrInstances );
+		if( distances == nullptr ) 
 		{ LOG_FATAL << "Memory allocation failed when calculating flowfield!" << std::endl; return false; }
 
-		tempField.list = (glm::vec3*)Core::world.m_frameHeap.NewPODArray<float>( nrNodes * sizeof(glm::vec3) );
-		if( tempField.list == nullptr )
+		for( int i = 0; i < nrInstances; i++ )
+		{
+			distances[i] = Core::world.m_frameHeap.NewPODArray<float>( nrNodes );
+			if( distances[i] == nullptr ) 
+			{ LOG_FATAL << "Memory allocation failed when calculating flowfield!" << std::endl; return false; }
+		}
+		
+		points = (glm::vec3**)Core::world.m_frameHeap.NewPODArray<float*>( nrInstances );
+		if( points == nullptr ) 
 		{ LOG_FATAL << "Memory allocation failed when calculating flowfield!" << std::endl; return false; }
 
-		tempField.edges = Core::world.m_frameHeap.NewPODArray<int>( nrNodes );
-		if( tempField.list == nullptr )
+		for( int i = 0; i < nrInstances; i++ )
+		{
+			points[i] = (glm::vec3*)Core::world.m_frameHeap.NewPODArray<float>( nrNodes * sizeof( glm::vec3 ) );
+			if( points[i] == nullptr ) 
+			{ LOG_FATAL << "Memory allocation failed when calculating flowfield!" << std::endl; return false; }
+		}
+
+		tempField = (Flowfield**)Core::world.m_frameHeap.NewPODArray<void*>( nrInstances );
+		if( tempField == nullptr ) 
 		{ LOG_FATAL << "Memory allocation failed when calculating flowfield!" << std::endl; return false; }
+
+		for( int i = 0; i < nrInstances; i++ )
+		{
+			tempField[i] = (Flowfield*)Core::world.m_frameHeap.NewPODArray<float>( sizeof( Flowfield ) );
+			tempField[i]->list = (glm::vec3*)Core::world.m_frameHeap.NewPODArray<float>( nrNodes * sizeof( glm::vec3 ) );
+			if( tempField[i]->list == nullptr ) 
+			{ LOG_FATAL << "Memory allocation failed when calculating flowfield!" << std::endl; return false; }
+
+			tempField[i]->edges = Core::world.m_frameHeap.NewPODArray<int>( nrNodes );
+			if( tempField[i]->edges == nullptr ) 
+			{ LOG_FATAL << "Memory allocation failed when calculating flowfield!" << std::endl; return false; }
+		}
 
 		return true;
 	}
 
-	Core::PathData Core::NavigationMesh::CalculateShortPath( int ownNode, glm::vec3 ownPosition, int otherNode, glm::vec3 otherPosition )
+	Core::PathData Core::NavigationMesh::CalculateShortPath( int ownNode, glm::vec3 ownPosition, int otherNode, glm::vec3 otherPosition, int memoryInstance )
 	{
 		std::vector< AStarData > prioList;
 
 		// init memory...
-		std::memset( visited, false, sizeof(bool) * nrNodes );
-		std::memset( distances, 0, sizeof(float) * nrNodes );
-		std::memset( points, 0, sizeof( glm::vec3 ) * nrNodes );
-		std::memset( tempField.list, 0, sizeof(glm::vec3) * nrNodes );
-		std::memset( tempField.edges, 0, sizeof(int) * nrNodes );
+		std::memset( visited[memoryInstance], false, sizeof(bool) * nrNodes );
+		std::memset( distances[memoryInstance], 0, sizeof(float) * nrNodes );
+		std::memset( points[memoryInstance], 0, sizeof( glm::vec3 ) * nrNodes );
+		std::memset( tempField[memoryInstance]->list, 0, sizeof(glm::vec3) * nrNodes );
+		std::memset( tempField[memoryInstance]->edges, 0, sizeof(int) * nrNodes );
 
 
 		// rig first node...		
@@ -402,7 +431,7 @@ namespace Core
 			
 			// redundancy check, if sorting is perfect, this should never have any effect
 			// note; this block kills of added nodes that are already visited. this is vital functionality.
-			if( visited[ prioList[0].node ] )
+			if( visited[memoryInstance][ prioList[0].node ] )
 			{
 				prioList.erase( prioList.begin() );
 				std::sort( prioList.begin(), prioList.end(), AstarSortingFunction );
@@ -422,7 +451,7 @@ namespace Core
 			mid = lineStart + (( lineEnd - lineStart ) * 0.5f );				
 
 
-			if( !visited[ prioList[0].node ] )
+			if( !visited[memoryInstance][ prioList[0].node ] )
 			{
 				if( prioList.size() != 0 )
 				{
@@ -475,7 +504,7 @@ namespace Core
 
 			{
 				int parentNode = current.corners[ prioList[0].entryEdge ].linksTo;
-				int parentEntryEdge = tempField.edges[ parentNode ];
+				int parentEntryEdge = tempField[memoryInstance]->edges[ parentNode ];
 				int ii = parentEntryEdge * 2;
 				int oo = ( ii + 2 ) % 8;
 				glm::vec3 startOfLine = glm::vec3( nodes[ parentNode ].points[ ii ], 0.0f, nodes[ parentNode ].points[ ii + 1 ] );
@@ -488,13 +517,13 @@ namespace Core
 			// first node condition...
 			if( prioList[0].parentNode < 0 )
 			{
-				tempField.list[ prioList[0].node ] = ownMidLine;
-				tempField.edges[ prioList[0].node ] = prioList[0].entryEdge;
-				distances[ prioList[0].node ] = prioList[0].entryDistance;
-				points[ prioList[0].node ] = ownMidLine;
+				tempField[memoryInstance]->list[ prioList[0].node ] = ownMidLine;
+				tempField[memoryInstance]->edges[ prioList[0].node ] = prioList[0].entryEdge;
+				distances[memoryInstance][ prioList[0].node ] = prioList[0].entryDistance;
+				points[memoryInstance][ prioList[0].node ] = ownMidLine;
 
 				// set metadata for calculation...
-				visited[ prioList[0].node ] = true;
+				visited[memoryInstance][ prioList[0].node ] = true;
 				prioList.erase( prioList.begin() );
 				std::sort( prioList.begin(), prioList.end(), AstarSortingFunction );
 
@@ -507,7 +536,7 @@ namespace Core
 			positions[1] = ownMidLine;
 			positions[2] = ownLineEnd + ( ownLineStart - ownLineEnd ) * 0.25f;
 
-			glm::vec3 posFromParent = points[ prioList[0].parentNode ];
+			glm::vec3 posFromParent = points[memoryInstance][ prioList[0].parentNode ];
 
 			// sort...
 			std::sort( &positions[0], &positions[3], 
@@ -518,19 +547,19 @@ namespace Core
 				return false; 
 			} );
 			
-			points[ prioList[0].node ] = positions[0];
-			tempField.list[ prioList[0].node ] = points[ prioList[0].parentNode ];
-			tempField.edges[ prioList[0].node ] = prioList[0].entryEdge;
+			points[memoryInstance][ prioList[0].node ] = positions[0];
+			tempField[memoryInstance]->list[ prioList[0].node ] = points[memoryInstance][ prioList[0].parentNode ];
+			tempField[memoryInstance]->edges[ prioList[0].node ] = prioList[0].entryEdge;
 
 			// utility
-			distances[ prioList[0].node ] = prioList[0].entryDistance;
+			distances[memoryInstance][ prioList[0].node ] = prioList[0].entryDistance;
 
 			// set metadata for calculation...
-			visited[ prioList[0].node ] = true;
+			visited[memoryInstance][ prioList[0].node ] = true;
 			prioList.erase( prioList.begin() ); 
 			std::sort( prioList.begin(), prioList.end(), AstarSortingFunction );
 		}
 
-		return PathData( prioList[0].node, prioList[0].entryEdge, points[ prioList[0].parentNode ] );
+		return PathData( prioList[0].node, prioList[0].entryEdge, points[memoryInstance][ prioList[0].parentNode ] );
 	}
 }

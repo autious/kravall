@@ -29,7 +29,7 @@ namespace GFX
 		/*!
 		Gaussian blur pass
 		*/
-		void GaussianBlur(FBOTexture* texture);
+		void GaussianBlur(FBOTexture* texture, float blurFactor);
 
 
 	private:
@@ -47,6 +47,9 @@ namespace GFX
 		GLint m_screenSizeUniform;
 		GLint m_occlusionRadiusUniform;
 		GLint m_maxOcclusionDistanceUniform;
+		
+		GLint m_horizontalBlurFactorUniform;
+		GLint m_verticalBlurFactorUniform;
 
 		GLint m_normalDepthUniform;
 		GLint m_noiseUniform;
