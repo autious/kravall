@@ -64,8 +64,7 @@ void Core::ThreadPool::Wait()
 		return;
 
 	while( m_nrJobsInProgress != 0 )
-		if( m_nrJobsInProgress < 0  )
-			LOG_FATAL << "Threadpool reports negative number of jobs!" << std::endl;
+		std::this_thread::sleep_for( std::chrono::nanoseconds(5) );
 }
 
 
