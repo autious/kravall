@@ -126,13 +126,16 @@ extern "C"
             
         return luaL_error(L, "getPoliceGroupsInsideBox(mouseX, mouseY, mouseX2, mouseY2, graceDistance), requires 5 arguments");
 	}
+      
+    static int LuaGetIsInsideNavigationMesh( lua_State * L )
+    {
+        glm::vec3 * vec3in = luau_checkglmvec3(L,1);
+		Core::PickingSystem* pickingSystem = Core::world.m_systemHandler.GetSystem<Core::PickingSystem>();
 
+        lua_pushboolean( L, pickingSystem->IsInsideNavigationMesh( *vec3in ) );
 
-
-
-
-
-
+        return 1;
+    }
 }
 
 namespace Core
@@ -147,7 +150,7 @@ namespace Core
                     luau_setfunction(L, "getHitEntity", LuaGetHitEntity);
                     luau_setfunction(L, "getGroundHit", LuaGetGroundHit);
 					luau_setfunction(L, "getPoliceGroupsInsideBox", LuaGetPoliceGroupsInsideBox);
-
+                    luau_setfunction(L, "getIsInsideNavigationMesh", LuaGetIsInsideNavigationMesh );
                 lua_setfield(L, -2, "picking" );
             lua_pop( L, 2 );
     }

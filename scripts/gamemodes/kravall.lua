@@ -5,6 +5,7 @@ local window = require "window"
 local Camera = require "rts_camera"
 local KravallControl = require "gui/KravallControl"
 local PoliceSquadHandler = require "gamemodes/kravall/PoliceSquadHandler"
+local MoveMarker = require "visual_objects/MoveMarker"
 local T = {}
 
 local keyboard = core.input.keyboard
@@ -30,6 +31,7 @@ function T:new(o)
 end
 
 function T:init()
+    self.moveMarker = MoveMarker:new()
     self.gui = KravallControl:new( 
     {
         -- Called when the user is changing the formation from the gui.
@@ -73,7 +75,15 @@ function T:init()
         -- or when the state of the unit might have changes (like health)
         onSelectedUnitInformationChange = function( data )
             self.gui:setUnitInformation( data ) 
-        end
+        end,
+        onMoveToPosition = function( squads, position, accept )
+            if accept then
+                self.moveMarker:playAccept(  position )
+            else
+                self.moveMarker:playDeny( position )
+            end
+        end,
+        
     })
 
 end
@@ -91,6 +101,7 @@ function T:update( delta )
         end
     end
     self.camera:update( delta )
+    self.moveMarker:update( delta )
 end
 
 function T:destroy()
@@ -99,6 +110,7 @@ function T:destroy()
     if self.popup ~= nil then
         self.popup:destroy()
     end
+    self.moveMarker:destroy()
 end
 
 function T:name()
