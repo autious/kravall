@@ -27,12 +27,11 @@ return function( scen )
 	scen:registerUpdateCallback( function(delta) scen.gamemode:update(delta) end )
 	scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
 	scen:registerInitCallback( function() 
-                                    print( "FUND" )
                                     scen.gamemode:init()
 									scen.gamemode.camera:lookAt( core.glm.vec3.new( -40, 30, 180 ), core.glm.vec3.new( -40, 0, 155 ) ) 
 									--scen.gamemode.camera.yaw = scen.gamemode.camera.yaw + math.pi
 									local plane = entity.get "plane"
-									plane(scen, 0, 0, 0, 900)
+									plane(scen, 0, -1, 0, 900)
 									
 									-- load weapons...
 									fists = core.weaponData.pushWeapon( 1.0, 20, 0.2, 0.05, 0.05, 0.5, "punch" )
