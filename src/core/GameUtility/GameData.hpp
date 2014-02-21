@@ -50,6 +50,8 @@ namespace Core
 			staminaCost = 0.0f;
 			moralDamageOnMiss = 0.0f;
 			animationDmgDealingtime = 0.5f;
+			rageBuff = 0.1f;
+			pressureBuff = 0.2f;
 			animationName = "";
 		}
 		
@@ -57,6 +59,8 @@ namespace Core
 		float weaponDamage;
 		float moraleDamage;
 		float moralDamageOnMiss;
+		float rageBuff;
+		float pressureBuff;
 		float staminaCost;
 		float animationDmgDealingtime;
 		std::string animationName;
@@ -92,7 +96,7 @@ namespace Core
 		/*!
 			Will push weaponData to the list and return the id for the weapon. This function is meant to be used form lua.
 		*/
-		static int PushWeaponData( float range, float weaponDamage, float moraleDamage, float moralDamageOnMiss, float staminaCost, float animationDmgDealingtime, std::string animationName );
+		static int PushWeaponData( float range, float weaponDamage, float moraleDamage, float moralDamageOnMiss, float rageBuff, float pressureBuff, float staminaCost, float animationDmgDealingtime, std::string animationName );
 
 		/*!
 			Will allocate a flowfield leading to this point and save it for use in the GetEscapePointGroup() function.
