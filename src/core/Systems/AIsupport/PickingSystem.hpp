@@ -1,9 +1,9 @@
 #ifndef SRC_CORE_SYSTEMS_PICKINGSYSTEM_HPP
 #define SRC_CORE_SYSTEMS_PICKINGSYSTEM_HPP
 
+//#include <SystemDef.hpp>
 #include <ComponentFramework/BaseSystem.hpp>
 #include <glm/glm.hpp>
-
 
 namespace Core
 {
@@ -34,6 +34,7 @@ namespace Core
 		*/
 		glm::vec3 GetGroundHit( int mouseX, int mouseY );
 
+        bool IsInsideNavigationMesh( const glm::vec3 & pos );
 		/*!
 			Will return the current intersection of the mouse ray and X-Z plane.
 		*/

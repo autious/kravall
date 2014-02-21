@@ -38,9 +38,9 @@ namespace Core
 		struct DataIN
 		{
 			glm::vec4 position_unitType;
-			glm::vec4 newDirection_empty;
+			glm::vec4 newDirection_speed;
 			glm::vec4 health_stamina_morale_stancealignment;
-			glm::vec4 groupSquadID_defenseRage_mobilityPressure_empty;
+			glm::vec4 groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance;
 		};
 
 		struct DataOUT
@@ -53,7 +53,7 @@ namespace Core
 		GLuint m_inDataBuffer;
 		GLuint m_outDataBuffer;
 
-		const unsigned int MAXIMUM_ENTITIES = 1280;
+		const unsigned int MAXIMUM_ENTITIES = 2048;
 
 		DataIN* m_inData;
 		DataOUT* m_outData;
@@ -64,6 +64,8 @@ namespace Core
 		bool m_dispatch;
 
 		GLsync m_sync;
+
+		unsigned int m_prevSize;
 	};
 }
 

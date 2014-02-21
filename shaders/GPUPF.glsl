@@ -1,7 +1,7 @@
 #version 430 core
 
 #define WORK_GROUP_SIZE 1024
-#define MAXIMUM_ENTITIES 1024
+#define MAXIMUM_ENTITIES 2048
 #define MAX_CURVES 1024;
 
 #define RIOTER_TYPE 0
@@ -20,7 +20,7 @@
 #pragma optionNV(ifcvt none) 
 #pragma optionNV(inline all) 
 #pragma optionNV(strict on) 
-#pragma optionNV(unroll all)
+#pragma optionNV(unroll none)
 
 
 layout (local_size_x = WORK_GROUP_SIZE) in;
@@ -47,7 +47,8 @@ struct DataIN
 	vec4 position_unitType;
 	vec4 newDirection_speed;
 	vec4 health_stamina_morale_stance;
-	vec4 groupSquadID_defenseRage_mobilityPressure_empty;
+	//vec4 groupSquadID_defenseRage_mobilityPressure_empty;
+	vec4 groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance;
 };
 
 struct DataOUT
@@ -56,12 +57,12 @@ struct DataOUT
 	vec4 morale_rage_pressure_empty;
 };
 
-layout(std430, binding = 0) restrict readonly buffer InputBuffer
+layout(std430, binding = 0) coherent readonly buffer InputBuffer
 {
 	DataIN gInput[];
 };
 
-layout (std430, binding = 1) restrict writeonly buffer OutputBuffer
+layout (std430, binding = 1) coherent writeonly buffer OutputBuffer
 {
 	DataOUT gOutput[];
 };
@@ -128,7 +129,7 @@ float GetEffectOnAgentAt(vec2 queryPosition, int groupID)
 	
 		//if (groupID >= 0)
 		{
-			matchID = int(indata.groupSquadID_defenseRage_mobilityPressure_empty.x);
+			matchID = int(indata.groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance.x);
 		}
 	
 		if (distSqr >= gChargeCurves[0][0].ch_cu_re_dec.z && (indata.position_unitType.w == RIOTER_TYPE && matchID != groupID) )
@@ -181,8 +182,8 @@ vec3 GetMoodOnAgent(vec2 queryPosition, int groupID, int index)
 	float rage = 0;
 
 	//float rMorale = gInput[index].health_stamina_morale_stance.z;
-	//float rRage = gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.y;
-	//float rPressure = gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.z;
+	//float rRage = gInput[index].groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance.y;
+	//float rPressure = gInput[index].groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance.z;
 	int rType = int(gInput[index].position_unitType.w);
 	int rState = int(gInput[index].health_stamina_morale_stance.w);
 	//int receieverIndex = gMoodReceiverIndices[rType][rState];
@@ -210,8 +211,8 @@ vec3 GetMoodOnAgent(vec2 queryPosition, int groupID, int index)
 		
 		
 		sMorale = indata.health_stamina_morale_stance.z;
-		sRage = indata.groupSquadID_defenseRage_mobilityPressure_empty.y;
-		sPressure = indata.groupSquadID_defenseRage_mobilityPressure_empty.z;
+		sRage = indata.groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance.y;
+		sPressure = indata.groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance.z;
 		sType = int(indata.position_unitType.w);
 		sState = int(indata.health_stamina_morale_stance.w);
 
@@ -219,8 +220,8 @@ vec3 GetMoodOnAgent(vec2 queryPosition, int groupID, int index)
 		//
 		//
 		//float sMorale = gInput[i].health_stamina_morale_stance.z;
-		//float sRage = gInput[i].groupSquadID_defenseRage_mobilityPressure_empty.y;
-		//float sPressure = gInput[i].groupSquadID_defenseRage_mobilityPressure_empty.z;
+		//float sRage = gInput[i].groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance.y;
+		//float sPressure = gInput[i].groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance.z;
 		//int sType = int(gInput[i].position_unitType.w);
 		//int sState = int(gInput[i].health_stamina_morale_stance.w);
 
@@ -277,7 +278,7 @@ void main()
 	
 	if (gl_LocalInvocationIndex == 0)
 	{
-		gChargeCurves[0][0].ch_cu_re_dec = vec4(3.0f, 5.0f, 1.0f, 3.0f / (5.0f)); //0.3 makes them stick into a huge blob
+		gChargeCurves[0][0].ch_cu_re_dec = vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)); //0.3 makes them stick into a huge blob
 		gChargeCurves[0][1].ch_cu_re_dec = vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f));
 
 		//MOOD CURVE INDICES/PLACEMENT CAN BE FOUND AT THE BOTTOM OF THIS DOCUMENT
@@ -440,58 +441,89 @@ void main()
 			gInput[index].position_unitType.y + 0 * gInput[index].newDirection_speed.y / 2.0f, 
 			gInput[index].position_unitType.z + 0 * gInput[index].newDirection_speed.z / 2.0f);
 		
-			float highestSum = GetEffectOnAgentAt(vec2(offsetPos.x, offsetPos.z), int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x));
+			float highestSum = GetEffectOnAgentAt(vec2(offsetPos.x, offsetPos.z), int(gInput[index].groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance.x));
 			float staySum = highestSum;
 
 			CalculatedCharge chargeSums[8];
 
 			float chargeSum = 0;
-			int groupID =  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x);
+			int groupID =  int(gInput[index].groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance.x);
 
-			// ---------------------------------------- -1, 0 ----------------------------------------
-			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x - 1, offsetPos.z + 0), groupID);
-			chargeSums[0].x = -1;
-			chargeSums[0].y = 0;
-			chargeSums[0].chargeSum = chargeSum;
+			#define navMeshWallRepellVal -1000.0
 
-			// ---------------------------------------- 1, 0 ----------------------------------------
-			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 1, offsetPos.z + 0),  groupID);
-			chargeSums[1].x = 1;
-			chargeSums[1].y = 0;
-			chargeSums[1].chargeSum = chargeSum;
+			#define navMeshPF
 			
-			// ---------------------------------------- 0, -1 ----------------------------------------
-			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 0, offsetPos.z - 1),  groupID);
-			chargeSums[2].x = 0;
-			chargeSums[2].y = -1;
-			chargeSums[2].chargeSum = chargeSum;
-			
-			// ---------------------------------------- 0, 1 ----------------------------------------
-			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 0, offsetPos.z + 1), groupID);
-			chargeSums[3].x = 0;
-			chargeSums[3].y = 1;
-			chargeSums[3].chargeSum = chargeSum;
-			
-			// ---------------------------------------- -1, -1 ----------------------------------------
-			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x - 1, offsetPos.z - 1),  groupID);
-			chargeSums[4].x = -1;
-			chargeSums[4].y = -1;
-			chargeSums[4].chargeSum = chargeSum;
-			
-			// ---------------------------------------- 1, -1 ----------------------------------------
-			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 1, offsetPos.z - 1),  groupID);
-			chargeSums[5].x = 1;
-			chargeSums[5].y = -1;
-			chargeSums[5].chargeSum = chargeSum;
-			
-			// ---------------------------------------- -1, 1 ----------------------------------------
-			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x - 1, offsetPos.z + 1),  groupID);
-			chargeSums[6].x = -1;
-			chargeSums[6].y = 1;
-			chargeSums[6].chargeSum = chargeSum;
-			
-			// ---------------------------------------- 1, 1 ----------------------------------------
-			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 1, offsetPos.z + 1),  groupID);
+			#ifdef navMeshPF
+			// y = 0.01 for normalizing when the other two are zero
+			vec3 navMeshWallVector = 
+				vec3(	(uint(gInput[index].groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance.w) >> 30) - 1, 
+						0.01, 
+						((uint(gInput[index].groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance.w) >> 28) & 0x3) - 1 );			
+			navMeshWallVector = normalize( navMeshWallVector ) * 
+						float((uint(gInput[index].groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance.w) & 0xFFFFFFF)) * 0.0001 * navMeshWallRepellVal;
+			#endif
+
+
+			// --------------------------------------- -1, 0 ----------------------------------------
+			#ifdef navMeshPF
+			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x - 1, offsetPos.z + 0), groupID) + dot( navMeshWallVector, normalize( vec3( 1, 0, 0)));
+			#endif
+			chargeSums[0].x = -1;																									    
+			chargeSums[0].y = 0;																									    
+			chargeSums[0].chargeSum = chargeSum;																					    
+																																	    
+			// ---------------------------------------- 1, 0 ----------------------------------------								    
+			#ifdef navMeshPF
+			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 1, offsetPos.z + 0), groupID) + dot( navMeshWallVector, normalize( vec3( 1, 0, 0)));
+			#endif
+			chargeSums[1].x = 1;																									    
+			chargeSums[1].y = 0;																									    
+			chargeSums[1].chargeSum = chargeSum;																					    
+																																	    
+			// ---------------------------------------- 0, -1 ----------------------------------------								    
+			#ifdef navMeshPF
+			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 0, offsetPos.z - 1), groupID) + dot( navMeshWallVector, normalize( vec3( 0, 0, 1)));
+			#endif
+			chargeSums[2].x = 0;																									    
+			chargeSums[2].y = -1;																									    
+			chargeSums[2].chargeSum = chargeSum;																					    
+																																	    
+			// ---------------------------------------- 0, 1 ----------------------------------------			
+			#ifdef navMeshPF					    
+			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 0, offsetPos.z + 1), groupID) + dot( navMeshWallVector, normalize( vec3( 0, 0, 1)));
+			#endif
+			chargeSums[3].x = 0;																									    
+			chargeSums[3].y = 1;																									    
+			chargeSums[3].chargeSum = chargeSum;																					    
+																																	    
+			// ---------------------------------------- -1, -1 ----------------------------------------				
+			#ifdef navMeshPF				    
+			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x - 1, offsetPos.z - 1), groupID) + dot( navMeshWallVector, normalize( vec3( 1, 0, 1)));
+			#endif
+			chargeSums[4].x = -1;																									    
+			chargeSums[4].y = -1;																									    
+			chargeSums[4].chargeSum = chargeSum;																					    
+																																	    
+			// ---------------------------------------- 1, -1 ----------------------------------------					
+			#ifdef navMeshPF			    
+			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 1, offsetPos.z - 1), groupID) + dot( navMeshWallVector, normalize( vec3( 1, 0, 1)));
+			#endif
+			chargeSums[5].x = 1;																									    
+			chargeSums[5].y = -1;																									    
+			chargeSums[5].chargeSum = chargeSum;																					    
+																																	    
+			// ---------------------------------------- -1, 1 ----------------------------------------					
+			#ifdef navMeshPF			    
+			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x - 1, offsetPos.z + 1), groupID) + dot( navMeshWallVector, normalize( vec3( 1, 0, 1)));
+			#endif
+			chargeSums[6].x = -1;																									    
+			chargeSums[6].y = 1;																									    
+			chargeSums[6].chargeSum = chargeSum;																					    
+																																	    
+			// ---------------------------------------- 1, 1 ----------------------------------------						
+			#ifdef navMeshPF		    
+			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 1, offsetPos.z + 1), groupID) + dot( navMeshWallVector, normalize( vec3( 1, 0, 1)));
+			#endif
 			chargeSums[7].x = 1;
 			chargeSums[7].y = 1;
 			chargeSums[7].chargeSum = chargeSum;
@@ -546,10 +578,10 @@ void main()
 			break;
 
 		float morale = gInput[index].health_stamina_morale_stance.z;
-		float pressure = gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.z;
-		float rage = gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.y;
+		float pressure = gInput[index].groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance.z;
+		float rage = gInput[index].groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance.y;
 
-		vec3 moods = GetMoodOnAgent(vec2(gInput[index].position_unitType.x, gInput[index].position_unitType.z), int(gInput[index].groupSquadID_defenseRage_mobilityPressure_empty.x), int(index));
+		vec3 moods = GetMoodOnAgent(vec2(gInput[index].position_unitType.x, gInput[index].position_unitType.z), int(gInput[index].groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance.x), int(index));
 
 		gOutput[index].morale_rage_pressure_empty = vec4(morale + moods.x, rage + moods.y, pressure + moods.z, 0);
 	}

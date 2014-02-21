@@ -3,7 +3,7 @@ local image = require"factories/image"
 local AABB = require"collision/aabb"
 
 local mouse = core.input.mouse
-local GUIComponent = { x=0,y=0,width=0,height=0,inside = false, press = false }
+local GUIComponent = { x=0,y=0,width=0,height=0,inside = false, press = false, show = true }
 
 function GUIComponent:new(o)
     o = o or {}
@@ -20,7 +20,7 @@ function GUIComponent:new(o)
     function o.callbacks.onPosition( x,y )
         curr_mouse_x = x
         curr_mouse_y = y
-        if AABB:new({o.x,o.y,o.width,o.height}):collides( x, y ) then
+        if AABB:new({o.x,o.y,o.width,o.height}):collides( x, y ) and o.show then
             if o.inside == false then
                 o.onEnter()  
             end
@@ -65,6 +65,10 @@ function GUIComponent:new(o)
     input.registerOnPosition(o.callbacks.onPosition)
 
     return o
+end
+
+function GUIComponent:setShow( flag )
+    self.show = flag
 end
 
 --Virtual functions to be overloaded.

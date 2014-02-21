@@ -53,12 +53,17 @@ namespace Core
 		*/
 		bool HasThreads();
 
+		/*!
+			Will return the current number of threads available.
+		*/
+		int GetNrThreads() { return m_nrThreads; }
+
 		~ThreadPool();
 
 	private:
 		friend class Worker;
 
-		std::vector< std::thread > m_threads;
+		int m_nrThreads;
 
 		std::deque< std::function<void()> > m_tasks;
 

@@ -20,7 +20,8 @@ void Core::AttackAnimationSystem::Update(float delta)
 	{
 		Core::TargetingComponent* tc = WGETC<Core::TargetingComponent>(*it);	
 		Core::WorldPositionComponent* targetWpc = WGETC<Core::WorldPositionComponent>( tc->target );
-		if( targetWpc )
+		Core::TargetingComponent* targetTc = WGETC<Core::TargetingComponent>( tc->target );
+		if( targetTc )
 		{
 			Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(*it);
 			

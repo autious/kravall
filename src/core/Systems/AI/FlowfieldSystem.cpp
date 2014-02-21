@@ -46,19 +46,19 @@ void Core::FlowfieldSystem::Update( float delta )
 			Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(*it);
 			glm::vec3 position = wpc->GetVec3( *wpc );
 
-			//glm::vec3 midOfEdgeLinkingToNextNode = instance->flowfields[groupID].list[ ffc->node ];
 			float* navMeshGoal = instance->flowfields[ attribc->rioter.groupID ].goal;
-			glm::vec3 navGoal = glm::vec3( navMeshGoal[0], 0.0f, navMeshGoal[2] );
-			//if( glm::dot( navGoal, navGoal ) > 0.05f ) // goal node condition...
-			//{
+			glm::vec3 navGoal = glm::vec3( navMeshGoal[0], 0.0f, navMeshGoal[1] );
 				
 			if( !Core::PathFinder::CheckLineVsNavMesh( position, navGoal, 3.0f, ffc->node ) )
 			{
-				//GFX::Debug::DrawLine( position, navGoal, GFXColor( 0, 0.5, 1, 1 ), false );
-				glm::vec3 newDir = glm::normalize( navGoal - position );
-				glm::vec3 currentDir = glm::vec3( mvmc->newDirection[0], mvmc->newDirection[1], mvmc->newDirection[2] ); 
-				
-				Core::MovementComponent::SetDirection( mvmc, newDir.x, 0.0f, newDir.z );
+				if( glm::dot( navGoal - position, navGoal - position ) == 0.0f )
+					MovementComponent::SetDirection( mvmc, 0.0f, 0.0f, 0.0f );
+				else
+				{
+					glm::vec3 newDir = glm::normalize( navGoal - position );
+					glm::vec3 currentDir = glm::vec3( mvmc->newDirection[0], mvmc->newDirection[1], mvmc->newDirection[2] ); 
+					Core::MovementComponent::SetDirection( mvmc, newDir.x, 0.0f, newDir.z );
+				}
 			}
 			else
 			{
@@ -79,10 +79,8 @@ void Core::FlowfieldSystem::Update( float delta )
 				{
 					// is outside edges...
 					if( distanceAlongLine < 0 )
-						//targetPosition = lineStart + ( lineEnd - lineStart ) * 0.25f;
 						targetPosition = lineStart + glm::normalize( lineEnd - lineStart ) * 1.25f;
 					else 
-						//targetPosition = lineEnd + ( lineStart - lineEnd ) * 0.25f;
 						targetPosition = lineEnd + glm::normalize( lineStart - lineEnd ) * 1.25f;
 				}
 				else 
@@ -95,33 +93,6 @@ void Core::FlowfieldSystem::Update( float delta )
 
 				MovementComponent::SetDirection( mvmc, flowfieldDirection.x, 0, flowfieldDirection.z );
 			}
-
-			//}
-			//else
-			//	MovementComponent::SetDirection( mvmc, 0.0f, 0.0f, 0.0f );
 		}
 	}
 }
-
-/*
-{
-			if( !instance )
-				continue;
-
-			Core::AttributeComponent* attribc = WGETC<Core::AttributeComponent>(*it);
-			Core::FlowfieldComponent* ffc = WGETC<Core::FlowfieldComponent>(*it);
-
-			float* navMeshGoal = instance->flowfields[ attribc->rioter.groupID ].goal;
-			if( !Core::PathFinder::CheckLineVsNavMesh( position, glm::vec3( navMeshGoal[0], 0.0f, navMeshGoal[2] ), 3.0f, ffc->node ) )
-			{
-				GFX::Debug::DrawLine( position, glm::vec3( navMeshGoal[0], 0.0f, navMeshGoal[2] ), GFXColor( 0, 0.5, 1, 1 ), false );
-				glm::vec3 newDir = glm::normalize( glm::vec3( navMeshGoal[0], 0.0f, navMeshGoal[2] ) - position );
-				glm::vec3 currentDir = glm::vec3( mvmc->newDirection[0], mvmc->newDirection[1], mvmc->newDirection[2] ); 
-				
-				if( glm::dot( currentDir, newDir ) > 0.0f )
-					Core::MovementComponent::SetDirection( mvmc, newDir.x, 0.0f, newDir.z );
-			}
-
-			continue;
-		}
-		*/

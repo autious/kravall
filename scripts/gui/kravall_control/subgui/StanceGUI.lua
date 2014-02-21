@@ -50,7 +50,7 @@ function StanceGUI:new(o)
                       })
 
 
-    o:addPlacementHandler(require "gui/placement/CenterPlacer")
+    o:addPlacementHandler(require "gui/placement/EastPlacer")
     o:addComponents( o.stances )
 
     return o

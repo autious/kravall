@@ -38,6 +38,8 @@ void GetPlanePoint()
 	Core::GetInputManager().GetMouseState().GetCursorPosition( x, y );
 	glm::vec3 position = ((Core::PickingSystem*)Core::world.m_systemHandler.GetSystem( pickingSystem ))->GetGroundHit( x, y );
 
+	LOG_WARNING << position.x << "  " << position.z << std::endl;
+
 	int o = 0;
 }
 
@@ -76,7 +78,7 @@ void Core::AIDebugSystem::Update( float delta )
 	
 
 
-	GetPlanePoint();
+	//GetPlanePoint();
 
 
 	return; //////////////////////////////////////////

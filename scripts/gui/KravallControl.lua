@@ -18,9 +18,13 @@ local AbilityGUI = require "gui/kravall_control/subgui/AbilityGUI"
 local FormationGUI = require "gui/kravall_control/subgui/FormationGUI"
 local UnitStatGUI = require "gui/kravall_control/subgui/UnitStatGUI"
 
-local KravallControl = { 
-                        onFormationSelect = function(formation) core.log.error("No handler set for onFormationChange in KravallControl") end,
-                        onStanceSelect = function(stance) core.log.error("No handler set for onStanceChange in KravallControl") end }
+local KravallControl = 
+{ 
+    onFormationSelect = function(formation) core.log.error("No handler set for onFormationChange in KravallControl") end,
+    onStanceSelect = function(stance) core.log.error("No handler set for onStanceChange in KravallControl") end,
+    onAbilitySelect = function(ability) end
+}
+                            
 
 function KravallControl:new(o)
     o = o or {}
@@ -31,16 +35,22 @@ function KravallControl:new(o)
     o.gui = GUI:new()
      
     ------------------
-    o.statusGUI = UnitStatGUI:new( {} )
+    o.statusGUI = UnitStatGUI:new( { show = false } )
     --------------
     o.eventGUIPadder = GUI:new( {width=220,height=220, anchor="SouthWest"} )
     o.eventGUIPadder:addPlacementHandler( CenterPlacer )
     o.eventGUI = EventListerGUI:new( {x=0,y=0, width=200, height=200, anchor="SouthWest"} )
     o.eventGUIPadder:addComponent( o.eventGUI )
     ----------
-    o.stanceGUI = StanceGUI:new( {onStanceSelect = function(stance) o.onStanceSelect( stance ) end })
-    o.abilitiesGUI = AbilityGUI:new()
-    o.formationGUI = FormationGUI:new( { onFormationSelect = function(form) o.onFormationSelect(form) end } )
+    o.stanceGUI = StanceGUI:new( {
+        onStanceSelect = function(stance) o.onStanceSelect( stance ) end 
+    })
+    o.abilitiesGUI = AbilityGUI:new( {
+        onAbilitySelect = function(ability) o.onAbilitySelect( ability ) end 
+    })
+    o.formationGUI = FormationGUI:new( { 
+        onFormationSelect = function(form) o.onFormationSelect(form) end 
+    })
 
     o.rightControlGUI = GUI:new{x=0,y=0, width=150,height=500, anchor="NorthEast"}
     o.rightControlGUI:addPlacementHandler( AnchorPlacer )
@@ -66,6 +76,28 @@ function KravallControl:setStance( stance )
     self.stanceGUI:setStance( stance )
 end
 
+function KravallControl:setAbility( ability )
+    self.abilitiesGUI:setAbility( ability ) 
+end
+
+function KravallControl:setUnitInformation( data )
+    self.statusGUI:setFormation( data.formation )
+    self.statusGUI:setStance( data.stance )
+    self.statusGUI:setName( data.name )
+    self.statusGUI:setHealth( data.health )
+    self.statusGUI:setMorale( data.morale )
+    self.statusGUI:setStamina( data.stamina )
+end
+
+function KravallControl:setSelectedSquads( squads )
+    if squads and #squads > 0 then
+        self.statusGUI:setShow( true )
+    else
+        self.statusGUI:setShow( false )
+    end
+    --TODO: show/hide the status field depending on selection.
+end
+
 function KravallControl:addEvent( component )
     self.eventGUI:addComponent( component )
 end
@@ -75,18 +107,12 @@ end
 
 function KravallControl:update( delta )
     -- For debug writing
-    self.gui:update( delta )
-    self.eventGUI:update( delta )
-    self.statusGUI:update( delta )
-    self.stanceGUI:update(delta)
-    self.abilitiesGUI:update(delta )
-    self.formationGUI:update(delta )
-    self.rightControlGUI:update(delta )
+    self.gui:renderDebug( delta )
 
-    self.count = self.count or 5
+    self.count = self.count or 0
     self.count = self.count + delta
 
-    if self.count > 1 then
+    if self.count > 10 then
         self.ind = self.ind or 0
         self.ind = self.ind + 1
         

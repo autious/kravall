@@ -328,12 +328,16 @@ namespace Core
 
             for(std::vector<Entity>::iterator it = squad.begin(); it != squad.end(); ++it)        
             {
-                Core::GraphicsComponent* gfxc = WGETC<Core::GraphicsComponent>(*it);
-                gfxc->outlineColor[0] = Color.x;
-                gfxc->outlineColor[1] = Color.y;
-                gfxc->outlineColor[2] = Color.z;
-                gfxc->outlineColor[3] = Color.w;
-                GFX::SetBitmaskValue(gfxc->bitmask, GFX::BITMASK::LAYER, GFX::LAYER_TYPES::OUTLINE_LAYER);
+				Core::TargetingComponent* tc = WGETC<Core::TargetingComponent>(*it);
+				if( tc )
+				{
+					Core::GraphicsComponent* gfxc = WGETC<Core::GraphicsComponent>(*it);
+					gfxc->outlineColor[0] = Color.x;
+					gfxc->outlineColor[1] = Color.y;
+					gfxc->outlineColor[2] = Color.z;
+					gfxc->outlineColor[3] = Color.w;
+					GFX::SetBitmaskValue(gfxc->bitmask, GFX::BITMASK::LAYER, GFX::LAYER_TYPES::OUTLINE_LAYER);
+				}
             }
         }
     }
@@ -346,10 +350,43 @@ namespace Core
 
             for(std::vector<Entity>::iterator it = squad.begin(); it != squad.end(); ++it)        
             {
-                Core::GraphicsComponent* gfxc = WGETC<Core::GraphicsComponent>(*it);
-                GFX::SetBitmaskValue(gfxc->bitmask, GFX::BITMASK::LAYER, GFX::LAYER_TYPES::MESH_LAYER);
+				Core::GraphicsComponent* gfxc = WGETC<Core::GraphicsComponent>(*it);
+				GFX::SetBitmaskValue(gfxc->bitmask, GFX::BITMASK::LAYER, GFX::LAYER_TYPES::MESH_LAYER);
             }
         }
+    }
+
+    std::vector<Core::SquadAbility> SquadSystem::GetPossibleAbilities( int squadId )
+    {
+        std::vector<Core::SquadAbility> abilities;
+
+        abilities.push_back( Core::SquadAbility::SPRINT );
+        abilities.push_back( Core::SquadAbility::FLEE );
+        abilities.push_back( Core::SquadAbility::ROUT );
+        abilities.push_back( Core::SquadAbility::ATTACK );
+        abilities.push_back( Core::SquadAbility::ARREST_INDIVIDUAL );
+        abilities.push_back( Core::SquadAbility::ARREST_GROUP );
+        abilities.push_back( Core::SquadAbility::TEAR_GAS );
+
+        return abilities;
+    }
+
+    std::vector<int> SquadSystem::GetAllSquads()
+    {
+        std::vector<int> ids;
+        for(std::vector<Entity>::iterator squad_it = m_entities.begin();
+             squad_it != m_entities.end();
+              ++squad_it)
+        {
+            Core::SquadComponent* sqdc = WGETC<Core::SquadComponent>(*squad_it);
+            ids.push_back( sqdc->squadID );
+        }
+        return ids;
+    }
+
+    std::vector<Entity> SquadSystem::GetAllSquadEntities()
+    {
+        return m_entities;
     }
 
     void SquadSystem::Update(float delta)

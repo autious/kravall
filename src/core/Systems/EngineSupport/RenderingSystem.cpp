@@ -52,7 +52,6 @@ namespace Core
 				instanceData->outlineColor[2] = gc->outlineColor[2];
 				instanceData->outlineColor[3] = gc->outlineColor[3];
 
-				
                 if (ac != nullptr)
                 {
                     instanceData->animationIndex = ac->animationID;

@@ -5,11 +5,20 @@ local GUI = {
                 winWidth = core.config.initScreenWidth, 
                 winHeight = core.config.initScreenHeight,
                 xoffset = 0,
-                yoffset = 0 }
+                yoffset = 0,
+                show = true,
+            }
 
 window.registerFramebufferSizeCallback( function( width, height ) 
     GUI.winWidth, GUI.winHeight = width, height
 end)
+
+function GUI:setShow( flag )
+    self.show = flag
+    for _,v in  pairs( self.components ) do
+        v:setShow( flag )
+    end  
+end
 
 function GUI:new(o)
     o = o or {}
@@ -26,6 +35,7 @@ function GUI:new(o)
     -- constrict on resize call
     o:setPosition( o.x, o.y )
 
+    o:setShow( o.show )
     return o
 end
 
@@ -39,6 +49,7 @@ function GUI:addComponent( comp )
     assert( comp ~= nil, "Component is nil" )
     self.components[#(self.components)+1] = comp 
     self:constrict( )
+    comp:setShow( self.show )
 end
 
 function GUI:addPlacementHandler( handler )
@@ -119,10 +130,20 @@ function GUI:destroy()
     end
 end
 
-function GUI:update(delta)
+function GUI:renderDebug(delta)
     if core.config.debugDrawGUIBorders then 
         core.draw.drawRectangle( self.x, self.y, self.width, self.height, false )
     end
+
+    for k,v in pairs( self.components ) do
+        if v.renderDebug then
+            v:renderDebug( delta )
+        end
+    end
+end
+
+function GUI:update()
+    print( "GUI:update(): WARNING THIS FUNCTION IS NO LONGER IN ACTIVE USE I REFER TO renderDebug(delta) instead")
 end
 
 return GUI

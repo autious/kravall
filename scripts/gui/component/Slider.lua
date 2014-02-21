@@ -10,6 +10,7 @@ local Slider =
                     yoffset=0,
                     width =0,
                     height = 0,
+                    show = true,
                     matReleased = "assets/texture/ui/slider-knob-release_00.material",
                     matPressed = "assets/texture/ui/slider-knob-press_00.material",
                     matHover = "assets/texture/ui/slider-knob-hover_00.material",
@@ -52,32 +53,80 @@ function Slider:new(o)
     o.releasedKnob:show( true )
     o.hoverKnob:show( false )
     o.bg:show( true )
+    
+    o:setShow( o.show )
 
     return o
+end
+
+function Slider:setShow( flag )
+    self.show = flag
+
+    self.GUIComponent:setShow( flag )
+    self.releasedKnob:show( flag )
+    self.bg:show( flag )
+
+    if flag == false then
+        self.pressedKnob:show( flag )
+        self.hoverKnob:show( flag )
+    end
 end
 
 function Slider:setPosition(x,y)
     self.x = x
     self.y = y
 
-    local newXPos = self.a * self.bgWidth + self.x - self.knobWidth/2
+    local newXPos = self.a * (self.bgWidth - self.knobWidth) + self.x 
     self.GUIComponent:setPosition(newXPos,y)
-    self.pressedKnob:setPosition( newXPos, self.y )
-    self.releasedKnob:setPosition(newXPos , self.y )
-    self.hoverKnob:setPosition( newXPos , self.y )
+    self.pressedKnob:setPosition( newXPos, self.y + self.bgHeight / 2 - self.knobHeight / 2)
+    self.releasedKnob:setPosition(newXPos , self.y + self.bgHeight / 2 - self.knobHeight / 2)
+    self.hoverKnob:setPosition( newXPos , self.y + self.bgHeight / 2 - self.knobHeight / 2)
     self.bg:setPosition( self.x, self.y )
 end
 
 function Slider:onDrag( x, y )
-    local fact = (x - self.x) / self.bgWidth
         
-    if fact > 1 then
-        fact = 1
-    end
+    if self.show then
+        local fact = (x - (self.x + self.knobWidth / 2) ) / (self.bgWidth - self.knobWidth)
+            
+        if fact > 1 then
+            fact = 1
+        end
 
-    if fact < 0 then
-        fact = 0
+        if fact < 0 then
+            fact = 0
+        end
+
+        self.a = fact
+
+        self:onChange( fact ) 
+
+        self:setPosition(self.x,self.y)
     end
+end
+
+function Slider:setToMiddle()
+    local fact = 0.5
+
+    self.a = fact
+
+    self:onChange( fact ) 
+
+    self:setPosition(self.x,self.y)
+end
+
+function Slider:setToMinimum()
+    local fact = 0
+
+    self.a = fact
+
+    self:onChange( fact ) 
+
+    self:setPosition(self.x,self.y)
+end
+
+function Slider:setToMaximum()
+    local fact = 1
 
     self.a = fact
 
@@ -87,28 +136,35 @@ function Slider:onDrag( x, y )
 end
 
 function Slider:onPress() 
-    self.pressedKnob:show(true)
-    self.releasedKnob:show(false)
-    self.hoverKnob:show(false)
-
+    if self.show then
+        self.pressedKnob:show(true)
+        self.releasedKnob:show(false)
+        self.hoverKnob:show(false)
+    end
 end
 
 function Slider:onRelease()
-    self.pressedKnob:show(false)
-    self.releasedKnob:show(false)
-    self.hoverKnob:show(true)
+    if self.show then
+        self.pressedKnob:show(false)
+        self.releasedKnob:show(false)
+        self.hoverKnob:show(true)
+    end
 end
 
 function Slider:onEnter()
-    self.pressedKnob:show(false)
-    self.releasedKnob:show(false)
-    self.hoverKnob:show(true)
+    if self.show then
+        self.pressedKnob:show(false)
+        self.releasedKnob:show(false)
+        self.hoverKnob:show(true)
+    end
 end
 
 function Slider:onExit()
-    self.pressedKnob:show(false)
-    self.releasedKnob:show(true)
-    self.hoverKnob:show(false)
+    if self.show then
+        self.pressedKnob:show(false)
+        self.releasedKnob:show(true)
+        self.hoverKnob:show(false)
+    end
 end
 
 function Slider:destroy()

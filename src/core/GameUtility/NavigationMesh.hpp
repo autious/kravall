@@ -234,15 +234,14 @@ namespace Core
 
 
 		/*!
-			Will allocate frame memory for Astar algorithm. Must be run before use of CalculateShortPath function.
-			Will reserve memory according to the currently loaded navigation mesh and will return false if heap allocation fails.
+			
 		*/
-		bool AllocateFrameMemoryForAstar();
+		bool AllocateFrameMemoryForAstar( int nrInstances );
 
 		/*!
 			Used for single unit pathfinding. AllocateFrameMemoryForAstar() must be run once before any calls to this function. 
 		*/
-		PathData CalculateShortPath( int ownNode, glm::vec3 ownPosition, int otherNode, glm::vec3 otherPosition );
+		PathData CalculateShortPath( int ownNode, glm::vec3 ownPosition, int otherNode, glm::vec3 otherPosition, int memoryInstance );
 
 		/*!
 			Uses the GFX debug system to draw the outlines of the navigation mesh.
@@ -276,10 +275,10 @@ namespace Core
 
 		private : 
 
-			Flowfield tempField;
-			bool* visited;
-			float* distances;
-			glm::vec3* points;
+			Flowfield** tempField;
+			bool** visited;
+			float** distances;
+			glm::vec3** points;
 	};
 }
 

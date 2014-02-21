@@ -39,6 +39,8 @@ void Core::MovementSystem::Update(float delta)
 			mc->speed = 0.0f;
 
 		InterpolateDirections(mc, delta);
+		//for( int i = 0; i < 3; i++ )
+		//	mc->direction[i] = mc->newDirection[i];
 
 		wpc->position[0] += mc->direction[0] * mc->speed * delta;
 		wpc->position[1] = 0.0f; //+= mc->direction[1] * mc->speed * delta;
@@ -56,14 +58,14 @@ void Core::MovementSystem::Update(float delta)
 			*rc = RotationComponent::GetComponentRotateY(-angle - 3.141592f * 1.5f); 
 		}
 
-		GFX::Debug::DrawSphere( glm::vec3( mc->goal[0], 0, mc->goal[2] ), 2.0f, GFXColor(), false );
+		//GFX::Debug::DrawSphere( glm::vec3( mc->goal[0], 0, mc->goal[2] ), 2.0f, GFXColor( 0.3, 1, 0.45, 1 ), false );
 
 		// Draw the debug lines showing the rioter's direction.
 		/*GFX::Debug::DrawLine(Core::WorldPositionComponent::GetVec3(*wpc),
 							 glm::vec3(wpc->position[0] + mc->direction[0],
 									   wpc->position[1] + mc->direction[1],
 									   wpc->position[2] + mc->direction[2]),
-							 GFXColor(1.0f, 0.0f, 0.0f, 1.0f), false);*/
+							 GFXColor(1.0f, 1.0f, 0.0f, 1.0f), false);*/
 	}
 
 
@@ -87,7 +89,7 @@ void Core::MovementSystem::Update(float delta)
 		}
 
 		if( mvmc->movedThisFrame )
-			attribc->stamina -= Core::GameData::GetMovementDataWithState( mvmc->state ).staminaCostPerSecond;
+			attribc->stamina -= Core::GameData::GetMovementDataWithState( mvmc->state ).staminaCostPerSecond * delta;
 	}
 
 

@@ -20,9 +20,14 @@ namespace Core
             HoverTextComponent * htc = WGETC<HoverTextComponent>(*it);
             WorldPositionComponent * wpc = WGETC<WorldPositionComponent>(*it);
 
-            if( htc->hoverTextId != -1 )
+            if( htc->hoverTextId != -1 && htc->render )
             {
-                GFX::RenderText( localFontData, glm::vec2( wpc->position[0], -wpc->position[1] ), htc->size, HoverTextComponent::GetColor( *htc ), m_strings[htc->hoverTextId].c_str() );
+                GFX::FontData * font = localFontData;
+
+                if( htc->font != nullptr )
+                    font = htc->font;
+
+                GFX::RenderText( font, glm::vec2( wpc->position[0], -wpc->position[1] ), htc->size, HoverTextComponent::GetColor( *htc ), m_strings[htc->hoverTextId].c_str() );
 
 
                 if( CONF.GetBool( "debugRenderHoverTextBounding", true ) )

@@ -17,6 +17,19 @@ namespace Core
         HALF_CIRCLE_FORMATION
 	};
 
+    enum SquadAbility
+    {
+        SPRINT,
+        FLEE,
+        ROUT,
+        ATTACK,
+        ARREST_INDIVIDUAL,
+        ARREST_GROUP,
+        TEAR_GAS,
+        TAZE,
+        BLITZ
+    };
+
 	/*!
 		Component used for controlling a group of police. The Entity asigned to the squadLeader varaible must match an aspect of Core::WorldPositionComponent.
 	*/

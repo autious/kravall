@@ -18,6 +18,82 @@ extern "C"
         return 1;
     }
 
+    static int LuaSquadFormationToString(lua_State* L)
+    {
+        Core::SquadFormation* sf = luau_checksquadformation(L, 1);
+
+        switch(*sf)
+        {
+            case Core::SquadFormation::NO_FORMATION:
+                lua_pushstring(L, "NoFormation" );
+                break;
+            case Core::SquadFormation::LINE_FORMATION:
+                lua_pushstring(L, "LineFormation" );
+                break;
+            case Core::SquadFormation::CIRCLE_FORMATION:
+                lua_pushstring(L, "CircleFormation" );
+                break;
+            case Core::SquadFormation::HALF_CIRCLE_FORMATION:
+                lua_pushstring(L, "HalfCircleFormation" );
+                break;
+            default:
+                lua_pushstring(L, "UnknownFormation" );
+                break;
+        }
+
+        return 1;
+    }
+
+    static int LuaSquadAbilityEq( lua_State *L )
+    {
+        Core::SquadAbility* lhs = luau_checksquadability(L,1);
+        Core::SquadAbility* rhs = luau_checksquadability(L,2);
+
+        lua_pushboolean( L, *lhs == *rhs );
+        return 1;
+    }
+
+    static int LuaSquadAbilityToString( lua_State *L )
+    {
+        Core::SquadAbility* sa = luau_checksquadability(L,1);
+
+        switch( *sa )
+        {
+            case Core::SquadAbility::SPRINT:
+                lua_pushstring( L, "Sprint" );
+                break;
+            case Core::SquadAbility::FLEE:
+                lua_pushstring( L, "Flee" );
+                break;
+            case Core::SquadAbility::ROUT:
+                lua_pushstring( L, "Rout" );
+                break;
+            case Core::SquadAbility::ATTACK:
+                lua_pushstring( L, "Attack" );
+                break;
+            case Core::SquadAbility::ARREST_INDIVIDUAL:
+                lua_pushstring( L, "ArrestIndividual" );
+                break;
+            case Core::SquadAbility::ARREST_GROUP:
+                lua_pushstring( L, "ArrestGroup" );
+                break;
+            case Core::SquadAbility::TEAR_GAS:
+                lua_pushstring( L, "TearGas" );
+                break;
+            case Core::SquadAbility::TAZE:
+                lua_pushstring( L, "Taze" );
+                break;
+            case Core::SquadAbility::BLITZ:
+                lua_pushstring( L, "Blitz" );
+                break;
+            default:
+                lua_pushstring( L, "UnknownSquadAbility" );
+                break;
+        }
+
+        return 1;
+    }
+
     static int LuaSetSquadGoal(lua_State* L)
     {
         Core::SquadSystem* squadSystem = Core::world.m_systemHandler.GetSystem<Core::SquadSystem>();
@@ -303,6 +379,55 @@ extern "C"
             return luaL_error(L, "disableOutline([squadIDs])  expects 1 parameter");
         }
     }
+
+    static int LuaGetPossibleAbilities( lua_State *L )
+    {
+        Core::SquadSystem* squadSystem = Core::world.m_systemHandler.GetSystem<Core::SquadSystem>();
+        luau_assert( L, lua_gettop(L) == 1 );
+
+        std::vector<Core::SquadAbility> abilities = squadSystem->GetPossibleAbilities( luaL_checkinteger( L, 1 ) );
+        lua_newtable( L );
+
+        for( int i = 0; i < abilities.size(); i++ )
+        {
+            LuaUNewSquadAbility( L, abilities[i] );
+            lua_rawseti(L, -2, i+1); 
+        }
+
+        return 1;
+    }
+
+    static int LuaGetAllSquads( lua_State *L )
+    {
+        Core::SquadSystem* squadSystem = Core::world.m_systemHandler.GetSystem<Core::SquadSystem>();
+
+        std::vector<int> ids = squadSystem->GetAllSquads();  
+
+        lua_newtable( L );
+        for( int i = 0; i < ids.size(); i++ )
+        {
+            lua_pushinteger( L, ids[i] );
+            lua_rawseti( L, -2, i+1 );      
+        }  
+
+        return 1;
+    }
+
+    static int LuaGetAllSquadEntities( lua_State * L )
+    {
+        Core::SquadSystem* squadSystem = Core::world.m_systemHandler.GetSystem<Core::SquadSystem>();
+
+        std::vector<Core::Entity> ents = squadSystem->GetAllSquadEntities();
+
+        lua_newtable(L);
+        for( int i = 0; i < ents.size(); i++ )
+        {
+            Core::LuaUNewLightEntity( L, ents[i] ); 
+            lua_rawseti( L, -2, i+1 ); 
+        } 
+
+        return 1;
+    }
 }
 
 namespace Core
@@ -314,6 +439,12 @@ namespace Core
 
         luaL_newmetatable(L, SQUAD_FORMATION_META_TYPE);
             luau_setfunction(L, "__eq", LuaSquadFormationEq);
+            luau_setfunction(L, "__tostring", LuaSquadFormationToString )
+        lua_pop(L, 1);
+
+        luaL_newmetatable(L, SQUAD_ABILITY_META_TYPE);
+            luau_setfunction(L, "__eq", LuaSquadAbilityEq );
+            luau_setfunction(L, "__tostring", LuaSquadAbilityToString )
         lua_pop(L, 1);
 
         lua_getglobal(L, "core");
@@ -326,6 +457,9 @@ namespace Core
                     luau_setfunction(L, "getSquadEntity", LuaGetSquadEntity);
                     luau_setfunction(L, "enableOutline", LuaEnableOutline);
                     luau_setfunction(L, "disableOutline", LuaDisableOutline);
+                    luau_setfunction(L, "getPossibleAbilities", LuaGetPossibleAbilities );
+                    luau_setfunction(L, "getAllSquads", LuaGetAllSquads );
+                    luau_setfunction(L, "getAllSquadEntities", LuaGetAllSquadEntities );
                         lua_newtable(L);
                         Core::SquadFormation* formation = LuaUNewSquadFormation(L);
                         *formation = Core::SquadFormation::NO_FORMATION;
@@ -342,8 +476,45 @@ namespace Core
                         formation = LuaUNewSquadFormation(L);
                         *formation = Core::SquadFormation::HALF_CIRCLE_FORMATION;
                         lua_setfield(L, -2, "HalfCircleFormation");
-
                     lua_setfield(L, -2, "formations");
+                    lua_newtable( L );
+                        Core::SquadAbility* ability = LuaUNewSquadAbility(L);    
+                        *ability = Core::SquadAbility::SPRINT;
+                        lua_setfield(L, -2, "Sprint" );
+                    
+                        ability = LuaUNewSquadAbility(L);
+                        *ability = Core::SquadAbility::FLEE;
+                        lua_setfield(L, -2, "Flee" );
+    
+                        ability = LuaUNewSquadAbility(L);
+                        *ability = Core::SquadAbility::ROUT;
+                        lua_setfield(L, -2, "Rout" );
+
+                        ability = LuaUNewSquadAbility(L);
+                        *ability = Core::SquadAbility::ATTACK;
+                        lua_setfield( L, -2, "Attack" );
+
+                        ability = LuaUNewSquadAbility(L);
+                        *ability = Core::SquadAbility::ARREST_INDIVIDUAL;            
+                        lua_setfield( L, -2, "ArrestIndividual" );
+
+                        ability = LuaUNewSquadAbility(L);
+                        *ability = Core::SquadAbility::ARREST_GROUP;
+                        lua_setfield( L, -2, "ArrestGroup" );
+
+                        ability = LuaUNewSquadAbility(L);
+                        *ability = Core::SquadAbility::TEAR_GAS;
+                        lua_setfield( L, -2, "TearGas" );
+
+                        ability = LuaUNewSquadAbility(L);
+                        *ability = Core::SquadAbility::TAZE;
+                        lua_setfield( L, -2, "Taze" );
+
+                        ability = LuaUNewSquadAbility(L);
+                        *ability = Core::SquadAbility::BLITZ;
+                        lua_setfield( L, -2, "Blitz" );
+
+                    lua_setfield(L, -2, "abilities");
                 lua_setfield(L, -2, "squad");
         lua_pop(L, 2);
 

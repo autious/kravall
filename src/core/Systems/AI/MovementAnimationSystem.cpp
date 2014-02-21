@@ -52,29 +52,46 @@ namespace Core
 			mvmc->movedThisFrame = false;
 			if( frameSpeed > MOVEDTHISFRAME_THRESHOLD )
 				mvmc->movedThisFrame = true;
-
+			
+			
+			bool hasAlteredAnimation = false;
+			
 			ac->loop = false;
 			if ( !tc->isAttacking )
 			{
 
 				// if moving faster than walking but not already playing running animation or if not playing any animation...
 				if( frameSpeed > walkingData.speedToDesire + GRACE_THRESHOLD &&
-						( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "walk-straight" ) != ac->animationID
+						( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle" ) == ac->animationID
 						|| !ac->playing ))
-					Core::AnimationManager::PlayAnimation( *it, "walk-straight" ); // running
+				{
+					hasAlteredAnimation = true;
+					Core::AnimationManager::PlayAnimation( *it, "agitated-run" ); // running
+				}
 
 				// if moving but not running and not already playing walk-animation or if not playing any animation
 				else if( frameSpeed > 0.05f &&  
-						( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "walk-straight" ) != ac->animationID 
+						( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle" ) == ac->animationID 
 						|| !ac->playing ))
+				{
+					hasAlteredAnimation = true;
 					Core::AnimationManager::PlayAnimation( *it, "walk-straight" ); // walking
+				}
 
 				// if not moving and not already playing idle-animation or if not playing any animation
 				else if( (Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle" ) != ac->animationID 
 						|| !ac->playing) && 
 						frameSpeed < 0.05f )
+				{
+					hasAlteredAnimation = true;
 					Core::AnimationManager::PlayAnimation( *it, "idle" ); // still
+				}
 
+				// try to make animations less unified
+				if( hasAlteredAnimation )
+				{
+					//ac->speed = 1 + ((std::rand() % 1000) / 1000.0f) * 0.1f;
+				}
 			}
 
 

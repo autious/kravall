@@ -14,8 +14,7 @@ namespace Core
 		int node, edge;
 		float t;
 	};
-
-
+	
 	bool CheckLineWithCornerCheck( glm::vec3 start, glm::vec3 goal, float radius, Core::NavigationMesh* instance, int startNode )
 	{
 		bool samePoint = true;
@@ -25,6 +24,7 @@ namespace Core
 		if( samePoint )
 			return false;
 
+		glm::vec3 dir = glm::normalize( goal - start );
 		float hitDistance = 0;
 		float distanceToTarget = glm::distance( start, goal );
 		int nextNode = startNode;
@@ -46,15 +46,10 @@ namespace Core
 				glm::vec3 lineStart = glm::vec3( current->points[ ii ], 0, current->points[ ii + 1 ] );
 				glm::vec3 lineEnd	= glm::vec3( current->points[ oo ], 0, current->points[ oo + 1 ] );
 
-				// check vs. ray
-				float A = glm::determinant( glm::mat2x2( start.x, start.z, goal.x, goal.z ) );
-				float B = glm::determinant( glm::mat2x2( lineStart.x, lineStart.z, lineEnd.x, lineEnd.z ) );
-				float divider = glm::determinant( glm::mat2x2( start.x - goal.x, start.z - goal.z, lineStart.x - lineEnd.x, lineStart.z - lineEnd.z  ) );
-				
-				float intersectionX = glm::determinant( glm::mat2x2( A, start.x - goal.x , B, lineStart.x - lineEnd.x ) ) / divider;
-				float intersectionZ = glm::determinant( glm::mat2x2( A, start.z - goal.z , B, lineStart.z - lineEnd.z ) ) / divider;
-		
-				glm::vec3 hit = glm::vec3( intersectionX, 0.0f, intersectionZ );
+				glm::vec3 planeNormal = glm::normalize( glm::cross( (lineEnd - lineStart), glm::vec3( 0.0f, 1.0f, 0.0f ) ) );				
+				float dot = glm::dot( planeNormal, dir );
+				float distance = glm::dot(lineStart - start, planeNormal) / dot;				
+				glm::vec3 hit = start + dir * distance;
 		
 				float alongLine = glm::dot( hit - lineStart, (lineEnd - lineStart) * current->corners[i].inverseLength );
 
@@ -101,6 +96,10 @@ namespace Core
 			return true;
 		return false;
 	}
+
+
+
+
 
 	bool PathFinder::CheckLineVsNavMesh( glm::vec3 from, glm::vec3 to, float cornerRadius, int startNode )
 	{

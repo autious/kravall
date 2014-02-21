@@ -29,6 +29,7 @@ namespace Core
 		NoGoalPriority,
 		FormationGoalPriority,
 		AttackGoalPriority,
+		TargetingGoalPriority,
 	};
 
 	/*!

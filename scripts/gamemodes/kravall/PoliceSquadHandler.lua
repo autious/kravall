@@ -1,21 +1,37 @@
-local PoliceSquadHandler = { onFormationChange = function() core.log.error( "No function set for onFormationChange in PoliceSquadHandler") end,
-onStanceChange = function(stance) core.log.error( "No functionset for StanceChange in PoliceSquadHandler") end }
+local PoliceSquadHandler =  { 
+
+                                onFormationChange = function() 
+                                    core.log.error( "No function set for onFormationChange in PoliceSquadHandler") 
+                                end,
+                                onStanceChange = function(stance) 
+                                    core.log.error( "No functionset for StanceChange in PoliceSquadHandler")   
+                                end,
+                                onAbilityChange= function( ability )
+                                    core.log.error( "No functionset for AbilityChange in PoliceSquadHandler")   
+                                end,
+                                onSelectedSquadsChange = function(squads)
+                                    core.log.error( "No function set for onSelectedSquadsChange" )
+                                end,
+                                onSelectedUnitInformationChange = function(data)
+                                    core.log.error( "No function set for onSelectedUnitInformationChange")
+                                end,
+                                onMoveToPosition = function( squads, position, success )
+                                    core.log.error( "No function set for onMoveToPosition" )
+                                end
+                                 
+                            }
+local U = require "utility"
 
 local keyboard = core.input.keyboard
 local mouse = core.input.mouse
 local s_squad = core.system.squad
 
+local standardPolice = (require "game_constants").standardPolice
+local guiBehaviour = (require "game_constants").guiBehaviour
+
 local input = require "input"
 
-function PoliceSquadHandler:new(o)
-    o = o or {}
-    setmetatable( o, self )
-    self.__index = self
-
-    o.groupsSelectedByBox = {}
-    o.previousGroupSelectedByBox = {}
-    o.selectedSquads = {}
-
+local function registerCallbacks(o)
     input.registerOnButton( function( button, action, mods, consumed )
         if action == core.input.action.Press then
             --Only allow press if UI element hasn't been pressed
@@ -36,13 +52,32 @@ function PoliceSquadHandler:new(o)
             end
         end
     end, "GAME")
+end
+
+function PoliceSquadHandler:new(o)
+    o = o or {}
+    setmetatable( o, self )
+    self.__index = self
+
+    o.groupsSelectedByBox = {}
+    o.previousGroupSelectedByBox = {}
+    o.selectedSquads = {}
+
+    -- List for units recently damaged, with ttl.
+    o.squadDamageQueue = {}
+
+    -- List of total health in previous frame
+    o.prevFrameSquadHealth = {}
+
+    registerCallbacks(o)
 
     return o
 end
 
 function PoliceSquadHandler:DeselectAllSquads()
     s_squad.disableOutline(self.selectedSquads)    
-    self.selectedSquads = {}
+    self:setFormation( core.system.squad.formations.NoFormation )
+    self:setSquadSelection( {} )
 end
 
 function PoliceSquadHandler:setFormation( formation )
@@ -54,6 +89,105 @@ function PoliceSquadHandler:setFormation( formation )
     if doEvent and self.onFormationChange then
         self.onFormationChange( formation ) 
     end
+end
+
+--The two following functions are used to manipulate
+-- the current squad selection, and are responsible for calling
+-- and callbacks relevant to such a modification
+-- Both functions take tables contianing a continous
+-- list of squads, nil is not allowed, instead to
+-- deselect use an empty list
+function PoliceSquadHandler:addSquadsToSelection( squads )
+    for _,v in pairs( squads ) do
+        self.selectedSquads[#(self.selectedSquads)+1] = v
+    end    
+
+    self:setSquadSelection( self.selectedSquads )
+end
+
+function PoliceSquadHandler:setSquadSelection( squads )
+    self.selectedSquads = squads     
+    self.onSelectedSquadsChange( squads )
+
+    if #(self.selectedSquads) > 0 then
+        self.onSelectedUnitInformationChange( self:evaluateSquadInformation( self.selectedSquads[1] ))
+    end
+end
+
+function PoliceSquadHandler:setSquadPrimary( squad )
+    local newselection = {squad}
+    
+    for i,v in pairs( self.selectedSquads ) do
+        if v ~= squad then
+            newselection[#newselection+1] = v
+        end 
+    end
+
+    self.selectedSquads = newselection
+end
+
+-- Generates a table containing information about the given
+-- squad, to be sent to the gui components.
+function PoliceSquadHandler:evaluateSquadInformation( squad )
+    local squadEntity = core.system.squad.getSquadEntity( squad )
+
+    local sq = squadEntity:get( core.componentType.SquadComponent )
+
+    local data = { 
+                    health = sq.squadHealth,
+                    morale = sq.squadMorale, 
+                    stamina = sq.squadHealth, 
+                    stance = sq.squadStance,
+                    formation = sq.squadFormation,
+                    name = "Police Squad" 
+                 }
+
+    return data
+end
+
+function PoliceSquadHandler:updateSquadDamageStatus( delta )
+    local allSquads = core.system.squad.getAllSquadEntities()
+
+    for i,v in pairs( allSquads ) do 
+        local squadComponent = v:get( core.componentType.SquadComponent )
+
+        if self.prevFrameSquadHealth[squadComponent.squadID] ~= nil
+            and self.prevFrameSquadHealth[squadComponent.squadID] > squadComponent.squadHealth then
+            if self.squadDamageQueue[squadComponent.squadID] then
+                self.squadDamageQueue[squadComponent.squadID].ttl = guiBehaviour.damageBlinkingLinger
+            else
+                self.squadDamageQueue[squadComponent.squadID] = {ttl=guiBehaviour.damageBlinkingLinger}
+            end
+        end 
+
+        self.prevFrameSquadHealth[squadComponent.squadID] = squadComponent.squadHealth
+    end
+
+    if not self.hasLived then
+        self.hasLived = 0
+    end
+
+    local savedSquadDamageQueue = {}
+    for i,v in pairs( self.squadDamageQueue ) do
+        if v.ttl > 0 then
+            savedSquadDamageQueue[i] = v
+        end
+        v.ttl = v.ttl - delta
+
+        if self.hasLived % 1.0 > 0.5 then
+            core.system.squad.enableOutline( {i}, standardPolice.damageOutline:get() )
+        end
+    end
+
+    self.hasLived = self.hasLived + delta 
+
+    --Reset counter to counteract the noticable rounding error that will occur
+    --after ca 20 billion years of running the program
+    if self.hasLived > 1.0 then
+        self.hasLived = self.hasLived - 1.0
+    end
+
+    self.squadDamageQueue = savedSquadDamageQueue
 end
 
 -- If given non-nil, sets the stance to given value on selection
@@ -71,6 +205,10 @@ function PoliceSquadHandler:setStance( stance )
 
         self.onStanceChange( stance )  
     end
+end
+
+function PoliceSquadHandler:setAbility( ability )
+    self.onAbilityChange( ability )
 end
 
 -- Check if given group has any differing stances, if so, return nil
@@ -94,6 +232,53 @@ function PoliceSquadHandler:evaluateStanceForGroups( policeGroup )
 end
 
 function PoliceSquadHandler:update( delta )
+   
+    -- Sets the box selection outline to the given squads
+    -- If any of the given squads match the primary selection, it gets a different tint
+    local function applyBoxOutline( squads )
+        local notPrimary = {}
+        local primaryGroup = nil
+        
+        if #(self.selectedSquads) > 0 then
+            primaryGroup = self.selectedSquads[1]
+        end
+            
+
+        for _,v in pairs( squads ) do 
+            if primaryGroup == v then
+                s_squad.enableOutline( {v}, standardPolice.selectionBoxHoverPrimaryOutline:get() )
+            else
+                notPrimary[#notPrimary+1] = v    
+            end
+        end
+        s_squad.enableOutline(notPrimary, standardPolice.selectionBoxHoverOutline:get())
+    end
+
+    local function applySelectionOutline( squads )
+        local notPrimary = {}
+            
+        for i,v in ipairs( squads ) do 
+            if i == 1 then
+                s_squad.enableOutline( {v}, standardPolice.selectionPrimaryOutline:get() )
+            else
+                notPrimary[#notPrimary+1] = v    
+            end
+        end
+        s_squad.enableOutline(notPrimary, standardPolice.selectionOutline:get())
+        
+    end
+
+    local function clearOutlines()
+        local allSquads = core.system.squad.getAllSquadEntities()
+
+        for i,v in pairs( allSquads ) do 
+            local squadComponent = v:get( core.componentType.SquadComponent )
+            core.system.squad.disableOutline( {squadComponent.squadID} )
+        end
+    end
+
+    clearOutlines()
+
     --Formations
     --Click Selection
     if self.leftClicked then        
@@ -121,15 +306,19 @@ function PoliceSquadHandler:update( delta )
                         end
 
                         if not found then
-                            self.selectedSquads[#(self.selectedSquads)+1] = attributeComponent.squadID
-                            if #(self.selectedSquads) == 1 then                                
+                            self:addSquadsToSelection( {attributeComponent.squadID} )
+                            -- New selection, take formation and put in gui
+                            if #(self.selectedSquads) == 1 then
                                 self:setFormation( squadComponent.squadFormation )
                             end
+                        else
+                            self:setSquadPrimary( attributeComponent.squadID ) 
                         end
+
+
                     else --Select new group of units
                         self:DeselectAllSquads()
-                        self.selectedSquads[#(self.selectedSquads)+1] = attributeComponent.squadID
-
+                        self:addSquadsToSelection( {attributeComponent.squadID} )
                         self:setFormation( squadComponent.squadFormation )
                     end
 
@@ -140,6 +329,7 @@ function PoliceSquadHandler:update( delta )
                     -- Called so that we set the gui squad button to current selection.
                     -- (Or to nothing if current selection has mixxed stances)
                     self:setStance( self:evaluateStanceForGroups( self.selectedSquads ) )
+                    applySelectionOutline( self.selectedSquads )
                 end
             end
 		elseif not keyboard.isKeyDown(keyboard.key.Left_shift) and not core.config.stickySelection and not self.isClick then
@@ -154,12 +344,12 @@ function PoliceSquadHandler:update( delta )
 		self.boxEndX, self.boxEndY = mouse.getPosition()
 		self.groupsSelectedByBox = core.system.picking.getPoliceGroupsInsideBox( self.boxStartX, self.boxStartY, self.boxEndX, self.boxEndY, core.config.boxSelectionGraceDistance )
         
-        if self.previousGroupsSelectedByBox and #(self.previousGroupsSelectedByBox) then
+        if self.previousGroupsSelectedByBox and #(self.previousGroupsSelectedByBox) > 0 then
             s_squad.disableOutline(self.previousGroupsSelectedByBox)
         end
 
         if self.groupsSelectedByBox and #(self.groupsSelectedByBox) >= 1 then
-            s_squad.enableOutline(self.groupsSelectedByBox, 1, 0.9, 0.1, 1)
+            applyBoxOutline( self.groupsSelectedByBox )
         end
 
         self.previousGroupsSelectedByBox = self.groupsSelectedByBox
@@ -185,8 +375,13 @@ function PoliceSquadHandler:update( delta )
             if self.clickEndX and self.clickEndY and self.clickEndZ and self.selectedFormation ~= s_squad.formations.CircleFormation then
 	            s_squad.setSquadGoal(self.selectedSquads, (self.clickStartX + self.clickEndX) / 2, (self.clickStartY + self.clickEndY) / 2, (self.clickStartZ + self.clickEndZ) / 2)
             else                
-	            s_squad.setSquadGoal(self.selectedSquads, self.clickStartX, self.clickStartY, self.clickStartZ)
+                --Tell other systems that we are telling things to move.
+                s_squad.setSquadGoal(self.selectedSquads, self.clickStartX, self.clickStartY, self.clickStartZ)
             end
+
+            local clickPos = core.glm.vec3.new(core.system.picking.getGroundHit(  mouseX, mouseY ))
+            print ("WHAT IS GOING ON" )
+            self.onMoveToPosition( self.selectedSquads, clickPos, core.system.picking.getIsInsideNavigationMesh(clickPos) )
 
 
             self.clickStartX, self.clickStartY, self.clickStartZ = nil, nil, nil
@@ -238,7 +433,7 @@ function PoliceSquadHandler:update( delta )
                         local squadEntity = s_squad.getSquadEntity(self.groupsSelectedByBox[p])
                         local squadComponent = squadEntity:get(core.componentType.SquadComponent)
 
-						self.selectedSquads[#(self.selectedSquads)+1] = self.groupsSelectedByBox[p]
+						self:addSquadsToSelection( {self.groupsSelectedByBox[p]} )
                         if #(self.selectedSquads) == 1 then
                             self:setFormation( squadComponent.squadFormation )
                         end
@@ -261,11 +456,22 @@ function PoliceSquadHandler:update( delta )
 	end
     
     if self.selectedSquads and #(self.selectedSquads) >= 1 then
-        s_squad.enableOutline(self.selectedSquads, 0.1, 0.9, 0.3, 1.0)
+        applySelectionOutline(self.selectedSquads)
     end
+    self:updateSquadDamageStatus( delta )
 
     self.leftClicked = false
     self.rightClicked = false
+
+    -- Update the data each frame, should probably be changed to only update
+    -- when relevant. TODO: Fix aforementioned thing
+    if #(self.selectedSquads) > 0 then
+        self.onSelectedUnitInformationChange( self:evaluateSquadInformation( self.selectedSquads[1] ))
+    else
+        -- This can be seen as relatively temp or redundant, 
+        -- as the gui elements should hide when there is no selection.
+        self.onSelectedUnitInformationChange( {name = "", health=0, morale=0, stamina=0} )
+    end
 end
 
 return PoliceSquadHandler
