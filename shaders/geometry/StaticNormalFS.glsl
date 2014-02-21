@@ -21,7 +21,14 @@ layout ( location = 4 ) out vec4 gGlowMatRT;
 
 void main()
 {
+	vec4 diffuse = texture2D(gDiffuse, uvFS);
+	if( diffuse.w < 0.5 )
+		discard;
 	vec3 sampledNormal = texture2D(gNormal, uvFS).xyz;
+	vec4 spec = texture2D(gSpecular, uvFS);
+	vec4 glow = texture2D(gGlow, uvFS);
+
+
 	sampledNormal = 2.0f * sampledNormal - vec3(1.0f);
 
 	vec3 tangent = normalize(tangentFS.xyz);
@@ -35,13 +42,8 @@ void main()
 	finalNormal = TBN * sampledNormal;
 	finalNormal = normalize(finalNormal);
 
-	vec4 diffuse = texture2D(gDiffuse, uvFS);
 	diffuse.xyz = pow(diffuse.xyz, vec3(gGamma));
-
-	vec4 spec = texture2D(gSpecular, uvFS);
 	spec.xyz = pow(spec.xyz, vec3(gGamma));
-
-	vec4 glow = texture2D(gGlow, uvFS);
 	glow.xyz = pow(glow.xyz, vec3(gGamma));
 
 	gNormalDepthRT = vec4(finalNormal, posFS.z / posFS.w);//vec4(finalNormal, );

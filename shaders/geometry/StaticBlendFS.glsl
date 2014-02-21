@@ -55,6 +55,8 @@ vec4 randColor( uint seed )
 void main()
 {
 	vec4 diffuseColor = texture2D(gDiffuse, uvFS);
+	if( diffuse.w < 0.5 )
+		discard;
 	vec4 blendMap = texture2D(gNormal, uvFS);
 	vec4 specColor = texture2D(gSpecular, uvFS);
 	vec4 glowColor = texture2D(gGlow, uvFS);
