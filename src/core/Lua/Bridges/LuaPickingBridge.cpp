@@ -88,7 +88,7 @@ extern "C"
 			float gaceDistance = luaL_checknumber( L, 5 );
 
 			// temp code !
-			GFX::DrawSelectionbox(glm::vec4(X, Y, X2 - X, Y2 - Y), GFXColor(1, 0, 1, 1));
+			GFX::DrawSelectionbox(glm::vec4(X, Y, X2 - X, Y2 - Y), GFXColor(0, 1, 0, 1));
 			//GFX::Debug::DrawRectangle( glm::vec2( X, Y ), glm::vec2( X2 - X, Y2 - Y ), false, GFXColor( 1, 0, 1, 1 ) );	
 			// temp code end !
 			
