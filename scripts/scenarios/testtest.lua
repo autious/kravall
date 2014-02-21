@@ -66,7 +66,7 @@ local police = ent.get "police"
 local building = ent.get "building"
 
 -- usual weapons...
-local fists = core.weaponData.pushWeapon( 1.0, 20, 0.2, 0.05, 0.05, 0.5, "punch" )			
+local fists = core.weaponData.pushWeapon( 1.0, 20, 0.2, 0.05, 3.2, 2.9, 0.05, 0.5, "punch" )
 
 core.gameMetaData.registerEscapePoint( 50, 0, 0 )
 
