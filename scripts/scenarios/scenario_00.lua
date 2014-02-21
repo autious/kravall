@@ -12,6 +12,8 @@ local staticModel = entities.get "staticModel"
 
 scen.asm:specific_content( core.contentmanager.load( core.loaders.NavigationMeshLoader, "scripts/scenarios/scenario_00.nav", function( value ) end, false ) )
 
+-- usual weapons...
+local fists = core.weaponData.pushWeapon( 1.0, 20, 0.2, 0.05, 0.05, 0.5, "punch" )
 
 local script = dofile "scripts/scenarios/scenario_00_script.lua"( scen )
 

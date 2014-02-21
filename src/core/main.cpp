@@ -132,7 +132,7 @@ void run( GLFWwindow * window )
 
     Core::world.m_luaState.Init();
 
-	Core::world.threadHandler.Initialize( CONF.GetInt( "numberOfSystemCoresToUse", 1 ) );
+	Core::world.m_threadHandler.Initialize( CONF.GetInt( "numberOfSystemCoresToUse", 1 ) );
 
 
 	//inputline.resize(1);

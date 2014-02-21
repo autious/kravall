@@ -47,7 +47,7 @@ namespace Core
         LuaState m_luaState;
         ConfigurationHandler m_config;
 
-		ThreadPool threadHandler;
+		ThreadPool m_threadHandler;
     };
 
     extern World world;

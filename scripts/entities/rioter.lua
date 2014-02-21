@@ -31,13 +31,13 @@ return function(asm, posX, posY, posZ, group, gender, material, weaponType)
 			{
 				type = core.componentType.AttributeComponent,
 				data = { health = 100, stamina = 100, morale = 2.0, 
-					   alignment = core.RioterAlignment.Anarchist, rage = 0, pressure = 0, groupID = group, stanceRioter = core.RioterStance.Normal}
+					   alignment = core.RioterAlignment.Anarchist, rage = 0, pressure = 0, groupID = group, stanceRioter = core.RioterStance.Retreating}
                 ,
                 ignoreHard = true
 			},
 			{
 				type = core.componentType.TargetingComponent,
-				data = { weapon = weaponType or fists },
+				data = { weapon = weaponType or -1 },
 				ignoreHard = true
 			},
 			{

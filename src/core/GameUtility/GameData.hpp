@@ -94,11 +94,26 @@ namespace Core
 		*/
 		static int PushWeaponData( float range, float weaponDamage, float moraleDamage, float moralDamageOnMiss, float staminaCost, float animationDmgDealingtime, std::string animationName );
 
+		/*!
+			Will allocate a flowfield leading to this point and save it for use in the GetEscapePointGroup() function.
+		*/
+		static int RegisterEscapePoint( glm::vec3 point );
+
+		/*!	
+			Will return the flowfield group index whos escape point is closest to this point.
+		*/
+		static int GetEscapePointGroup( int node );
+
+		/*!
+			Will deallocate all dynamic game data and reset all other data.
+		*/
+		static void ClearData();
 
 	private:
 
 		static MovementData m_movementData[ MovementState::MOVEMENTSTATE_COUNT ];
 		static std::vector< WeaponData > m_weaponData;
+		static std::vector< int > m_escapePointGroups;
 
 		friend TempInitGameData;
 	};

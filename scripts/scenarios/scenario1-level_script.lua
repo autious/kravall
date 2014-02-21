@@ -20,6 +20,9 @@ return function( scen )
     scen.name = "Scenario 1"
     scen.description = "You are mean"
 
+	-- weapons
+	local fists
+	
 	scen.gamemode = require "gamemodes/kravall":new()
 	scen:registerUpdateCallback( function(delta) scen.gamemode:update(delta) end )
 	scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
@@ -30,6 +33,9 @@ return function( scen )
 									--scen.gamemode.camera.yaw = scen.gamemode.camera.yaw + math.pi
 									local plane = entity.get "plane"
 									plane(scen, 0, 0, 0, 900)
+									
+									-- load weapons...
+									fists = core.weaponData.pushWeapon( 1.0, 20, 0.2, 0.05, 0.05, 0.5, "punch" )
 							   end)
 	
 	-- Just random helpful stuffzzz --
@@ -62,7 +68,7 @@ return function( scen )
 			verts[i + 1] = verts[i + 1] + wpc.position[3]
 		end
 			
-		group( scen, ac.vertices, grp, {size, size} )
+		group( scen, ac.vertices, grp, {size, size}, fists )
 	end
 	
 	---- Create a police squad
@@ -70,7 +76,7 @@ return function( scen )
 		local wpc = ent:get( core.componentType.WorldPositionComponent )
 		local ac = ent:get( core.componentType.AreaComponent )
 		
-		squad1 = squad( scen, wpc.position[1], 0, wpc.position[3], 0)
+		squad1 = squad( scen, wpc.position[1], 0, wpc.position[3], 0, fists)
 	end
 	
 	-- Set destination for rioters based on an area's name
