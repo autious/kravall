@@ -134,7 +134,7 @@ namespace GFX
 		max *= unitsPerTexel;
 
 		// Set ortho matrix to use the calculated corner points
-		return glm::ortho<float>(min.x, max.x, min.y, max.y, -200, -minZ);
+		return glm::ortho<float>(min.x, max.x, min.y, max.y, -225.0f, -minZ);
 		//return glm::ortho<float>(minX, maxX, minY, maxY, -maxZ, -minZ);
 
 	}
