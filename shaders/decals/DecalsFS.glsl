@@ -13,6 +13,7 @@ layout (shared) uniform PerFrameBlock
 
 uniform sampler2D gNormalDepth;
 uniform sampler2D gDiffuse;
+uniform sampler2D gGlow;
 
 uniform float gGamma;
 
@@ -48,8 +49,17 @@ void main()
 	{
 		vec2 uv = vec2(localPos.x, localPos.z) + 0.5f;
 		vec4 diffuseColor = texture2D(gDiffuse, uv);
+		diffuseColor.xyz = pow(diffuseColor.xyz, vec3(gGamma));
+
+		vec4 glowColor = texture2D(gGlow, uv);
+		glowColor.xyz = pow(glowColor.xyz, vec3(gGamma));
+
 		diffuseRT = diffuseColor;
+		glowMatIDRT = glowColor;
 	}
 	else
+	{
 		diffuseRT = vec4(0.0f);
+		glowMatIDRT = vec4(0.0f);
+	}
 }
