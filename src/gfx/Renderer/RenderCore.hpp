@@ -11,6 +11,7 @@
 
 #include "Console/ConsolePainter.hpp"
 #include "OverlayRenderer/OverlayPainter.hpp"
+#include "OverlayRenderer/BoxPainter.hpp"
 #include "DebugRenderer/DebugPainter.hpp"
 #include "TextRenderer/TextPainter.hpp"
 #include "SplashRenderer/SplashPainter.hpp"
@@ -208,6 +209,8 @@ namespace GFX
 		void SetAnimationFramerate(unsigned int framerate);
 		inline unsigned int GetAnimationFramerate(){ return m_animationFramerate; }
 
+		inline void DrawSelectionbox(const glm::vec4& posdim, const glm::vec4& color){ m_selectionBoxColor = color; m_selectionBoxPosDim = posdim; m_drawSelectionbox = true; }
+
 	private:
 		RenderCore();
 		~RenderCore();
@@ -263,6 +266,7 @@ namespace GFX
 		SplashPainter* m_splashPainter;
 		FBOPainter* m_fboPainter;
         OverlayPainter* m_overlayPainter;
+		BoxPainter* m_boxPainter;
 		PostProcessingPainter* m_postProcessingPainter;
 		GIPainter* m_GIPainter;
 		BlurPainter* m_blurPainter;
@@ -304,6 +308,10 @@ namespace GFX
 		glm::mat4x4 m_debugFitFrustum;
 
 		bool m_reloadAnimationData;
+		
+		glm::vec4 m_selectionBoxPosDim;
+		glm::vec4 m_selectionBoxColor;
+		bool m_drawSelectionbox;
 
 	};
 

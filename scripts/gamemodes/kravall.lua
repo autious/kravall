@@ -7,18 +7,13 @@ local KravallControl = require "gui/KravallControl"
 local PoliceSquadHandler = require "gamemodes/kravall/PoliceSquadHandler"
 local PDC = require "particle_definition"
 local ASM = require "assembly_loader"
+local MoveMarker = require "visual_objects/MoveMarker"
 
 local T = {}
 
 local keyboard = core.input.keyboard
 local mouse = core.input.mouse
 local s_squad = core.system.squad
-
-core.movementData.setMovementMetaData( core.movementData.Walking, 5.8, 17, 17, 0.0 )
-core.movementData.setMovementMetaData( core.movementData.Sprinting, 8.8, 17, 14, 0.2 )
-
--- usual weapons...
-fists = core.weaponData.pushWeapon( 1.0, 20, 0.2, 0.05, 0.05, 0.5, "punch" )
 
 function T:new(o)
     o = o or {}
@@ -28,6 +23,10 @@ function T:new(o)
 
     o.objectiveHandler = objective_handler:new()
     o.camera = Camera.new()
+	
+	-- set default movementData
+	core.movementData.setMovementMetaData( core.movementData.Walking, 5.8, 17, 17, 0.0 )
+	core.movementData.setMovementMetaData( core.movementData.Sprinting, 8.8, 17, 14, 0.2 )
 
     return o
 end
@@ -45,6 +44,7 @@ function T:init()
         TearGas = PDC:createParticleDefinition(self.asm, 5000, "assets/texture/particle/smoke.material")
     }
 
+    self.moveMarker = MoveMarker:new()
     self.gui = KravallControl:new( 
     {
         -- Called when the user is changing the formation from the gui.
@@ -89,9 +89,16 @@ function T:init()
         -- or when the state of the unit might have changes (like health)
         onSelectedUnitInformationChange = function( data )
             self.gui:setUnitInformation( data ) 
-        end
-    })
-
+        end,
+        onMoveToPosition = function( squads, position, accept )
+            if accept then
+                self.moveMarker:playAccept(  position )
+            else
+                self.moveMarker:playDeny( position )
+            end
+        end,
+        
+    })	
 end
 
 function T:update( delta )
@@ -107,6 +114,7 @@ function T:update( delta )
         end
     end
     self.camera:update( delta )
+    self.moveMarker:update( delta )
 end
 
 function T:destroy()
@@ -115,6 +123,8 @@ function T:destroy()
     if self.popup ~= nil then
         self.popup:destroy()
     end
+    self.moveMarker:destroy()
+	core.gameMetaData.clearGameData()
 end
 
 function T:name()

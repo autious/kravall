@@ -64,7 +64,7 @@ return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, group
 			},
 			{
 				type = core.componentType.TargetingComponent,
-				data = { weapon = weaponType or fists },
+				data = { weapon = weaponType or -1 },
 				ignoreHard = true
 			},
 			{

@@ -134,7 +134,7 @@ namespace GFX
 		max *= unitsPerTexel;
 
 		// Set ortho matrix to use the calculated corner points
-		return glm::ortho<float>(min.x, max.x, min.y, max.y, -200, -minZ);
+		return glm::ortho<float>(min.x, max.x, min.y, max.y, -225.0f, -minZ);
 		//return glm::ortho<float>(minX, maxX, minY, maxY, -maxZ, -minZ);
 
 	}
@@ -408,10 +408,10 @@ namespace GFX
 		ClearFBO();
 
 		// Apply gaussain blur to the shadowmap
-		m_blurPainter->GaussianBlur(shadowMaps[0]);
-		m_blurPainter->GaussianBlur(shadowMaps[1]);
-		m_blurPainter->GaussianBlur(shadowMaps[2]);
-		m_blurPainter->GaussianBlur(shadowMaps[3]);
+		m_blurPainter->GaussianBlur(shadowMaps[0], 0.7);
+		m_blurPainter->GaussianBlur(shadowMaps[1], 0.5);
+		m_blurPainter->GaussianBlur(shadowMaps[2], 0.3);
+		m_blurPainter->GaussianBlur(shadowMaps[3], 0.1);
 
 		glViewport(0, 0, width, height);
 		

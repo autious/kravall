@@ -23,6 +23,7 @@ namespace Core
 		static void SetAnimationSpeed(const Entity& entity, float speed);								// exists in lua
 		static void SetAnimationTime(const Entity& entity, float time);									// exists in lua
 
+        static bool IsAnimationPlaying( const Entity& entity );
 
 		static int GetAnimationID(int meshID, const std::string& animationName);
 		static int StoreAnimationID(int meshID, int animationID, const std::string& animationName);

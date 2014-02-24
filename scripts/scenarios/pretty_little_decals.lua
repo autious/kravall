@@ -104,32 +104,32 @@ local dude2 = scen.asm:loadAssembly(
 
 
 --Cube
---scen:loadAssembly( 
---{
---	{
---		type = core.componentType.WorldPositionComponent,
---		data = { position = { 0, 9.5, 0 } }
---	},
---	{
---		type = core.componentType.GraphicsComponent,
---		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.DecalGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
---		load = { 
---					mesh = { core.loaders.GnomeLoader, "assets/cube.bgnome", false },
---					material = { core.loaders.MaterialLoader, "assets/material/asphalt.material", false }
---			   }
---	},
---	{
---		type = core.componentType.ScaleComponent,
---		data = { scale = 10.0 }
---	},
---	{
---		type = core.componentType.RotationComponent,
---		--data = { rotation = { 0,0, math.sin( 3.14 ), math.cos(3.14/2.0) } }
---		--data = { rotation = { 1*math.sin( -3.14/4 ), 0, 0, math.cos( -3.14/4 ) } }
---		data = { rotation = { 0, 0, 0, 1 } }
---	}
---}
---)
+scen:loadAssembly( 
+{
+	{
+		type = core.componentType.WorldPositionComponent,
+		data = { position = { 0, 9.5, 0 } }
+	},
+	{
+		type = core.componentType.GraphicsComponent,
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
+		load = { 
+					mesh = { core.loaders.GnomeLoader, "assets/model/dev/cube.bgnome", false },
+					material = { core.loaders.MaterialLoader, "assets/material/asphalt.material", false }
+			   }
+	},
+	{
+		type = core.componentType.ScaleComponent,
+		data = { scale = 10.0 }
+	},
+	{
+		type = core.componentType.RotationComponent,
+		--data = { rotation = { 0,0, math.sin( 3.14 ), math.cos(3.14/2.0) } }
+		--data = { rotation = { 1*math.sin( -3.14/4 ), 0, 0, math.cos( -3.14/4 ) } }
+		data = { rotation = { 0, 0, 0, 1 } }
+	}
+}
+)
 
 scen:loadAssembly( 
 {
@@ -141,7 +141,7 @@ scen:loadAssembly(
 		type = core.componentType.GraphicsComponent,
 		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.DecalGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {1, 1, 1, 1}, render = true },
 		load = { 
-					mesh = { core.loaders.GnomeLoader, "assets/cube.bgnome", false },
+					mesh = { core.loaders.GnomeLoader, "assets/model/dev/cube.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/asphalt.material", false }
 			   }
 	},
@@ -168,7 +168,7 @@ scen:loadAssembly(
 		type = core.componentType.GraphicsComponent,
 		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.DecalGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {10, 10, 10, 1}, render = true },
 		load = { 
-					mesh = { core.loaders.GnomeLoader, "assets/cube.bgnome", false },
+					mesh = { core.loaders.GnomeLoader, "assets/model/dev/cube.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/dev/decal_test.material", false }
 			   }
 	},
@@ -195,7 +195,7 @@ scen:loadAssembly(
 		type = core.componentType.GraphicsComponent,
 		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.DecalGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {25, 25, 25, 1}, render = true },
 		load = { 
-					mesh = { core.loaders.GnomeLoader, "assets/cube.bgnome", false },
+					mesh = { core.loaders.GnomeLoader, "assets/model/dev/cube.bgnome", false },
 					material = { core.loaders.MaterialLoader, "assets/material/dev/decal_test.material", false }
 			   }
 	},

@@ -64,6 +64,8 @@ namespace Core
 		bool m_dispatch;
 
 		GLsync m_sync;
+
+		unsigned int m_prevSize;
 	};
 }
 

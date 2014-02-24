@@ -151,6 +151,10 @@ vec4 CalculatePointlight( LightData light, SurfaceData surface, vec3 wPos, vec3 
 	
 	if(length(lightDir) > light.radius_length)
 		return vec4(0.0f, 0.0f, 0.0f, 0.0f);
+
+#ifdef SHOW_LIGHT_TILES
+	return vec4(1.0f, 0.0f, 0.0f, 0.0f);
+#endif
 	
 	// Calculate attenuation
 	float dist = length( lightDir );
@@ -329,19 +333,21 @@ void main()
 
 		float clipDelta = zFar - zNear;
 
-		float d = 0.5*(normalColor.w + 1.0);
+		float ldepth = (1.0 / wPos.w - zNear) / (zFar - zNear);
 
-		float viewDepth = (normalColor.w/wPos.w+zNear)/zFar;
-
-		uint depth = uint(viewDepth * uint(0xFFFFFFFF));
+		uint depth = uint(ldepth * uint(0xFFFFFFFF));
 
 		atomicMin(minDepth, depth);
 		atomicMax(maxDepth, depth);
 
 		barrier();
 
-		float minDepthZ =  clipDelta*(float(minDepth) / float(uint(0xFFFFFFFF)));
-		float maxDepthZ =  clipDelta*(float(maxDepth) / float(uint(0xFFFFFFFF)));
+		float minDepthZ =  (float(minDepth) / float(uint(0xFFFFFFFF)));
+		float maxDepthZ =  (float(maxDepth) / float(uint(0xFFFFFFFF)));
+
+		minDepthZ = minDepthZ * clipDelta + zNear;
+		maxDepthZ = maxDepthZ * clipDelta + zNear;
+
 
 		vec2 tileScale = framebufferDim * (1.0f / float( 2 * WORK_GROUP_SIZE));
 		vec2 tileBias = tileScale - vec2(gl_WorkGroupID.xy);
@@ -367,10 +373,10 @@ void main()
 		frustumPlanes[3] = col4 + col2;
 
 		//far
-		frustumPlanes[4] = vec4(0.0f, 0.0f, -1.0f, -minDepthZ);
+		frustumPlanes[4] = vec4(0.0f, 0.0f, 1.0f, maxDepthZ);
 
 		//near
-		frustumPlanes[5] = vec4(0.0f, 0.0f, 1.0f, maxDepthZ);
+		frustumPlanes[5] = vec4(0.0f, 0.0f, -1.0f, -minDepthZ);
 
 		for(int i = 0; i < 4; i++)
 		{
@@ -407,7 +413,7 @@ void main()
 				for (uint i = 5; i >= 0 && inFrustum; i--)
 				{
 					dist = dot(frustumPlanes[i], pos);
-					inFrustum = (-dist <= rad);
+					inFrustum = (dist > -rad);
 				}
 			
 				if (inFrustum)

@@ -183,7 +183,19 @@ namespace GFX
 	{
 		Renderer().AddRenderJob(bitmask, value);
 	}
-	
+
+	void DrawSelectionbox(const glm::vec4& posDim, const GFXColor& color)
+	{
+		
+		glm::vec4 cspos = glm::vec4(
+			posDim.x / float(Renderer().GetWindowWidth() / 2) - 1.0f,
+			1.0f - posDim.y / float(Renderer().GetWindowHeight() / 2),
+			posDim.z / float(Renderer().GetWindowWidth())*2,
+			posDim.w / float(Renderer().GetWindowHeight())*2);
+
+		Renderer().DrawSelectionbox(cspos, color);
+	}
+
 	int GetScreenWidth()
 	{
 		return Renderer().GetWindowWidth();

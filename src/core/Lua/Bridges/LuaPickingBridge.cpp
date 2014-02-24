@@ -88,7 +88,8 @@ extern "C"
 			float gaceDistance = luaL_checknumber( L, 5 );
 
 			// temp code !
-			GFX::Debug::DrawRectangle( glm::vec2( X, Y ), glm::vec2( X2 - X, Y2 - Y ), false, GFXColor( 1, 0, 1, 1 ) );	
+			GFX::DrawSelectionbox(glm::vec4(X, Y, X2 - X, Y2 - Y), GFXColor(0, 1, 0, 1));
+			//GFX::Debug::DrawRectangle( glm::vec2( X, Y ), glm::vec2( X2 - X, Y2 - Y ), false, GFXColor( 1, 0, 1, 1 ) );	
 			// temp code end !
 			
 			std::vector< Core::Entity > list = Core::world.m_systemHandler.GetSystem<Core::PickingSystem>()->BoxSelect( X, Y, X2, Y2, gaceDistance );
@@ -126,13 +127,16 @@ extern "C"
             
         return luaL_error(L, "getPoliceGroupsInsideBox(mouseX, mouseY, mouseX2, mouseY2, graceDistance), requires 5 arguments");
 	}
+      
+    static int LuaGetIsInsideNavigationMesh( lua_State * L )
+    {
+        glm::vec3 * vec3in = luau_checkglmvec3(L,1);
+		Core::PickingSystem* pickingSystem = Core::world.m_systemHandler.GetSystem<Core::PickingSystem>();
 
+        lua_pushboolean( L, pickingSystem->IsInsideNavigationMesh( *vec3in ) );
 
-
-
-
-
-
+        return 1;
+    }
 }
 
 namespace Core
@@ -147,7 +151,7 @@ namespace Core
                     luau_setfunction(L, "getHitEntity", LuaGetHitEntity);
                     luau_setfunction(L, "getGroundHit", LuaGetGroundHit);
 					luau_setfunction(L, "getPoliceGroupsInsideBox", LuaGetPoliceGroupsInsideBox);
-
+                    luau_setfunction(L, "getIsInsideNavigationMesh", LuaGetIsInsideNavigationMesh );
                 lua_setfield(L, -2, "picking" );
             lua_pop( L, 2 );
     }
