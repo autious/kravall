@@ -239,6 +239,62 @@ light = scen.asm:loadAssembly(
 --	}
 --} 
 --)
+scen:loadAssembly( 
+{
+	{
+		type = core.componentType.LightComponent,
+		data =  { 
+					color = { 1, 0, 0 },
+					speccolor = { 1, 0, 0 },
+					intensity = 15.0,
+					spotangle = 3.14/3.0,
+					spotpenumbra = 0.5,
+					type = core.gfx.objectTypes.Light,
+					lighttype = core.gfx.lightTypes.Spot
+				}
+	},
+	{
+		type = core.componentType.WorldPositionComponent,
+		data = { position = { 10, 2, 0 } }
+	},
+	{
+		type = core.componentType.ScaleComponent,
+		data = { scale = 50.0 }
+	},
+	{
+		type = core.componentType.RotationComponent,
+		data = { rotation = { 0,-1,0,0 } }
+	}
+} 
+)
+spotlight = scen:loadAssembly( 
+{
+	{
+		type = core.componentType.LightComponent,
+		data =  { 
+					color = { 0.2, 0.7, 0.8 },
+					speccolor = { 0.2, 0.7, 0.8 },
+					intensity = 15.0,
+					spotangle = 3.14/3.0,
+					spotpenumbra = 0.5,
+					type = core.gfx.objectTypes.Light,
+					lighttype = core.gfx.lightTypes.Spot
+				}
+	},
+	{
+		type = core.componentType.WorldPositionComponent,
+		data = { position = { -10, 0.1, 0 } }
+	},
+	{
+		type = core.componentType.ScaleComponent,
+		data = { scale = 50.0 }
+	},
+	{
+		type = core.componentType.RotationComponent,
+		data = { rotation = { 0,-1,0,0 } }
+	}
+} 
+)
 local rot = 10
 local x = 200
 local y = 300
@@ -270,9 +326,10 @@ local function Update(delta)
 	end
 	
 	local rc;
-    rc = light:get(core.componentType.RotationComponent)
-	rc.rotation = { math.cos(rot), -1 - (0.1 + math.sin(rot)), math.sin(rot), 0 }
-	light:set(core.componentType.RotationComponent, rc)
+    rc = spotlight:get(core.componentType.RotationComponent)
+	rc.rotation = { math.cos(rot), math.sin(rot), 0, 0 }
+	spotlight:set(core.componentType.RotationComponent, rc)
+	
 	
 	--core.draw.drawTextbox( 100, 100, 100, 300, 0, "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890" )
 	--core.draw.drawRectangle( 100, 100, 100, 300, false )
