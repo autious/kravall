@@ -399,13 +399,32 @@ namespace Core
 		GFX::InstanceData* instanceData = Core::world.m_frameHeap.NewObject<GFX::InstanceData>();
 		instanceData->modelMatrix = translationMatrix * scaleMatrix;
 		GFX::Draw(m_bitmask, (void*)instanceData);
+
+		GFX::LightData* lightData = Core::world.m_frameHeap.NewObject<GFX::LightData>();
+
+		lightData->position = position;
+		lightData->spot_angle = 0.0f;
+		lightData->spot_penumbra = 0.0f;
+		lightData->color[0] = 0.0f;
+		lightData->color[1] = 1.0f;
+		lightData->color[2] = 0.0f;
+		lightData->spec_color[0] = 0.0f;
+		lightData->spec_color[1] = 1.0f;
+		lightData->spec_color[2] = 0.0f;
+		lightData->radius_length = 5.0f;
+		lightData->intensity = 0.1f;
+		lightData->orientation = glm::vec3(0.0f);
+
+		GFX::Draw(m_lightBitmask, (void*)lightData);
+
 	}
 
 	void SquadSystem::Update(float delta)
 	{
 		if (!m_foundAssets)
 		{
-		
+			m_lightBitmask = 0;
+			m_bitmask = 0;
 			Core::world.m_contentManager.Load<Core::GnomeLoader>("assets/model/dev/cube.bgnome", [this](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
 			{
 				Core::ModelData data = *static_cast<Core::ModelData*>(handle);
@@ -422,6 +441,11 @@ namespace Core
 			GFX::SetBitmaskValue(m_bitmask, GFX::BITMASK::MATERIAL_ID, m_material);
 			GFX::SetBitmaskValue(m_bitmask, GFX::BITMASK::LAYER, GFX::LAYER_TYPES::MESH_LAYER);
 			GFX::SetBitmaskValue(m_bitmask, GFX::BITMASK::TYPE,	GFX::OBJECT_TYPES::DECAL_GEOMETRY);
+
+		
+			GFX::SetBitmaskValue(m_lightBitmask, GFX::BITMASK::LIGHT_TYPE, GFX::LIGHT_TYPES::POINT);
+			GFX::SetBitmaskValue(m_lightBitmask, GFX::BITMASK::TYPE, GFX::OBJECT_TYPES::LIGHT);
+		
 			m_foundAssets = true;
 		}
 		else
