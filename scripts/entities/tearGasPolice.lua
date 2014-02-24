@@ -2,9 +2,16 @@ local tearGasPolice = (require "game_constants").tearGasPolice
 
 return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, groupID, weaponType)
 
-	local meshes = {"assets/model/animated/cop/cop-teargas_00.bgnome"}
+	local meshes = {"assets/model/animated/police/cop/cop-teargas_00.bgnome"}
+    
+    local T = {}
+    
+    function T:getAbilities()
+        local abilities = core.system.squad.abilities
+        return {abilities.Attack, abilities.ArrestGroup, abilities.Sprint, abilities.TearGas, abilities.Sprint, abilities.Rout }
+    end    
 
-	asm:loadAssembly( 
+	T.entity = asm:loadAssembly( 
 		{
 			{
 				type = core.componentType.WorldPositionComponent,
@@ -40,9 +47,9 @@ return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, group
 				type = core.componentType.AttributeComponent,
 				data = 
                     { 
-                        health = standardPolice.maxHealth, 
-                        stamina = 100, 
-                        morale = standardPolice.maxMorale, 
+                        health = tearGasPolice.maxHealth, 
+                        stamina = tearGasPolice.maxStamina, 
+                        morale = tearGasPolice.maxMorale, 
                         stancePolice = core.PoliceStance.Passive,
                         statePolice = core.PoliceState.Attacking, 
                         defense = 0, 
@@ -85,4 +92,6 @@ return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, group
             }
 		}
 	)
+
+    return T
 end

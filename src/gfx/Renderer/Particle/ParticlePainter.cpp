@@ -64,7 +64,7 @@ namespace GFX
     
     }
 
-    void ParticlePainter::Render(unsigned int& renderIndex,GFX::FBOTexture* particleTarget, GFX::FBOTexture* depthBuffer, GFX::FBOTexture* normalDepth, GFX::FBOTexture* specular, GFX::FBOTexture* glowMatID, GLuint toneMappedTexture, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
+    void ParticlePainter::Render(unsigned int& renderIndex,GFX::FBOTexture* particleTarget, GFX::FBOTexture* depthBuffer, GFX::FBOTexture* normalDepth, GFX::FBOTexture* specular, GFX::FBOTexture* glowMatID, GLuint toneMappedTexture, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix, float gamma)
     {
 		BasePainter::Render();
 
@@ -142,7 +142,9 @@ namespace GFX
                     m_texture1Uniform = m_shaderManager->GetUniformLocation(currentShader, "gNormal");
                     m_texture2Uniform = m_shaderManager->GetUniformLocation(currentShader, "gSpecular");
                     m_texture3Uniform = m_shaderManager->GetUniformLocation(currentShader, "gGlow");
+                    m_depthBufferSizeUniform = m_shaderManager->GetUniformLocation(currentShader, "depthBufferSize");
                     m_depthBufferUniform = m_shaderManager->GetUniformLocation(currentShader, "gDepthBuffer");
+                    m_gammaUniform = m_shaderManager->GetUniformLocation(currentShader, "gGamma");
                 }
                 
                 glUseProgram(currentShader);
@@ -154,8 +156,17 @@ namespace GFX
 
                 if(m_depthBufferUniform >= 0)
                 {
+                    m_textureManager->BindTexture(normalDepth->GetTextureHandle(), m_depthBufferUniform, 4, GL_TEXTURE_2D);
+                }
 
-                    m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[3]).textureHandle, m_texture3Uniform, 3, GL_TEXTURE_2D);
+                if(m_depthBufferSizeUniform >= 0)
+                {
+                    glUniform2fv(m_depthBufferSizeUniform, 1, &glm::vec2(normalDepth->GetWidth(), normalDepth->GetHeight())[0]);
+                }
+
+                if(m_gammaUniform >= 0)
+                {
+                    glUniform1f(m_depthBufferSizeUniform, gamma);
                 }
             }
 
@@ -253,7 +264,7 @@ namespace GFX
         glDrawBuffers(5, drawBuffers);
         glEnable(GL_BLEND);
         glBlendEquation(GL_FUNC_ADD);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE);    
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);    
        
         m_shaderManager->UseProgram("ParticleApply");
         glActiveTexture(GL_TEXTURE0);

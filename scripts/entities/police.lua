@@ -2,10 +2,19 @@ local standardPolice = (require "game_constants").standardPolice
 
 return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, groupID, weaponType)
 
+    assert(groupID, "groupID is nil")
+
 	local meshes = {"assets/model/animated/rioter/rioter-male_00.bgnome", "assets/model/animated/rioter/rioter-female_00.bgnome" }
     local gender = math.random(1, #meshes)
 
-	asm:loadAssembly( 
+    local T = {}
+    
+    function T.getAbilities()
+        local abilities = core.system.squad.abilities
+        return {abilities.Attack, abilities.ArrestGroup, abilities.Sprints, abilities.Sprint, abilities.Rout }
+    end    
+
+    T.entity = asm:loadAssembly( 
 		{
 			{
 				type = core.componentType.WorldPositionComponent,
@@ -42,7 +51,7 @@ return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, group
 				data = 
                     { 
                         health = standardPolice.maxHealth, 
-                        stamina = 100, 
+                        stamina = standardPolice.maxStamina, 
                         morale = standardPolice.maxMorale, 
                         stancePolice = core.PoliceStance.Passive,
                         statePolice = core.PoliceState.Attacking, 
@@ -86,4 +95,6 @@ return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, group
             }
 		}
 	)
+
+    return T
 end
