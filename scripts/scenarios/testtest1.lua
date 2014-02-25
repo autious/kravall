@@ -21,28 +21,18 @@ function scen:load()
     
     scen.asm:specific_content( core.contentmanager.load( core.loaders.NavigationMeshLoader, "extremeScenario.txt", function( value ) end, false ) )
 
-    
+	local function genF( e, f )
+        if type( script[f] ) == "function"  then
+            return function() script[ f ]( e ) end
+        else
+            error( "Function " .. f .. " does not exist in script file" )
+        end
+    end
+	
+    scen:registerInitCallback( genF( ent, "makeASquadYo" ) )
 	
     directional( scen, 0.6643835306167603, -0.6150288581848145, 0.42465752363204956, 1.0, 0.9453219771385193, 0.7452670335769653, 0.7205882668495178 )
     ambient( scen, 0.6720433235168457, 0.8547968864440918, 1.0, 0.017941176295280457 )
-	
-	local fists = core.weaponData.pushWeapon( 1.0, 0.75, 20, 0.2, 0.05, 3.2, 2.9, 0.05, 0.5, "punch" )
-	core.gameMetaData.registerEscapePoint( 50, 0, 0 )
-
-	local rGroup = core.system.groups.createGroup();
-	local centerPoint = { -50, 0, 0 }
-	local side = math.sqrt( 32 )
-	for i = -side/2, side/2 do
-		for p = -side/2, side/2 do
-			--rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rGroup, nil, nil, fists)
-		end
-	end
-	core.system.groups.setGroupGoal(rGroup, 0, 0, -300)
-
-	local sqads = {}	
-	for i = 0, 10 do
-		sqads[#sqads + 1] = squad(scen, 20, 0, 0, math.pi/2, fists);
-	end
 	
 
 end
