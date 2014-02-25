@@ -121,7 +121,11 @@ namespace Core
 						in[i].health_stamina_morale_stancealignment = glm::vec4(ac->health, ac->stamina, ac->morale, ac->rioter.stance); //Attacking state should override stance here
 						in[i].groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance = glm::vec4(ac->rioter.groupID, 1, 1, navMeshValue);
 					}
-
+					else if (utc->type == UnitType::Object)
+					{
+						in[i].health_stamina_morale_stancealignment = glm::vec4(100.0f, 100.0f, 2.0f, ac->pfObject.pfObjectType); //Attacking state should override stance here
+						in[i].groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance = glm::vec4(0, 1, 1, 0);
+					}
 					i++;
 				}
 				glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);

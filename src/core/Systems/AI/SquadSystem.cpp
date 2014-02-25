@@ -6,7 +6,7 @@
 #include <GameUtility/GameData.hpp>
 
 #include <gfx/GFXInterface.hpp>
-#include <gfx/BitmaskDefinitions.hpp>
+#include <gfx/InstanceData.hpp>
 
 #define FORMATION_COLUMN_SPACING_MINIMUM 2.0f
 #define FORMATION_ROW_SPACING 2.0f
@@ -15,7 +15,7 @@ namespace Core
 {
     SquadSystem::SquadSystem() : Core::BaseSystem(Core::EntityHandler::GenerateAspect<Core::SquadComponent>(), 0ULL)
     {
-        
+		m_foundAssets = false;
     }
 
     void SquadSystem::SetSquadGoal(int* squadIDs, int nSquads, glm::vec3 target)
@@ -231,7 +231,8 @@ namespace Core
                     glm::vec3 finalPosition = center + relPos;
                     //TODO: Replace Debug draw with decals
                     navMesh->GetClosestPointInsideMesh(finalPosition, center, goalNode, 0.2f);
-                    GFX::Debug::DrawSphere(finalPosition, 0.5f, GFXColor(1.0f, 0.0f, 0.0f, 1.0f), false);
+					PushDecal(finalPosition);
+                    //GFX::Debug::DrawSphere(finalPosition, 0.5f, GFXColor(1.0f, 0.0f, 0.0f, 1.0f), false);
 
                     xOffset += xSpacing;
                     if(xOffset > rightDistance)
@@ -271,7 +272,8 @@ namespace Core
                         glm::vec3 finalPosition = centerPosition + relPos;
                         //TODO: Replace Debug draw with decals
                         navMesh->GetClosestPointInsideMesh(finalPosition, centerPosition, goalNode, 0.2f);
-                        GFX::Debug::DrawSphere(finalPosition, 0.5f, GFXColor(1.0f, 0.0f, 0.0f, 1.0f), false);
+						PushDecal(finalPosition);
+                        //GFX::Debug::DrawSphere(finalPosition, 0.5f, GFXColor(1.0f, 0.0f, 0.0f, 1.0f), false);
 
                         circumferenceOffset += circleSpacing;
                         if(circumferenceOffset >= circumference)
@@ -389,127 +391,185 @@ namespace Core
         return m_entities;
     }
 
-    void SquadSystem::Update(float delta)
-    {
-        for(std::vector<Entity>::iterator squad_it = m_entities.begin(); squad_it != m_entities.end(); ++squad_it)        
-        {
-            Core::SquadComponent* sqdc = WGETC<Core::SquadComponent>(*squad_it);
-            std::vector<Core::Entity> squad = Core::world.m_systemHandler.GetSystem<Core::GroupDataSystem>()->GetMembersInGroup(sqdc->squadID);
+	void SquadSystem::PushDecal(glm::vec3 position)
+	{
+		glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), position);
+		glm::mat4 scaleMatrix = glm::scale(1.0f, 1.0f, 1.0f);
 
-			Core::AttributeComponent* attribc = WGETC<Core::AttributeComponent>(sqdc->squadLeader);
-            if(sqdc->squadLeader == INVALID_ENTITY || !attribc)
-            {
-                if(squad.size() > 0)
-                {
-                    sqdc->squadLeader = squad[static_cast<int>(squad.size() / 2)];
-                }
-                else
-                {
-                    //The group is empty
-                    continue;
-                }
-            }
+		GFX::InstanceData* instanceData = Core::world.m_frameHeap.NewObject<GFX::InstanceData>();
+		instanceData->modelMatrix = translationMatrix * scaleMatrix;
+		GFX::Draw(m_bitmask, (void*)instanceData);
 
-            Core::WorldPositionComponent* leader_wpc = WGETC<Core::WorldPositionComponent>(sqdc->squadLeader);                
-			sqdc->waitForStraggler = false;
-            
-			glm::vec3 leaderPosition = Core::WorldPositionComponent::GetVec3(*leader_wpc);
+		GFX::LightData* lightData = Core::world.m_frameHeap.NewObject<GFX::LightData>();
 
-            float rotation = 0.0f;            
-            if(sqdc->squadMoveInFormation)
-            {
-                //TODO: If squad leader is not in combat, set squadForward to his facing
-                //sqdc->squadForward[0] = leaderForward[0];
-                //sqdc->squadForward[1] = leaderForward[1];
-                rotation = glm::atan(-sqdc->squadForward[1], sqdc->squadForward[0]) - (3.14f / 2.0f);
-            }
-            else
-            {
-                rotation = glm::atan(-sqdc->squadTargetForward[1], sqdc->squadTargetForward[0])  - (3.14f / 2.0f);
+		lightData->position = position;
+		lightData->spot_angle = 0.0f;
+		lightData->spot_penumbra = 0.0f;
+		lightData->color[0] = 0.0f;
+		lightData->color[1] = 1.0f;
+		lightData->color[2] = 0.0f;
+		lightData->spec_color[0] = 0.0f;
+		lightData->spec_color[1] = 1.0f;
+		lightData->spec_color[2] = 0.0f;
+		lightData->radius_length = 5.0f;
+		lightData->intensity = 0.1f;
+		lightData->orientation = glm::vec3(0.0f);
 
-            }
+		GFX::Draw(m_lightBitmask, (void*)lightData);
 
-            float cosVal = glm::cos(rotation);
-            float sinVal = glm::sin(rotation);
-            glm::mat2 rotMat = glm::mat2(cosVal, -sinVal, sinVal, cosVal);
+	}
 
-            //Calculate individual goals depending on formation settings.
-            Core::NavigationMesh* navMesh = Core::GetNavigationMesh();
-            for(std::vector<Entity>::iterator entity_it = squad.begin(); entity_it != squad.end(); ++entity_it)
-            {
-                Core::FormationComponent* frmc = WGETC<Core::FormationComponent>(*entity_it);
-                Core::MovementComponent* mc = WGETC<Core::MovementComponent>(*entity_it);
-                Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(*entity_it);
+	void SquadSystem::Update(float delta)
+	{
+		if (!m_foundAssets)
+		{
+			m_lightBitmask = 0;
+			m_bitmask = 0;
+			Core::world.m_contentManager.Load<Core::GnomeLoader>("assets/model/dev/cube.bgnome", [this](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+			{
+				Core::ModelData data = *static_cast<Core::ModelData*>(handle);
+				this->m_mesh = data.meshID;
+			});
+		
+			Core::world.m_contentManager.Load<Core::MaterialLoader>("assets/texture/dev/positionPreview.material", [this](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+			{
+				Core::MaterialData data = *static_cast<Core::MaterialData*>(handle);
+				this->m_material = data.materialId;
+			});
+		
+			GFX::SetBitmaskValue(m_bitmask, GFX::BITMASK::MESH_ID, m_mesh);
+			GFX::SetBitmaskValue(m_bitmask, GFX::BITMASK::MATERIAL_ID, m_material);
+			GFX::SetBitmaskValue(m_bitmask, GFX::BITMASK::LAYER, GFX::LAYER_TYPES::MESH_LAYER);
+			GFX::SetBitmaskValue(m_bitmask, GFX::BITMASK::TYPE,	GFX::OBJECT_TYPES::DECAL_GEOMETRY);
 
+		
+			GFX::SetBitmaskValue(m_lightBitmask, GFX::BITMASK::LIGHT_TYPE, GFX::LIGHT_TYPES::POINT);
+			GFX::SetBitmaskValue(m_lightBitmask, GFX::BITMASK::TYPE, GFX::OBJECT_TYPES::LIGHT);
+		
+			m_foundAssets = true;
+		}
+		else
+		{
+			for (std::vector<Entity>::iterator squad_it = m_entities.begin(); squad_it != m_entities.end(); ++squad_it)
+			{
+				Core::SquadComponent* sqdc = WGETC<Core::SquadComponent>(*squad_it);
+				std::vector<Core::Entity> squad = Core::world.m_systemHandler.GetSystem<Core::GroupDataSystem>()->GetMembersInGroup(sqdc->squadID);
 
-                glm::vec2 relPos2D = glm::vec2(frmc->relativePosition[0], frmc->relativePosition[1]);
-                relPos2D = rotMat * relPos2D;
-
-                glm::vec3 relativePosition = glm::vec3(relPos2D.x, 0.0f, relPos2D.y);
-                if(sqdc->squadMoveInFormation)
-                {
-                    glm::vec3 formationPosition = leaderPosition + relativePosition;
-                    int goalNode;
-
-                    //If the formation position is outside the navigation mesh the formation position should be on
-                    //    the point where the line from the leader to the formation position collides with the navmesh.
-                    bool hasMovedFormationPos = navMesh->GetClosestPointInsideMesh(formationPosition, leaderPosition, goalNode, 0.2f);
-                    if(!hasMovedFormationPos)
-                    {
-                        //If an entity is given a new position it can no longer be a straggler
-                        frmc->isStraggler = glm::distance(formationPosition, WorldPositionComponent::GetVec3(*wpc)) > static_cast<float>(Core::world.m_config.GetDouble("formationStraggleDistance", 0.5));  
-                        sqdc->waitForStraggler = !sqdc->waitForStraggler ? frmc->isStraggler : true;                                                    
-                    }
-
-					formationPosition.y = 0.0f;
-					mc->SetGoal( formationPosition, goalNode, Core::MovementGoalPriority::FormationGoalPriority );
-                }
-                else
-                {
-                    
-                    glm::vec3 squadTargetPosition = glm::vec3(sqdc->squadGoal[0], sqdc->squadGoal[1], sqdc->squadGoal[2]);  
-                    glm::vec3 formationPosition = squadTargetPosition + relativePosition;
-                    int goalNode;
-
-                    GFX::Debug::DrawLine(squadTargetPosition, squadTargetPosition + glm::vec3(sqdc->squadTargetForward[0], 0.0f, sqdc->squadTargetForward[1])*3.0f, GFXColor(0.0f, 1.0f, 0.0f, 1.0f),false);
-                    //If the formation position is outside the navigation mesh the formation position should be on
-                    //    the point where the line from the target position to the formation position collides with the navmesh.
-                    
-                    navMesh->GetClosestPointInsideMesh(formationPosition, squadTargetPosition, goalNode, 0.2f);
-
-                    formationPosition.y = 0.0f;
-					mc->SetGoal( formationPosition, goalNode, Core::MovementGoalPriority::FormationGoalPriority );
-                }
-            }
-
-            sqdc->squadHealth = 0;
-            sqdc->squadStamina = 0;
-            sqdc->squadMorale = 0.0f;
-            //Set attributes and calculate squad data.
-            for(std::vector<Entity>::iterator entity_it = squad.begin(); entity_it != squad.end(); ++entity_it)
-            {
-                Core::FormationComponent* frmc = WGETC<Core::FormationComponent>(*entity_it);
-                Core::MovementComponent* mc = WGETC<Core::MovementComponent>(*entity_it);
-                Core::AttributeComponent* atrbc = WGETC<Core::AttributeComponent>(*entity_it);
-
-                atrbc->police.stance = sqdc->squadStance;
-                sqdc->squadHealth += atrbc->health;
-                sqdc->squadStamina += atrbc->stamina;
-                sqdc->squadMorale += atrbc->morale;
-
-				if( sqdc->waitForStraggler )
+				Core::AttributeComponent* attribc = WGETC<Core::AttributeComponent>(sqdc->squadLeader);
+				if (sqdc->squadLeader == INVALID_ENTITY || !attribc)
 				{
-					if(!frmc->isStraggler)
+					if (squad.size() > 0)
 					{
-						mc->SetDesiredSpeed( 0.0f, Core::DesiredSpeedSetPriority::SquadMoveInFormationDesiredSpeedPriority );
+						sqdc->squadLeader = squad[static_cast<int>(squad.size() / 2)];
 					}
 					else
 					{
-						// PoliceGoalSystem will make sure that they move to the goal and that they stop there as well.
-						//mc->SetDesiredSpeed( Core::GameData::GetMovementDataWithState( mc->state ).speedToDesire, Core::DesiredSpeedSetPriority::SquadMoveInFormationDesiredSpeedPriority );
+						//The group is empty
+						continue;
 					}
 				}
-            }
-        }
-    }
+
+				Core::WorldPositionComponent* leader_wpc = WGETC<Core::WorldPositionComponent>(sqdc->squadLeader);
+				sqdc->waitForStraggler = false;
+
+				glm::vec3 leaderPosition = Core::WorldPositionComponent::GetVec3(*leader_wpc);
+
+				float rotation = 0.0f;
+				if (sqdc->squadMoveInFormation)
+				{
+					//TODO: If squad leader is not in combat, set squadForward to his facing
+					//sqdc->squadForward[0] = leaderForward[0];
+					//sqdc->squadForward[1] = leaderForward[1];
+					rotation = glm::atan(-sqdc->squadForward[1], sqdc->squadForward[0]) - (3.14f / 2.0f);
+				}
+				else
+				{
+					rotation = glm::atan(-sqdc->squadTargetForward[1], sqdc->squadTargetForward[0]) - (3.14f / 2.0f);
+
+				}
+
+				float cosVal = glm::cos(rotation);
+				float sinVal = glm::sin(rotation);
+				glm::mat2 rotMat = glm::mat2(cosVal, -sinVal, sinVal, cosVal);
+
+				//Calculate individual goals depending on formation settings.
+				Core::NavigationMesh* navMesh = Core::GetNavigationMesh();
+				for (std::vector<Entity>::iterator entity_it = squad.begin(); entity_it != squad.end(); ++entity_it)
+				{
+					Core::FormationComponent* frmc = WGETC<Core::FormationComponent>(*entity_it);
+					Core::MovementComponent* mc = WGETC<Core::MovementComponent>(*entity_it);
+					Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(*entity_it);
+
+
+					glm::vec2 relPos2D = glm::vec2(frmc->relativePosition[0], frmc->relativePosition[1]);
+					relPos2D = rotMat * relPos2D;
+
+					glm::vec3 relativePosition = glm::vec3(relPos2D.x, 0.0f, relPos2D.y);
+					if (sqdc->squadMoveInFormation)
+					{
+						glm::vec3 formationPosition = leaderPosition + relativePosition;
+						int goalNode;
+
+						//If the formation position is outside the navigation mesh the formation position should be on
+						//    the point where the line from the leader to the formation position collides with the navmesh.
+						bool hasMovedFormationPos = navMesh->GetClosestPointInsideMesh(formationPosition, leaderPosition, goalNode, 0.2f);
+						if (!hasMovedFormationPos)
+						{
+							//If an entity is given a new position it can no longer be a straggler
+							frmc->isStraggler = glm::distance(formationPosition, WorldPositionComponent::GetVec3(*wpc)) > static_cast<float>(Core::world.m_config.GetDouble("formationStraggleDistance", 0.5));
+							sqdc->waitForStraggler = !sqdc->waitForStraggler ? frmc->isStraggler : true;
+						}
+
+						formationPosition.y = 0.0f;
+						mc->SetGoal(formationPosition, goalNode, Core::MovementGoalPriority::FormationGoalPriority);
+					}
+					else
+					{
+
+						glm::vec3 squadTargetPosition = glm::vec3(sqdc->squadGoal[0], sqdc->squadGoal[1], sqdc->squadGoal[2]);
+						glm::vec3 formationPosition = squadTargetPosition + relativePosition;
+						int goalNode;
+
+						GFX::Debug::DrawLine(squadTargetPosition, squadTargetPosition + glm::vec3(sqdc->squadTargetForward[0], 0.0f, sqdc->squadTargetForward[1])*3.0f, GFXColor(0.0f, 1.0f, 0.0f, 1.0f), false);
+						//If the formation position is outside the navigation mesh the formation position should be on
+						//    the point where the line from the target position to the formation position collides with the navmesh.
+
+						navMesh->GetClosestPointInsideMesh(formationPosition, squadTargetPosition, goalNode, 0.2f);
+
+						formationPosition.y = 0.0f;
+						mc->SetGoal(formationPosition, goalNode, Core::MovementGoalPriority::FormationGoalPriority);
+					}
+				}
+
+				sqdc->squadHealth = 0;
+				sqdc->squadStamina = 0;
+				sqdc->squadMorale = 0.0f;
+				//Set attributes and calculate squad data.
+				for (std::vector<Entity>::iterator entity_it = squad.begin(); entity_it != squad.end(); ++entity_it)
+				{
+					Core::FormationComponent* frmc = WGETC<Core::FormationComponent>(*entity_it);
+					Core::MovementComponent* mc = WGETC<Core::MovementComponent>(*entity_it);
+					Core::AttributeComponent* atrbc = WGETC<Core::AttributeComponent>(*entity_it);
+
+					atrbc->police.stance = sqdc->squadStance;
+					sqdc->squadHealth += atrbc->health;
+					sqdc->squadStamina += atrbc->stamina;
+					sqdc->squadMorale += atrbc->morale;
+
+					if (sqdc->waitForStraggler)
+					{
+						if (!frmc->isStraggler)
+						{
+							mc->SetDesiredSpeed(0.0f, Core::DesiredSpeedSetPriority::SquadMoveInFormationDesiredSpeedPriority);
+						}
+						else
+						{
+							// PoliceGoalSystem will make sure that they move to the goal and that they stop there as well.
+							//mc->SetDesiredSpeed( Core::GameData::GetMovementDataWithState( mc->state ).speedToDesire, Core::DesiredSpeedSetPriority::SquadMoveInFormationDesiredSpeedPriority );
+						}
+					}
+				}
+			}
+		}
+	}
 }

@@ -1,20 +1,17 @@
-local standardPolice = (require "game_constants").standardPolice
+local tearGasPolice = (require "game_constants").tearGasPolice
 
 return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, groupID, weaponType)
 
-    assert(groupID, "groupID is nil")
-
-	local meshes = {"assets/model/animated/rioter/rioter-male_00.bgnome", "assets/model/animated/rioter/rioter-female_00.bgnome" }
-    local gender = math.random(1, #meshes)
-
+	local meshes = {"assets/model/animated/police/cop/cop-teargas_00.bgnome"}
+    
     local T = {}
     
-    function T.getAbilities()
+    function T:getAbilities()
         local abilities = core.system.squad.abilities
-        return {abilities.Attack, abilities.ArrestGroup, abilities.Sprints, abilities.Sprint, abilities.Rout }
+        return {abilities.Attack, abilities.ArrestGroup, abilities.Sprint, abilities.TearGas, abilities.Sprint, abilities.Rout }
     end    
 
-    T.entity = asm:loadAssembly( 
+	T.entity = asm:loadAssembly( 
 		{
 			{
 				type = core.componentType.WorldPositionComponent,
@@ -25,7 +22,7 @@ return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, group
 				data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 1, 0, 1} },
 				load = { 
 							mesh = { core.loaders.GnomeLoader, meshes[1] },
-							material = { core.loaders.MaterialLoader, "assets/texture/animated/police/cop/cop-light_00.material" }
+							material = { core.loaders.MaterialLoader, "assets/texture/animated/police/cop/cop-teargas_00.material" }
 					   }
 			},
 			{
@@ -50,9 +47,9 @@ return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, group
 				type = core.componentType.AttributeComponent,
 				data = 
                     { 
-                        health = standardPolice.maxHealth, 
-                        stamina = standardPolice.maxStamina, 
-                        morale = standardPolice.maxMorale, 
+                        health = tearGasPolice.maxHealth, 
+                        stamina = tearGasPolice.maxStamina, 
+                        morale = tearGasPolice.maxMorale, 
                         stancePolice = core.PoliceStance.Passive,
                         statePolice = core.PoliceState.Attacking, 
                         defense = 0, 
@@ -64,7 +61,7 @@ return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, group
 			},
 			{
 				type = core.componentType.TargetingComponent,
-				data = { weapon = weaponType or -1 },
+				data = { weapon = weaponType or fists },
 				ignoreHard = true
 			},
 			{
@@ -84,11 +81,6 @@ return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, group
 					currentFrame = 0,
 					queuedAnimationID = 0
 				}
-			},
-			{
-				type = core.componentType.MovementDataComponent,
-				data = { },
-				ignoreHard = true
 			},
 			{
 				type = core.componentType.FlowfieldComponent,

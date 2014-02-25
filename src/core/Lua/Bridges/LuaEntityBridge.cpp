@@ -69,8 +69,8 @@ extern "C"
     
     static int LuaEntityGet( lua_State * L )
     {
-
         LuaEntity * ent = luau_checkentity( L, 1 );
+
         if( ent->entity == INVALID_ENTITY )
             return luaL_error( L, "entity get on invalid entity" );
         else

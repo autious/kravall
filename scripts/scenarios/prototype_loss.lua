@@ -20,10 +20,6 @@ local objDontDie = objective.new( DONT_DIE_MSG )
 local ESCORT_MSG = "Escort atleast 5 anarchists to their home."
 local objLeadThrough = objective.new( ESCORT_MSG )
 
-gamemode.objectiveHandler:addObjective( objDontDie )
-gamemode.objectiveHandler:addObjective( objLeadThrough )
-
-
 function printCount( ent )
 --    print( core.system.area.getAreaRioterCount( ent ) ) 
     for _,ent in pairs( core.system.area.getAreaRioters( ent ) ) do

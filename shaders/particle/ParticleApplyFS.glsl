@@ -5,10 +5,8 @@ out vec4 color;
 in vec2 uv;
 
 uniform sampler2D textureIN;
-uniform float alphaIN;
 
 void main()
 {
 	color = texture2D(textureIN, uv);
-	color.a *= alphaIN;
 }

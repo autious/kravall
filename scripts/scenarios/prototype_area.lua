@@ -1,6 +1,5 @@
 local ent = require "entities"
 local scenario = require "scenario"
-local objective = require "objective" 
 local scen = scenario.new()
 
 scen.name = "Protype Area"
@@ -12,10 +11,6 @@ scen:registerInitCallback( function() scen.gamemode:init() end )
 scen:registerUpdateCallback( function(delta) scen.gamemode:update(delta) end )
 scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
 
-local DONT_DIE_MSG = "Don't let the anarchists die" 
-local ESCORT_MSG = "Escort atleast 5 anarchists to their home."
-local objDontDie
-local objLeadThrough
 
 function printCount( ent )
 --    print( core.system.area.getAreaRioterCount( ent ) ) 
@@ -27,28 +22,7 @@ end
 function checkObjCount( ent )
     local count = core.system.area.getAreaRioterCount( ent )
     local alive_count = core.system.groups.getGroupMemberCount( 1 )
-
-    if objDontDie ~= nil and objLeadThrough ~= nil then
-        if alive_count < 5 then
-            objDontDie.state = "fail"   
-            objLeadThrough.state = "fail"
-        end
-
-        if count > 5 then
-            objDontDie.state = "success"
-            objLeadThrough.state = "success" 
-        end
-
-        objDontDie.title = DONT_DIE_MSG .. " " .. alive_count .. " still alive."
-    end
 end
-
-scen:registerInitCallback( function()
-    objDontDie = objective.new( DONT_DIE_MSG ) 
-    objLeadThrough = objective.new( ESCORT_MSG )
-    scen.gamemode.objectiveHandler:addObjective( objDontDie )
-    scen.gamemode.objectiveHandler:addObjective( objLeadThrough )
-end)
 
 --DATA--
 function scen:load()
