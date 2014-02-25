@@ -14,10 +14,11 @@ function Prep:new(o)
     o.squadPositionDecal = SquadPositionDecal:new()
     o.squadPositionDecal:setFormationOffsets( 
     {
-        core.glm.vec3.new(1,0,0),
-        core.glm.vec3.new(-1,0,0),
-        core.glm.vec3.new(0,0,1),
-        core.glm.vec3.new(0,0,-1),
+        core.glm.vec3.new(1,0,1),
+        core.glm.vec3.new(1,0,-1),
+        core.glm.vec3.new(0,0,0),
+        core.glm.vec3.new(-1,0,-1),
+        core.glm.vec3.new(-1,0,1),
     })
 
     o.spawnAreas = {}
