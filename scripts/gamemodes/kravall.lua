@@ -1,5 +1,3 @@
-local objective_handler = require "objective_handler"
-local objective = require "objective"
 local fac_image = require "factories/image"
 local window = require "window"
 local Camera = require "rts_camera"
@@ -21,7 +19,6 @@ function T:new(o)
     setmetatable( o, self )
     self.__index = self
 
-    o.objectiveHandler = objective_handler:new()
     o.camera = Camera.new()
 	
 	-- set default movementData
@@ -105,25 +102,19 @@ function T:init()
     })	
 end
 
+function T:createObjective( )
+    return self.gui:createObjective( )
+end
+
 function T:update( delta )
-    self.objectiveHandler:update( delta )
     self.gui:update(delta)
     self.policeHandler:update(delta)
-
-    if self.popup == nil then
-        if self.objectiveHandler:isWin() then
-            self.popup = fac_image( window.width/2, window.height/2, "assets/texture/ui/win.material",true )
-        elseif self.objectiveHandler:isLoss() then
-            self.popup = fac_image( window.width/2, window.height/2, "assets/texture/ui/loss.material",true ) 
-        end
-    end
     self.camera:update( delta )
     self.moveMarker:update( delta )
 end
 
 function T:destroy()
     self.gui:destroy()
-    self.objectiveHandler:destroy() 
     if self.popup ~= nil then
         self.popup:destroy()
     end

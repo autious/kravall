@@ -17,6 +17,11 @@ namespace Core
 		PS_Normal, PS_Attacking, PS_Fleeing, PS_Routing
 	};
 
+	enum PFObjectTypes
+	{
+		TearGas, Molotov
+	};
+
 	/*!
 	Enum specifying the alignment of the rioters.
 	A rioter's alignment defines its behaviour and reactions in different situations. There are two alignments:
@@ -79,6 +84,24 @@ namespace Core
 				/*! The rioter's alignment represented by the RioterAlignment enum. */
 				RioterAlignment alignment;
 			} rioter;
+			struct
+			{
+				/*! The type of object to affect the PF. */
+				PFObjectTypes pfObjectType;
+
+				/*! The rioter's conceptual group ID. Used for determining which flow field to use.*/
+				int pad1;
+
+				/*! The rioter's rage represented by an floating point value with range [0, 100]. */
+				float pad2;
+
+				/*! The rioter's pressure represented by an floating point value with range [0, 100]. */
+				float pad3;
+
+				/*! The rioter's alignment represented by the RioterAlignment enum. */
+				int pad4;
+
+			} pfObject;
 		};
 
 		/*!

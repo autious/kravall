@@ -5,6 +5,7 @@ local Checkbox = require "gui/component/Checkbox"
 local TextSelectList = require "gui/component/TextSelectList"
 local TextLabel = require "gui/component/TextLabel"
 local TextBox = require "gui/component/TextBox"
+local ObjectiveHandler = require "gui/component/ObjectiveHandler"
 
 local AnchorPlacer = require "gui/placement/AnchorPlacer"
 local EastPlacer = require "gui/placement/EastPlacer"
@@ -25,7 +26,6 @@ local KravallControl =
     onAbilitySelect = function(ability) end
 }
                             
-
 function KravallControl:new(o)
     o = o or {}
 
@@ -60,6 +60,9 @@ function KravallControl:new(o)
     o.rightControlGUI:addComponent( o.formationGUI )
     -------
 
+    o.objectiveHandler = ObjectiveHandler:new{width=150, height=200, anchor="NorthWest" }
+
+    o.gui:addComponent( o.objectiveHandler )
     o.gui:addComponent( o.rightControlGUI )
     o.gui:addComponent( o.statusGUI )
     o.gui:addComponent( o.eventGUIPadder )
@@ -115,23 +118,27 @@ function KravallControl:update( delta )
     -- For debug writing
     self.gui:renderDebug( delta )
 
-    self.count = self.count or 0
-    self.count = self.count + delta
+    --self.count = self.count or 0
+    --self.count = self.count + delta
 
-    if self.count > 10 then
-        self.ind = self.ind or 0
-        self.ind = self.ind + 1
-        
-        if self.ind % 2 == 1 then
-            self:addEvent(TextLabel:new( {label="Status: " .. self.ind} ))
-        else
-            self:addEvent(Button:new( {onClick=function() print( "JOEL" ) end }))
-        end
-        self.count = 0
-    end
+    --if self.count > 10 then
+    --    self.ind = self.ind or 0
+    --    self.ind = self.ind + 1
+    --    
+    --    if self.ind % 2 == 1 then
+    --        self:addEvent(TextLabel:new( {label="Status: " .. self.ind} ))
+    --    else
+    --        self:addEvent(Button:new( {onClick=function() print( "JOEL" ) end }))
+    --    end
+    --    self.count = 0
+    --end
 
     -- constrict each frame to give animation like results.
     self.eventGUI:constrict( delta )
+end
+
+function KravallControl:createObjective( objective )
+    return self.objectiveHandler:createObjective( objective )  
 end
 
 function KravallControl:destroy()
