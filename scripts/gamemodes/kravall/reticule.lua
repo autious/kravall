@@ -6,7 +6,6 @@ function Reticule:new(o)
     self.__index = self
 
     local vao_handle
-    local material_handle
     
     o.entity = core.entity.create( c.WorldPositionComponent,
                                    c.GraphicsComponent,
@@ -21,22 +20,29 @@ function Reticule:new(o)
         end, 
         false )
 
-    o.material = core.contentmanager.load( 
+    o.acceptMaterial = core.contentmanager.load( 
         core.loaders.MaterialLoader, 
-        "assets/texture/dev/positionPreview.material", 
+        "assets/texture/dev/smokeAcceptReticule.material", 
         function( mat )
-            material_handle = mat
+            o.accept_material_handle = mat
         end, 
         false )
 
+    o.denyMaterial = core.contentmanager.load( 
+        core.loaders.MaterialLoader, 
+        "assets/texture/dev/smokeDenyReticule.material", 
+        function( mat )
+            o.deny_material_handle = mat
+        end, 
+        false )
     o.entity:set( c.GraphicsComponent, 
     { 
         mesh = vao_handle, 
-        material = material_handle, 
+        material = o.accept_material_handle, 
         type = core.gfx.objectTypes.DecalGeometry,
         layer = core.gfx.layerTypes.MeshLayer, 
-        outlineColor = {10, 10, 10, 10}, 
-        render = true
+        outlineColor = {15, 1, 15, 1}, 
+        render = false
     })
 
     o.entity:set( c.ScaleComponent, { scale = 1 } )
@@ -50,12 +56,21 @@ function Reticule:SetPosition(x, y, z)
 end
 
 function Reticule:SetScale(scale)
-    self.entity:set(c.GrapichsComponent, {outlineColor = {scale, scale, scale, scale}}, true)
+    self.entity:set(c.GrapichsComponent, {outlineColor = {scale, 1, scale, scale}}, true)
+end
+
+function Reticule:SetDeny()
+    self.entity:set(c.GraphicsComponent, {material = self.deny_material_handle}, true)
+end
+
+function Reticule:SetAccept()
+    self.entity:set(c.GraphicsComponent, {material = self.accept_material_handle}, true)
 end
 
 function Reticule:destroy()
     self.mesh:free()
-    self.material:free()
+    self.acceptMaterial:free()
+    self.denyMaterial:free()
     self.mesh = nil
     self.material = nil
 end
