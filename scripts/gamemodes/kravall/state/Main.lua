@@ -1,12 +1,20 @@
 local MoveMarker = require "visual_objects/MoveMarker"
 local PoliceSquadHandler = require "gamemodes/kravall/PoliceSquadHandler"
 local KravallControl = require "gui/KravallControl"
+local PDC = require "particle_definition"
+local ASM = require "assembly_loader"
 
 local Main = { name = "Main" }
 function Main:new(o)
     o = o or {}
     setmetatable( o, self )
     self.__index = self
+
+    o.asm = ASM.loadPack({})
+    o.particleDefinitions =
+    {
+        TearGas = PDC:createParticleDefinition(o.asm, 5000, "assets/texture/particle/smoke.material")
+    }
 
     --Init the things that are required.
     o.moveMarker = MoveMarker:new()
@@ -62,6 +70,11 @@ function Main:new(o)
                 o.moveMarker:playDeny( position )
             end
         end,
+
+        onUsableAbilitiesChange = function( abilities )
+            o.gui:setUsableAbilities( abilities )
+        end,
+        particleDefinitions = o.particleDefinitions,
     })	
 
     return o
@@ -77,6 +90,7 @@ function Main:destroy()
     self.moveMarker:destroy()
     self.gui:destroy()
     self.policeHandler:destroy()
+    self.asm:destroy()
 end
 
 return Main

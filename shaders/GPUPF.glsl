@@ -74,25 +74,46 @@ layout (std430, binding = 1) coherent writeonly buffer OutputBuffer
 
 uniform uint gEntityCount;
 
-shared ChargeCurve gChargeCurves[1][2];
+//shared ChargeCurve gChargeCurves[1][2];
 
-//uniform vec4 gChargeCurves[6][13]= {{ vec4(0.0f), vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f) },
-//									
-//								   { vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f), vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f) },
-//
-//								   { vec4(0.0f), vec4(0.0f), vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f), vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f) },
-//
-//								   { vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f) },
-//
-//								   { vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f), vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f) },
-//
-//								   { vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f) }};
+uniform vec4 gChargeCurves[6][13]= {{ vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),vec4(0.0f),vec4(0.0f),vec4(0.0f) },
+									
+								   { vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),vec4(0.0f),vec4(0.0f),vec4(0.0f) },
 
-uniform int gChargeSenderIndices[3][6] = {{ 0, 0, 0, 0, 0, 0 },
-										  { 0, 0, 0, 0, 0, 0  },
-										  { 0, 0, 0, 0, 0, 0  }};
+								   { vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),vec4(0.0f),vec4(0.0f),vec4(0.0f)  },
 
-uniform int gChargeReceiverIndices[3][6] = {{ 0, 0, 0, 0, 0, 0 },
+								   { vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),vec4(0.0f),vec4(0.0f),vec4(0.0f)  },
+
+								   { vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),vec4(0.0f),vec4(0.0f),vec4(0.0f)  },
+
+								   { vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f), vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f) }};
+
+//Row indices in order
+//Normal
+//Agitated
+//Attacking
+//Retreating
+//Civilian
+
+//Column indices in order
+//Normal rioter
+//Agitated rioter
+//Attacking rioter
+//retreating rioter
+//civilian rioter
+//passive police
+//defensive police
+//Aggressive police
+//Attacking police
+//Tear gas
+//Molotov
+
+
+uniform int gChargeSenderIndices[3][6] = {{ 0, 1, 2, 3, 4, 5 },
+										  { 6, 7, 8, 9, 0, 0  },
+										  { 10, 11, 0, 0, 0, 0  }};
+
+uniform int gChargeReceiverIndices[3][6] = {{ 0, 1, 2, 3, 4, 5 },
 										  { 0, 0, 0, 0, 0, 0  },
 										  { 0, 0, 0, 0, 0, 0  }};
 
@@ -121,32 +142,33 @@ uniform int gMoodReceiverIndices[2][6] = {{ 0, 1, 2, 3, 4, 5 },
 										  {	5, 5, 5, 5, 0, 0 }};
 
 
-float GetAgentChargeAt(int unitType, float distSqr)
+float GetAgentChargeAt(int unitType, float distSqr, vec4 chargeCurve)
 {
-	ChargeCurve c = gChargeCurves[0][unitType];
-	
-	return float(distSqr > 0.001f && distSqr < c.ch_cu_re_dec.z) * (-MINIMUM_CHARGE + distSqr * (c.ch_cu_re_dec.z / MINIMUM_CHARGE)) + 
-	float(distSqr <= c.ch_cu_re_dec.y) * ( c.ch_cu_re_dec.x - distSqr * c.ch_cu_re_dec.w);
+	//ChargeCurve c = gChargeCurves[0][unitType];
+	//
+	//return float(distSqr > 0.001f && distSqr < c.ch_cu_re_dec.z) * (-MINIMUM_CHARGE + distSqr * (c.ch_cu_re_dec.z / MINIMUM_CHARGE)) + 
+	//float(distSqr <= c.ch_cu_re_dec.y) * ( c.ch_cu_re_dec.x - distSqr * c.ch_cu_re_dec.w);
 
 
-	//int senderIndex = gChargeSenderIndices[sType][sState];
-	//int receieverIndex = gChargeReceiverIndices[rType][rState];
+	//int senderIndex = 1;//gChargeSenderIndices[sType][sState];
+	//int receieverIndex = 0;//gChargeReceiverIndices[rType][rState];
 	//
 	//vec4 chargeCurve = gChargeCurves[receieverIndex][senderIndex];
-	//
-	//return float(distSqr > 0.001f && distSqr < chargeCurve.z) * (-MINIMUM_CHARGE + distSqr * (chargeCurve.z / MINIMUM_CHARGE)) + 
-	//float(distSqr <= chargeCurve.y) * ( chargeCurve.x - distSqr * chargeCurve.w);
+	
+	return float(distSqr > 0.001f && distSqr < chargeCurve.z) * (-MINIMUM_CHARGE + distSqr * (chargeCurve.z / MINIMUM_CHARGE)) + 
+	float(distSqr <= chargeCurve.y) * ( chargeCurve.x - distSqr * chargeCurve.w);
 
 
 }
 
 
-float GetEffectOnAgentAt(vec2 queryPosition, int groupID)
+float GetEffectOnAgentAt(vec2 queryPosition, int groupID, uint index)
 {
 	float positiveSum = 0.0f;
 	float negativeSum = 0.0f;
 	float currentSum = 0.0f;
 	DataIN indata;
+
 	for (int i = 0; i < gInput.length(); ++i)
 	{
 		if (i > gEntityCount)
@@ -165,11 +187,16 @@ float GetEffectOnAgentAt(vec2 queryPosition, int groupID)
 		{
 			matchID = int(indata.groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance.x);
 		}
+
+		int senderIndex = gChargeSenderIndices[int(indata.position_unitType.w)][int(indata.health_stamina_morale_stance.w)];
+		int receieverIndex = 0;//gChargeReceiverIndices[rType][rState];
 	
-		if (distSqr >= gChargeCurves[0][0].ch_cu_re_dec.z && (indata.position_unitType.w == RIOTER_TYPE && matchID != groupID) )
+		vec4 chargeCurve = gChargeCurves[receieverIndex][senderIndex];
+	
+		if (distSqr >= chargeCurve.z && (indata.position_unitType.w == RIOTER_TYPE && matchID != groupID) )
 			continue;
 	
-		currentSum = GetAgentChargeAt(int(indata.position_unitType.w), distSqr);
+		currentSum = GetAgentChargeAt(int(indata.position_unitType.w), distSqr, chargeCurve);
 	
 		//if(currentSum >= 0)
 			positiveSum += currentSum * float((currentSum >= 0));
@@ -310,10 +337,10 @@ void main()
 	*/
 	//barrier();
 	
-	if (gl_LocalInvocationIndex == 0)
-	{
-		gChargeCurves[0][0].ch_cu_re_dec = vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)); //0.3 makes them stick into a huge blob
-		gChargeCurves[0][1].ch_cu_re_dec = vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f));
+	//if (gl_LocalInvocationIndex == 0)
+	//{
+	//	gChargeCurves[0][0].ch_cu_re_dec = vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)); //0.3 makes them stick into a huge blob
+	//	gChargeCurves[0][1].ch_cu_re_dec = vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f));
 
 		//MOOD CURVE INDICES/PLACEMENT CAN BE FOUND AT THE BOTTOM OF THIS DOCUMENT
 		/*
@@ -450,7 +477,7 @@ void main()
 		//pol vs rioter civ
 		//No effect
 		*/
-	}
+	//}
 	
 	barrier();
 	
@@ -475,7 +502,7 @@ void main()
 			gInput[index].position_unitType.y + 0 * gInput[index].newDirection_speed.y / 2.0f, 
 			gInput[index].position_unitType.z + 0 * gInput[index].newDirection_speed.z / 2.0f);
 		
-			float highestSum = GetEffectOnAgentAt(vec2(offsetPos.x, offsetPos.z), int(gInput[index].groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance.x));
+			float highestSum = GetEffectOnAgentAt(vec2(offsetPos.x, offsetPos.z), int(gInput[index].groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance.x), index);
 			float staySum = highestSum;
 
 			CalculatedCharge chargeSums[8];
@@ -500,7 +527,7 @@ void main()
 
 			// --------------------------------------- -1, 0 ----------------------------------------
 			#ifdef navMeshPF
-			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x - 1, offsetPos.z + 0), groupID) + dot( navMeshWallVector, normalize( vec3( 1, 0, 0)));
+			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x - 1, offsetPos.z + 0), groupID, index) + dot( navMeshWallVector, normalize( vec3( 1, 0, 0)));
 			#endif
 			chargeSums[0].x = -1;																									    
 			chargeSums[0].y = 0;																									    
@@ -508,7 +535,7 @@ void main()
 																																	    
 			// ---------------------------------------- 1, 0 ----------------------------------------								    
 			#ifdef navMeshPF
-			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 1, offsetPos.z + 0), groupID) + dot( navMeshWallVector, normalize( vec3( 1, 0, 0)));
+			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 1, offsetPos.z + 0), groupID, index) + dot( navMeshWallVector, normalize( vec3( 1, 0, 0)));
 			#endif
 			chargeSums[1].x = 1;																									    
 			chargeSums[1].y = 0;																									    
@@ -516,7 +543,7 @@ void main()
 																																	    
 			// ---------------------------------------- 0, -1 ----------------------------------------								    
 			#ifdef navMeshPF
-			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 0, offsetPos.z - 1), groupID) + dot( navMeshWallVector, normalize( vec3( 0, 0, 1)));
+			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 0, offsetPos.z - 1), groupID, index) + dot( navMeshWallVector, normalize( vec3( 0, 0, 1)));
 			#endif
 			chargeSums[2].x = 0;																									    
 			chargeSums[2].y = -1;																									    
@@ -524,7 +551,7 @@ void main()
 																																	    
 			// ---------------------------------------- 0, 1 ----------------------------------------			
 			#ifdef navMeshPF					    
-			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 0, offsetPos.z + 1), groupID) + dot( navMeshWallVector, normalize( vec3( 0, 0, 1)));
+			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 0, offsetPos.z + 1), groupID, index) + dot( navMeshWallVector, normalize( vec3( 0, 0, 1)));
 			#endif
 			chargeSums[3].x = 0;																									    
 			chargeSums[3].y = 1;																									    
@@ -532,7 +559,7 @@ void main()
 																																	    
 			// ---------------------------------------- -1, -1 ----------------------------------------				
 			#ifdef navMeshPF				    
-			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x - 1, offsetPos.z - 1), groupID) + dot( navMeshWallVector, normalize( vec3( 1, 0, 1)));
+			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x - 1, offsetPos.z - 1), groupID, index) + dot( navMeshWallVector, normalize( vec3( 1, 0, 1)));
 			#endif
 			chargeSums[4].x = -1;																									    
 			chargeSums[4].y = -1;																									    
@@ -540,7 +567,7 @@ void main()
 																																	    
 			// ---------------------------------------- 1, -1 ----------------------------------------					
 			#ifdef navMeshPF			    
-			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 1, offsetPos.z - 1), groupID) + dot( navMeshWallVector, normalize( vec3( 1, 0, 1)));
+			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 1, offsetPos.z - 1), groupID, index) + dot( navMeshWallVector, normalize( vec3( 1, 0, 1)));
 			#endif
 			chargeSums[5].x = 1;																									    
 			chargeSums[5].y = -1;																									    
@@ -548,7 +575,7 @@ void main()
 																																	    
 			// ---------------------------------------- -1, 1 ----------------------------------------					
 			#ifdef navMeshPF			    
-			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x - 1, offsetPos.z + 1), groupID) + dot( navMeshWallVector, normalize( vec3( 1, 0, 1)));
+			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x - 1, offsetPos.z + 1), groupID, index) + dot( navMeshWallVector, normalize( vec3( 1, 0, 1)));
 			#endif
 			chargeSums[6].x = -1;																									    
 			chargeSums[6].y = 1;																									    
@@ -556,7 +583,7 @@ void main()
 																																	    
 			// ---------------------------------------- 1, 1 ----------------------------------------						
 			#ifdef navMeshPF		    
-			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 1, offsetPos.z + 1), groupID) + dot( navMeshWallVector, normalize( vec3( 1, 0, 1)));
+			chargeSum = GetEffectOnAgentAt(vec2(offsetPos.x + 1, offsetPos.z + 1), groupID, index) + dot( navMeshWallVector, normalize( vec3( 1, 0, 1)));
 			#endif
 			chargeSums[7].x = 1;
 			chargeSums[7].y = 1;

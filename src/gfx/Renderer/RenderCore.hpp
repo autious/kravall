@@ -244,6 +244,8 @@ namespace GFX
 		
 		FBOTexture** m_shadowMapTextures;
 
+        FBOTexture* m_particleTarget;
+
 		GLuint m_dummyVAO;
 
 		UniformBufferManager*	m_uniformBufferManager;

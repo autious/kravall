@@ -3,7 +3,8 @@ return function( scen )
 	local groupIds = {}
 	local entity = require "entities"
 	local rioter = entity.get "rioter"
-	local squad = entity.get "policeSquad"
+	local policeSquad = entity.get "policeSquad"
+    local tearGasSquad = entity.get "policeTearGasSquad"
 	local group = entity.get "group"
 	local atkRange = 90
 	local pathFlag = 1
@@ -87,7 +88,8 @@ return function( scen )
 		local wpc = ent:get( core.componentType.WorldPositionComponent )
 		local ac = ent:get( core.componentType.AreaComponent )
 		
-		squad1 = squad( scen, wpc.position[1], 0, wpc.position[3], 0, fists)
+		scen.gamemode:addSquad( policeSquad( scen, wpc.position[1], 0, wpc.position[3], 0, fists))
+		scen.gamemode:addSquad( tearGasSquad( scen, wpc.position[1], 0, wpc.position[3], 0, fists))
 	end
 	
 	-- Set destination for rioters based on an area's name

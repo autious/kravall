@@ -49,6 +49,11 @@ function T:init()
     self:setState( self.initGamestate )
 end
 
+--This function should not be used once squad creation is moved to inside Kravall game mode
+function T:addSquad(squad)
+    self.gamestate.policeHandler:addSquad(squad)
+end
+
 function T:createObjective( )
     return self.objectiveHandler:createObjective( )
 end
