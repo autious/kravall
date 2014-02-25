@@ -89,7 +89,6 @@ end
 function Main:destroy()
     self.moveMarker:destroy()
     self.gui:destroy()
-    self.policeHandler:destroy()
     self.asm:destroy()
 end
 
