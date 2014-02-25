@@ -12,7 +12,7 @@ Core::ComponentGetters Core::MovementDataComponentBinding::GetGetters()
         
         lua_newtable( L );  
 
-        lua_pushboolean( L, mdc->movedThisFrame );
+        lua_pushnumber( L, mdc->movedThisFrame );
         
         return 1;
     };
@@ -114,7 +114,7 @@ Core::ComponentSetters Core::MovementDataComponentBinding::GetSetters()
     {
         MovementDataComponent *mdc = WGETC<MovementDataComponent>( entity );
         
-        if( lua_isboolean(  L, valueindex ) )
+        if( lua_isnumber(  L, valueindex ) )
         {
             mdc->prevDt = static_cast<float>(lua_tonumber( L, valueindex ));
         }

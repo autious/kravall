@@ -12,7 +12,7 @@ namespace Core
 {
     MovementAnimationSystem::MovementAnimationSystem() : BaseSystem(EntityHandler::GenerateAspect<
 		TargetingComponent, Core::GraphicsComponent, Core::AnimationComponent, 
-		Core::AttributeComponent, Core::WorldPositionComponent, GraphicsComponent>(), 0ULL)
+		Core::AttributeComponent, Core::MovementDataComponent, Core::WorldPositionComponent, GraphicsComponent>(), 0ULL)
     {
     }
 

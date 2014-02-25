@@ -61,7 +61,7 @@ return function(asm, posX, posY, posZ, group, gender, material, weaponType)
 			},
 			{
 				type = core.componentType.MovementDataComponent,
-				data = { },
+				data = { prevDt = 1.0 },
 				ignoreHard = true
 			},
 			{
