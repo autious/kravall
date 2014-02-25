@@ -82,7 +82,11 @@ function PoliceSquadHandler:new(o)
     -- List of timed entities created for abilities
     o.abilityEntities = {}
 
+    -- Reticule that is displayed
     o.reticule = Reticule:new()
+
+    -- Function to call when aiming
+    o.aimingFunction = nil
     
     registerCallbacks(o)
 
@@ -260,6 +264,7 @@ function PoliceSquadHandler:setAbility( ability )
     self.onAbilityChange( ability )
     if ability == core.system.squad.abilities.TearGas then
         self.isAiming = true
+        self.AimingFunction = self.AimTearGas
     end
 end
 
@@ -306,14 +311,27 @@ function PoliceSquadHandler:canUseAbility(ability)
     return false
 end
 
-function PoliceSquadHandler:ToggleReticule()
-    local gfxc = self.reticule.entity:get(core.componentType.GraphicsComponent) 
-    gfxc.render = not gfxc.render
+function PoliceSquadHandler:SetReticuleRender(value)
+    self.reticule.entity:set(core.componentType.GraphicsComponent, {render = value}, true) 
 end
 
-function PoliceSquadHandler:useTearGas(x, y, z)
+function PoliceSquadHandler:AimTearGas()
+    local mouseX, mouseY = mouse.getPosition()
+    local x,y,z = core.system.picking.getGroundHit(mouseX, mouseY);
+    self.reticule:SetPosition(x, y, z)
+
+    if mouse.isButtonDownOnce(mouse.button.Left) then
+        self:UseTearGas(x, y, z)            
+        if not keyboard.isKeyDown(keyboard.key.Left_shift) then
+            self.isAiming = false
+        end
+    end
+end
+
+function PoliceSquadHandler:UseTearGas(x, y, z)
     local errorMessage = "None"
     for entity, abilities in pairs(self.usableAbilities) do
+    
         for i=1, #abilities do
             if abilities[i] == core.system.squad.abilities.TearGas then
                 local wpc = entity:get(core.componentType.WorldPositionComponent)
@@ -322,12 +340,20 @@ function PoliceSquadHandler:useTearGas(x, y, z)
                     if attributeComponent.stamina >= tearGasPolice.tearGasStaminaCost then
                         attributeComponent.stamina = (attributeComponent.stamina - tearGasPolice.tearGasStaminaCost)
                         local pairTable = {}                
-                        local entity = core.entity.create(core.componentType.EmitterComponent, core.componentType.WorldPositionComponent)
+                        local entity = core.entity.create(core.componentType.EmitterComponent
+                                                            , core.componentType.WorldPositionComponent
+                                                            , core.componentType.MovementComponent
+                                                            , core.componentType.UnitTypeComponent
+                                                            , core.componentType.AttributeComponent
+                                                            , core.componentType.FlowfieldComponent)
+
+                        entity:set(core.componentType.AttributeComponent, {pfObjectType = core.PFObjectType.TearGas}, true)
+                        entity:set(core.componentType.UnitTypeComponent, {unitType = core.UnitType.Object}, true)
                         entity:set(core.componentType.WorldPositionComponent, {position = {x, y, z}})
                         entity:set(core.componentType.EmitterComponent, {
                                 rate = 10,
                                 offset = {0, 0, 0},
-                                life = 5,
+                                life = 0,
                                 lifeVariance = 0,
                                 lifeReduction = 1,
                                 lifeReductionVariance = 0,
@@ -530,6 +556,7 @@ function PoliceSquadHandler:update( delta )
 
     --Abilities
     if mouse.isButtonDownOnce(mouse.button.Right) then
+        self:SetReticuleRender(false)
         self.isAiming = false
     end
 
@@ -547,31 +574,23 @@ function PoliceSquadHandler:update( delta )
 
     if keyboard.isKeyDownOnce(keyboard.key.Kp_8) then
         if self:canUseAbility(core.system.squad.abilities.TearGas) then
-            self:ToggleReticule()
             
             if self.isAiming then
-                self.isAming = false
+                self.isAiming = false
+                self:SetReticuleRender(false)
+                self.AimingFunction = nil
             else
                 self.isAiming = true
+                self:SetReticuleRender(true)
+                self.AimingFunction = self.AimTearGas
             end
             
        end
     end
 
     if self.isAiming == true then
-       --Draw reticule at x, y, z 
-        local mouseX, mouseY = mouse.getPosition()
-        local x,y,z = core.system.picking.getGroundHit(mouseX, mouseY);
-        self.reticule:SetPosition(x, y, z)
-
-        if mouse.isButtonDownOnce(mouse.button.Left) then
-            self:useTearGas(x, y, z)            
-            if not keyboard.isKeyDown(keyboard.key.Left_shift) then
-                self.isAiming = false
-            end
-        end
+        self:AimingFunction()
     end   
-
 
     --Stances
     if keyboard.isKeyDown(keyboard.key.I)  then        
