@@ -18,6 +18,7 @@
 #define POLICE_STANCE_META_TYPE "meta_type_police_stance"
 #define ATTRIBUTE_POLICE_COMPONENT_META_TYPE "attribute_police_component_meta_type"
 #define ATTRIBUTE_RIOTER_COMPONENT_META_TYPE "attribute_rioter_component_meta_type"
+#define ATTRIBUTE_PF_OBJECT_COMPONENT_META_TYPE "attribute_pf_object_component_meta_type"
 #define LOG_META_TYPE "metatype_log"
 #define HOVER_TEXT_META_TYPE "metatype_hover_text"
 #define PARTICLE_DEFINITION_META_TYPE "particle_definition_meta_type"
