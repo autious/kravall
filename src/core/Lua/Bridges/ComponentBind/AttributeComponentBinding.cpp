@@ -32,6 +32,21 @@ Core::ComponentGetters Core::AttributeComponentBinding::GetGetters()
         return 1;
     };
 
+	// of object attributes...
+	getters["pfObjectType"] = [](Core::Entity entity, lua_State *L)
+	{
+		AttributeComponent *atrbc = WGETC<AttributeComponent>(entity);
+
+		Core::PFObjectTypes* pfObjectType = (Core::PFObjectTypes*)lua_newuserdata(L, sizeof(Core::PFObjectTypes));
+		*pfObjectType = atrbc->pfObject.pfObjectType;
+
+		luaL_newmetatable(L, ATTRIBUTE_PF_OBJECT_COMPONENT_META_TYPE);
+		lua_setmetatable(L, -2);
+
+		return 1;
+	};
+
+
 	// police attributes...
 	getters["stancePolice"] = []( Core::Entity entity, lua_State *L )
     {
@@ -181,6 +196,13 @@ Core::ComponentSetters Core::AttributeComponentBinding::GetSetters()
             luaL_error( L, "Unable to set morale for ent %d, value is not number", entity );
         }
     };
+
+	//pfObject
+	setters["pfObjectType"] = [](Core::Entity entity, lua_State * L, int valueindex)
+	{
+		AttributeComponent *atrbc = WGETC<AttributeComponent>(entity);
+		atrbc->pfObject.pfObjectType = *(Core::PFObjectTypes*)luaL_checkudata(L, valueindex, ATTRIBUTE_PF_OBJECT_COMPONENT_META_TYPE);
+	};
 
 	// police...
 	setters["stancePolice"] = []( Core::Entity entity, lua_State * L, int valueindex )

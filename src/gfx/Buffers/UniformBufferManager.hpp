@@ -30,19 +30,12 @@ namespace GFX
 		\param basicCamera camera to be passed to the program
 		*/
 		void SetBasicCameraUBO(const BasicCamera& basicCamera);
-
-		/*!
-		Get the camera ubo id
-		\return basic camera ubo id
-		*/
-		GLuint GetBasicCameraUBO();
         
         static const GLuint CAMERA_BINDING_INDEX;
 
 	private:
 		void CreateBasicCameraUBO();
 
-		GLuint m_exampleUBO;
 		GLuint m_basicCameraUBO;
 	};
 }

@@ -10,7 +10,7 @@ scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
 scen:registerInitCallback( function() scen.gamemode:init() end )
 
 scen.gamemode.camera:lookAt( core.glm.vec3.new( 0, 60, 120 ), core.glm.vec3.new( 0, 20, 50 ) )
-core.gfx.setWhitepoint(2.0, 2.0, 2.0)
+core.gfx.setWhitepoint(5.0, 5.0, 5.0)
 --Plane
 function scen:load()
 

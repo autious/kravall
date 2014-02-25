@@ -72,17 +72,6 @@ Core::ComponentGetters Core::MovementComponentBinding::GetGetters()
         return 1;
     };
 
-	getters["movedThisFrame"] = []( Core::Entity entity, lua_State * L )
-    {
-        MovementComponent *mvc = WGETC<MovementComponent>( entity );
-        
-        lua_newtable( L );  
-
-        lua_pushboolean( L, mvc->movedThisFrame );
-        
-        return 1;
-    };
-
     return getters;
 
 }
@@ -184,20 +173,6 @@ Core::ComponentSetters Core::MovementComponentBinding::GetSetters()
 		{
 			mvc->goal[0] = FLT_MAX;
 		}
-    };
-
-	setters["movedThisFrame"] = []( Core::Entity entity, lua_State * L, int valueindex )
-    {
-        MovementComponent *mvc = WGETC<MovementComponent>( entity );
-        
-        if( lua_isboolean(  L, valueindex ) )
-        {
-            mvc->movedThisFrame = static_cast<bool>(lua_toboolean( L, valueindex ));
-        }
-        else
-        {
-            luaL_error( L, "Unable to set speed for ent %d, value is not number", entity );
-        }
     };
 
     return setters;

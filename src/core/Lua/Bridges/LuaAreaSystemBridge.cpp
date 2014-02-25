@@ -36,6 +36,15 @@ extern "C"
 
         return 1;
     }
+
+    static int LuaIsPointInside( lua_State * L )
+    {
+        Core::AreaSystem *as = Core::world.m_systemHandler.GetSystem<Core::AreaSystem>();
+        LuaEntity * ent = luau_checkentity( L, 1 );
+        glm::vec3 * vec3 = luau_checkglmvec3( L, 2);  
+
+        return as->IsAreaOnPoint( ent->entity, *vec3 );
+    }
 }
 
 namespace Core
@@ -47,6 +56,7 @@ namespace Core
                 lua_newtable( L );
                     luau_setfunction( L, "getAreaRioters", LuaGetAreaRioters );
                     luau_setfunction( L, "getAreaRioterCount", LuaGetAreaRioterCount );
+                    luau_setfunction( L, "isPointInside", LuaIsPointInside );
                 lua_setfield(L, -2, "area" );
             lua_pop( L, 2 );
     }

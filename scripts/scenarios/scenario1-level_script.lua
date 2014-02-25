@@ -1,10 +1,10 @@
 return function( scen )
     local T = {}
 	local groupIds = {}
-	local objective = require "objective" 
 	local entity = require "entities"
 	local rioter = entity.get "rioter"
-	local squad = entity.get "policeSquad"
+	local policeSquad = entity.get "policeSquad"
+    local tearGasSquad = entity.get "policeTearGasSquad"
 	local group = entity.get "group"
 	local atkRange = 90
 	local pathFlag = 1
@@ -20,10 +20,13 @@ return function( scen )
     scen.name = "Scenario 1"
     scen.description = "You are mean"
 
+
 	-- weapons
 	local fists
 	
 	scen.gamemode = require "gamemodes/kravall":new()
+
+
 	scen:registerUpdateCallback( function(delta) scen.gamemode:update(delta) end )
 	scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
 	scen:registerInitCallback( function() 
@@ -34,8 +37,18 @@ return function( scen )
 									plane(scen, 0, -1, 0, 900)
 									
 									-- load weapons...
-									fists = core.weaponData.pushWeapon( 1.0, 20, 0.2, 0.05, 3.2, 2.9, 0.05, 0.5, "punch" )
+									fists = core.weaponData.pushWeapon( 1.0, 0.75, 20, 0.2, 0.05, 3.2, 2.9, 0.05, 0.5, "punch" )
 							   end)
+
+    scen:registerInitCallback( function()
+        print( "Creating objectives.." )
+        objDontDie      = scen.gamemode:createObjective()
+        objLeadThrough  = scen.gamemode:createObjective()
+
+        objDontDie.title      = DONT_DIE_MSG 
+        objLeadThrough.title  = ESCORT_MSG
+    end)
+
 	
 	-- Just random helpful stuffzzz --
 	--core.system.name.getEntitiesByName( "area1" )[1]
@@ -75,7 +88,8 @@ return function( scen )
 		local wpc = ent:get( core.componentType.WorldPositionComponent )
 		local ac = ent:get( core.componentType.AreaComponent )
 		
-		squad1 = squad( scen, wpc.position[1], 0, wpc.position[3], 0, fists)
+		scen.gamemode:addSquad( policeSquad( scen, wpc.position[1], 0, wpc.position[3], 0, fists))
+		scen.gamemode:addSquad( tearGasSquad( scen, wpc.position[1], 0, wpc.position[3], 0, fists))
 	end
 	
 	-- Set destination for rioters based on an area's name
@@ -128,18 +142,7 @@ return function( scen )
 			objDontDie.state = "fail"
 		end
 	end
-	
-	
-	
 
-scen:registerInitCallback( function()
-    objDontDie = objective.new( DONT_DIE_MSG ) 
-    objLeadThrough = objective.new( ESCORT_MSG )
-    scen.gamemode.objectiveHandler:addObjective( objDontDie )
-    scen.gamemode.objectiveHandler:addObjective( objLeadThrough )
-end)
-
-	
 
 	--===================== SHORTCUTS ======================--
 	function T.createRioter_0( ent )
