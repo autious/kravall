@@ -119,11 +119,11 @@ uniform int gChargeReceiverIndices[3][6] = {{ 0, 1, 2, 3, 4, 5 },
 
 
 
-uniform vec4 gMoodCurves[6][13] = {{ vec4(5, -0.001f, 0.01f, 0.01f), vec4(5, 0.0f, 0.0f, 0.01f),vec4(15, 0.0f, 0.5f, 0.1f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(3, 0.0f, 0.0001f, 0.00001f),vec4(5, 0.0f, 0.0002f, 0.0002f),vec4(3, -0.0001f, 0.0001f, 0.0001f),vec4(0.0f),vec4(0.0f),vec4(0.0f) },
+uniform vec4 gMoodCurves[6][13] = {{ vec4(5, -0.001f, 0.01f, 0.01f), vec4(5, 0.0f, 0.0f, 0.01f),vec4(15, 0.0f, 0.5f, 0.1f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(3, 0.0f, 0.0001f, 0.00001f),vec4(5, 0.0f, 0.0002f, 0.0002f),vec4(3, -0.0001f, 0.0001f, 0.0001f),vec4(0.0f), vec4(30, -0.1f, 0.1f, 0.1f),vec4(0.0f) },
 									
-								   { vec4(5, 0.0f, 0.001f, 0.1f),vec4(5, 0.0f, 0.001f, 0.1f),vec4(15, 0.0f, 0.0005f, 0.1f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(3, 0.0f, 0.00005f, 0.001f),vec4(3, 0.0f, 0.00005f, 0.001f), vec4(5, 0.0f, 0.0001f, 0.0002f),vec4(3, -0.0001f, 0.0001f, 0.0002f),vec4(0.0f),vec4(0.0f),vec4(0.0f) },
+								   { vec4(5, 0.0f, 0.001f, 0.1f),vec4(5, 0.0f, 0.001f, 0.1f),vec4(15, 0.0f, 0.0005f, 0.1f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(3, 0.0f, 0.00005f, 0.001f),vec4(3, 0.0f, 0.00005f, 0.001f), vec4(5, 0.0f, 0.0001f, 0.0002f),vec4(3, -0.0001f, 0.0001f, 0.0002f),vec4(0.0f), vec4(30, -0.1f, 0.1f, 0.1f),vec4(0.0f) },
 
-								   { vec4(5, 0.0f, 0.01f, 0.1f), vec4(5, 0.0, 0.0, 0.1f), vec4(15, 0.0f, 0.5f, 0.1f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(5, 0.0001f, 0.0001f, 0.0002f), vec4(3, -0.0001f, 0.0001f, 0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f) },
+								   { vec4(5, 0.0f, 0.01f, 0.1f), vec4(5, 0.0, 0.0, 0.1f), vec4(15, 0.0f, 0.5f, 0.1f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(5, 0.0001f, 0.0001f, 0.0002f), vec4(3, -0.0001f, 0.0001f, 0.0f),vec4(0.0f), vec4(30, -0.1f, 0.1f, 0.1f),vec4(0.0f) },
 
 								   { vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f) },
 
@@ -135,11 +135,13 @@ uniform vec4 gMoodCurves[6][13] = {{ vec4(5, -0.001f, 0.01f, 0.01f), vec4(5, 0.0
 //int gMoodSenderIndices[2][6];
 //int gMoodReceiverIndices[2][6];
 
-uniform int gMoodSenderIndices[2][6] = {{ 6, 7, 8, 9, 10, 0 },
-										{ 0, 1, 2, 3, 0, 0	}};
+uniform int gMoodSenderIndices[3][6] = {{ 6, 7, 8, 9, 10, 0 },
+										{ 0, 1, 2, 3, 0, 0	},
+										{ 11, 0, 0, 0, 0, 0	}};
 
-uniform int gMoodReceiverIndices[2][6] = {{ 0, 1, 2, 3, 4, 5 },
-										  {	5, 5, 5, 5, 0, 0 }};
+uniform int gMoodReceiverIndices[3][6] = {{ 0, 1, 2, 3, 4, 5 },
+										  {	5, 5, 5, 5, 0, 0 },
+										  {	0, 0, 0, 0, 0, 0 }};
 
 
 float GetAgentChargeAt(int unitType, float distSqr, vec4 chargeCurve)
