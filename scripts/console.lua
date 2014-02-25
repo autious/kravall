@@ -29,6 +29,7 @@ function help()
 	print "showMesh()" 
     print "print_env()" 
     print "toggleMenu()"
+    print "isnumberwang(anything)"
 end
 
 -- Loads a scenario from the scenario folder and returns the assembly.
@@ -116,4 +117,11 @@ function print( ... )
     core.log.info:print( ... )
 end
 
+function isnumberwang( value)
+    if math.random( 1,3) == 1  then
+        print( "That's numberwang!" )
+    else
+        print( "Sorry" )
+    end
+end
        

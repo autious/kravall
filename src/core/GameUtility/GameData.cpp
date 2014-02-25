@@ -41,11 +41,12 @@ namespace Core
 		m_movementData[ state ].staminaCostPerSecond	= staminaCostPerSecond;
 	}
 
-	int Core::GameData::PushWeaponData( float range, float weaponDamage, float moraleDamage, float moralDamageOnMiss, float rageBuff, float pressureBuff, float staminaCost, float animationDmgDealingtime, std::string animationName )
+	int Core::GameData::PushWeaponData( float range, float graceDistance, float weaponDamage, float moraleDamage, float moralDamageOnMiss, float rageBuff, float pressureBuff, float staminaCost, float animationDmgDealingtime, std::string animationName )
 	{
 		m_weaponData.push_back( WeaponData() );
 
 		m_weaponData.back().range					= range;
+		m_weaponData.back().graceDistance			= graceDistance;
 		m_weaponData.back().weaponDamage			= weaponDamage;
 		m_weaponData.back().moraleDamage			= moraleDamage;
 		m_weaponData.back().moralDamageOnMiss		= moralDamageOnMiss;

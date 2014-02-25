@@ -21,6 +21,7 @@
 #include <Lua/Bridges/ComponentBind/FormationComponentBinding.hpp>
 #include <Lua/Bridges/ComponentBind/HoverTextComponentBinding.hpp>
 #include <Lua/Bridges/ComponentBind/EmitterComponentBinding.hpp>
+#include <Lua/Bridges/ComponentBind/MovementDataComponentBinding.hpp>
 
 #include <cassert>
 
@@ -47,7 +48,8 @@ namespace Core
      SquadComponentBinding,
      FormationComponentBinding,
      HoverTextComponentBinding,
-     EmitterComponentBinding> EntityBridge;
+     EmitterComponentBinding,
+	 MovementDataComponentBinding> EntityBridge;
 }
 
 /*************/

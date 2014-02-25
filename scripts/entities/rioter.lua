@@ -31,7 +31,7 @@ return function(asm, posX, posY, posZ, group, gender, material, weaponType)
 			{
 				type = core.componentType.AttributeComponent,
 				data = { health = 100, stamina = 100, morale = 2.0, 
-					   alignment = core.RioterAlignment.Anarchist, rage = 0, pressure = 0, groupID = group, stanceRioter = core.RioterStance.Normal}
+					   alignment = core.RioterAlignment.Anarchist, rage = 0, pressure = 0, groupID = group, stanceRioter = core.RioterStance.Agitated}
                 ,
                 ignoreHard = true
 			},
@@ -54,10 +54,15 @@ return function(asm, posX, posY, posZ, group, gender, material, weaponType)
 					currentTime = math.random() * 10,
 					loop = true,
 					playing = true,
-					speed = 1.6,
+					speed = 1.6, -- this is irrelevant in kravall mode, see movementAnimationSystem.
 					currentFrame = 0,
 					queuedAnimationID = 0
 				}
+			},
+			{
+				type = core.componentType.MovementDataComponent,
+				data = { prevDt = 1.0 },
+				ignoreHard = true
 			},
 			{
 				type = core.componentType.FlowfieldComponent,
