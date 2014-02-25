@@ -1,117 +1,185 @@
-local ent = require "entities"
-local scen = require "scenario":new()
-
-scen.asm:specific_content( core.contentmanager.load(
-		core.loaders.NavigationMeshLoader, "extremeScenario.txt", function( value ) end, false ) )
-
-
-scen.gamemode = require "gamemodes/kravall":new()
-scen.gamemode:init()
-
-local mouse = core.input.mouse
-local squad = ent.get "policeSquad"
-
-scen:registerInitCallback( function() scen.gamemode:init(delta) end )
-
-scen:registerUpdateCallback( function(delta) scen.gamemode:update(delta) end )
-scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
-
-local ambient = ent.get "ambientLight"
-local directional = ent.get "directionalLight"
-local street_light = ent.get "streetLight"
-local street_light_intensity = 2.0
-ambient(scen, 1.0, 1.0, 1.0, 0.01)
-directional(scen, -1, -1, 0.5)
-
-
---scen:registerUpdateCallback( function( delta ) scen.gamemode:update(delta) end )
---scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
-
-
---scen.gamemode.camera:lookAt( core.glm.vec3.new( 50, 25, 50 ), core.glm.vec3.new( 0, 0, 0 ) )
----- Ambient light
-scen:loadAssembly( 
-{
-	{
-		type = core.componentType.LightComponent,
-		data =  { 
-					color = { 1.0, 1.0, 1.0 },
-					intensity = 1.0,
-					type = core.gfx.objectTypes.Light,
-					lighttype = core.gfx.lightTypes.Ambient,
-					spotangle = 0,
-					spotpenumbra = 0,
-					speccolor = {0,0,0}
-				}
-	},
-	{
-		type = core.componentType.WorldPositionComponent,
-		data = { position = { 0, 0, 0 } }
-	},
-	{
-		type = core.componentType.ScaleComponent,
-		data = { scale = 1.0 }
-	},
-	{
-		type = core.componentType.RotationComponent,
-		data = { rotation = { 0,0,0,0 } }
-	}
-} 
-)
-
-
-
-local rioter = ent.get "rioter"
-local police = ent.get "police"
-local building = ent.get "building"
-
--- usual weapons...
-local fists = core.weaponData.pushWeapon( 1.0, 0.75, 20, 0.2, 0.05, 3.2, 2.9, 0.05, 0.5, "punch" )
-
-core.gameMetaData.registerEscapePoint( 50, 0, 0 )
-
-local rGroup = core.system.groups.createGroup();
---local centerPoint = { 110, 0, 0 }
-local centerPoint = { -50, 0, 0 }
-local side = math.sqrt( 32 )
-for i = -side/2, side/2 do
-	for p = -side/2, side/2 do
-		--rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rGroup, nil, nil, fists)
-	end
-end
---rioter( scen, 0, 0, 0, rGroup, fists)
-core.system.groups.setGroupGoal(rGroup, 0, 0, -300)
-
---for i = 0, 40 do
---	squad(scen, 20, 0, 0, math.pi/2, fists);
---end
-
-local sqads = {}	
-for i = 0, 50 do
-	sqads[#sqads + 1] = squad(scen, 20, 0, 0, math.pi/2, fists);
-end
-
---local squadOne2 = squad(scen, 20, 0, 0, math.pi/2, fists);
---local squadOne3 = squad(scen, 20, 0, 0, math.pi/2, fists);
---local squadOne4 = squad(scen, 20, 0, 0, math.pi/2, fists);
---local squadOne5 = squad(scen, 20, 0, 0, math.pi/2, fists);
---local squadTwo6 = squad(scen, 77, 0, 43, math.pi/2, fists);
-
-
-
-local clicked = false
-local prevClicked = true
-local firstX, firstY
-
-function Update(dt)
+return function( scen )
+    local T = {}
+	local groupIds = {}
+	local entity = require "entities"
+	local rioter = entity.get "rioter"
+	local policeSquad = entity.get "policeSquad"
+    local tearGasSquad = entity.get "policeTearGasSquad"
+	local group = entity.get "group"
+	local atkRange = 90
+	local pathFlag = 1
+	local activeGoal = ""
+	local friendlyGroup, angryGroup1, angryGroup2, angryGroup3
 	
+	local DONT_DIE_MSG = "one can not simply" 
+	local ESCORT_MSG = "derp into querp"
+	local objDontDie
+	local objLeadThrough
+	local track = true
+
+    scen.name = "The Adventure"
+    scen.description = "test scenario pls ignore"
+
+
+	-- weapons
+	local fists
+	
+	scen.gamemode = require "gamemodes/kravall":new()
+
+
+	scen:registerUpdateCallback( function(delta) scen.gamemode:update(delta) end )
+	scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
+	scen:registerInitCallback( function() 
+                                    scen.gamemode:init()
+									scen.gamemode.camera:lookAt( core.glm.vec3.new( -40, 30, 180 ), core.glm.vec3.new( -40, 0, 155 ) ) 
+									--scen.gamemode.camera.yaw = scen.gamemode.camera.yaw + math.pi
+									local plane = entity.get "plane"
+									plane(scen, 0, -1, 0, 900)
+									
+									-- load weapons...
+									fists = core.weaponData.pushWeapon( 1.0, 0.75, 20, 0.2, 0.05, 3.2, 2.9, 0.05, 0.5, "punch" )
+							   end)
+
+    scen:registerInitCallback( function()
+        print( "Creating objectives.." )
+        objDontDie      = scen.gamemode:createObjective()
+        objLeadThrough  = scen.gamemode:createObjective()
+
+        objDontDie.title      = DONT_DIE_MSG 
+        objLeadThrough.title  = ESCORT_MSG
+    end)
+
+	
+	-- Just random helpful stuffzzz --
+	--core.system.name.getEntitiesByName( "area1" )[1]
+	-- local myName = GetEntityName( ent )
+	
+	
+	--====================== MAIN FUNCTIONS ======================--
+	
+		
+	---- Returns amount of rioters in an area
+	function T.checkObjCount( ent )
+		return core.system.area.getAreaRioterCount( ent )
+    end
+	
+	-- Return name of an area
+	local function GetEntityName(ent)
+		return ent:get( core.componentType.NameComponent )["name"]
+	end
+	
+	---- Create a group of rioters
+	function T.createRioter( ent, grp, size )
+		local wpc = ent:get( core.componentType.WorldPositionComponent )
+		local ac = ent:get( core.componentType.AreaComponent )
+		verts = ac.vertices
+
+		-- Make vertex positions from local space to world space
+		for i = 1, 8, 2 do
+			verts[i] = verts[i] + wpc.position[1]
+			verts[i + 1] = verts[i + 1] + wpc.position[3]
+		end
+			
+		group( scen, ac.vertices, grp, {size, size}, fists )
+	end
+	
+	---- Create a police squad
+	function T.createSquad( ent )
+		local wpc = ent:get( core.componentType.WorldPositionComponent )
+		local ac = ent:get( core.componentType.AreaComponent )
+		
+		scen.gamemode:addSquad( policeSquad( scen, wpc.position[1], 0, wpc.position[3], 0, fists))
+		scen.gamemode:addSquad( tearGasSquad( scen, wpc.position[1], 0, wpc.position[3], 0, fists))
+	end
+	
+	-- Set destination for rioters based on an area's name
+	local function setGoal( grp )
+		-- Set group destination to the next destination
+		local activeGoal = "goal" .. pathFlag
+		local destArea = core.system.name.getEntitiesByName( activeGoal )[1]
+		local destination = destArea:get( core.componentType.WorldPositionComponent )
+		core.system.groups.setGroupGoal( friendlyGroup, destination.position[1], 0, destination.position[3])
+
+		-- Check if the group has reached their destination
+		local count = core.system.area.getAreaRioterCount( grp )
+		local alive_count = core.system.groups.getGroupMemberCount( friendlyGroup )
+		
+		if pathFlag < 4 then
+			if T.checkObjCount( destArea ) > 10 then
+				pathFlag = pathFlag + 1;
+			end
+			
+			-- WIN CONDITION
+			else if T.checkObjCount( destArea ) > 50 then
+				objLeadThrough.state = "success" 
+				objDontDie.state = "success" 
+				track = false
+			end
+		end
+		
+		objDontDie.title = DONT_DIE_MSG .. " " .. alive_count .. " still alive."
+	end
+	
+	local function trackGroup( grp )
+		-- Calculating distance between hunting / target groups
+		local x1,y1,z1 = core.system.groups.getGroupMedianPosition(grp)
+		local x2,y2,z2 = core.system.groups.getGroupMedianPosition(friendlyGroup)
+		local tmpx = x1-x2
+		local tmpx = tmpx * tmpx
+		local tmpz = z1-z2
+		local tmpz = tmpz * tmpz
+		local tmpxz = tmpx + tmpz
+		local result = math.sqrt(tmpxz)
+
+		if result < atkRange then
+			core.system.groups.setGroupGoal( grp, x2, 0, z2)
+		end
+		
+		-- TEMPORARY LOSE CONDITION
+		local kill = 10
+		if result < kill then
+			objLeadThrough.state = "fail"
+			objDontDie.state = "fail"
+		end
+	end
+
+
+	--===================== SHORTCUTS ======================--
+	function T.createRioter_0( ent )
+		friendlyGroup = core.system.groups.createGroup()
+		groupIds[ent] = friendlyGroup
+		T.createRioter( ent, friendlyGroup, 15 )
+	end
+	
+	function T.createPoliceSquad( ent )
+		T.createSquad( ent )
+	end
+	
+	function T.createRioter_1( ent )
+		angryGroup1 = core.system.groups.createGroup()
+		groupIds[ent] = angryGroup1
+		T.createRioter( ent, angryGroup1, 10 )
+	end
+	
+	function T.createRioter_2( ent )
+		angryGroup2 = core.system.groups.createGroup()
+		groupIds[ent] = angryGroup2
+		T.createRioter( ent, angryGroup2, 10 )
+	end
+	
+	function T.createRioter_3( ent )
+		angryGroup3 = core.system.groups.createGroup()
+		groupIds[ent] = angryGroup3
+		T.createRioter( ent, angryGroup3, 10 )
+	end
+	
+	function T.setDestination( ent )
+			setGoal( ent )
+	end
+	
+	function T.track( ent )
+			trackGroup( groupIds[ent] )
+	end
+	
+	return T;
 end
-
-
-
-
-
-
-scen:registerUpdateCallback( Update )
-
-return scen;
