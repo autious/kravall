@@ -3,6 +3,7 @@
 
 in vec4 posFS;
 in vec4 posW;
+in vec3 orientationFS;
 in vec2 uvFS;
 
 layout (shared) uniform PerFrameBlock
@@ -38,14 +39,18 @@ void main()
 
 	vec2 depthUV = screenPosition * 0.5f + 0.5f;
 	depthUV += vec2(0.5f / 1280.0f, 0.5f / 720.0f);
-	float depth = texture2D(gNormalDepth, depthUV).w;
+	vec4 normal_depth = texture2D(gNormalDepth, depthUV);
+	float depth = normal_depth.w;
 
 	vec4 worldPos = reconstruct_pos(depth, depthUV);
 	worldPos.w = 1.0f;
 	vec4 localPos =  invModelMatrix * worldPos;
 
 	float dist =  0.5f - abs(localPos.xyz);
-	if (dist >= 0.0f )
+
+	float normalThreshold = dot(normal_depth.xyz, orientationFS) - cos(3.14f / 2.0f);
+
+	if (dist >= 0.0f && normalThreshold > 0.0f)
 	{
 		vec2 uv = vec2(localPos.x, localPos.z) + 0.5f;
 		vec4 diffuseColor = texture2D(gDiffuse, uv);

@@ -44,6 +44,11 @@ return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, group
                 ignoreHard = true 
 			},
 			{
+				type = core.componentType.MovementDataComponent,
+				data = { prevDt = 1.0 },
+				ignoreHard = true
+			},
+			{
 				type = core.componentType.AttributeComponent,
 				data = 
                     { 
@@ -58,6 +63,11 @@ return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, group
                     },
 
                 ignoreHard = true
+			},
+			{
+				type = core.componentType.MovementDataComponent,
+				data = { prevDt = 1.0 },
+				ignoreHard = true
 			},
 			{
 				type = core.componentType.TargetingComponent,

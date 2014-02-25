@@ -24,6 +24,7 @@ return
         selectionBoxHoverPrimaryOutline = vec4{"#ffe614",10.0},
         tearGasRange                    = 20,
         tearGasStaminaCost              = 60,
+        tearGasDuration                 = 10,
     },
     guiBehaviour = 
     {

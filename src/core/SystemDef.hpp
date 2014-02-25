@@ -22,6 +22,7 @@
 #include <Components/TargetingComponent.hpp>
 #include <Components/HoverTextComponent.hpp>
 #include <Components/EmitterComponent.hpp>
+#include <Components/MovementDataComponent.hpp>
 
 /**********All systems after this line************/
 #include <Systems/EngineSupport/RenderingSystem.hpp>
@@ -62,7 +63,8 @@ namespace Core
     typedef EntityHandlerTemplate<SystemHandler, WorldPositionComponent, RotationComponent, ScaleComponent, 
 		GraphicsComponent, LightComponent, MovementComponent, UnitTypeComponent, AttributeComponent,
 		BoundingVolumeComponent, FlowfieldComponent, AreaComponent, NameComponent, AnimationComponent,
-        SquadComponent, FormationComponent, TargetingComponent, HoverTextComponent, EmitterComponent> EntityHandler;
+        SquadComponent, FormationComponent, TargetingComponent, HoverTextComponent, EmitterComponent, 
+		MovementDataComponent> EntityHandler;
 }
 
 

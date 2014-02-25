@@ -35,9 +35,11 @@ void Core::AttackAnimationSystem::Update(float delta)
 			// if the unit can attack its target, start the attack animation.
 			float distSqr = glm::dot( wpc->GetVec3( *wpc ) - targetWpc->GetVec3( *targetWpc ),
 							 wpc->GetVec3( *wpc ) - targetWpc->GetVec3( *targetWpc ));
-			if (distSqr < weapon.range * weapon.range )
+			if( distSqr < weapon.range * weapon.range )
 				tc->isAttacking = true;
 		
+			mvmc->state = Core::MovementState::Movement_Walking;
+
 			// draw range and target...
 			//GFX::Debug::DrawSphere( wpc->GetVec3( *wpc ), weapon.range, GFXColor( 0.5, 1, 0.5, 1 ), false );
 			//GFX::Debug::DrawLine( targetWpc->GetVec3( *targetWpc ), wpc->GetVec3( *wpc ), GFXColor( 0.5, 1, 0.5, 1 ), false );
@@ -58,11 +60,11 @@ void Core::AttackAnimationSystem::Update(float delta)
 				if( animac->currentTime > weapon.animationDmgDealingtime && !tc->hasAttacked )
 				{
 					tc->hasAttacked = true;
-					Core::AttributeComponent* owmAttribc = WGETC<Core::AttributeComponent>( *it );
 					
+					Core::AttributeComponent* owmAttribc = WGETC<Core::AttributeComponent>( *it );
 					Core::AttributeComponent* enemyAttribc = WGETC<Core::AttributeComponent>( tc->target );
 					Core::UnitTypeComponent* enemyUtc = WGETC<Core::UnitTypeComponent>( tc->target );
-
+					
 					owmAttribc->stamina -= weapon.staminaCost;
 					if( enemyUtc->type == Core::UnitType::Rioter )
 					{
@@ -71,7 +73,7 @@ void Core::AttackAnimationSystem::Update(float delta)
 					}
 
 					// deal dmg if target is still in range
-					if (distSqr < weapon.range * weapon.range )
+					if (distSqr < weapon.range * weapon.range + weapon.graceDistance * weapon.graceDistance )
 					{
 						enemyAttribc->health -= (int)weapon.weaponDamage;
 						enemyAttribc->morale -= weapon.moraleDamage;					
@@ -105,10 +107,9 @@ void Core::AttackAnimationSystem::Update(float delta)
 
 			if( animac->animationID == weaponAnimation )
 			{
-				//Core::AnimationManager::LoopAnimation( *it, 0 );
 				tc->isAttacking = false;
 				tc->hasAttacked = false;
-
+				
 				Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>(*it);
 				mvmc->SetDesiredSpeed( Core::GameData::GetMovementDataWithState( mvmc->state ).speedToDesire, 
 						Core::DesiredSpeedSetPriority::CombatAnimationDesiredSpeedPriority );
