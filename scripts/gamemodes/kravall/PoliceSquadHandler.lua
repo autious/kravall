@@ -309,6 +309,8 @@ end
 function PoliceSquadHandler:AimTearGas()
     local mouseX, mouseY = mouse.getPosition()
     local x,y,z = core.system.picking.getGroundHit(mouseX, mouseY);
+    local errorMessage = nil
+    local inRange = false
     self.reticule:SetPosition(x, y, z)
 
     if not self:CanUseAbility(core.system.squad.abilities.TearGas) then
@@ -322,25 +324,52 @@ function PoliceSquadHandler:AimTearGas()
             if abilities[i] == core.system.squad.abilities.TearGas then
                 local wpc = entity:get(core.componentType.WorldPositionComponent)
                 if math.sqrt(((wpc.position[1]-x) * (wpc.position[1]-x)) + ((wpc.position[2]-y) * (wpc.position[2]-y)) + ((wpc.position[3]-z) * (wpc.position[3]-z))) < tearGasPolice.tearGasRange then
-                    self.reticule:SetAccept()
-                    local attributeComponent = entity:get(core.componentType.AttributeComponent)
-                    if attributeComponent.stamina >= tearGasPolice.tearGasStaminaCost then
-                        if self.leftClicked then
+
+                    if inRange == false then 
+                        inRange = true 
+                    end
+
+                    if self.leftClicked then
+                        local attributeComponent = entity:get(core.componentType.AttributeComponent)
+                        if attributeComponent.stamina >= tearGasPolice.tearGasStaminaCost then
                             --Consume click to avoid deselecting squads
                             self.leftClicked = false
                             self.leftPressed = false
                             self:UseTearGas(entity, x, y, z) 
+
                             if not keyboard.isKeyDown(keyboard.key.Left_shift) then
                                 self.isAiming = false
+                                self:SetReticuleRender(false)
+                                self.AimingFunction = nil
                             end
+
                             return
+                        else
+                            errorMessage = "Not enough stamina"    
                         end
                     end
-                else
-                    self.reticule:SetDeny()
                 end
             end
         end
+    end
+
+    if inRange then
+        self.reticule:SetAccept()
+    else
+        self.reticule:SetDeny()
+    end
+
+    if self.leftClicked then
+        --Consume click to avoid deselecting squads
+        self.leftClicked = false
+        self.leftPressed = false
+        if errorMessage == nil then
+            errorMessage = "Too far away"
+        end
+    end
+
+    if errorMessage then
+        print( errorMessage)
     end
 end
 
