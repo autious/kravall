@@ -85,6 +85,10 @@ function T:init()
             self.gui:setSelectedSquads( squads )
         end,
 
+        onUsableAbilitiesChange = function( abilities )
+            self.gui:setUsableAbilities( abilities )
+        end,
+
         -- Called when the currently active unit changes
         -- or when the state of the unit might have changes (like health)
         onSelectedUnitInformationChange = function( data )

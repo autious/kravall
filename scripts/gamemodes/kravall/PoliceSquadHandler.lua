@@ -34,6 +34,8 @@ local standardPolice = (require "game_constants").standardPolice
 local guiBehaviour = (require "game_constants").guiBehaviour
 local tearGasPolice = (require "game_constants").tearGasPolice
 
+local Reticule = require "gamemodes/kravall/reticule"
+
 local input = require "input"
 
 local function registerCallbacks(o)
@@ -79,6 +81,8 @@ function PoliceSquadHandler:new(o)
 
     -- List of timed entities created for abilities
     o.abilityEntities = {}
+
+    o.reticule = Reticule:new()
     
     registerCallbacks(o)
 
@@ -254,6 +258,9 @@ end
 
 function PoliceSquadHandler:setAbility( ability )
     self.onAbilityChange( ability )
+    if ability == core.system.squad.abilities.TearGas then
+        self.isAiming = true
+    end
 end
 
 -- Check if given group has any differing stances, if so, return nil
@@ -289,14 +296,19 @@ function PoliceSquadHandler:clearUsableAbilites()
 end    
 
 function PoliceSquadHandler:canUseAbility(ability)
-    for _,abilityList in pairs(self.usableAbilites) do
-        for a in abilityList do
+    for _,abilityList in pairs(self.usableAbilities) do
+        for _,a in pairs(abilityList) do
             if a == ability then
                 return true
             end
         end
     end
     return false
+end
+
+function PoliceSquadHandler:ToggleReticule()
+    local gfxc = self.reticule.entity:get(core.componentType.GraphicsComponent) 
+    gfxc.render = not gfxc.render
 end
 
 function PoliceSquadHandler:useTearGas(x, y, z)
@@ -517,6 +529,10 @@ function PoliceSquadHandler:update( delta )
     end
 
     --Abilities
+    if mouse.isButtonDownOnce(mouse.button.Right) then
+        self.isAiming = false
+    end
+
     local i = 1
     while i <= #(self.abilityEntities) do
         local e = self.abilityEntities[i]
@@ -530,8 +546,8 @@ function PoliceSquadHandler:update( delta )
     end
 
     if keyboard.isKeyDownOnce(keyboard.key.Kp_8) then
-        --if self.canUseAbility(core.system.squad.abilities.TearGas) then
-         --   self:toggleReticuleRendering()
+        if self:canUseAbility(core.system.squad.abilities.TearGas) then
+            self:ToggleReticule()
             
             if self.isAiming then
                 self.isAming = false
@@ -539,18 +555,19 @@ function PoliceSquadHandler:update( delta )
                 self.isAiming = true
             end
             
-       --end
+       end
     end
 
     if self.isAiming == true then
        --Draw reticule at x, y, z 
         local mouseX, mouseY = mouse.getPosition()
         local x,y,z = core.system.picking.getGroundHit(mouseX, mouseY);
+        self.reticule:SetPosition(x, y, z)
+
         if mouse.isButtonDownOnce(mouse.button.Left) then
             self:useTearGas(x, y, z)            
             if not keyboard.isKeyDown(keyboard.key.Left_shift) then
                 self.isAiming = false
-                --self.toggleReticuleRendering()
             end
         end
     end   
