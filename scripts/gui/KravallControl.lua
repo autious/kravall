@@ -112,20 +112,20 @@ function KravallControl:update( delta )
     -- For debug writing
     self.gui:renderDebug( delta )
 
-    self.count = self.count or 0
-    self.count = self.count + delta
+    --self.count = self.count or 0
+    --self.count = self.count + delta
 
-    if self.count > 10 then
-        self.ind = self.ind or 0
-        self.ind = self.ind + 1
-        
-        if self.ind % 2 == 1 then
-            self:addEvent(TextLabel:new( {label="Status: " .. self.ind} ))
-        else
-            self:addEvent(Button:new( {onClick=function() print( "JOEL" ) end }))
-        end
-        self.count = 0
-    end
+    --if self.count > 10 then
+    --    self.ind = self.ind or 0
+    --    self.ind = self.ind + 1
+    --    
+    --    if self.ind % 2 == 1 then
+    --        self:addEvent(TextLabel:new( {label="Status: " .. self.ind} ))
+    --    else
+    --        self:addEvent(Button:new( {onClick=function() print( "JOEL" ) end }))
+    --    end
+    --    self.count = 0
+    --end
 
     -- constrict each frame to give animation like results.
     self.eventGUI:constrict( delta )
