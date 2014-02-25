@@ -75,6 +75,29 @@ layout (std430, binding = 1) coherent writeonly buffer OutputBuffer
 uniform uint gEntityCount;
 
 shared ChargeCurve gChargeCurves[1][2];
+
+//uniform vec4 gChargeCurves[6][13]= {{ vec4(0.0f), vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f) },
+//									
+//								   { vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f), vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f) },
+//
+//								   { vec4(0.0f), vec4(0.0f), vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f), vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f) },
+//
+//								   { vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f) },
+//
+//								   { vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f), vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f) },
+//
+//								   { vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f) }};
+
+uniform int gChargeSenderIndices[3][6] = {{ 0, 0, 0, 0, 0, 0 },
+										  { 0, 0, 0, 0, 0, 0  },
+										  { 0, 0, 0, 0, 0, 0  }};
+
+uniform int gChargeReceiverIndices[3][6] = {{ 0, 0, 0, 0, 0, 0 },
+										  { 0, 0, 0, 0, 0, 0  },
+										  { 0, 0, 0, 0, 0, 0  }};
+
+
+
 uniform vec4 gMoodCurves[6][13] = {{ vec4(5, -0.001f, 0.01f, 0.01f), vec4(5, 0.0f, 0.0f, 0.01f),vec4(15, 0.0f, 0.5f, 0.1f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(3, 0.0f, 0.0001f, 0.00001f),vec4(5, 0.0f, 0.0002f, 0.0002f),vec4(3, -0.0001f, 0.0001f, 0.0001f),vec4(0.0f),vec4(0.0f),vec4(0.0f) },
 									
 								   { vec4(5, 0.0f, 0.001f, 0.1f),vec4(5, 0.0f, 0.001f, 0.1f),vec4(15, 0.0f, 0.0005f, 0.1f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(3, 0.0f, 0.00005f, 0.001f),vec4(3, 0.0f, 0.00005f, 0.001f), vec4(5, 0.0f, 0.0001f, 0.0002f),vec4(3, -0.0001f, 0.0001f, 0.0002f),vec4(0.0f),vec4(0.0f),vec4(0.0f) },
@@ -104,6 +127,17 @@ float GetAgentChargeAt(int unitType, float distSqr)
 	
 	return float(distSqr > 0.001f && distSqr < c.ch_cu_re_dec.z) * (-MINIMUM_CHARGE + distSqr * (c.ch_cu_re_dec.z / MINIMUM_CHARGE)) + 
 	float(distSqr <= c.ch_cu_re_dec.y) * ( c.ch_cu_re_dec.x - distSqr * c.ch_cu_re_dec.w);
+
+
+	//int senderIndex = gChargeSenderIndices[sType][sState];
+	//int receieverIndex = gChargeReceiverIndices[rType][rState];
+	//
+	//vec4 chargeCurve = gChargeCurves[receieverIndex][senderIndex];
+	//
+	//return float(distSqr > 0.001f && distSqr < chargeCurve.z) * (-MINIMUM_CHARGE + distSqr * (chargeCurve.z / MINIMUM_CHARGE)) + 
+	//float(distSqr <= chargeCurve.y) * ( chargeCurve.x - distSqr * chargeCurve.w);
+
+
 }
 
 

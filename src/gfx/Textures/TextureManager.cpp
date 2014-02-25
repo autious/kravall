@@ -21,7 +21,9 @@ namespace GFX
 
 		if (decal)
 		{
-			LoadTexture(id, data, GL_TEXTURE_2D, GL_RGBA, GL_RGBA, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR,
+			//NO MIPMAP FOR UUU
+			//FOR NOW
+			LoadTexture(id, data, GL_TEXTURE_2D, GL_RGBA, GL_RGBA, GL_LINEAR, GL_LINEAR,
 				GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, width, height);
 		}
 		else
