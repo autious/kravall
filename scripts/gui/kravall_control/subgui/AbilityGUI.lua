@@ -256,4 +256,18 @@ function AbilityGUI:setAbility( ability )
     end
 end
 
+function AbilityGUI:setUsableAbilities(abilities)
+    for _,v in pairs(self.localComponents) do
+        v:setShow(false)
+    end
+
+    for _,a in pairs(abilities) do
+        for k,v in pairs(self.localComponents) do
+            if a == k then
+                v:setShow(true)
+            end
+        end
+    end
+end
+
 return AbilityGUI

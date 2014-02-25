@@ -3,7 +3,10 @@ local window = require "window"
 local Camera = require "rts_camera"
 local KravallControl = require "gui/KravallControl"
 local PoliceSquadHandler = require "gamemodes/kravall/PoliceSquadHandler"
+local PDC = require "particle_definition"
+local ASM = require "assembly_loader"
 local MoveMarker = require "visual_objects/MoveMarker"
+
 local T = {}
 
 local keyboard = core.input.keyboard
@@ -25,7 +28,19 @@ function T:new(o)
     return o
 end
 
+--This function should not be used once squad creation is moved to inside Kravall game mode
+function T:addSquad(squad)
+    self.policeHandler:addSquad(squad)
+end
+
 function T:init()
+
+    self.asm = ASM.loadPack({})
+    self.particleDefinitions =
+    {
+        TearGas = PDC:createParticleDefinition(self.asm, 5000, "assets/texture/particle/smoke.material")
+    }
+
     self.moveMarker = MoveMarker:new()
     self.gui = KravallControl:new( 
     {
@@ -46,6 +61,7 @@ function T:init()
 
     self.policeHandler = PoliceSquadHandler:new( 
     {
+        particleDefinitions = self.particleDefinitions,
         -- Called when the currently active formation is changed logically.
         onFormationChange = function( formation )
             self.gui:setFormation( formation ) 
@@ -64,6 +80,10 @@ function T:init()
         -- Could be empty
         onSelectedSquadsChange = function( squads )
             self.gui:setSelectedSquads( squads )
+        end,
+
+        onUsableAbilitiesChange = function( abilities )
+            self.gui:setUsableAbilities( abilities )
         end,
 
         -- Called when the currently active unit changes

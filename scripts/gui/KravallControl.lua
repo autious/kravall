@@ -101,6 +101,12 @@ function KravallControl:setSelectedSquads( squads )
     --TODO: show/hide the status field depending on selection.
 end
 
+function KravallControl:setUsableAbilities(abilities)
+    self.abilitiesGUI:setUsableAbilities(abilities)
+end
+
+
+
 function KravallControl:addEvent( component )
     self.eventGUI:addComponent( component )
 end
