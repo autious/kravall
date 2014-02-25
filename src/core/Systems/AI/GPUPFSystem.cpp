@@ -9,7 +9,7 @@ static int frameCount = 0;
 namespace Core
 {
 	GPUPFSystem::GPUPFSystem() : BaseSystem(EntityHandler::GenerateAspect<WorldPositionComponent, MovementComponent,
-		UnitTypeComponent, AttributeComponent, FlowfieldComponent>(), 0ULL)
+		UnitTypeComponent, AttributeComponent, FlowfieldComponent, MovementDataComponent>(), 0ULL)
 	{
 		m_foundShader = false;
 		m_readBack = false;
@@ -169,21 +169,22 @@ namespace Core
 				for (std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); it++)
 				{
 					MovementComponent* mc = WGETC<MovementComponent>(*it);
+					MovementDataComponent *mdc = WGETC<MovementDataComponent>( *it );
 					AttributeComponent* ac = WGETC<AttributeComponent>(*it);
 					UnitTypeComponent* utc = WGETC<UnitTypeComponent>(*it);
 
 					#define PF_FACTOR 0.5f
 					#define FF_FACTOR 0.5f
 
-					float dirDot = glm::dot(glm::vec2(mc->newDirection[0], mc->newDirection[2]), glm::vec2(mc->oldPFDir[0], mc->oldPFDir[1]));
+					float dirDot = glm::dot(glm::vec2(mc->newDirection[0], mc->newDirection[2]), glm::vec2(mdc->oldPFDir[0], mdc->oldPFDir[1]));
 
 					glm::vec3 FFDirection = glm::vec3(mc->newDirection[0], mc->newDirection[1], mc->newDirection[2]);
 					FFDirection = FFDirection * float(!(dirDot < 0.0f));
 
 					glm::vec3 newDir = glm::vec3(
-						FFDirection.x * FF_FACTOR + mc->oldPFDir[0] * PF_FACTOR,
+						FFDirection.x * FF_FACTOR + mdc->oldPFDir[0] * PF_FACTOR,
 						0 * FF_FACTOR + 0 * PF_FACTOR,
-						FFDirection.z * FF_FACTOR + mc->oldPFDir[1] * PF_FACTOR);
+						FFDirection.z * FF_FACTOR + mdc->oldPFDir[1] * PF_FACTOR);
 
 					if (glm::length(newDir) > 0.1f)
 						newDir = glm::normalize(newDir);
@@ -211,14 +212,15 @@ namespace Core
 				for (std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); it++)
 				{
 					MovementComponent* mc = WGETC<MovementComponent>(*it);
+					MovementDataComponent *mdc = WGETC<MovementDataComponent>( *it );
 					AttributeComponent* ac = WGETC<AttributeComponent>(*it);
 					UnitTypeComponent* utc = WGETC<UnitTypeComponent>(*it);
 
 					#define PF_FACTOR 0.5f
 					#define FF_FACTOR 0.5f
 
-					mc->oldPFDir[0] = out[i].newDirection_speed.x;
-					mc->oldPFDir[1] = out[i].newDirection_speed.z;
+					mdc->oldPFDir[0] = out[i].newDirection_speed.x;
+					mdc->oldPFDir[1] = out[i].newDirection_speed.z;
 
 					float dirDot = glm::dot(glm::vec2(mc->newDirection[0], mc->newDirection[2]), glm::vec2(out[i].newDirection_speed.x, out[i].newDirection_speed.z));
 

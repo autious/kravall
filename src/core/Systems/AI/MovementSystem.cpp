@@ -10,7 +10,7 @@ const float Core::MovementSystem::TURN_FACTOR = 7.5f;
 Core::MovementSystem::MovementSystem()  
 : BaseSystem( {
 	{ EntityHandler::GenerateAspect<WorldPositionComponent, MovementComponent>(), 0ULL}, 
-	{ EntityHandler::GenerateAspect<AttributeComponent, MovementComponent, UnitTypeComponent>(), 0ULL } })
+	{ EntityHandler::GenerateAspect<AttributeComponent, MovementComponent, UnitTypeComponent, MovementDataComponent>(), 0ULL } })
 {
 }
 
@@ -73,11 +73,12 @@ void Core::MovementSystem::Update(float delta)
 	for (std::vector<Entity>::iterator it = m_bags[1].m_entities.begin(); it != m_bags[1].m_entities.end(); it++)
 	{
 		UnitTypeComponent* utc = WGETC<UnitTypeComponent>(*it);
-		if( utc->type != Core::Police )
+		if( utc->type != Core::UnitType::Police )
 			continue;
 
 		AttributeComponent* attribc = WGETC<AttributeComponent>(*it);
 		MovementComponent* mvmc = WGETC<MovementComponent>(*it);
+		MovementDataComponent *mdc = WGETC<MovementDataComponent>( *it );
 
 		if( attribc->stamina > 30.0f )
 		{
@@ -88,7 +89,7 @@ void Core::MovementSystem::Update(float delta)
 			mvmc->state = Core::MovementState::Movement_Walking;
 		}
 
-		if( mvmc->movedThisFrame )
+		if( mdc->movedThisFrame )
 			attribc->stamina -= Core::GameData::GetMovementDataWithState( mvmc->state ).staminaCostPerSecond * delta;
 	}
 

@@ -5,7 +5,6 @@ local Checkbox = require "gui/component/Checkbox"
 local TextSelectList = require "gui/component/TextSelectList"
 local TextLabel = require "gui/component/TextLabel"
 local TextBox = require "gui/component/TextBox"
-local ObjectiveHandler = require "gui/component/ObjectiveHandler"
 
 local AnchorPlacer = require "gui/placement/AnchorPlacer"
 local EastPlacer = require "gui/placement/EastPlacer"
@@ -60,9 +59,6 @@ function KravallControl:new(o)
     o.rightControlGUI:addComponent( o.formationGUI )
     -------
 
-    o.objectiveHandler = ObjectiveHandler:new{width=150, height=200, anchor="NorthWest" }
-
-    o.gui:addComponent( o.objectiveHandler )
     o.gui:addComponent( o.rightControlGUI )
     o.gui:addComponent( o.statusGUI )
     o.gui:addComponent( o.eventGUIPadder )
@@ -135,10 +131,6 @@ function KravallControl:update( delta )
 
     -- constrict each frame to give animation like results.
     self.eventGUI:constrict( delta )
-end
-
-function KravallControl:createObjective( objective )
-    return self.objectiveHandler:createObjective( objective )  
 end
 
 function KravallControl:destroy()
