@@ -67,6 +67,7 @@ namespace Core
 		int m_material;
 
 		GFX::GFXBitmask m_bitmask;
+		GFX::GFXBitmask m_lightBitmask;
     };
 }
 #endif
