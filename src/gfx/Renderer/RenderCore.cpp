@@ -480,7 +480,7 @@ namespace GFX
 		CT(m_overlayPainter->Render(renderJobIndex, m_overlayViewMatrix, m_overlayProjMatrix), "Console");
 
 		// Draw debug information
-		CT(m_debugPainter->Render(m_depthBuffer, m_normalDepth, m_viewMatrix, m_projMatrix, false), "Debug");
+		CT(m_debugPainter->Render(m_depthBuffer, m_normalDepth, m_viewMatrix, m_projMatrix, true), "Debug");
 
 		// Draw the console
 		CT(m_consolePainter->Render(), "Console");

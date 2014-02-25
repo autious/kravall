@@ -1,6 +1,6 @@
 local MoveMarker = require "visual_objects/MoveMarker"
 local PoliceSquadHandler = require "gamemodes/kravall/PoliceSquadHandler"
-local KravallControl = require "gui/KravallControl"
+local KravallControl = require "gui/kravall/main/KravallControl"
 local PDC = require "particle_definition"
 local ASM = require "assembly_loader"
 
