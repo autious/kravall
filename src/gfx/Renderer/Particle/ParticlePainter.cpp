@@ -264,7 +264,7 @@ namespace GFX
         glDrawBuffers(5, drawBuffers);
         glEnable(GL_BLEND);
         glBlendEquation(GL_FUNC_ADD);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);    
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE);    
        
         m_shaderManager->UseProgram("ParticleApply");
         glActiveTexture(GL_TEXTURE0);

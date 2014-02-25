@@ -13,6 +13,9 @@ local PoliceSquadHandler =  {
                                 onSelectedSquadsChange = function(squads)
                                     core.log.error( "No function set for onSelectedSquadsChange" )
                                 end,
+                                onUsableAbilitiesChange = function(abilities)
+                                    core.log.error( "No function is set  for onSelectedAbilitiesChange" )
+                                end,
                                 onSelectedUnitInformationChange = function(data)
                                     core.log.error( "No function set for onSelectedUnitInformationChange")
                                 end,
@@ -172,13 +175,18 @@ end
 -- available to the members of the given squadIds
 function PoliceSquadHandler:setUsableAbilites(squads)
     local abilities = {}
+    local aggregatedAbilities = {}
     for i=1, #squads do
         local squad = self:getSquad(squads[i])
         for _,member in pairs(squad.members) do
             abilities[member.entity] = member.getAbilities()
+            for i=1, #(member.getAbilities()) do
+                aggregatedAbilities[#aggregatedAbilities+1] = abilities[member.entity][i]
+            end
         end                 
     end
     self.usableAbilities = abilities;
+    self.onUsableAbilitiesChange(aggregatedAbilities)
 
 end
 
@@ -292,43 +300,53 @@ function PoliceSquadHandler:canUseAbility(ability)
 end
 
 function PoliceSquadHandler:useTearGas(x, y, z)
+    local errorMessage = "None"
     for entity, abilities in pairs(self.usableAbilities) do
         for i=1, #abilities do
             if abilities[i] == core.system.squad.abilities.TearGas then
                 local wpc = entity:get(core.componentType.WorldPositionComponent)
                 if math.sqrt(((wpc.position[1]-x) * (wpc.position[1]-x)) + ((wpc.position[2]-y) * (wpc.position[2]-y)) + ((wpc.position[3]-z) * (wpc.position[3]-z))) < tearGasPolice.tearGasRange then
-                    --Spawn gas grenade entity at x y z, deduct stamina from entity
-                    local pairTable = {}                
-                    local entity = core.entity.create(core.componentType.EmitterComponent, core.componentType.WorldPositionComponent)
-                    entity:set(core.componentType.WorldPositionComponent, {position = {x, y, z}})
-                    entity:set(core.componentType.EmitterComponent, {
-                            rate = 10,
-                            offset = {0, 0, 0},
-                            life = 5,
-                            lifeVariance = 0,
-                            lifeReduction = 1,
-                            lifeReductionVariance = 0,
-                            velocity = {0, 0, 6},
-                            velocityVariance = {3, 3, 3},
-                            acceleration = {0, -2, 0},
-                            coneDirection = {0, 1, 0},
-                            coneAngle = 30,
-                            coneAngleVariance = 60,
-                            type = core.system.particle.emitters.Cone,
-                            handle = self.particleDefinitions["TearGas"]
-                            }, true)
+                    local attributeComponent = entity:get(core.componentType.AttributeComponent)
+                    if attributeComponent.stamina >= tearGasPolice.tearGasStaminaCost then
+                        attributeComponent.stamina = (attributeComponent.stamina - tearGasPolice.tearGasStaminaCost)
+                        local pairTable = {}                
+                        local entity = core.entity.create(core.componentType.EmitterComponent, core.componentType.WorldPositionComponent)
+                        entity:set(core.componentType.WorldPositionComponent, {position = {x, y, z}})
+                        entity:set(core.componentType.EmitterComponent, {
+                                rate = 10,
+                                offset = {0, 0, 0},
+                                life = 5,
+                                lifeVariance = 0,
+                                lifeReduction = 1,
+                                lifeReductionVariance = 0,
+                                velocity = {0, 0, 6},
+                                velocityVariance = {3, 3, 3},
+                                acceleration = {0, -2, 0},
+                                coneDirection = {0, 1, 0},
+                                coneAngle = 30,
+                                coneAngleVariance = 60,
+                                type = core.system.particle.emitters.Cone,
+                                handle = self.particleDefinitions["TearGas"]
+                                }, true)
 
-                    pairTable.entity = entity
-                    pairTable.timer = 2                    
+                        pairTable.entity = entity
+                        pairTable.timer = 2                    
 
-                    self.abilityEntities[#(self.abilityEntities) + 1] = pairTable
+                        self.abilityEntities[#(self.abilityEntities) + 1] = pairTable
+                        return
+                    else
+                        errorMessage = "Not enough stamina"
+                    end
                 else
-                    print("Too far away")
+                    if errorMessage ~= "Not enough stamina" then
+                        errorMessage = "No unit in range"
+                    end
                     -- Display out of range message
                 end
             end
         end
     end
+    print(errorMessage)
 end
 
 
@@ -501,11 +519,7 @@ function PoliceSquadHandler:update( delta )
     --Abilities
     local i = 1
     while i <= #(self.abilityEntities) do
-        print ("Table size: " .. #(self.abilityEntities))
-        print("Index: " .. i)
-
         local e = self.abilityEntities[i]
-        print (e)
         self.abilityEntities[i].timer = self.abilityEntities[i].timer - delta
         if self.abilityEntities[i].timer <= 0 then
             self.abilityEntities[i].entity:destroy()

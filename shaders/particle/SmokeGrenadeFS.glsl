@@ -22,6 +22,7 @@ uniform sampler2D gGlow;
 void main()
 {
     vec4 diffuse = texture2D(gDiffuse, FragmentIn.UV);
+    vec4 normal = texture2D(gNormal, FragmentIn.UV);
     vec4 glow = texture2D(gGlow, FragmentIn.UV);
 
     float depth = FragmentIn.Position.z / FragmentIn.Position.w;
@@ -29,10 +30,7 @@ void main()
     
     //Something is borked with depth, seems to be dependant on viewspace
     //float fade = clamp((sampleDepth - depth) * 0.2f, 0.0f, 1.0f);
-    
-    diffuseRT.xyz = pow(diffuse.xyz, vec3(gGamma)) * (min(5.0f, (FragmentIn.life-0.15f) ) / 5.0f) * diffuse.a;
+
+    diffuseRT.xyz = min(vec3(1.0f, 1.0f, 1.0f), pow(diffuse.xyz, vec3(gGamma))) * (min(5.0f, (FragmentIn.life-0.15f) ) / 5.0f) * diffuse.a;
     diffuseRT.a = min(diffuse.a, (min(5.0f, (FragmentIn.life-0.15f) ) / 5.0f));
-    //diffuseRT = diffuse * diffuse.a;
-    //diffuseRT.a = diffuse.a * vec4(1.0f, 1.0f, 1.0f, min(5.0f, FragmentIn.life) / 5.0f); // * fade; 
-    //glowMatIDRT = glow;
 }
