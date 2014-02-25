@@ -77,6 +77,11 @@ return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, group
 				}
 			},
 			{
+				type = core.componentType.MovementDataComponent,
+				data = { },
+				ignoreHard = true
+			},
+			{
 				type = core.componentType.FlowfieldComponent,
 				data = { node = -1 }
 			},
