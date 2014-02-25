@@ -343,6 +343,7 @@ function PoliceSquadHandler:UseTearGas(x, y, z)
                         local entity = core.entity.create(core.componentType.EmitterComponent
                                                             , core.componentType.WorldPositionComponent
                                                             , core.componentType.MovementComponent
+															, core.componentType.RotationComponent
                                                             , core.componentType.UnitTypeComponent
                                                             , core.componentType.AttributeComponent
                                                             , core.componentType.FlowfieldComponent)
@@ -353,7 +354,7 @@ function PoliceSquadHandler:UseTearGas(x, y, z)
                         entity:set(core.componentType.EmitterComponent, {
                                 rate = 10,
                                 offset = {0, 0, 0},
-                                life = 0,
+                                life = 5,
                                 lifeVariance = 0,
                                 lifeReduction = 1,
                                 lifeReductionVariance = 0,
