@@ -5,7 +5,7 @@ local function createMember( scen, pos, memberDef )
     assert( pos )
     assert( memberDef )
 
-    scen:loadAssembly( 
+    return scen:loadAssembly( 
 		{
 			{
 				type = core.componentType.WorldPositionComponent,
@@ -44,7 +44,23 @@ local function createMember( scen, pos, memberDef )
 end
 
 return function( scen, squadInstance )
-    for i,v in pairs( squadInstance.squadDef.setup ) do
-        createMember(scen, squadInstance.position + core.glm.vec3.new( unpack( v.positionOffset ) ), v )
+    local e = {}
+
+    function e:setOutline( color )
+        if color then
+            for _,v in ipairs(self) do
+                v:set( core.componentType.GraphicsComponent, { layer = core.gfx.layerTypes.OutlineLayer, outlineColor = color}, true )
+            end
+        else
+            for _,v in ipairs(self) do
+                v:set( core.componentType.GraphicsComponent, { layer = core.gfx.layerTypes.MeshLayer }, true )
+            end
+        end
     end
+
+    for i,v in pairs( squadInstance.squadDef.setup ) do
+        table.insert( e, createMember(scen, squadInstance.position + core.glm.vec3.new( unpack( v.positionOffset ) ), v ) )
+    end
+
+    return e
 end

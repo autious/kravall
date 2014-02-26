@@ -24,7 +24,7 @@ function Prep:new(o)
 
     o.spawnAreas = {}
     o.createdSquads = {}
-    o.creteadVisualRepresentation = {}
+    o.createdVisualRepresentation = {}
 
     o.prepInterface = PrepInterface:new(
     {
@@ -36,7 +36,16 @@ function Prep:new(o)
         onSelectCurrentSquad = function(squadDef)
             o.activeSquad = squadDef
             o.squadPositionDecal:setActiveSquad(squadDef)
-        end
+        end,
+        onSelectCreatedSquad = function (squadInstance)
+            for _,v in  pairs( o.createdVisualRepresentation ) do
+                v:setOutline(nil)
+            end
+            local rep =  o.createdVisualRepresentation[squadInstance]
+            if rep then
+                rep:setOutline( {0,1,0,1} ) 
+            end
+        end,
     })
 
     o.onButton = function( button, action, mods, consumed )
@@ -51,7 +60,8 @@ function Prep:new(o)
                         position    = o.activePosition,
                     }
                     table.insert(o.createdSquads, squadInstance )
-                    o.createdVisualRepresenation[squadInstance] = ent.get "squadInstanceStatic"( o.asm, squadInstance )
+
+                    o.createdVisualRepresentation[squadInstance] = ent.get "squadInstanceStatic"( o.asm, squadInstance )
                     o.prepInterface:updatePurchasedList()
                 end
             end 

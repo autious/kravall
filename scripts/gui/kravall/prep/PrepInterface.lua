@@ -15,9 +15,10 @@ local CenterPlacer = require "gui/placement/CenterPlacer"
 
 local PrepInterface = 
 {
+    policeTypes = {},
     onSelectCurrentSquad = function(squadDef) end,
     onFinished = function() end,
-    policeTypes = {}
+    onSelectCreatedSquad = function (squadInstance) end,
 }
 
 function PrepInterface:new(o)
@@ -44,7 +45,8 @@ function PrepInterface:new(o)
     { 
         xoffset=20,
         anchor="West", 
-        elements= o.createdSquads
+        elements= o.createdSquads,
+        onSelect = o.onSelectCreatedSquad,
     }
 
     o.doneButton = Button:new{ anchor="SouthEast", xoffset=-10, yoffset=-10, onClick = o.onFinished }
