@@ -2,6 +2,9 @@ local PrepInterface = require "gui/kravall/prep/PrepInterface"
 
 local SquadPositionDecal = require "visual_objects/SquadPositionDecal"
 
+local ASM = require "assembly_loader"
+local ent = require "entities"
+
 local Prep = { 
     name = "Prep",
     policeTypes = nil,
@@ -16,6 +19,8 @@ function Prep:new(o)
     self.__index = self
   
     o.squadPositionDecal = SquadPositionDecal:new()
+
+    o.asm = ASM.loadPack({})
 
     o.spawnAreas = {}
     o.createdSquads = {}
@@ -40,13 +45,13 @@ function Prep:new(o)
             if o.activeSquad then
                 if o.canPlace then 
                     --pLace unit
-            
-                    table.insert(o.createdSquads, 
-                    { 
+                    local squadInstance = { 
                         name        = o.activeSquad.name,
                         squadDef    = o.activeSquad,
                         position    = o.activePosition,
-                    })
+                    }
+                    table.insert(o.createdSquads, squadInstance )
+                    o.createdVisualRepresenation[squadInstance] = ent.get "squadInstanceStatic"( o.asm, squadInstance )
                     o.prepInterface:updatePurchasedList()
                 end
             end 
@@ -82,6 +87,9 @@ function Prep:destroy()
     input.deregisterOnButton( self.onButton )
     input.deregisterOnPosition( self.onPosition )
     self.prepInterface:destroy()
+    self.asm:destroy()
+    self.asm = nil
+    
 end
 
 return Prep
