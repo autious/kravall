@@ -58,6 +58,27 @@ namespace Core
             }
             
             return 1;
+
+        };
+
+        getters["dim"] = []( Core::Entity entity, lua_State * L )
+        {
+            HoverTextComponent *htc = WGETC<HoverTextComponent>( entity );
+
+            lua_newtable( L );
+            lua_pushnumber( L, htc->dim[0] );
+            lua_rawseti( L, -2, 1 );  
+            lua_pushnumber( L, htc->dim[1] );
+            lua_rawseti( L, -2, 2 );  
+
+            return 1;
+        };
+
+        getters["box"] = []( Core::Entity entity, lua_State * L )
+        {
+            HoverTextComponent *htc = WGETC<HoverTextComponent>( entity );
+            lua_pushboolean( L, htc->box );
+            return 1;
         };
         
 
@@ -120,6 +141,26 @@ namespace Core
             {
                 luaL_error( L, "Value font in HoverTextComponent is not font data" );
             }
+        };
+
+        setters["dim"] = [](Core::Entity entity, lua_State * L, int valueindex )
+        {
+            HoverTextComponent *htc = WGETC<HoverTextComponent>( entity );
+            luau_assert( L, lua_istable( L, valueindex ) );
+            
+            lua_rawgeti( L, valueindex, 1 );
+            htc->dim[0] = luaL_checknumber( L, -1 ); 
+            lua_pop( L, 1 );
+            lua_rawgeti( L, valueindex, 2 );
+            htc->dim[1] = luaL_checknumber( L, -1 ); 
+            lua_pop( L, 1 );
+        };
+
+        setters["box"] = [](Core::Entity entity, lua_State * L, int valueindex )
+        {
+            HoverTextComponent *htc = WGETC<HoverTextComponent>( entity );
+            
+            htc->box = lua_toboolean(L, valueindex);
         };
 
         return setters;

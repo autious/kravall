@@ -7,6 +7,9 @@ local standardPolice = (require "game_constants").standardPolice
 
 return function( scen )
     local T = {}
+
+    scen.name = "Max's police prep test"
+    scen.description = "This is simple scenario demonstrating how to create a kravall gamemode with a prep mode."
     
     -- Set game to start in prepmode
     scen.gamemode =  require "gamemodes/kravall":new(
