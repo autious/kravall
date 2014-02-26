@@ -55,6 +55,10 @@ function PrepInterface:new(o)
         xoffset = 20,
         yoffset = -20,
         anchor = "SouthWest",
+        matReleased = "assets/texture/ui/remove-button-release.material",
+        matPressed = "assets/texture/ui/remove-button-press.material",
+        matHover = "assets/texture/ui/remove-button-hover.material",
+        
         onClick = o.onRemoveSelected,
     }
 
