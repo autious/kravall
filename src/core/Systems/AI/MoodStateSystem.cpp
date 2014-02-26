@@ -4,6 +4,13 @@
 #include <World.hpp>
 #include <GameUtility/GameData.hpp>
 
+//#define SHOW_MOOD_STATE_DEBUG 
+#ifdef SHOW_MOOD_STATE_DEBUG
+	#define DRAW_DEBUG( x ) x
+#else
+	#define DRAW_DEBUG( x ) ;
+#endif
+
 namespace Core
 {
 
@@ -179,7 +186,7 @@ namespace Core
 					break;
 				}
 
-				GFX::Debug::DrawSphere(WorldPositionComponent::GetVec3(*WGETC<WorldPositionComponent>(*it)), 1, Colors::CornflowerBlue, false);
+				DRAW_DEBUG( GFX::Debug::DrawSphere(WorldPositionComponent::GetVec3(*WGETC<WorldPositionComponent>(*it)), 1, Colors::CornflowerBlue, false); )
 			}
 			break;
 
@@ -221,7 +228,7 @@ namespace Core
 					}
 					break;
 				}
-				GFX::Debug::DrawSphere(WorldPositionComponent::GetVec3(*WGETC<WorldPositionComponent>(*it)), 1, Colors::Yellow, false);
+				DRAW_DEBUG( GFX::Debug::DrawSphere(WorldPositionComponent::GetVec3(*WGETC<WorldPositionComponent>(*it)), 1, Colors::Yellow, false); )
 			}
 			break;
 
@@ -256,7 +263,7 @@ namespace Core
 					break;
 				}
 
-				GFX::Debug::DrawSphere(WorldPositionComponent::GetVec3(*WGETC<WorldPositionComponent>(*it)), 1, Colors::Red, false);
+				DRAW_DEBUG( GFX::Debug::DrawSphere(WorldPositionComponent::GetVec3(*WGETC<WorldPositionComponent>(*it)), 1, Colors::Red, false); )
 			}
 			break;
 
@@ -283,7 +290,7 @@ namespace Core
 					break;
 				}
 
-				GFX::Debug::DrawSphere(WorldPositionComponent::GetVec3(*WGETC<WorldPositionComponent>(*it)), 1, Colors::White, false);
+				DRAW_DEBUG( GFX::Debug::DrawSphere(WorldPositionComponent::GetVec3(*WGETC<WorldPositionComponent>(*it)), 1, Colors::White, false); )
 			}
 			break;
 
@@ -308,7 +315,7 @@ namespace Core
 					}
 					break;
 				}
-				GFX::Debug::DrawSphere(WorldPositionComponent::GetVec3(*WGETC<WorldPositionComponent>(*it)), 1, Colors::DeepPink, false);
+				DRAW_DEBUG( GFX::Debug::DrawSphere(WorldPositionComponent::GetVec3(*WGETC<WorldPositionComponent>(*it)), 1, Colors::DeepPink, false); )
 			}
 			break;
 		}

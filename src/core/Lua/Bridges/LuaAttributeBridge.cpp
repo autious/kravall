@@ -69,6 +69,18 @@ static void PushRioterObjectType( lua_State * L, const unsigned int value, const
         lua_settable( L, table );
 }
 
+static void PushPFObjectObjectType(lua_State * L, const unsigned int value, const char * name, int table)
+{
+	lua_pushstring(L, name);
+	unsigned int* uvalue = (unsigned int*)lua_newuserdata(L, sizeof(Core::PoliceStance));
+	*uvalue = value;
+
+	luaL_newmetatable(L, ATTRIBUTE_PF_OBJECT_COMPONENT_META_TYPE);
+	lua_setmetatable(L, -2);
+	lua_settable(L, table);
+}
+
+
 Core::LuaAttributeComponentBridge::LuaAttributeComponentBridge( lua_State * L )
 {
 
@@ -117,6 +129,12 @@ Core::LuaAttributeComponentBridge::LuaAttributeComponentBridge( lua_State * L )
             PushRioterObjectType(L, Core::RioterStance::Retreating, "Retreating", rioterStanceTable);
             PushRioterObjectType(L, Core::RioterStance::Civilian, "Civilian", rioterStanceTable);
         lua_setfield(L,-2, "RioterStance");
+
+		lua_newtable(L); // new table
+		int pfObjectTypeTable = lua_gettop(L);
+			PushPFObjectObjectType(L, Core::PFObjectTypes::TearGas, "TearGas", pfObjectTypeTable);
+			PushPFObjectObjectType(L, Core::PFObjectTypes::Molotov, "Molotov", pfObjectTypeTable);
+		lua_setfield(L, -2, "PFObjectType");
 
         //lua_settable( L, coreTableIndex );
 

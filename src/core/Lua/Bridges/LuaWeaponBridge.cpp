@@ -11,17 +11,18 @@ extern "C"
 
 	static int LuaPushWeaponType(lua_State * L)
     {
-		float range						= static_cast<float>(luaL_checknumber( L, 1 ));
-		float healthDmg					= static_cast<float>(luaL_checknumber( L, 2 ));
-		float moraleDmg					= static_cast<float>(luaL_checknumber( L, 3 ));
-		float moralDmgOnMiss			= static_cast<float>(luaL_checknumber( L, 4 ));
-		float rageBuff					= static_cast<float>(luaL_checknumber( L, 5 ));
-		float pressureBuff				= static_cast<float>(luaL_checknumber( L, 6 ));
-		float staminacost				= static_cast<float>(luaL_checknumber( L, 7 ));
-		float animationDmgDealingTime	= static_cast<float>(luaL_checknumber( L, 8 ));
-		std::string animationName		= luaL_checkstring( L,					  9 );
+		float range						= static_cast<float>(luaL_checknumber( L, 1  ));
+		float graceDistance				= static_cast<float>(luaL_checknumber( L, 2  ));
+		float healthDmg					= static_cast<float>(luaL_checknumber( L, 3  ));
+		float moraleDmg					= static_cast<float>(luaL_checknumber( L, 4  ));
+		float moralDmgOnMiss			= static_cast<float>(luaL_checknumber( L, 5  ));
+		float rageBuff					= static_cast<float>(luaL_checknumber( L, 6  ));
+		float pressureBuff				= static_cast<float>(luaL_checknumber( L, 7  ));
+		float staminacost				= static_cast<float>(luaL_checknumber( L, 8  ));
+		float animationDmgDealingTime	= static_cast<float>(luaL_checknumber( L, 9  ));
+		std::string animationName		= luaL_checkstring( L,					  10 );
 
-		int weapon = Core::GameData::PushWeaponData( range, healthDmg, moraleDmg, moralDmgOnMiss, rageBuff, pressureBuff, staminacost, animationDmgDealingTime, animationName );
+		int weapon = Core::GameData::PushWeaponData( range, graceDistance, healthDmg, moraleDmg, moralDmgOnMiss, rageBuff, pressureBuff, staminacost, animationDmgDealingTime, animationName );
         lua_pushnumber(L, weapon );
 
         return 1;

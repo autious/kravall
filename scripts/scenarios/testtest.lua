@@ -66,7 +66,7 @@ local police = ent.get "police"
 local building = ent.get "building"
 
 -- usual weapons...
-local fists = core.weaponData.pushWeapon( 1.0, 20, 0.2, 0.05, 3.2, 2.9, 0.05, 0.5, "punch" )
+local fists = core.weaponData.pushWeapon( 1.0, 0.75, 20, 0.2, 0.05, 3.2, 2.9, 0.05, 0.5, "punch" )
 
 core.gameMetaData.registerEscapePoint( 50, 0, 0 )
 
@@ -87,7 +87,7 @@ core.system.groups.setGroupGoal(rGroup, 0, 0, -300)
 --end
 
 local sqads = {}	
-for i = 0, 10 do
+for i = 0, 50 do
 	sqads[#sqads + 1] = squad(scen, 20, 0, 0, math.pi/2, fists);
 end
 

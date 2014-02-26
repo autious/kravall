@@ -2,15 +2,17 @@ local ent = require "entities"
 
 return function(asm, posX, posY, posZ, rotation, weaponType)
 
+    local T = {}
     local police = ent.get "police"
-    local members = {}
-    local groupId = core.system.groups.createGroup()
-	print(groupId)
+
+    T.members = {}
+    T.groupId = core.system.groups.createGroup()
+
     asm:loadAssembly(
             {
                 {
                     type = core.componentType.SquadComponent,
-                    data = {squadID = groupId, 
+                    data = {squadID = T.groupId, 
                             squadGoal = {posX, posY, posZ},
                             squadMoveInFormation = false,
                             squadTargetForward = {math.sin(rotation), -math.cos(rotation)}},                        
@@ -31,7 +33,9 @@ return function(asm, posX, posY, posZ, rotation, weaponType)
             local x_p = x*math.cos(rotation) - z*math.sin(rotation)
             local z_p = x*math.sin(rotation) + z*math.cos(rotation)
     
-            members[i*3+k] = police(asm, posX + x_p, 0, posZ + z_p, x_p, z_p, groupId, weaponType)
+            T.members[i*3+k] = police(asm, posX + x_p, 0, posZ + z_p, x_p, z_p, T.groupId, weaponType)
         end
     end
+
+    return T
 end
