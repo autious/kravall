@@ -29,63 +29,11 @@ local T =
             {
                 name = "Common Squad",
                 cost = 100,
+                description = "Default",
                 setup = 
                 {
                     {
                         positionOffset = {0,0,0},
-                        weapon = "punch",
-                        mesh = "assets/model/animated/police/cop/cop-teargas_00.bgnome",
-                        material = "assets/texture/animated/police/cop/cop-teargas_00.material",
-                        abilities = {
-                            abilities.Attack, 
-                            abilities.ArrestGroup, 
-                            abilities.Sprint, 
-                            abilities.Rout,
-                        },
-                        health = standardPolice.maxHealth, 
-                        stamina = standardPolice.maxStamina, 
-                        morale = standardPolice.maxMorale, 
-                    },
-                    {
-                        positionOffset = {1,0,1},
-                        weapon = "punch",
-                        mesh = "assets/model/animated/police/cop/cop-teargas_00.bgnome",
-                        material = "assets/texture/animated/police/cop/cop-teargas_00.material",
-                        abilities = {
-                            abilities.Attack, 
-                            abilities.ArrestGroup, 
-                            abilities.Sprint, 
-                            abilities.Rout,
-                        },
-                        health = standardPolice.maxHealth, 
-                        stamina = standardPolice.maxStamina, 
-                        morale = standardPolice.maxMorale, 
-                    },
-                },
-            },
-            {
-                name = "Teargas Squad",
-                cost = 100,
-                setup = 
-                {
-                    {
-                        positionOffset = {0,0,0},
-                        weapon = "punch",
-                        mesh = "assets/model/animated/police/cop/cop-teargas_00.bgnome",
-                        material = "assets/texture/animated/police/cop/cop-teargas_00.material",
-                        abilities = {
-                            abilities.Attack, 
-                            abilities.ArrestGroup, 
-                            abilities.Sprint, 
-                            abilities.TearGas, 
-                            abilities.Rout,
-                        },
-                        health = standardPolice.maxHealth, 
-                        stamina = standardPolice.maxStamina, 
-                        morale = standardPolice.maxMorale, 
-                    },
-                    {
-                        positionOffset = {2,0,2},
                         weapon = "punch",
                         mesh = "assets/model/animated/police/cop/cop-teargas_00.bgnome",
                         material = "assets/texture/animated/police/cop/cop-teargas_00.material",
@@ -113,6 +61,7 @@ function T:new(o)
     self.__index = self
 
     o.camera = Camera.new()
+    o.onStateChangeFunctions = {}
 
 	
 	-- set default movementData
@@ -149,7 +98,11 @@ function T:setState( state )
     elseif state == "End" then
         print( "State set to \"End\"" )
         self.gamestate = End:new()
+    else
+        error( "Invalid state set" )
     end
+
+    self:triggerOnStateChange( state )
 end
 
 function T:init()
@@ -193,6 +146,26 @@ function T:destroy()
 
     -- Remove all weapons that was created.
 	core.gameMetaData.clearGameData()
+end
+
+function T:registerOnStateChange(f)
+    self.onStateChangeFunctions[f] = true   
+end
+
+function T:deregisterOnStateChange(f)
+    self.onStateChangeFunctions[f] = nil
+end
+
+function T:triggerOnStateChange( stateName )
+    local deleteList = {}
+    for i,_ in pairs( self.onStateChangeFunctions ) do
+        deleteList[i] = i(stateName)
+    end
+
+    for i,v in pairs( deleteList ) do
+        --Keep or destroy based on return value
+        self.onStateChangeFunctions[i] = v or nil
+    end
 end
 
 function T:name()

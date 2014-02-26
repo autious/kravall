@@ -18,6 +18,7 @@ function scen:load()
     local rioter = entities.get "rioter"
     local staticModel = entities.get "staticModel"
     local empty = entities.get "empty"
+    local decal = entities.get "decal"
     local ent
     
     scen.asm:specific_content( core.contentmanager.load( core.loaders.NavigationMeshLoader, "scripts/scenarios/max-police-place.nav", function( value ) end, false ) )
@@ -31,18 +32,32 @@ function scen:load()
         end
     end
     
-    directional( scen, 0.03658536449074745, -0.2655065953731537, 0.9634146094322205, 1.0, 1.0, 1.0, 0.3571428656578064 )
-    ambient( scen, 1.0, 1.0, 1.0, 0.2077922224998474 )
+    directional( scen, -0.0, -1.0, 0.0, 1.0, 1.0, 1.0, 0.27737224102020264 )
+    ambient( scen, 1.0, 1.0, 1.0, 0.2518247961997986 )
 
-    ent = area( scen, {-46.2037353515625, 0, 54.88370895385742}, {-10.428420066833496, 10.428420066833496, -10.428420066833496, -10.428420066833496, 10.428420066833496, -10.428420066833496, 10.428420066833496, 10.428420066833496}, "" )
+    ent = area( scen, {-27.610185623168945, 0, -1.596445918083191}, {-3.4176018238067627, 3.4176018238067627, -3.4176018238067627, -3.4176018238067627, 3.4176018238067627, -3.4176018238067627, 3.4176018238067627, 3.4176018238067627}, "" )
+    scen:registerInitCallback( genF( ent, "spawnRiotersOnMain" ) )
+
+    ent = area( scen, {-11.38118839263916, 0, 0.19888296723365784}, {-3.5933034420013428, 3.5933034420013428, -3.5933034420013428, -3.5933034420013428, 3.5933034420013428, -3.5933034420013428, 3.5933034420013428, 3.5933034420013428}, "" )
     scen:registerInitCallback( genF( ent, "registerSpawn" ) )
 
-    ent = area( scen, {-45.56719207763672, 0, 11.533400535583496}, {-8.532986640930176, 8.532986640930176, -8.532986640930176, -8.532986640930176, 8.532986640930176, -8.532986640930176, 8.532986640930176, 8.532986640930176}, "" )
+    ent = area( scen, {0.9353055953979492, 0, -0.1122860535979271}, {-3.5933034420013428, 3.5933034420013428, -3.5933034420013428, -3.5933034420013428, 3.5933034420013428, -3.5933034420013428, 3.5933034420013428, 3.5933034420013428}, "" )
     scen:registerInitCallback( genF( ent, "registerSpawn" ) )
 
-    ent = area( scen, {-44.694461822509766, 0, 169.2928466796875}, {-9.7553071975708, 10.207505226135254, -9.7553071975708, -7.405930519104004, 7.858128547668457, -7.405930519104004, 7.858128547668457, 10.207505226135254}, "riot-group1" )
+    ent = spotLight( scen, -20.164817810058594, -4.273693084716797, 13.708491325378418, -0.11095533519983292, 0.993825376033783, -0.0, 1.0, 1.0, 1.0, 0.19587819278240204, 0.10459889255326615, 50.03199768066406, 10000.0, "" )
+    ent = spotLight( scen, -20.164817810058594, -4.273693084716797, 25.372024536132812, -0.11095533519983292, 0.993825376033783, -0.0, 1.0, 1.0, 1.0, 0.19587819278240204, 0.10459889255326615, 50.03199768066406, 10000.0, "" )
+    ent = spotLight( scen, -20.164817810058594, -4.273693084716797, 35.51907730102539, -0.11095533519983292, 0.993825376033783, -0.0, 1.0, 1.0, 1.0, 0.19587819278240204, 0.10459889255326615, 50.03199768066406, 10000.0, "" )
 
+    ent = staticModel( scen, -44.901527404785156, -3.7172346115112305, 26.703746795654297, 0.0, 0.0, 0.0, 1.0, 1.0, "assets/model/static/building/apartment/s01-b/1-windows.bgnome", "assets/texture/static/building/window-sandframe-64_00.material", "" )
+    ent = staticModel( scen, -44.901527404785156, -3.7172346115112305, 26.703746795654297, 0.0, 0.0, 0.0, 1.0, 1.0, "assets/model/static/building/apartment/s01-b/1-main.bgnome", "assets/texture/static/building/brickwall-32_01.material", "" )
+    ent = staticModel( scen, -44.901527404785156, -3.7172346115112305, 26.703746795654297, 0.0, 0.0, 0.0, 1.0, 1.0, "assets/model/static/building/apartment/s01-b/1-frame.bgnome", "assets/texture/static/building/concrete-sand-32_00.material", "" )
+    ent = staticModel( scen, -11.420299530029297, -3.31034517288208, 0.22364680469036102, 0.0, 0.0, 0.0, 1.0, 3.513718366622925, "assets/model/dev/cube.bgnome", "assets/texture/dev/default.material", "" )
+    scen:registerInitCallback( genF( ent, "hideOnMain" ) )
+    ent = staticModel( scen, 0.8873360753059387, -3.31034517288208, -0.17642156779766083, 0.0, 0.0, 0.0, 1.0, 3.513718366622925, "assets/model/dev/cube.bgnome", "assets/texture/dev/default.material", "" )
+    scen:registerInitCallback( genF( ent, "hideOnMain" ) )
 
+    ent = empty( scen, "", 23.707996368408203, 0.005897998809814453, -1.2461998462677002, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0 )
+    scen:registerInitCallback( genF( ent, "allGroupGoal" ) )
 
 end
 return scen
