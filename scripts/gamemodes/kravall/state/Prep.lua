@@ -2,7 +2,11 @@ local PrepInterface = require "gui/kravall/prep/PrepInterface"
 
 local SquadPositionDecal = require "visual_objects/SquadPositionDecal"
 
-local Prep = { name = "Prep" }
+local Prep = { 
+    name = "Prep",
+
+    onFinished = function() end
+}
 
 local input = require "input"
 
@@ -23,17 +27,25 @@ function Prep:new(o)
 
     o.spawnAreas = {}
 
-    o.prepInterface = PrepInterface:new()
+    o.prepInterface = PrepInterface:new(
+    {
+        onFinished = function()
+            print( "Fin" )
+            o.onFinished()
+        end
+    }
+    )
 
     o.onButton = function( button, action, mods, consumed )
-         
     end
 
     input.registerOnButton( o.onButton, "GAME" )
 
+    o.canPlace = false
+
     o.onPosition = function( x, y )
         o.squadPositionDecal:setPosition( core.system.picking.getGroundHit( x,y ))
-        o.squadPositionDecal:verifyPlacement( o.spawnAreas )
+        o.canPlace = o.squadPositionDecal:verifyPlacement( o.spawnAreas )
     end 
 
     input.registerOnPosition( o.onPosition )
