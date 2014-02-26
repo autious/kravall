@@ -15,6 +15,10 @@ Core::TargetingSystem::TargetingSystem() : BaseSystem(EntityHandler::GenerateAsp
 
 void Core::TargetingSystem::Update(float delta)
 {
+	Core::NavigationMesh* instance = Core::GetNavigationMesh();
+	if( instance == nullptr )
+		return; // this can be removed as the groups are refactored out of the flowfield instance.
+
 	for (std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); it++)
 	{
 		Core::UnitTypeComponent* utc = WGETC<Core::UnitTypeComponent>(*it);
@@ -22,7 +26,7 @@ void Core::TargetingSystem::Update(float delta)
 		if (utc->type == UnitType::Police)
 			HandlePoliceTargeting(*it, delta);
 		else if (utc->type == UnitType::Rioter)
-			HandleRioterTargeting(*it, delta);
+			HandleRioterTargeting(*it, delta, instance );
 	}
 
 	//TemporaryFunction();
@@ -83,7 +87,7 @@ void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police, float del
 		case PoliceStance::Aggressive:
 			if (tc->target == INVALID_ENTITY)
 			{
-				tc->target = FindClosestTarget(wpc, UnitType::Rioter);
+				tc->target = FindClosestTarget(wpc, UnitType::Rioter + 1, -1, nullptr );
 				tc->attackTime = 0.0f;
 			}
 			else
@@ -128,7 +132,7 @@ void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police, float del
 	//GFX::Debug::DrawSphere(wpc->GetVec3(*wpc) + *reinterpret_cast<glm::vec3*>(sphere->offset), sphere->radius, colour, false);
 }
 
-void Core::TargetingSystem::HandleRioterTargeting(Core::Entity rioter, float delta)
+void Core::TargetingSystem::HandleRioterTargeting(Core::Entity rioter, float delta, Core::NavigationMesh* instance )
 {
 	Core::TargetingComponent* tc = WGETC<Core::TargetingComponent>(rioter);
 
@@ -183,7 +187,7 @@ void Core::TargetingSystem::HandleRioterTargeting(Core::Entity rioter, float del
 
 	tc->target = FindClosestAttacker(tc, wpc);
 	if (tc->target == INVALID_ENTITY)
-		tc->target = FindClosestTarget(wpc, UnitType::Police);
+		tc->target = FindClosestTarget(wpc, (UnitType::Police + 1) | (UnitType::Rioter + 1 ), instance->flowfields[ac->rioter.groupID].team, instance );
 
 	Core::TargetingComponent* tcNewTarget = WGETC<Core::TargetingComponent>(tc->target);
 	if( !tcNewTarget )
@@ -199,15 +203,23 @@ void Core::TargetingSystem::HandleRioterTargeting(Core::Entity rioter, float del
 	// 3. Other rioter of differing alignment
 }
 
-Core::Entity Core::TargetingSystem::FindClosestTarget(Core::WorldPositionComponent* origin, Core::UnitType targetType)
+Core::Entity Core::TargetingSystem::FindClosestTarget(Core::WorldPositionComponent* origin, int targetType, int ownTeam, Core::NavigationMesh* instance)
 {
 	float minDist = std::numeric_limits<float>::max();
 	Entity minDistEntity = INVALID_ENTITY;
 	for (std::vector<Entity>::iterator it = m_entities.begin();	it != m_entities.end();	it++)
 	{
 		Core::UnitTypeComponent* utc = WGETC<Core::UnitTypeComponent>(*it);
-		if (utc->type != targetType)
+		if ( !(utc->type + 1 & targetType) )
 			continue;
+		
+		if( instance )
+		{
+			Core::AttributeComponent* attribc = WGETC<Core::AttributeComponent>(*it);
+			int group = utc->type == Core::UnitType::Police ? attribc->police.squadID : attribc->rioter.groupID;
+			if( instance->flowfields[ group ].team == ownTeam )
+				continue;
+		}
 
 		Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(*it);
 		Core::TargetingComponent* tc = WGETC<Core::TargetingComponent>(*it);
@@ -315,11 +327,17 @@ void Core::TargetingSystem::TemporaryFunction()
 	if (m_lastClickedEntity != INVALID_ENTITY)
 	{
 		Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(m_lastClickedEntity);
+		Core::AttributeComponent* attribc = WGETC<Core::AttributeComponent>(m_lastClickedEntity);
+		Core::UnitTypeComponent* utc = WGETC<Core::UnitTypeComponent>(m_lastClickedEntity);
+		int group = utc->type == Core::UnitType::Police ? attribc->police.squadID : attribc->rioter.groupID;
 
 		bool isFPressed = Core::GetInputManager().GetKeyboardState().IsKeyDown(GLFW_KEY_F);
 		if (isFPressed /*&& !m_wasFPressed*/)
 		{
-			m_currentTarget = FindClosestTarget(wpc, UnitType::Police);
+			if( Core::GetNavigationMesh() == nullptr )
+				return;
+
+			m_currentTarget = FindClosestTarget(wpc, UnitType::Police, Core::GetNavigationMesh()->flowfields[group].team, utc->type == Core::UnitType::Police ? nullptr : Core::GetNavigationMesh() );
 			if (m_currentTarget != INVALID_ENTITY)
 			{
 				Core::TargetingComponent* tc = WGETC<Core::TargetingComponent>(m_lastClickedEntity);
