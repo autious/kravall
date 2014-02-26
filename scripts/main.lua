@@ -1,3 +1,4 @@
+require "strict"
 local Camera = require "rts_camera" 
 local MainMenu = require "gui/MainMenu"
 local viewport = require "gui/viewport"
@@ -32,6 +33,9 @@ function core.update( delta )
     end 
 end
 
+logo = nil
+current_scenario = nil
+current_scenario_name = nil
 -- Called when program starts
 function core.init() 
     print( "Program starting in lua" )

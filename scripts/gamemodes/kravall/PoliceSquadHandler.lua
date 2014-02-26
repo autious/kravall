@@ -1,6 +1,5 @@
 local PoliceSquadHandler =  {
                                 particleDefinitions = nil,
-                                createdSquads = {},
                                 onFormationChange = function() 
                                     core.log.error( "No function set for onFormationChange in PoliceSquadHandler") 
                                 end,
@@ -85,6 +84,8 @@ function PoliceSquadHandler:new(o)
 
     -- Reticule that is displayed
     o.reticule = Reticule:new()
+
+    o.createdSquads = {}
 
     -- Function to call when aiming
     o.aimingFunction = nil
@@ -601,6 +602,7 @@ function PoliceSquadHandler:update( delta )
     --Ability: Sprint
     for _,squad in pairs(self.createdSquads) do
         local squadEntity = core.system.squad.getSquadEntity(squad.groupId)
+        assert( squadEntity, "no squad entity bound to " .. squad.groupId )
         local sqdc = squadEntity:get(core.componentType.SquadComponent)
         for _,member in pairs(squad.members) do
             if member.isSprinting == true then
@@ -645,7 +647,7 @@ function PoliceSquadHandler:update( delta )
     --Click Selection
     if self.leftClicked then        
 		self.boxStartX, self.boxStartY = mouse.getPosition()
-        selectedEntity = core.system.picking.getLastHitEntity()
+        local selectedEntity = core.system.picking.getLastHitEntity()
         if selectedEntity then
             local unitTypeComponent = selectedEntity:get(core.componentType.UnitTypeComponent);
             local attributeComponent = selectedEntity:get(core.componentType.AttributeComponent);

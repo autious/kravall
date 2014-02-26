@@ -52,8 +52,8 @@ return function( x,y, material, c )
                 self.ent:set( core.componentType.GraphicsComponent, { material = material_handle }, true )
                 self.ent:set( core.componentType.ScaleComponent, {scale = {meta_data.diffuseWidth,meta_data.diffuseHeight,1}}, true )
 
-                px = x 
-                py = y
+                local px = x 
+                local py = y
                 if c then
                     px = x - meta_data.diffuseWidth/2
                     py = y - meta_data.diffuseHeight/2
