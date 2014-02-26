@@ -109,8 +109,11 @@ namespace Core
 					*/
 
 					in[i].position_unitType = glm::vec4(wpc->position[0], wpc->position[1], wpc->position[2], utc->type);
-					in[i].newDirection_speed = glm::vec4(mc->newDirection[0], mc->newDirection[1], mc->newDirection[2], mc->speed);
 
+
+					//USE TEAM INSTEAD OF 1
+					in[i].newDirection_team = glm::vec4(mc->newDirection[0], mc->newDirection[1], mc->newDirection[2], 1);
+					
 					if (utc->type == UnitType::Rioter)
 					{
 						in[i].health_stamina_morale_stancealignment = glm::vec4(ac->health, ac->stamina, ac->morale, ac->rioter.stance);
@@ -238,8 +241,6 @@ namespace Core
 					mc->newDirection[0] = newDir.x;
 					mc->newDirection[1] = newDir.y;
 					mc->newDirection[2] = newDir.z;
-
-					mc->speed = out[i].newDirection_speed.w;
 
 					ac->morale = out[i].morale_rage_pressure_empty.x;
 
