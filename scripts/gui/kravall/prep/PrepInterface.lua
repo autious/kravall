@@ -15,8 +15,11 @@ local CenterPlacer = require "gui/placement/CenterPlacer"
 
 local PrepInterface = 
 {
-    onSelectCurrentUnit = function() end,
+    policeTypes = {},
+    onSelectCurrentSquad = function(squadDef) end,
     onFinished = function() end,
+    onSelectCreatedSquad = function (squadInstance) end,
+    onRemoveSelected = function() end
 }
 
 function PrepInterface:new(o)
@@ -26,16 +29,55 @@ function PrepInterface:new(o)
 
     o.gui = GUI:new()
 
+
     o.totalCash = TextLabel:new{ label="Cash: $4000", xoffset=20,yoffset=-5, anchor="West" }
-    o.unitSelection = TextSelectList:new{ xoffset=20,anchor="West"}
-    o.doneButton = Button:new{ anchor="SouthEast", xoffset=-10, yoffset=-10, onClick = o.onFinished }
+    o.title = TextLabel:new{ label="\\/ Purchase menu \\/", xoffset=20,yoffset=-5, anchor="West" }
+    o.unitSelection = TextSelectList:new
+    { 
+        xoffset=20,
+        anchor="West", 
+        elements=o.policeTypes,
+        onSelect = o.onSelectCurrentSquad,
+    }
+
+    o.unitPurchasedTitle = TextLabel:new{ label="\\/ Bought \\/", xoffset=20,yoffset=-5, anchor="West" }
+
+    o.unitPurchased = TextSelectList:new
+    { 
+        xoffset=20,
+        anchor="West", 
+        elements= o.createdSquads,
+        onSelect = o.onSelectCreatedSquad,
+    }
+
+    o.removeSelectedButton = Button:new
+    { 
+        xoffset = 20,
+        yoffset = -20,
+        anchor = "SouthWest",
+        matReleased = "assets/texture/ui/remove-button-release.material",
+        matPressed = "assets/texture/ui/remove-button-press.material",
+        matHover = "assets/texture/ui/remove-button-hover.material",
+        
+        onClick = o.onRemoveSelected,
+    }
+
+    o.doneButton = Button:new{ anchor = "SouthEast", xoffset=-10, yoffset=-10, onClick = o.onFinished }
     
-    o.gui:addComponent( o.doneButton) 
+    o.gui:addComponent( o.doneButton )
     o.gui:addComponent( o.totalCash )
+    o.gui:addComponent( o.title )
     o.gui:addComponent( o.unitSelection )
+    o.gui:addComponent( o.unitPurchasedTitle )
+    o.gui:addComponent( o.unitPurchased )
+    o.gui:addComponent( o.removeSelectedButton )
     o.gui:addPlacementHandler( AnchorPlacer )
 
     return o
+end
+
+function PrepInterface:updatePurchasedList()
+    self.unitPurchased:updateList()
 end
 
 function PrepInterface:destroy()

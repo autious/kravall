@@ -16,8 +16,8 @@ end
 
 function Text:setPosition( x,y )
     local width,height = self:getDim()
-    self.x = x
-    self.y = y
+    self.x = math.floor(x)
+    self.y = math.floor(y)
     self.ent:set( core.componentType.WorldPositionComponent, { position = {self.x,-(self.y + height),0 }})
 end
 
