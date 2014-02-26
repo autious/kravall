@@ -7,7 +7,7 @@ scen.description = "Default Description"
 
 scen.cameras = scen.cameras or {}
 
-local script = dofile "scripts/scenarios/scenario1_script.lua"( scen )
+--local script = dofile "scripts/scenarios/scenario1_script.lua"( scen )
 
 function scen:load()
     local ambient = entities.get "ambientLight"

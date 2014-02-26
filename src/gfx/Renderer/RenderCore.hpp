@@ -312,7 +312,7 @@ namespace GFX
 		glm::vec4 m_selectionBoxPosDim;
 		glm::vec4 m_selectionBoxColor;
 		bool m_drawSelectionbox;
-
+		RenderInfo totalRenderInfo;
 	};
 
 	/*!

@@ -76,17 +76,30 @@ uniform uint gEntityCount;
 
 //shared ChargeCurve gChargeCurves[1][2];
 
-uniform vec4 gChargeCurves[6][13]= {{ vec4(-5000.0f, 300.0f, 1.0f, -5000.0f / (300.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 300.0f, 1.0f, -5000.0f / (300.0f)),vec4(0.0f),vec4(0.0f)},
+//x = charge
+//y = cutoff
+//z = repel
+//w = decline
+uniform vec4 gChargeCurves[6][13]= {{ vec4(-5000.0f, 300.0f, 40.0f, -5000.0f / (300.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 300.0f, 1.0f, -5000.0f / (300.0f)),vec4(0.0f),vec4(0.0f)},
 									
 								   { vec4(0.0f),vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 300.0f, 1.0f, -5000.0f / (300.0f)),vec4(0.0f),vec4(0.0f) },
 
-								   { vec4(0.0f), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 300.0f, 1.0f, -5000.0f / (300.0f)),vec4(0.0f),vec4(0.0f)  },
-
+								   { vec4(0.0f), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(-5000.0f, 0.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 0.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 0.0f, 1.0f, -5000.0f / (30.0f)), vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 300.0f, 1.0f, -5000.0f / (300.0f)), vec4(0.0f),vec4(0.0f)  }, 								   
+								   
 								   { vec4(0.0f),vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 300.0f, 1.0f, -5000.0f / (300.0f)),vec4(0.0f),vec4(0.0f)  },
 
 								   { vec4(0.0f),vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 300.0f, 1.0f, -5000.0f / (300.0f)),vec4(0.0f),vec4(0.0f)  },
 
 								   { vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f), vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f) }};
+
+
+uniform int gChargeSenderIndices[3][6] = {{ 1, 2, 3, 4, 5, 0 },
+										  { 6, 7, 8, 9, 0, 0  },
+										  { 10, 11, 0, 0, 0, 0  }};
+
+uniform int gChargeReceiverIndices[3][6] = {{ 0, 1, 2, 3, 4, 5 },
+										  { 0, 0, 0, 0, 0, 0  },
+										  { 0, 0, 0, 0, 0, 0  }};
 
 //Row indices in order
 //Normal
@@ -96,6 +109,7 @@ uniform vec4 gChargeCurves[6][13]= {{ vec4(-5000.0f, 300.0f, 1.0f, -5000.0f / (3
 //Civilian
 
 //Column indices in order
+//reserved
 //Normal rioter
 //Agitated rioter
 //Attacking rioter
@@ -109,39 +123,79 @@ uniform vec4 gChargeCurves[6][13]= {{ vec4(-5000.0f, 300.0f, 1.0f, -5000.0f / (3
 //Molotov
 
 
-uniform int gChargeSenderIndices[3][6] = {{ 1, 2, 3, 4, 5, 0 },
-										  { 6, 7, 8, 9, 0, 0  },
-										  { 10, 11, 0, 0, 0, 0  }};
 
-uniform int gChargeReceiverIndices[3][6] = {{ 0, 1, 2, 3, 4, 5 },
-										  { 0, 0, 0, 0, 0, 0  },
-										  { 0, 0, 0, 0, 0, 0  }};
-
-
-
-uniform vec4 gMoodCurves[6][13] = {{ vec4(5, -0.001f, 0.01f, 0.01f), vec4(5, 0.0f, 0.0f, 0.01f),vec4(15, 0.0f, 0.5f, 0.1f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(3, 0.0f, 0.0001f, 0.00001f),vec4(5, 0.0f, 0.0002f, 0.0002f),vec4(3, -0.0001f, 0.0001f, 0.0001f),vec4(0.0f), vec4(30, -0.1f, 0.1f, 0.1f),vec4(0.0f) },
+//x = range
+//y = morale
+//z = pressure
+//w = rage
+uniform vec4 gMoodCurves[6][13] = {{ vec4(20.0f, 0.01f, 0.01f, 0.01f), vec4(0.0f), vec4(5.0f, 0.001f, 0.001f, 0.001f), vec4(5.0f, 0.001f, 0.001f, 0.001f), vec4(5.0f, -0.001f, 0.001f, 0.001f),vec4(0.0f), vec4(5.0f, 0.0f, 0.001f, 0.001f), vec4(5.0f, 0.0f, 0.0001f, 0.0001f), vec4(100.0f, 0.5f, 100.0f, 100.0f), vec4(0.0f), vec4(20.0f, 10.01f, 10.01f, 10.01f), vec4(0.0f),vec4(0.0f) },
 									
-								   { vec4(5, 0.0f, 0.001f, 0.1f),vec4(5, 0.0f, 0.001f, 0.1f),vec4(15, 0.0f, 0.0005f, 0.1f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(3, 0.0f, 0.00005f, 0.001f),vec4(3, 0.0f, 0.00005f, 0.001f), vec4(5, 0.0f, 0.0001f, 0.0002f),vec4(3, -0.0001f, 0.0001f, 0.0002f),vec4(0.0f), vec4(30, -0.1f, 0.1f, 0.1f),vec4(0.0f) },
+								   { vec4(20.0f, 0.01f, 0.01f, 0.01f), vec4(0.0f), vec4(5.0f, 0.001f, 0.001f, 0.001f), vec4(5.0f, 0.001f, 0.001f, 0.001f), vec4(5.0f, -0.001f, 0.001f, 0.001f),vec4(0.0f), vec4(5.0f, 0.0f, 0.001f, 0.001f), vec4(5.0f, 0.0f, 0.0001f, 0.0001f), vec4(100.0f, 0.5f, 100.0f, 100.0f), vec4(0.0f), vec4(20.0f, 10.01f, 10.01f, 10.01f), vec4(0.0f),vec4(0.0f) },
 
-								   { vec4(5, 0.0f, 0.01f, 0.1f), vec4(5, 0.0, 0.0, 0.1f), vec4(15, 0.0f, 0.5f, 0.1f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(5, 0.0001f, 0.0001f, 0.0002f), vec4(3, -0.0001f, 0.0001f, 0.0f),vec4(0.0f), vec4(30, -0.1f, 0.1f, 0.1f),vec4(0.0f) },
+								   { vec4(20.0f, 0.01f, 0.01f, 0.01f), vec4(0.0f), vec4(5.0f, 0.001f, 0.001f, 0.001f), vec4(5.0f, 0.001f, 0.001f, 0.001f), vec4(5.0f, -0.001f, 0.001f, 0.001f),vec4(0.0f), vec4(5.0f, 0.0f, 0.001f, 0.001f), vec4(5.0f, 0.0f, 0.0001f, 0.0001f), vec4(100.0f, 0.5f, 100.0f, 100.0f), vec4(0.0f), vec4(20.0f, 10.01f, 10.01f, 10.01f), vec4(0.0f),vec4(0.0f) },
 
-								   { vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f) },
+								   { vec4(20.0f, 0.01f, 0.01f, 0.01f), vec4(0.0f), vec4(5.0f, 0.001f, 0.001f, 0.001f), vec4(5.0f, 0.001f, 0.001f, 0.001f), vec4(5.0f, -0.001f, 0.001f, 0.001f),vec4(0.0f), vec4(5.0f, 0.0f, 0.001f, 0.001f), vec4(5.0f, 0.0f, 0.0001f, 0.0001f), vec4(100.0f, 0.5f, 100.0f, 100.0f), vec4(0.0f), vec4(20.0f, 10.01f, 10.01f, 10.01f), vec4(0.0f),vec4(0.0f)  },
 
-								   { vec4(0.0f),vec4(0.0f),vec4(15, 0.0f, 0.5f, 0.1f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(5, 0.0f, 0.005f, 0.001f),vec4(5, 0.0f, 0.001f, 0.002f), vec4(3, -0.0001f, 0.0f, 0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f) },
+								   { vec4(20.0f, 0.01f, 0.01f, 0.01f), vec4(0.0f), vec4(5.0f, 0.001f, 0.001f, 0.001f), vec4(5.0f, 0.001f, 0.001f, 0.001f), vec4(5.0f, -0.001f, 0.001f, 0.001f),vec4(0.0f), vec4(5.0f, 0.0f, 0.001f, 0.001f), vec4(5.0f, 0.0f, 0.0001f, 0.0001f), vec4(100.0f, 0.5f, 100.0f, 100.0f), vec4(0.0f), vec4(0.0f), vec4(0.0f),vec4(0.0f)  },
 
-								   { vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(1, -0.0001f, 0.0f, 0.0f),vec4(15, -0.001f, 0.0f, 0.0f),vec4(15, -0.001f, 0.0f, 0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f) }};
+								   { vec4(0.0f), vec4(0.0f), vec4(0.0f), vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f), vec4(0.0f), vec4(0.0f), vec4(0.0f), vec4(0.0f), vec4(0.0f),vec4(0.0f) }};
 
-//shared MoodCurve gMoodCurves[6][13];
-//int gMoodSenderIndices[2][6];
-//int gMoodReceiverIndices[2][6];
 
-uniform int gMoodSenderIndices[3][6] = {{ 6, 7, 8, 9, 10, 0 },
-										{ 0, 1, 2, 3, 0, 0	},
-										{ 11, 0, 0, 0, 0, 0	}};
+uniform int gMoodSenderIndices[3][6] = {{ 1, 2, 3, 4, 5, 0 },
+										{ 6, 7, 8, 9, 0, 0  },
+										{ 10, 11, 0, 0, 0, 0  }};
 
 uniform int gMoodReceiverIndices[3][6] = {{ 0, 1, 2, 3, 4, 5 },
 										  {	5, 5, 5, 5, 0, 0 },
 										  {	0, 0, 0, 0, 0, 0 }};
+
+
+//Row indices in order
+//Normal
+//Agitated
+//Attacking
+//Retreating
+//Civilian
+
+//Column indices in order
+//reserved
+//Normal rioter
+//Agitated rioter
+//Attacking rioter
+//retreating rioter
+//civilian rioter
+//passive police
+//defensive police
+//Aggressive police
+//Attacking police
+//Tear gas
+//Molotov
+
+
+
+//uniform vec4 gMoodCurves[6][13] = {{ vec4(5, -0.001f, 0.01f, 0.01f), vec4(5, 0.0f, 0.0f, 0.01f),vec4(15, 0.0f, 0.5f, 0.1f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(3, 0.0f, 0.0001f, 0.00001f),vec4(5, 0.0f, 0.0002f, 0.0002f),vec4(3, -0.0001f, 0.0001f, 0.0001f),vec4(0.0f), vec4(30, -0.1f, 0.1f, 0.1f),vec4(0.0f) },
+//									
+//								   { vec4(5, 0.0f, 0.001f, 0.1f),vec4(5, 0.0f, 0.001f, 0.1f),vec4(15, 0.0f, 0.0005f, 0.1f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(3, 0.0f, 0.00005f, 0.001f),vec4(3, 0.0f, 0.00005f, 0.001f), vec4(5, 0.0f, 0.0001f, 0.0002f),vec4(3, -0.0001f, 0.0001f, 0.0002f),vec4(0.0f), vec4(30, -0.1f, 0.1f, 0.1f),vec4(0.0f) },
+//
+//								   { vec4(5, 0.0f, 0.01f, 0.1f), vec4(5, 0.0, 0.0, 0.1f), vec4(15, 0.0f, 0.5f, 0.1f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(5, 0.0001f, 0.0001f, 0.0002f), vec4(3, -0.0001f, 0.0001f, 0.0f),vec4(0.0f), vec4(30, -0.1f, 0.1f, 0.1f),vec4(0.0f) },
+//
+//								   { vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f) },
+//
+//								   { vec4(0.0f),vec4(0.0f),vec4(15, 0.0f, 0.5f, 0.1f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(5, 0.0f, 0.005f, 0.001f),vec4(5, 0.0f, 0.001f, 0.002f), vec4(3, -0.0001f, 0.0f, 0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f) },
+//
+//								   { vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(1, -0.0001f, 0.0f, 0.0f),vec4(15, -0.001f, 0.0f, 0.0f),vec4(15, -0.001f, 0.0f, 0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f) }};
+//
+////shared MoodCurve gMoodCurves[6][13];
+////int gMoodSenderIndices[2][6];
+////int gMoodReceiverIndices[2][6];
+//
+//uniform int gMoodSenderIndices[3][6] = {{ 6, 7, 8, 9, 10, 0 },
+//										{ 0, 1, 2, 3, 0, 0	},
+//										{ 11, 0, 0, 0, 0, 0	}};
+//
+//uniform int gMoodReceiverIndices[3][6] = {{ 0, 1, 2, 3, 4, 5 },
+//										  {	5, 5, 5, 5, 0, 0 },
+//										  {	0, 0, 0, 0, 0, 0 }};
 
 
 float GetAgentChargeAt(int unitType, float distSqr, vec4 chargeCurve)
@@ -193,7 +247,7 @@ float GetEffectOnAgentAt(vec2 queryPosition, int groupID, uint index)
 
 		int senderIndex = gChargeSenderIndices[int(indata.position_unitType.w)][int(indata.health_stamina_morale_stance.w)];
 
-		int multiplier = int(indata.newDirection_team.w == receiver.newDirection_team.w);
+		int multiplier = int(indata.newDirection_team.w == receiver.newDirection_team.w || indata.newDirection_team.w  == 0);
 	
 		vec4 chargeCurve = gChargeCurves[receieverIndex * multiplier][senderIndex * multiplier];
 	
@@ -214,10 +268,10 @@ float GetEffectOnAgentAt(vec2 queryPosition, int groupID, uint index)
 
 //r-prefix = receiever
 //s-prefix = sender
-vec3 MoodProp(int rType, int rState, float sMorale, float sPressure, float sRage, int sType, int sState, float dist)
+vec3 MoodProp(int rType, int rState, float sMorale, float sPressure, float sRage, int sType, int sState, float dist, int multiplier)
 {
-	int senderIndex = gMoodSenderIndices[sType][sState];
-	int receieverIndex = gMoodReceiverIndices[rType][rState];
+	int senderIndex = gMoodSenderIndices[sType][sState] * multiplier;
+	int receieverIndex = gMoodReceiverIndices[rType][rState] * multiplier;
 
 	vec4 moodCurve = gMoodCurves[receieverIndex][senderIndex];
 
@@ -252,7 +306,7 @@ vec3 GetMoodOnAgent(vec2 queryPosition, int groupID, int index)
 	int rType = int(gInput[index].position_unitType.w);
 	int rState = int(gInput[index].health_stamina_morale_stance.w);
 	//int receieverIndex = gMoodReceiverIndices[rType][rState];
-
+	DataIN receiver = gInput[index];
 	float sMorale;
 	float sRage;
 	float sPressure;
@@ -273,7 +327,8 @@ vec3 GetMoodOnAgent(vec2 queryPosition, int groupID, int index)
 		indata = gInput[i];
 
 		dist = distance(indata.position_unitType.xyz, vec3(queryPosition.x, 0, queryPosition.y));
-		
+
+		int multiplier = int(indata.newDirection_team.w == receiver.newDirection_team.w || indata.newDirection_team.w  == 0);
 		
 		sMorale = indata.health_stamina_morale_stance.z;
 		sRage = indata.groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance.y;
@@ -290,7 +345,7 @@ vec3 GetMoodOnAgent(vec2 queryPosition, int groupID, int index)
 		//int sType = int(gInput[i].position_unitType.w);
 		//int sState = int(gInput[i].health_stamina_morale_stance.w);
 
-		moods = MoodProp(rType, rState, sMorale, sPressure, sRage, sType, sState, dist);
+		moods = MoodProp(rType, rState, sMorale, sPressure, sRage, sType, sState, dist, multiplier);
 		//vec3 moods = MoodProp(receieverIndex, sMorale, sPressure, sRage, sType, sState, dist);
 		morale += moods.x;
 		rage += moods.y;
