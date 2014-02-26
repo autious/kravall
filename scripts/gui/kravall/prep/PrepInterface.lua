@@ -6,12 +6,15 @@ local Checkbox = require "gui/component/Checkbox"
 local TextSelectList = require "gui/component/TextSelectList"
 local TextLabel = require "gui/component/TextLabel"
 local TextBox = require "gui/component/TextBox"
+local Image = require "gui/component/Image"
 
 local AnchorPlacer = require "gui/placement/AnchorPlacer"
 local EastPlacer = require "gui/placement/EastPlacer"
 local NorthPlacer = require "gui/placement/NorthPlacer"
 local WestPlacer = require "gui/placement/WestPlacer"
 local CenterPlacer = require "gui/placement/CenterPlacer"
+
+local Util = require "gui/placement/util"
 
 local PrepInterface = 
 {
@@ -73,14 +76,33 @@ function PrepInterface:new(o)
     }
 
     o.doneButton = Button:new{ anchor = "SouthEast", xoffset=-10, yoffset=-10, onClick = o.onFinished }
+
+    local comps = {}
+    table.insert( comps, o.totalCash )
+    table.insert( comps, o.title )
+    table.insert( comps, o.selectedCost )
+    table.insert( comps, o.unitSelection )
+    table.insert( comps, o.unitPurchasedTitle )
+
+    o.background = Image:new
+    { 
+        mat = "assets/texture/ui/prep-background_00.material",
+        ignoreConstrict = true,
+        yoffset = -10,
+    }
     
-    o.gui:addComponent( o.doneButton )
-    o.gui:addComponent( o.totalCash )
-    o.gui:addComponent( o.title )
-    o.gui:addComponent( o.selectedCost )
-    o.gui:addComponent( o.unitSelection )
-    o.gui:addComponent( o.unitPurchasedTitle )
+    local width,height = Util.getTotalDimHeight( comps, 10,10 )
+    o.menuSubGUI = GUI:new{ width = width, height = height, anchor="West" }
+
+    table.insert( comps, o.background )
+
+    o.menuSubGUI:addComponents( comps )
+    o.menuSubGUI:addPlacementHandler( AnchorPlacer )
+    
+    o.gui:addComponent( o.menuSubGUI  )
     o.gui:addComponent( o.unitPurchased )
+    o.gui:addComponent( o.doneButton )
+
     o.gui:addComponent( o.removeSelectedButton )
 
     o.gui:addPlacementHandler( AnchorPlacer )
