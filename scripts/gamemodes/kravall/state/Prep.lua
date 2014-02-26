@@ -58,6 +58,7 @@ function Prep:new(o)
                     end
                 end
                 o.prepInterface:updatePurchasedList()
+                o.selectedSquadInstance = nil
             end 
         end
     })
