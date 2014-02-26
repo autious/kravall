@@ -396,6 +396,7 @@ function PoliceSquadHandler:UseTearGas(entity, x, y, z)
     local entity = core.entity.create(core.componentType.EmitterComponent
                                         , core.componentType.WorldPositionComponent
                                         , core.componentType.MovementComponent
+										, core.componentType.MovementDataComponent
                                         , core.componentType.RotationComponent
                                         , core.componentType.UnitTypeComponent
                                         , core.componentType.AttributeComponent

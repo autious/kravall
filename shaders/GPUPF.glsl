@@ -194,7 +194,7 @@ float GetEffectOnAgentAt(vec2 queryPosition, int groupID, uint index)
 
 		int senderIndex = gChargeSenderIndices[int(indata.position_unitType.w)][int(indata.health_stamina_morale_stance.w)];
 
-		int multiplier = int(indata.newDirection_team.w == receiver.newDirection_team.w);
+		int multiplier = int(indata.newDirection_team.w == receiver.newDirection_team.w || indata.newDirection_team.w  == 0);
 	
 		vec4 chargeCurve = gChargeCurves[receieverIndex * multiplier][senderIndex * multiplier];
 	
