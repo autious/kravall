@@ -531,7 +531,6 @@ function PoliceSquadHandler:update( delta )
             while i <= #(v.members) do
                 local found = false
                 for _, entity in pairs(squadMembers) do
-                    print(#squadMembers)
                     if core.entity.isSameEntity(v.members[i].entity, entity) then
                         --Squad member is still in the squad, e.g not killed
                         found = true
