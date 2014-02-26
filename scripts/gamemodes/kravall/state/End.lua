@@ -10,6 +10,10 @@ function End:new(o)
     return o
 end
 
+function End:update( delta )
+
+end
+
 function End:destroy()
 
 end

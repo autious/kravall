@@ -58,6 +58,11 @@ function T:createObjective( )
     return self.objectiveHandler:createObjective( )
 end
 
+function T:addAreaSpawnZone(ent)
+    assert( self.gamestate.name == "Prep", "Can't add spawn zones when not in Prep mode" )
+    self.gamestate:addAreaSpawnZone( ent )
+end
+
 function T:update( delta )
     self.camera:update( delta )
     self.gamestate:update( delta )
@@ -67,6 +72,8 @@ function T:destroy()
     if type( self.gamestate ) == "table" then
         self.gamestate:destroy()
     end
+
+    self.objectiveHandler:destroy()
 
 	core.gameMetaData.clearGameData()
 end
