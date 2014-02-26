@@ -45,7 +45,21 @@ function Prep:new(o)
             if rep then
                 rep:setOutline( {0,1,0,1} ) 
             end
+            o.selectedSquadInstance = squadInstance
         end,
+        onRemoveSelected = function( )
+            if o.selectedSquadInstance then
+                o.createdVisualRepresentation[o.selectedSquadInstance]:destroy()
+                o.createdVisualRepresentation[o.selectedSquadInstance] = nil
+                for i,v in pairs( o.createdSquads ) do
+                    if v == o.selectedSquadInstance then
+                        table.remove( o.createdSquads, i ) 
+                        break
+                    end
+                end
+                o.prepInterface:updatePurchasedList()
+            end 
+        end
     })
 
     o.onButton = function( button, action, mods, consumed )

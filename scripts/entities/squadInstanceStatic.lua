@@ -58,6 +58,12 @@ return function( scen, squadInstance )
         end
     end
 
+    function e:destroy()
+        for _,v in ipairs(self) do
+            v:destroy()
+        end
+    end
+
     for i,v in pairs( squadInstance.squadDef.setup ) do
         table.insert( e, createMember(scen, squadInstance.position + core.glm.vec3.new( unpack( v.positionOffset ) ), v ) )
     end

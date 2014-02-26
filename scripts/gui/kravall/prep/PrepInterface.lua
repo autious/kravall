@@ -19,6 +19,7 @@ local PrepInterface =
     onSelectCurrentSquad = function(squadDef) end,
     onFinished = function() end,
     onSelectCreatedSquad = function (squadInstance) end,
+    onRemoveSelected = function() end
 }
 
 function PrepInterface:new(o)
@@ -49,14 +50,23 @@ function PrepInterface:new(o)
         onSelect = o.onSelectCreatedSquad,
     }
 
-    o.doneButton = Button:new{ anchor="SouthEast", xoffset=-10, yoffset=-10, onClick = o.onFinished }
+    o.removeSelectedButton = Button:new
+    { 
+        xoffset = 20,
+        yoffset = -20,
+        anchor = "SouthWest",
+        onClick = o.onRemoveSelected,
+    }
+
+    o.doneButton = Button:new{ anchor = "SouthEast", xoffset=-10, yoffset=-10, onClick = o.onFinished }
     
-    o.gui:addComponent( o.doneButton) 
+    o.gui:addComponent( o.doneButton )
     o.gui:addComponent( o.totalCash )
     o.gui:addComponent( o.title )
     o.gui:addComponent( o.unitSelection )
     o.gui:addComponent( o.unitPurchasedTitle )
     o.gui:addComponent( o.unitPurchased )
+    o.gui:addComponent( o.removeSelectedButton )
     o.gui:addPlacementHandler( AnchorPlacer )
 
     return o
