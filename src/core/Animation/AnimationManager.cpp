@@ -43,7 +43,7 @@ namespace Core
 			int animationID = GetAnimationID(meshID, animationName);
 			if (animationID < 0)
 			{
-				LOG_WARNING << "Failed to play animation \'" << animationName << "\': Cannot find animation";
+//				LOG_WARNING << "Failed to play animation \'" << animationName << "\': Cannot find animation";
 			}
 			else
 			{
@@ -55,7 +55,7 @@ namespace Core
 		}
 		else
 		{
-			LOG_WARNING << "Failed to play animation \'" << animationName << "\': No animation component attached to entity";
+//			LOG_WARNING << "Failed to play animation \'" << animationName << "\': No animation component attached to entity";
 		}
 	}
 
@@ -74,7 +74,7 @@ namespace Core
 		}
 		else
 		{
-			LOG_WARNING << "Failed to play animation with index \'" << animationID << "\': No animation component attached to entity";
+//			LOG_WARNING << "Failed to play animation with index \'" << animationID << "\': No animation component attached to entity";
 		}
 	}
 

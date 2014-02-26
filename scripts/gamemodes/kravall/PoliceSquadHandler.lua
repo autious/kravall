@@ -531,6 +531,7 @@ function PoliceSquadHandler:update( delta )
             while i <= #(v.members) do
                 local found = false
                 for _, entity in pairs(squadMembers) do
+                    print(#squadMembers)
                     if core.entity.isSameEntity(v.members[i].entity, entity) then
                         --Squad member is still in the squad, e.g not killed
                         found = true
@@ -603,8 +604,9 @@ function PoliceSquadHandler:update( delta )
         local squadEntity = core.system.squad.getSquadEntity(squad.groupId)
         local sqdc = squadEntity:get(core.componentType.SquadComponent)
         for _,member in pairs(squad.members) do
-            if member.isSprinting then
-                local attrbc = member.entity:get(core.componentType.AttributeComponent);
+            if member.isSprinting == true then
+                print(member.entity)
+                local attrbc = member.entity:get(core.componentType.AttributeComponent)
                 local remainingStamina = attrbc.stamina - sprinting.sprintingStaminaCost * delta
 
                 if remainingStamina > 0 then
