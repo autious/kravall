@@ -58,7 +58,7 @@ void Core::PoliceGoalSystem::Update( float delta )
 	//int nrCores = Core::world.m_threadHandler.GetNrThreads();
 	//int nrPerCore = std::ceil((float)m_entities.size() / (float)nrCores);
 
-	int nrCores = Core::world.m_threadHandler.GetNrThreads();
+	int nrCores = 1;//Core::world.m_threadHandler.GetNrThreads();
 	int nrPerCore = std::ceil((float)head / (float)nrCores);
 
 	for( int i = 0; i < nrCores; i++ )
