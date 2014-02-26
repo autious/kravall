@@ -18,11 +18,13 @@ layout ( location = 5 ) in vec2 uvIN;
 
 out vec4 posFS;
 out vec4 posW;
+out vec3 orientationFS;
 out vec2 uvFS;
 
 void main()
 {
 	posW = modelMatrix * vec4(positionIN.xyz, positionIN.w);
+	orientationFS = normalize(modelMatrix[1].xyz);
 	//Move position to clip space
 	posFS = gProjection * gView * posW;
 	uvFS = uvIN;
