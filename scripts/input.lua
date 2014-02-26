@@ -21,16 +21,20 @@ end
 
 function core.input.mouse.onButton( button, action, mods )
     local consumed = false
+    local tmp
     for k,v in pairs( onbutton["GUI"] ) do
-       consumed = consumed or k( button, action, mods, consumed ) or false
+       tmp = k( button, action, mods, consumed )
+       consumed = consumed or tmp or false
     end 
 
     for k,v in pairs( onbutton["GAME"] ) do
-       consumed = consumed or k( button, action, mods, consumed ) or false
+        tmp = k( button, action, mods, consumed )
+        consumed = consumed or tmp  or false
     end 
 
     for k,v in pairs( onbutton["DEFAULT"] ) do
-       consumed = consumed or k( button, action, mods, consumed ) or false
+        tmp = k( button, action, mods, consumed ) 
+        consumed = consumed or tmp  or false
     end 
 end
 

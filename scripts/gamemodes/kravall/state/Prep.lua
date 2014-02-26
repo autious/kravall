@@ -67,7 +67,8 @@ function Prep:new(o)
 
     o.onButton = function( button, action, mods, consumed )
         if button == core.input.mouse.button.Left 
-           and action == core.input.action.Press then 
+           and action == core.input.action.Press 
+           and consumed == false then 
             if o.activeSquad then
                 if o.canPlace then 
 
