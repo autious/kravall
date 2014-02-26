@@ -67,14 +67,14 @@ namespace GFX
 
 		GLuint m_matricesUniform;
 		
-		glm::mat4x4 m_dbgmat1;
-		glm::mat4x4 m_dbgmat2;
-		glm::mat4x4 m_dbgmat3;
-		glm::mat4x4 m_dbgmat4;
-		glm::mat4x4 m_dbgmat5;
-		glm::mat4x4 m_dbgmat6;
-		glm::mat4x4 m_dbgmat7;
-		glm::mat4x4 m_dbgmat8;
+		//glm::mat4x4 m_dbgmat1;
+		//glm::mat4x4 m_dbgmat2;
+		//glm::mat4x4 m_dbgmat3;
+		//glm::mat4x4 m_dbgmat4;
+		//glm::mat4x4 m_dbgmat5;
+		//glm::mat4x4 m_dbgmat6;
+		//glm::mat4x4 m_dbgmat7;
+		//glm::mat4x4 m_dbgmat8;
 
 	};
 }
