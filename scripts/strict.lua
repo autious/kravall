@@ -4,6 +4,8 @@
 -- (even assigning nil will do) in a main chunk before being used
 -- anywhere or assigned to inside a function.
 -- distributed under the Lua license: http://www.lua.org/license.html
+--
+-- ACTITATE BY ADDING IN main.lua
 
 local getinfo, error, rawset, rawget = debug.getinfo, error, rawset, rawget
 

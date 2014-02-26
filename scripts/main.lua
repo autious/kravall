@@ -1,4 +1,4 @@
-require "strict"
+--require "strict"
 local Camera = require "rts_camera" 
 local MainMenu = require "gui/MainMenu"
 local viewport = require "gui/viewport"
