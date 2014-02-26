@@ -16,6 +16,7 @@ local CenterPlacer = require "gui/placement/CenterPlacer"
 local PrepInterface = 
 {
     onSelectCurrentUnit = function() end,
+    onFinished = function() end,
 }
 
 function PrepInterface:new(o)
@@ -27,7 +28,9 @@ function PrepInterface:new(o)
 
     o.totalCash = TextLabel:new{ label="Cash: $4000", xoffset=20,yoffset=-5, anchor="West" }
     o.unitSelection = TextSelectList:new{ xoffset=20,anchor="West"}
+    o.doneButton = Button:new{ anchor="SouthEast", xoffset=-10, yoffset=-10, onClick = o.onFinished }
     
+    o.gui:addComponent( o.doneButton) 
     o.gui:addComponent( o.totalCash )
     o.gui:addComponent( o.unitSelection )
     o.gui:addPlacementHandler( AnchorPlacer )
