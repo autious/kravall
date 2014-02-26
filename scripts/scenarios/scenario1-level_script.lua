@@ -145,7 +145,7 @@ return function( scen )
 
 	--===================== SHORTCUTS ======================--
 	function T.createRioter_0( ent )
-		friendlyGroup = core.system.groups.createGroup()
+		friendlyGroup = core.system.groups.createGroup( 2 )
 		groupIds[ent] = friendlyGroup
 		T.createRioter( ent, friendlyGroup, 15 )
 	end
@@ -155,19 +155,19 @@ return function( scen )
 	end
 	
 	function T.createRioter_1( ent )
-		angryGroup1 = core.system.groups.createGroup()
+		angryGroup1 = core.system.groups.createGroup( 1 )
 		groupIds[ent] = angryGroup1
 		T.createRioter( ent, angryGroup1, 10 )
 	end
 	
 	function T.createRioter_2( ent )
-		angryGroup2 = core.system.groups.createGroup()
+		angryGroup2 = core.system.groups.createGroup( 1 )
 		groupIds[ent] = angryGroup2
 		T.createRioter( ent, angryGroup2, 10 )
 	end
 	
 	function T.createRioter_3( ent )
-		angryGroup3 = core.system.groups.createGroup()
+		angryGroup3 = core.system.groups.createGroup( 1 )
 		groupIds[ent] = angryGroup3
 		T.createRioter( ent, angryGroup3, 10 )
 	end

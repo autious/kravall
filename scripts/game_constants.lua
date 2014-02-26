@@ -22,9 +22,17 @@ return
         selectionOutline                = vec4{"#19e54c", 1.0},
         selectionBoxHoverOutline        = vec4{"#ffe614", 10.0},
         selectionBoxHoverPrimaryOutline = vec4{"#ffe614",10.0},
+    },
+    tearGas =
+    {
         tearGasRange                    = 20,
         tearGasStaminaCost              = 60,
         tearGasDuration                 = 10,
+    },
+    sprinting =
+    {
+        sprintingStaminaCost            = 3.0,
+        sprintingReachThreshold         = 2,
     },
     guiBehaviour = 
     {

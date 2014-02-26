@@ -56,9 +56,9 @@
 namespace Core
 {
     typedef SystemHandlerTemplate<PriorityResetSystem, LightSystem, FlowfieldPositioningSystem, PoliceGoalSystem, NavMeshCollisionSystem, 
-	CollisionSystem2D, PickingSystem, TargetingSystem, MovementAnimationSystem, AttackAnimationSystem, AIDebugSystem, FlowfieldSystem, GPUPFSystem, ParticleSystem,
-	RioterGoalSystem, MovementSystem, NameSystem, GroupDataSystem, AreaSystem, NavMeshBlockingSystem, MoodStateSystem, 
-	AnimationSystem, SquadSystem, RemovalSystem, HoverTextSystem, RenderingSystem> SystemHandler;
+	CollisionSystem2D, PickingSystem, TargetingSystem, MovementAnimationSystem, AttackAnimationSystem, AIDebugSystem, FlowfieldSystem, RioterGoalSystem, RemovalSystem, GroupDataSystem,
+	GPUPFSystem, ParticleSystem, MovementSystem, NameSystem, AreaSystem, NavMeshBlockingSystem, MoodStateSystem, 
+	AnimationSystem, SquadSystem,  HoverTextSystem, RenderingSystem> SystemHandler;
 
     typedef EntityHandlerTemplate<SystemHandler, WorldPositionComponent, RotationComponent, ScaleComponent, 
 		GraphicsComponent, LightComponent, MovementComponent, UnitTypeComponent, AttributeComponent,

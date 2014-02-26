@@ -52,7 +52,7 @@ namespace GFX
 		\param glowMatID Rendertarget for glow and materialID
 		*/
 		void Render(AnimationManagerGFX* animationManager, unsigned int& renderIndex, FBOTexture* depthBuffer, FBOTexture* normalDepth, 
-			FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix, const float& gamma);
+			FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix, const float& gamma, RenderInfo& out_RenderInfo);
 
 	private:
 		
