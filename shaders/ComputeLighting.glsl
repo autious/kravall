@@ -403,6 +403,7 @@ void main()
 			if(lightIndex >= numPointLights)
 				break;
 		
+			lightIndex += totalShadowcasters;
 			lightIndex = min(lightIndex, numPointLights+totalShadowcasters-1); // Dont want this because of break above?
 		
 			p = lights[lightIndex];
@@ -436,7 +437,6 @@ void main()
 				break;
 
 			lightIndex += numPointLights+totalShadowcasters;
-		
 			lightIndex = min(lightIndex, numPointLights+numSpotLights+totalShadowcasters-1); // Dont want this because of break above?
 		
 			p = lights[lightIndex];

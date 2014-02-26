@@ -42,7 +42,7 @@ namespace GFX
 		/*!
 		Main text rendering loop
 		*/
-		void Render(int screenWidth, int screenHeight);
+		void Render(int screenWidth, int screenHeight, RenderInfo& out_RenderInfo);
 
 	private:
 
@@ -57,7 +57,7 @@ namespace GFX
 		GLuint m_colorUniform;
 		GLuint m_textureUniform;
 
-		void RenderText(const char* text, GFX::FontData* fontData, float x, float y, float sx, float sy, glm::vec4 color);
+		void RenderText(const char* text, GFX::FontData* fontData, float x, float y, float sx, float sy, glm::vec4 color, RenderInfo& out_RenderInfo);
 
 		std::vector<Text> m_text;
 	};
