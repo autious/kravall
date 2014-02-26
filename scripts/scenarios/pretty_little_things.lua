@@ -188,31 +188,31 @@ scen:loadAssembly(
 }
 )
 --Knot
-scen:loadAssembly( 
-{
-	{
-		type = core.componentType.WorldPositionComponent,
-		data = { position = { 0, 14, -30 } }
-	},
-	{
-		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry,layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
-		load = { 
-					mesh = { core.loaders.GnomeLoader, "assets/knot.bgnome", false },
-					material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
-			   }
-	},
-	{
-		type = core.componentType.ScaleComponent,
-		data = { scale = 3.0 }
-	},
-	{
-		type = core.componentType.RotationComponent,
-		--data = { rotation = { 0,0, math.sin( 3.14 ), math.cos(3.14/2.0) } }
-		data = { rotation = { 1*math.sin( -3.14/4 ), 0, 0, math.cos( -3.14/4 ) } }
-	}
-}
-)
+--scen:loadAssembly( 
+--{
+--	{
+--		type = core.componentType.WorldPositionComponent,
+--		data = { position = { 0, 14, -30 } }
+--	},
+--	{
+--		type = core.componentType.GraphicsComponent,
+--		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry,layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
+--		load = { 
+--					mesh = { core.loaders.GnomeLoader, "assets/knot.bgnome", false },
+--					material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
+--			   }
+--	},
+--	{
+--		type = core.componentType.ScaleComponent,
+--		data = { scale = 3.0 }
+--	},
+--	{
+--		type = core.componentType.RotationComponent,
+--		--data = { rotation = { 0,0, math.sin( 3.14 ), math.cos(3.14/2.0) } }
+--		data = { rotation = { 1*math.sin( -3.14/4 ), 0, 0, math.cos( -3.14/4 ) } }
+--	}
+--}
+--)
 -- Pointlight
 --scen:loadAssembly( 
 --    {
@@ -389,6 +389,33 @@ scen:loadAssembly(
 	}
 } 
 )
+scen:loadAssembly( 
+    {
+        {
+            type = core.componentType.LightComponent,
+            data =  { 
+						color = { 0.8, 0.2, 0.8 },
+						speccolor = { 0.8, 0.2, 0.8 },
+                        intensity = 1.0,
+                        type = core.gfx.objectTypes.Light,
+                        lighttype = core.gfx.lightTypes.Point
+                    }
+			, ignoreHard = true
+        },
+        {
+            type = core.componentType.WorldPositionComponent,
+            data = { position = { -10, 12, -5 } }
+        },
+        {
+            type = core.componentType.ScaleComponent,
+            data = { scale = 50 }
+        },
+        {
+            type = core.componentType.RotationComponent,
+            data = { rotation = { 0.0,0.0,0.0,0 } }
+        }
+    } 
+    )
 
 
 -- Directional light
@@ -401,7 +428,7 @@ scen:loadAssembly(
 					speccolor = { 1.0, 1.0, 1.0 },
 					intensity = 0.05,
 					type = core.gfx.objectTypes.Light,
-					lighttype = core.gfx.lightTypes.Dir
+					lighttype = core.gfx.lightTypes.DirShadow
 				},
 		ignoreHard = true
 	},

@@ -149,9 +149,12 @@ namespace GFX
 	}
 
 	void DeferredPainter::Render(AnimationManagerGFX* animationManager, unsigned int& renderIndex, 
-	FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix, const float& gamma)
+	FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, 
+	FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix, const float& gamma, RenderInfo& out_RenderInfo)
 	{
 		BasePainter::Render();
+		unsigned int numDrawCalls = 0;
+		unsigned int numTris = 0;
 
 		BindGBuffer(depthBuffer, normalDepth, diffuse, specular, glowMatID);
 		glEnable(GL_DEPTH_TEST);
@@ -245,6 +248,8 @@ namespace GFX
 					}
 
 					glDrawElementsInstanced(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0, instanceCount);
+					numDrawCalls++;
+					numTris += (mesh.indexCount / 3) * instanceCount;
 
 					if (currentLayer == LAYER_TYPES::OUTLINE_LAYER)
 					{
@@ -260,6 +265,8 @@ namespace GFX
 							m_shaderManager->UseProgram("AnimatedOutline");
 
 						glDrawElementsInstanced(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0, instanceCount);
+						numDrawCalls++;
+						numTris += (mesh.indexCount / 3) * instanceCount;
 
 						glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
@@ -343,7 +350,8 @@ namespace GFX
 
 		ClearFBO();
 		renderIndex = i;
-
+		out_RenderInfo.numDrawCalls = numDrawCalls;
+		out_RenderInfo.numTris = numTris;
 	}
 
 	void DeferredPainter::BindGBuffer(FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID)
