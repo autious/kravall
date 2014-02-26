@@ -31,7 +31,7 @@ return function(asm, posX, posY, posZ, group, gender, material, weaponType)
 			{
 				type = core.componentType.AttributeComponent,
 				data = { health = 100, stamina = 100, morale = 2.0, 
-					   alignment = core.RioterAlignment.Anarchist, rage = 0, pressure = 0, groupID = group, stanceRioter = core.RioterStance.Agitated}
+					   alignment = core.RioterAlignment.Anarchist, rage = 0, pressure = 0, groupID = group, stanceRioter = core.RioterStance.Normal}
                 ,
                 ignoreHard = true
 			},
@@ -76,7 +76,7 @@ return function(asm, posX, posY, posZ, group, gender, material, weaponType)
 				type = core.componentType.GraphicsComponent,
 				data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1} },
 				load = { 
-							mesh = { core.loaders.GnomeLoader, meshes[1] },
+							mesh = { core.loaders.GnomeLoader, meshes[gender] },
 							material = { core.loaders.MaterialLoader, materials[material]  },
 					   }
 			}

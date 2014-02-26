@@ -38,7 +38,7 @@ namespace Core
 		struct DataIN
 		{
 			glm::vec4 position_unitType;
-			glm::vec4 newDirection_speed;
+			glm::vec4 newDirection_team;
 			glm::vec4 health_stamina_morale_stancealignment;
 			glm::vec4 groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance;
 		};

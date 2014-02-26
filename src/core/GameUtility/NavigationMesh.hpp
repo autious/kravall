@@ -148,11 +148,12 @@ namespace Core
 		*/
 		struct Flowfield
 		{
-			/* Group Data */
+			/* Group Data. Future refactoring needed. */
 
 			float stuckTimer;
 			float timeSinceLastCheck;
 			float recordedPosition[2];
+			int team;
 
 			/* ********* */
 
@@ -186,7 +187,7 @@ namespace Core
         /*!
             Creates a group and allocates memory for flowfields for the group.
         */
-        int CreateGroup();
+        int CreateGroup( int team = 0 );
 
 		/*!
 			Will allocate flowfields from the level allocator.

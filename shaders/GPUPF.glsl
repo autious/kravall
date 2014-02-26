@@ -45,7 +45,7 @@ struct MoodCurve
 struct DataIN
 {
 	vec4 position_unitType;
-	vec4 newDirection_speed;
+	vec4 newDirection_team;
 	vec4 health_stamina_morale_stance;
 	//vec4 groupSquadID_defenseRage_mobilityPressure_empty;
 	vec4 groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance;
@@ -53,7 +53,7 @@ struct DataIN
 
 struct DataOUT
 {
-	vec4 newDirection_speed;
+	vec4 newDirection_team;
 	vec4 morale_rage_pressure_empty;
 };
 
@@ -76,15 +76,15 @@ uniform uint gEntityCount;
 
 //shared ChargeCurve gChargeCurves[1][2];
 
-uniform vec4 gChargeCurves[6][13]= {{ vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 300.0f, 1.0f, -5000.0f / (300.0f)),vec4(0.0f),vec4(0.0f),vec4(0.0f) },
+uniform vec4 gChargeCurves[6][13]= {{ vec4(-5000.0f, 300.0f, 1.0f, -5000.0f / (300.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 300.0f, 1.0f, -5000.0f / (300.0f)),vec4(0.0f),vec4(0.0f)},
 									
-								   { vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 300.0f, 1.0f, -5000.0f / (300.0f)),vec4(0.0f),vec4(0.0f),vec4(0.0f) },
+								   { vec4(0.0f),vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 300.0f, 1.0f, -5000.0f / (300.0f)),vec4(0.0f),vec4(0.0f) },
 
-								   { vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 300.0f, 1.0f, -5000.0f / (300.0f)),vec4(0.0f),vec4(0.0f),vec4(0.0f)  },
+								   { vec4(0.0f), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(-5000.0f, 0.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 0.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 0.0f, 1.0f, -5000.0f / (30.0f)), vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 300.0f, 1.0f, -5000.0f / (300.0f)), vec4(0.0f),vec4(0.0f)  }, 								   
+								   
+								   { vec4(0.0f),vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 300.0f, 1.0f, -5000.0f / (300.0f)),vec4(0.0f),vec4(0.0f)  },
 
-								   { vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 300.0f, 1.0f, -5000.0f / (300.0f)),vec4(0.0f),vec4(0.0f),vec4(0.0f)  },
-
-								   { vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 300.0f, 1.0f, -5000.0f / (300.0f)),vec4(0.0f),vec4(0.0f),vec4(0.0f)  },
+								   { vec4(0.0f),vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 300.0f, 1.0f, -5000.0f / (300.0f)),vec4(0.0f),vec4(0.0f)  },
 
 								   { vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f), vec4(0.0f),vec4(0.0f),vec4(0.0f),vec4(0.0f) }};
 
@@ -96,6 +96,7 @@ uniform vec4 gChargeCurves[6][13]= {{ vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec
 //Civilian
 
 //Column indices in order
+//reserved
 //Normal rioter
 //Agitated rioter
 //Attacking rioter
@@ -109,9 +110,9 @@ uniform vec4 gChargeCurves[6][13]= {{ vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec
 //Molotov
 
 
-uniform int gChargeSenderIndices[3][6] = {{ 0, 1, 2, 3, 4, 0 },
-										  { 5, 6, 7, 8, 0, 0  },
-										  { 9, 10, 0, 0, 0, 0  }};
+uniform int gChargeSenderIndices[3][6] = {{ 1, 2, 3, 4, 5, 0 },
+										  { 6, 7, 8, 9, 0, 0  },
+										  { 10, 11, 0, 0, 0, 0  }};
 
 uniform int gChargeReceiverIndices[3][6] = {{ 0, 1, 2, 3, 4, 5 },
 										  { 0, 0, 0, 0, 0, 0  },
@@ -159,8 +160,6 @@ float GetAgentChargeAt(int unitType, float distSqr, vec4 chargeCurve)
 	
 	return float(distSqr > 0.001f && distSqr < chargeCurve.z) * (-MINIMUM_CHARGE + distSqr * (chargeCurve.z / MINIMUM_CHARGE)) + 
 	float(distSqr <= chargeCurve.y) * ( chargeCurve.x - distSqr * chargeCurve.w);
-
-
 }
 
 
@@ -170,8 +169,9 @@ float GetEffectOnAgentAt(vec2 queryPosition, int groupID, uint index)
 	float negativeSum = 0.0f;
 	float currentSum = 0.0f;
 	DataIN indata;
+	DataIN receiver = gInput[index];
 
-	int receieverIndex = gChargeReceiverIndices[int(gInput[index].position_unitType.w)][int(gInput[index].health_stamina_morale_stance.w)];
+	int receieverIndex = gChargeReceiverIndices[int(receiver.position_unitType.w)][int(receiver.health_stamina_morale_stance.w)];
 
 	for (int i = 0; i < gInput.length(); ++i)
 	{
@@ -193,11 +193,12 @@ float GetEffectOnAgentAt(vec2 queryPosition, int groupID, uint index)
 		}
 
 		int senderIndex = gChargeSenderIndices[int(indata.position_unitType.w)][int(indata.health_stamina_morale_stance.w)];
+
+		int multiplier = int(indata.newDirection_team.w == receiver.newDirection_team.w || indata.newDirection_team.w  == 0);
 	
+		vec4 chargeCurve = gChargeCurves[receieverIndex * multiplier][senderIndex * multiplier];
 	
-		vec4 chargeCurve = gChargeCurves[receieverIndex][senderIndex];
-	
-		if (distSqr >= chargeCurve.z && (indata.position_unitType.w == RIOTER_TYPE && matchID != groupID) )
+		if (distSqr >= chargeCurve.z && (indata.position_unitType.w == RIOTER_TYPE))// && matchID != groupID) )
 			continue;
 	
 		currentSum = GetAgentChargeAt(int(indata.position_unitType.w), distSqr, chargeCurve);
@@ -495,16 +496,16 @@ void main()
 		if (index >= gEntityCount)
 			break;
 
-		gOutput[index].newDirection_speed = gInput[index].newDirection_speed;
+		gOutput[index].newDirection_team = gInput[index].newDirection_team;
 		
 		if (int(gInput[index].position_unitType.w) == RIOTER_TYPE)
 		{
 			vec2 bestIndex = vec2(0.0f, 0.0f);
 
 			vec3 offsetPos = vec3(
-			gInput[index].position_unitType.x + 0 * gInput[index].newDirection_speed.x / 2.0f,
-			gInput[index].position_unitType.y + 0 * gInput[index].newDirection_speed.y / 2.0f, 
-			gInput[index].position_unitType.z + 0 * gInput[index].newDirection_speed.z / 2.0f);
+			gInput[index].position_unitType.x + 0 * gInput[index].newDirection_team.x / 2.0f,
+			gInput[index].position_unitType.y + 0 * gInput[index].newDirection_team.y / 2.0f, 
+			gInput[index].position_unitType.z + 0 * gInput[index].newDirection_team.z / 2.0f);
 		
 			float highestSum = GetEffectOnAgentAt(vec2(offsetPos.x, offsetPos.z), int(gInput[index].groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance.x), index);
 			float staySum = highestSum;
@@ -614,7 +615,7 @@ void main()
 					pfVector = normalize(pfVector);
 			}
 
-			gOutput[index].newDirection_speed = vec4(pfVector.x, 0, pfVector.z, gInput[index].newDirection_speed.w );
+			gOutput[index].newDirection_team = vec4(pfVector.x, 0, pfVector.z, gInput[index].newDirection_team.w );
 			
 			//float dirDot = dot(vec2(gInput[index].newDirection_speed.x, gInput[index].newDirection_speed.z), vec2(pfVector.x, pfVector.z));
 			//

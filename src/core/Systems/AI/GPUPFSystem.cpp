@@ -108,25 +108,29 @@ namespace Core
 					float navMeshWallDistance = abs( navMeshValue - navMeshWallVector.x * 1000 ) - abs( navMeshWallVector.z * 100 ) - 200;
 					*/
 
+					int team = 0; // UnitType::Object will default to zero here.
 					in[i].position_unitType = glm::vec4(wpc->position[0], wpc->position[1], wpc->position[2], utc->type);
-					in[i].newDirection_speed = glm::vec4(mc->newDirection[0], mc->newDirection[1], mc->newDirection[2], mc->speed);
-
+					
 					if (utc->type == UnitType::Rioter)
 					{
 						in[i].health_stamina_morale_stancealignment = glm::vec4(ac->health, ac->stamina, ac->morale, ac->rioter.stance);
 						in[i].groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance = glm::vec4(ac->rioter.groupID, ac->rioter.rage, ac->rioter.pressure, navMeshValue);
+						team = Core::GetNavigationMesh()->flowfields[ ac->rioter.groupID ].team;
 					}
 					else if (utc->type == UnitType::Police)
 					{
 						in[i].health_stamina_morale_stancealignment = glm::vec4(ac->health, ac->stamina, ac->morale, ac->rioter.stance); //Attacking state should override stance here
 						in[i].groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance = glm::vec4(ac->rioter.groupID, 1, 1, navMeshValue);
+						team = Core::GetNavigationMesh()->flowfields[ ac->police.squadID ].team;
 					}
 					else if (utc->type == UnitType::Object)
 					{
 						in[i].health_stamina_morale_stancealignment = glm::vec4(100.0f, 100.0f, 2.0f, ac->pfObject.pfObjectType); //Attacking state should override stance here
 						in[i].groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance = glm::vec4(0, 1, 1, 0);
 					}
-					i++;
+
+					in[i].newDirection_team = glm::vec4(mc->newDirection[0], mc->newDirection[1], mc->newDirection[2], team);
+					i++;					
 				}
 				glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 				//glInvalidateBufferData(m_inDataBuffer);
@@ -238,8 +242,6 @@ namespace Core
 					mc->newDirection[0] = newDir.x;
 					mc->newDirection[1] = newDir.y;
 					mc->newDirection[2] = newDir.z;
-
-					mc->speed = out[i].newDirection_speed.w;
 
 					ac->morale = out[i].morale_rage_pressure_empty.x;
 

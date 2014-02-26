@@ -33,9 +33,9 @@ return function(asm, posX, posY, posZ, rotation, weaponType)
             local x_p = x*math.cos(rotation) - z*math.sin(rotation)
             local z_p = x*math.sin(rotation) + z*math.cos(rotation)
             if i == 0 and k == 1 then
-                T.members[i*3+k] = tearGasPolice(asm, posX + x_p, 0, posZ + z_p, x_p, z_p, T.groupId, weaponType)
+                T.members[#(T.members)+1] = tearGasPolice(asm, posX + x_p, 0, posZ + z_p, x_p, z_p, T.groupId, weaponType)
             else
-                T.members[i*3+k] = police(asm, posX + x_p, 0, posZ + z_p, x_p, z_p, T.groupId, weaponType)
+                T.members[#(T.members)+1] = police(asm, posX + x_p, 0, posZ + z_p, x_p, z_p, T.groupId, weaponType)
             end
         end
     end
