@@ -196,7 +196,22 @@ function PoliceSquadHandler:setUsableAbilities(squads)
     end
     self.usableAbilities = abilities;
     self.onUsableAbilitiesChange(aggregatedAbilities)
+end
 
+function PoliceSquadHandler:evaluateUsableAbilities()
+    local abilities = {}
+    local aggregatedAbilities = {}
+    for i=1, #self.selectedSquads do
+        local squad = self:getSquad(self.selectedSquads[i])
+        for _,member in pairs(squad.members) do
+            abilities[member.entity] = member.getAbilities()
+            for i=1, #(member.getAbilities()) do
+                aggregatedAbilities[#aggregatedAbilities+1] = abilities[member.entity][i]
+            end
+        end                 
+    end
+    self.usableAbilities = abilities;
+    self.onUsableAbilitiesChange(aggregatedAbilities)
 end
 
 function PoliceSquadHandler:updateSquadDamageStatus( delta )
@@ -317,6 +332,7 @@ function PoliceSquadHandler:AimTearGas()
         self.isAiming = false
         self.AimingFunction = nil
         self:SetReticuleRender(false)
+        return
     end
 
     for entity, abilities in pairs(self.usableAbilities) do    
@@ -459,6 +475,34 @@ function PoliceSquadHandler:update( delta )
     end
 
     clearOutlines()
+
+    local function updateSquads()
+        for k,v in pairs(self.createdSquads) do
+            local groupId = v.groupId  
+            local squadMembers = core.system.groups.getMembersInGroup(groupId)
+
+            local i=1
+            while i <= #(v.members) do
+                local found = false
+                for _, entity in pairs(squadMembers) do
+                    if core.entity.isSameEntity(v.members[i].entity, entity) then
+                        --Squad member is still in the squad, e.g not killed
+                        found = true
+                    end
+                end
+
+                if not found then
+                    table.remove(v.members, i)
+                else
+                    i=i+1
+                end
+            end            
+        end
+        self:evaluateUsableAbilities()
+    end
+
+    updateSquads()
+
 
     --Abilities
     if self.isAiming and self.rightClicked then
