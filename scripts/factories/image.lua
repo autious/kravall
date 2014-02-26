@@ -8,8 +8,8 @@ end
 
 function Image:setPosition( x,y)
     local pos = self.ent:get( core.componentType.WorldPositionComponent )
-    pos.position[1] = x
-    pos.position[2] = -y
+    pos.position[1] = math.floor( x )
+    pos.position[2] = math.floor( -y )
     self.ent:set( core.componentType.WorldPositionComponent,pos )
 end
 

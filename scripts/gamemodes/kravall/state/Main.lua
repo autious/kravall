@@ -4,6 +4,9 @@ local KravallControl = require "gui/kravall/main/KravallControl"
 local PDC = require "particle_definition"
 local ASM = require "assembly_loader"
 
+local ent = require "entities"
+local squadInstance = ent.get "squadInstance"
+
 local Main = { name = "Main" }
 function Main:new(o)
     o = o or {}
@@ -11,10 +14,12 @@ function Main:new(o)
     self.__index = self
 
     o.asm = ASM.loadPack({})
+
     o.particleDefinitions =
     {
         TearGas = PDC:createParticleDefinition(o.asm, 5000, "assets/texture/particle/smoke.material")
     }
+
 
     --Init the things that are required.
     o.moveMarker = MoveMarker:new()
@@ -76,6 +81,12 @@ function Main:new(o)
         end,
         particleDefinitions = o.particleDefinitions,
     })	
+
+    if o.unitInstances then
+        for _,v in  pairs( o.unitInstances ) do
+            o.policeHandler:addSquad( squadInstance( o.asm, v, o.activeWeaponList ) )
+        end
+    end
 
     return o
 end

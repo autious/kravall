@@ -35,10 +35,6 @@ void Core::PoliceGoalSystem::Update( float delta )
 	if( !instance->AllocateFrameMemoryForAstar( Core::world.m_threadHandler.GetNrThreads() ) )
 		return;
 
-	//int startIndex;
-	//int endIndex;
-	//int memoryIndex;
-
 	int head = 0;
 	Core::Entity* policeList = Core::world.m_frameHeap.NewPODArray<Core::Entity>( m_entities.size() );
 	if( policeList == nullptr )
@@ -54,9 +50,6 @@ void Core::PoliceGoalSystem::Update( float delta )
 			continue;
 		policeList[ head++ ] = *it;
 	}
-
-	//int nrCores = Core::world.m_threadHandler.GetNrThreads();
-	//int nrPerCore = std::ceil((float)m_entities.size() / (float)nrCores);
 
 	int nrCores = Core::world.m_threadHandler.GetNrThreads();
 	int nrPerCore = std::ceil((float)head / (float)nrCores);

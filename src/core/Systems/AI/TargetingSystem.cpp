@@ -87,7 +87,7 @@ void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police, float del
 		case PoliceStance::Aggressive:
 			if (tc->target == INVALID_ENTITY)
 			{
-				tc->target = FindClosestTarget(wpc, UnitType::Rioter + 1, -1, nullptr );
+				tc->target = FindClosestTarget(wpc, 1 << UnitType::Rioter, -1, nullptr );
 				tc->attackTime = 0.0f;
 			}
 			else
@@ -187,7 +187,7 @@ void Core::TargetingSystem::HandleRioterTargeting(Core::Entity rioter, float del
 
 	tc->target = FindClosestAttacker(tc, wpc);
 	if (tc->target == INVALID_ENTITY)
-		tc->target = FindClosestTarget(wpc, (UnitType::Police + 1) | (UnitType::Rioter + 1 ), instance->flowfields[ac->rioter.groupID].team, instance );
+		tc->target = FindClosestTarget(wpc, ( 1 << UnitType::Police ) | ( 1 << UnitType::Rioter ), instance->flowfields[ac->rioter.groupID].team, instance );
 
 	Core::TargetingComponent* tcNewTarget = WGETC<Core::TargetingComponent>(tc->target);
 	if( !tcNewTarget )
@@ -210,7 +210,7 @@ Core::Entity Core::TargetingSystem::FindClosestTarget(Core::WorldPositionCompone
 	for (std::vector<Entity>::iterator it = m_entities.begin();	it != m_entities.end();	it++)
 	{
 		Core::UnitTypeComponent* utc = WGETC<Core::UnitTypeComponent>(*it);
-		if ( !(utc->type + 1 & targetType) )
+		if( !(1 << utc->type & targetType) )
 			continue;
 		
 		if( instance )

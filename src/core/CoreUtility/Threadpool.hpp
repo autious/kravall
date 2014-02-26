@@ -69,6 +69,9 @@ namespace Core
 
 		std::mutex m_queueMutex;
 		std::condition_variable m_condition;
+		
+		std::mutex m_waitMutex;
+		std::condition_variable m_waitCondition;
 	
 		bool m_stop;
 		int m_nrJobsInProgress;
