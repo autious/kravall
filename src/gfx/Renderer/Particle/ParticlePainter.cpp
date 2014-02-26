@@ -64,9 +64,13 @@ namespace GFX
     
     }
 
-    void ParticlePainter::Render(unsigned int& renderIndex,GFX::FBOTexture* particleTarget, GFX::FBOTexture* depthBuffer, GFX::FBOTexture* normalDepth, GFX::FBOTexture* specular, GFX::FBOTexture* glowMatID, GLuint toneMappedTexture, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix, float gamma)
+    void ParticlePainter::Render(unsigned int& renderIndex,GFX::FBOTexture* particleTarget, GFX::FBOTexture* depthBuffer, 
+		GFX::FBOTexture* normalDepth, GFX::FBOTexture* specular, GFX::FBOTexture* glowMatID, GLuint toneMappedTexture, 
+		const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix, float gamma, RenderInfo& out_RenderInfo)
     {
 		BasePainter::Render();
+		unsigned int numDrawCalls = 0;
+		unsigned int numTris = 0;
 
         glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 
@@ -249,6 +253,8 @@ namespace GFX
                 }
             }
             glDrawArrays(GL_POINTS, 0, particleData->particleCount);
+			numDrawCalls++;
+			numTris += 2 * particleData->particleCount;
         }
         
         glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
@@ -275,5 +281,7 @@ namespace GFX
         
         glDisable(GL_BLEND);
         glDepthMask(GL_TRUE);
+		out_RenderInfo.numDrawCalls = numDrawCalls;
+		out_RenderInfo.numTris = numTris;
     }
 }

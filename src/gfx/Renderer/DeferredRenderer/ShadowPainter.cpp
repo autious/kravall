@@ -143,9 +143,13 @@ namespace GFX
 //#endif
 	void ShadowPainter::Render(AnimationManagerGFX* animationManager, const unsigned int& renderIndex, FBOTexture* depthBuffer, glm::mat4 viewMatrix, glm::mat4 projMatrix,
 			const unsigned int& geometryStartIndex, const unsigned int& geometryEndIndex, FBOTexture** shadowMaps, const unsigned int& width, const unsigned int& height,
-			const glm::vec2& nearFar)
+			const glm::vec2& nearFar, RenderInfo& out_RenderInfo)
 	{
 		BasePainter::Render();
+
+		unsigned int numDrawCalls = 0;
+		unsigned int numTris = 0;
+
 		unsigned int startIndex = geometryStartIndex;
 		unsigned int endIndex = geometryEndIndex;
 		//GLenum error;
@@ -402,6 +406,9 @@ namespace GFX
 				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_RBO[3]);
 				glDrawElementsInstanced(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0, instanceCount);
 
+				numDrawCalls += 4;
+				numTris += (mesh.indexCount / 3) * instanceCount * 4;
+
 				//instanceCount = 0;
 
 			}
@@ -420,6 +427,7 @@ namespace GFX
 
 		glViewport(0, 0, width, height);
 		
-
+		out_RenderInfo.numDrawCalls = numDrawCalls;
+		out_RenderInfo.numTris = numTris;
 	}
 }

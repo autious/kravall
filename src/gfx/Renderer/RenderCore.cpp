@@ -129,6 +129,7 @@ namespace GFX
 	{
 		m_windowWidth = 0;
 		m_windowHeight = 0;
+		totalRenderInfo = { 0, 0 };
 		
 		// Set default settings
 		m_settings[GFX_SHADOW_QUALITY] = GFX_SHADOWS_VARIANCE; // TODO: Implement basic shadow mapping as low res option
@@ -441,6 +442,8 @@ namespace GFX
 		ShadowDataContainer::numSpotLights = 0;
 		ShadowDataContainer::numPointLights = 0;
 
+		RenderInfo renderInfo[6];
+
 		// renderJobIndex is the index of the current render job
 		unsigned int renderJobIndex = 0;
 
@@ -451,13 +454,13 @@ namespace GFX
 		CT(m_renderJobManager->Sort(), "Sorting");
 
 		// Draw geometry to G-buffers
-		CT(m_deferredPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix, m_gamma), "Geometry");
+		CT(m_deferredPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix, m_gamma, renderInfo[0]), "Geometry");
 
 		//Draw decals to Gbuffer
-		CT(m_decalPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix, m_gamma), "Decals");
+		CT(m_decalPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_viewMatrix, m_projMatrix, m_gamma, renderInfo[1]), "Decals");
 
 		// Draw shadow map geometry
-		CT(m_shadowPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_viewMatrix, m_projMatrix, 0, renderJobIndex, m_shadowMapTextures, m_windowWidth, m_windowHeight, glm::vec2(m_nearZ, m_farZ)), "Shadowmap");
+		CT(m_shadowPainter->Render(m_animationManager, renderJobIndex, m_depthBuffer, m_viewMatrix, m_projMatrix, 0, renderJobIndex, m_shadowMapTextures, m_windowWidth, m_windowHeight, glm::vec2(m_nearZ, m_farZ), renderInfo[2]), "Shadowmap");
 
 		// Do global illumination / ssao
 		//CT(m_GIPainter->Render(delta, m_normalDepth, m_diffuse, m_viewMatrix, m_projMatrix), "GI");
@@ -468,7 +471,7 @@ namespace GFX
 
 
         // Do particle rendering as forwarded pass
-		CT(m_particlePainter->Render(renderJobIndex, m_particleTarget, m_depthBuffer, m_normalDepth, m_specular, m_glowMatID, m_toneMappedTexture, m_viewMatrix, m_projMatrix, m_gamma), "Particle");
+		CT(m_particlePainter->Render(renderJobIndex, m_particleTarget, m_depthBuffer, m_normalDepth, m_specular, m_glowMatID, m_toneMappedTexture, m_viewMatrix, m_projMatrix, m_gamma, renderInfo[3]), "Particle");
 
 		// Do post processing
 		CT(m_postProcessingPainter->Render(delta, m_toneMappedTexture, m_currentLUT, m_exposure, m_gamma, m_whitePoint, m_diffuse), "PostProcessing");
@@ -478,7 +481,7 @@ namespace GFX
 			CT(m_fboPainter->Render(m_normalDepth, m_diffuse, m_specular, m_glowMatID, m_windowWidth, m_windowHeight, m_shadowMapTextures, m_showFBO), "FBO");
 
 		// Draw overlays/ui
-		CT(m_overlayPainter->Render(renderJobIndex, m_overlayViewMatrix, m_overlayProjMatrix), "Console");
+		CT(m_overlayPainter->Render(renderJobIndex, m_overlayViewMatrix, m_overlayProjMatrix, renderInfo[4]), "Console");
 
 		// Draw debug information
 		CT(m_debugPainter->Render(m_depthBuffer, m_normalDepth, m_viewMatrix, m_projMatrix, true), "Debug");
@@ -487,13 +490,22 @@ namespace GFX
 		CT(m_consolePainter->Render(), "Console");
 
 		// Draw debug text
-		CT(m_textPainter->Render(m_windowWidth, m_windowHeight), "Text");
+		CT(m_textPainter->Render(m_windowWidth, m_windowHeight, renderInfo[5]), "Text");
 		
 		if( m_drawSelectionbox )
 			m_boxPainter->Render(m_selectionBoxPosDim, m_selectionBoxColor);
 
 		m_renderJobManager->Clear();
 		m_drawSelectionbox = false;
+
+
+		totalRenderInfo = { 0, 0 };
+		for (int i = 0; i < 5; i++)
+		{
+			totalRenderInfo.numDrawCalls += renderInfo[i].numDrawCalls;
+			totalRenderInfo.numTris += renderInfo[i].numTris;
+		}
+
 	}
 
 	void RenderCore::SubSystemTimeRender()
@@ -512,11 +524,25 @@ namespace GFX
 			    GetTextManager().AddText(t);
 			}
 
-			glm::vec2 position = glm::vec2(m_windowWidth-200, m_windowHeight - 5 - 20 * m_subsystemTimes.size());
-			glm::vec2 dimensions = glm::vec2(200, 20 * m_subsystemTimes.size());
+			// Draw draw info
+			std::stringstream ss1;
+			ss1 << "Tris: " << totalRenderInfo.numTris << "+";
+			glm::vec2 pos = glm::vec2(m_windowWidth-200+5, m_windowHeight + 12 - 20 * m_subsystemTimes.size() - 20);
+			Text t1(pos.x, pos.y, 1.0f, 1.0f, m_font, Colors::White, ss1.str().c_str());
+			GetTextManager().AddText(t1);
+			
+			std::stringstream ss2;
+			ss2 << "Draw calls: " << totalRenderInfo.numDrawCalls << "\n";
+			pos = glm::vec2(m_windowWidth-200+5, m_windowHeight + 12 - 20 * m_subsystemTimes.size() - 40);
+			Text t2(pos.x, pos.y, 1.0f, 1.0f, m_font, Colors::White, ss2.str().c_str());
+			GetTextManager().AddText(t2);
+
+
+			glm::vec2 position = glm::vec2(m_windowWidth-200, m_windowHeight - 5 - 20 * m_subsystemTimes.size() - 40);
+			glm::vec2 dimensions = glm::vec2(200, 20 * m_subsystemTimes.size() + 40);
 
 			DebugRect r;
-			r.color = glm::vec4( 0.5f,0.5f,0.5f,0.5f);
+			r.color = glm::vec4( 0.2f,0.2f,0.2f,0.9f);
 			r.position = glm::vec3(
 				position.x / float(Renderer().GetWindowWidth() / 2) - 1.0f,
 				1.0f - position.y / float(Renderer().GetWindowHeight() / 2), 0.0f);
@@ -524,6 +550,7 @@ namespace GFX
 				dimensions.x / float(Renderer().GetWindowWidth())*2,
 				dimensions.y / float(Renderer().GetWindowHeight())*2, 0.0f);
 			DebugDrawing().AddRect(r, true);
+
 
 		}
 	}

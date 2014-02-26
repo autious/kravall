@@ -76,9 +76,12 @@ namespace GFX
 	}
 
 	void DecalPainter::Render(AnimationManagerGFX* animationManager, unsigned int& renderIndex,
-		FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix, const float& gamma)
+		FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, 
+		FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix, const float& gamma, RenderInfo& out_RenderInfo)
 	{
 		BasePainter::Render();
+		unsigned int numDrawCalls = 0;
+		unsigned int numTris = 0;
 
 		BindGBuffer(depthBuffer, diffuse, specular, glowMatID);
 
@@ -171,6 +174,8 @@ namespace GFX
 			m_shaderManager->SetUniform(10, 10, 10, m_decalSizeUniform);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IBO);
 			glDrawElements(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0);
+			numDrawCalls++;
+			numTris += (mesh.indexCount / 3);
 		}
 
 		
@@ -180,6 +185,8 @@ namespace GFX
 		glCullFace(GL_BACK);
 		m_shaderManager->ResetProgram();
 		ClearFBO();
+		out_RenderInfo.numDrawCalls = numDrawCalls;
+		out_RenderInfo.numTris = numTris;
 	}
 
 	void DecalPainter::BindGBuffer(FBOTexture* depthBuffer, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID)

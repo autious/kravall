@@ -50,7 +50,7 @@ namespace GFX
 		*/
 		void Render(AnimationManagerGFX* animationManager, const unsigned int& renderIndex, FBOTexture* depthBuffer, glm::mat4 viewMatrix, glm::mat4 projMatrix,
 			const unsigned int& geometryStartIndex, const unsigned int& geometryEndIndex, FBOTexture** shadowMaps, const unsigned int& width, const unsigned int& height,
-			const glm::vec2& nearFar);
+			const glm::vec2& nearFar, RenderInfo& out_RenderInfo);
 
 	private:
 

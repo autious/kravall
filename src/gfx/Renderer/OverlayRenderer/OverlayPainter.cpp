@@ -42,9 +42,11 @@ namespace GFX
 		m_projectionMatrixUniform = m_shaderManager->GetUniformLocation("Overlay", "projectionMatrix");
     }
 
-    void OverlayPainter::Render( unsigned int& renderIndex, glm::mat4& viewMatrix, glm::mat4& projectionMatrix )
+    void OverlayPainter::Render( unsigned int& renderIndex, glm::mat4& viewMatrix, glm::mat4& projectionMatrix, RenderInfo& out_RenderInfo )
     {
 		BasePainter::Render();
+		unsigned int numDrawCalls = 0;
+		unsigned int numTris = 0;
 
 		glDisable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
@@ -117,10 +119,14 @@ namespace GFX
 			m_shaderManager->SetUniform(1, d->modelMatrix, m_modelMatrixUniform);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IBO);
 			glDrawElements(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0);
+			numDrawCalls++;
+			numTris += (mesh.indexCount / 3);
 		}
 
 		m_shaderManager->ResetProgram();
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
+		out_RenderInfo.numDrawCalls = numDrawCalls;
+		out_RenderInfo.numTris = numTris;
     }
 }
