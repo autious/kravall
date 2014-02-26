@@ -11,7 +11,55 @@ local Prep = require( "gamemodes/kravall/state/Prep" )
 local Main = require( "gamemodes/kravall/state/Main" )
 local End = require( "gamemodes/kravall/state/End" )
 
-local T = { initGamestate = "Main" }
+local T = 
+    { 
+        initGamestate = "Main",
+        weapons = 
+        {
+            punch = {1.0, 0.75, 20, 0.2, 0.05, 3.2, 2.9, 0.05, 0.5, "punch"}
+        },
+        policeTypes =
+        {
+            {
+                name = "Common Squad",
+                cost = 100,
+                setup = 
+                {
+                    {
+                        positionOffset = {0,0,0},
+                        weapon = "punch",
+                        mesh = "assets/model/animated/police/cop/cop-teargas_00.bgnome",
+                        material = "assets/texture/animated/police/cop/cop-teargas_00.material"
+                    },
+                    {
+                        positionOffset = {1,0,1},
+                        weapon = "punch",
+                        mesh = "assets/model/animated/police/cop/cop-teargas_00.bgnome",
+                        material = "assets/texture/animated/police/cop/cop-teargas_00.material"
+                    },
+                },
+            },
+            {
+                name = "Teargas Squad",
+                cost = 100,
+                setup = 
+                {
+                    {
+                        positionOffset = {0,0,0},
+                        weapon = "punch",
+                        mesh = "assets/model/animated/police/cop/cop-teargas_00.bgnome",
+                        material = "assets/texture/animated/police/cop/cop-teargas_00.material"
+                    },
+                    {
+                        positionOffset = {2,0,2},
+                        weapon = "punch",
+                        mesh = "assets/model/animated/police/cop/cop-teargas_00.bgnome",
+                        material = "assets/texture/animated/police/cop/cop-teargas_00.material"
+                    },
+                },
+            },
+        }
+    }
 
 --T.gamestate can be either Prep, Main or End
 
@@ -40,7 +88,13 @@ function T:setState( state )
         self.gamestate = Main:new(  )
     elseif state == "Prep" then
         print( "State set to \"Prep\"" )
-        self.gamestate = Prep:new({onFinished = function() print("fin"); self:setState( "Main" ) end})
+        self.gamestate = Prep:new
+        {
+            policeTypes = self.policeTypes,
+            onFinished = function() self:setState( "Main" ) end,
+            addUnit = function(squad) print("Added unit " .. squad.name ) end, 
+        }
+
     elseif state == "End" then
         print( "State set to \"End\"" )
         self.gamestate = End:new()

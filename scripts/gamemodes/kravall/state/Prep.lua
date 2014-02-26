@@ -4,7 +4,7 @@ local SquadPositionDecal = require "visual_objects/SquadPositionDecal"
 
 local Prep = { 
     name = "Prep",
-
+    policeTypes = nil,
     onFinished = function() end
 }
 
@@ -16,23 +16,19 @@ function Prep:new(o)
     self.__index = self
   
     o.squadPositionDecal = SquadPositionDecal:new()
-    o.squadPositionDecal:setFormationOffsets( 
-    {
-        core.glm.vec3.new(1,0,1),
-        core.glm.vec3.new(1,0,-1),
-        core.glm.vec3.new(0,0,0),
-        core.glm.vec3.new(-1,0,-1),
-        core.glm.vec3.new(-1,0,1),
-    })
 
     o.spawnAreas = {}
 
     o.prepInterface = PrepInterface:new(
     {
         onFinished = function()
-            print( "Fin" )
             o.onFinished()
-        end
+        end,
+        onSelectCurrentSquad = function(squadDef)
+            print( "SELCT!" )
+            o.squadPositionDecal:setActiveSquad(squadDef)
+        end,
+        policeTypes = o.policeTypes 
     }
     )
 
