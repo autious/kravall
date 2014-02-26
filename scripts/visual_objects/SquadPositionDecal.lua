@@ -69,7 +69,7 @@ function SquadPositionDecal:setPosition(x, y, z)
 end
 
 function SquadPositionDecal:verifyPlacement( areas )
-
+    local accepted = true
     for _,h in pairs( self.offsets ) do
         local isInside = false
         for _,v in pairs( areas ) do
@@ -86,10 +86,11 @@ function SquadPositionDecal:verifyPlacement( areas )
             { 
                 material = self.fail_material_handle, 
             }, true)
+            accepted = false
         end
     end
 
-
+    return accepted
 end
 
 function SquadPositionDecal:setFormationOffsets( list )

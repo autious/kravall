@@ -7,6 +7,10 @@ local keyboard = core.input.keyboard
 local mouse = core.input.mouse
 local s_squad = core.system.squad
 
+local Prep = require( "gamemodes/kravall/state/Prep" ) 
+local Main = require( "gamemodes/kravall/state/Main" )
+local End = require( "gamemodes/kravall/state/End" )
+
 local T = { initGamestate = "Main" }
 
 --T.gamestate can be either Prep, Main or End
@@ -33,13 +37,13 @@ function T:setState( state )
 
     if state == "Main" then
         print( "State set to \"Main\"" )
-        self.gamestate = require( "gamemodes/kravall/state/Main" ):new()
+        self.gamestate = Main:new(  )
     elseif state == "Prep" then
         print( "State set to \"Prep\"" )
-        self.gamestate =  require( "gamemodes/kravall/state/Prep" ):new()
+        self.gamestate = Prep:new({onFinished = function() print("fin"); self:setState( "Main" ) end})
     elseif state == "End" then
         print( "State set to \"End\"" )
-        self.gamestate =  require( "gamemodes/kravall/state/End" ):new()
+        self.gamestate = End:new()
     end
 end
 
