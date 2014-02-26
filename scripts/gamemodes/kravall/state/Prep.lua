@@ -8,7 +8,8 @@ local ent = require "entities"
 local Prep = { 
     name = "Prep",
     policeTypes = nil,
-    onFinished = function( squadInstances ) end
+    onFinished = function( squadInstances ) end,
+    cashLimit = 1000,
 }
 
 local input = require "input"
@@ -28,6 +29,7 @@ function Prep:new(o)
 
     o.prepInterface = PrepInterface:new(
     {
+        cashLimit = o.cashLimit,
         policeTypes = o.policeTypes,
         createdSquads = o.createdSquads,
         onFinished = function()
@@ -68,18 +70,30 @@ function Prep:new(o)
            and action == core.input.action.Press then 
             if o.activeSquad then
                 if o.canPlace then 
-                    --pLace unit
-                    local squadInstance = { 
-                        name        = o.activeSquad.name,
-                        squadDef    = o.activeSquad,
-                        position    = o.activePosition,
-                    }
-                    table.insert(o.createdSquads, squadInstance )
 
-                    o.createdVisualRepresentation[squadInstance] = ent.get "squadInstanceStatic"( o.asm, squadInstance )
-                    o.prepInterface:updatePurchasedList()
+                    if o.activeSquad.cost <= (o.cashLimit - o:totalCost() ) then
+                        --pLace unit
+                        local squadInstance = 
+                        { 
+                            name        = o.activeSquad.name,
+                            squadDef    = o.activeSquad,
+                            position    = o.activePosition,
+                        }
+                        table.insert(o.createdSquads, squadInstance )
+
+                        o.createdVisualRepresentation[squadInstance] = ent.get "squadInstanceStatic" ( o.asm, squadInstance )
+                        o.prepInterface:updatePurchasedList()
+                        o.prepInterface:setRemainingMoney( o.cashLimit - o:totalCost() )
+                    else
+                        print( "Not enough money" ) 
+                    end
                 end
             end 
+        elseif button == core.input.mouse.button.Right
+           and action == core.input.action.Press then 
+            if o.activeSquad then
+                o.prepInterface:setSelected( nil ) 
+            end
         end
     end
 
@@ -98,6 +112,13 @@ function Prep:new(o)
     return o
 end
 
+function Prep:totalCost() 
+    local sum = 0
+    for _,v in pairs( self.createdSquads ) do
+        sum = sum + v.squadDef.cost
+    end
+    return sum
+end
 -- Add a spawn zone, designated by an entity with an AreaComponent
 function Prep:addAreaSpawnZone( ent )
     table.insert( self.spawnAreas, ent )
@@ -114,7 +135,6 @@ function Prep:destroy()
     self.prepInterface:destroy()
     self.asm:destroy()
     self.asm = nil
-    
 end
 
 return Prep

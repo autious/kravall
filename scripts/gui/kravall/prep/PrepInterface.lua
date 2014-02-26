@@ -30,22 +30,31 @@ function PrepInterface:new(o)
     o.gui = GUI:new()
 
 
-    o.totalCash = TextLabel:new{ label="Cash: $" , xoffset=20,yoffset=-5, anchor="West" }
-    o.selectedCost = TextLabel:new{ label ="Cost: $", xoffset=20, yoffset=-5, anchor="West" }
-    o.title = TextLabel:new{ label="\\/ Purchase menu \\/", xoffset=20,yoffset=-5, anchor="West" }
+    o.totalCash = TextLabel:new{ label="Cash: $" .. o.cashLimit , xoffset=20,  anchor="West" }
+    o.title = TextLabel:new{ label="\\/ Purchase menu \\/", xoffset=20, anchor="West" }
+    o.selectedCost = TextLabel:new{ label ="Cost: $0", xoffset=20,  anchor="West" }
+
     o.unitSelection = TextSelectList:new
     { 
-        xoffset=20,
+        xoffset=30,
         anchor="West", 
         elements=o.policeTypes,
-        onSelect = o.onSelectCurrentSquad,
+        onSelect = function( squadDef )
+            if squadDef then
+                o.selectedCost:setLabel( "Cost: $" .. squadDef.cost )
+            else
+                o.selectedCost:setLabel( "Cost: $0" )
+            end
+
+            o.onSelectCurrentSquad(squadDef)
+        end
     }
 
     o.unitPurchasedTitle = TextLabel:new{ label="\\/ Bought \\/", xoffset=20,yoffset=-5, anchor="West" }
 
     o.unitPurchased = TextSelectList:new
     { 
-        xoffset=20,
+        xoffset=30,
         anchor="West", 
         elements= o.createdSquads,
         onSelect = o.onSelectCreatedSquad,
@@ -67,15 +76,24 @@ function PrepInterface:new(o)
     
     o.gui:addComponent( o.doneButton )
     o.gui:addComponent( o.totalCash )
-    o.gui:addComponent( o.selectedCost )
     o.gui:addComponent( o.title )
+    o.gui:addComponent( o.selectedCost )
     o.gui:addComponent( o.unitSelection )
     o.gui:addComponent( o.unitPurchasedTitle )
     o.gui:addComponent( o.unitPurchased )
     o.gui:addComponent( o.removeSelectedButton )
+
     o.gui:addPlacementHandler( AnchorPlacer )
 
     return o
+end
+
+function PrepInterface:setSelected( squad )
+   self.unitSelection:setActive( squad )
+end
+
+function PrepInterface:setRemainingMoney( value )
+    self.totalCash:setLabel( "Cash: $" .. value )
 end
 
 function PrepInterface:updatePurchasedList()
