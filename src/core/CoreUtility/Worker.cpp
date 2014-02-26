@@ -16,8 +16,8 @@ void Core::Worker::operator()()
 			std::unique_lock<std::mutex> lock( m_pool.m_queueMutex );
 			m_pool.m_nrJobsInProgress--;
 
-			if( m_pool.m_nrJobsInProgress == 0 && m_pool.m_tasks.empty() )
-				m_pool.m_waitCondition.notify_all();
+			//if( m_pool.m_nrJobsInProgress == 0 && m_pool.m_tasks.empty() )
+			m_pool.m_waitCondition.notify_all();
 
 			while( !m_pool.m_stop && m_pool.m_tasks.empty() )
 			{
