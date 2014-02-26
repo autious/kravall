@@ -38,9 +38,12 @@ namespace GFX
 		glGenVertexArrays(1, &m_textVAO);
 	}
 
-	void TextPainter::Render(int screenWidth, int screenHeight)
+	void TextPainter::Render(int screenWidth, int screenHeight, RenderInfo& out_RenderInfo)
 	{
 		m_text = GetTextManager().GetText();
+
+		out_RenderInfo.numDrawCalls = 0;
+		out_RenderInfo.numTris = 0;
 
 		for (unsigned int i = 0; i < m_text.size(); i++)
 		{
@@ -51,14 +54,15 @@ namespace GFX
 				((2 * m_text[i].m_posY) / static_cast<float>(screenHeight)) - 1.0f,
 				m_text[i].m_sizeX * (2 / static_cast<float>(screenWidth)),
 				-m_text[i].m_sizeY * (2 / static_cast<float>(screenHeight)),
-				m_text[i].m_color
+				m_text[i].m_color,
+				out_RenderInfo
 				);
 		}
 
 		GetTextManager().ClearText();
 	}
 
-	void TextPainter::RenderText(const char* text, FontData* fontData, float x, float y, float sx, float sy, glm::vec4 color)
+	void TextPainter::RenderText(const char* text, FontData* fontData, float x, float y, float sx, float sy, glm::vec4 color, RenderInfo& out_RenderInfo)
 	{
 		m_shaderManager->UseProgram("BasicText");
 
@@ -119,6 +123,8 @@ namespace GFX
 
 		glBindVertexArray(m_textVAO);
 		glDrawArrays(GL_POINTS, 0, coords.size());
+		out_RenderInfo.numDrawCalls++;
+		out_RenderInfo.numTris += 2 * coords.size();
 
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
