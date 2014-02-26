@@ -30,7 +30,8 @@ function PrepInterface:new(o)
     o.gui = GUI:new()
 
 
-    o.totalCash = TextLabel:new{ label="Cash: $4000", xoffset=20,yoffset=-5, anchor="West" }
+    o.totalCash = TextLabel:new{ label="Cash: $" , xoffset=20,yoffset=-5, anchor="West" }
+    o.selectedCost = TextLabel:new{ label ="Cost: $", xoffset=20, yoffset=-5, anchor="West" }
     o.title = TextLabel:new{ label="\\/ Purchase menu \\/", xoffset=20,yoffset=-5, anchor="West" }
     o.unitSelection = TextSelectList:new
     { 
@@ -66,6 +67,7 @@ function PrepInterface:new(o)
     
     o.gui:addComponent( o.doneButton )
     o.gui:addComponent( o.totalCash )
+    o.gui:addComponent( o.selectedCost )
     o.gui:addComponent( o.title )
     o.gui:addComponent( o.unitSelection )
     o.gui:addComponent( o.unitPurchasedTitle )
