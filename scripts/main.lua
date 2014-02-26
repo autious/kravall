@@ -89,3 +89,18 @@ function closescenario()
     collectgarbage() --For niceness, always good to do right after loading a scenario as the
                      --assembly files are quite large.
 end
+
+function deepPrint( table, counter )
+    counter =  counter or 0
+    for i,v in pairs ( table ) do
+        print( counter, ".:", i,":", v )
+        if type(v) == "table" then
+            deepPrint(v, counter+1)
+        elseif type(v) == "function" then
+            print( counter,".:",i,"():",v()) 
+            if type( v() ) == "table" then
+                deepPrint( v(), counter+1)
+            end 
+        end
+    end
+end
