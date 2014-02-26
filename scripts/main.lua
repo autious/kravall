@@ -8,9 +8,20 @@ require "console"
 local current_scenario = nil
 local current_scenario_name = ""
 
--- Called on each frame
+local input = require "input"
+
+input.registerOnKey( function( key, scancode, action )
+    if key == core.input.keyboard.key.F5 
+        and action == core.input.action.Press 
+        and current_scenario then
+            openscenario( current_scenario_name )
+    end
+end)
+
+--For initial camera placment.
 camera = Camera.new()
 
+-- Called on each frame
 function core.update( delta )
     if camera ~= nil then
         camera:update( delta )
