@@ -17,6 +17,7 @@ namespace Core
 	enum MovementState
 	{
 		Movement_Walking,
+        Movement_Jogging,
 		Movement_Sprinting,
 		MOVEMENTSTATE_COUNT,
 	};
