@@ -96,7 +96,7 @@ end
 function SquadPositionDecal:setActiveSquad( squadDef )
     local posList = {}
     for i,v in  pairs( squadDef.setup ) do
-        table.insert( posList, core.glm.vec3.new( unpack( v.positionOffset )  ) )
+        table.insert( posList, core.glm.vec3.new( unpack( v.positionOffset ) ) )
     end
     self.currentSquadDef = squadDef
     self:setFormationOffsets( posList ) 

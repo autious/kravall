@@ -44,8 +44,7 @@ function PrepInterface:new(o)
     { 
         xoffset=20,
         anchor="West", 
-        elements= o.createdSquads,
-        onSelect = o.onSelectCurrentSquad,
+        elements= o.createdSquads
     }
 
     o.doneButton = Button:new{ anchor="SouthEast", xoffset=-10, yoffset=-10, onClick = o.onFinished }

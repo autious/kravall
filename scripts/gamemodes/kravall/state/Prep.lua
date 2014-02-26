@@ -5,7 +5,7 @@ local SquadPositionDecal = require "visual_objects/SquadPositionDecal"
 local Prep = { 
     name = "Prep",
     policeTypes = nil,
-    onFinished = function() end
+    onFinished = function( squadInstances ) end
 }
 
 local input = require "input"
@@ -19,20 +19,20 @@ function Prep:new(o)
 
     o.spawnAreas = {}
     o.createdSquads = {}
+    o.creteadVisualRepresentation = {}
 
     o.prepInterface = PrepInterface:new(
     {
         policeTypes = o.policeTypes,
         createdSquads = o.createdSquads,
         onFinished = function()
-            o.onFinished()
+            o.onFinished( o.createdSquads )
         end,
         onSelectCurrentSquad = function(squadDef)
             o.activeSquad = squadDef
             o.squadPositionDecal:setActiveSquad(squadDef)
         end
-    }
-    )
+    })
 
     o.onButton = function( button, action, mods, consumed )
         if button == core.input.mouse.button.Left 
@@ -40,8 +40,13 @@ function Prep:new(o)
             if o.activeSquad then
                 if o.canPlace then 
                     --pLace unit
-                    print( "CREATE LIFE" )
-                    table.insert( o.createdSquads, o.activeSquad )
+            
+                    table.insert(o.createdSquads, 
+                    { 
+                        name        = o.activeSquad.name,
+                        squadDef    = o.activeSquad,
+                        position    = o.activePosition,
+                    })
                     o.prepInterface:updatePurchasedList()
                 end
             end 
@@ -53,7 +58,8 @@ function Prep:new(o)
     o.canPlace = false
 
     o.onPosition = function( x, y )
-        o.squadPositionDecal:setPosition( core.system.picking.getGroundHit( x,y ))
+        o.activePosition= core.glm.vec3.new(core.system.picking.getGroundHit( x,y ))
+        o.squadPositionDecal:setPosition( o.activePosition:get() )
         o.canPlace = o.squadPositionDecal:verifyPlacement( o.spawnAreas )
     end 
 
