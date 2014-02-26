@@ -21,6 +21,7 @@
 #include <Lua/Bridges/ComponentBind/FormationComponentBinding.hpp>
 #include <Lua/Bridges/ComponentBind/HoverTextComponentBinding.hpp>
 #include <Lua/Bridges/ComponentBind/EmitterComponentBinding.hpp>
+#include <Lua/Bridges/ComponentBind/MovementDataComponentBinding.hpp>
 
 #include <cassert>
 
@@ -47,7 +48,8 @@ namespace Core
      SquadComponentBinding,
      FormationComponentBinding,
      HoverTextComponentBinding,
-     EmitterComponentBinding> EntityBridge;
+     EmitterComponentBinding,
+	 MovementDataComponentBinding> EntityBridge;
 }
 
 /*************/
@@ -67,8 +69,8 @@ extern "C"
     
     static int LuaEntityGet( lua_State * L )
     {
-
         LuaEntity * ent = luau_checkentity( L, 1 );
+
         if( ent->entity == INVALID_ENTITY )
             return luaL_error( L, "entity get on invalid entity" );
         else

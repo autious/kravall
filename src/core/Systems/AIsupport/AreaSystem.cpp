@@ -135,4 +135,23 @@ namespace Core
             return 0;
         }
     }
+
+    bool AreaSystem::IsAreaOnPoint( Entity id, const glm::vec3& position ) 
+    {
+        AreaComponent * areaAC = WGETC<AreaComponent>(id);
+        WorldPositionComponent * areaWPC = WGETC<WorldPositionComponent>(id);
+
+        if( areaAC && areaWPC ) 
+        {
+            return Core::AreaUtility::CheckPointInsideNode(
+                    position, 
+                    areaAC->vertices, 
+                    WorldPositionComponent::GetVec3(*areaWPC));
+        }
+        else
+        {
+            LOG_ERROR << "Attempting to use non area entity as area in IsPointInArea check, returning false as answer." << std::endl;
+            return false;
+        }
+    }
 }

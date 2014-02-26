@@ -45,7 +45,7 @@ namespace Core
 	};
 
 	/*!
-		Component holding a moving object's speed, maximum speed and direction of movement.
+		Component holding a moving object's speed, maximum speed, direction of movement and goal related data.
 	*/
 	struct MovementComponent
 	{
@@ -55,12 +55,6 @@ namespace Core
 		/*! The object's desired speed. The speed will attempt to reach this speed. */
 		float desiredSpeed;
 
-		/*! The position from the previos frame. Used to calculate perceived speed. */
-		float prevPos[3];
-
-		/*! If the entity has moved more than a certain distance in the last frame this value will be true. See macro MOVEDTHISFRAME_THRESHOLD */
-		bool movedThisFrame;
-
 		/*! 
 			Should NEVER be set directly - use the static function SetDirection instead. An array specifying the 
 			object's direction of movement where index 0 = x, index 1 = y and index 2 = z. 
@@ -69,8 +63,6 @@ namespace Core
 
 		/*! An array specifying the object's new direction of movement where index 0 = x, index 1 = y and index 2 = z. */
 		float newDirection[3];
-
-		float oldPFDir[3];
 
 		/*! Priority value for the current set goal. If new value has higher priority the current value may be repalced. */
 		MovementGoalPriority currentGoalPriority;
@@ -85,14 +77,14 @@ namespace Core
 		float goal[3];
 
 		/*! The Navigation mesh node index in which the goal resides. */
-		int NavMeshGoalNodeIndex;
+		int NavMeshGoalNodeIndex; 
 
 		/*! State used when resetting movement data, eg. when changing states. */
 		MovementState state;
 
 		/*! Default constructor. Initialising all members to 0. */
 		MovementComponent() : speed(0.0f), desiredSpeed(0.0f), currentGoalPriority( MovementGoalPriority::NoGoalPriority ), 
-			currentDesiredSpeedPriority( DesiredSpeedSetPriority::NoDesiredSpeedPriority ), movedThisFrame( false )
+			currentDesiredSpeedPriority( DesiredSpeedSetPriority::NoDesiredSpeedPriority )
 		{
 			direction[0] = 0.0f;
 			direction[1] = 0.0f;
@@ -107,10 +99,6 @@ namespace Core
 			goal[2] = 0.0f;
 
 			NavMeshGoalNodeIndex = -1;
-
-			prevPos[0] = std::numeric_limits<float>::max();
-			prevPos[1] = 0.0f;
-			prevPos[2] = 0.0f;
 
 			state = MovementState::Movement_Walking;
 		}

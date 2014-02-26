@@ -1,16 +1,15 @@
-local objective_handler = require "objective_handler"
-local objective = require "objective"
 local fac_image = require "factories/image"
 local window = require "window"
 local Camera = require "rts_camera"
-local KravallControl = require "gui/KravallControl"
-local PoliceSquadHandler = require "gamemodes/kravall/PoliceSquadHandler"
-local MoveMarker = require "visual_objects/MoveMarker"
-local T = {}
+local ObjectiveHandler = require "gui/component/ObjectiveHandler"
 
 local keyboard = core.input.keyboard
 local mouse = core.input.mouse
 local s_squad = core.system.squad
+
+local T = { initGamestate = "Main" }
+
+--T.gamestate can be either Prep, Main or End
 
 function T:new(o)
     o = o or {}
@@ -18,96 +17,64 @@ function T:new(o)
     setmetatable( o, self )
     self.__index = self
 
-    o.objectiveHandler = objective_handler:new()
     o.camera = Camera.new()
 	
 	-- set default movementData
-	core.movementData.setMovementMetaData( core.movementData.Walking, 5.8, 17, 17, 0.0 )
-	core.movementData.setMovementMetaData( core.movementData.Sprinting, 8.8, 17, 14, 0.2 )
+	core.movementData.setMovementMetaData( core.movementData.Walking, 1.5, 17, 17, 0.0 )
+	core.movementData.setMovementMetaData( core.movementData.Sprinting, 5.8, 17, 14, 0.2 )
 
     return o
 end
 
+function T:setState( state )
+    if type( self.gamestate ) == "table" then
+        self.gamestate:destroy()
+    end
+
+    if state == "Main" then
+        print( "State set to \"Main\"" )
+        self.gamestate = require( "gamemodes/kravall/state/Main" ):new()
+    elseif state == "Prep" then
+        print( "State set to \"Prep\"" )
+        self.gamestate =  require( "gamemodes/kravall/state/Prep" ):new()
+    elseif state == "End" then
+        print( "State set to \"End\"" )
+        self.gamestate =  require( "gamemodes/kravall/state/End" ):new()
+    end
+end
+
 function T:init()
-    self.moveMarker = MoveMarker:new()
-    self.gui = KravallControl:new( 
-    {
-        -- Called when the user is changing the formation from the gui.
-        onFormationSelect = function( formation )
-            self.policeHandler:setFormation( formation )
-        end,
-        -- Called when the user is changing stance from the gui.
-        onStanceSelect = function( stance )
-            self.policeHandler:setStance( stance )
-        end,
+    self.objectiveHandler = ObjectiveHandler:new{ anchor="NorthWest" }
 
-        -- Called when the user is changing the current active ability in the gui.
-        onAbilitySelect = function( ability )
-            self.policeHandler:setAbility( ability )
-        end
-    })
+    self:setState( self.initGamestate )
+end
 
-    self.policeHandler = PoliceSquadHandler:new( 
-    {
-        -- Called when the currently active formation is changed logically.
-        onFormationChange = function( formation )
-            self.gui:setFormation( formation ) 
-        end,
-        -- Called when the currently active stance is changed logically.
-        onStanceChange = function( stance )
-            self.gui:setStance( stance )
-        end,
+--This function should not be used once squad creation is moved to inside Kravall game mode
+function T:addSquad(squad)
+    self.gamestate.policeHandler:addSquad(squad)
+end
 
-        onAbilityChange = function( ability )
-            self.gui:setAbility( ability )
-        end,
+function T:createObjective( )
+    return self.objectiveHandler:createObjective( )
+end
 
-        -- Called whenever the selection changes
-        -- might contain previously sent units.
-        -- Could be empty
-        onSelectedSquadsChange = function( squads )
-            self.gui:setSelectedSquads( squads )
-        end,
-
-        -- Called when the currently active unit changes
-        -- or when the state of the unit might have changes (like health)
-        onSelectedUnitInformationChange = function( data )
-            self.gui:setUnitInformation( data ) 
-        end,
-        onMoveToPosition = function( squads, position, accept )
-            if accept then
-                self.moveMarker:playAccept(  position )
-            else
-                self.moveMarker:playDeny( position )
-            end
-        end,
-        
-    })	
+function T:addAreaSpawnZone(ent)
+    assert( self.gamestate.name == "Prep", "Can't add spawn zones when not in Prep mode" )
+    self.gamestate:addAreaSpawnZone( ent )
 end
 
 function T:update( delta )
-    self.objectiveHandler:update( delta )
-    self.gui:update(delta)
-    self.policeHandler:update(delta)
-
-    if self.popup == nil then
-        if self.objectiveHandler:isWin() then
-            self.popup = fac_image( window.width/2, window.height/2, "assets/texture/ui/win.material",true )
-        elseif self.objectiveHandler:isLoss() then
-            self.popup = fac_image( window.width/2, window.height/2, "assets/texture/ui/loss.material",true ) 
-        end
-    end
     self.camera:update( delta )
-    self.moveMarker:update( delta )
+    self.gamestate:update( delta )
 end
 
 function T:destroy()
-    self.gui:destroy()
-    self.objectiveHandler:destroy() 
-    if self.popup ~= nil then
-        self.popup:destroy()
+    if type( self.gamestate ) == "table" then
+        self.gamestate:destroy()
     end
-    self.moveMarker:destroy()
+
+    self.objectiveHandler:destroy()
+
 	core.gameMetaData.clearGameData()
 end
 

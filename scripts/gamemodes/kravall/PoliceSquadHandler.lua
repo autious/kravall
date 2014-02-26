@@ -1,5 +1,6 @@
-local PoliceSquadHandler =  { 
-
+local PoliceSquadHandler =  {
+                                particleDefinitions = nil,
+                                createdSquads = {},
                                 onFormationChange = function() 
                                     core.log.error( "No function set for onFormationChange in PoliceSquadHandler") 
                                 end,
@@ -11,6 +12,9 @@ local PoliceSquadHandler =  {
                                 end,
                                 onSelectedSquadsChange = function(squads)
                                     core.log.error( "No function set for onSelectedSquadsChange" )
+                                end,
+                                onUsableAbilitiesChange = function(abilities)
+                                    core.log.error( "No function is set  for onSelectedAbilitiesChange" )
                                 end,
                                 onSelectedUnitInformationChange = function(data)
                                     core.log.error( "No function set for onSelectedUnitInformationChange")
@@ -28,6 +32,9 @@ local s_squad = core.system.squad
 
 local standardPolice = (require "game_constants").standardPolice
 local guiBehaviour = (require "game_constants").guiBehaviour
+local tearGasPolice = (require "game_constants").tearGasPolice
+
+local Reticule = require "gamemodes/kravall/reticule"
 
 local input = require "input"
 
@@ -69,6 +76,18 @@ function PoliceSquadHandler:new(o)
     -- List of total health in previous frame
     o.prevFrameSquadHealth = {}
 
+    -- List of entity, abilities
+    o.usableAbilities = {}
+
+    -- List of timed entities created for abilities
+    o.abilityEntities = {}
+
+    -- Reticule that is displayed
+    o.reticule = Reticule:new()
+
+    -- Function to call when aiming
+    o.aimingFunction = nil
+    
     registerCallbacks(o)
 
     return o
@@ -78,6 +97,7 @@ function PoliceSquadHandler:DeselectAllSquads()
     s_squad.disableOutline(self.selectedSquads)    
     self:setFormation( core.system.squad.formations.NoFormation )
     self:setSquadSelection( {} )
+    self:setUsableAbilities( {} )
 end
 
 function PoliceSquadHandler:setFormation( formation )
@@ -103,6 +123,7 @@ function PoliceSquadHandler:addSquadsToSelection( squads )
     end    
 
     self:setSquadSelection( self.selectedSquads )
+    self:setUsableAbilities( self.selectedSquads )
 end
 
 function PoliceSquadHandler:setSquadSelection( squads )
@@ -143,6 +164,39 @@ function PoliceSquadHandler:evaluateSquadInformation( squad )
                  }
 
     return data
+end
+
+-- Adds a created police squad to the internal list of squads
+function PoliceSquadHandler:addSquad(squad)
+    self.createdSquads[#(self.createdSquads) +1] = squad
+end
+
+-- Retrieves the squad with the given squadId
+function PoliceSquadHandler:getSquad(squadId)
+    for i=1, #(self.createdSquads) do
+        if self.createdSquads[i].groupId == squadId then
+            return self.createdSquads[i]    
+        end
+    end
+end
+
+-- Sets the current usable abilities to the abilities 
+-- available to the members of the given squadIds
+function PoliceSquadHandler:setUsableAbilities(squads)
+    local abilities = {}
+    local aggregatedAbilities = {}
+    for i=1, #squads do
+        local squad = self:getSquad(squads[i])
+        for _,member in pairs(squad.members) do
+            abilities[member.entity] = member.getAbilities()
+            for i=1, #(member.getAbilities()) do
+                aggregatedAbilities[#aggregatedAbilities+1] = abilities[member.entity][i]
+            end
+        end                 
+    end
+    self.usableAbilities = abilities;
+    self.onUsableAbilitiesChange(aggregatedAbilities)
+
 end
 
 function PoliceSquadHandler:updateSquadDamageStatus( delta )
@@ -209,6 +263,11 @@ end
 
 function PoliceSquadHandler:setAbility( ability )
     self.onAbilityChange( ability )
+    if ability == core.system.squad.abilities.TearGas then
+        self.isAiming = true
+        self:SetReticuleRender(true)
+        self.AimingFunction = self.AimTearGas
+    end
 end
 
 -- Check if given group has any differing stances, if so, return nil
@@ -230,6 +289,129 @@ function PoliceSquadHandler:evaluateStanceForGroups( policeGroup )
     
     return firstStance
 end
+
+
+function PoliceSquadHandler:CanUseAbility(ability)
+    for _,abilityList in pairs(self.usableAbilities) do
+        for _,a in pairs(abilityList) do
+            if a == ability then
+                return true
+            end
+        end
+    end
+    return false
+end
+
+function PoliceSquadHandler:SetReticuleRender(value)
+    self.reticule.entity:set(core.componentType.GraphicsComponent, {render = value}, true) 
+end
+
+function PoliceSquadHandler:AimTearGas()
+    local mouseX, mouseY = mouse.getPosition()
+    local x,y,z = core.system.picking.getGroundHit(mouseX, mouseY);
+    local errorMessage = nil
+    local inRange = false
+    self.reticule:SetPosition(x, y, z)
+
+    if not self:CanUseAbility(core.system.squad.abilities.TearGas) then
+        self.isAiming = false
+        self.AimingFunction = nil
+        self:SetReticuleRender(false)
+    end
+
+    for entity, abilities in pairs(self.usableAbilities) do    
+        for i=1, #abilities do
+            if abilities[i] == core.system.squad.abilities.TearGas then
+                local wpc = entity:get(core.componentType.WorldPositionComponent)
+                if math.sqrt(((wpc.position[1]-x) * (wpc.position[1]-x)) + ((wpc.position[2]-y) * (wpc.position[2]-y)) + ((wpc.position[3]-z) * (wpc.position[3]-z))) < tearGasPolice.tearGasRange then
+
+                    if inRange == false then 
+                        inRange = true 
+                    end
+
+                    if self.leftClicked then
+                        local attributeComponent = entity:get(core.componentType.AttributeComponent)
+                        if attributeComponent.stamina >= tearGasPolice.tearGasStaminaCost then
+                            --Consume click to avoid deselecting squads
+                            self.leftClicked = false
+                            self.leftPressed = false
+                            self:UseTearGas(entity, x, y, z) 
+
+                            if not keyboard.isKeyDown(keyboard.key.Left_shift) then
+                                self.isAiming = false
+                                self:SetReticuleRender(false)
+                                self.AimingFunction = nil
+                            end
+
+                            return
+                        else
+                            errorMessage = "Not enough stamina"    
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    if inRange then
+        self.reticule:SetAccept()
+    else
+        self.reticule:SetDeny()
+    end
+
+    if self.leftClicked then
+        --Consume click to avoid deselecting squads
+        self.leftClicked = false
+        self.leftPressed = false
+        if errorMessage == nil then
+            errorMessage = "Too far away"
+        end
+    end
+
+    if errorMessage then
+        print( errorMessage)
+    end
+end
+
+function PoliceSquadHandler:UseTearGas(entity, x, y, z)
+    local attributeComponent = entity:get(core.componentType.AttributeComponent)
+    entity:set(core.componentType.AttributeComponent, {stamina = (attributeComponent.stamina - tearGasPolice.tearGasStaminaCost)}, true)
+    local pairTable = {}                
+    local entity = core.entity.create(core.componentType.EmitterComponent
+                                        , core.componentType.WorldPositionComponent
+                                        , core.componentType.MovementComponent
+										, core.componentType.MovementDataComponent
+                                        , core.componentType.RotationComponent
+                                        , core.componentType.UnitTypeComponent
+                                        , core.componentType.AttributeComponent
+                                        , core.componentType.FlowfieldComponent)
+
+    entity:set(core.componentType.AttributeComponent, {pfObjectType = core.PFObjectType.TearGas}, true)
+    entity:set(core.componentType.UnitTypeComponent, {unitType = core.UnitType.Object}, true)
+    entity:set(core.componentType.WorldPositionComponent, {position = {x, y, z}})
+    entity:set(core.componentType.EmitterComponent, {
+            rate = 10,
+            offset = {0, 0, 0},
+            life = 5,
+            lifeVariance = 0,
+            lifeReduction = 1,
+            lifeReductionVariance = 0,
+            velocity = {0, 0, 6},
+            velocityVariance = {3, 3, 3},
+            acceleration = {0, -2, 0},
+            coneDirection = {0, 1, 0},
+            coneAngle = 30,
+            coneAngleVariance = 60,
+            type = core.system.particle.emitters.Cone,
+            handle = self.particleDefinitions["TearGas"]
+            }, true)
+
+    pairTable.entity = entity
+    pairTable.timer = tearGasPolice.tearGasDuration 
+
+    self.abilityEntities[#(self.abilityEntities) + 1] = pairTable
+end
+
 
 function PoliceSquadHandler:update( delta )
    
@@ -278,6 +460,45 @@ function PoliceSquadHandler:update( delta )
     end
 
     clearOutlines()
+
+    --Abilities
+    if self.isAiming and self.rightClicked then
+        self:SetReticuleRender(false)
+        self.isAiming = false
+        --Consume event to prevent setting goals
+        self.rightClicked = false
+        self.rightPressed = false
+    end
+
+    local i = 1
+    while i <= #(self.abilityEntities) do
+        local e = self.abilityEntities[i]
+        self.abilityEntities[i].timer = self.abilityEntities[i].timer - delta
+        if self.abilityEntities[i].timer <= 0 then
+            self.abilityEntities[i].entity:destroy()
+            table.remove(self.abilityEntities, i)
+        else
+            i=i+1
+        end
+    end
+
+    if keyboard.isKeyDownOnce(keyboard.key.Kp_8) then
+        if self:CanUseAbility(core.system.squad.abilities.TearGas) then            
+            if self.isAiming then
+                self.isAiming = false
+                self:SetReticuleRender(false)
+                self.AimingFunction = nil
+            else
+                self.isAiming = true
+                self:SetReticuleRender(true)
+                self.AimingFunction = self.AimTearGas
+            end            
+       end
+    end
+
+    if self.isAiming == true then
+        self:AimingFunction()
+    end   
 
     --Formations
     --Click Selection
@@ -339,7 +560,6 @@ function PoliceSquadHandler:update( delta )
         if self.isClick == true then
             self.isClick = false
         end
-
 	elseif self.leftPressed then
 		self.boxEndX, self.boxEndY = mouse.getPosition()
 		self.groupsSelectedByBox = core.system.picking.getPoliceGroupsInsideBox( self.boxStartX, self.boxStartY, self.boxEndX, self.boxEndY, core.config.boxSelectionGraceDistance )
@@ -354,13 +574,13 @@ function PoliceSquadHandler:update( delta )
 
         self.previousGroupsSelectedByBox = self.groupsSelectedByBox
 
-    elseif mouse.isButtonDownOnce(mouse.button.Right) then
+    elseif self.rightClicked then
         if #(self.selectedSquads) > 0 then
             self.isClick = true
             local mouseX, mouseY = mouse.getPosition()
             self.clickStartX, self.clickStartY, self.clickStartZ = core.system.picking.getGroundHit(mouseX, mouseY);
         end   
-    elseif mouse.isButtonDown(mouse.button.Right) then        
+    elseif self.rightPressed then        
         if #(self.selectedSquads) > 0 and self.clickStartX and self.clickStartY and self.clickStartZ and self.isClick then
             local mouseX, mouseY = mouse.getPosition()
             local dragX, dragY, dragZ = core.system.picking.getGroundHit(mouseX, mouseY)    
@@ -388,7 +608,7 @@ function PoliceSquadHandler:update( delta )
         end
     end
 
-    --Formation selectiong
+    --Formation selection
     if keyboard.isKeyDown(keyboard.key.H) then
         self:setFormation( s_squad.formations.HalfCircleFormation )
     elseif keyboard.isKeyDown(keyboard.key.C) then

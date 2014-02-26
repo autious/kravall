@@ -5,6 +5,7 @@
 #include <Components/SquadComponent.hpp>
 #include <glm/glm.hpp>
 
+#include <gfx/BitmaskDefinitions.hpp>
 namespace Core
 {
     class SquadSystem : public Core::BaseSystem
@@ -58,6 +59,15 @@ namespace Core
         std::vector<int> GetAllSquads( );
         std::vector<Entity> GetAllSquadEntities();
         std::vector<Core::SquadAbility> GetPossibleAbilities( int squadId );
+
+	private:
+		void PushDecal(glm::vec3 position);
+		bool m_foundAssets;
+		int m_mesh;
+		int m_material;
+
+		GFX::GFXBitmask m_bitmask;
+		GFX::GFXBitmask m_lightBitmask;
     };
 }
 #endif

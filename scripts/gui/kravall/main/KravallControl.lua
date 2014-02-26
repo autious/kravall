@@ -12,11 +12,11 @@ local NorthPlacer = require "gui/placement/NorthPlacer"
 local WestPlacer = require "gui/placement/WestPlacer"
 local CenterPlacer = require "gui/placement/CenterPlacer"
 
-local EventListerGUI = require "gui/kravall_control/EventListerGUI"
-local StanceGUI = require "gui/kravall_control/subgui/StanceGUI"
-local AbilityGUI = require "gui/kravall_control/subgui/AbilityGUI" 
-local FormationGUI = require "gui/kravall_control/subgui/FormationGUI"
-local UnitStatGUI = require "gui/kravall_control/subgui/UnitStatGUI"
+local EventListerGUI = require "gui/kravall/main/EventListerGUI"
+local StanceGUI = require "gui/kravall/main/subgui/StanceGUI"
+local AbilityGUI = require "gui/kravall/main/subgui/AbilityGUI" 
+local FormationGUI = require "gui/kravall/main/subgui/FormationGUI"
+local UnitStatGUI = require "gui/kravall/main/subgui/UnitStatGUI"
 
 local KravallControl = 
 { 
@@ -25,7 +25,6 @@ local KravallControl =
     onAbilitySelect = function(ability) end
 }
                             
-
 function KravallControl:new(o)
     o = o or {}
 
@@ -98,6 +97,12 @@ function KravallControl:setSelectedSquads( squads )
     --TODO: show/hide the status field depending on selection.
 end
 
+function KravallControl:setUsableAbilities(abilities)
+    self.abilitiesGUI:setUsableAbilities(abilities)
+end
+
+
+
 function KravallControl:addEvent( component )
     self.eventGUI:addComponent( component )
 end
@@ -109,20 +114,20 @@ function KravallControl:update( delta )
     -- For debug writing
     self.gui:renderDebug( delta )
 
-    self.count = self.count or 0
-    self.count = self.count + delta
+    --self.count = self.count or 0
+    --self.count = self.count + delta
 
-    if self.count > 10 then
-        self.ind = self.ind or 0
-        self.ind = self.ind + 1
-        
-        if self.ind % 2 == 1 then
-            self:addEvent(TextLabel:new( {label="Status: " .. self.ind} ))
-        else
-            self:addEvent(Button:new( {onClick=function() print( "JOEL" ) end }))
-        end
-        self.count = 0
-    end
+    --if self.count > 10 then
+    --    self.ind = self.ind or 0
+    --    self.ind = self.ind + 1
+    --    
+    --    if self.ind % 2 == 1 then
+    --        self:addEvent(TextLabel:new( {label="Status: " .. self.ind} ))
+    --    else
+    --        self:addEvent(Button:new( {onClick=function() print( "JOEL" ) end }))
+    --    end
+    --    self.count = 0
+    --end
 
     -- constrict each frame to give animation like results.
     self.eventGUI:constrict( delta )
