@@ -72,6 +72,7 @@ namespace GFX
         TextureManager* m_textureManager;
 
 		InstanceData* m_staticInstances;
+		GLuint m_instanceOffsetUniform;
 	};
 }
 

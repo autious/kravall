@@ -71,11 +71,14 @@ GLFWwindow* init( int argc, char** argv )
             Core::world.m_luaState.DoBlock( argv[i+1] );
         }
     }
+	
 
     initScreenWidth = Core::world.m_config.GetInt( "initScreenWidth", 1280 );
     initScreenHeight = Core::world.m_config.GetInt( "initScreenHeight", 720 );
     
 	Core::InitializeGLFW(&window, initScreenWidth, initScreenHeight, Core::WindowMode::WMODE_WINDOWED);
+
+	//Core::InitializeGLFW(&window, initScreenWidth, initScreenHeight, Core::WindowMode::WMODE_FULLSCREEN_BORDERLESS);
 
 	clop::Register("exit", ClopCloseWindow);
 

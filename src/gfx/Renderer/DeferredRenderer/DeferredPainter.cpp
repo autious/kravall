@@ -140,17 +140,26 @@ namespace GFX
         m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("StaticOutline"), "PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
 
 		m_outlineThickness = 2;
-		m_staticInstances = new InstanceData[1024];
+		m_staticInstances = new InstanceData[MAX_INSTANCES];
+		
 
 		glGenBuffers(1, &m_instanceBuffer);
-		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_instanceBuffer);
-		glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_INSTANCES * sizeof(InstanceData), NULL, GL_STREAM_COPY);
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_instanceBuffer);
+		glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_INSTANCES * sizeof(InstanceData), NULL, GL_STREAM_COPY);
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, 0);
+
+		m_instanceOffsetUniform = m_shaderManager->GetUniformBlockLocation("StaticNormal", "instanceBufferOffset");
+
+		glGenBuffers(1, &m_instanceOffsetUniform);
+		glBindBufferBase(GL_UNIFORM_BUFFER, 3, m_instanceOffsetUniform);
+		glBufferData(GL_UNIFORM_BUFFER, sizeof(unsigned int), NULL, GL_STREAM_DRAW);
+		glBindBufferBase(GL_UNIFORM_BUFFER, 3, 0);
+
 	}
 
-	void DeferredPainter::Render(AnimationManagerGFX* animationManager, unsigned int& renderIndex, 
-	FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, 
-	FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix, const float& gamma, RenderInfo& out_RenderInfo)
+	void DeferredPainter::Render(AnimationManagerGFX* animationManager, unsigned int& renderIndex,
+		FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular,
+		FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix, const float& gamma, RenderInfo& out_RenderInfo)
 	{
 		BasePainter::Render();
 		unsigned int numDrawCalls = 0;
@@ -190,13 +199,116 @@ namespace GFX
 		unsigned int material = std::numeric_limits<decltype(material)>::max();
 		unsigned int depth = std::numeric_limits<decltype(depth)>::max();
 
+		int instanceBufferSize = 0;
+
+		{
+			Material mat;
+			Mesh mesh;
+			GFXBitmask bitmask;
+			int instanceCount = 0;
+			unsigned int instanceOffset = 0;
+			unsigned int i;
+			
+			bool endMe = false;
+			for (i = renderIndex; i < renderJobs.size(); i++)
+			{
+				bitmask = renderJobs[i].bitmask;
+
+				objType = GetBitmaskValue(bitmask, BITMASK::TYPE);
+
+				// Break if no opaque object
+				if (objType != GFX::OBJECT_TYPES::OPAQUE_GEOMETRY)
+				{
+					endMe = true;
+				}
+
+				if (!endMe)
+				{
+					viewport = GetBitmaskValue(bitmask, BITMASK::VIEWPORT_ID);
+					layer = GetBitmaskValue(bitmask, BITMASK::LAYER);
+					translucency = GetBitmaskValue(bitmask, BITMASK::TRANSLUCENCY_TYPE);
+					meshID = GetBitmaskValue(bitmask, BITMASK::MESH_ID);
+					material = GetBitmaskValue(bitmask, BITMASK::MATERIAL_ID);
+					depth = GetBitmaskValue(bitmask, BITMASK::DEPTH);
+				}
+
+				if (material == currentMaterial && meshID == currentMesh && !endMe && instanceCount < MAX_INSTANCES && layer == currentLayer)
+				{
+					InstanceData smid = *(InstanceData*)renderJobs.at(i).value;
+					m_staticInstances[instanceOffset + instanceCount] = smid;
+					instanceCount++;
+					instanceBufferSize++;
+				}
+				else
+				{
+					if (i > 0)
+					{
+						instanceCount = 0;
+					}
+
+					if (endMe)
+						break;
+
+					if (material != currentMaterial)
+					{
+						mat = m_materialManager->GetMaterial(material);
+
+						currentMaterial = material;
+
+						//compare shader
+						if (mat.shaderProgramID != currentShader)
+						{
+							currentShader = mat.shaderProgramID;
+						}
+					}
+
+					if (meshID != currentMesh)
+					{
+						mesh = m_meshManager->GetMesh(meshID);
+						currentMesh = meshID;
+					}
+
+					if (layer != currentLayer)
+					{
+						currentLayer = layer;
+					}
+					InstanceData smid = *(InstanceData*)renderJobs.at(i).value;
+					m_staticInstances[instanceOffset + instanceCount] = smid;
+					instanceCount++;
+					instanceBufferSize++;
+					instanceOffset += instanceCount;
+				}
+			}
+			unsigned int iiiiiiii = 0;
+		}
+		
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_instanceBuffer);
+		InstanceData* pData = (InstanceData*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, MAX_INSTANCES * sizeof(InstanceData),
+			GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
+
+		memcpy(pData, m_staticInstances, instanceBufferSize * sizeof(InstanceData));
+
+		glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+
+		
+		currentShader = std::numeric_limits<decltype(currentShader)>::max();
+		currentMaterial = std::numeric_limits<decltype(currentMaterial)>::max();
+		currentMesh = std::numeric_limits<decltype(currentMesh)>::max();
+		currentLayer = std::numeric_limits<decltype(currentMesh)>::max();
+		objType = std::numeric_limits<decltype(objType)>::max();
+		viewport = std::numeric_limits<decltype(viewport)>::max();
+		layer = std::numeric_limits<decltype(layer)>::max();
+		translucency = std::numeric_limits<decltype(translucency)>::max();
+		meshID = std::numeric_limits<decltype(meshID)>::max();
+		material = std::numeric_limits<decltype(material)>::max();
+		depth = std::numeric_limits<decltype(depth)>::max();
 
 		Material mat;
 		Mesh mesh;
 		GFXBitmask bitmask;
 		int instanceCount = 0;
+		unsigned int instanceOffset = 0;
 		unsigned int i;
-
 		bool endMe = false;
 		for (i = renderIndex; i < renderJobs.size(); i++)
 		{
@@ -222,20 +334,17 @@ namespace GFX
 
 			if (material == currentMaterial && meshID == currentMesh && !endMe && instanceCount < MAX_INSTANCES && layer == currentLayer)
 			{
-				InstanceData smid = *(InstanceData*)renderJobs.at(i).value;
-				m_staticInstances[instanceCount++] = smid;
+				//InstanceData smid = *(InstanceData*)renderJobs.at(i).value;
+				//m_staticInstances[instanceOffset+instanceCount] = smid;
+				instanceCount++;
 			}
 			else
 			{
 				if (i > 0)
 				{
-					glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_instanceBuffer);
-					InstanceData* pData = (InstanceData*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, MAX_INSTANCES * sizeof(InstanceData),
-
-						GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
-					memcpy(pData, m_staticInstances, instanceCount * sizeof(InstanceData));
-
-					glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+					//glBindBufferBase(GL_UNIFORM_BUFFER, 3, m_instanceOffsetUniform);
+					//glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(unsigned int), &instanceOffset);
+					//glBindBufferBase(GL_UNIFORM_BUFFER, 3, 0);
 
 					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IBO);
 
@@ -277,6 +386,7 @@ namespace GFX
 					}
 
 					instanceCount = 0;
+					instanceOffset += instanceCount;
 				}
 
 				if (endMe)
@@ -334,9 +444,7 @@ namespace GFX
 				{
 					currentLayer = layer;
 				}
-
-				InstanceData smid = *(InstanceData*)renderJobs.at(i).value;
-				m_staticInstances[instanceCount++] = smid;
+				instanceCount++;
 			}
 
 

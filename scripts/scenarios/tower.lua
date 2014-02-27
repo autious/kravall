@@ -36,118 +36,118 @@ scen.asm:loadAssembly(
 }
 )
 
-for i=1,10 do
-local scl = 2
-scen.asm:loadAssembly( 
-{
-	{
-		type = core.componentType.WorldPositionComponent,
-		data = { position = { 20*math.sin(2*math.pi*i*0.1), scl/2, 20*math.cos(2*math.pi*i*0.1) } }
-	},
-	{
-		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry,layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
-		load = { 
-					mesh = { core.loaders.GnomeLoader, "assets/cube.bgnome", false },
-					material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
-			   }
-	},
-	{
-		type = core.componentType.AnimationComponent,
-		data = { 
-			animationID = 0,
-			queuedAnimationID = 0,
-			currentTime = 0.0,
-			loop = false,
-			playing = false,
-			speed = 1.0,
-			currentFrame = 0
-		}
-	},
-	{
-		type = core.componentType.ScaleComponent,
-		data = { scale = scl }
-	},
-	{
-		type = core.componentType.RotationComponent,
-		data = { rotation = { 0, 0, 0, 1 }}
-	}
-}
-)
-end
-
-scen.asm:loadAssembly( 
-{
-	{
-		type = core.componentType.WorldPositionComponent,
-		data = { position = { 0, 1, 5 } }
-	},
-	{
-		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry,layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
-		load = { 
-					mesh = { core.loaders.GnomeLoader, "assets/knot.bgnome", false },
-					material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
-			   }
-	},
-	{
-		type = core.componentType.AnimationComponent,
-		data = { 
-			animationID = 0,
-			queuedAnimationID = 0,
-			currentTime = 0.0,
-			loop = false,
-			playing = false,
-			speed = 1.0,
-			currentFrame = 0
-		}
-	},
-	{
-		type = core.componentType.ScaleComponent,
-		data = { scale = 1 }
-	},
-	{
-		type = core.componentType.RotationComponent,
-		data = { rotation = { 0, 0, 0, 1 }}
-	}
-}
-)
-scen.asm:loadAssembly( 
-{
-	{
-		type = core.componentType.WorldPositionComponent,
-		data = { position = { 5*(0.866), 1, -2.5 } }
-	},
-	{
-		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry,layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
-		load = { 
-					mesh = { core.loaders.GnomeLoader, "assets/knot.bgnome", false },
-					material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
-			   }
-	},
-	{
-		type = core.componentType.AnimationComponent,
-		data = { 
-			animationID = 0,
-			queuedAnimationID = 0,
-			currentTime = 0.0,
-			loop = false,
-			playing = false,
-			speed = 1.0,
-			currentFrame = 0
-		}
-	},
-	{
-		type = core.componentType.ScaleComponent,
-		data = { scale = 1 }
-	},
-	{
-		type = core.componentType.RotationComponent,
-		data = { rotation = { 0, 0, 0, 1 }}
-	}
-}
-)
+--for i=1,10 do
+--local scl = 2
+--scen.asm:loadAssembly( 
+--{
+--	{
+--		type = core.componentType.WorldPositionComponent,
+--		data = { position = { 20*math.sin(2*math.pi*i*0.1), scl/2, 20*math.cos(2*math.pi*i*0.1) } }
+--	},
+--	{
+--		type = core.componentType.GraphicsComponent,
+--		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry,layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
+--		load = { 
+--					mesh = { core.loaders.GnomeLoader, "assets/cube.bgnome", false },
+--					material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
+--			   }
+--	},
+--	{
+--		type = core.componentType.AnimationComponent,
+--		data = { 
+--			animationID = 0,
+--			queuedAnimationID = 0,
+--			currentTime = 0.0,
+--			loop = false,
+--			playing = false,
+--			speed = 1.0,
+--			currentFrame = 0
+--		}
+--	},
+--	{
+--		type = core.componentType.ScaleComponent,
+--		data = { scale = scl }
+--	},
+--	{
+--		type = core.componentType.RotationComponent,
+--		data = { rotation = { 0, 0, 0, 1 }}
+--	}
+--}
+--)
+--end
+--
+--scen.asm:loadAssembly( 
+--{
+--	{
+--		type = core.componentType.WorldPositionComponent,
+--		data = { position = { 0, 1, 5 } }
+--	},
+--	{
+--		type = core.componentType.GraphicsComponent,
+--		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry,layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
+--		load = { 
+--					mesh = { core.loaders.GnomeLoader, "assets/knot.bgnome", false },
+--					material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
+--			   }
+--	},
+--	{
+--		type = core.componentType.AnimationComponent,
+--		data = { 
+--			animationID = 0,
+--			queuedAnimationID = 0,
+--			currentTime = 0.0,
+--			loop = false,
+--			playing = false,
+--			speed = 1.0,
+--			currentFrame = 0
+--		}
+--	},
+--	{
+--		type = core.componentType.ScaleComponent,
+--		data = { scale = 1 }
+--	},
+--	{
+--		type = core.componentType.RotationComponent,
+--		data = { rotation = { 0, 0, 0, 1 }}
+--	}
+--}
+--)
+--scen.asm:loadAssembly( 
+--{
+--	{
+--		type = core.componentType.WorldPositionComponent,
+--		data = { position = { 5*(0.866), 1, -2.5 } }
+--	},
+--	{
+--		type = core.componentType.GraphicsComponent,
+--		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry,layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
+--		load = { 
+--					mesh = { core.loaders.GnomeLoader, "assets/knot.bgnome", false },
+--					material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
+--			   }
+--	},
+--	{
+--		type = core.componentType.AnimationComponent,
+--		data = { 
+--			animationID = 0,
+--			queuedAnimationID = 0,
+--			currentTime = 0.0,
+--			loop = false,
+--			playing = false,
+--			speed = 1.0,
+--			currentFrame = 0
+--		}
+--	},
+--	{
+--		type = core.componentType.ScaleComponent,
+--		data = { scale = 1 }
+--	},
+--	{
+--		type = core.componentType.RotationComponent,
+--		data = { rotation = { 0, 0, 0, 1 }}
+--	}
+--}
+--)
 scen.asm:loadAssembly( 
 {
 	{
@@ -184,45 +184,45 @@ scen.asm:loadAssembly(
 	}
 }
 )
-for i=1,10 do
-local scl = 2
-scen.asm:loadAssembly( 
-{
-	{
-		type = core.componentType.WorldPositionComponent,
-		data = { position = { 10*math.sin(2*math.pi*i*0.1), scl/2, 10*math.cos(2*math.pi*i*0.1) } }
-	},
-	{
-		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry,layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
-		load = { 
-					mesh = { core.loaders.GnomeLoader, "assets/sphere.bgnome", false },
-					material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
-			   }
-	},
-	{
-		type = core.componentType.AnimationComponent,
-		data = { 
-			animationID = 0,
-			queuedAnimationID = 0,
-			currentTime = 0.0,
-			loop = false,
-			playing = false,
-			speed = 1.0,
-			currentFrame = 0
-		}
-	},
-	{
-		type = core.componentType.ScaleComponent,
-		data = { scale = scl }
-	},
-	{
-		type = core.componentType.RotationComponent,
-		data = { rotation = { 0, 0, 0, 1 }}
-	}
-}
-)
-end
+--for i=1,10 do
+--local scl = 2
+--scen.asm:loadAssembly( 
+--{
+--	{
+--		type = core.componentType.WorldPositionComponent,
+--		data = { position = { 10*math.sin(2*math.pi*i*0.1), scl/2, 10*math.cos(2*math.pi*i*0.1) } }
+--	},
+--	{
+--		type = core.componentType.GraphicsComponent,
+--		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry,layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
+--		load = { 
+--					mesh = { core.loaders.GnomeLoader, "assets/sphere.bgnome", false },
+--					material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
+--			   }
+--	},
+--	{
+--		type = core.componentType.AnimationComponent,
+--		data = { 
+--			animationID = 0,
+--			queuedAnimationID = 0,
+--			currentTime = 0.0,
+--			loop = false,
+--			playing = false,
+--			speed = 1.0,
+--			currentFrame = 0
+--		}
+--	},
+--	{
+--		type = core.componentType.ScaleComponent,
+--		data = { scale = scl }
+--	},
+--	{
+--		type = core.componentType.RotationComponent,
+--		data = { rotation = { 0, 0, 0, 1 }}
+--	}
+--}
+--)
+--end
 -- Dirlight
 light = scen.asm:loadAssembly( 
 {
@@ -380,11 +380,6 @@ local function Update(delta)
 	--core.draw.drawRectangle( 300, 100, 100, 300, false )
 	--core.draw.drawTextbox( 500, 100, x, y, offs, "FIRST. ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 This is a really long text repeated many times. ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 This is a really long text repeated many times. LAST." )
 	--core.draw.drawRectangle( 500, 100, x, y, false )
-	
-	
-	
-	
-	core.draw.drawText( 300, 35, "METERS TRAVELLED: " )
 end
 
 scen:registerUpdateCallback( Update )

@@ -15,6 +15,11 @@ layout (std140, binding = 4) readonly buffer instanceBuffer
     InstanceData gInstances[];
 };
 
+layout (std140, binding = 3) readonly buffer instanceBufferOffset
+{
+    uint gInstanceOffset;
+};
+
 layout (shared) uniform PerFrameBlock
 {
 	mat4 gView;
@@ -49,7 +54,8 @@ mat4x4 GetBoneMatrix(InstanceData instanceData, int boneIndex)
 
 void main()
 {
-	InstanceData instance = gInstances[gl_InstanceID];
+	uint instanceID = gInstanceOffset + gl_InstanceID;
+	InstanceData instance = gInstances[instanceID];
 	// Apply animations
 	vec4 posA = vec4(0.0f);
 	vec4 normalA = vec4(0.0f);
@@ -83,7 +89,7 @@ void main()
 	//Transform normal with model matrix
 	normalFS = instance.mm * normalA;
 	tangentFS = instance.mm * tangentA;
-	rnd_seed = gInstances[gl_InstanceID].rnd_seed;
+	rnd_seed = gInstances[instanceID].rnd_seed;
 
 	uvFS = uvIN;
 
