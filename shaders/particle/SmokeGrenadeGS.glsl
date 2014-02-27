@@ -29,7 +29,7 @@ void main()
 
     if(GeometryIn[0].life > 0.0f)
     {
-        scale = clamp(1.0f / (GeometryIn[0].life / 8.0f) * 10.0f, 2.0f, 30.0f) * 0.5f;
+        scale = clamp(1.0f / (GeometryIn[0].life / 8.0f) * 10.0f, 2.0f, 30.0f) * 0.2f;
     }
 
     gl_Position = GeometryOut.Position = gProjection * (viewSpacePointPos + vec4(vec3(1.0f, 1.0f, 0.0f) * scale, 0.0f));
