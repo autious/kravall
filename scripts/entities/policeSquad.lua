@@ -5,6 +5,7 @@ return function(asm, posX, posY, posZ, rotation, weaponType)
     local T = {}
     local police = ent.get "police"
 
+    T.startPosition = {posX, posY, posZ}
     T.members = {}
     T.groupId = core.system.groups.createGroup()
 
