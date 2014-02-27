@@ -97,7 +97,7 @@ function T:setState( state )
 
     elseif state == "End" then
         print( "State set to \"End\"" )
-        self.gamestate = End:new()
+        self.gamestate = End:new( {won = self.objectiveHandler:isWin() })
     else
         error( "Invalid state set" )
     end
@@ -134,6 +134,10 @@ end
 function T:update( delta )
     self.camera:update( delta )
     self.gamestate:update( delta )
+
+    if self.objectiveHandler:isEnd() and self.gamestate.name ~= "End" then
+        self:setState( "End" )
+    end
 end
 
 function T:destroy()

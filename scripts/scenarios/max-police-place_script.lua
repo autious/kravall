@@ -175,14 +175,29 @@ return function( scen )
             },
         }
     })
+    local obj1
+    local group1 = nil
 
     -- Setup callbacks for gamemode
     scen:registerInitCallback( function() scen.gamemode:init() 
-									local plane = entity.get "plane"
-									plane(scen, 0, -1, 0, 900)
+            local plane = entity.get "plane"
+            plane(scen, 0, -1, 0, 900)
+
+            obj1 = scen.gamemode:createObjective()
+            obj1.title = "Prevent rioters from reaching objective (by killing them)"
         end )
 
-    scen:registerUpdateCallback( function(delta) scen.gamemode:update(delta) end )
+    scen:registerUpdateCallback( 
+    function(delta) 
+            scen.gamemode:update(delta) 
+            if group1 then
+                local count = core.system.groups.getGroupMemberCount( group1 )
+                obj1.title = "Prevent rioters from reaching objective (by killing them). " .. count .. " remain."
+                if  count < 5 then
+                    obj1.state = "success"
+                end
+            end
+    end )
     scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
     
     -- Script goes here
@@ -215,6 +230,12 @@ return function( scen )
         end)
 
     end
+
+    function T.lossOnRioterInside( ent )
+        if core.system.area.getAreaRioterCount(ent) > 5 then
+            obj1.state = "fail" 
+        end
+    end
     
     -- Create rioter on area:
 	function T.createRioter( ent, xsize,ysize )
@@ -227,9 +248,9 @@ return function( scen )
 			verts[i] = verts[i] + wpc.position[1]
 			verts[i + 1] = verts[i + 1] + wpc.position[3]
 		end
-	    grp = core.system.groups.createGroup(1)
-		group( scen, ac.vertices, grp, {xsize, ysize}, fists )
-        core.system.groups.setGroupGoal( grp, unpack(groupsgoal) )
+	    group1 = group1 or core.system.groups.createGroup(1)
+		group( scen, ac.vertices, group1, {xsize, ysize}, fists )
+        core.system.groups.setGroupGoal( group1, unpack(groupsgoal) )
 	end
 
     --Hides objects when we enter main game state
