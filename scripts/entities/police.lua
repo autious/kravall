@@ -11,9 +11,10 @@ return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, group
     
     function T.getAbilities()
         local abilities = core.system.squad.abilities
-        return {abilities.Attack, abilities.ArrestGroup, abilities.Sprints, abilities.Sprint, abilities.Rout }
+        return {abilities.Attack, abilities.ArrestGroup, abilities.Flee, abilities.Sprint }
     end    
 
+    T.startOffset = {formationOffsetX, formationOffsetZ}
     T.entity = asm:loadAssembly( 
 		{
 			{
