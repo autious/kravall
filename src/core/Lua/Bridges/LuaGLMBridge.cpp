@@ -889,6 +889,17 @@ extern "C"
 
         return 1;
     }
+
+    static int LuaQuatGet( lua_State *L )
+    {
+        glm::quat *quat_first = luau_checkglmquat( L, 1 );
+        lua_pushnumber(L, (*quat_first)[0] ); 
+        lua_pushnumber(L, (*quat_first)[1] ); 
+        lua_pushnumber(L, (*quat_first)[2] ); 
+        lua_pushnumber(L, (*quat_first)[3] ); 
+
+        return 4;
+    }
 }
 
 namespace Core
@@ -1021,6 +1032,7 @@ namespace Core
                     luau_setfunction( L, "rotate", LuaQuatRotate );
                     luau_setfunction( L, "slerp", LuaQuatMix );
                     luau_setfunction( L, "mix", LuaQuatMix );
+                    luau_setfunction( L, "get", LuaQuatGet );
 
                     luaL_newmetatable( L, GLMQUAT_META_TYPE );
                         lua_pushvalue( L, quat_table );

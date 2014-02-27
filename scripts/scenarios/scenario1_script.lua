@@ -4,6 +4,7 @@ local group = entity.get "group"
 --For the kravall defintions
 local abilities = core.system.squad.abilities
 local standardPolice = (require "game_constants").standardPolice
+local tearGasPolice = (require "game_constants").tearGasPolice
 
 return function( scen )
     local T = {}
@@ -17,21 +18,39 @@ return function( scen )
         initGamestate="Prep",
         weapons = 
         {
-            punch = {1.0, 0.75, 20, 0.2, 0.05, 3.2, 2.9, 0.05, 0.5, "punch"}
+            -- range, graceDistance, damageToHealth, damageToMorale, damageToMoraleOnMiss, enemyRageIncrease, enemyPressureIncrease, staminaCost, timeWhenAnimationDealsDamage, animationName
+            punch = {1.0, 0.75, 20, 0.2, 0.05, 3.2, 2.9, 0.05, 0.5, "punch"},
+            shield = {1.0, 0.75, 40, 0.4, 0.05, 4, 2.0, 0.02, 0.3, "shield"}
         },
         policeTypes =
         {
             {
-                name = "Common Squad",
+                name = "Common Shield Squad",
                 description = "Can beat the fuck out of you",
                 cost = 100,
                 setup = 
                 {
+
+                    {
+                        positionOffset = {2,0,0},
+                        weapon = "shield",
+                        mesh = "assets/model/animated/police/cop/cop-shield_00.bgnome",
+                        material = "assets/texture/animated/police/cop/cop-shield_00.material",
+                        abilities = {
+                            abilities.Attack, 
+                            abilities.ArrestGroup, 
+                            abilities.Sprint, 
+                            abilities.Rout,
+                        },
+                        health = standardPolice.maxHealth, 
+                        stamina = standardPolice.maxStamina, 
+                        morale = standardPolice.maxMorale, 
+                    },
                     {
                         positionOffset = {0,0,0},
-                        weapon = "punch",
-                        mesh = "assets/model/animated/rioter/rioter-male_00.bgnome",
-                        material = "assets/texture/animated/police/cop/cop-light_00.material",
+                        weapon = "shield",
+                        mesh = "assets/model/animated/police/cop/cop-shield_00.bgnome",
+                        material = "assets/texture/animated/police/cop/cop-shield_00.material",
                         abilities = {
                             abilities.Attack, 
                             abilities.ArrestGroup, 
@@ -44,9 +63,9 @@ return function( scen )
                     },
                     {
                         positionOffset = {1,0,0},
-                        weapon = "punch",
-                        mesh = "assets/model/animated/rioter/rioter-male_00.bgnome",
-                        material = "assets/texture/animated/police/cop/cop-light_00.material",
+                        weapon = "shield",
+                        mesh = "assets/model/animated/police/cop/cop-shield_00.bgnome",
+                        material = "assets/texture/animated/police/cop/cop-shield_00.material",
                         abilities = {
                             abilities.Attack, 
                             abilities.ArrestGroup, 
@@ -59,9 +78,9 @@ return function( scen )
                     },
                     {
                         positionOffset = {0,0,1},
-                        weapon = "punch",
-                        mesh = "assets/model/animated/rioter/rioter-male_00.bgnome",
-                        material = "assets/texture/animated/police/cop/cop-light_00.material",
+                        weapon = "shield",
+                        mesh = "assets/model/animated/police/cop/cop-shield_00.bgnome",
+                        material = "assets/texture/animated/police/cop/cop-shield_00.material",
                         abilities = {
                             abilities.Attack, 
                             abilities.ArrestGroup, 
@@ -74,9 +93,9 @@ return function( scen )
                     },
                     {
                         positionOffset = {0,0,-1},
-                        weapon = "punch",
-                        mesh = "assets/model/animated/rioter/rioter-male_00.bgnome",
-                        material = "assets/texture/animated/police/cop/cop-light_00.material",
+                        weapon = "shield",
+                        mesh = "assets/model/animated/police/cop/cop-shield_00.bgnome",
+                        material = "assets/texture/animated/police/cop/cop-shield_00.material",
                         abilities = {
                             abilities.Attack, 
                             abilities.ArrestGroup, 
@@ -89,9 +108,9 @@ return function( scen )
                     },
                     {
                         positionOffset = {-1,0,0},
-                        weapon = "punch",
-                        mesh = "assets/model/animated/rioter/rioter-male_00.bgnome",
-                        material = "assets/texture/animated/police/cop/cop-light_00.material",
+                        weapon = "shield",
+                        mesh = "assets/model/animated/police/cop/cop-shield_00.bgnome",
+                        material = "assets/texture/animated/police/cop/cop-shield_00.material",
                         abilities = {
                             abilities.Attack, 
                             abilities.ArrestGroup, 
@@ -122,9 +141,9 @@ return function( scen )
                             abilities.TearGas, 
                             abilities.Rout,
                         },
-                        health = standardPolice.maxHealth, 
-                        stamina = standardPolice.maxStamina, 
-                        morale = standardPolice.maxMorale, 
+                        health = tearGasPolice.maxHealth, 
+                        stamina = tearGasPolice.maxStamina, 
+                        morale = tearGasPolice.maxMorale, 
                     },
                     {
                         positionOffset = {0,0,1},
@@ -137,9 +156,9 @@ return function( scen )
                             abilities.Sprint, 
                             abilities.Rout,
                         },
-                        health = standardPolice.maxHealth, 
-                        stamina = standardPolice.maxStamina, 
-                        morale = standardPolice.maxMorale, 
+                        health = tearGasPolice.maxHealth, 
+                        stamina = tearGasPolice.maxStamina, 
+                        morale = tearGasPolice.maxMorale, 
                     },
                     {
                         positionOffset = {1,0,0},
@@ -189,7 +208,8 @@ return function( scen )
     end
 
     -- Setup callbacks for gamemode
-    scen:registerInitCallback( function() scen.gamemode:init() 
+    scen:registerInitCallback( function() 
+        scen.gamemode:init() 
         local plane = entity.get "plane"
         plane(scen, 0, -1, 0, 900)
 
@@ -269,7 +289,7 @@ return function( scen )
 			verts[i + 1] = verts[i + 1] + wpc.position[3]
 		end
 	    local grp = core.system.groups.createGroup(1)
-		group( scen, ac.vertices, grp, {xsize, ysize}, fists, {0.9,0.3,0,1} )
+		group( scen, ac.vertices, grp, {xsize, ysize}, fists, {0.9,0.3,0,1}, 10, 20 )
         return grp
 	end
 
@@ -285,7 +305,7 @@ return function( scen )
 			verts[i + 1] = verts[i + 1] + wpc.position[3]
 		end
 	    local grp = core.system.groups.createGroup(2)
-		group( scen, ac.vertices, grp, {xsize, ysize}, fists )
+		group( scen, ac.vertices, grp, {xsize, ysize}, fists, nil, 30, 10 )
         return grp
 	end
 
@@ -366,6 +386,36 @@ return function( scen )
     function T.registerAg3Spawn( ent )
         print( "Registering Ag3" )
         ag3Spawn = ent 
+    end
+
+    function T.rotateY( ent, delta )
+        local rotation = ent:get( core.componentType.RotationComponent ).rotation
+
+        local qrot = core.glm.quat.new( unpack(rotation) )
+        
+        qrot = qrot:rotate( delta*10, core.glm.vec3.new(0,1,0) )
+
+        ent:set( core.componentType.RotationComponent, { rotation = {qrot:get()}})
+    end
+
+    function T.rotateX( ent, delta )
+        local rotation = ent:get( core.componentType.RotationComponent ).rotation
+
+        local qrot = core.glm.quat.new( unpack(rotation) )
+        
+        qrot = qrot:rotate( delta*10, core.glm.vec3.new(1,0,0) )
+
+        ent:set( core.componentType.RotationComponent, { rotation = {qrot:get()}})
+    end
+
+    function T.rotateZ( ent, delta )
+        local rotation = ent:get( core.componentType.RotationComponent ).rotation
+
+        local qrot = core.glm.quat.new( unpack(rotation) )
+        
+        qrot = qrot:rotate( delta*10, core.glm.vec3.new(0,0,1) )
+
+        ent:set( core.componentType.RotationComponent, { rotation = {qrot:get()}})
     end
 
     return T

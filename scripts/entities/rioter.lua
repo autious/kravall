@@ -1,4 +1,6 @@
-return function(asm, posX, posY, posZ, group, gender, material, weaponType, outlineColor)
+return function(asm, posX, posY, posZ, group, gender, material, weaponType, outlineColor, rage, pressure)
+    rage = rage or 1
+    pressure = pressure or 1
     local meshes = {"assets/model/animated/rioter/rioter-male_00.bgnome","assets/model/animated/rioter/rioter-female_00.bgnome" }
     local materials = {"assets/texture/animated/rioter/rioter_00.material","assets/texture/animated/rioter/rioter_01.material","assets/texture/animated/rioter/rioter_02.material" }
     gender = gender or (math.random(1,#meshes))
@@ -32,8 +34,8 @@ return function(asm, posX, posY, posZ, group, gender, material, weaponType, outl
 				type = core.componentType.AttributeComponent,
 				data = { health = 100, stamina = 100, morale = 2.0, 
 					   alignment = core.RioterAlignment.Anarchist, 
-                        rage = 1, 
-                        pressure = 1, 
+                        rage = rage, 
+                        pressure = pressure, 
                         groupID = group, stanceRioter = core.RioterStance.Normal}
                 ,
                 ignoreHard = true
