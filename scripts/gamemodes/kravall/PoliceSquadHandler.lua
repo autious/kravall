@@ -450,18 +450,18 @@ function PoliceSquadHandler:UseTearGas(entity, x, y, z)
     entity:set(core.componentType.UnitTypeComponent, {unitType = core.UnitType.Object}, true)
     entity:set(core.componentType.WorldPositionComponent, {position = {x, y, z}})
     entity:set(core.componentType.EmitterComponent, {
-            rate = 10,
-            offset = {0, 0, 0},
-            life = 5,
-            lifeVariance = 0,
-            lifeReduction = 1,
+            rate = 100,
+            offset = {0, -2, 0},
+            life = 3,
+            lifeVariance = 0.5,
+            lifeReduction = 1.5,
             lifeReductionVariance = 0,
-            velocity = {0, 0, 6},
-            velocityVariance = {3, 3, 3},
-            acceleration = {0, -2, 0},
+            velocity = {0, 0, 3},
+            velocityVariance = {0, 0, 4},
+            acceleration = {0, 2, 0},
             coneDirection = {0, 1, 0},
-            coneAngle = 30,
-            coneAngleVariance = 60,
+            coneAngle = 60,
+            coneAngleVariance = 30,
             type = core.system.particle.emitters.Cone,
             handle = self.particleDefinitions["TearGas"]
             }, true)
