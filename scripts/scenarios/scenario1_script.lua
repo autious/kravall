@@ -180,6 +180,7 @@ return function( scen )
     local waypoints = {}
     local waypoint_positions = {}
     local currentWaypoint = 0
+    local fists 
 
     local agitatorGroups = {}
 
@@ -194,6 +195,7 @@ return function( scen )
 
         obj1 = scen.gamemode:createObjective()
         obj1.title = "Protect deserters from attacking agitators! "
+		fists = core.weaponData.pushWeapon( 1.0, 0.75, 20, 0.2, 0.05, 3.2, 2.9, 0.05, 0.5, "punch" )
     end )
 
     scen:registerUpdateCallback( 
