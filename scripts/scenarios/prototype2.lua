@@ -23,21 +23,21 @@ local building = ent.get "building"
 local squad = ent.get "policeSquad"
 
 -- create squad
-local squadOne0 = squad(scen, -5, 0, 0, math.pi/2);
-local squadOne1 = squad(scen, -5, 0, 10, math.pi/2);
-local squadOne2 = squad(scen, -5, 0, 15, math.pi/2);
-local squadOne3 = squad(scen, -5, 0, 20, math.pi/2);
-local squadOne4 = squad(scen, -5, 0, 25, math.pi/2);
-local squadOne5 = squad(scen, -5, 0, 30, math.pi/2);
+--local squadOne0 = squad(scen, -5, 0, 0, math.pi/2);
+--local squadOne1 = squad(scen, -5, 0, 10, math.pi/2);
+--local squadOne2 = squad(scen, -5, 0, 15, math.pi/2);
+--local squadOne3 = squad(scen, -5, 0, 20, math.pi/2);
+--local squadOne4 = squad(scen, -5, 0, 25, math.pi/2);
+--local squadOne5 = squad(scen, -5, 0, 30, math.pi/2);
 
 local centerPoint = { 0, 0, 0 }
 local side = 32 -- math.sqrt( 1000 )
 
 
-local gOne = core.system.groups.createGroup()
-local gTwo = core.system.groups.createGroup()
-local gThree = core.system.groups.createGroup()
-local gFour = core.system.groups.createGroup()
+local gOne = core.system.groups.createGroup(1)
+local gTwo = core.system.groups.createGroup(1)
+local gThree = core.system.groups.createGroup(2)
+local gFour = core.system.groups.createGroup(2)
 
 for i = -side / 2, -1 do
 	for p = -side / 2, -1 do
