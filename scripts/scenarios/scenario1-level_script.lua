@@ -18,7 +18,7 @@ return function( scen )
 	local track = true
 
     scen.name = "Scenario 1"
-    scen.description = "You are mean"
+    scen.description = "Simple test scenario, made for the second pitch"
 
 
 	-- weapons

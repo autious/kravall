@@ -43,9 +43,11 @@ function GUIComponent:new(o)
     end
     function o.callbacks.onButton( button, action, mods )
         local consumed = false
+
         if button == mouse.button.Left then
             if action == core.input.action.Press then
                 if o.inside == true then
+
                     o.onPress( curr_mouse_x, curr_mouse_y ) 
                     o.press = true
                     consumed = true -- we assume that this is consumed, so game can ignore

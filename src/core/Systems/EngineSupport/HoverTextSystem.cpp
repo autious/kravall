@@ -26,8 +26,14 @@ namespace Core
 
                 if( htc->font != nullptr )
                     font = htc->font;
-
-                GFX::RenderText( font, glm::vec2( wpc->position[0], -wpc->position[1] ), htc->size, HoverTextComponent::GetColor( *htc ), m_strings[htc->hoverTextId].c_str() );
+                if( htc->box ) 
+                {
+	                GFX::RenderTextbox(font, glm::vec4( wpc->position[0], -wpc->position[1], htc->dim[0], htc->dim[1] ), 0, htc->size, HoverTextComponent::GetColor( *htc ), m_strings[htc->hoverTextId].c_str() );
+                }
+                else
+                {
+                    GFX::RenderText( font, glm::vec2( wpc->position[0], -wpc->position[1] ), htc->size, HoverTextComponent::GetColor( *htc ), m_strings[htc->hoverTextId].c_str() );
+                }
 
 
                 if( CONF.GetBool( "debugRenderHoverTextBounding", true ) )

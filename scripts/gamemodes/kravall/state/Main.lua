@@ -13,7 +13,8 @@ function Main:new(o)
     setmetatable( o, self )
     self.__index = self
 
-    o.asm = ASM.loadPack({})
+    assert( o.asm, "you need to give Main an asm instance" )
+
 
     o.particleDefinitions =
     {
@@ -100,7 +101,6 @@ end
 function Main:destroy()
     self.moveMarker:destroy()
     self.gui:destroy()
-    self.asm:destroy()
 end
 
 return Main

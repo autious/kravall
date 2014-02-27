@@ -2,7 +2,7 @@ local S = {}
 local assembly_loader = require "assembly_loader"
 
 function S.new( )
-    self = {}
+    local self = {}
     self.ranInit = false
     self.tickCallbacks = {}
     self.tcindex = 0 

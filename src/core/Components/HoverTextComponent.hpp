@@ -17,6 +17,8 @@ namespace Core
         float color[4];
         bool render;
         GFX::FontData * font;
+        float dim[2];
+        bool box;
         
         HoverTextComponent()
         {
@@ -24,6 +26,9 @@ namespace Core
             size = 1;
             render = true;
             font = nullptr;
+            dim[0] = 0;
+            dim[1] = 0;
+            box = false;
             SetColor( *this, Colors::White );
         }
 

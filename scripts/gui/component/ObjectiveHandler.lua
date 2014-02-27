@@ -50,6 +50,10 @@ function ObjectiveHandler:isLoss()
     return self.state == "fail"
 end
 
+function ObjectiveHandler:isEnd()
+    return self:isWin() or self:isLoss()
+end
+
 function ObjectiveHandler:updateObjective( obj )
 
     if obj.state == "success" then

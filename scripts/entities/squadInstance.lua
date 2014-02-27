@@ -10,6 +10,7 @@ local function createMember( scen, pos, groupID, weaponType, memberDef )
     local T = {}
     
     function T.getAbilities()
+        assert( #(memberDef.abilities) >= 1, "Abilities are non existant!" )
         return memberDef.abilities
     end    
     local formationOffsetX,_, formationOffsetZ = unpack( memberDef.positionOffset )
@@ -110,6 +111,8 @@ return function( scen, squadInstance, weaponList )
 
     T.members = {}
     T.groupId = core.system.groups.createGroup()
+
+    print( "GAVE A GROUP ID: " .. T.groupId )
 
     scen:loadAssembly(
             {
