@@ -15,6 +15,7 @@ local function createMember( scen, pos, groupID, weaponType, memberDef )
     end    
     local formationOffsetX,_, formationOffsetZ = unpack( memberDef.positionOffset )
 
+    T.startOffset = {formationOffsetX, formationOffsetZ}
     T.entity = scen:loadAssembly( 
 		{
 			{
@@ -110,6 +111,7 @@ return function( scen, squadInstance, weaponList )
     local T = {}
 
     T.members = {}
+    T.startPosition = {squadInstance.position:get()}
     T.groupId = core.system.groups.createGroup()
 
     print( "GAVE A GROUP ID: " .. T.groupId )

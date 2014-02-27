@@ -288,6 +288,10 @@ function PoliceSquadHandler:setAbility( ability )
         self.isAiming = true
         self:SetReticuleRender(false)
         self.AimingFunction = self.AimSprint
+    elseif ability == core.system.squad.abilities.Flee then
+        if self:canUseAbility(ability) then
+            self:UseFlee() 
+        end
     end
 end
 
@@ -474,6 +478,24 @@ function PoliceSquadHandler:UseSprint(x, y, z)
     core.system.squad.setSquadGoal(self.selectedSquads, x, y, z)
 end
 
+function PoliceSquadHandler:UseFlee()
+    local squadIDs = {}
+    for member, abilities in pairs(self.usableAbilities) do    
+        for i=1, #abilities do
+            if abilities[i] == core.system.squad.abilities.Flee then
+                local attrbc = member.entity:get(core.componentType.AttributeComponent)
+                squadIDs[attrbc.squadID] = self:getSquad(attrbc.squadID).startPosition
+                member.entity:set(core.componentType.FormationComponent, {relativePosition = member.startOffset}, true)
+                member.isSprinting = true
+            end
+        end
+    end
+
+    for k,v in pairs(squadIDs) do
+        core.system.squad.setSquadStance({k}, core.PoliceStance.Passive)
+        core.system.squad.setSquadGoal({k}, v[1], v[2], v[3])
+    end
+end
 
 function PoliceSquadHandler:update( delta )
    
@@ -583,6 +605,12 @@ function PoliceSquadHandler:update( delta )
                 self:SetReticuleRender(true)
                 self.AimingFunction = self.AimTearGas
             end            
+       end
+    end
+
+    if keyboard.isKeyDownOnce(keyboard.key.Kp_9) then
+        if self:CanUseAbility(core.system.squad.abilities.Flee) then            
+            self:UseFlee()
        end
     end
 
