@@ -40,6 +40,6 @@ return
     },
     policeStamina = 
     {
-        staminaRegeneration = 10.0,
+        staminaRegeneration = 5.0,
     }
 }
