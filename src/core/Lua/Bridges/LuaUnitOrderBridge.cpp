@@ -9,23 +9,56 @@ extern "C"
 {
     static int LuaAttackGroup(lua_State * L)
     {
-		//float range						= static_cast<float>(luaL_checknumber( L, 1  ));
-		//float graceDistance				= static_cast<float>(luaL_checknumber( L, 2  ));
-		//float healthDmg					= static_cast<float>(luaL_checknumber( L, 3  ));
-		//float moraleDmg					= static_cast<float>(luaL_checknumber( L, 4  ));
-		//float moralDmgOnMiss			= static_cast<float>(luaL_checknumber( L, 5  ));
-		//float rageBuff					= static_cast<float>(luaL_checknumber( L, 6  ));
-		//float pressureBuff				= static_cast<float>(luaL_checknumber( L, 7  ));
-		//float staminacost				= static_cast<float>(luaL_checknumber( L, 8  ));
-		//float animationDmgDealingTime	= static_cast<float>(luaL_checknumber( L, 9  ));
-		//std::string animationName		= luaL_checkstring( L,					  10 );
-		//
-		//int weapon = Core::GameData::PushWeaponData( range, graceDistance, healthDmg, moraleDmg, moralDmgOnMiss, rageBuff, pressureBuff, staminacost, animationDmgDealingTime, animationName );
-        //lua_pushnumber(L, weapon );
-		//
-        //return 1;
+		if(lua_gettop(L) == 2)
+        {
+			int targetGroup = -1;
+			if( lua_isnumber( L, 1 ) )
+			{
+				targetGroup = static_cast<int>(luaL_checkint( L, 1 ));
+			}
+			else
+			{
+				return luaL_error(L, "argument 1 of LuaAttackGroup is not a number");
+			}
 
-		return 0;
+            if(lua_istable(L, 2))
+            {   
+                int nSquads = 0;
+                int* squads = nullptr;
+
+                lua_pushnil(L);
+                while(lua_next(L, 2))
+                {
+                    lua_pop(L, 2);
+                    ++nSquads;
+                }
+                        
+                squads = Core::world.m_frameHeap.NewPODArray<int>(nSquads);
+
+                lua_pushnil(L);
+                for(int i=0; lua_next(L, 2); ++i)
+                {
+                    squads[i] = static_cast<int>(luaL_checknumber(L, -1));
+                    lua_pop(L, 1);
+                }
+
+				// do stuff here
+				std::stringstream s;
+				for( int i = 0; i < nSquads; i++ )
+					s << squads[i] << ", ";
+				LOG_WARNING << "groups " << s.str() << "are attacking group " << targetGroup << std::endl;
+
+                return 0;
+            }
+            else
+            {
+                return luaL_error(L, "argument 2 of LuaAttackGroup is not a table");
+            }
+        }
+        else
+        {
+            return luaL_error(L, "LuaAttackGroup( targetGroup, [SelectedGroups] )  expects 2 parameters");
+        }
     }
 
 }

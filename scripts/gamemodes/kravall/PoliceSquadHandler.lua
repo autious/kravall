@@ -69,6 +69,7 @@ function PoliceSquadHandler:new(o)
     o.groupsSelectedByBox = {}
     o.previousGroupSelectedByBox = {}
     o.selectedSquads = {}
+	o.outlinedRioterGroups = nil
 
     -- List for units recently damaged, with ttl.
     o.squadDamageQueue = {}
@@ -401,23 +402,34 @@ end
 
 -----------------------------------------------------------------------------------------------------------------------------
 function PoliceSquadHandler:AttackGroup()
+	if #self.selectedSquads == 0 then
+		self.isAiming = false
+		self:SetReticuleRender(false)
+		self.AimingFunction = nil
+	end
+	
 	local selectedEntity = core.system.picking.getLastHitEntity()
 	if selectedEntity then
 		local unitTypeComponent = selectedEntity:get(core.componentType.UnitTypeComponent);
 		local attributeComponent = selectedEntity:get(core.componentType.AttributeComponent);
 
 		if attributeComponent and unitTypeComponent then                 
-			--cursor is hovering riot group
+			
+			--cursor is hovering over rioters
 			if unitTypeComponent.unitType == core.UnitType.Rioter then
-				
 				s_squad.enableOutline( { attributeComponent.groupID }, standardPolice.selectionPrimaryOutline:get() )
-
+				self.outlinedRioterGroups = attributeComponent.groupID;
 				
-			end
-		end
-	else 
-		
-		
+				
+				if mouse.isButtonDown(mouse.button.Left) then
+					self.isAiming = false
+					self:SetReticuleRender(false)
+					self.AimingFunction = nil
+					
+					core.orders.attackGroup( attributeComponent.groupID, self.selectedSquads )
+				end				
+			end			
+		end		
 	end	
 end
 
@@ -557,13 +569,17 @@ function PoliceSquadHandler:update( delta )
     end
 
     local function clearOutlines()
-		local allSquadsAndGroups = core.system.squad.
-        --local allSquads = core.system.squad.getAllSquadEntities()
-        --
-        --for i,v in pairs( allSquads ) do 
-        --    local squadComponent = v:get( core.componentType.SquadComponent )
-        --    core.system.squad.disableOutline( {squadComponent.squadID} )
-        --end
+        local allSquads = core.system.squad.getAllSquadEntities()
+        
+        for i,v in pairs( allSquads ) do 
+            local squadComponent = v:get( core.componentType.SquadComponent )
+            core.system.squad.disableOutline( {squadComponent.squadID} )
+        end
+		
+		if self.outlinedRioterGroups then
+			core.system.squad.disableOutline( { self.outlinedRioterGroups } )		
+		end		
+		self.outlinedRioterGroups = nil
     end
 
     clearOutlines()
@@ -631,7 +647,7 @@ function PoliceSquadHandler:update( delta )
        end
     end
 	
-	-- attack group order
+	-- attack group
 	if keyboard.isKeyDownOnce(keyboard.key.Kp_5) then
 		if self.isAiming and self.AimingFunction == self.AttackGroup then
 			self.isAiming = false
