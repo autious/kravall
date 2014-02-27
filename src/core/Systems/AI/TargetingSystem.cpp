@@ -19,12 +19,14 @@ void Core::TargetingSystem::Update(float delta)
 	if( instance == nullptr )
 		return; // this can be removed as the groups are refactored out of the flowfield instance.
 
+	Core::SquadSystem* squadSystem = Core::world.m_systemHandler.GetSystem<Core::SquadSystem>();
+
 	for (std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); it++)
 	{
 		Core::UnitTypeComponent* utc = WGETC<Core::UnitTypeComponent>(*it);
 		
 		if (utc->type == UnitType::Police)
-			HandlePoliceTargeting(*it, delta);
+			HandlePoliceTargeting(*it, delta, squadSystem );
 		else if (utc->type == UnitType::Rioter)
 			HandleRioterTargeting(*it, delta, instance );
 	}
@@ -32,7 +34,7 @@ void Core::TargetingSystem::Update(float delta)
 	//TemporaryFunction();
 }
 
-void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police, float delta)
+void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police, float delta, Core::SquadSystem* squadSystem)
 {
 	Core::TargetingComponent* tc = WGETC<Core::TargetingComponent>(police);
 
@@ -44,6 +46,7 @@ void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police, float del
 	Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(police);
 	Core::MovementComponent* mc = WGETC<Core::MovementComponent>(police);
 	const Core::WeaponData& weapon = Core::GameData::GetWeaponDataFromWeapon( tc->weapon );
+	Core::SquadComponent* sqc = WGETC<Core::SquadComponent>(squadSystem->GetSquadEntity( ac->police.squadID ));
 
 	GFXColor colour = GFXColor(1.0f, 1.0f, 1.0f, 1.0f);	
 
@@ -84,7 +87,10 @@ void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police, float del
 		case PoliceStance::Aggressive:
 			if (tc->target == INVALID_ENTITY)
 			{
-				tc->target = FindClosestTarget(wpc, 1 << UnitType::Rioter, -1, nullptr );
+				if( sqc->targetGroup != std::numeric_limits<int>::max() )
+					tc->target = FindClosestTarget(wpc, 1 << UnitType::Rioter, -1, nullptr, sqc->targetGroup );
+				else
+					tc->target = FindClosestTarget(wpc, 1 << UnitType::Rioter, -1, nullptr );
 				tc->attackTime = 0.0f;
 			}
 			else
@@ -217,6 +223,48 @@ Core::Entity Core::TargetingSystem::FindClosestTarget(Core::WorldPositionCompone
 		return minDistEntity;
 	else
 		return INVALID_ENTITY;
+}
+
+Core::Entity Core::TargetingSystem::FindClosestTarget(Core::WorldPositionComponent* origin, int targetType, int ownTeam, Core::NavigationMesh* instance, int targetGroup)
+{
+	float minDist = std::numeric_limits<float>::max();
+	Entity minDistEntity = INVALID_ENTITY;
+	for (std::vector<Entity>::iterator it = m_entities.begin();	it != m_entities.end();	it++)
+	{
+		Core::UnitTypeComponent* utc = WGETC<Core::UnitTypeComponent>(*it);
+		if( !(1 << utc->type & targetType) )
+			continue;
+		
+		assert( utc->type != Core::UnitType::Object, "Police cannot currently attack UnitType::Objects" );
+
+		Core::AttributeComponent* attribc = WGETC<Core::AttributeComponent>(*it);
+		if( utc->type == Core::UnitType::Rioter ? attribc->rioter.groupID != targetGroup : attribc->police.squadID != targetGroup )
+			continue;
+
+		if( instance )
+		{
+			int group = utc->type == Core::UnitType::Police ? attribc->police.squadID : attribc->rioter.groupID;
+			if( instance->flowfields[ group ].team == ownTeam )
+				continue;
+		}
+
+		Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(*it);
+		Core::TargetingComponent* tc = WGETC<Core::TargetingComponent>(*it);
+
+		float dx = wpc->position[0] - origin->position[0];
+		float dy = wpc->position[1] - origin->position[1];
+		float dz = wpc->position[2] - origin->position[2];
+
+		float distSqr = dx * dx + dy * dy + dz * dz;
+
+		if (distSqr > 0.1f && distSqr < minDist && tc->numberOfAttackers < MAX_ATTACKERS)
+		{
+			minDist = distSqr;
+			minDistEntity = *it;
+		}
+	}
+
+	return minDistEntity;
 }
 
 Core::Entity Core::TargetingSystem::FindClosestAttacker(Core::TargetingComponent* originTC, Core::WorldPositionComponent* originWPC)

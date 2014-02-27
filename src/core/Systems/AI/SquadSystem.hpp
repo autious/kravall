@@ -52,6 +52,13 @@ namespace Core
         */
         Core::Entity GetSquadEntity(int squadID);
 
+		/*!
+			Will assign a target group for the assigned squad and set all members to attacking state.
+			\param The id of the attacking squad.
+			\param The id of the group to be attacked.
+		*/
+		void SetSquadTargetGroup( int sqadID, int targetSquadID );
+
         void EnableOutline(int* squadIDs, int nSqauds, const glm::vec4& Color);
 
         void DisableOutline(int* squadIDs, int nSqauds);

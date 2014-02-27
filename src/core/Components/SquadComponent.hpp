@@ -48,6 +48,7 @@ namespace Core
 		int squadHealth = 0;
 		int squadStamina = 0;
 		float squadMorale = 0.0f;
+		int targetGroup = std::numeric_limits<int>::max();
 
 		inline static const char* GetName()
 		{
