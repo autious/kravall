@@ -24,7 +24,7 @@ return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, group
 				type = core.componentType.GraphicsComponent,
 				data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 1, 0, 1} },
 				load = { 
-							mesh = { core.loaders.GnomeLoader, meshes[1] },
+							mesh = { core.loaders.GnomeLoader, meshes[gender] },
 							material = { core.loaders.MaterialLoader, "assets/texture/animated/police/cop/cop-light_00.material" }
 					   }
 			},

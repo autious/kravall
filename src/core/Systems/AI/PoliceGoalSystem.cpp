@@ -32,45 +32,56 @@ void Core::PoliceGoalSystem::Update( float delta )
 	if( !instance )
 		return;
 
-	if( !instance->AllocateFrameMemoryForAstar(Core::world.m_threadHandler.GetNrThreads() ) )
+	if( !instance->AllocateFrameMemoryForAstar( Core::world.m_threadHandler.GetNrThreads() ) )
 		return;
 
-	int startIndex;
-	int endIndex;
-	int memoryIndex;
+	int head = 0;
+	Core::Entity* policeList = Core::world.m_frameHeap.NewPODArray<Core::Entity>( m_entities.size() );
+	if( policeList == nullptr )
+	{
+		LOG_FATAL << "not enough memory for police goal system!" << std::endl;
+		return;
+	}
+	
+	for( std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); it++ )
+	{
+		UnitTypeComponent* utc = WGETC<UnitTypeComponent>(*it);
+		if( utc->type != Core::UnitType::Police )
+			continue;
+		policeList[ head++ ] = *it;
+	}
 
 	int nrCores = Core::world.m_threadHandler.GetNrThreads();
-	int nrPerCore = std::ceil((float)m_entities.size() / (float)nrCores);
+	int nrPerCore = std::ceil((float)head / (float)nrCores);
 
 	for( int i = 0; i < nrCores; i++ )
 	{
-		startIndex = nrPerCore * i;
-		endIndex = startIndex + nrPerCore;
-		if( endIndex > m_entities.size() )
-			endIndex = m_entities.size();
-		
-		memoryIndex = i;
+		int startIndex = nrPerCore * i;
+		int endIndex = startIndex + nrPerCore;
+		if( endIndex > head )
+			endIndex = head;
+		if( startIndex > head )
+			startIndex = head;
 
-		Core::world.m_threadHandler.Enqueue( [ this, instance, startIndex, endIndex, memoryIndex ]()
+		int memoryIndex = i;
+
+		Core::world.m_threadHandler.Enqueue( [ policeList, instance, startIndex, endIndex, memoryIndex ]()
 		{
+			for( int i = startIndex; i < endIndex; i++ )
+			{		
+				Core::Entity ent = policeList[ i ];
 
-			for( std::vector<Entity>::iterator it = m_entities.begin() + startIndex; it != m_entities.begin() + endIndex; it++ )
-			{
-				UnitTypeComponent* utc = WGETC<UnitTypeComponent>(*it);
-				if( utc->type != Core::UnitType::Police )
-					continue;
-		
-				Core::AttributeComponent* attribc = WGETC<Core::AttributeComponent>(*it);
+				Core::AttributeComponent* attribc = WGETC<Core::AttributeComponent>(ent);
 				int groupId = attribc->police.squadID;
 				if( groupId < 0 )
 					continue;
 		
-				Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>(*it);
+				Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>(ent);
 				if( mvmc->NavMeshGoalNodeIndex < 0 )
 					continue;
 
-				Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(*it);
-				Core::FlowfieldComponent* ffc = WGETC<Core::FlowfieldComponent>(*it);
+				Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(ent);
+				Core::FlowfieldComponent* ffc = WGETC<Core::FlowfieldComponent>(ent);
 
 				glm::vec3 position = glm::vec3( wpc->position[0], 0.0f, wpc->position[2] );
 				glm::vec3 target = glm::vec3( mvmc->goal[0], 0.0f, mvmc->goal[2] );	

@@ -138,20 +138,27 @@ namespace GFX
 		//return glm::ortho<float>(minX, maxX, minY, maxY, -maxZ, -minZ);
 
 	}
-#ifdef _WIN32
-#include <Windows.h>
-#endif
+//#ifdef _WIN32
+//#include <Windows.h>
+//#endif
 	void ShadowPainter::Render(AnimationManagerGFX* animationManager, const unsigned int& renderIndex, FBOTexture* depthBuffer, glm::mat4 viewMatrix, glm::mat4 projMatrix,
 			const unsigned int& geometryStartIndex, const unsigned int& geometryEndIndex, FBOTexture** shadowMaps, const unsigned int& width, const unsigned int& height,
-			const glm::vec2& nearFar)
+			const glm::vec2& nearFar, RenderInfo& out_RenderInfo)
 	{
 		BasePainter::Render();
+
+		unsigned int numDrawCalls = 0;
+		unsigned int numTris = 0;
+
 		unsigned int startIndex = geometryStartIndex;
 		unsigned int endIndex = geometryEndIndex;
 		//GLenum error;
 
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
+
+		int shadowmapRes = shadowMaps[0]->GetWidth();
+		glViewport(0, 0, shadowmapRes, shadowmapRes);
 
 		// Set framebuffers for shadowmapping
 
@@ -170,12 +177,7 @@ namespace GFX
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, shadowMaps[1]->GetTextureHandle(), 0);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, shadowMaps[2]->GetTextureHandle(), 0);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, shadowMaps[3]->GetTextureHandle(), 0);
-
-		glClearBufferfv(GL_COLOR, 0, &glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)[0]);
-		glClearBufferfv(GL_COLOR, 1, &glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)[0]);
-		glClearBufferfv(GL_COLOR, 2, &glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)[0]);
-		glClearBufferfv(GL_COLOR, 3, &glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)[0]);
-
+		
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_RBO[0]);
 		glClear(GL_DEPTH_BUFFER_BIT);
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_RBO[1]);
@@ -184,10 +186,17 @@ namespace GFX
 		glClear(GL_DEPTH_BUFFER_BIT);
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_RBO[3]);
 		glClear(GL_DEPTH_BUFFER_BIT);
+		
+		glDrawBuffer(GL_COLOR_ATTACHMENT0);
+		glClearBufferfv(GL_COLOR, 0, &glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)[0]);
+		glDrawBuffer(GL_COLOR_ATTACHMENT1);
+		glClearBufferfv(GL_COLOR, 0, &glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)[0]);
+		glDrawBuffer(GL_COLOR_ATTACHMENT2);
+		glClearBufferfv(GL_COLOR, 0, &glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)[0]);
+		glDrawBuffer(GL_COLOR_ATTACHMENT3);
+		glClearBufferfv(GL_COLOR, 0, &glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)[0]);
 
 
-		int shadowmapRes = shadowMaps[0]->GetWidth();
-		glViewport(0, 0, shadowmapRes, shadowmapRes);
 
 		
 
@@ -268,30 +277,30 @@ namespace GFX
 				ShadowDataContainer::numDirLights++;
 
 				
-#ifdef _WIN32
-				if (GetAsyncKeyState(VK_F1))
-				{
-					m_dbgmat1 = matrices[0] * viewMatrix;
-					m_dbgmat2 = matrices[1] * viewMatrix;
-					m_dbgmat3 = matrices[2] * viewMatrix;
-					m_dbgmat4 = matrices[3] * viewMatrix;
-
-					m_dbgmat5 = shadowData.lightMatrix1;
-					m_dbgmat6 = shadowData.lightMatrix2;
-					m_dbgmat7 = shadowData.lightMatrix3;
-					m_dbgmat8 = shadowData.lightMatrix4;
-				}
-#endif
-				
-				DebugDrawing().AddFrustum(m_dbgmat1, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), true);
-				DebugDrawing().AddFrustum(m_dbgmat2, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f), true);
-				DebugDrawing().AddFrustum(m_dbgmat3, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f), true);
-				DebugDrawing().AddFrustum(m_dbgmat4, glm::vec4(0.0f, 1.0f, 1.0f, 1.0f), true);
-				
-				DebugDrawing().AddFrustum(m_dbgmat5, glm::vec4(1.0f, 0.5f, 0.5f, 1.0f), true);
-				DebugDrawing().AddFrustum(m_dbgmat6, glm::vec4(0.5f, 1.0f, 0.5f, 1.0f), true);
-				DebugDrawing().AddFrustum(m_dbgmat7, glm::vec4(0.5f, 0.5f, 1.0f, 1.0f), true);
-				DebugDrawing().AddFrustum(m_dbgmat8, glm::vec4(0.5f, 1.0f, 1.0f, 1.0f), true);
+//#ifdef _WIN32
+//				if (GetAsyncKeyState(VK_F1))
+//				{
+//					m_dbgmat1 = matrices[0] * viewMatrix;
+//					m_dbgmat2 = matrices[1] * viewMatrix;
+//					m_dbgmat3 = matrices[2] * viewMatrix;
+//					m_dbgmat4 = matrices[3] * viewMatrix;
+//
+//					m_dbgmat5 = shadowData.lightMatrix1;
+//					m_dbgmat6 = shadowData.lightMatrix2;
+//					m_dbgmat7 = shadowData.lightMatrix3;
+//					m_dbgmat8 = shadowData.lightMatrix4;
+//				}
+//#endif
+//				
+//				DebugDrawing().AddFrustum(m_dbgmat1, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), true);
+//				DebugDrawing().AddFrustum(m_dbgmat2, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f), true);
+//				DebugDrawing().AddFrustum(m_dbgmat3, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f), true);
+//				DebugDrawing().AddFrustum(m_dbgmat4, glm::vec4(0.0f, 1.0f, 1.0f, 1.0f), true);
+//				
+//				DebugDrawing().AddFrustum(m_dbgmat5, glm::vec4(1.0f, 0.5f, 0.5f, 1.0f), true);
+//				DebugDrawing().AddFrustum(m_dbgmat6, glm::vec4(0.5f, 1.0f, 0.5f, 1.0f), true);
+//				DebugDrawing().AddFrustum(m_dbgmat7, glm::vec4(0.5f, 0.5f, 1.0f, 1.0f), true);
+//				DebugDrawing().AddFrustum(m_dbgmat8, glm::vec4(0.5f, 1.0f, 1.0f, 1.0f), true);
 				
 			}
 			else if (lightType == GFX::LIGHT_TYPES::SPOT_SHADOW)
@@ -397,6 +406,9 @@ namespace GFX
 				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_RBO[3]);
 				glDrawElementsInstanced(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0, instanceCount);
 
+				numDrawCalls += 4;
+				numTris += (mesh.indexCount / 3) * instanceCount * 4;
+
 				//instanceCount = 0;
 
 			}
@@ -415,6 +427,7 @@ namespace GFX
 
 		glViewport(0, 0, width, height);
 		
-
+		out_RenderInfo.numDrawCalls = numDrawCalls;
+		out_RenderInfo.numTris = numTris;
 	}
 }

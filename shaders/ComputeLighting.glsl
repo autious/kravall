@@ -148,9 +148,9 @@ vec3 BlinnPhong( LightData light, SurfaceData surface, vec3 eyeDirection, vec3 l
 vec4 CalculatePointlight( LightData light, SurfaceData surface, vec3 wPos, vec3 eyePosition, inout float occlusion)
 {
 	vec3 lightDir = light.position - wPos;
-	
-	if(length(lightDir) > light.radius_length)
-		return vec4(0.0f, 0.0f, 0.0f, 0.0f);
+
+	if(length(lightDir) > light.radius_length) return vec4(0.0f, 0.0f, 0.0f, 0.0f);
+		
 
 #ifdef SHOW_LIGHT_TILES
 	return vec4(1.0f, 0.0f, 0.0f, 0.0f);
@@ -168,6 +168,8 @@ vec4 CalculatePointlight( LightData light, SurfaceData surface, vec3 wPos, vec3 
 vec4 CalculateSpotlight( LightData light, SurfaceData surface, vec3 wPos, vec3 eyePosition, inout float occlusion)
 {
 	vec3 lightDir = light.position - wPos;
+
+	if(length(lightDir) > light.radius_length) return vec4(0.0f, 0.0f, 0.0f, 0.0f);
 	
 	float cosAngle = dot(normalize(light.orientation.xyz), normalize(-lightDir));
 	float cosOuterAngle = cos(light.spot_angle);
@@ -401,6 +403,7 @@ void main()
 			if(lightIndex >= numPointLights)
 				break;
 		
+			lightIndex += totalShadowcasters;
 			lightIndex = min(lightIndex, numPointLights+totalShadowcasters-1); // Dont want this because of break above?
 		
 			p = lights[lightIndex];
@@ -433,8 +436,7 @@ void main()
 			if(lightIndex >= numSpotLights)
 				break;
 
-			lightIndex += numPointLights;
-		
+			lightIndex += numPointLights+totalShadowcasters;
 			lightIndex = min(lightIndex, numPointLights+numSpotLights+totalShadowcasters-1); // Dont want this because of break above?
 		
 			p = lights[lightIndex];

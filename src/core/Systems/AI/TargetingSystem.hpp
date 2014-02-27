@@ -5,6 +5,7 @@
 #include <Components/WorldPositionComponent.hpp>
 #include <Components/UnitTypeComponent.hpp>
 #include <Components/TargetingComponent.hpp>
+#include <GameUtility/NavigationMesh.hpp>
 
 namespace Core
 {
@@ -40,8 +41,8 @@ namespace Core
 		bool m_wasFPressed;
 
 		void HandlePoliceTargeting(Entity police, float delta);
-		void HandleRioterTargeting(Entity rioter, float delta);
-		Entity FindClosestTarget(WorldPositionComponent* origin, UnitType targetType);
+		void HandleRioterTargeting(Entity rioter, float delta, Core::NavigationMesh* instance );
+		Entity FindClosestTarget( WorldPositionComponent* origin, int targetType, int ownTeam, Core::NavigationMesh* instance );
 		Entity FindClosestAttacker(TargetingComponent* originTC, WorldPositionComponent* originWPC);
 
 		/*! Verrry verrry temporary, plomise!! Don't kill me! :D */

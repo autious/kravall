@@ -12,11 +12,11 @@ local NorthPlacer = require "gui/placement/NorthPlacer"
 local WestPlacer = require "gui/placement/WestPlacer"
 local CenterPlacer = require "gui/placement/CenterPlacer"
 
-local EventListerGUI = require "gui/kravall_control/EventListerGUI"
-local StanceGUI = require "gui/kravall_control/subgui/StanceGUI"
-local AbilityGUI = require "gui/kravall_control/subgui/AbilityGUI" 
-local FormationGUI = require "gui/kravall_control/subgui/FormationGUI"
-local UnitStatGUI = require "gui/kravall_control/subgui/UnitStatGUI"
+local EventListerGUI = require "gui/kravall/main/EventListerGUI"
+local StanceGUI = require "gui/kravall/main/subgui/StanceGUI"
+local AbilityGUI = require "gui/kravall/main/subgui/AbilityGUI" 
+local FormationGUI = require "gui/kravall/main/subgui/FormationGUI"
+local UnitStatGUI = require "gui/kravall/main/subgui/UnitStatGUI"
 
 local KravallControl = 
 { 

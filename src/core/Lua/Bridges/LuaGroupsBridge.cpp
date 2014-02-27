@@ -64,7 +64,10 @@ extern "C"
         Core::NavigationMesh* navMesh = Core::GetNavigationMesh();
         if(navMesh)
         {
-            lua_pushnumber(L, navMesh->CreateGroup());
+			if( lua_isnumber( L, 1 ) )
+				lua_pushnumber(L, navMesh->CreateGroup( static_cast<int>luaL_checkint( L, 1 ) ));
+			else
+				lua_pushnumber(L, navMesh->CreateGroup());
         }
         else
         {

@@ -16,8 +16,8 @@ end
 
 function Text:setPosition( x,y )
     local width,height = self:getDim()
-    self.x = x
-    self.y = y
+    self.x = math.floor(x)
+    self.y = math.floor(y)
     self.ent:set( core.componentType.WorldPositionComponent, { position = {self.x,-(self.y + height),0 }})
 end
 
@@ -27,7 +27,6 @@ end
 
 function Text:getDim( )
     return self.textId:getDimensions()
-    --return string.len( self.string ) * 10, 14
 end
 
 function Text:setColor( r,g,b,a )
@@ -44,8 +43,11 @@ end
 
 Text.__index = Text
 
-return function( x,y, string, color )
+return function( x,y, string, color, box, boxdim )
     local self = {}
+
+    box = box or false
+    boxdim = boxdim or {0,0}
 
     color = color or {1,1,1,1}
     
@@ -62,7 +64,7 @@ return function( x,y, string, color )
         "assets/font/ingame-hud.font",
         function( fontUD )
             if self.ent and self.ent:isValid() then
-                self.ent:set( core.componentType.HoverTextComponent, {font = fontUD, hoverTextId = self.textId, color = color, render = true} )
+                self.ent:set( core.componentType.HoverTextComponent, {font = fontUD, hoverTextId = self.textId, color = color, render = true, box = box, dim = boxdim} )
 
                 self:setPosition( x,y )
             end

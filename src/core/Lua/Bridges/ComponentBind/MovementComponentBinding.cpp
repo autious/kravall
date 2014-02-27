@@ -1,4 +1,5 @@
 #include "MovementComponentBinding.hpp"
+#include <Lua/Bridges/LuaMovementMetaDataBridge.hpp>
 
 #include <World.hpp>
 
@@ -173,6 +174,14 @@ Core::ComponentSetters Core::MovementComponentBinding::GetSetters()
 		{
 			mvc->goal[0] = FLT_MAX;
 		}
+    };
+
+	setters["state"] = [](Core::Entity entity, lua_State * L, int valueindex )
+    {
+        MovementComponent *mvc = WGETC<MovementComponent>( entity );
+
+        Core::MovementState state = *(Core::MovementState*)luaL_checkudata(L, valueindex, UNIT_MOVEMENT_META_DATA_TYPE_META);
+        mvc->state = state;
     };
 
     return setters;

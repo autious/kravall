@@ -128,6 +128,8 @@ function TextSelectList:colorActive()
     for k,v in pairs( self.textElements ) do
         if v.object == self.activeObject then
             v:setColor( "#f3ff2c" )
+        else
+            v:setColor( "#ffffff" )
         end
     end
 end

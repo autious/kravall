@@ -50,7 +50,7 @@ namespace GFX
 		*/
 		void Render(AnimationManagerGFX* animationManager, const unsigned int& renderIndex, FBOTexture* depthBuffer, glm::mat4 viewMatrix, glm::mat4 projMatrix,
 			const unsigned int& geometryStartIndex, const unsigned int& geometryEndIndex, FBOTexture** shadowMaps, const unsigned int& width, const unsigned int& height,
-			const glm::vec2& nearFar);
+			const glm::vec2& nearFar, RenderInfo& out_RenderInfo);
 
 	private:
 
@@ -67,14 +67,14 @@ namespace GFX
 
 		GLuint m_matricesUniform;
 		
-		glm::mat4x4 m_dbgmat1;
-		glm::mat4x4 m_dbgmat2;
-		glm::mat4x4 m_dbgmat3;
-		glm::mat4x4 m_dbgmat4;
-		glm::mat4x4 m_dbgmat5;
-		glm::mat4x4 m_dbgmat6;
-		glm::mat4x4 m_dbgmat7;
-		glm::mat4x4 m_dbgmat8;
+		//glm::mat4x4 m_dbgmat1;
+		//glm::mat4x4 m_dbgmat2;
+		//glm::mat4x4 m_dbgmat3;
+		//glm::mat4x4 m_dbgmat4;
+		//glm::mat4x4 m_dbgmat5;
+		//glm::mat4x4 m_dbgmat6;
+		//glm::mat4x4 m_dbgmat7;
+		//glm::mat4x4 m_dbgmat8;
 
 	};
 }

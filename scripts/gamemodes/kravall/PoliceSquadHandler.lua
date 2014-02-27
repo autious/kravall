@@ -1,6 +1,5 @@
 local PoliceSquadHandler =  {
                                 particleDefinitions = nil,
-                                createdSquads = {},
                                 onFormationChange = function() 
                                     core.log.error( "No function set for onFormationChange in PoliceSquadHandler") 
                                 end,
@@ -32,7 +31,8 @@ local s_squad = core.system.squad
 
 local standardPolice = (require "game_constants").standardPolice
 local guiBehaviour = (require "game_constants").guiBehaviour
-local tearGasPolice = (require "game_constants").tearGasPolice
+local tearGas = (require "game_constants").tearGas
+local sprinting = (require "game_constants").sprinting
 
 local Reticule = require "gamemodes/kravall/reticule"
 
@@ -84,6 +84,8 @@ function PoliceSquadHandler:new(o)
 
     -- Reticule that is displayed
     o.reticule = Reticule:new()
+
+    o.createdSquads = {}
 
     -- Function to call when aiming
     o.aimingFunction = nil
@@ -157,7 +159,7 @@ function PoliceSquadHandler:evaluateSquadInformation( squad )
     local data = { 
                     health = sq.squadHealth,
                     morale = sq.squadMorale, 
-                    stamina = sq.squadHealth, 
+                    stamina = sq.squadStamina, 
                     stance = sq.squadStance,
                     formation = sq.squadFormation,
                     name = "Police Squad" 
@@ -188,15 +190,30 @@ function PoliceSquadHandler:setUsableAbilities(squads)
     for i=1, #squads do
         local squad = self:getSquad(squads[i])
         for _,member in pairs(squad.members) do
-            abilities[member.entity] = member.getAbilities()
+            abilities[member] = member.getAbilities()
             for i=1, #(member.getAbilities()) do
-                aggregatedAbilities[#aggregatedAbilities+1] = abilities[member.entity][i]
+                aggregatedAbilities[#aggregatedAbilities+1] = abilities[member][i]
             end
         end                 
     end
     self.usableAbilities = abilities;
     self.onUsableAbilitiesChange(aggregatedAbilities)
+end
 
+function PoliceSquadHandler:evaluateUsableAbilities()
+    local abilities = {}
+    local aggregatedAbilities = {}
+    for i=1, #self.selectedSquads do
+        local squad = self:getSquad(self.selectedSquads[i])
+        for _,member in pairs(squad.members) do
+            abilities[member] = member.getAbilities()
+            for i=1, #(member.getAbilities()) do
+                aggregatedAbilities[#aggregatedAbilities+1] = abilities[member][i]
+            end
+        end                 
+    end
+    self.usableAbilities = abilities;
+    self.onUsableAbilitiesChange(aggregatedAbilities)
 end
 
 function PoliceSquadHandler:updateSquadDamageStatus( delta )
@@ -267,6 +284,10 @@ function PoliceSquadHandler:setAbility( ability )
         self.isAiming = true
         self:SetReticuleRender(true)
         self.AimingFunction = self.AimTearGas
+    elseif ability == core.system.squad.abilities.Sprint then
+        self.isAiming = true
+        self:SetReticuleRender(false)
+        self.AimingFunction = self.AimSprint
     end
 end
 
@@ -317,25 +338,26 @@ function PoliceSquadHandler:AimTearGas()
         self.isAiming = false
         self.AimingFunction = nil
         self:SetReticuleRender(false)
+        return
     end
 
-    for entity, abilities in pairs(self.usableAbilities) do    
+    for member, abilities in pairs(self.usableAbilities) do    
         for i=1, #abilities do
             if abilities[i] == core.system.squad.abilities.TearGas then
-                local wpc = entity:get(core.componentType.WorldPositionComponent)
-                if math.sqrt(((wpc.position[1]-x) * (wpc.position[1]-x)) + ((wpc.position[2]-y) * (wpc.position[2]-y)) + ((wpc.position[3]-z) * (wpc.position[3]-z))) < tearGasPolice.tearGasRange then
+                local wpc = member.entity:get(core.componentType.WorldPositionComponent)
+                if math.sqrt(((wpc.position[1]-x) * (wpc.position[1]-x)) + ((wpc.position[2]-y) * (wpc.position[2]-y)) + ((wpc.position[3]-z) * (wpc.position[3]-z))) < tearGas.tearGasRange then
 
                     if inRange == false then 
                         inRange = true 
                     end
 
                     if self.leftClicked then
-                        local attributeComponent = entity:get(core.componentType.AttributeComponent)
-                        if attributeComponent.stamina >= tearGasPolice.tearGasStaminaCost then
+                        local attributeComponent = member.entity:get(core.componentType.AttributeComponent)
+                        if attributeComponent.stamina >= tearGas.tearGasStaminaCost then
                             --Consume click to avoid deselecting squads
                             self.leftClicked = false
                             self.leftPressed = false
-                            self:UseTearGas(entity, x, y, z) 
+                            self:UseTearGas(member.entity, x, y, z) 
 
                             if not keyboard.isKeyDown(keyboard.key.Left_shift) then
                                 self.isAiming = false
@@ -373,9 +395,36 @@ function PoliceSquadHandler:AimTearGas()
     end
 end
 
+function PoliceSquadHandler:AimSprint()
+    local mouseX, mouseY = mouse.getPosition()
+    local x,y,z = core.system.picking.getGroundHit(mouseX, mouseY);
+    if not self:CanUseAbility(core.system.squad.abilities.Sprint) then
+        self.isAiming = false
+        self:SetReticuleRender(false)
+        self.AimingFunction = nil
+        return
+    end
+
+    if self.leftClicked then
+        --Consume click to avoid deselecting squads
+        self.leftClicked = false
+        self.leftPressed = false
+        
+
+        self:UseSprint(x, y, z)
+        if not keyboard.isKeyDown(keyboard.key.Left_shift) then
+            self.isAiming = false
+            self:SetReticuleRender(false)
+            self.AimingFunction = nil
+        end
+
+
+    end
+end
+
 function PoliceSquadHandler:UseTearGas(entity, x, y, z)
     local attributeComponent = entity:get(core.componentType.AttributeComponent)
-    entity:set(core.componentType.AttributeComponent, {stamina = (attributeComponent.stamina - tearGasPolice.tearGasStaminaCost)}, true)
+    entity:set(core.componentType.AttributeComponent, {stamina = (attributeComponent.stamina - tearGas.tearGasStaminaCost)}, true)
     local pairTable = {}                
     local entity = core.entity.create(core.componentType.EmitterComponent
                                         , core.componentType.WorldPositionComponent
@@ -407,9 +456,22 @@ function PoliceSquadHandler:UseTearGas(entity, x, y, z)
             }, true)
 
     pairTable.entity = entity
-    pairTable.timer = tearGasPolice.tearGasDuration 
+    pairTable.timer = tearGas.tearGasDuration 
 
     self.abilityEntities[#(self.abilityEntities) + 1] = pairTable
+end
+
+function PoliceSquadHandler:UseSprint(x, y, z)
+
+    for member, abilities in pairs(self.usableAbilities) do    
+        for i=1, #abilities do
+            if abilities[i] == core.system.squad.abilities.Sprint then
+                member.isSprinting = true                
+            end
+        end
+    end
+    
+    core.system.squad.setSquadGoal(self.selectedSquads, x, y, z)
 end
 
 
@@ -461,6 +523,34 @@ function PoliceSquadHandler:update( delta )
 
     clearOutlines()
 
+    local function updateSquads()
+        for k,v in pairs(self.createdSquads) do
+            local groupId = v.groupId  
+            local squadMembers = core.system.groups.getMembersInGroup(groupId)
+
+            local i=1
+            while i <= #(v.members) do
+                local found = false
+                for _, entity in pairs(squadMembers) do
+                    if core.entity.isSameEntity(v.members[i].entity, entity) then
+                        --Squad member is still in the squad, e.g not killed
+                        found = true
+                    end
+                end
+
+                if not found then
+                    table.remove(v.members, i)
+                else
+                    i=i+1
+                end
+            end            
+        end
+        self:evaluateUsableAbilities()
+    end
+
+    updateSquads()
+
+
     --Abilities
     if self.isAiming and self.rightClicked then
         self:SetReticuleRender(false)
@@ -484,7 +574,7 @@ function PoliceSquadHandler:update( delta )
 
     if keyboard.isKeyDownOnce(keyboard.key.Kp_8) then
         if self:CanUseAbility(core.system.squad.abilities.TearGas) then            
-            if self.isAiming then
+            if self.isAiming and self.AimingFunction == self.AimTearGas then
                 self.isAiming = false
                 self:SetReticuleRender(false)
                 self.AimingFunction = nil
@@ -496,6 +586,58 @@ function PoliceSquadHandler:update( delta )
        end
     end
 
+    if keyboard.isKeyDownOnce(keyboard.key.Kp_3) then
+        if self:CanUseAbility(core.system.squad.abilities.Sprint) then            
+            if self.isAiming and self.AimingFunction == self.AimSprint then
+                self.isAiming = false
+                self.AimingFunction = nil
+            else
+                self.isAiming = true
+                self:SetReticuleRender(false)
+                self.AimingFunction = self.AimSprint
+            end            
+       end
+    end
+
+    --Ability: Sprint
+    for _,squad in pairs(self.createdSquads) do
+        local squadEntity = core.system.squad.getSquadEntity(squad.groupId)
+        assert( squadEntity, "no squad entity bound to " .. squad.groupId )
+        local sqdc = squadEntity:get(core.componentType.SquadComponent)
+        for _,member in pairs(squad.members) do
+            if member.isSprinting == true then
+                local attrbc = member.entity:get(core.componentType.AttributeComponent)
+                local remainingStamina = attrbc.stamina - sprinting.sprintingStaminaCost * delta
+
+                if remainingStamina > 0 then
+                    local wpc = member.entity:get(core.componentType.WorldPositionComponent)
+                    local frmtnc = member.entity:get(core.componentType.FormationComponent)
+                    local goal = {sqdc.squadGoal[1] + frmtnc.relativePosition[1], 
+                                    sqdc.squadGoal[2],
+                                    sqdc.squadGoal[3] + frmtnc.relativePosition[2]}
+                    local pos = wpc.position
+
+                    local distToTarget = math.sqrt((pos[1] - goal[1]) * (pos[1] - goal[1]) + (pos[2] - goal[2]) * (pos[2] - goal[2]) + (pos[3] - goal[3]) * (pos[3] - goal[3]))
+
+                    if distToTarget  > sprinting.sprintingReachThreshold then
+                
+                        member.entity:set(core.componentType.MovementComponent, {state = core.movementData.Sprinting}, true)
+                    else
+                        member.entity:set(core.componentType.MovementComponent, {state = core.movementData.Jogging}, true)
+                        member.isSprinting = nil
+                    end
+                else
+                    remainingStamina = 0
+                    member.isSprinting = nil
+                    member.entity:set(core.componentType.MovementComponent, {state = core.movementData.Jogging}, true)
+                end
+                member.entity:set(core.componentType.AttributeComponent, {stamina = remainingStamina}, true)
+            else              
+                member.entity:set(core.componentType.MovementComponent, {state = core.movementData.Jogging}, true)
+            end         
+        end
+    end
+
     if self.isAiming == true then
         self:AimingFunction()
     end   
@@ -504,7 +646,7 @@ function PoliceSquadHandler:update( delta )
     --Click Selection
     if self.leftClicked then        
 		self.boxStartX, self.boxStartY = mouse.getPosition()
-        selectedEntity = core.system.picking.getLastHitEntity()
+        local selectedEntity = core.system.picking.getLastHitEntity()
         if selectedEntity then
             local unitTypeComponent = selectedEntity:get(core.componentType.UnitTypeComponent);
             local attributeComponent = selectedEntity:get(core.componentType.AttributeComponent);

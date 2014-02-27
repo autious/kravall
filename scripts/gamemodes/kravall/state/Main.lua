@@ -1,8 +1,11 @@
 local MoveMarker = require "visual_objects/MoveMarker"
 local PoliceSquadHandler = require "gamemodes/kravall/PoliceSquadHandler"
-local KravallControl = require "gui/KravallControl"
+local KravallControl = require "gui/kravall/main/KravallControl"
 local PDC = require "particle_definition"
 local ASM = require "assembly_loader"
+
+local ent = require "entities"
+local squadInstance = ent.get "squadInstance"
 
 local Main = { name = "Main" }
 function Main:new(o)
@@ -10,11 +13,14 @@ function Main:new(o)
     setmetatable( o, self )
     self.__index = self
 
-    o.asm = ASM.loadPack({})
+    assert( o.asm, "you need to give Main an asm instance" )
+
+
     o.particleDefinitions =
     {
         TearGas = PDC:createParticleDefinition(o.asm, 5000, "assets/texture/particle/smoke.material")
     }
+
 
     --Init the things that are required.
     o.moveMarker = MoveMarker:new()
@@ -77,6 +83,12 @@ function Main:new(o)
         particleDefinitions = o.particleDefinitions,
     })	
 
+    if o.unitInstances then
+        for _,v in  pairs( o.unitInstances ) do
+            o.policeHandler:addSquad( squadInstance( o.asm, v, o.activeWeaponList ) )
+        end
+    end
+
     return o
 end
 
@@ -89,7 +101,6 @@ end
 function Main:destroy()
     self.moveMarker:destroy()
     self.gui:destroy()
-    self.asm:destroy()
 end
 
 return Main

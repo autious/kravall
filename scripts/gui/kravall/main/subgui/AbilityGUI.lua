@@ -22,7 +22,7 @@ function AbilityGUI:new(o)
     local function onHoverAbility(self)
         for i,v in pairs(o.localComponents) do
             if v == self then
-                meta = getmetatable( i )
+                local meta = getmetatable( i )
                 o.selectionLabel:setLabel( meta.__tostring(i) )
             end
         end
@@ -32,7 +32,7 @@ function AbilityGUI:new(o)
 
     local function onExit(self)
         if o.currentActiveAbility then
-            meta = getmetatable( o.currentActiveAbility )
+            local meta = getmetatable( o.currentActiveAbility )
             o.selectionLabel:setLabel( meta.__tostring(o.currentActiveAbility) )
         else
             o.selectionLabel:setLabel( "" )
@@ -44,7 +44,7 @@ function AbilityGUI:new(o)
     local function onClickAbility(self, value)
         for i,v in pairs(o.localComponents) do
             if v == self then
-                meta = getmetatable( i )
+                local meta = getmetatable( i )
                 o.onAbilitySelect(i)
             end
         end
@@ -214,7 +214,7 @@ function AbilityGUI:new(o)
 
     o.labelWrapperGUI = GUI:new{width=o.width,height=14}
 
-    buttonGUIComponents = {}
+    local buttonGUIComponents = {}
     buttonGUIComponents[#buttonGUIComponents+1] = o.policeSpecific
     buttonGUIComponents[#buttonGUIComponents+1] = o.policeSpecific2
     buttonGUIComponents[#buttonGUIComponents+1] = o.standard 

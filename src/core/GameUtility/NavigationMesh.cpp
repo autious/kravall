@@ -29,7 +29,7 @@ namespace Core
 		mesh = newMesh;
 	}
 
-    int NavigationMesh::CreateGroup()
+    int NavigationMesh::CreateGroup( int groupTeam )
     {
         if(nrUsedFlowfields >= maxFlowfields)
         {
@@ -54,6 +54,8 @@ namespace Core
 				    				 
 		flowfields[ nrUsedFlowfields ].recordedPosition[0] = 0.0f;
 		flowfields[ nrUsedFlowfields ].recordedPosition[1] = 0.0f;
+
+		flowfields[ nrUsedFlowfields ].team = groupTeam;
 
         return nrUsedFlowfields++;
     }

@@ -50,11 +50,11 @@ namespace Core
             SquadComponent* sqdc = WGETC<SquadComponent>(entity);
 
             lua_newtable(L);
-                lua_pushnumber(L, sqdc->squadForward[0]);
+                lua_pushnumber(L, sqdc->squadGoal[0]);
                 lua_rawseti(L, -2, 1);
-                lua_pushnumber(L, sqdc->squadForward[1]);
+                lua_pushnumber(L, sqdc->squadGoal[1]);
                 lua_rawseti(L, -2, 2);            
-                lua_pushnumber(L, sqdc->squadForward[2]);
+                lua_pushnumber(L, sqdc->squadGoal[2]);
                 lua_rawseti(L, -2, 3);            
 
             return 1;

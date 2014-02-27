@@ -4,6 +4,7 @@
 #include <map>
 #include <vector>
 
+#include <glm/glm.hpp>
 #include <ComponentFramework/BaseSystem.hpp>
 
 namespace Core
@@ -20,6 +21,8 @@ namespace Core
 
         std::vector<Entity> GetAreaRioters( Entity id );
         int GetAreaRioterCount( Entity id );
+        bool IsAreaOnPoint( Entity id, const glm::vec3 &position );
+        
     private:
         void DrawAreas();
 
