@@ -606,7 +606,6 @@ function PoliceSquadHandler:update( delta )
         local sqdc = squadEntity:get(core.componentType.SquadComponent)
         for _,member in pairs(squad.members) do
             if member.isSprinting == true then
-                print(member.entity)
                 local attrbc = member.entity:get(core.componentType.AttributeComponent)
                 local remainingStamina = attrbc.stamina - sprinting.sprintingStaminaCost * delta
 
