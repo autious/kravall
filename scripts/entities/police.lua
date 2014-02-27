@@ -4,7 +4,8 @@ return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, group
 
     assert(groupID, "groupID is nil")
 
-	local meshes = {"assets/model/animated/rioter/rioter-male_00.bgnome", "assets/model/animated/rioter/rioter-female_00.bgnome" }
+	--local meshes = {"assets/model/animated/rioter/rioter-male_00.bgnome", "assets/model/animated/rioter/rioter-female_00.bgnome" }
+	local meshes = {"assets/model/animated/police/cop/cop-shield_00.bgnome"}
     local gender = math.random(1, #meshes)
 
     local T = {}
@@ -30,7 +31,8 @@ return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, group
 				data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 1, 0, 1} },
 				load = { 
 							mesh = { core.loaders.GnomeLoader, meshes[gender] },
-							material = { core.loaders.MaterialLoader, "assets/texture/animated/police/cop/cop-light_00.material" }
+							--material = { core.loaders.MaterialLoader, "assets/texture/animated/police/cop/cop-light_00.material" }
+							material = { core.loaders.MaterialLoader, "assets/texture/animated/police/cop/cop-shield_00.material" }
 					   }
 			},
 			{
