@@ -295,7 +295,7 @@ function PoliceSquadHandler:setAbility( ability )
         self:SetReticuleRender(false)
         self.AimingFunction = self.AimSprint
     elseif ability == core.system.squad.abilities.Flee then
-        if self:canUseAbility(ability) then
+        if self:CanUseAbility(ability) then
             self:UseFlee() 
         end
     end
