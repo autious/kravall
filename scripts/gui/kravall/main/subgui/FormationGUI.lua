@@ -23,29 +23,29 @@ function FormationGUI:new(o)
                             matSelected         = "assets/texture/ui/form-line-selected_00.material",
                             matHoverOpen        = "assets/texture/ui/form-line-hover_00.material",
                             matHoverSelected    = "assets/texture/ui/form-line-extra_00.material",
-                            onClick            = function(self,value) if value then o.onFormationSelect( f_line ) else o.onFormationSelect( f_no ) end end ,
-                            xoffset             = xoffset
-                        }
-
-    o.formations[f_halfcircle] = Checkbox:new {  
-                            doStateSwitchOnPress = false,
-                            checked = false,
-                            matOpen             = "assets/texture/ui/form-circle-unselected_00.material",
-                            matSelected         = "assets/texture/ui/form-circle-selected_00.material",
-                            matHoverOpen        = "assets/texture/ui/form-circle-hover_00.material",
-                            matHoverSelected    = "assets/texture/ui/form-circle-extra_00.material",
-                            onClick            = function(self,value) if value then o.onFormationSelect( f_halfcircle ) else o.onFormationSelect( f_no ) end end ,
+                            onClick            = function(self,value) if value then o.onFormationSelect( f_line ) else o.onFormationSelect( f_no ) end end,
                             xoffset             = xoffset
                         }
 
     o.formations[f_circle] = Checkbox:new {  
                             doStateSwitchOnPress = false,
                             checked = false,
+                            matOpen             = "assets/texture/ui/form-circle-unselected_00.material",
+                            matSelected         = "assets/texture/ui/form-circle-selected_00.material",
+                            matHoverOpen        = "assets/texture/ui/form-circle-hover_00.material",
+                            matHoverSelected    = "assets/texture/ui/form-circle-extra_00.material",
+                            onClick            = function(self,value) if value then o.onFormationSelect( f_circle ) else o.onFormationSelect( f_no ) end end,
+                            xoffset             = xoffset
+                        }
+
+    o.formations[f_halfcircle] = Checkbox:new {  
+                            doStateSwitchOnPress = false,
+                            checked = false,
                             matOpen             = "assets/texture/ui/form-square-unselected_00.material",
                             matSelected         = "assets/texture/ui/form-square-selected_00.material",
                             matHoverOpen        = "assets/texture/ui/form-square-hover_00.material",
                             matHoverSelected    = "assets/texture/ui/form-square-extra_00.material",
-                            onClick            = function(self,value) if value then o.onFormationSelect( f_circle ) else o.onFormationSelect( f_no ) end end ,
+                            onClick            = function(self,value) if value then o.onFormationSelect( f_halfcircle ) else o.onFormationSelect( f_no ) end end,
                             xoffset             = xoffset
                         }
 
