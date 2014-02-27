@@ -67,8 +67,6 @@ void Core::PoliceGoalSystem::Update( float delta )
 
 		Core::world.m_threadHandler.Enqueue( [ policeList, instance, startIndex, endIndex, memoryIndex ]()
 		{
-
-			//for( std::vector<Entity>::iterator it = m_entities.begin() + startIndex; it != m_entities.begin() + endIndex; it++ )
 			for( int i = startIndex; i < endIndex; i++ )
 			{		
 				Core::Entity ent = policeList[ i ];
