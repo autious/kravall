@@ -395,6 +395,28 @@ function PoliceSquadHandler:AimTearGas()
     end
 end
 
+-----------------------------------------------------------------------------------------------------------------------------
+function PoliceSquadHandler:AttackGroup()
+	local selectedEntity = core.system.picking.getLastHitEntity()
+	if selectedEntity then
+		local unitTypeComponent = selectedEntity:get(core.componentType.UnitTypeComponent);
+		local attributeComponent = selectedEntity:get(core.componentType.AttributeComponent);
+
+		if attributeComponent and unitTypeComponent then                 
+			--cursor is hovering riot group
+			if unitTypeComponent.unitType == core.UnitType.Rioter then
+				
+				s_squad.enableOutline( { attributeComponent.groupID }, standardPolice.selectionPrimaryOutline:get() )
+
+				
+			end
+		end
+	else 
+		
+		
+	end	
+end
+
 function PoliceSquadHandler:AimSprint()
     local mouseX, mouseY = mouse.getPosition()
     local x,y,z = core.system.picking.getGroundHit(mouseX, mouseY);
@@ -513,12 +535,13 @@ function PoliceSquadHandler:update( delta )
     end
 
     local function clearOutlines()
-        local allSquads = core.system.squad.getAllSquadEntities()
-
-        for i,v in pairs( allSquads ) do 
-            local squadComponent = v:get( core.componentType.SquadComponent )
-            core.system.squad.disableOutline( {squadComponent.squadID} )
-        end
+		local allSquadsAndGroups = core.system.squad.
+        --local allSquads = core.system.squad.getAllSquadEntities()
+        --
+        --for i,v in pairs( allSquads ) do 
+        --    local squadComponent = v:get( core.componentType.SquadComponent )
+        --    core.system.squad.disableOutline( {squadComponent.squadID} )
+        --end
     end
 
     clearOutlines()
@@ -585,6 +608,19 @@ function PoliceSquadHandler:update( delta )
             end            
        end
     end
+	
+	-- attack group order
+	if keyboard.isKeyDownOnce(keyboard.key.Kp_5) then
+		if self.isAiming and self.AimingFunction == self.AttackGroup then
+			self.isAiming = false
+			self:SetReticuleRender(false)
+			self.AimingFunction = nil
+		else
+			self.isAiming = true
+			self:SetReticuleRender(false)
+			self.AimingFunction = self.AttackGroup
+		end            	
+	end
 
     if keyboard.isKeyDownOnce(keyboard.key.Kp_3) then
         if self:CanUseAbility(core.system.squad.abilities.Sprint) then            

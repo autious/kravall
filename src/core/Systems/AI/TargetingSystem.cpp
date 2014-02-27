@@ -61,9 +61,6 @@ void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police, float del
 		if (distSqr < weapon.range * weapon.range )
 		{
 			TargetingComponent::Attack(police, *tcTarget);
-
-			//if (TargetingComponent::Attack(police, *tcTarget))
-			//	std::cout << "Police: " << police << " is attacking rioter " << tc->target << std::endl;
 		}
 
 		tc->attackTime += delta;
@@ -116,20 +113,6 @@ void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police, float del
 			tc->target = INVALID_ENTITY;
 			break;
 	}
-
-	
-
-	if (tc->target != INVALID_ENTITY)
-	{
-		//Core::WorldPositionComponent* twpc = WGETC<Core::WorldPositionComponent>(tc->target);
-		//Core::BoundingVolumeComponent* tbvc = WGETC<Core::BoundingVolumeComponent>(tc->target);
-		//Core::BoundingSphere* tSphere = reinterpret_cast<Core::BoundingSphere*>(tbvc->data);
-		//GFX::Debug::DrawSphere(twpc->GetVec3(*twpc) + *reinterpret_cast<glm::vec3*>(tSphere->offset), tSphere->radius, GFXColor(1.0f, 0.0f, 0.0f, 1.0f), false);
-	}
-	
-	//Core::BoundingVolumeComponent* bvc = WGETC<Core::BoundingVolumeComponent>(police);
-	//Core::BoundingSphere* sphere = reinterpret_cast<Core::BoundingSphere*>(bvc->data);
-	//GFX::Debug::DrawSphere(wpc->GetVec3(*wpc) + *reinterpret_cast<glm::vec3*>(sphere->offset), sphere->radius, colour, false);
 }
 
 void Core::TargetingSystem::HandleRioterTargeting(Core::Entity rioter, float delta, Core::NavigationMesh* instance )
@@ -165,8 +148,7 @@ void Core::TargetingSystem::HandleRioterTargeting(Core::Entity rioter, float del
 
 		if (distSqr < weapon.range * weapon.range ) // Attack
 		{
-			if (TargetingComponent::Attack(rioter, *tcTarget))
-				;//std::cout << "Rioter: " << rioter << " is attacking police " << tc->target << std::endl;
+			TargetingComponent::Attack(rioter, *tcTarget);
 		}
 
 		tc->attackTime += delta;
@@ -195,12 +177,6 @@ void Core::TargetingSystem::HandleRioterTargeting(Core::Entity rioter, float del
 		mc->SetGoal( glm::vec3( std::numeric_limits<float>::max() ), -1, Core::MovementGoalPriority::TargetingGoalPriority );
 		tc->target = INVALID_ENTITY;
 	}
-
-
-
-	// 1. Attacker
-	// 2. Closest police
-	// 3. Other rioter of differing alignment
 }
 
 Core::Entity Core::TargetingSystem::FindClosestTarget(Core::WorldPositionComponent* origin, int targetType, int ownTeam, Core::NavigationMesh* instance)
