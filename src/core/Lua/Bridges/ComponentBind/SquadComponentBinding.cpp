@@ -94,7 +94,6 @@ namespace Core
             }
             else
             {
-                LOG_WARNING << "asdasd" << std::endl;
                 lua_pushnil(L);
             }
 
