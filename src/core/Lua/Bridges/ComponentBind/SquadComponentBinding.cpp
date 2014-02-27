@@ -88,15 +88,7 @@ namespace Core
         {
             SquadComponent* sqdc = WGETC<SquadComponent>(entity);
             LuaEntity* ent = LuaUNewLightEntity(L);
-            if(sqdc->squadLeader != INVALID_ENTITY)
-            {
-                ent->entity = sqdc->squadLeader;
-            }
-            else
-            {
-                LOG_WARNING << "asdasd" << std::endl;
-                lua_pushnil(L);
-            }
+            ent->entity = sqdc->squadLeader;
 
             return 1;
         };

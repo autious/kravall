@@ -32,10 +32,14 @@ return
     sprinting =
     {
         sprintingStaminaCost            = 3.0,
-        sprintingReachThreshold         = 2,
+        sprintingReachThreshold         = 10,
     },
     guiBehaviour = 
     {
-        damageBlinkingLinger = 5
+        damageBlinkingLinger = 5,
+    },
+    policeStamina = 
+    {
+        staminaRegeneration = 2.0,
     }
 }

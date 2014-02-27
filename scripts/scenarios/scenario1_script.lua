@@ -1,82 +1,370 @@
+local entity = require "entities"
+local group = entity.get "group"
+
+--For the kravall defintions
+local abilities = core.system.squad.abilities
+local standardPolice = (require "game_constants").standardPolice
+
 return function( scen )
     local T = {}
+
+    scen.name = "Scenario 1 (DESU DESU)"
+    scen.description = "Protect the peaceful demonstrators from the multiple agitators that attempt to murder them with great fury."
     
-    scen.gamemode =  require "gamemodes/kravall":new()
-    scen:registerInitCallback( function() scen.gamemode:init() end )
-    scen:registerUpdateCallback( function(delta) scen.gamemode:update(delta) end )
+    -- Set game to start in prepmode
+    scen.gamemode =  require "gamemodes/kravall":new(
+    {
+        initGamestate="Prep",
+        weapons = 
+        {
+            punch = {1.0, 0.75, 20, 0.2, 0.05, 3.2, 2.9, 0.05, 0.5, "punch"}
+        },
+        policeTypes =
+        {
+            {
+                name = "Common Squad",
+                description = "Can beat the fuck out of you",
+                cost = 100,
+                setup = 
+                {
+                    {
+                        positionOffset = {0,0,0},
+                        weapon = "punch",
+                        mesh = "assets/model/animated/rioter/rioter-male_00.bgnome",
+                        material = "assets/texture/animated/police/cop/cop-light_00.material",
+                        abilities = {
+                            abilities.Attack, 
+                            abilities.ArrestGroup, 
+                            abilities.Sprint, 
+                            abilities.Rout,
+                        },
+                        health = standardPolice.maxHealth, 
+                        stamina = standardPolice.maxStamina, 
+                        morale = standardPolice.maxMorale, 
+                    },
+                    {
+                        positionOffset = {1,0,0},
+                        weapon = "punch",
+                        mesh = "assets/model/animated/rioter/rioter-male_00.bgnome",
+                        material = "assets/texture/animated/police/cop/cop-light_00.material",
+                        abilities = {
+                            abilities.Attack, 
+                            abilities.ArrestGroup, 
+                            abilities.Sprint, 
+                            abilities.Rout,
+                        },
+                        health = standardPolice.maxHealth, 
+                        stamina = standardPolice.maxStamina, 
+                        morale = standardPolice.maxMorale, 
+                    },
+                    {
+                        positionOffset = {0,0,1},
+                        weapon = "punch",
+                        mesh = "assets/model/animated/rioter/rioter-male_00.bgnome",
+                        material = "assets/texture/animated/police/cop/cop-light_00.material",
+                        abilities = {
+                            abilities.Attack, 
+                            abilities.ArrestGroup, 
+                            abilities.Sprint, 
+                            abilities.Rout,
+                        },
+                        health = standardPolice.maxHealth, 
+                        stamina = standardPolice.maxStamina, 
+                        morale = standardPolice.maxMorale, 
+                    },
+                    {
+                        positionOffset = {0,0,-1},
+                        weapon = "punch",
+                        mesh = "assets/model/animated/rioter/rioter-male_00.bgnome",
+                        material = "assets/texture/animated/police/cop/cop-light_00.material",
+                        abilities = {
+                            abilities.Attack, 
+                            abilities.ArrestGroup, 
+                            abilities.Sprint, 
+                            abilities.Rout,
+                        },
+                        health = standardPolice.maxHealth, 
+                        stamina = standardPolice.maxStamina, 
+                        morale = standardPolice.maxMorale, 
+                    },
+                    {
+                        positionOffset = {-1,0,0},
+                        weapon = "punch",
+                        mesh = "assets/model/animated/rioter/rioter-male_00.bgnome",
+                        material = "assets/texture/animated/police/cop/cop-light_00.material",
+                        abilities = {
+                            abilities.Attack, 
+                            abilities.ArrestGroup, 
+                            abilities.Sprint, 
+                            abilities.Rout,
+                        },
+                        health = standardPolice.maxHealth, 
+                        stamina = standardPolice.maxStamina, 
+                        morale = standardPolice.maxMorale, 
+                    },
+                },
+            },
+            {
+                name = "Teargas Squad",
+                description = "Can make people cry ='D",
+                cost = 100,
+                setup = 
+                {
+                    {
+                        positionOffset = {-1,0,0},
+                        weapon = "punch",
+                        mesh = "assets/model/animated/police/cop/cop-teargas_00.bgnome",
+                        material = "assets/texture/animated/police/cop/cop-teargas_00.material",
+                        abilities = {
+                            abilities.Attack, 
+                            abilities.ArrestGroup, 
+                            abilities.Sprint, 
+                            abilities.TearGas, 
+                            abilities.Rout,
+                        },
+                        health = standardPolice.maxHealth, 
+                        stamina = standardPolice.maxStamina, 
+                        morale = standardPolice.maxMorale, 
+                    },
+                    {
+                        positionOffset = {0,0,1},
+                        weapon = "punch",
+                        mesh = "assets/model/animated/police/cop/cop-teargas_00.bgnome",
+                        material = "assets/texture/animated/police/cop/cop-teargas_00.material",
+                        abilities = {
+                            abilities.Attack, 
+                            abilities.ArrestGroup, 
+                            abilities.Sprint, 
+                            abilities.Rout,
+                        },
+                        health = standardPolice.maxHealth, 
+                        stamina = standardPolice.maxStamina, 
+                        morale = standardPolice.maxMorale, 
+                    },
+                    {
+                        positionOffset = {1,0,0},
+                        weapon = "punch",
+                        mesh = "assets/model/animated/rioter/rioter-male_00.bgnome",
+                        material = "assets/texture/animated/police/cop/cop-light_00.material",
+                        abilities = {
+                            abilities.Attack, 
+                            abilities.ArrestGroup, 
+                            abilities.Sprint, 
+                            abilities.Rout,
+                        },
+                        health = standardPolice.maxHealth, 
+                        stamina = standardPolice.maxStamina, 
+                        morale = standardPolice.maxMorale, 
+                    },
+                    {
+                        positionOffset = {0,0,-1},
+                        weapon = "punch",
+                        mesh = "assets/model/animated/rioter/rioter-male_00.bgnome",
+                        material = "assets/texture/animated/police/cop/cop-light_00.material",
+                        abilities = {
+                            abilities.Attack, 
+                            abilities.ArrestGroup, 
+                            abilities.Sprint, 
+                            abilities.Rout,
+                        },
+                        health = standardPolice.maxHealth, 
+                        stamina = standardPolice.maxStamina, 
+                        morale = standardPolice.maxMorale, 
+                    },
+                },
+            },
+        }
+    })
+    local obj1
+    local deserterGroup = nil
+    local waypoints = {}
+    local waypoint_positions = {}
+    local currentWaypoint = 0
+
+    local agitatorGroups = {}
+
+    local function getCurrentWaypoint()
+        return waypoints["waypoint"..currentWaypoint]
+    end
+
+    -- Setup callbacks for gamemode
+    scen:registerInitCallback( function() scen.gamemode:init() 
+        local plane = entity.get "plane"
+        plane(scen, 0, -1, 0, 900)
+
+        obj1 = scen.gamemode:createObjective()
+        obj1.title = "Protect deserters from attacking agitators! "
+    end )
+
+    scen:registerUpdateCallback( 
+    function(delta) 
+        scen.gamemode:update(delta) 
+        if deserterGroup then
+            local count = core.system.groups.getGroupMemberCount( deserterGroup )
+            obj1.title = "Protect deserters from attacking agitators! " .. count .. " remain."
+            if  count == 0 then
+                obj1.state = "fail"
+            end
+        end
+    end )
+
+    scen:registerTickCallback( function( )
+        if getCurrentWaypoint() then 
+            if core.system.area.getAreaRioterCount( getCurrentWaypoint(), deserterGroup ) > 10 then
+                currentWaypoint = currentWaypoint + 1
+                if getCurrentWaypoint() then
+                    print( "Set new goal!" )
+                    core.system.groups.setGroupGoal( deserterGroup, unpack( waypoint_positions["waypoint"..currentWaypoint] ) )
+                end   
+            end 
+        end
+    end)
+
+    scen:registerTickCallback( function()
+        for i,v in  pairs( agitatorGroups ) do
+            core.system.groups.setGroupGoal( v, core.system.groups.getGroupMedianPosition(deserterGroup))
+        end     
+    end)
+
     scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
     
     -- Script goes here
-    	--====================== MAIN FUNCTIONS ======================--
-	
-		
-	---- Returns amount of rioters in an area
-	function T.checkObjCount( ent )
-		return core.system.area.getAreaRioterCount( ent )
+
+    --Function for adding more spawnpoints.
+    function T.registerSpawn(ent)
+        print( "Registering spawn point" )
+        
+        scen.gamemode:addAreaSpawnZone(ent)
     end
-	
-	-- Return name of an area
-	local function GetEntityName(ent)
-		return ent:get( core.componentType.NameComponent )["name"]
-	end
-	
-	---- Create a group of rioters
-	function T.createRioter( ent, grp, size )
-		wpc = ent:get( core.componentType.WorldPositionComponent )
-		ac = ent:get( core.componentType.AreaComponent )
-		local verts = ac.vertices
+
+    function T.spawnDesertersOnMain(ent)
+        scen.gamemode:registerOnStateChange( function( stateName )
+            if stateName == "Main" then
+                assert( waypoint_positions["waypoint1"], "Missing waypoint1, there is something wrong in blenders export, maybe you're not registering it?" )
+                deserterGroup = T.createDeserter( ent,10,5 ) 
+                return false -- return false to indicate that we have served our purpose and wish no longer to be called.
+
+            end
+            return true
+        end)
+    end
+
+    function T.winOnRioterInside( ent )
+        if core.system.area.getAreaRioterCount(ent,deserterGroup) > 5 then
+            obj1.state = "success"
+        end
+    end
+    
+    -- Create rioter on area:
+	function T.createDeserter( ent, xsize, ysize )
+		local wpc = ent:get( core.componentType.WorldPositionComponent )
+		local ac = ent:get( core.componentType.AreaComponent )
+		verts = ac.vertices
 
 		-- Make vertex positions from local space to world space
 		for i = 1, 8, 2 do
 			verts[i] = verts[i] + wpc.position[1]
 			verts[i + 1] = verts[i + 1] + wpc.position[3]
 		end
-			
-		group( scen, ac.vertices, grp, {size, size} )
-
-	end
-	
-	-- Set destination for rioters based on an area's name
-	function setGoal( grp )
-		
-		-- Set group destination to the next destination
-		activeGoal = "goal" .. pathFlag
-		destArea = core.system.name.getEntitiesByName( activeGoal )[1]
-		destination = destArea:get( core.componentType.WorldPositionComponent )
-		core.system.groups.setGroupGoal( 0, destination.position[1], 0, destination.position[3])
-
-		-- Check if the group has reached their destination
-		if T.checkObjCount( destArea ) > 10 then
-			pathFlag = pathFlag + 1;
-	end
-	
-	---- Return position of current goal
-	--function getGoalPosition( )
-	--	position = core.system.name.getEntitiesByName( "area" .. currGoal )[1]:get( core.componentType.WorldPositionComponent )
-	--	return position
-	--end
-	
+	    local grp = core.system.groups.createGroup(1)
+		group( scen, ac.vertices, grp, {xsize, ysize}, fists, {0.9,0.3,0,1} )
+        return grp
 	end
 
-	--===================== SHORTCUTS ======================--
-	function T.createRioter_friendly( ent )
-		--local groupid = core.system.groups.createGroup()
-		--T.createRioter( ent, groupid, 20 )
+    -- Create rioter on area:
+	function T.createAgitator( ent, xsize, ysize )
+		local wpc = ent:get( core.componentType.WorldPositionComponent )
+		local ac = ent:get( core.componentType.AreaComponent )
+		verts = ac.vertices
+
+		-- Make vertex positions from local space to world space
+		for i = 1, 8, 2 do
+			verts[i] = verts[i] + wpc.position[1]
+			verts[i + 1] = verts[i + 1] + wpc.position[3]
+		end
+	    local grp = core.system.groups.createGroup(2)
+		group( scen, ac.vertices, grp, {xsize, ysize}, fists )
+        return grp
 	end
-	
-	function T.createRioter_bigBad( ent )
-		--local groupid = core.system.groups.createGroup()
-		--T.createRioter( ent, groupid, 10 )
-	end
-	
-	function T.createRioter_smallBad( ent )
-		--local groupid = core.system.groups.createGroup()
-		--T.createRioter( ent, groupid, 3 )
-	end
-	
-	function T.setDestination( ent )
-			--setGoal( ent )
-	end
-	
+
+    --Hides objects when we enter main game state
+    function T.hideOnMain(ent)
+        scen.gamemode:registerOnStateChange( function( stateName )
+            if stateName == "Main" then
+                ent:set( core.componentType.GraphicsComponent, {render=false}, true )
+                return false -- return false to indicate that we have served our purpose and wish no longer to be called.
+            end
+            return true
+        end)
+    end
+
+    function T.destroyOnMain(ent)
+        scen.gamemode:registerOnStateChange( function( stateName )
+            if stateName == "Main" then
+                ent:destroy()
+                return false -- return false to indicate that we have served our purpose and wish no longer to be called.
+            end
+            return true
+        end)
+    end
+
+    function T.showOnMain(ent)
+        scen.gamemode:registerOnStateChange( function( stateName )
+            if stateName == "Main" then
+                ent:set( core.componentType.GraphicsComponent, {render=true}, true )
+                return false -- return false to indicate that we have served our purpose and wish no longer to be called.
+            end
+            return true
+        end)
+    end
+
+    function T.registerWaypoint(ent)
+        local nc = ent:get(core.componentType.NameComponent) 
+        local wpc = ent:get(core.componentType.WorldPositionComponent)
+        
+        waypoints[nc.name] = ent 
+        waypoint_positions[nc.name] = wpc.position
+        print( "Regestering waypoint: " .. nc.name )
+    end
+
+    local ag1Spawn = nil
+    function T.checkAg1Enter( ent )
+        if ag1Spawn and core.system.area.getAreaRioterCount( ent, deserterGroup ) > 0 then
+            table.insert( agitatorGroups, T.createAgitator( ag1Spawn, 10,10 ) ) 
+            ag1Spawn = nil
+        end
+    end
+
+    function T.registerAg1Spawn( ent )
+        print( "Registering Ag1" )
+        ag1Spawn = ent 
+    end
+
+    local ag2Spawn = nil
+    function T.checkAg2Enter( ent )
+        if ag2Spawn and core.system.area.getAreaRioterCount( ent, deserterGroup ) > 0 then
+            table.insert( agitatorGroups, T.createAgitator( ag2Spawn, 10,10 ) ) 
+            ag2Spawn = nil
+        end
+    end
+
+    function T.registerAg2Spawn( ent )
+        print( "Registering Ag2" )
+        ag2Spawn = ent 
+    end
+
+    local ag3Spawn = nil
+    function T.checkAg3Enter( ent )
+        if ag3Spawn and core.system.area.getAreaRioterCount( ent, deserterGroup ) > 0 then
+            table.insert( agitatorGroups, T.createAgitator( ag3Spawn, 10,10 ) ) 
+            ag3Spawn = nil
+        end
+    end
+
+    function T.registerAg3Spawn( ent )
+        print( "Registering Ag3" )
+        ag3Spawn = ent 
+    end
+
     return T
 end

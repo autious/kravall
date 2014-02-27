@@ -1,4 +1,4 @@
-return function(asm, posX, posY, posZ, group, gender, material, weaponType)
+return function(asm, posX, posY, posZ, group, gender, material, weaponType, outlineColor)
     local meshes = {"assets/model/animated/rioter/rioter-male_00.bgnome","assets/model/animated/rioter/rioter-female_00.bgnome" }
     local materials = {"assets/texture/animated/rioter/rioter_00.material","assets/texture/animated/rioter/rioter_01.material","assets/texture/animated/rioter/rioter_02.material" }
     gender = gender or (math.random(1,#meshes))
@@ -31,7 +31,10 @@ return function(asm, posX, posY, posZ, group, gender, material, weaponType)
 			{
 				type = core.componentType.AttributeComponent,
 				data = { health = 100, stamina = 100, morale = 2.0, 
-					   alignment = core.RioterAlignment.Anarchist, rage = 1, pressure = 1, groupID = group, stanceRioter = core.RioterStance.Normal}
+					   alignment = core.RioterAlignment.Anarchist, 
+                        rage = 1, 
+                        pressure = 1, 
+                        groupID = group, stanceRioter = core.RioterStance.Normal}
                 ,
                 ignoreHard = true
 			},
@@ -70,11 +73,18 @@ return function(asm, posX, posY, posZ, group, gender, material, weaponType)
 			}
         }
 
+        local meshType
+        if outlineColor then
+            meshType = core.gfx.layerTypes.OutlineLayer
+        else
+            meshType = core.gfx.layerTypes.MeshLayer
+            outlineColor = {0, 0, 1, 1}
+        end
 
-        base[#base+1] = 
+        base[#base+1] =
 			{
 				type = core.componentType.GraphicsComponent,
-				data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1} },
+				data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry, layer = meshType, outlineColor = outlineColor },
 				load = { 
 							mesh = { core.loaders.GnomeLoader, meshes[gender] },
 							material = { core.loaders.MaterialLoader, materials[material]  },
