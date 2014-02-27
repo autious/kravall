@@ -20,4 +20,6 @@ Core::SquadComponent::SquadComponent()
 	squadHealth = 0;
 	squadStamina = 0;
 	squadMorale = 0.0f;
+
+	targetGroup = std::numeric_limits<int>::max();
 }

@@ -322,6 +322,13 @@ namespace Core
         return INVALID_ENTITY;
     }
 
+	void SquadSystem::SetSquadTargetGroup( int squadID, int targetSquadID )
+	{
+		Core::SquadComponent* sq = WGETC<Core::SquadComponent>( GetSquadEntity( squadID ) );
+		sq->targetGroup = targetSquadID;
+		sq->squadStance = Core::PoliceStance::Aggressive;
+	}
+
     void SquadSystem::EnableOutline(int* squadIDs, int nSquads,const glm::vec4& Color)
     {        
         for(int i=0; i<nSquads; ++i)
