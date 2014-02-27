@@ -213,6 +213,7 @@ return function( scen )
         local plane = entity.get "plane"
         plane(scen, 0, -1, 0, 900)
 
+        scen.gamemode.camera:lookAt( core.glm.vec3.new( 50, 100, 10), core.glm.vec3.new( -60, 0, -50 ) ) 
         obj1 = scen.gamemode:createObjective()
         obj1.title = "Protect deserters from attacking agitators! "
 		fists = core.weaponData.pushWeapon( 1.0, 0.75, 20, 0.2, 0.05, 3.2, 2.9, 0.05, 0.5, "punch" )
