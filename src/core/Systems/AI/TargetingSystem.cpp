@@ -235,7 +235,7 @@ Core::Entity Core::TargetingSystem::FindClosestTarget(Core::WorldPositionCompone
 		if( !(1 << utc->type & targetType) )
 			continue;
 		
-		assert( utc->type != Core::UnitType::Object, "Police cannot currently attack UnitType::Objects" );
+		assert( utc->type != Core::UnitType::Object);// "Police cannot currently attack UnitType::Objects" );
 
 		Core::AttributeComponent* attribc = WGETC<Core::AttributeComponent>(*it);
 		if( utc->type == Core::UnitType::Rioter ? attribc->rioter.groupID != targetGroup : attribc->police.squadID != targetGroup )
