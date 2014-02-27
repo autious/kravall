@@ -31,7 +31,10 @@ return function(asm, posX, posY, posZ, group, gender, material, weaponType, outl
 			{
 				type = core.componentType.AttributeComponent,
 				data = { health = 100, stamina = 100, morale = 2.0, 
-					   alignment = core.RioterAlignment.Anarchist, rage = 1, pressure = 1, groupID = group, stanceRioter = core.RioterStance.Normal}
+					   alignment = core.RioterAlignment.Anarchist, 
+                        rage = 1, 
+                        pressure = 1, 
+                        groupID = group, stanceRioter = core.RioterStance.Normal}
                 ,
                 ignoreHard = true
 			},
