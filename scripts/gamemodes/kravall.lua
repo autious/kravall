@@ -15,7 +15,7 @@ local abilities = core.system.squad.abilities
 
 local standardPolice = (require "game_constants").standardPolice
 
-local assembly_loader = require "assembly_loader"
+local ASM = require "assembly_loader"
 
 local T = 
     { 
@@ -62,6 +62,7 @@ function T:new(o)
 
     o.camera = Camera.new()
     o.onStateChangeFunctions = {}
+    o.asm = ASM.loadPack({})
 
 	
 	-- set default movementData
@@ -83,6 +84,7 @@ function T:setState( state )
         { 
             unitInstances = self.unitInstances, --definitions of the units placed
             activeWeaponList = self.activeWeaponList,
+            asm = self.asm,
         } )
     elseif state == "Prep" then
         print( "State set to \"Prep\"" )
@@ -147,9 +149,10 @@ function T:destroy()
     end
 
     self.objectiveHandler:destroy()
-
+    self.asm:destroy()
     -- Remove all weapons that was created.
 	core.gameMetaData.clearGameData()
+    
 end
 
 function T:registerOnStateChange(f)
