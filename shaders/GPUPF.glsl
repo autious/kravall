@@ -81,11 +81,11 @@ uniform uint gEntityCount;
 //z = repel
 //w = decline
 
-uniform vec4 gChargeCurves[6][13]= {{ vec4(-5000.0f, 300.0f, 40.0f, -5000.0f / (300.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 300.0f, 1.0f, -5000.0f / (300.0f)),vec4(0.0f),vec4(0.0f)},
+uniform vec4 gChargeCurves[6][13]= {{ vec4(-5000.0f, 40.0f, 40.0f, -5000.0f / (40.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 300.0f, 1.0f, -5000.0f / (300.0f)),vec4(0.0f),vec4(0.0f)},
 									
 								   { vec4(0.0f),vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 300.0f, 1.0f, -5000.0f / (300.0f)),vec4(0.0f),vec4(0.0f) },
 
-								   { vec4(0.0f), vec4(0.0f, 0.0f, 1.5f, 0.0f / (1.0f)), vec4(0.0f, 0.0f, 1.5f, 0.0f / (1.0f)), vec4(0.0f, 0.0f, 1.5f, 0.0f / (1.0f)), vec4(0.0f, 0.0f, 1.5f, 0.0f / (1.0f)), vec4(0.0f, 0.0f, 1.5f, 0.0f / (1.0f)), vec4(-5000.0f, 0.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 0.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 0.0f, 1.0f, -5000.0f / (30.0f)), vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 300.0f, 1.0f, -5000.0f / (300.0f)), vec4(0.0f),vec4(0.0f)  }, 								   
+								   { vec4(0.0f), vec4(0.0f, 0.0f, 1.5f, 0.0f / (1.0f)), vec4(0.0f, 0.0f, 1.5f, 0.0f / (1.0f)), vec4(10.0f, 100.0f, 1.5f, 10.0f / (100.0f)), vec4(0.0f, 0.0f, 1.5f, 0.0f / (1.0f)), vec4(0.0f, 0.0f, 1.5f, 0.0f / (1.0f)), vec4(-5000.0f, 0.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 0.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 0.0f, 1.0f, -5000.0f / (30.0f)), vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 300.0f, 1.0f, -5000.0f / (300.0f)), vec4(0.0f),vec4(0.0f)  }, 								   
 								   
 								   { vec4(0.0f),vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 300.0f, 1.0f, -5000.0f / (300.0f)),vec4(0.0f),vec4(0.0f)  },
 
@@ -253,7 +253,7 @@ float GetEffectOnAgentAt(vec2 queryPosition, int groupID, uint index)
 		senderIndex = senderIndex * multiplier;
 		vec4 chargeCurve = gChargeCurves[receieverIndex][senderIndex];
 	
-		if (distSqr >= chargeCurve.z && (indata.position_unitType.w == RIOTER_TYPE))// && matchID != groupID) )
+		if (distSqr >= chargeCurve.y && (indata.position_unitType.w == RIOTER_TYPE))// && matchID != groupID) )
 			continue;
 	
 		currentSum = GetAgentChargeAt(int(indata.position_unitType.w), distSqr, chargeCurve);
