@@ -1,3 +1,4 @@
+--require "strict"
 local Camera = require "rts_camera" 
 local MainMenu = require "gui/MainMenu"
 local viewport = require "gui/viewport"
@@ -8,9 +9,20 @@ require "console"
 local current_scenario = nil
 local current_scenario_name = ""
 
--- Called on each frame
+local input = require "input"
+
+input.registerOnKey( function( key, scancode, action )
+    if key == core.input.keyboard.key.F5 
+        and action == core.input.action.Press 
+        and current_scenario then
+            openscenario( current_scenario_name )
+    end
+end)
+
+--For initial camera placment.
 camera = Camera.new()
 
+-- Called on each frame
 function core.update( delta )
     if camera ~= nil then
         camera:update( delta )
@@ -21,6 +33,9 @@ function core.update( delta )
     end 
 end
 
+logo = nil
+current_scenario = nil
+current_scenario_name = nil
 -- Called when program starts
 function core.init() 
     print( "Program starting in lua" )
@@ -77,4 +92,19 @@ function closescenario()
 
     collectgarbage() --For niceness, always good to do right after loading a scenario as the
                      --assembly files are quite large.
+end
+
+function deepPrint( table, counter )
+    counter =  counter or 0
+    for i,v in pairs ( table ) do
+        print( counter, ".:", i,":", v )
+        if type(v) == "table" then
+            deepPrint(v, counter+1)
+        elseif type(v) == "function" then
+            print( counter,".:",i,"():",v()) 
+            if type( v() ) == "table" then
+                deepPrint( v(), counter+1)
+            end 
+        end
+    end
 end

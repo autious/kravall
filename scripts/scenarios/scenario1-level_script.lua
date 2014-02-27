@@ -18,14 +18,13 @@ return function( scen )
 	local track = true
 
     scen.name = "Scenario 1"
-    scen.description = "You are mean"
+    scen.description = "Simple test scenario, made for the second pitch"
 
 
 	-- weapons
 	local fists
 	
 	scen.gamemode = require "gamemodes/kravall":new()
-
 
 	scen:registerUpdateCallback( function(delta) scen.gamemode:update(delta) end )
 	scen:registerDestroyCallback( function() scen.gamemode:destroy() end )

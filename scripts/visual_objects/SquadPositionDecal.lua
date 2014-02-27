@@ -93,6 +93,17 @@ function SquadPositionDecal:verifyPlacement( areas )
     return accepted
 end
 
+function SquadPositionDecal:setActiveSquad( squadDef )
+    local posList = {}
+    if squadDef then
+        for i,v in  pairs( squadDef.setup ) do
+            table.insert( posList, core.glm.vec3.new( unpack( v.positionOffset ) ) )
+        end
+    end
+    self.currentSquadDef = squadDef
+    self:setFormationOffsets( posList ) 
+end
+
 function SquadPositionDecal:setFormationOffsets( list )
     if self.entities then
         for i,v in pairs(self.entities) do

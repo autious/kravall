@@ -8,8 +8,8 @@ end
 
 function Image:setPosition( x,y)
     local pos = self.ent:get( core.componentType.WorldPositionComponent )
-    pos.position[1] = x
-    pos.position[2] = -y
+    pos.position[1] = math.floor( x )
+    pos.position[2] = math.floor( -y )
     self.ent:set( core.componentType.WorldPositionComponent,pos )
 end
 
@@ -52,8 +52,8 @@ return function( x,y, material, c )
                 self.ent:set( core.componentType.GraphicsComponent, { material = material_handle }, true )
                 self.ent:set( core.componentType.ScaleComponent, {scale = {meta_data.diffuseWidth,meta_data.diffuseHeight,1}}, true )
 
-                px = x 
-                py = y
+                local px = x 
+                local py = y
                 if c then
                     px = x - meta_data.diffuseWidth/2
                     py = y - meta_data.diffuseHeight/2

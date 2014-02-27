@@ -96,6 +96,7 @@ namespace GFX
 		}
 		else if (current == 6) // Draw shadowmap
 		{
+			glDepthMask(GL_FALSE);
 			glViewport(0, 0, 128, 128);
 			TextureManager::BindTexture(shadowMaps[0]->GetTextureHandle(), m_textureUniform, 0, GL_TEXTURE_2D);
 			glBindVertexArray(m_dummyVAO);
@@ -118,7 +119,8 @@ namespace GFX
 			TextureManager::BindTexture(shadowMaps[3]->GetTextureHandle(), m_textureUniform, 0, GL_TEXTURE_2D);
 			glBindVertexArray(m_dummyVAO);
 			glDrawArrays(GL_POINTS, 0, 1);
-
+			
+			glDepthMask(GL_TRUE);
 			glViewport(0, 0, screenWidth, screenHeight);
 		}
 		
