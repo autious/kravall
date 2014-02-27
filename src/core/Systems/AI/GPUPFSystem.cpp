@@ -79,6 +79,10 @@ namespace Core
 				int i = 0;
 				for (std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); it++)
 				{
+					if (i > MAXIMUM_ENTITIES)
+						break;
+
+
 					WorldPositionComponent* wpc = WGETC<WorldPositionComponent>(*it);
 					MovementComponent* mc = WGETC<MovementComponent>(*it);
 					UnitTypeComponent* utc = WGETC<UnitTypeComponent>(*it);
@@ -172,6 +176,10 @@ namespace Core
 				int i = 0;
 				for (std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); it++)
 				{
+					if (i > MAXIMUM_ENTITIES)
+						break;
+
+
 					MovementComponent* mc = WGETC<MovementComponent>(*it);
 					MovementDataComponent *mdc = WGETC<MovementDataComponent>( *it );
 					AttributeComponent* ac = WGETC<AttributeComponent>(*it);
@@ -215,6 +223,9 @@ namespace Core
 				int i = 0;
 				for (std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); it++)
 				{
+					if (i > MAXIMUM_ENTITIES)
+						break;
+
 					MovementComponent* mc = WGETC<MovementComponent>(*it);
 					MovementDataComponent *mdc = WGETC<MovementDataComponent>( *it );
 					AttributeComponent* ac = WGETC<AttributeComponent>(*it);
