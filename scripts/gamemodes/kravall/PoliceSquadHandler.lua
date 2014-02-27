@@ -33,6 +33,7 @@ local standardPolice = (require "game_constants").standardPolice
 local guiBehaviour = (require "game_constants").guiBehaviour
 local tearGas = (require "game_constants").tearGas
 local sprinting = (require "game_constants").sprinting
+local policeStamina = (require "game_constants").policeStamina
 
 local Reticule = require "gamemodes/kravall/reticule"
 
@@ -93,6 +94,12 @@ function PoliceSquadHandler:new(o)
     registerCallbacks(o)
 
     return o
+end
+
+function PoliceSquadHandler:destroy()
+    for _,v in pairs(self.abilityEntities) do
+        v.entity:destroy()
+    end 
 end
 
 function PoliceSquadHandler:DeselectAllSquads()
@@ -288,6 +295,10 @@ function PoliceSquadHandler:setAbility( ability )
         self.isAiming = true
         self:SetReticuleRender(false)
         self.AimingFunction = self.AimSprint
+    elseif ability == core.system.squad.abilities.Flee then
+        if self:CanUseAbility(ability) then
+            self:UseFlee() 
+        end
     end
 end
 
@@ -439,18 +450,18 @@ function PoliceSquadHandler:UseTearGas(entity, x, y, z)
     entity:set(core.componentType.UnitTypeComponent, {unitType = core.UnitType.Object}, true)
     entity:set(core.componentType.WorldPositionComponent, {position = {x, y, z}})
     entity:set(core.componentType.EmitterComponent, {
-            rate = 10,
-            offset = {0, 0, 0},
-            life = 5,
-            lifeVariance = 0,
-            lifeReduction = 1,
+            rate = 100,
+            offset = {0, -2, 0},
+            life = 3,
+            lifeVariance = 0.5,
+            lifeReduction = 1.5,
             lifeReductionVariance = 0,
-            velocity = {0, 0, 6},
-            velocityVariance = {3, 3, 3},
-            acceleration = {0, -2, 0},
+            velocity = {0, 0, 3},
+            velocityVariance = {0, 0, 4},
+            acceleration = {0, 2, 0},
             coneDirection = {0, 1, 0},
-            coneAngle = 30,
-            coneAngleVariance = 60,
+            coneAngle = 60,
+            coneAngleVariance = 30,
             type = core.system.particle.emitters.Cone,
             handle = self.particleDefinitions["TearGas"]
             }, true)
@@ -474,6 +485,24 @@ function PoliceSquadHandler:UseSprint(x, y, z)
     core.system.squad.setSquadGoal(self.selectedSquads, x, y, z)
 end
 
+function PoliceSquadHandler:UseFlee()
+    local squadIDs = {}
+    for member, abilities in pairs(self.usableAbilities) do    
+        for i=1, #abilities do
+            if abilities[i] == core.system.squad.abilities.Flee then
+                local attrbc = member.entity:get(core.componentType.AttributeComponent)
+                squadIDs[attrbc.squadID] = self:getSquad(attrbc.squadID).startPosition
+                member.entity:set(core.componentType.FormationComponent, {relativePosition = member.startOffset}, true)
+                member.isSprinting = true
+            end
+        end
+    end
+
+    for k,v in pairs(squadIDs) do
+        core.system.squad.setSquadStance({k}, core.PoliceStance.Passive)
+        core.system.squad.setSquadGoal({k}, v[1], v[2], v[3])
+    end
+end
 
 function PoliceSquadHandler:update( delta )
    
@@ -586,6 +615,12 @@ function PoliceSquadHandler:update( delta )
        end
     end
 
+    if keyboard.isKeyDownOnce(keyboard.key.Kp_9) then
+        if self:CanUseAbility(core.system.squad.abilities.Flee) then            
+            self:UseFlee()
+       end
+    end
+
     if keyboard.isKeyDownOnce(keyboard.key.Kp_3) then
         if self:CanUseAbility(core.system.squad.abilities.Sprint) then            
             if self.isAiming and self.AimingFunction == self.AimSprint then
@@ -605,8 +640,8 @@ function PoliceSquadHandler:update( delta )
         assert( squadEntity, "no squad entity bound to " .. squad.groupId )
         local sqdc = squadEntity:get(core.componentType.SquadComponent)
         for _,member in pairs(squad.members) do
+            local attrbc = member.entity:get(core.componentType.AttributeComponent)
             if member.isSprinting == true then
-                local attrbc = member.entity:get(core.componentType.AttributeComponent)
                 local remainingStamina = attrbc.stamina - sprinting.sprintingStaminaCost * delta
 
                 if remainingStamina > 0 then
@@ -632,8 +667,15 @@ function PoliceSquadHandler:update( delta )
                     member.entity:set(core.componentType.MovementComponent, {state = core.movementData.Jogging}, true)
                 end
                 member.entity:set(core.componentType.AttributeComponent, {stamina = remainingStamina}, true)
-            else              
+            else            
+                local remainingStamina = attrbc.stamina + policeStamina.staminaRegeneration * delta
+
+                if remainingStamina > member.maximumStamina then
+                    remainingStamina = member.maximumStamina
+                end
+
                 member.entity:set(core.componentType.MovementComponent, {state = core.movementData.Jogging}, true)
+                member.entity:set(core.componentType.AttributeComponent, {stamina = remainingStamina}, true)
             end         
         end
     end

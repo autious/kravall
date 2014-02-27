@@ -4,7 +4,7 @@
 #include <World.hpp>
 #include <GameUtility/GameData.hpp>
 
-//#define SHOW_MOOD_STATE_DEBUG 
+#define SHOW_MOOD_STATE_DEBUG 
 #ifdef SHOW_MOOD_STATE_DEBUG
 	#define DRAW_DEBUG( x ) x
 #else

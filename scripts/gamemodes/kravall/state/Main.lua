@@ -100,6 +100,7 @@ end
 
 function Main:destroy()
     self.moveMarker:destroy()
+    self.policeHandler:destroy()
     self.gui:destroy()
 end
 
