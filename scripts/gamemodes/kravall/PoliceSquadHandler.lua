@@ -33,6 +33,7 @@ local standardPolice = (require "game_constants").standardPolice
 local guiBehaviour = (require "game_constants").guiBehaviour
 local tearGas = (require "game_constants").tearGas
 local sprinting = (require "game_constants").sprinting
+local policeStamina = (require "game_constants").policeStamina
 
 local Reticule = require "gamemodes/kravall/reticule"
 
@@ -289,7 +290,7 @@ function PoliceSquadHandler:setAbility( ability )
         self:SetReticuleRender(false)
         self.AimingFunction = self.AimSprint
     elseif ability == core.system.squad.abilities.Flee then
-        if self:canUseAbility(ability) then
+        if self:CanUseAbility(ability) then
             self:UseFlee() 
         end
     end
@@ -633,8 +634,8 @@ function PoliceSquadHandler:update( delta )
         assert( squadEntity, "no squad entity bound to " .. squad.groupId )
         local sqdc = squadEntity:get(core.componentType.SquadComponent)
         for _,member in pairs(squad.members) do
+            local attrbc = member.entity:get(core.componentType.AttributeComponent)
             if member.isSprinting == true then
-                local attrbc = member.entity:get(core.componentType.AttributeComponent)
                 local remainingStamina = attrbc.stamina - sprinting.sprintingStaminaCost * delta
 
                 if remainingStamina > 0 then
@@ -660,8 +661,15 @@ function PoliceSquadHandler:update( delta )
                     member.entity:set(core.componentType.MovementComponent, {state = core.movementData.Jogging}, true)
                 end
                 member.entity:set(core.componentType.AttributeComponent, {stamina = remainingStamina}, true)
-            else              
+            else            
+                local remainingStamina = attrbc.stamina + policeStamina.staminaRegeneration * delta
+
+                if remainingStamina > member.maximumStamina then
+                    remainingStamina = member.maximumStamina
+                end
+
                 member.entity:set(core.componentType.MovementComponent, {state = core.movementData.Jogging}, true)
+                member.entity:set(core.componentType.AttributeComponent, {stamina = remainingStamina}, true)
             end         
         end
     end

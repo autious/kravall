@@ -36,6 +36,10 @@ return
     },
     guiBehaviour = 
     {
-        damageBlinkingLinger = 5
+        damageBlinkingLinger = 5,
+    },
+    policeStamina = 
+    {
+        staminaRegeneration = 10.0,
     }
 }

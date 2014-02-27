@@ -14,8 +14,13 @@ local function createMember( scen, pos, groupID, weaponType, memberDef )
         return memberDef.abilities
     end    
     local formationOffsetX,_, formationOffsetZ = unpack( memberDef.positionOffset )
+    
+    T.maximumStamina = memberDef.stamina
+    T.maximumHealth = memberDef.health
+    T.maximumMorale = memberDef.morale
 
     T.startOffset = {formationOffsetX, formationOffsetZ}
+
     T.entity = scen:loadAssembly( 
 		{
 			{

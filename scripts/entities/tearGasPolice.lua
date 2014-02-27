@@ -11,6 +11,10 @@ return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, group
         return {abilities.Attack, abilities.ArrestGroup, abilities.Sprint, abilities.TearGas, abilities.Sprint, abilities.Flee }
     end    
 
+    T.maximumHealth = tearGasPolice.maxHealth
+    T.maximumStamina = tearGasPolice.maxStamina
+    T.maximumMorale = tearGasPolice.maxMorale
+
     T.startOffset = {formationOffsetX, formationOffsetZ}
 	T.entity = asm:loadAssembly( 
 		{
