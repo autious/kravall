@@ -96,6 +96,12 @@ function PoliceSquadHandler:new(o)
     return o
 end
 
+function PoliceSquadHandler:destroy()
+    for _,v in pairs(self.abilityEntities) do
+        v.entity:destroy()
+    end 
+end
+
 function PoliceSquadHandler:DeselectAllSquads()
     s_squad.disableOutline(self.selectedSquads)    
     self:setFormation( core.system.squad.formations.NoFormation )
@@ -290,7 +296,7 @@ function PoliceSquadHandler:setAbility( ability )
         self:SetReticuleRender(false)
         self.AimingFunction = self.AimSprint
     elseif ability == core.system.squad.abilities.Flee then
-        if self:canUseAbility(ability) then
+        if self:CanUseAbility(ability) then
             self:UseFlee() 
         end
     end

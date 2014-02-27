@@ -50,6 +50,10 @@ namespace GFX
 		m_textureManager->Load3DTexture(id, 32, 32, 32, "assets/texture/Lut/test3.png");
 		m_LUTTextures.push_back(id);
 		m_LUTNames.push_back("test3");
+
+		m_textureManager->Load3DTexture(id, 32, 32, 32, "assets/texture/Lut/redtestLUT.png");
+		m_LUTTextures.push_back(id);
+		m_LUTNames.push_back("redtest");
 	}
 
 	GLuint LUTManager::GetLUTHandle(std::string name)
