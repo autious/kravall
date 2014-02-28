@@ -24,17 +24,18 @@ function SetupMenu:new(o,menuState)
     body=[[Hint: In the deployment screen, you can buy and place police squads in one of the multiple spawn points in the scenario. Keep in mind the scenario objectives! 
 
 
+Hint: To move a selected squad, right click and drag to set formation or single right click to move in the existing formation.
+
 
 Hint: When you think you have all the squads you need, or have no more money left, press the Go!-button and the game starts immediately.
-
 
 
 Hint: Different points of interest are marked either on the ground or with a coloured lamp in the deployment screen.
 
 
-
-Hint: The more police, the quicker rioters get angry and agitated.]]
-    ,width=500, height=600, yoffset=50, anchor="Center"}))
+Hint: The more police, the quicker rioters get
+angry and agitated.]]
+    ,width=700, height=600, yoffset=50, anchor="Center"}))
     o.gui:addComponent(Button:new({
 
                                     matReleased = "assets/texture/ui/go-button-release.material",
