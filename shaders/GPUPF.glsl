@@ -129,7 +129,7 @@ uniform int gChargeReceiverIndices[3][6] = {{ 0, 1, 2, 3, 4, 5 },
 //y = morale
 //z = pressure
 //w = rage
-uniform vec4 gMoodCurves[6][13] = {{ vec4(20.0f, 0.01f, 0.01f, 0.01f), vec4(0.0f), vec4(5.0f, 0.001f, 0.001f, 0.001f), vec4(5.0f, 0.001f, 0.001f, 0.001f), vec4(5.0f, -0.001f, 0.001f, 0.001f),vec4(0.0f), vec4(10.0f, 0.0f, 1.1f, 1.1f), vec4(10.0f, 0.0f, 1.1f, 1.1f), vec4(10.0f, 0.1f, 1.0f, 1.0f), vec4(0.0f), vec4(20.0f, 10.01f, 10.01f, 10.01f), vec4(0.0f),vec4(0.0f) },
+uniform vec4 gMoodCurves[6][13] = {{ vec4(20.0f, 0.01f, 0.01f, 0.01f), vec4(0.0f), vec4(5.0f, 0.001f, 0.001f, 0.001f), vec4(5.0f, 0.001f, 0.001f, 0.001f), vec4(5.0f, -0.001f, 0.001f, 0.001f),vec4(0.0f), vec4(10.0f, 0.0f, 0.3f, 0.3f), vec4(10.0f, 0.0f, 0.3f, 0.3f), vec4(10.0f, 0.1f, 1.0f, 1.0f), vec4(0.0f), vec4(20.0f, 10.01f, 10.01f, 10.01f), vec4(0.0f),vec4(0.0f) },
 																																																																							   
 								   { vec4(20.0f, 0.01f, 0.01f, 0.01f), vec4(0.0f), vec4(5.0f, 0.001f, 0.001f, 0.001f), vec4(5.0f, 0.001f, 0.001f, 0.001f), vec4(5.0f, -0.001f, 0.001f, 0.001f),vec4(0.0f), vec4(10.0f, 0.0f, 1.1f, 1.1f), vec4(10.0f, 0.0f, 1.1f, 1.1f),  vec4(10.0f, 0.1f, 1.0f, 1.0f), vec4(0.0f), vec4(20.0f, 10.01f, 10.01f, 10.01f), vec4(0.0f),vec4(0.0f) },
 																																																																							   

@@ -1,6 +1,14 @@
-return function(asm, posX, posY, posZ, group, gender, material, weaponType, outlineColor, rage, pressure)
+return function(asm, posX, posY, posZ, group, gender, material, weaponType, outlineColor, rage, pressure, alignment)
     rage = rage or 1
     pressure = pressure or 1
+    alignment = alignment or core.RioterAlignment.Anarchist
+    
+    if alignment == core.RioterAlignment.Anarchist then 
+       -- print( "ALIGNMENT: anarchist" )
+    elseif alignment == core.RioterAlignment.Pacifist then
+       -- print( "ALIGNMENT: pacifist" )
+    end
+
     local meshes = {"assets/model/animated/rioter/rioter-male_00.bgnome","assets/model/animated/rioter/rioter-female_00.bgnome" }
     local materials = {"assets/texture/animated/rioter/rioter_00.material","assets/texture/animated/rioter/rioter_01.material","assets/texture/animated/rioter/rioter_02.material" }
     gender = gender or (math.random(1,#meshes))
@@ -33,7 +41,7 @@ return function(asm, posX, posY, posZ, group, gender, material, weaponType, outl
 			{
 				type = core.componentType.AttributeComponent,
 				data = { health = 100, stamina = 100, morale = 2.0, 
-					   alignment = core.RioterAlignment.Anarchist, 
+					   alignment = alignment, 
                         rage = rage, 
                         pressure = pressure, 
                         groupID = group, stanceRioter = core.RioterStance.Normal}

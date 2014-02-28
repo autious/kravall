@@ -17,18 +17,18 @@ function ScenarioMenu:new(o,menuState)
 
     o.gui = GUI:new()
     
-    local descriptionBox = TextBox:new({anchor="East", body="", width = 300, height = 100})
-    local scenarioLabel = TextLabel:new({ xoffset=-50, yoffset=250, anchor="NorthEast", label=""})
+    local descriptionBox = TextBox:new({anchor="East", yoffset=180, body="", width = 600, height = 500})
+    --local scenarioLabel = TextLabel:new({ xoffset=-50, yoffset=250, anchor="NorthEast", label=""})
 
     local function onScenarioSelect( object )
         descriptionBox:setText( object.description )         
-        scenarioLabel:setLabel( object.name )
+       -- scenarioLabel:setLabel( object.name )
         menuState.selectedScenario = object
         o.gui:constrict()
 
     end
 
-    local selectionList = TextSelectList:new({ anchor="West", xoffset=300, elements=o.scenarios, onSelect = onScenarioSelect })
+    local selectionList = TextSelectList:new({ anchor="NorthWest", yoffset=310, xoffset=300, elements=o.scenarios, onSelect = onScenarioSelect })
 
     o.gui:addComponent(Button:new({
                                     matReleased = "assets/texture/ui/back-button-release.material",
@@ -42,7 +42,7 @@ function ScenarioMenu:new(o,menuState)
                                     matHover = "assets/texture/ui/go-button-hover.material",
                                     anchor="SouthEast",xoffset=0,yoffset=0,onClick = menuState.goSetup }))
     o.gui:addComponent( selectionList )
-    o.gui:addComponent( scenarioLabel )
+    --o.gui:addComponent( scenarioLabel )
     o.gui:addComponent( descriptionBox )
     
     if menuState.selectedScenario ~=nil then

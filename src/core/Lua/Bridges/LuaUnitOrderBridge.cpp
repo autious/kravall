@@ -55,12 +55,14 @@ extern "C"
 				for( int i = 0; i < nSquads; i++ )
 					squadSystem->SetSquadTargetGroup( squads[i], targetGroup );
 
-				squadSystem->SetSquadStance( squads, nSquads, Core::PoliceStance::Passive );
+				squadSystem->RevertSquadStanceFromAgressive( squads, nSquads );
 			}
 			else
 			{
 				for( int i = 0; i < nSquads; i++ )
 					squadSystem->SetSquadTargetGroup( squads[i], targetGroup );
+
+				squadSystem->SetSquadStance( squads, nSquads, Core::PoliceStance::Aggressive );
 			}
 
 			return 0;

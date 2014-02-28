@@ -59,6 +59,13 @@ namespace Core
 		*/
 		void SetSquadTargetGroup( int sqadID, int targetSquadID );
 
+		/*!
+			Will revert the squads to their SquadComponent->prevSquadStance.
+			\param squadIDs Pointer to an array of squad IDs.
+            \param nSqauds The number of elements in array sent in to squadIDs.
+		*/
+		void RevertSquadStanceFromAgressive( int* squadIDs, int nSquads );
+
         void EnableOutline(int* squadIDs, int nSqauds, const glm::vec4& Color);
 
         void DisableOutline(int* squadIDs, int nSqauds);

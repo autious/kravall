@@ -10,7 +10,11 @@ return function( scen )
     local T = {}
 
     scen.name = "Scenario 1 (DESU DESU)"
-    scen.description = "Protect the peaceful demonstrators from the multiple agitators that attempt to murder them with great fury."
+    scen.description =  [[Deserters and transhumans are equal, or so they say. The rebellion of the lower districts have sparked a revolution filled with violence, blood and tears. All in the name of freedom.
+
+    Not everyone can handle it. That is why some people abandon their cause to seek refuge at the transhuman embassy where they will be assimilated into transhuman society in exchange for valuable information regarding the rebels' hideouts.
+
+    A group of deserters are on their way to the embassy right now. Bands of rebels are certain to lie in wait for them and it is your job to protect the deserters until they reach the embassy. Keep them safe at any cost.]]
     
     -- Set game to start in prepmode
     scen.gamemode =  require "gamemodes/kravall":new(
@@ -20,7 +24,8 @@ return function( scen )
         {
             -- range, graceDistance, damageToHealth, damageToMorale, damageToMoraleOnMiss, enemyRageIncrease, enemyPressureIncrease, staminaCost, timeWhenAnimationDealsDamage, animationName
             punch = {1.0, 0.75, 20, 0.2, 0.05, 3.2, 2.9, 0.05, 0.5, "punch"},
-            shield = {1.0, 0.75, 40, 0.4, 0.05, 4, 2.0, 0.02, 0.3, "shield"}
+            --shield = {1.0, 0.75, 20, 0.2, 0.05, 3.2, 2.9, 0.05, 0.5, "shield"},
+            shield = {1.0, 0.75, 40, 0.4, 0.05, 4, 2.0, 0.02, 0.3, "punch"}
         },
         policeTypes =
         {
@@ -216,7 +221,10 @@ return function( scen )
         scen.gamemode.camera:lookAt( core.glm.vec3.new( 50, 100, 10), core.glm.vec3.new( -60, 0, -50 ) ) 
         obj1 = scen.gamemode:createObjective()
         obj1.title = "Protect deserters from attacking agitators! "
-		fists = core.weaponData.pushWeapon( 1.0, 0.75, 20, 0.2, 0.05, 3.2, 2.9, 0.05, 0.5, "punch" )
+
+        -- range, graceDistance, damageToHealth, damageToMorale, damageToMoraleOnMiss, enemyRageIncrease, enemyPressureIncrease, staminaCost, timeWhenAnimationDealsDamage, animationName
+		--fists = core.weaponData.pushWeapon( 1.0, 0.75, 20, 0.2, 0.05, 3.2, 2.9, 0.05, 0.5, "punch" )
+		fists = core.weaponData.pushWeapon( 1.0, 0.75, 10, 0.05, 0.01, 3.2, 2.9, 0.05, 0.5, "punch" )
     end )
 
     scen:registerUpdateCallback( 
@@ -290,7 +298,7 @@ return function( scen )
 			verts[i + 1] = verts[i + 1] + wpc.position[3]
 		end
 	    local grp = core.system.groups.createGroup(1)
-		group( scen, ac.vertices, grp, {xsize, ysize}, fists, {0.9,0.3,0,1}, 10, 20 )
+		group( scen, ac.vertices, grp, {xsize, ysize}, fists, {0.9,0.3,0,1}, 0, 0,core.RioterAlignment.Pacifist )
         return grp
 	end
 
@@ -306,7 +314,7 @@ return function( scen )
 			verts[i + 1] = verts[i + 1] + wpc.position[3]
 		end
 	    local grp = core.system.groups.createGroup(2)
-		group( scen, ac.vertices, grp, {xsize, ysize}, fists, nil, 30, 10 )
+		group( scen, ac.vertices, grp, {xsize, ysize}, fists, nil, 0, 0,core.RioterAlignment.Anarchist )
         return grp
 	end
 
@@ -417,6 +425,22 @@ return function( scen )
         qrot = qrot:rotate( delta*10, core.glm.vec3.new(0,0,1) )
 
         ent:set( core.componentType.RotationComponent, { rotation = {qrot:get()}})
+    end
+
+
+    function T.rotateYLight( ent, delta )
+
+        local r = ent:get(core.componentType.RotationComponent).rotation
+        r[4] = 0
+        local vec = core.glm.vec4.new(unpack(r))
+
+        local qrot = core.glm.quat.new( )
+        
+        qrot = qrot:rotate( delta*10, core.glm.vec3.new(0,1,0) )
+        local d = qrot:mat4Cast() 
+        local newD = d * vec     
+        
+        ent:set( core.componentType.RotationComponent, { rotation = {newD:get()}})
     end
 
     return T
