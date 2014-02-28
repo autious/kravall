@@ -288,7 +288,7 @@ return function( scen )
 			verts[i + 1] = verts[i + 1] + wpc.position[3]
 		end
 	    local grp = core.system.groups.createGroup(1)
-		group( scen, ac.vertices, grp, {xsize, ysize}, fists, {0.9,0.3,0,1}, 0, 0,core.RioterAlignment.Pacifist )
+		group( scen, ac.vertices, grp, {xsize, ysize}, fists, {0.9,0.3,0,1}, 1, 1,core.RioterAlignment.Pacifist )
         return grp
 	end
 
@@ -304,7 +304,7 @@ return function( scen )
 			verts[i + 1] = verts[i + 1] + wpc.position[3]
 		end
 	    local grp = core.system.groups.createGroup(2)
-		group( scen, ac.vertices, grp, {xsize, ysize}, fists, nil, 0, 0,core.RioterAlignment.Anarchist )
+		group( scen, ac.vertices, grp, {xsize, ysize}, fists, nil, 1, 1, core.RioterAlignment.Anarchist )
         return grp
 	end
 
@@ -358,6 +358,8 @@ return function( scen )
 
     function T.registerAg1Spawn( ent )
         print( "Registering Ag1" )
+		local wpc = ent:get(core.componentType.WorldPositionComponent)
+		core.gameMetaData.registerEscapePoint( wpc.position[1], wpc.position[2], wpc.position[3] )
         ag1Spawn = ent 
     end
 
@@ -371,6 +373,8 @@ return function( scen )
 
     function T.registerAg2Spawn( ent )
         print( "Registering Ag2" )
+		local wpc = ent:get(core.componentType.WorldPositionComponent)
+		core.gameMetaData.registerEscapePoint( wpc.position[1], wpc.position[2], wpc.position[3] )
         ag2Spawn = ent 
     end
 
@@ -384,6 +388,8 @@ return function( scen )
 
     function T.registerAg3Spawn( ent )
         print( "Registering Ag3" )
+		local wpc = ent:get(core.componentType.WorldPositionComponent)
+		core.gameMetaData.registerEscapePoint( wpc.position[1], wpc.position[2], wpc.position[3] )
         ag3Spawn = ent 
     end
 

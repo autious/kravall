@@ -123,9 +123,6 @@ vec3 BlinnPhong( LightData light, SurfaceData surface, vec3 eyeDirection, vec3 l
 	float df =  max( 0.0f, dot(surface.normalDepth.xyz, lightDirection));
 	intensity = df;
 
-	occlusion = 1 - clamp(dot(vec4(lightDirection , 1.0f), surface.occlusion), 0.0f, 1.0f);
-	occlusion *= attenuation;
-
 	diffuseColor = surface.diffuse.xyz * intensity * light.color * light.intensity * attenuation;
 
 	// Specular
@@ -134,7 +131,7 @@ vec3 BlinnPhong( LightData light, SurfaceData surface, vec3 eyeDirection, vec3 l
 	{
 		vec3 H = normalize( lightDirection + eyeDirection );
 		float NdotH = dot( surface.normalDepth.xyz, H );
-		intensity = pow( clamp( NdotH, 0.0f, 1.0f ), surface.specular.w  * 256) * df;
+		intensity = pow( clamp( NdotH, 0.0f, 1.0f ), max(1.0f, surface.specular.w  * 256)) * df;
 	
 		// Temp vars, need materials with these channels
 
@@ -168,23 +165,23 @@ vec4 CalculatePointlight( LightData light, SurfaceData surface, vec3 wPos, vec3 
 vec4 CalculateSpotlight( LightData light, SurfaceData surface, vec3 wPos, vec3 eyePosition, inout float occlusion)
 {
 	vec3 lightDir = light.position - wPos;
-
+	
 	if(length(lightDir) > light.radius_length) return vec4(0.0f, 0.0f, 0.0f, 0.0f);
 	
 	float cosAngle = dot(normalize(light.orientation.xyz), normalize(-lightDir));
 	float cosOuterAngle = cos(light.spot_angle);
 	float cosInnerAngle = cosOuterAngle+light.spot_penumbra;
 	float cosDelta = cosInnerAngle - cosOuterAngle;
-
+	
 	float spot = clamp((cosAngle - cosOuterAngle) / cosDelta,0.0f, 1.0f);
-
+	
 	if((cosAngle > cos(light.spot_angle)) && (length(lightDir) <= light.radius_length))
 	{
 		// Calculate attenuation
 		float dist = length( lightDir );
 		float att = spot * ((pow(clamp( 1 - pow(dist / light.radius_length, 4.0f), 0.0f, 1.0f), 2.0f)) / (pow(dist, 2.0f) + 1));// More attenuations to chose from at the bottom of this file
 		//float att =  spot * (1.0f / dist - 1.0f / light.radius_length);
-
+	
 		vec3 eyeDir = normalize(eyePosition - wPos);
 		return vec4(BlinnPhong(light, surface, eyeDir, lightDir, att, occlusion), 0.0f);
 	}

@@ -75,8 +75,11 @@ GLFWwindow* init( int argc, char** argv )
     initScreenWidth = Core::world.m_config.GetInt( "initScreenWidth", 1280 );
     initScreenHeight = Core::world.m_config.GetInt( "initScreenHeight", 720 );
     
-	Core::InitializeGLFW(&window, initScreenWidth, initScreenHeight, Core::WindowMode::WMODE_WINDOWED);
-
+	if (Core::world.m_config.GetBool("fullscreen", false) == true)
+		Core::InitializeGLFW(&window, initScreenWidth, initScreenHeight, Core::WindowMode::WMODE_FULLSCREEN);
+	else
+		Core::InitializeGLFW(&window, initScreenWidth, initScreenHeight, Core::WindowMode::WMODE_WINDOWED);
+	
 	clop::Register("exit", ClopCloseWindow);
 
 	Core::world.InitWorld();
