@@ -31,15 +31,15 @@ return function(scen,x,y,z,qx,qy,qz,qw,scale,model,material,radius,name)
         }
     end
 
-    radius = 1
-    if radius then
-        components[#components + 1] = {
-            type = core.componentType.BoundingVolumeComponent,
-            data = { sphereOffset = { 0, 0, 0 }, sphereRadius = radius, pickingRadius = radius,
-                    collisionModel = core.BoundingVolumeCollisionModel.StaticResolution, 
-                    type = core.BoundingVolumeType.SphereBoundingType }
-        }
-    end
+    --radius = 1
+    --if radius then
+    --    components[#components + 1] = {
+    --        type = core.componentType.BoundingVolumeComponent,
+    --        data = { sphereOffset = { 0, 0, 0 }, sphereRadius = radius, pickingRadius = radius,
+    --                collisionModel = core.BoundingVolumeCollisionModel.StaticResolution, 
+    --                type = core.BoundingVolumeType.SphereBoundingType }
+    --    }
+    --end
 
     return scen:loadAssembly( components )
 

@@ -763,7 +763,11 @@ function PoliceSquadHandler:update( delta )
     --Click Selection
     if self.leftClicked then        
 		self.boxStartX, self.boxStartY = mouse.getPosition()
-        local selectedEntity = core.system.picking.getLastHitEntity()
+
+          --local aspct = core.entity.generateAspect( core.componentType.AttributeComponent, core.componentType.BoundingVolumeComponent )
+          --local selectedEntity = core.system.picking.getHitEntity(self.boxStartX, self.boxStartY, aspct )
+       local selectedEntity = core.system.picking.getLastHitEntity()
+
         if selectedEntity then
             local unitTypeComponent = selectedEntity:get(core.componentType.UnitTypeComponent);
 
