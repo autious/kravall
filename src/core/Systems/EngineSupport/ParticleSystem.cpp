@@ -34,6 +34,29 @@ namespace
 
 namespace Core
 {
+    ParticleHandle ParticleSystem::CreateParticle(int numberOfParticles, unsigned long long int materialId)
+    {
+        ParticleContainer* next = Core::world.m_levelHeap.NewObject<Core::ParticleContainer>();
+        next->m_numberOfParticles = numberOfParticles;
+        next->m_particlePointer = 0;
+        next->m_materialId = materialId;
+        next->m_particles = Core::world.m_levelHeap.NewPODArray<GFX::Particle>(numberOfParticles);
+        GFX::Content::CreateParticleBuffer(next->m_particleBufferId, next->m_numberOfParticles);
+        memset(next->m_particles, 0, numberOfParticles * sizeof(GFX::Particle));
+        next->m_particleData = Core::world.m_levelHeap.NewPODArray<Core::ParticleData>(numberOfParticles);
+        memset(next->m_particleData, 0, numberOfParticles * sizeof(Core::ParticleData));
+        next->m_prev = m_particleContainer;
+
+        m_particleContainer = next;
+
+        return static_cast<ParticleHandle>(next);
+    }
+
+    void ParticleSystem::ChangeMaterialOfDefinition(ParticleHandle handle, unsigned long long int materialId)
+    {
+        handle->m_materialId = materialId;
+    }
+
     ParticleSystem::ParticleSystem() : BaseSystem(EntityHandler::GenerateAspect<Core::WorldPositionComponent, Core::EmitterComponent>(), 0ULL)
     {
         m_numberOfContainers = 0;
@@ -182,21 +205,4 @@ namespace Core
         m_reseterCreated = false;
     }
 
-    ParticleHandle ParticleSystem::CreateParticle(int numberOfParticles, unsigned long long int m_materialId)
-    {
-        ParticleContainer* next = Core::world.m_levelHeap.NewObject<Core::ParticleContainer>();
-        next->m_numberOfParticles = numberOfParticles;
-        next->m_particlePointer = 0;
-        next->m_materialId = m_materialId;
-        next->m_particles = Core::world.m_levelHeap.NewPODArray<GFX::Particle>(numberOfParticles);
-        GFX::Content::CreateParticleBuffer(next->m_particleBufferId, next->m_numberOfParticles);
-        memset(next->m_particles, 0, numberOfParticles * sizeof(GFX::Particle));
-        next->m_particleData = Core::world.m_levelHeap.NewPODArray<Core::ParticleData>(numberOfParticles);
-        memset(next->m_particleData, 0, numberOfParticles * sizeof(Core::ParticleData));
-        next->m_prev = m_particleContainer;
-
-        m_particleContainer = next;
-
-        return static_cast<ParticleHandle>(next);
-    }
 }
