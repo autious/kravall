@@ -10,22 +10,45 @@ local WestPlacer = require "gui/placement/WestPlacer"
 local NorthWestPlacer = require "gui/placement/NorthWestPlacer"
 local CenterPlacer = require "gui/placement/CenterPlacer"
 
-local ObjectiveHandler = GUI:new()
+local ObjectiveHandler = GUI:new{
+        show = true,
+        showObjectives = true,
+    }
 
 function ObjectiveHandler:new(o)
-    o = GUI.new( self, o )
    
     o.objectives = {}
     o.objectiveComponents = {}
     o.state = ""
     o.subGUI = GUI:new({xoffset=10,yoffset=10})
 
+    o = GUI.new( self, o )
+
     o:addComponent(o.subGUI)
     o:addPlacementHandler( NorthWestPlacer )
     o.subGUI:addPlacementHandler( NorthWestPlacer )
-    o.subGUI:addComponent( Label:new{label="Objectives"} )
+    o.subGUI:addComponent( Label:new
+    {
+        label="(-) Objectives",
+        onClick = function( self )
+            o:setObjectivesShow( not o.showObjectives )
+            
+            if o.showObjectives then
+                self:setLabel( "(-) Objectives" )
+            else
+                self:setLabel( "(+) Objectives" )
+            end
+        end   
+    } )
 
     return o
+end
+
+function ObjectiveHandler:setObjectivesShow( state )
+    for i,v in pairs(self.objectiveComponents) do
+        v:setShow( state and self.show ) 
+    end
+    self.showObjectives = state
 end
 
 function ObjectiveHandler:win()
@@ -40,6 +63,13 @@ function ObjectiveHandler:loss()
         v.state = "fail"
     end 
     self.state = "fail"
+end
+
+function ObjectiveHandler:setShow( state )
+    self.show = state
+    self.subGUI:setShow( state )
+
+    self:setObjectivesShow( self.showObjectives )
 end
 
 function ObjectiveHandler:isWin()
