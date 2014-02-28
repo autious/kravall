@@ -762,6 +762,11 @@ function PoliceSquadHandler:update( delta )
         local selectedEntity = core.system.picking.getLastHitEntity()
         if selectedEntity then
             local unitTypeComponent = selectedEntity:get(core.componentType.UnitTypeComponent);
+
+			if not unitTypeComponent then
+				return
+			end
+
             local attributeComponent = selectedEntity:get(core.componentType.AttributeComponent);
 
             if attributeComponent and unitTypeComponent then                 

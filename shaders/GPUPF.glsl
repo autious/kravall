@@ -99,7 +99,7 @@ uniform int gChargeSenderIndices[3][6] = {{ 1, 2, 3, 4, 5, 0 },
 										  { 10, 11, 0, 0, 0, 0  }};
 
 uniform int gChargeReceiverIndices[3][6] = {{ 0, 1, 2, 3, 4, 5 },
-										  { 5, 5, 5, 5, 5, 0  },
+										  { 5, 5, 5, 5, 5, 5  },
 										  { 0, 0, 0, 0, 0, 0  }};
 
 //Row indices in order
