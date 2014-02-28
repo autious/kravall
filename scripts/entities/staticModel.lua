@@ -35,7 +35,7 @@ return function(scen,x,y,z,qx,qy,qz,qw,scale,model,material,radius,name)
     --if radius then
     --    components[#components + 1] = {
     --        type = core.componentType.BoundingVolumeComponent,
-    --        data = { sphereOffset = { 0, 0, 0 }, sphereRadius = radius, 
+    --        data = { sphereOffset = { 0, 0, 0 }, sphereRadius = radius, pickingRadius = radius,
     --                collisionModel = core.BoundingVolumeCollisionModel.StaticResolution, 
     --                type = core.BoundingVolumeType.SphereBoundingType }
     --    }

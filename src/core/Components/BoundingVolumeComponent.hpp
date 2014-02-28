@@ -57,6 +57,7 @@ namespace Core
 			Radius of the spehere. 
 		*/
 		float radius;
+		float pickingRadius;
 		
 		/*! 
 			Vector members to the middle of the object in object space. 
@@ -86,6 +87,8 @@ namespace Core
 			offset[0] = offsetX;
 			offset[1] = offsetY;
 			offset[2] = offsetZ;
+
+			pickingRadius = 0.0f;
 		}
 			
 	};
