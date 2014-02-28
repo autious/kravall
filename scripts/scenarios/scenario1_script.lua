@@ -298,7 +298,7 @@ return function( scen )
 			verts[i + 1] = verts[i + 1] + wpc.position[3]
 		end
 	    local grp = core.system.groups.createGroup(1)
-		group( scen, ac.vertices, grp, {xsize, ysize}, fists, {0.9,0.3,0,1}, 10, 20 )
+		group( scen, ac.vertices, grp, {xsize, ysize}, fists, {0.9,0.3,0,1}, 10, 20,core.RioterAlignment.Pacifist )
         return grp
 	end
 
@@ -314,7 +314,7 @@ return function( scen )
 			verts[i + 1] = verts[i + 1] + wpc.position[3]
 		end
 	    local grp = core.system.groups.createGroup(2)
-		group( scen, ac.vertices, grp, {xsize, ysize}, fists, nil, 30, 10 )
+		group( scen, ac.vertices, grp, {xsize, ysize}, fists, nil, 30, 10,core.RioterAlignment.Anarchist )
         return grp
 	end
 
@@ -425,6 +425,22 @@ return function( scen )
         qrot = qrot:rotate( delta*10, core.glm.vec3.new(0,0,1) )
 
         ent:set( core.componentType.RotationComponent, { rotation = {qrot:get()}})
+    end
+
+
+    function T.rotateYLight( ent, delta )
+
+        local r = ent:get(core.componentType.RotationComponent).rotation
+        r[4] = 0
+        local vec = core.glm.vec4.new(unpack(r))
+
+        local qrot = core.glm.quat.new( )
+        
+        qrot = qrot:rotate( delta*10, core.glm.vec3.new(0,1,0) )
+        local d = qrot:mat4Cast() 
+        local newD = d * vec     
+        
+        ent:set( core.componentType.RotationComponent, { rotation = {newD:get()}})
     end
 
     return T
