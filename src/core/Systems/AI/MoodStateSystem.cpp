@@ -242,7 +242,7 @@ namespace Core
 					{
 						atc->rioter.stance = RioterStance::Retreating;
 					}
-					else if (stateChangeFactor < 50) //Should be set to agitated
+					else if (stateChangeFactor < 35) //Should be set to agitated
 					{
 						atc->rioter.stance = RioterStance::Agitated;
 					}
