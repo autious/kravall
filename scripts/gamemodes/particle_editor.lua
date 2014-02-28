@@ -1,13 +1,24 @@
 local window = require "window"
 local Camera = require "rts_camera"
-local PDC = require "particle_definition"
-local ASM = require "assembly_loader"
 
 local T = {}
 
 local keyboard = core.input.keyboard
 local mouse = core.input.mouse
 local particleDefinition
+
+
+function ChangeParticleMaterial(materialFileName)
+
+    if T.particleMaterial then
+        core.contentmanager.free(T.particleMaterial)
+    end
+
+    T.particleMaterial = core.contentmanager.load(core.loaders.MaterialLoader, materialFileName, 
+        function(value)        
+            core.system.particle.changeMaterialOfDefinition(particleDefinition, value)
+        end, false)
+end
 
 
 function T:new(o)
@@ -21,8 +32,13 @@ function T:new(o)
 end
 
 function T:init()
-    self.asm = ASM.loadPack({})
-    particleDefinition = PDC:createParticleDefinition(self.asm, 10000, "assets/texture/particle/smoke.material")
+
+    -- IMPORTANT: If you are looking at this to copy into another Lua file you should require in the particle_definition 
+    --  file instead and use that with the ASM table instead of doing it like this.
+    T.particleMaterial = core.contentmanager.load(core.loaders.MaterialLoader, "assets/texture/particle/smoke.material", 
+        function(value)        
+            particleDefinition = core.system.particle.createParticleDefinition(10000, value)
+        end, false)
 
     self.emitterEntity = core.entity.create(core.componentType.EmitterComponent, core.componentType.WorldPositionComponent)
     
