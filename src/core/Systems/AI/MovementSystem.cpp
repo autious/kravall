@@ -5,7 +5,7 @@
 #include <GameUtility/GameData.hpp>
 
 //const float Core::MovementSystem::TURN_FACTOR = 10.0f;
-const float Core::MovementSystem::TURN_FACTOR = 7.5f;
+const float Core::MovementSystem::TURN_FACTOR = 12.5f;
 
 Core::MovementSystem::MovementSystem()  
 : BaseSystem( {

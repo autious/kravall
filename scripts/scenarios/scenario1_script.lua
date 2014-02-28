@@ -9,7 +9,7 @@ local tearGasPolice = (require "game_constants").tearGasPolice
 return function( scen )
     local T = {}
 
-    scen.name = "Scenario 1 (DESU DESU)"
+    scen.name = "Save the deserters!"
     scen.description =  [[Deserters and transhumans are equal, or so they say. The rebellion of the lower districts have sparked a revolution filled with violence, blood and tears. All in the name of freedom.
 
     Not everyone can handle it. That is why some people abandon their cause to seek refuge at the transhuman embassy where they will be assimilated into transhuman society in exchange for valuable information regarding the rebels' hideouts.
@@ -210,7 +210,7 @@ return function( scen )
 
         scen.gamemode.camera:lookAt( core.glm.vec3.new( 50, 100, 10), core.glm.vec3.new( -60, 0, -50 ) ) 
         obj1 = scen.gamemode:createObjective()
-        obj1.title = "Protect deserters from attacking agitators! "
+        obj1.title = "At least one deserter must survive and reach the goal."
 
         -- range, graceDistance, damageToHealth, damageToMorale, damageToMoraleOnMiss, enemyRageIncrease, enemyPressureIncrease, staminaCost, timeWhenAnimationDealsDamage, animationName
 		--fists = core.weaponData.pushWeapon( 1.0, 0.75, 20, 0.2, 0.05, 3.2, 2.9, 0.05, 0.5, "punch" )
@@ -222,7 +222,7 @@ return function( scen )
         scen.gamemode:update(delta) 
         if deserterGroup then
             local count = core.system.groups.getGroupMemberCount( deserterGroup )
-            obj1.title = "Protect deserters from attacking agitators! " .. count .. " remain."
+            obj1.title = "At least one deserter must survive and reach the goal. " .. count .. " remain."
             if  count == 0 then
                 obj1.state = "fail"
             end
@@ -288,7 +288,7 @@ return function( scen )
 			verts[i + 1] = verts[i + 1] + wpc.position[3]
 		end
 	    local grp = core.system.groups.createGroup(1)
-		group( scen, ac.vertices, grp, {xsize, ysize}, fists, {0.9,0.3,0,1}, 0, 0,core.RioterAlignment.Pacifist )
+		group( scen, ac.vertices, grp, {xsize, ysize}, fists, {0.9,0.3,0,1}, 1, 1,core.RioterAlignment.Pacifist )
         return grp
 	end
 
@@ -304,7 +304,7 @@ return function( scen )
 			verts[i + 1] = verts[i + 1] + wpc.position[3]
 		end
 	    local grp = core.system.groups.createGroup(2)
-		group( scen, ac.vertices, grp, {xsize, ysize}, fists, nil, 0, 0,core.RioterAlignment.Anarchist )
+		group( scen, ac.vertices, grp, {xsize, ysize}, fists, nil, 1, 1, core.RioterAlignment.Anarchist )
         return grp
 	end
 
@@ -358,6 +358,8 @@ return function( scen )
 
     function T.registerAg1Spawn( ent )
         print( "Registering Ag1" )
+		local wpc = ent:get(core.componentType.WorldPositionComponent)
+		core.gameMetaData.registerEscapePoint( wpc.position[1], wpc.position[2], wpc.position[3] )
         ag1Spawn = ent 
     end
 
@@ -371,6 +373,8 @@ return function( scen )
 
     function T.registerAg2Spawn( ent )
         print( "Registering Ag2" )
+		local wpc = ent:get(core.componentType.WorldPositionComponent)
+		core.gameMetaData.registerEscapePoint( wpc.position[1], wpc.position[2], wpc.position[3] )
         ag2Spawn = ent 
     end
 
@@ -384,6 +388,8 @@ return function( scen )
 
     function T.registerAg3Spawn( ent )
         print( "Registering Ag3" )
+		local wpc = ent:get(core.componentType.WorldPositionComponent)
+		core.gameMetaData.registerEscapePoint( wpc.position[1], wpc.position[2], wpc.position[3] )
         ag3Spawn = ent 
     end
 
