@@ -219,7 +219,7 @@ namespace Core
 						}
 						else if (stateChangeFactor > 50) //Should be set to attacking
 						{
-							atc->rioter.stance = RioterStance::Attacking;
+							//atc->rioter.stance = RioterStance::Attacking;
 						}
 						else if (stateChangeFactor < 20) //Should be set to normal
 						{
