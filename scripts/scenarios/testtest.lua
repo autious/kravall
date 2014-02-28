@@ -72,7 +72,7 @@ return function( scen )
 		core.system.groups.setGroupGoal(rGroup, 0, 0, -300)
 
 		local sqads = {}	
-		for i = 0, 0 do
+		for i = 0, 30 do
 			--sqads[#sqads + 1] = squad(scen, 20, 0, 0, math.pi/2, fists);
 			scen.gamemode:addSquad( policeSquad( scen, 20, 0, 0, 0, fists))
 		end
