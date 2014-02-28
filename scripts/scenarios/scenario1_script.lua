@@ -358,6 +358,8 @@ return function( scen )
 
     function T.registerAg1Spawn( ent )
         print( "Registering Ag1" )
+		local wpc = ent:get(core.componentType.WorldPositionComponent)
+		core.gameMetaData.registerEscapePoint( wpc.position[1], wpc.position[2], wpc.position[3] )
         ag1Spawn = ent 
     end
 
@@ -371,6 +373,8 @@ return function( scen )
 
     function T.registerAg2Spawn( ent )
         print( "Registering Ag2" )
+		local wpc = ent:get(core.componentType.WorldPositionComponent)
+		core.gameMetaData.registerEscapePoint( wpc.position[1], wpc.position[2], wpc.position[3] )
         ag2Spawn = ent 
     end
 
@@ -384,6 +388,8 @@ return function( scen )
 
     function T.registerAg3Spawn( ent )
         print( "Registering Ag3" )
+		local wpc = ent:get(core.componentType.WorldPositionComponent)
+		core.gameMetaData.registerEscapePoint( wpc.position[1], wpc.position[2], wpc.position[3] )
         ag3Spawn = ent 
     end
 
