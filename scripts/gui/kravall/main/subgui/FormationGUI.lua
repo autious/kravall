@@ -41,10 +41,10 @@ function FormationGUI:new(o)
     o.formations[f_halfcircle] = Checkbox:new {  
                             doStateSwitchOnPress = false,
                             checked = false,
-                            matOpen             = "assets/texture/ui/form-square-unselected_00.material",
-                            matSelected         = "assets/texture/ui/form-square-selected_00.material",
-                            matHoverOpen        = "assets/texture/ui/form-square-hover_00.material",
-                            matHoverSelected    = "assets/texture/ui/form-square-extra_00.material",
+                            matOpen             = "assets/texture/ui/form-halfcircle-unselected_00.material",
+                            matSelected         = "assets/texture/ui/form-halfcircle-selected_00.material",
+                            matHoverOpen        = "assets/texture/ui/form-halfcircle-hover_00.material",
+                            matHoverSelected    = "assets/texture/ui/form-halfcircle-extra_00.material",
                             onClick            = function(self,value) if value then o.onFormationSelect( f_halfcircle ) else o.onFormationSelect( f_no ) end end,
                             xoffset             = xoffset
                         }
