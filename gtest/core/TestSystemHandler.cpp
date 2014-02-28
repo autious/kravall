@@ -95,6 +95,7 @@ namespace Core {
         EXPECT_FALSE( t2->has(e) );
         EXPECT_FALSE( t1->has(e) );
 
+
         e = e_handler.CreateEntity<TS2_NO_TS1_NO>( Component2() );
         EXPECT_FALSE( t2->has(e) );
         EXPECT_FALSE( t1->has(e) );
@@ -106,6 +107,52 @@ namespace Core {
         e_handler.DestroyEntity(e);
         EXPECT_FALSE( t2->has(e) );
         EXPECT_FALSE( t1->has(e) );
+
+        e = e_handler.CreateEntity();
+        e_handler.AddComponents<TS2_OK_TS1_OK>( e, Component1(), Component3(), Component4() );
+        EXPECT_TRUE( t2->has(e) );
+        EXPECT_TRUE( t1->has(e) );
+
+        e_handler.RemoveComponents<TS2_OK_TS1_OK>(e);
+        EXPECT_FALSE( t2->has(e) );
+        EXPECT_FALSE( t1->has(e) );
+        e_handler.DestroyEntity( e );
+
+        //Checking "dynamic loads"
+        e = e_handler.CreateEntity();
+        EXPECT_FALSE( t2->has(e) );
+        EXPECT_FALSE( t1->has(e) );
+
+        e_handler.AddComponentsAspect( e, 1ULL << 0 | 1ULL << 3 );
+        EXPECT_FALSE( t2->has(e) );
+        EXPECT_TRUE( t1->has(e) );
+
+        e_handler.RemoveComponentsAspect( e, 1ULL << 0 | 1ULL << 3 );
+        EXPECT_FALSE( t2->has(e) );
+        EXPECT_FALSE( t1->has(e) );
+        e_handler.DestroyEntity( e );
+
+        e_handler.CreateEntity();
+        EXPECT_FALSE( t2->has(e) );
+        EXPECT_FALSE( t1->has(e) );
+
+        e_handler.AddComponentsAspect( e, 1ULL << 1 );
+        EXPECT_FALSE( t2->has(e) );
+        EXPECT_FALSE( t1->has(e) );
+        e_handler.DestroyEntity( e );
+
+        e = e_handler.CreateEntity();
+        EXPECT_FALSE( t2->has(e) );
+        EXPECT_FALSE( t1->has(e) );
+
+        e_handler.AddComponentsAspect( e, 1ULL << 0 | 1ULL << 2 | 1ULL << 3 );
+        EXPECT_TRUE( t2->has(e) );
+        EXPECT_TRUE( t1->has(e) );
+
+        e_handler.RemoveComponentsAspect( e, 1ULL << 0 | 1ULL << 2 | 1ULL << 3 );
+        EXPECT_FALSE( t2->has(e) );
+        EXPECT_FALSE( t1->has(e) );
+        e_handler.DestroyEntity( e );
     }
 }
 #endif

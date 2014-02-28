@@ -17,7 +17,7 @@ Core::PVector::~PVector( )
     free( m_data );
 }
 
-int Core::PVector::Alloc( )
+int Core::PVector::Alloc( void *def )
 {
     int id = -1;
     if( m_count >= m_size )
@@ -30,8 +30,8 @@ int Core::PVector::Alloc( )
 
     if( deleted.size() > 0 )
     {
-        id = deleted.back();
-        deleted.pop_back();
+        id = deleted.front();
+        deleted.pop();
     }
     else
     {
@@ -40,18 +40,24 @@ int Core::PVector::Alloc( )
 
     m_count++;
 
+    if( def != nullptr )
+    {
+        Set( id, def );
+    }
+
     return id;
 }
 
 void Core::PVector::Release( int id )
 {
-    deleted.push_back( id );
+    deleted.push( id );
     m_count--;
 }
 
 void* Core::PVector::Get( int id )
 {
-    assert( id >= 0 && id < (int)m_count );
+
+    assert( id >= 0 && id < (int)m_size );
     return &(((unsigned char*)m_data)[id*m_typesize]);
 }
 
@@ -68,4 +74,14 @@ size_t Core::PVector::GetCount()
 size_t Core::PVector::GetAllocation()
 {
     return m_size;
+}
+
+size_t Core::PVector::GetMemoryUse()
+{
+    return m_count * m_typesize;
+}
+
+size_t Core::PVector::GetMemoryAllocation()
+{
+    return m_size * m_typesize;
 }

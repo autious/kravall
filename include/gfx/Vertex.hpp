@@ -5,12 +5,13 @@
 
 namespace GFX
 {
-	struct StaticVertex
+	struct Vertex
 	{
 		glm::vec4 position;
 		glm::vec4 normal;
 		glm::vec4 tangent;
-		glm::vec4 binormal;
+		glm::ivec4 boneIndices;
+		glm::vec4 boneWeights;
 		glm::vec2 uv;
 	};
 }

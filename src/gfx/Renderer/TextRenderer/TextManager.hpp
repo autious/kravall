@@ -1,7 +1,7 @@
 #ifndef SRC_GFX_RENDERER_TEXT_RENDERER_TEXT_MANAGER_HPP
 #define SRC_GFX_RENDERER_TEXT_RENDERER_TEXT_MANAGER_HPP
 
-#include "Buffers/Font.hpp"
+#include "Buffers/Text.hpp"
 #include <vector>
 
 namespace GFX
@@ -26,6 +26,7 @@ namespace GFX
 		\param t Text to be added
 		*/
 		void AddText(Text t);
+		void AddTextbox(GFX::FontData* fontData, glm::vec4 rectangle, float offset, float size, glm::vec4 color, const char* text);
 		
 		/*!
 		Return entire vector of text objects

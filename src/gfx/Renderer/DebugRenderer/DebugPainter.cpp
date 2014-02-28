@@ -3,6 +3,7 @@
 
 #include "../RenderCore.hpp"
 #include <logger/Logger.hpp>
+#include <Textures/TextureManager.hpp>
 
 namespace GFX
 {
@@ -40,8 +41,6 @@ namespace GFX
 		m_pointColorUniform = m_shaderManager->GetUniformLocation("DebugPoint", "inColor");
 		m_pointSizeUniform = m_shaderManager->GetUniformLocation("DebugPoint", "pointSize");
 
-		m_uniformBufferManager->CreateBasicCameraUBO(m_shaderManager->GetShaderProgramID("DebugPoint"));
-
 		// Create and attach circle debug shaders
 		m_shaderManager->CreateProgram("DebugCircle");
 		m_shaderManager->AttachShader("DebugVS", "DebugCircle");
@@ -54,8 +53,6 @@ namespace GFX
 		m_circleColorUniform = m_shaderManager->GetUniformLocation("DebugCircle", "inColor");
 		m_screenSizeUniform = m_shaderManager->GetUniformLocation("DebugCircle", "screenSizeAndLinewidth");
 
-		m_uniformBufferManager->CreateBasicCameraUBO(m_shaderManager->GetShaderProgramID("DebugCircle"));
-
 		// Create and attach line debug shaders
 		m_shaderManager->CreateProgram("DebugLine");
 		m_shaderManager->AttachShader("DebugVS", "DebugLine");
@@ -66,8 +63,6 @@ namespace GFX
 		m_lineStartUniform = m_shaderManager->GetUniformLocation("DebugLine", "pointPosition");
 		m_lineEndUniform = m_shaderManager->GetUniformLocation("DebugLine", "pointPosition2");
 		m_lineColorUniform = m_shaderManager->GetUniformLocation("DebugLine", "inColor");
-
-		m_uniformBufferManager->CreateBasicCameraUBO(m_shaderManager->GetShaderProgramID("DebugLine"));
 
 		// Create and attach rect debug shaders
 		m_shaderManager->CreateProgram("DebugRect");
@@ -80,55 +75,49 @@ namespace GFX
 		m_rectDimUniform = m_shaderManager->GetUniformLocation("DebugRect", "pointPosition2");
 		m_rectColorUniform = m_shaderManager->GetUniformLocation("DebugRect", "inColor");
 
-		m_uniformBufferManager->CreateBasicCameraUBO(m_shaderManager->GetShaderProgramID("DebugRect"));
-
 		// Create and attach box debug shaders
 		m_shaderManager->CreateProgram("DebugBox");
 		m_shaderManager->AttachShader("DebugVS", "DebugBox");
 		m_shaderManager->AttachShader("DebugBoxGS", "DebugBox");
 		m_shaderManager->AttachShader("DebugFS", "DebugBox");
 		m_shaderManager->LinkProgram("DebugBox");
+		
+		m_boxPosUniform = m_shaderManager->GetUniformLocation("DebugBox", "pointPosition");
+		m_boxDimUniform = m_shaderManager->GetUniformLocation("DebugBox", "pointPosition2");
+		m_boxColorUniform = m_shaderManager->GetUniformLocation("DebugBox", "inColor");
 
-		m_rectPosUniform = m_shaderManager->GetUniformLocation("DebugBox", "pointPosition");
-		m_rectDimUniform = m_shaderManager->GetUniformLocation("DebugBox", "pointPosition2");
-		m_rectColorUniform = m_shaderManager->GetUniformLocation("DebugBox", "inColor");
-
-		m_uniformBufferManager->CreateBasicCameraUBO(m_shaderManager->GetShaderProgramID("DebugBox"));
-
-
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("DebugBox"), "PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
 	}
 
-	void DebugPainter::Render(glm::mat4 viewMatrix, glm::mat4 projMatrix)
+	void DebugPainter::Render(FBOTexture* depthBuffer, FBOTexture* color, glm::mat4 viewMatrix, glm::mat4 projMatrix, bool draw)
 	{
 		BasePainter::Render();
 
-		if (DebugDrawing().ShouldRender())
+		if (DebugDrawing().ShouldRender() && draw)
 		{
 
+			glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
+
+
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthBuffer->GetTextureHandle(), 0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color->GetTextureHandle(), 0);
+
+			GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0 };
+			glDrawBuffers(1, drawBuffers);
+
+			glClear(GL_COLOR_BUFFER_BIT);
+
 			//DetachTextures();
-			GLenum err = 0;
-			err = glGetError();
         
-            if( err )
-            {
-                LOG_ERROR << "Got GL error: " << err << std::endl;
-                err = 0;
-            }
 
 			glBindVertexArray(m_dummyVAO);
 			glDisable(GL_PROGRAM_POINT_SIZE);
-
 			glEnable(GL_BLEND);
-			err = glGetError();
             
-            if( err )
-            {
-                LOG_ERROR << "Got GL error: " << err << std::endl;
-            }
 
 			// Draw 3D
 			//Disable depth for debug
-			glDisable(GL_DEPTH_TEST);
+			//glDisable(GL_DEPTH_TEST);
 
 			BasicCamera bc;
 			bc.viewMatrix = viewMatrix;
@@ -136,6 +125,25 @@ namespace GFX
 
 			m_uniformBufferManager->SetBasicCameraUBO(bc);
 
+			// Draw boxes
+			m_shaderManager->UseProgram("DebugBox");
+			for (unsigned int i = 0; i < DebugDrawing().GetFilledBoxes().size(); ++i)
+			{
+				DebugBox b = DebugDrawing().GetFilledBoxes()[i];
+
+				m_shaderManager->SetUniform(1, b.color, m_boxColorUniform);
+				m_shaderManager->SetUniform(1, b.position, m_boxPosUniform);
+				m_shaderManager->SetUniform(1, b.dimensions, m_boxDimUniform);
+				
+				if (b.useDepth)
+					glEnable(GL_DEPTH_TEST);
+				else
+					glDisable(GL_DEPTH_TEST); 
+
+				glDrawArrays(GL_POINTS, 0, 1);
+			}
+			m_shaderManager->ResetProgram();
+			
 
 			// Draw lines3D
 			m_shaderManager->UseProgram("DebugLine");
@@ -148,30 +156,41 @@ namespace GFX
 				m_shaderManager->SetUniform(1, dl.end, m_lineEndUniform);
 
 				glLineWidth(dl.thickness);
+
+				if (dl.useDepth)
+					glEnable(GL_DEPTH_TEST);
+				else
+					glDisable(GL_DEPTH_TEST); 
+
 				glDrawArrays(GL_POINTS, 0, 1);
 			}
 			glLineWidth(1.0f);
 			m_shaderManager->ResetProgram();
 
-			// Draw boxes
-			m_shaderManager->UseProgram("DebugBox");
-			for (unsigned int i = 0; i < DebugDrawing().GetFilledBoxes().size(); ++i)
-			{
-				DebugBox b = DebugDrawing().GetFilledBoxes()[i];
-
-				m_shaderManager->SetUniform(1, b.color, m_rectColorUniform);
-				m_shaderManager->SetUniform(1, b.position, m_rectPosUniform);
-				m_shaderManager->SetUniform(1, b.dimensions, m_rectDimUniform);
-
-				glDrawArrays(GL_POINTS, 0, 1);
-			}
-			m_shaderManager->ResetProgram();
-
 			// Draw 2D
+			glDisable(GL_DEPTH_TEST); 
 			bc.viewMatrix = glm::mat4x4(1.0f);
 			bc.projMatrix = glm::mat4x4(1.0f);
 			m_uniformBufferManager->SetBasicCameraUBO(bc);
+			
+			// Draw lines
+			m_shaderManager->UseProgram("DebugLine");
 
+			for (unsigned int i = 0; i < DebugDrawing().GetLines().size(); ++i)
+			{
+				DebugLine dl = DebugDrawing().GetLines()[i];
+
+				m_shaderManager->SetUniform(1, dl.color, m_lineColorUniform);
+				m_shaderManager->SetUniform(1, dl.start, m_lineStartUniform);
+				m_shaderManager->SetUniform(1, dl.end, m_lineEndUniform);
+
+				glLineWidth(dl.thickness);
+				glDrawArrays(GL_POINTS, 0, 1);
+			}
+			glLineWidth(1.0f);
+			m_shaderManager->ResetProgram();
+
+			BasePainter::ClearFBO();
 
 			// Draw filled rectangles
 			m_shaderManager->UseProgram("DebugRect");
@@ -212,11 +231,8 @@ namespace GFX
 				DebugPoint dp = DebugDrawing().GetPoints()[i];
 
 				m_shaderManager->SetUniform(1, dp.color, m_pointColorUniform);
-				err = glGetError();
 				m_shaderManager->SetUniform(1, dp.position, m_pointPositionUniform);
-				err = glGetError();
 				m_shaderManager->SetUniform(dp.size, m_pointSizeUniform);
-				err = glGetError();
 
 				glPointSize(dp.size);
 				glDrawArrays(GL_POINTS, 0, 1);
@@ -224,31 +240,34 @@ namespace GFX
 			glPointSize(1.0f);
 			m_shaderManager->ResetProgram();
 
-			// Draw lines
-			m_shaderManager->UseProgram("DebugLine");
 
-			for (unsigned int i = 0; i < DebugDrawing().GetLines().size(); ++i)
-			{
-				DebugLine dl = DebugDrawing().GetLines()[i];
+			m_shaderManager->UseProgram("TQ");
 
-				m_shaderManager->SetUniform(1, dl.color, m_lineColorUniform);
-				m_shaderManager->SetUniform(1, dl.start, m_lineStartUniform);
-				m_shaderManager->SetUniform(1, dl.end, m_lineEndUniform);
+			glDisable(GL_DEPTH_TEST);
+			glDepthMask(GL_FALSE);
 
-				glLineWidth(dl.thickness);
-				glDrawArrays(GL_POINTS, 0, 1);
-			}
-			glLineWidth(1.0f);
+			m_shaderManager->SetUniform(1.0f, m_shaderManager->GetUniformLocation("TQ", "alphaIN"));
+			TextureManager::BindTexture(color->GetTextureHandle(), m_shaderManager->GetUniformLocation("TQ", "textureIN"), 0, GL_TEXTURE_2D);
+
+			glBindVertexArray(m_dummyVAO);
+			glDrawArrays(GL_POINTS, 0, 1);
+
 			m_shaderManager->ResetProgram();
+
+			glEnable(GL_DEPTH_TEST);
+			glDepthMask(GL_TRUE);
+			glDisable(GL_BLEND);
+
+			BasePainter::ClearFBO();
+
+			TextureManager::UnbindTexture();
+
+			//DebugDrawing().Clear();
 		}
-
-		glDisable(GL_BLEND);
-
-		glEnable(GL_DEPTH_TEST);
-
-		ClearFBO();
-
+		
 		DebugDrawing().Clear();
+		
+
 	}
 
 

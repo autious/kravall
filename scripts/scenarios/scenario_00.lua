@@ -1,0 +1,77 @@
+local entities = require "entities"
+local scenario = require "scenario"
+local scen = scenario.new()
+
+local ambient = entities.get "ambientLight"
+local directional = entities.get "directionalLight"
+local pointLight = entities.get "pointLight"
+local spotLight = entities.get "spotLight"
+local area = entities.get "area"
+local rioter = entities.get "rioter"
+local staticModel = entities.get "staticModel"
+
+scen.asm:specific_content( core.contentmanager.load( core.loaders.NavigationMeshLoader, "scripts/scenarios/scenario_00.nav", function( value ) end, false ) )
+
+-- usual weapons...
+local fists = core.weaponData.pushWeapon( 1.0, 20, 0.2, 0.05, 0.05, 0.5, "punch" )
+
+local script = dofile "scripts/scenarios/scenario_00_script.lua"( scen )
+
+local function genF( e, f )
+    if type( script[f] ) == "function"  then
+        return function() script[ f ]( e ) end
+    else
+        error( "Function " .. f .. " does not exist in script file" )
+    end
+end
+
+directional( scen, -0.545976996421814, -0.7968841791152954, -0.2586206793785095, 1.0, 0.8689313530921936, 0.69304358959198, 0.4585987329483032 )
+ambient( scen, 0.5842457413673401, 0.857562243938446, 1.0, 0.5259235501289368 )
+
+scen.cameras = scen.cameras or {}
+scen.cameras["aaa"] = {
+    view = core.glm.mat4.new(
+    -0.4433393180370331, -0.14487029612064362, 0.8845692873001099, -0.0,
+    -0.0, 0.986852765083313, 0.16162176430225372, 0.0,
+    -0.8963538408279419, 0.07165328413248062, -0.4375106394290924, -0.0,
+    -2.68745493888855, -11.27133560180664, -8.940114974975586, 1.0 ),
+    fov = 1.1667441129684448
+}
+scen.cameras["hej"] = {
+    view = core.glm.mat4.new(
+    -0.4433393180370331, -0.14487029612064362, 0.8845692873001099, -0.0,
+    -0.0, 0.986852765083313, 0.16162176430225372, 0.0,
+    -0.8963538408279419, 0.07165328413248062, -0.4375106394290924, -0.0,
+    1.50411057472229, -9.208680152893066, -7.83828592300415, 1.0 ),
+    fov = 1.1667441129684448
+}
+local ent = area( scen, {-37.92256546020508, 0, -5.602817535400391}, {-7.091899394989014, 6.968003273010254, -7.091899394989014, -7.051133155822754, 7.091899394989014, -7.051133155822754, 7.091899394989014, 6.968003273010254}, "" )
+scen:registerInitCallback( genF( ent, "goal_1" ) )
+
+local ent = area( scen, {-5.740078926086426, 0, 22.64487648010254}, {-7.091899394989014, 6.968003273010254, -7.091899394989014, -7.051133155822754, 7.091899394989014, -7.051133155822754, 7.091899394989014, 6.968003273010254}, "" )
+scen:registerInitCallback( genF( ent, "goal_0" ) )
+
+local ent = area( scen, {-24.276535034179688, 0, -5.511226654052734}, {-7.091899394989014, 6.968003273010254, -7.091899394989014, -7.051133155822754, 7.091899394989014, -7.051133155822754, 7.091899394989014, 6.968003273010254}, "" )
+scen:registerInitCallback( genF( ent, "createRioter_1" ) )
+
+local ent = area( scen, {-5.883894920349121, 0, -20.169673919677734}, {-7.091899394989014, 6.968003273010254, -7.091899394989014, -7.051133155822754, 7.091899394989014, -7.051133155822754, 7.091899394989014, 6.968003273010254}, "" )
+scen:registerInitCallback( genF( ent, "createRioter_0" ) )
+
+local ent = pointLight( scen, -31.540992736816406, 7.834939956665039, -6.377818584442139, 0.9756662845611572, 1.0, 0.0, 15.279999732971191, 30.0, "" )
+local ent = pointLight( scen, -3.063934803009033, 4.579497337341309, -20.711673736572266, 0.0, 1.0, 0.003387451171875, 10.819999694824219, 10.0, "" )
+local ent = pointLight( scen, -6.201173305511475, 10.839999198913574, -11.77055835723877, 0.0, 0.9058628082275391, 1.0, 10.819999694824219, 10.0, "" )
+local ent = pointLight( scen, -9.680977821350098, 3.744184970855713, -11.102054595947266, 1.0, 0.01836186647415161, 0.0, 10.109999656677246, 10.0, "namememe" )
+local ent = pointLight( scen, -3.131089210510254, 10.901637077331543, 0.08429203927516937, 1.0, 0.01836186647415161, 0.0, 1.130000114440918, 10.0, "" )
+local ent = spotLight( scen, -2.9666647911071777, 10.056656837463379, 4.576138019561768, -0.10879802703857422, -0.9657140374183655, 0.23571032285690308, 1.0, 0.0, 0.9490699768066406, 0.24870948493480682, 0.06963865607823072, 13.09999942779541, 100.0, "" )
+local ent = spotLight( scen, -9.171133041381836, 10.056656837463379, 4.576138019561768, -0.10879802703857422, -0.9657140374183655, 0.23571032285690308, 1.0, 0.07961362600326538, 0.10508197546005249, 0.24870948493480682, 0.06963865607823072, 12.709999084472656, 100.0, "" )
+local ent = spotLight( scen, -9.171133041381836, 10.056656837463379, -0.12058043479919434, -0.10879802703857422, -0.9657140374183655, 0.23571032285690308, 0.2881484031677246, 1.0, 0.09323525428771973, 0.2225295454263687, 0.06067202476666589, 13.0, 100.0, "" )
+local ent = spotLight( scen, -2.3219308853149414, 9.614997863769531, -3.261042833328247, -0.20182229578495026, 0.15756170451641083, 0.9666654467582703, 0.0, 0.7970137596130371, 1.0, 0.5061461925506592, 0.14172093451755785, 8.699999809265137, 100.0, "" )
+
+local ent = staticModel( scen, -10.266436576843262, 16.437965393066406, -7.168942928314209, 0.0, 0.0, 0.0, 1.0, 1.0, "assets/model/animated/police/cop/cop-light_00.bgnome", "assets/material/animated/police/cop/cop-light_00.material", "" )
+local ent = staticModel( scen, -3.2026877403259277, 0.0, 5.6742706298828125, 0.0, 0.0, 0.0, 1.0, 6.863753795623779, "assets/model/animated/police/cop/cop-light_00.bgnome", "assets/material/animated/police/cop/cop-light_00.material", "per" )
+local ent = staticModel( scen, -1.789361596107483, 1.1920928955078125e-07, -13.516300201416016, 0.0, 0.0, 0.0, 1.0, 6.863753795623779, "assets/model/animated/police/cop/cop-light_00.bgnome", "assets/material/animated/police/cop/cop-light_00.material", "per" )
+local ent = staticModel( scen, -9.270901679992676, 1.1920928955078125e-07, 1.1057147979736328, 0.0, 0.0, 0.0, 1.0, 6.863753795623779, "assets/model/animated/police/cop/cop-light_00.bgnome", "assets/material/animated/police/cop/cop-light_00.material", "per" )
+local ent = staticModel( scen, -9.068596839904785, 0.0, 5.6742706298828125, 0.0, 0.0, 0.0, 1.0, 6.863753795623779, "assets/model/animated/police/cop/cop-light_00.bgnome", "assets/material/animated/police/cop/cop-light_00.material", "per" )
+
+
+return scen

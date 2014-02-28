@@ -3,12 +3,14 @@
 
 #include "BaseSystem.hpp"
 #include "PVector.hpp"
+#include <TemplateUtility/TemplateIndex.hpp>
 
 #include <array>
 #include <utility>
 #include <vector>
 
 #include <Timer.hpp>
+
 
 #define GNAME( name ) #name
 
@@ -53,13 +55,13 @@ namespace Core
         {
             for( int i = 0; i < SYSTEM_COUNT; i++ )
             {
-				Timer().Start();
+				m_timer.Start();
                  
                 m_systems[i]->Update( delta );
 
-				Timer().Stop();
+				m_timer.Stop();
 
-				std::chrono::microseconds diff = Timer().GetDelta();
+				std::chrono::microseconds diff = m_timer.GetDelta();
 
                 m_frameTimes[i] = diff; 
             } 
@@ -85,6 +87,13 @@ namespace Core
             return m_systems[id];
         }
 
+
+        template <typename System>
+        System* GetSystem()
+        {
+            return reinterpret_cast<System*>(m_systems[Index<System, std::tuple<Args...>>::value]);
+        }
+
         std::vector<std::pair<const char*,std::chrono::microseconds>> GetFrameTime()
         {
             std::vector<std::pair<const char*,std::chrono::microseconds>> ar;
@@ -100,6 +109,7 @@ namespace Core
     private:
         std::array<BaseSystem*,SYSTEM_COUNT> m_systems;
         std::array<std::chrono::microseconds,SYSTEM_COUNT> m_frameTimes;
+		HighresTimer m_timer;
     };
 }
 #endif

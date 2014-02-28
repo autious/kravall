@@ -1,23 +1,39 @@
-translateOS = { windows="win32", linux="linux"}
+function dist_name()
+    if os.is( "linux" ) then
+        if os.is64bit() then 
+            return "linux_amd64" 
+        else
+            error( "Build script does not support 32-bit linux machines" ) 
+        end
+    elseif os.is( "windows" ) then
+        return "win32"
+    end
+end
 
 solution "RiotGame"
     configurations {"DebugTest","Debug", "Release", "ReleaseTest", "PureReleaseTest", "PureDebugTest"}
         flags{ "Unicode", "NoPCH" } 
-        libdirs { translateOS[os.get()] .. "/lib" }
-        includedirs { translateOS[os.get()] .. "/deps", "deps", "include"}
+        libdirs { dist_name() .. "/lib" }
+        includedirs { dist_name() .. "/deps", "deps", "include"}
     
-    local location_path = "build"
+        local location_path = "build"
 
-    if os.is( "linux" ) then
-        buildoptions { "-std=c++11 -Wall"} -- -Wno-unused-parameter" }
-        location_path = "" 
-    elseif(os.is("windows")) then
-        location_path = location_path .."/win32/" .. _ACTION
-        location ( location_path )
-        location_path = location_path .. "/projects"
-    end
-    
-	defines { "_CRT_SECURE_NO_WARNINGS" }
+        -- GMAKE people are lazy, populate root folder with build files
+        -- Also give extra flags to the GCC compiler
+        if _ACTION and _ACTION == "gmake" then 
+            buildoptions { "-std=c++11 -Wall -Werror=return-type"}-- -Wconversion"} -- -Wno-unused-parameter" }
+            --Add the lib folder as an rpath.
+            linkoptions { "-Wl,-rpath=" .. dist_name() .. "/lib" }
+            location_path = "" 
+        elseif _ACTION then
+            --Disable warnings about using completely standard (and normal) c functions.
+            --In visual studio
+	        defines { "_CRT_SECURE_NO_WARNINGS", "NOMINMAX" }
+
+            location_path = location_path .."/" .. dist_name() .. "/" .. _ACTION
+            location ( location_path )
+            location_path = location_path .. "/projects"
+        end
 	
     configuration { "Debug or DebugTest or PureDebugTest" }
         defines { "DEBUG" }
@@ -34,26 +50,26 @@ solution "RiotGame"
         defines { "SKIP_RUN" }
 
     configuration { "Debug" }
-        targetdir ( "bin/" .. translateOS[os.get()] .. "/debug" )
+        targetdir ( "bin/" .. dist_name() .. "/debug" )
 
     configuration { "Release" } 
-        targetdir ( "bin/" .. translateOS[os.get()] .. "/release" )   
+        targetdir ( "bin/" .. dist_name() .. "/release" )   
 
     configuration { "DebugTest" }
-        targetdir ( "bin/" .. translateOS[os.get()] .. "/debugtest" )
+        targetdir ( "bin/" .. dist_name() .. "/debugtest" )
 
     configuration { "ReleaseTest" } 
-        targetdir ( "bin/" .. translateOS[os.get()] .. "/releasetest" )   
+        targetdir ( "bin/" .. dist_name() .. "/releasetest" )   
     
     configuration { "PureReleaseTest" } 
-        targetdir ( "bin/" .. translateOS[os.get()] .. "/purereleasetest" )   
+        targetdir ( "bin/" .. dist_name() .. "/purereleasetest" )   
 
     configuration { "PureDebugTest" } 
-        targetdir ( "bin/" .. translateOS[os.get()] .. "/puredebugtest" )   
+        targetdir ( "bin/" .. dist_name() .. "/puredebugtest" )   
 
     project "core"
         targetname "RiotGame" 
-        debugdir "" -- fungerade inte för utskrift av textfiler, lämnar detta så det syns utifall något faller iom. det / John
+        debugdir ""
         location ( location_path )
         language "C++"
         kind "ConsoleApp"
@@ -62,16 +78,17 @@ solution "RiotGame"
 
         if os.is( "linux" ) then
             includedirs { "/usr/include/lua5.1" }
+            includedirs { "/usr/include/freetype2" }
         end
 
         --Idiotic non-matching naming convenstions.
         if( os.is( "linux" ) ) then
-           links { "lua5.1" } 
+           links { "luajit-5.1" } 
         else
             links { "lua51" }
         end
 
-        links { "glfw3", "gfx", "logger" }
+        links { "glfw3", "gfx", "logger", "freetype" }
         configuration{ "*Test" }
             links { "gtest" }
         configuration{ "windows" }
@@ -88,7 +105,7 @@ solution "RiotGame"
         location ( location_path )
         language "C++"
         kind "SharedLib"
-        files { "gtest/gfx/**.cpp", "src/gfx/**.hpp", "src/gfx/**.h", "src/gfx/**.cpp", "include/gfx/**.hpp" ,"include/utility/**.hpp", "shaders/**.vertex", "shaders/**.geometry", "shaders/**.fragment", "shaders/**.compute" }
+        files { "gtest/gfx/**.cpp", "src/gfx/**.hpp", "src/gfx/**.h", "src/gfx/**.cpp", "include/gfx/**.hpp" ,"include/utility/**.hpp", "shaders/**.vertex", "shaders/**.geometry", "shaders/**.fragment", "shaders/**.compute", "shaders/**.glsl" }
 
 		includedirs { "src/gfx", "include/gfx", "include/utility", "shaders", "include", "deps" }       
         

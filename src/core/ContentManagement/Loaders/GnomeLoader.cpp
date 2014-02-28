@@ -4,6 +4,12 @@
 #include <string>
 #include <fstream>
 #include <gfx/GFXInterface.hpp>
+#include <logger/Logger.hpp>
+#include <Animation/AnimationManager.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+//#include <glm/ext.hpp>
 
 namespace Core
 {
@@ -17,239 +23,299 @@ namespace Core
 
     }
 
-    void* GnomeLoader::LoadAsync(const char* assetName, Core::FinisherVector& finisherList, std::mutex& finisherLock)
+    Core::AssetHandle GnomeLoader::LoadAsync(const char* assetName)
     {
-        /*
-        finisherList.push_back(std::make_tuple(this, gnome, [&handle, ](Core::GnomeLoader* loader, Core::AssetHandle lambdaHandle)
-            {
-                Core::GnomeLoader::Gnome* gnome = reinterpret_cast<Core::GnomeLoader::Gnome>(lambdaHandle);
-                Core::ModelData data;
-                
-                GFX::Content::LoadStaticMesh(data.IBO, data.VAO, gnome->mesh.numberOfVertices, gnome->mesh.numberOfVertices, vs, indices);
-                
-                delete[] indices;
-                delete gnome;
-            }));  
-        */
-        return nullptr;
+        Core::GnomeLoader::Gnome* gnome = LoadGnomeFromFile(assetName);     
+        return gnome;        
     }
 
-    void* GnomeLoader::Load(const char* assetName)
-    {        
-        std::fstream file;
+    void GnomeLoader::FinishLoadAsync(Core::AssetHandle& handle)
+    {
+        Core::GnomeLoader::Gnome* gnome = static_cast<Core::GnomeLoader::Gnome*>(handle);
+        Core::ModelData* modelData = new Core::ModelData;
 
-        file.open(assetName, std::ios::in);
-        if (file)
+        if(gnome != nullptr)
         {
-            int materialId;
-            std::string line;
 
-            Core::GnomeLoader::Animation animation;
-            Core::GnomeLoader::Bone bone;
-            Core::GnomeLoader::Material material;	
-            Core::GnomeLoader::Vertex vertex;
-            Core::GnomeLoader::Header header;
+            GFX::Content::LoadMesh(modelData->meshID, gnome->numberOfVertices, gnome->numberOfIndices, gnome->vertices, gnome->indices);
 
-			file >> line;
+            m_modelData.push_back(modelData);   
+			LOG_FATAL << "NO ASYNC ANIMATION LOADING YET, PLEASE IMPLEMENT THIS! BLAME JAOEL /Jaoel";
 
-			file >> line;
-			file >> header.numberOfMaterials;
-			file >> line;
-			file >> header.numberOfVertices;
-			file >> line;
-			file >> header.numberOfTriangles;
-			file >> line;
-			file >> header.numberOfBones;
-			file >> line;
-			file >> header.numberOfAnimations;
+            //delete[] gnome->materials;
+            delete[] gnome->indices;
+            delete[] gnome->vertices;
 
-            Core::GnomeLoader::Mesh mesh;
-            Core::GnomeLoader::Bone* bones;
-            Core::GnomeLoader::Animation* animations;
-
-
-			mesh.vertices = new Core::GnomeLoader::Vertex[header.numberOfVertices];
-            mesh.materials = new Core::GnomeLoader::Material[header.numberOfMaterials];
-            mesh.numberOfVertices = header.numberOfVertices;
-            bones = new Core::GnomeLoader::Bone[header.numberOfBones];
-            animations = new Core::GnomeLoader::Animation[header.numberOfBones];
-
-
-			//Material
-			file >> line;
-			for (int i = 0; i < header.numberOfMaterials; ++i)
-			{
-				file >> material.name;
-				file >> line;
-				file >> material.ambient[0] >> material.ambient[1] >> material.ambient[2];
-				file >> line;
-				file >> material.diffuse[0] >> material.diffuse[1] >> material.diffuse[2];
-				file >> line;
-				file >> material.specularity[0] >> material.specularity[1] >> material.specularity[2];
-				file >> line;
-				file >> material.specularityPower;
-				file >> line;
-				file >> material.reflectivity;
-				file >> line;
-				file >> material.transparency;
-				file >> line;
-				file >> material.alphaClip;
-				file >> line;
-				file >> material.diffuseTexture;
-				file >> line;
-				file >> material.normalMap;
-				file >> line;
-				file >> material.alphaMap;
-
-				mesh.materials[i] = material;
-			}
-           
-			std::cout << "Parsed material" << std::endl;
-
-            file >> line;
-            file >> line >> materialId; //todo: make dynamic solution for mutiple materials
-            vertex.materialId = materialId;
-            for (int i = 0; i < header.numberOfVertices; ++i)
+            if(gnome->numberOfBones)
             {
-                file >> line;
-                file >> vertex.position[0]	 >> vertex.position[1]	 >> vertex.position[2];
-                file >> line;
-                file >> vertex.normal[0]	 >> vertex.normal[1]	 >> vertex.normal[2];
-                file >> line;
-                file >> vertex.tangent[0]	 >> vertex.tangent[1]	 >> vertex.tangent[2];
-                file >> line;
-                file >> vertex.binormal[0]	 >> vertex.binormal[1]	 >> vertex.binormal[2];
-                file >> line;
-                file >> vertex.uv[0]		 >> vertex.uv[1];
-                file >> line;
-                file >> vertex.boneWeight[0] >> vertex.boneWeight[1] >> vertex.boneWeight[2] >> vertex.boneWeight[3];
-                file >> line;
-                file >> vertex.boneIndex[0]	 >> vertex.boneIndex[1]	 >> vertex.boneIndex[2]	 >> vertex.boneIndex[3];
-
-                mesh.vertices[i] = vertex;
-            }
-
-			std::cout << "Parsed verts" << std::endl;
-
-            //Bones
-           // file >> line;
-		   //
-           // for (int k = 0; k < header.numberOfBones; ++k)
-           // {
-           //     file >> bone.Name;
-           //     for (int i = 0; i < 4; i++)
-           //     {
-           //         for (int j = 0; j < 4; j++)
-           //         {
-           //             file >> bone.offsetMatrix[i][j];
-           //         }
-           //     }
-           //     bones[k] = bone;
-           // }
-           // 
-           // file >> line;
-           // for (int i = 0; i < header.numberOfBones; ++i)
-           // {
-           //     file >> line;
-           //     file >> bones[i].parentID;
-           //     bones[i].id = i;
-           // }
-		   //
-           // //Animations
-           // file >> line;
-           // file >> line;
-		   //
-           // for (int i = 0; i < header.numberOfAnimations; ++i)
-           // {
-           //     file >> line;
-           //     file >> animation.name;
-           //     file >> line;
-		   //
-           //     for (int j = 0; j < header.numberOfBones; ++j)
-           //     {
-           //         int noKeys;
-           //         file >> line >> line >> noKeys;
-           //         file >> line;
-           //         
-           //         std::vector<Keyframe> keys; //TODO: unvectorize //c:\users\alice\downloads\flag.gnome
-           //         for (int k = 0; k < noKeys; k++)
-           //         {
-           //             Keyframe keyframe;
-           //             file >> line;
-           //             file >> keyframe.time;
-           //             file >> line;
-           //             file >> keyframe.position[0] >> keyframe.position[1] >> keyframe.position[2];
-           //             file >> line;
-           //             file >> keyframe.scale[0]	 >> keyframe.scale[1]	 >> keyframe.scale[2]; 
-           //             file >> line;
-           //             file >> keyframe.rotation[0] >> keyframe.rotation[1] >> keyframe.rotation[2] >> keyframe.rotation[3];
-		   //
-		   //
-           //             keys.push_back(keyframe);
-           //         }
-           //         file >> line;
-		   //
-           //         animations[i].keyframes.push_back(keys);
-           //         animations[i].namedKeyframes[bones[j].Name] = keys;
-           //     }
-           // }
-
-			std::cout << "Parsed animations" << std::endl;
-
-            //Apply data to GFX buffers
-            GLint* indices = new GLint[mesh.numberOfVertices];           
-            GFX::StaticVertex* vertices = new GFX::StaticVertex[header.numberOfVertices];
-
-            for (int i = 0; i < mesh.numberOfVertices; i++)
-            {
-                indices[i] = i;
-            }
-            
-            for (int i = 0; i < mesh.numberOfVertices; i++)
-            {
-                GFX::StaticVertex v;
-                for (int j = 0; j < 3; j++)
-                    vertices[i].position[j] = mesh.vertices[i].position[j];
-                for (int j = 0; j < 3; j++)
-                    vertices[i].normal[j] = mesh.vertices[i].normal[j];
-                for (int j = 0; j < 2; j++)
+                for (int i = 0; i < gnome->numberOfAnimations; ++i)
                 {
-                    //if (j == 1)
-                    //	vertices[i].uv[j] = 1 - mesh.vertices[i].uv[j];
-                    //else
-                        vertices[i].uv[j] = mesh.vertices[i].uv[j];
+                    for (int j = 0; j < gnome->numberOfBones; ++j)
+                        delete[] gnome->animations[i].boneAnim[j].Keyframes;
+                    delete[] gnome->animations[i].boneAnim;
                 }
-                for (int j = 0; j < 3; j++)
-                    vertices[i].tangent[j] = mesh.vertices[i].tangent[j];
-                for (int j = 0; j < 3; j++)
-                    vertices[i].binormal[j] = mesh.vertices[i].binormal[j];
-
-                vertices[i].position[3] = 1.0f;
-                vertices[i].normal[3] = 0.0f;
-                vertices[i].tangent[3] = 0.0f;
-                vertices[i].tangent[3] = 0.0f;
             }
+            delete[] gnome->bones;
+            //delete[] gnome->animations;            
+
+            delete static_cast<Core::GnomeLoader::Gnome*>(handle);
+            handle = reinterpret_cast<AssetHandle>(modelData);
+        }
+        else
+        {
+            LOG_FATAL << "Data from asynchronous GnomeLoaderFileRead is null" << std::endl;
+            assert(false);
+        }
+    }
+	void Core::GnomeLoader::InterpolateBoneAnimation(int animationIndex, const Core::GnomeLoader::Gnome* gnome, float time, std::vector<glm::mat4x4>& boneTransforms)
+	{
+		for (int b = 0; b < gnome->numberOfBones; b++)
+		{
+			glm::mat4x4 &M = boneTransforms[b];
+			glm::vec3 S, P;
+			glm::quat Q;
+
+			Core::GnomeLoader::BoneForAnimation &boneAnim = gnome->animations[animationIndex].boneAnim[b];
+			
+
+			int numKeys = boneAnim.numKeys;
+			if (time <= boneAnim.Keyframes[0].time)
+			{
+				S = glm::vec3(
+							boneAnim.Keyframes[0].scale[0],
+							boneAnim.Keyframes[0].scale[1],
+							boneAnim.Keyframes[0].scale[2]);
+					
+				P = glm::vec3(
+							boneAnim.Keyframes[0].position[0],
+							boneAnim.Keyframes[0].position[1],
+							boneAnim.Keyframes[0].position[2]);
+					
+				Q = glm::quat(
+							boneAnim.Keyframes[0].rotation[0], 
+							boneAnim.Keyframes[0].rotation[1],
+							boneAnim.Keyframes[0].rotation[2],
+							boneAnim.Keyframes[0].rotation[3]);
+			}
+			else if (time >= boneAnim.Keyframes[numKeys-1].time)
+			{
+				S = glm::vec3(
+							boneAnim.Keyframes[numKeys-1].scale[0],
+							boneAnim.Keyframes[numKeys-1].scale[1],
+							boneAnim.Keyframes[numKeys-1].scale[2]);
+					
+				P = glm::vec3(
+							boneAnim.Keyframes[numKeys-1].position[0],
+							boneAnim.Keyframes[numKeys-1].position[1],
+							boneAnim.Keyframes[numKeys-1].position[2]);
+					
+				Q = glm::quat(
+							boneAnim.Keyframes[numKeys-1].rotation[0], 
+							boneAnim.Keyframes[numKeys-1].rotation[1],
+							boneAnim.Keyframes[numKeys-1].rotation[2],
+							boneAnim.Keyframes[numKeys-1].rotation[3]);
+			}
+			else
+			{
+				for (int i = 0; i < boneAnim.numKeys; i++)
+				{
+					if (time >= boneAnim.Keyframes[i].time && time <= boneAnim.Keyframes[i + 1].time)
+					{
+						float lerpPercent = (time - boneAnim.Keyframes[i].time) / (boneAnim.Keyframes[i+1].time - boneAnim.Keyframes[i].time);
+						
+						glm::vec3 s0 = glm::vec3(
+							boneAnim.Keyframes[i].scale[0],
+							boneAnim.Keyframes[i].scale[1],
+							boneAnim.Keyframes[i].scale[2]);
+						glm::vec3 s1 = glm::vec3(
+							boneAnim.Keyframes[i+1].scale[0],
+							boneAnim.Keyframes[i+1].scale[1],
+							boneAnim.Keyframes[i+1].scale[2]);
+						
+						glm::vec3 p0 = glm::vec3(
+							boneAnim.Keyframes[i].position[0],
+							boneAnim.Keyframes[i].position[1],
+							boneAnim.Keyframes[i].position[2]);
+						glm::vec3 p1 = glm::vec3(
+							boneAnim.Keyframes[i+1].position[0],
+							boneAnim.Keyframes[i+1].position[1],
+							boneAnim.Keyframes[i+1].position[2]);
+						
+						glm::quat q0 = glm::quat(
+							boneAnim.Keyframes[i].rotation[0],
+							boneAnim.Keyframes[i].rotation[1], 
+							boneAnim.Keyframes[i].rotation[2],
+							boneAnim.Keyframes[i].rotation[3]
+							);
+						glm::quat q1 = glm::quat(
+							boneAnim.Keyframes[i+1].rotation[0],
+							boneAnim.Keyframes[i+1].rotation[1], 
+							boneAnim.Keyframes[i+1].rotation[2],
+							boneAnim.Keyframes[i+1].rotation[3]
+							);
+						
+						S = glm::mix(s0, s1, lerpPercent);
+						P = glm::mix(p0, p1, lerpPercent);
+						Q = glm::slerp(q0, q1, lerpPercent);
+
+						break;
+					}
+				}
+			}
+			
+			glm::mat4x4 rotMatrix = glm::toMat4(glm::quat(Q.w, Q.x, Q.y, Q.z));
+			glm::mat4x4 transMatrix =  glm::translate(glm::mat4x4(1.0f), P);
+			glm::mat4x4 scaleMatrix =	glm::scale(glm::mat4x4(1.0f), S);
+			
+			M = transMatrix * rotMatrix * scaleMatrix;
+		}
+	}
+	void Core::GnomeLoader::GetFinalTransforms(int animationIndex, const Core::GnomeLoader::Gnome* gnome, float time, std::vector<glm::mat4x4>& finalTransforms)
+	{
+		int numBones = gnome->numberOfBones;
+		
+		if(finalTransforms.size() < numBones)
+			finalTransforms.resize(numBones);
+		
+		std::vector<glm::mat4x4> toParentTransforms = std::vector<glm::mat4x4>(numBones);
+		std::vector<glm::mat4x4> toRootTransforms = std::vector<glm::mat4x4>(numBones);
+
+		InterpolateBoneAnimation(animationIndex, gnome, time, toParentTransforms);
+
+		toRootTransforms[0] = toParentTransforms[0];
+
+		for (int i = 1; i < numBones; i++)
+		{
+			glm::mat4x4 toParent = toParentTransforms[i];
+
+			int parentIndex = gnome->bones[i].parentID;
+			if (parentIndex >= 0)
+			{
+				glm::mat4x4 parentToRoot = toRootTransforms[parentIndex];
+
+				glm::mat4x4 toRoot = parentToRoot * toParent;
+
+				toRootTransforms[i] = toRoot;
+			}
+			else
+			{
+				toRootTransforms[i] = glm::mat4x4(
+					1.0f, 0.0f, 0.0f, 0.0f, 
+					0.0f, 1.0f, 0.0f, 0.0f, 
+					0.0f, 0.0f, 1.0f, 0.0f, 
+					0.0f, 0.0f, 0.0f, 1.0f);
+			}
+		}
+
+		for (int i = 0; i < numBones; i++)
+		{
+			glm::mat4x4 offset = glm::mat4x4(
+							gnome->bones[i].offsetMatrix[0][0], gnome->bones[i].offsetMatrix[1][0], gnome->bones[i].offsetMatrix[2][0], gnome->bones[i].offsetMatrix[3][0],
+							gnome->bones[i].offsetMatrix[0][1], gnome->bones[i].offsetMatrix[1][1], gnome->bones[i].offsetMatrix[2][1], gnome->bones[i].offsetMatrix[3][1],
+							gnome->bones[i].offsetMatrix[0][2], gnome->bones[i].offsetMatrix[1][2], gnome->bones[i].offsetMatrix[2][2], gnome->bones[i].offsetMatrix[3][2],
+							gnome->bones[i].offsetMatrix[0][3], gnome->bones[i].offsetMatrix[1][3], gnome->bones[i].offsetMatrix[2][3], gnome->bones[i].offsetMatrix[3][3]
+							);
+			glm::mat4x4 toRoot = toRootTransforms[i];
+			finalTransforms[i] = toRoot * offset;
+		}
+
+	}
+
+	void Core::GnomeLoader::LoadAnimations(const Core::GnomeLoader::Gnome* gnome, const unsigned int& meshID)
+	{
+		int skeletonID = -1;
+		if (GFX::Content::CreateSkeleton(skeletonID) == GFX_SUCCESS
+			&& GFX::Content::BindSkeletonToMesh(meshID, skeletonID) == GFX_SUCCESS)
+		{
+			for (int a = 0; a < gnome->numberOfAnimations; ++a)
+			{
+				LOG_INFO << "Loading animation \'" << gnome->animations[a].name << "\'";
+
+				
+				std::vector<glm::mat4x4> frames;
+				float duration = 0.0f;
+				
+				// Find animation duration
+				for (int e = 0; e < gnome->numberOfBones; e++)
+				{
+					for (int k = 0; k < gnome->animations[a].boneAnim[e].numKeys; k++)
+					{
+						duration = std::max(duration, gnome->animations[a].boneAnim[e].Keyframes[k].time);
+					}
+				}
+				int numFrames = duration * GFX::Settings::GetAnimationFramerate();
+				//numFrames *= 1;
+
+				// Create frames
+				for (int f = 0; f < numFrames; f++)
+				{
+					float time = duration * (f/float(numFrames-1));
+					std::vector<glm::mat4x4> transforms;
+					GetFinalTransforms(a, gnome, time, transforms);
+					for (unsigned int t = 0; t < transforms.size(); t++)
+						frames.push_back(transforms[t]);
+				}
+				
+
+				// If everything was successful, move the animation to GFX and store its name to make it easier to use later
+				int result = GFX::Content::AddAnimationToSkeleton(skeletonID, frames.data(), numFrames, gnome->numberOfBones);
+
+				if (result == GFX_INVALID_ANIMATION)
+					LOG_ERROR << "Could not add animation \'" << gnome->animations[a].name << "\' Animation is invalid.";
+				else if (result == GFX_INVALID_NR_FRAMES)
+					LOG_ERROR << "Could not add animation \'" << gnome->animations[a].name << "\' Animation contains no keyframes.";
+				else if (result == GFX_INVALID_NR_BONES)
+					LOG_ERROR << "Could not add animation \'" << gnome->animations[a].name << "\' Animation contains no bones.";
+				else if (result == GFX_INVALID_MAX_FRAMES)
+					LOG_ERROR << "Could not add animation \'" << gnome->animations[a].name << "\' Reached maximum keyframe limit.";
+				else if (result == GFX_INVALID_SKELETON)
+					LOG_ERROR << "Could not add animation \'" << gnome->animations[a].name << "\' Skeleton with ID " << skeletonID << " does not exist.";
+				else
+					AnimationManager::StoreAnimationID(meshID, result, gnome->animations[a].name);
+			}
+		}
+	}
 
 
-            Core::ModelData* modelData = new Core::ModelData;
-            modelData->iSize = modelData->vSize = mesh.numberOfVertices;
+    Core::AssetHandle GnomeLoader::Load(const char* assetName)
+    {        
+        Core::ModelData* modelData = new Core::ModelData();
+        Core::GnomeLoader::Gnome* gnome = LoadGnomeFromFile(assetName);
 
-            m_modelData.push_back(modelData);            
+        if(gnome != nullptr)
+        {
+            GFX::Content::LoadMesh(modelData->meshID, gnome->numberOfVertices, gnome->numberOfIndices, gnome->vertices, gnome->indices);
 
-            GFX::Content::LoadStaticMesh(modelData->IBO, modelData->VAO, mesh.numberOfVertices, mesh.numberOfVertices, vertices, indices);
+
+			// Load the animations for this mesh
+			if (gnome->numberOfAnimations)
+				LoadAnimations(gnome, modelData->meshID);
+
+            m_modelData.push_back(modelData);
             
-            delete[] mesh.vertices;
-            delete[] mesh.materials;
-            delete[] bones;
-            delete[] animations;            
-            delete[] indices;
-            delete[] vertices;
+            //delete[] gnome->materials;
+            delete[] gnome->indices;
+            delete[] gnome->vertices;
 
-			std::cout << "Applied data" << std::endl;
+            if(gnome->numberOfBones)
+            {
+                for (int i = 0; i < gnome->numberOfAnimations; ++i)
+                {
+                    for (int j = 0; j < gnome->numberOfBones; ++j)
+                        delete[] gnome->animations[i].boneAnim[j].Keyframes;
+                    delete[] gnome->animations[i].boneAnim;
+                }
+            }
+            delete[] gnome->bones;
+			delete[] gnome->animations;
 
+            delete gnome;
             return modelData;
         }
-        file.close();
+        else
+        {
+            LOG_FATAL << "Data from synchronous GnomeLoaderFileRead is null " << std::endl;
+        }
         return nullptr;
     }
 
@@ -265,12 +331,156 @@ namespace Core
                 break;
             }
         }
-        GFX::Content::DeleteStaticMesh(modelData->IBO, modelData->VAO);        
-        delete modelData;
+		GFX::Content::DeleteSkeleton(GFX::Content::GetSkeletonID(modelData->meshID));
+        GFX::Content::DeleteMesh(modelData->meshID);        
+        delete modelData;        
     }
 
     const ModelData* GnomeLoader::getData(const Core::AssetHandle handle) const
     {
         return static_cast<const Core::ModelData*>(handle);
+    }
+	std::string GetFileNameAndPath(std::string filename, std::string delim)
+	{
+		std::string gFile; 
+
+		size_t pos = filename.find_last_of(delim);
+
+		for (unsigned int i = 0; i < pos; i++)
+		{
+			gFile.push_back(filename[i]); //Letter-by-letter string cut
+		}
+
+		return gFile;
+	}
+    Core::GnomeLoader::Gnome* GnomeLoader::LoadGnomeFromFile(const char* fileName)
+    {
+		std::fstream m_file;
+		std::fstream m_animationFile;
+
+		m_file.open(fileName, std::ios::in | std::ios::binary);
+		m_animationFile.open(GetFileNameAndPath(fileName,".") + ".bagnome", std::ios::in | std::ios::binary);
+        if (m_file.good())
+        {
+            Core::GnomeLoader::Header header;
+			Core::GnomeLoader::AnimationHeader animationHeader;
+
+			/* Magic */
+			char m_magicByte[6], m_magicByteAnimation[10];
+			m_file.read((char*)m_magicByte, 6);
+			m_animationFile.read((char*)m_magicByteAnimation, 10);
+
+			if (strcmp(m_magicByte, "GNOME") != 0)
+			{
+				LOG_FATAL << fileName << " is not a .BGNOME, of a obsolete version of .BGNOME or corrupted." << std::endl;
+				m_file.close();
+				return nullptr;
+			}
+
+			Core::GnomeLoader::Gnome* gnome = new Core::GnomeLoader::Gnome;
+
+			/* Header */
+			m_file.read((char*)&header, sizeof(header));
+
+            gnome->numberOfVertices = header.numberOfVertices;
+			gnome->numberOfIndices = header.numberOfIndices;
+            gnome->numberOfBones = header.numberOfBones;
+
+			gnome->vertices = new GFX::Vertex[header.numberOfVertices];
+			gnome->indices = new int[header.numberOfIndices];
+            gnome->bones = new Core::GnomeLoader::Bone[header.numberOfBones];
+
+			/* Vertex */
+			m_file.read((char*)gnome->vertices, sizeof(GFX::Vertex) * header.numberOfVertices);
+
+			/* Index */
+			m_file.read((char*)gnome->indices, sizeof(int) * header.numberOfIndices);
+
+			/* Animations */
+			if (header.numberOfBones)
+			{
+				/* Bones in bgnome */
+				for (int k = 0; k < header.numberOfBones; k++)
+				{
+					m_file.read((char*)&gnome->bones[k], sizeof(int) * 3 + sizeof(float) * 16 );
+                    char* boneName = new char[gnome->bones[k].nameSize];
+                    m_file.read((char*)boneName, gnome->bones[k].nameSize);
+                    gnome->bones[k].name = std::string(boneName);
+                    delete[] boneName;
+				}
+
+				/* Animation File */
+				if (m_animationFile) //Not the prettiest code ever made, but hey, if it works, it works! :D
+				{
+					/* Magic Byte */
+					if (strcmp(m_magicByteAnimation, "ANIMGNOME") == 0)
+					{
+						/* Header */
+						m_animationFile.read((char*)&animationHeader, sizeof(animationHeader));
+						gnome->numberOfAnimations = animationHeader.numberOfAnimations;
+
+						if (animationHeader.numberOfBones == header.numberOfBones)
+						{
+							gnome->animations = new Core::GnomeLoader::Animation[animationHeader.numberOfAnimations];
+
+							/* Animation */
+							for (int i = 0; i < animationHeader.numberOfAnimations; ++i)
+							{
+								m_animationFile.read((char*)&gnome->animations[i].nameSize, sizeof(int));
+								char* tmp = new char[gnome->animations[i].nameSize];
+								m_animationFile.read((char*)tmp, gnome->animations[i].nameSize);
+								gnome->animations[i].name = std::string(tmp);
+								delete[] tmp;
+								gnome->animations[i].boneAnim = new BoneForAnimation[header.numberOfBones];
+
+								for (int j = 0; j < header.numberOfBones; ++j)
+								{
+									m_animationFile.read((char*)&gnome->animations[i].boneAnim[j].numKeys, sizeof(int));
+									gnome->animations[i].boneAnim[j].Keyframes = new Keyframe[gnome->animations[i].boneAnim[j].numKeys];
+									m_animationFile.read((char*)gnome->animations[i].boneAnim[j].Keyframes, sizeof(Keyframe)* gnome->animations[i].boneAnim[j].numKeys);
+								}
+							}
+						}
+						else
+						{
+							gnome->numberOfAnimations = 0;
+							gnome->animations = new Core::GnomeLoader::Animation[gnome->numberOfAnimations];
+							LOG_FATAL << fileName << ": Number of bones do not match .bgnome and .bagnome. Have you used the correct animation file?" << std::endl;
+							std::cout << "Binary Animation GNOME File do not match .bgnome, proceeds without animation..." << std::endl;
+						}
+					}
+					else
+					{
+						gnome->numberOfAnimations = 0;
+						gnome->animations = new Core::GnomeLoader::Animation[gnome->numberOfAnimations];
+						LOG_FATAL << fileName << " is not a .BGNOME, of a obsolete version of .BGNOME or corrupted." << std::endl;
+						std::cout << "Binary Animation GNOME File do not match .bgnome, proceeds without animation..." << std::endl;
+					}
+				}
+				else
+				{
+					gnome->numberOfAnimations = 0;
+					gnome->animations = new Core::GnomeLoader::Animation[gnome->numberOfAnimations];
+					std::cout << "Binary Animation GNOME File is missing for " << GetFileNameAndPath(fileName, ".") << ".bagnome, proceeds without animation..." << std::endl;
+				}
+			}
+			else
+			{
+				gnome->numberOfAnimations = 0;
+				gnome->animations = new Core::GnomeLoader::Animation[gnome->numberOfAnimations];
+				std::cout << "there was no bones, ignoring reading .bagnome" << std::endl;
+			}
+
+			/* Done! */
+			m_animationFile.close();
+            m_file.close();
+            return gnome;
+        }
+        else
+        {
+           LOG_FATAL << "Unable to open GnomeFile with path: " << fileName << std::endl; 
+        }
+        m_file.close();
+        return nullptr;
     }
 }

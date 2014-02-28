@@ -20,7 +20,7 @@ namespace GFX
 
 		//load shader
 		m_shaderManager->LoadShader("shaders/RenderToQuad/Quad.vertex", "QVS", GL_VERTEX_SHADER);
-		m_shaderManager->LoadShader("shaders/FSQuad.geometry", "QGS", GL_GEOMETRY_SHADER);
+		m_shaderManager->LoadShader("shaders/FSQuadGS.glsl", "QGS", GL_GEOMETRY_SHADER);
 		m_shaderManager->LoadShader("shaders/RenderToQuad/Quad.fragment", "QFS", GL_FRAGMENT_SHADER);
 		m_shaderManager->CreateProgram("TQ");
 
@@ -34,7 +34,7 @@ namespace GFX
 		m_textureUniform = m_shaderManager->GetUniformLocation("TQ", "textureIN");
 	}
 
-	void FBOPainter::Render(FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, int screenWidth, int screenHeight, int current )
+	void FBOPainter::Render(FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, FBOTexture* glowMatID, int screenWidth, int screenHeight, FBOTexture** shadowMaps, int current )
 	{
 		m_shaderManager->UseProgram("TQ");
 
@@ -43,60 +43,92 @@ namespace GFX
 
 		m_shaderManager->SetUniform(1.0f, m_alphaUniform);
 
-		switch (current)
+		if (current > 1 && current <= 5)
 		{
-			case 0:
-				//Draw composite to back buffer
-				break;
-			case 1:
-				Texture::BindTexture(normalDepth->GetTextureHandle(), m_textureUniform, 0, GL_TEXTURE_2D);
-				break;
+			glDepthMask(GL_FALSE);
+			switch (current)
+			{
 			case 2:
-				Texture::BindTexture(diffuse->GetTextureHandle(), m_textureUniform, 0, GL_TEXTURE_2D);
+				TextureManager::BindTexture(normalDepth->GetTextureHandle(), m_textureUniform, 0, GL_TEXTURE_2D);
 				break;
 			case 3:
-				Texture::BindTexture(specular->GetTextureHandle(), m_textureUniform, 0, GL_TEXTURE_2D);
+				TextureManager::BindTexture(diffuse->GetTextureHandle(), m_textureUniform, 0, GL_TEXTURE_2D);
 				break;
 			case 4:
-				Texture::BindTexture(glowMatID->GetTextureHandle(), m_textureUniform, 0, GL_TEXTURE_2D);
+				TextureManager::BindTexture(specular->GetTextureHandle(), m_textureUniform, 0, GL_TEXTURE_2D);
 				break;
+			case 5:
+				TextureManager::BindTexture(glowMatID->GetTextureHandle(), m_textureUniform, 0, GL_TEXTURE_2D);
+				break;
+			}
+			glBindVertexArray(m_dummyVAO);
+			glDrawArrays(GL_POINTS, 0, 1);
+			glDepthMask(GL_TRUE);
 		}
-		glBindVertexArray(m_dummyVAO);
-		glDrawArrays(GL_POINTS, 0, 1);
 
-		float x = screenWidth / 4;
-		glm::vec2 vpDim = glm::vec2(288, 162);
-		float offset = (screenWidth - (vpDim.x * 4.0f)) / 4.0f;
-		float halfOffset = offset / 2;
+		else if (current == 1)
+		{
+			int x = screenWidth / 4;
+			int y = screenHeight / 4;
 
+			glViewport(0, 0, x, y);
+			TextureManager::BindTexture(normalDepth->GetTextureHandle(), m_textureUniform, 0, GL_TEXTURE_2D);
+			glBindVertexArray(m_dummyVAO);
+			glDrawArrays(GL_POINTS, 0, 1);
+
+			glViewport(x, 0, x, y);
+			TextureManager::BindTexture(diffuse->GetTextureHandle(), m_textureUniform, 0, GL_TEXTURE_2D);
+			glBindVertexArray(m_dummyVAO);
+			glDrawArrays(GL_POINTS, 0, 1);
+
+			glViewport(2 * x, 0, x, y);
+			TextureManager::BindTexture(specular->GetTextureHandle(), m_textureUniform, 0, GL_TEXTURE_2D);
+			glBindVertexArray(m_dummyVAO);
+			glDrawArrays(GL_POINTS, 0, 1);
+
+			glViewport(3 * x, 0, x, y);
+			TextureManager::BindTexture(glowMatID->GetTextureHandle(), m_textureUniform, 0, GL_TEXTURE_2D);
+			glBindVertexArray(m_dummyVAO);
+			glDrawArrays(GL_POINTS, 0, 1);
+
+			glViewport(0, 0, screenWidth, screenHeight);
+
+		}
+		else if (current == 6) // Draw shadowmap
+		{
+			glDepthMask(GL_FALSE);
+			glViewport(0, 0, 128, 128);
+			TextureManager::BindTexture(shadowMaps[0]->GetTextureHandle(), m_textureUniform, 0, GL_TEXTURE_2D);
+			glBindVertexArray(m_dummyVAO);
+			glDrawArrays(GL_POINTS, 0, 1);
+
+			
+			glViewport(128, 0, 128, 128);
+			TextureManager::BindTexture(shadowMaps[1]->GetTextureHandle(), m_textureUniform, 0, GL_TEXTURE_2D);
+			glBindVertexArray(m_dummyVAO);
+			glDrawArrays(GL_POINTS, 0, 1);
+			
+			
+			glViewport(256, 0, 128, 128);
+			TextureManager::BindTexture(shadowMaps[2]->GetTextureHandle(), m_textureUniform, 0, GL_TEXTURE_2D);
+			glBindVertexArray(m_dummyVAO);
+			glDrawArrays(GL_POINTS, 0, 1);
+			
+			
+			glViewport(384, 0, 128, 128);
+			TextureManager::BindTexture(shadowMaps[3]->GetTextureHandle(), m_textureUniform, 0, GL_TEXTURE_2D);
+			glBindVertexArray(m_dummyVAO);
+			glDrawArrays(GL_POINTS, 0, 1);
+			
+			glDepthMask(GL_TRUE);
+			glViewport(0, 0, screenWidth, screenHeight);
+		}
 		
-		glViewport(halfOffset, 50, vpDim.x, vpDim.y);
-		Texture::BindTexture(normalDepth->GetTextureHandle(), m_textureUniform, 0, GL_TEXTURE_2D );
-		glBindVertexArray(m_dummyVAO);
-		glDrawArrays(GL_POINTS, 0, 1);
-
-		glViewport(vpDim.x + offset + halfOffset, 50, vpDim.x, vpDim.y);
-		Texture::BindTexture(diffuse->GetTextureHandle(), m_textureUniform, 0, GL_TEXTURE_2D);
-		glBindVertexArray(m_dummyVAO);
-		glDrawArrays(GL_POINTS, 0, 1);
-
-		glViewport((vpDim.x + offset) * 2 + halfOffset, 50, vpDim.x, vpDim.y);
-		Texture::BindTexture(specular->GetTextureHandle(), m_textureUniform, 0, GL_TEXTURE_2D);
-		glBindVertexArray(m_dummyVAO);
-		glDrawArrays(GL_POINTS, 0, 1);
-		
-		glViewport((vpDim.x + offset) * 3 + halfOffset, 50, vpDim.x, vpDim.y);
-		Texture::BindTexture(glowMatID->GetTextureHandle(), m_textureUniform, 0, GL_TEXTURE_2D);
-		glBindVertexArray(m_dummyVAO);
-		glDrawArrays(GL_POINTS, 0, 1);
-
-		m_shaderManager->ResetProgram();
-
+		BasePainter::ClearFBO();
+		TextureManager::UnbindTexture();
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
-
-		glViewport(0, 0, screenWidth, screenHeight);
-		BasePainter::ClearFBO();
+		m_shaderManager->ResetProgram();
 	}
 
 }

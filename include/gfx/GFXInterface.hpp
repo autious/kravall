@@ -14,8 +14,7 @@
 #include <glm/glm.hpp>
 #include <GL/glew.h>
 
-#define GFX_SUCCESS 0
-#define GFX_FAIL 1
+#include <GFXDefines.hpp>
 
 typedef glm::vec2 GFXVec2;
 typedef glm::vec3 GFXVec3;
@@ -27,7 +26,13 @@ typedef GFXVec4 GFXColor;
 #include <vector>
 #include <iostream>
 #include <gfx/Vertex.hpp>
-#include <gfx/Material.hpp>
+#include <gfx/BitmaskDefinitions.hpp>
+#include <gfx/FontData.hpp>
+
+namespace GFX
+{
+    class Particle;
+}
 
 namespace GFX
 {
@@ -43,7 +48,7 @@ namespace GFX
 	Executes all draw calls made to the graphics engine and
 	renders it to the screen.
 	*/
-	DLL_API void Render();
+	DLL_API void Render(const double& delta);
 
 	/*!
 	Resizes the graphics to render on with specified dimensions.
@@ -62,19 +67,34 @@ namespace GFX
 	Sets the projection matrix used by the main camera.
 	\param matrix Pointer to a 4x4 matrix
 	*/
-	DLL_API void SetProjectionMatrix(GFXMat4x4 matrix);
+	DLL_API void SetProjectionMatrix(GFXMat4x4 matrix, float nearZ, float farZ);
+
+	/*!
+	Sets the view matrix used by the overlay cam
+	\param matrix Pointer to a 4x4 matrix
+	*/
+	DLL_API void SetOverlayViewMatrix(GFXMat4x4 matrix);
+
+	/*!
+	Sets the projection matrix used by the overlay cam
+	\param matrix Pointer to a 4x4 matrix
+	*/
+	DLL_API void SetOverlayProjectionMatrix(GFXMat4x4 matrix);
 
 	/*!
 	Issues a draw command to the graphics engine. 
 	\param bitmask The bitmask containing the type of draw call to be queued.
 	\param data A pointer to the data used for rendering
 	*/
-	DLL_API void Draw(unsigned int bitmask, void* data);
+	DLL_API void Draw(GFXBitmask bitmask, void* data);
 
-	DLL_API void Draw(const int& ibo, const int& vao, const int& size, Material* material);
-
-	DLL_API void Draw(const unsigned int& ibo, const unsigned int& vao, const unsigned int& iboSize, const unsigned int& shader, Material* mat, glm::mat4* matrix);
-
+	/*!
+	Sets the values needed to draw the selection box.
+	\param posDim This is a vec4 containing position and dimension (x, y, w, h)
+	\param color The color of the selectionbox
+	*/
+	DLL_API void DrawSelectionbox(const glm::vec4& posDim, const GFXColor& color );
+	
 	/*!
 	Issues a draw  text command to the graphics engine.
 	\param position Position of the starting letter
@@ -82,7 +102,17 @@ namespace GFX
 	\param color The color of the text
 	\param text The text to be rendered
 	*/
-	DLL_API void RenderText(GFXVec2 position, float size, GFXVec4 color, const char* text);
+	DLL_API void RenderText(GFX::FontData* fontData, GFXVec2 position, float size, GFXVec4 color, const char* text);
+
+	/*!
+	Issues a draw  text command to the graphics engine.
+	\param rectangle Rectangle (x, y, w, h) in which to draw the text
+	\param offset Scroll offset in pixels, if offset is zero, the text is scrolled all the way to the top
+	\param size Vertical size of each letter
+	\param color The color of the text
+	\param text The text to be rendered
+	*/
+	DLL_API void RenderTextbox(GFX::FontData* fontData, GFXVec4 rectangle, float offset, float size, GFXVec4 color, const char* text);
 
 	/*!
 	Shows the console window
@@ -124,25 +154,146 @@ namespace GFX
 	{
 		/*!
 		Loads a 2D RGBA texture onto the GPU
+		\param out_id Reference to the id created for the texture
+		\param data Texture data
 		\param width Width of the texture
 		\param height Height of the texture
-		\param data Texture data
-		\return Handle of the texture
 		*/
-		DLL_API unsigned int LoadTexture2DFromMemory(int width, int height, unsigned char* data);
-
-		DLL_API unsigned int LoadTexture2DFromFile(const char* filepath);
+		DLL_API void LoadTexture2DFromMemory(unsigned int& out_id, unsigned char* data, int width, int height, bool decal);
 
 		/*!
 		Deletes a texture from the GPU
 		\param textureHandle The handle of the texture to be deleted
 		*/
-		DLL_API void DeleteTexture(unsigned int textureHandle);
+		DLL_API void DeleteTexture(unsigned int id);
 
-		DLL_API void LoadStaticMesh(GLuint& IBO, GLuint& VAO, int& sizeVerts, int& sizeIndices, GFX::StaticVertex* verts, int* indices);
+		/*!
+		Loads a mesh to the GPU
+		\param meshID Reference to the id created for the mesh
+		\param sizeVerts Number of vertices in the mesh
+		\param sizeIndices Number of indices in the mesh
+		\param verts Array of vertices to use for the mesh
+		\param indices Array of indices to use for the mesh
+		*/
+		DLL_API void LoadMesh(unsigned int& meshID, int& sizeVerts, int& sizeIndices, GFX::Vertex* verts, int* indices);
+		
+		/*!
+		Creates a skeleton on the GPU
+		\param out_skeletonID Reference returning the id created for the skeleton
+		\return Returns #GFX_FAIL if unable to create skeleton, else returns #GFX_SUCCESS
+		*/
+		DLL_API int CreateSkeleton(int& out_skeletonID);
 
-		DLL_API void DeleteStaticMesh(const GLuint& IBO, const GLuint& VAO);
+		/*!
+		Deletes a skeleton, removing its animations
+		\param skeletonID The id of the skeleton to delete
+		\return Returns #GFX_FAIL if unable to remove skeleton, else returns #GFX_SUCCESS
+		*/
+		DLL_API int DeleteSkeleton(const int& skeletonID);
 
+		/*!
+		Binds a skeleton to a mesh
+		\param meshID The mesh to bind the skeleton to
+		\param skeletonID The id of the skeleton which to bind to the mesh
+		\return Returns #GFX_FAIL if unable bind skeleton to mesh, else returns #GFX_SUCCESS
+		*/
+		DLL_API int BindSkeletonToMesh(const unsigned int& meshID, const int& skeletonID);
+
+		/*!
+		Gets the skeleton ID linked to the mesh
+		*/
+		DLL_API int GetSkeletonID(const unsigned int& meshID);
+
+		/*!
+		Adds an animation to a skeleton. The data must contain the same number of bones for all frames
+		\param skeletonID Reference id of the skeleton to bind the animation to
+		\param frames Array of bone matrices sorted by frame
+		\param numFrames Number of bone matrices in the array
+		\param numBonesPerFrame Number of bone matrices per frame
+		\return Returns the animation ID if successful, else returns #GFX_INVALID_ANIMATION or #GFX_INVALID_SKELETON
+		*/
+		DLL_API int AddAnimationToSkeleton(const int& skeletonID, GFXMat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame);
+		
+		/*!
+		Gets the info for a particular animation.
+		\param skeletonID The id of the skeleton
+		\param animationID The id of the animation
+		\param out_frameCount The number of frames in this animation
+		\return Returns #GFX_SUCCESS if successful, else returns #GFX_INVALID_ANIMATION or #GFX_INVALID_SKELETON
+		*/
+		DLL_API int GetAnimationInfo(const int& skeletonID, const int& animationID, unsigned int& out_frameCount, unsigned int& out_bonesPerFrame, unsigned int& out_animationOffset);
+		
+		/*!
+		Deletes a mesh
+		\param meshID The id of the mesh to delete
+		*/
+		DLL_API void DeleteMesh(unsigned int& meshID);
+
+		/*!
+		Creates an empty material
+		\param out_id Reference to set material id
+		*/
+		DLL_API void CreateMaterial(unsigned long long int& out_id);
+		
+		/*!
+		Deletes a material
+		\param id The id of the material to remove
+		*/
+		DLL_API void DeleteMaterial(const unsigned long long int& id);
+		
+		/*!
+		Adds a texture to a material
+		\param materialID Id to material to attach texture to
+		\param textureID Id of texture to attach
+		\return Returns #GFX_SUCCESS, #GFX_INVALID_MATERIAL
+		*/
+		DLL_API int AddTextureToMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID);
+		
+		/*!
+		Adds a texture to a material
+		\param materialID Id to material where the texture is attached
+		\param textureID Id of texture to detach
+		*/
+		DLL_API void RemoveTextureFromMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID);
+	
+        /*!
+        Gets the shader id of the shader specified by the null terminated string.
+        \param shaderId Reference to set shader id.
+        \param shaderName The identifying string of the shader.
+		\return Returns #GFX_SUCCESS or #GFX_INVALID_SHADER
+        */
+        DLL_API int GetShaderId(unsigned int& shaderId, const char* shaderName);
+
+		/*!
+		Sets a shader for a material
+		\param materialID Id to material to attach shader to
+		\param textureID Id of shader to attach
+		\return Returns #GFX_SUCCESS, #GFX_INVALID_MATERIAL
+		*/
+		DLL_API int AttachShaderToMaterial(const unsigned long long int& materialID, const unsigned int& shaderID);
+
+        /*!
+        Creates a buffer that stores particles.
+        \param bufferId Out parameter that will be assigned the id of the particle buffer.
+        \param particleCount The number of particles that the buffer will hold.
+        */
+        DLL_API void CreateParticleBuffer(unsigned int& bufferId, unsigned int particleCount);
+
+        /*!
+        Deletes the specified particle buffer.
+        \param bufferId The Id of the particle buffer to be deleted.
+        */
+        DLL_API void DeleteParticleBuffer(unsigned int bufferId);
+
+        /*!
+        Transfers data over to the given particle buffer.
+        \param bufferId The buffer id to assign the data to.
+        \param particleData The data to be set.
+        \param particleCount The number of particles the data contains.
+        */
+        DLL_API void BufferParticleData(unsigned int bufferId, GFX::Particle* const data);
+
+		DLL_API void ReloadLUT();
 	}
 
 	namespace Debug
@@ -168,8 +319,9 @@ namespace GFX
 		\param p1 World space position of the starting point of the line
 		\param p2 World space position of the end point of the line
 		\param color Color of the line
+		\param useDepth If true, the depth buffer is used to occlude if behind an object, else draws on top of existing geometry regardless of depth
 		*/
-		DLL_API void DrawLine(GFXVec3 p1, GFXVec3 p2, GFXColor color);
+		DLL_API void DrawLine(GFXVec3 p1, GFXVec3 p2, GFXColor color, bool useDepth);
 
 		/*!
 		Draws a line on the screen.
@@ -177,8 +329,9 @@ namespace GFX
 		\param p2 The world space position of the end point of the line
 		\param color Color of the line
 		\param thickness Thickness of the line
+		\param useDepth If true, the depth buffer is used to occlude if behind an object, else draws on top of existing geometry regardless of depth
 		*/
-		DLL_API void DrawLine(GFXVec3 p1, GFXVec3 p2, GFXColor color, float thickness);
+		DLL_API void DrawLine(GFXVec3 p1, GFXVec3 p2, GFXColor color, float thickness, bool useDepth);
 
 		/*!
 		Draws a line on the screen.
@@ -212,16 +365,18 @@ namespace GFX
 		\param dimensions Box dimensions
 		\param solid If true, the box will be filled, else only outlines will be shown
 		\param color Color of the rectangle
+		\param useDepth If true, the depth buffer is used to occlude if behind an object, else draws on top of existing geometry regardless of depth
 		*/
-		DLL_API void DrawBox(GFXVec3 position, GFXVec3 dimensions, bool solid, GFXColor color);
+		DLL_API void DrawBox(GFXVec3 position, GFXVec3 dimensions, bool solid, GFXColor color, bool useDepth);
 
 		/*!
-		Draws a sphere on the screen.
+		Draws a representation of a sphere on the screen.
 		\param position World space position for the center of the sphere
 		\param radius Sphere radius
 		\param color Color of the sphere
+		\param useDepth If true, the depth buffer is used to occlude if behind an object, else draws on top of existing geometry regardless of depth
 		*/
-		DLL_API void DrawSphere(GFXVec3 position, float radius, GFXColor color);
+		DLL_API void DrawSphere(GFXVec3 position, float radius, GFXColor color, bool useDepth);
 
 		/*!
 		Draws a screen space circle on the screen.
@@ -231,102 +386,89 @@ namespace GFX
 		\param color Color of the circle
 		*/
 		DLL_API void DrawCircle(GFXVec2 position, float radius, unsigned int lineWidth, GFXColor color);
+		
+		/*!
+		Draws a frustum
+		\param cameraMatrix The matrix representing the frustum to draw
+		\param color The color to draw the frustum
+		\param useDepth If true, the depth buffer is used to occlude if behind an object, else draws on top of existing geometry regardless of depth
+		*/
+		DLL_API void DrawFrustum(GFXMat4x4 cameraMatrix, GFXColor color, bool useDepth);
+
+
+        /*!
+        Sets the font used for rendering the time statistics.
+        \param font Poitner to GFX::FontData struct used for rendering. 
+        */
+        DLL_API void SetStatisticsFont(GFX::FontData* font);
+
+		/*!
+		Enables or disables display of gfx system info
+		\param enabled If true, toggles graphics system info to show on the screen, false disables it
+		*/
+		DLL_API void DisplaySystemInfo(bool enabled);
+		
+		/*!
+		Enables or disables display of frame buffers as miniatures
+		\param which Which rendertarget to show -1: disabled, 0: miniatures, 1-4: displays target 1-4 as full screen
+		*/
+		DLL_API void DisplayFBO(int which);
+
 	} // namespace Debug
 
 	namespace Settings
 	{
-		enum GFXAAMode
-		{
-			AA_2X = 0,
-			AA_4X,
-			AA_8X,
-			AA_16X,
-			AA_DISABLED
-		};
-
-		enum GFXSSAOMode
-		{
-			SSAO_LOW = 0,
-			SSAO_MED,
-			SSAO_HIGH,
-			SSAO_HBAO,
-			SSAO_DISABLED
-		};
-
-		enum GFXShadowQuality
-		{
-			SHADOWS_LOW = 0,
-			SHADOWS_MED,
-			SHADOWS_HIGH,
-			SHADOWS_DISABLED
-		};
-
-		enum GFXTextureQuality
-		{
-			TEXTURES_LOW = 0,
-			TEXTURES_MED,
-			TEXTURES_HIGH
-		}; 
+		/*!
+		Sets gamma
+		\param gamma
+		*/
+		DLL_API void SetGamma(float gamma);
 		
-		enum GFXParticleDensity
-		{
-			PARTICLES_LOW = 0,
-			PARTICLES_MED,
-			PARTICLES_HIGH,
-			PARTICLES_VERY_HIGH,
-			PARTICLES_EXTREME,
-			PARTICLES_DISABLED
-		};
 
 		/*!
-		Sets antialiasing.
-		\param mode Anti-Aliasing mode to use.
+		Sets a setting to the specified value
+		\return Returns either GFX_SUCCESS or GFX_FAIL
 		*/
-		DLL_API void SetAntiAliasing(GFXAAMode mode);
+		int SetConfiguration(const int setting, const int value);
 
 		/*!
-		Enables or disables anisotropic filtering.
-		\param enabled If true, anisotropic is set to ON, else anisotropic filtering is disabled
+		Gets the value of a setting
+		\return Returns either GFX_SUCCESS or GFX_FAIL
 		*/
-		DLL_API void SetAnisotropic(bool enabled);
+		int GetConfiguration(const int setting, int& out_value);
+
 
 		/*!
-		Sets SSAO mode.
-		\param mode SSAO mode to use
+		Gets the animation play framerate.
+		\return Returns animation play framerate
 		*/
-		DLL_API void SetSSAO(GFXSSAOMode mode);
+		DLL_API unsigned int GetAnimationFramerate();
 
 		/*!
-		Sets the shadowmapping quality.
-		\param quality The quality of shadow maps
+		Sets the animation play framerate.
+		\param framerate The target framerate for animations (clamped between 12 and 48 fps)
 		*/
-		DLL_API void SetShadowQuality(GFXShadowQuality quality);
+		DLL_API void SetAnimationFramerate(unsigned int framerate);
 
-		/*!
-		Sets texture quality. Lower quality should only use lower mip levels of textures.
-		\param quality The texture quality to be used
-		*/
-		DLL_API void SetTextureQuality(GFXTextureQuality quality);
-
-		/*!
-		Sets the density of particles.
-		\param density Density to use when particles are rendered
-		*/
-		DLL_API void SetParticleDensity(GFXParticleDensity density);
-
-		/*!
-		Enables or disables High Dynamic Range shading. 
-		\param enabled If true, HDR is set to ON, else HDR is disabled
-		*/
-		DLL_API void SetHDR(bool enabled);
-
-		/*!
-		Enables or disables Depth of Field shading. 
-		\param enabled If true, Depth of Field will be enabled, else Depth of Field is disabled
-		*/
-		DLL_API void SetDoF(bool enabled);
 
 	} // namespace Settings
+
+	namespace ColorSettings
+	{
+		/*!
+		Sets the white point which means a pixel should be full-brighted
+		\param whitePoint
+		*/
+		DLL_API void SetWhitePoint(GFXVec3 whitePoint);
+
+		/*!
+		Sets exposure
+		\param exposure
+		*/
+		DLL_API void SetExposure(float exposure);
+
+		DLL_API void SetLUT(const char* LUT);
+	}
 
 } // namespace GFX
 

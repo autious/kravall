@@ -3,7 +3,7 @@
 
 #include <cstdint>
 #include <cstdlib>
-#include <vector>
+#include <queue>
 #include <cassert>
 #include <cstring>
 
@@ -21,7 +21,7 @@ namespace Core
         size_t m_count;
         size_t m_growStep;
         size_t m_typesize;
-        std::vector<int> deleted;
+        std::queue<int> deleted;
     public:
 
 
@@ -46,7 +46,7 @@ namespace Core
 
             \param source data to copy into index 
         */
-        int Alloc( );
+        int Alloc(void *def);
 
         /*!
             Releses a component from the array, making it available 
@@ -73,6 +73,17 @@ namespace Core
             Returns how many components slots there are allocated in memory.
         */
         size_t GetAllocation();
+
+
+        /*!
+            Returns how much memory is in active use (in bytes)
+        */
+        size_t GetMemoryUse();
+    
+        /*!
+            Returns how much memory is preallocted (in bytes)
+        */
+        size_t GetMemoryAllocation();
     };
 }
 

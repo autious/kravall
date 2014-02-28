@@ -37,6 +37,7 @@ namespace Core
     TEST( LuaConfigurationHandler, GetString )
     {
         LuaState state;
+        state.OpenLibs();
         ConfigurationHandler handler(&state);
 
         state.DoBlock( incorrect_config );
@@ -55,6 +56,7 @@ namespace Core
     TEST( LuaConfigurationHandler, GetDouble )
     {
         LuaState state;
+        state.OpenLibs();
         ConfigurationHandler handler(&state);
 
         state.DoBlock( incorrect_config );
@@ -73,6 +75,7 @@ namespace Core
     TEST( LuaConfigurationHandler, GetInt )
     {
         LuaState state;
+        state.OpenLibs();
         ConfigurationHandler handler(&state);
 
         state.DoBlock( incorrect_config );
@@ -91,6 +94,7 @@ namespace Core
     TEST( LuaConfigurationHandler, GetBool )
     {
         LuaState state;
+        state.OpenLibs();
         ConfigurationHandler handler(&state);
 
         state.DoBlock( incorrect_config );
@@ -109,6 +113,7 @@ namespace Core
     TEST( LuaConfigurationHandler, GetVec2 )
     {
         LuaState state;
+        state.OpenLibs();
         ConfigurationHandler handler(&state);
 
         state.DoBlock( incorrect_config );
@@ -127,6 +132,7 @@ namespace Core
     TEST( LuaConfigurationHandler, GetVec3 )
     {
         LuaState state;
+        state.OpenLibs();
         ConfigurationHandler handler(&state);
 
         state.DoBlock( incorrect_config );
@@ -145,6 +151,7 @@ namespace Core
     TEST( LuaConfigurationHandler, GetVec4 )
     {
         LuaState state;
+        state.OpenLibs();
         ConfigurationHandler handler(&state);
 
         state.DoBlock( incorrect_config );
@@ -163,6 +170,7 @@ namespace Core
     TEST( LuaConfigurationHandler, SetString )
     {
         LuaState state;
+        state.OpenLibs();
         ConfigurationHandler handler(&state);
 
         state.DoBlock( prep_config );
@@ -177,6 +185,7 @@ namespace Core
     TEST( LuaConfigurationHandler, SetDouble )
     {
         LuaState state;
+        state.OpenLibs();
         ConfigurationHandler handler(&state);
 
         state.DoBlock( prep_config );
@@ -192,6 +201,7 @@ namespace Core
     TEST( LuaConfigurationHandler, SetInt )
     {
         LuaState state;
+        state.OpenLibs();
         ConfigurationHandler handler(&state);
 
         state.DoBlock( prep_config );
@@ -207,6 +217,7 @@ namespace Core
     TEST( LuaConfigurationHandler, SetBool )
     {
         LuaState state;
+        state.OpenLibs();
         ConfigurationHandler handler(&state);
 
         state.DoBlock( prep_config );
@@ -222,6 +233,7 @@ namespace Core
     TEST( LuaConfigurationHandler, SetVec2 )
     {
         LuaState state;
+        state.OpenLibs();
         ConfigurationHandler handler(&state);
 
         state.DoBlock( prep_config );
@@ -237,6 +249,7 @@ namespace Core
     TEST( LuaConfigurationHandler, SetVec3 )
     {
         LuaState state;
+        state.OpenLibs();
         ConfigurationHandler handler(&state);
 
         state.DoBlock( prep_config );
@@ -252,6 +265,7 @@ namespace Core
     TEST( LuaConfigurationHandler, SetVec4 )
     {
         LuaState state;
+        state.OpenLibs();
         ConfigurationHandler handler(&state);
 
         state.DoBlock( prep_config );

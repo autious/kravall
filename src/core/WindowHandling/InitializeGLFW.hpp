@@ -6,23 +6,50 @@
 #include "GLFWInclude.hpp"
 #include <gfx/GFXInterface.hpp>
 #include <World.hpp>
+#include <WindowHandling/GLFWWindowCallbackHandler.hpp>
+
 
 namespace Core
 {
-	enum WindowMode
+    class BufferResizeCallback : public GLFWWindowCallbackInterface
+    {
+    public:
+        virtual void WindowResize( int width, int height )
+        {
+            
+        }
+
+        virtual void FramebufferResize( int width, int height )
+        {
+            GFX::Resize(width, height);
+        }
+
+        virtual void WindowFocus( int focus )
+        {
+
+        }
+    } buffResize;
+    
+    
+    enum WindowMode
 	{
 		WMODE_WINDOWED = 0,
 		WMODE_WINDOWED_BORDERLESS,
 		WMODE_FULLSCREEN,
 		WMODE_FULLSCREEN_BORDERLESS
 	};
-	void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+
+	/*! Callback function to be called when GLFW functions fail. Prints the error message to the console. */
+	void PrintGLFWError(int errorCode, const char* errorMessage)
 	{
-		GFX::Resize(width, height);
+		//std::cout << "OpenGL error: " << errorMessage << std::endl;
 	}
+
 
 	int InitializeGLFW(GLFWwindow** window, int width, int height, enum WindowMode wMode )
 	{
+		glfwSetErrorCallback(PrintGLFWError);
+
 		/* Initialize the library */
 		if (!glfwInit())
 		{
@@ -32,7 +59,7 @@ namespace Core
 
 		//Set context to version 4.4, not forward compatible (for compute shader support)
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_FALSE);
 		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
         glfwWindowHint(GLFW_RESIZABLE, Core::world.m_config.GetBool( "windowResizable", true ) );
@@ -95,10 +122,11 @@ namespace Core
 		std::cout << "OpenGL version: " << glfwGetWindowAttrib((*window), GLFW_CONTEXT_VERSION_MAJOR) << "." << glfwGetWindowAttrib((*window), GLFW_CONTEXT_VERSION_MINOR) << std::endl;
 
 		// if 1 then limits system to max 60 fps!
-		glfwSwapInterval( Core::world.m_config.GetInt( "vsync", 0 ));
+		glfwSwapInterval(Core::world.m_config.GetInt("vsync", 1));
 
 		// assign callback functions...
-		glfwSetFramebufferSizeCallback((*window), framebuffer_size_callback);
+        Core::GLFWWindowCallbackHandler::Get().SetWindow( *window );
+        Core::GLFWWindowCallbackHandler::Get().RegisterCallback( &buffResize );
 
 		// init glew
 		glewExperimental = true;
@@ -110,7 +138,8 @@ namespace Core
 			return -1;
 		}
 
-		
+		// remove redundant error from glew init.
+		glGetError(); 
 
 		return 0;
 	}

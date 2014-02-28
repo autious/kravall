@@ -13,8 +13,7 @@ LogHandler* LogSystem::fatalHandler[]		= {new ConsoleHandler( LogSystem::LogType
 LogHandler* LogSystem::errorHandler[]		= {new ConsoleHandler( LogSystem::LogType::logType_error ),nullptr,nullptr,nullptr};
 LogHandler* LogSystem::warningHandler[]	    = {new ConsoleHandler( LogSystem::LogType::logType_warning ),nullptr,nullptr,nullptr};
 
-
-char ignoreList[1024];
+char ignoreList[1024*8];
 
 struct IgnoreListnitializer
 {
@@ -30,6 +29,22 @@ static std::mutex logMutex;
 void LogSystem::Mute( const char* prefix )
 {
 	logMutex.lock();
+
+	{
+		std::stringstream ss;
+		ss << ignoreList;
+
+		std::string tt;
+		while( ss.rdbuf()->in_avail() != 0 )
+		{
+			ss >> tt;
+			if( std::strcmp( prefix, tt.c_str() ) == 0 )
+			{
+				logMutex.unlock();
+				return;
+			}
+		}
+	}
 
 	std::stringstream ss;
 	ss << prefix << " " << ignoreList;
@@ -70,7 +85,7 @@ void LogSystem::RegisterLogHandler( LogHandler** handlerChannel, LogHandler* new
 
     for( int i = 0; i < LOGGER_LIMIT; i++ )
     {
-        if( handlerChannel[i] == nullptr )
+        if( handlerChannel[i] == nullptr || handlerChannel[i] == newHandler )
         {
             handlerChannel[i] = newHandler;
             worked = true;
@@ -79,6 +94,21 @@ void LogSystem::RegisterLogHandler( LogHandler** handlerChannel, LogHandler* new
     }
 
     assert( worked );
+
+	logMutex.unlock();
+}
+
+void LogSystem::DeregisterLogHandler( LogHandler** handlerChannel, LogHandler* newHandler )
+{
+	logMutex.lock();
+
+    for( int i = 0; i < LOGGER_LIMIT; i++ )
+    {
+        if( handlerChannel[i] == newHandler )
+        {
+            handlerChannel[i] = nullptr;
+        } 
+    }
 
 	logMutex.unlock();
 }
@@ -102,7 +132,15 @@ LogSystem::LogData& operator<< ( const LogSystem::LogData& data, StandardEndLine
 	obj( ss );
 	
 	std::string msg = ss.str();
-	std::strcpy( temp.m_message, msg.c_str() );
+
+    if( msg.size() >= MESSAGE_LENGTH )
+    {
+        std::strcpy( temp.m_message, "ERROR STRING TOO LONG!!!!" );
+    }
+    else
+    {
+	    std::strcpy( temp.m_message, msg.c_str() );
+    }
 
 	return temp;
 }

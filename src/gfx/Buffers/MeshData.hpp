@@ -3,6 +3,7 @@
 
 #include "Vertex.hpp"
 #include <vector>
+#include <GL/glew.h>
 
 namespace GFX
 {
@@ -15,8 +16,18 @@ namespace GFX
 
 	struct StaticMeshData
 	{
-		std::vector<StaticVertex> vertices;
+		std::vector<GFX::Vertex> vertices;
 		std::vector<int> indices;
+	};
+
+	struct Mesh
+	{
+		unsigned int id;
+		GLuint VAO;
+		GLuint IBO;
+		unsigned int indexCount;
+		int skeletonID = -1;
+
 	};
 }
 

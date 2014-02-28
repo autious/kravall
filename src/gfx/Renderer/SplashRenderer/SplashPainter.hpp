@@ -4,7 +4,7 @@
 #include "../BasePainter.hpp"
 #include <Shaders/ShaderManager.hpp>
 #include <Buffers/UniformBufferManager.hpp>
-#include "../../Textures/Texture.hpp"
+#include "../../Textures/TextureManager.hpp"
 
 namespace GFX
 {
@@ -33,10 +33,10 @@ namespace GFX
 		/*!
 		Main rendering loop
 		*/
-		void Render(const int& screenWidth, const int& screenHeight);
-		void RenderSplash(const int& screenWidth, const int& screenHeight);
-		void FadeToBlack(const int& screenWidth, const int& screenHeight);
-		void FadeToWhite(const int& screenWidth, const int& screenHeight);
+		void Render(const int& screenWidth, const int& screenHeight, const double& delta);
+		void RenderSplash(const int& screenWidth, const int& screenHeight, const double& delta);
+		void FadeToBlack(const int& screenWidth, const int& screenHeight, const double& delta);
+		void FadeToWhite(const int& screenWidth, const int& screenHeight, const double& delta);
 
 		inline bool IsDone(){ return m_done; }
 

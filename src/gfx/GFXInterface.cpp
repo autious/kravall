@@ -1,10 +1,18 @@
 #include <iostream>
 
+
 #include <Renderer/RenderCore.hpp>
 #include <Shaders/ShaderManager.hpp>
 #include <Buffers/MeshManager.hpp>
+#include <Animation/AnimationManagerGFX.hpp>
+#include <Renderer/TextRenderer/TextManager.hpp>
+#include <Renderer/DebugRenderer/DebugManager.hpp>
+
 #include <gfx/Vertex.hpp>
+#include <gfx/Particle.hpp>
 #include <GFXInterface.hpp>
+#include <FontData.hpp>
+#include <Buffers/Text.hpp>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -45,7 +53,9 @@ namespace GFX
             LOG_ERROR << "Got GL error:" << err << std::endl;
             err = 0;
         }
-		glClearColor(100.0f / 255.0f, 149.0f / 255.0f, 237.0f / 255.0f, 1.0f);
+		//glClearColor(100.0f / 255.0f, 149.0f / 255.0f, 237.0f / 255.0f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		//glClearDepth(1.0f);
 
 		// assign callback functions
 		glDebugMessageCallbackARB(glErrorCallback, NULL);
@@ -83,6 +93,8 @@ namespace GFX
 		glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
 		glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
 
+		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
 		glCullFace(GL_BACK);
 		err = glGetError();
         if( err )
@@ -110,10 +122,10 @@ namespace GFX
 		Renderer().Resize(width, height);
 	}
 
-	void Render()
+	void Render(const double& delta)
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		Renderer().Render();
+		Renderer().Render(delta);
 	}
 
 	void SetViewMatrix(GFXMat4x4 matrix)
@@ -121,15 +133,28 @@ namespace GFX
 		Renderer().SetViewMatrix(matrix);
 	}
 
-	void SetProjectionMatrix(GFXMat4x4 matrix)
+	void SetProjectionMatrix(GFXMat4x4 matrix, float nearZ, float farZ)
 	{
-		Renderer().SetProjMatrix(matrix);
+		Renderer().SetProjMatrix(matrix, nearZ, farZ);
 	}
 
-	void RenderText(GFXVec2 position, float size, GFXVec4 color, const char* text)
+	void SetOverlayViewMatrix(GFXMat4x4 matrix)
 	{
-		Text t(position.x, position.y, size, size, color, text, Renderer().GetWindowWidth(), Renderer().GetWindowHeight());
+		Renderer().SetOverlayViewMatrix(matrix);
+	}
+
+	void SetOverlayProjectionMatrix(GFXMat4x4 matrix)
+	{
+		Renderer().SetOverlayProjMatrix(matrix);
+	}
+	void RenderText(GFX::FontData* fontData, GFXVec2 position, float size, GFXVec4 color, const char* text)
+	{
+        GFX::Text t(position.x, position.y, size, size, fontData, color, text);
 		GetTextManager().AddText(t);
+	}
+	void RenderTextbox(GFX::FontData* fontData, GFXVec4 rectangle, float offset, float size, GFXVec4 color, const char* text)
+	{
+		GetTextManager().AddTextbox(fontData, rectangle, offset, size, color, text);
 	}
 	void ShowConsole()
 	{
@@ -154,21 +179,28 @@ namespace GFX
 		Renderer().Delete();
 	}
 
-	void Draw(const int& ibo, const int& vao, const int& size, Material* material)
+	void Draw(GFXBitmask bitmask, void* value)
 	{
-		Renderer().AddRenderJob(ibo, vao, size, 0, material, 0);
-	}
-	
-	void Draw(const unsigned int& ibo, const unsigned int& vao, const unsigned int& iboSize, const unsigned int& shader, Material* mat, glm::mat4* matrix)
-	{
-		Renderer().AddRenderJob(ibo, vao, iboSize, shader, mat, matrix);
+		Renderer().AddRenderJob(bitmask, value);
 	}
 
+	void DrawSelectionbox(const glm::vec4& posDim, const GFXColor& color)
+	{
+		
+		glm::vec4 cspos = glm::vec4(
+			posDim.x / float(Renderer().GetWindowWidth() / 2) - 1.0f,
+			1.0f - posDim.y / float(Renderer().GetWindowHeight() / 2),
+			posDim.z / float(Renderer().GetWindowWidth())*2,
+			posDim.w / float(Renderer().GetWindowHeight())*2);
+
+		Renderer().DrawSelectionbox(cspos, color);
+	}
 
 	int GetScreenWidth()
 	{
 		return Renderer().GetWindowWidth();
 	}
+
 	int GetScreenHeight()
 	{
 		return Renderer().GetWindowHeight();
@@ -179,31 +211,153 @@ namespace GFX
 {
 	namespace Content
 	{
-		unsigned int LoadTexture2DFromMemory(int width, int height, unsigned char* data)
+		void LoadTexture2DFromMemory(unsigned int& id, unsigned char* data, int width, int height, bool decal)
 		{
-			return Texture::LoadFromMemory(data, GL_TEXTURE_2D, GL_RGBA, GL_RGBA, GL_LINEAR, GL_LINEAR,
-				GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, width, height);
+			Renderer().LoadTexture(id, data, width, height, decal);
 		}
 
-		unsigned int LoadTexture2DFromFile(const char* filepath)
+		void DeleteTexture(unsigned int id)
 		{
-			return Texture::LoadFromFile(filepath, GL_TEXTURE_2D, GL_RGBA, GL_RGBA, GL_LINEAR, GL_LINEAR,
-				GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+			Renderer().DeleteTexture(id);
 		}
 
-		void DeleteTexture(unsigned int textureHandle)
+		void LoadMesh(unsigned int& meshID, int& sizeVerts, int& sizeIndices, GFX::Vertex* verts, int* indices)
 		{
-			glDeleteTextures(1, &textureHandle);
+			Renderer().LoadMesh(meshID, sizeVerts, sizeIndices, verts, indices);
 		}
 
-		void LoadStaticMesh(GLuint& IBO, GLuint& VAO, int& sizeVerts, int& sizeIndices, GFX::StaticVertex* verts, int* indices)
+		void DeleteMesh(unsigned int& meshID)
 		{
-			MeshManager::LoadStaticMesh(IBO, VAO, sizeVerts, sizeIndices, verts, indices);
+			Renderer().DeleteMesh(meshID);
 		}
 
-		void DeleteStaticMesh(const GLuint& IBO, const GLuint& VAO)
+		void CreateMaterial(unsigned long long int& out_id)
 		{
-			MeshManager::DeleteMesh(IBO, VAO);
+			Renderer().CreateMaterial(out_id);
+		}
+
+		void DeleteMaterial(const unsigned long long int& id)
+		{
+			Renderer().DeleteMaterial(id);
+		}
+
+		int AddTextureToMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID)
+		{
+			return Renderer().AddTextureToMaterial(materialID, textureID);
+		}
+
+		void RemoveTextureFromMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID)
+		{
+			Renderer().RemoveTextureFromMaterial(materialID, textureID);
+		}
+
+        int GetShaderId(unsigned int& shaderId, const char* shaderName)
+        {
+			return Renderer().GetShaderId(shaderId, shaderName);
+        }
+
+		int AttachShaderToMaterial(const unsigned long long int& materialID, const unsigned int& shaderID)
+		{
+			return Renderer().SetShaderToMaterial(materialID, shaderID);
+		}
+
+		int CreateSkeleton(int& out_skeletonID)
+		{
+			return Renderer().CreateSkeleton(out_skeletonID);
+		}
+
+		int DeleteSkeleton(const int& skeletonID)
+		{
+			return Renderer().DeleteSkeleton(skeletonID);
+		}
+
+		int GetSkeletonID(const unsigned int& meshID)
+		{
+			return Renderer().GetSkeletonID(meshID);
+		}
+
+		int BindSkeletonToMesh(const unsigned int& meshID, const int& skeletonID)
+		{
+			return Renderer().BindSkeletonToMesh(meshID, skeletonID);
+		}
+
+		int AddAnimationToSkeleton(const int& skeletonID, GFXMat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame)
+		{
+			return Renderer().AddAnimationToSkeleton(skeletonID, frames, numFrames, numBonesPerFrame);
+		}
+
+		int GetAnimationInfo(const int& skeletonID, const int& animationID, unsigned int& out_frameCount, unsigned int& out_bonesPerFrame, unsigned int& out_animationOffset)
+		{
+			return Renderer().GetAnimationInfo(skeletonID, animationID, out_frameCount, out_bonesPerFrame, out_animationOffset);
+		}
+
+        void CreateParticleBuffer(unsigned int& bufferId, unsigned int particleCount)
+        {
+            Renderer().CreateParticleBuffer(bufferId, particleCount);
+        }
+
+        void DeleteParticleBuffer(unsigned int bufferId)
+        {
+            Renderer().DeleteParticleBuffer(bufferId);
+        }
+
+        void BufferParticleData(unsigned int bufferId, GFX::Particle* const data)
+        {
+            Renderer().BufferParticleData(bufferId, data);
+        }
+
+		void ReloadLUT()
+		{
+			Renderer().ReloadLUT();
+		}
+	}
+}
+
+namespace GFX
+{
+	namespace Settings
+	{
+		void SetGamma(float gamma)
+		{
+			Renderer().SetGamma(gamma);
+		}
+
+		unsigned int GetAnimationFramerate()
+		{
+			return Renderer().GetAnimationFramerate();
+		}
+
+		void SetAnimationFramerate(unsigned int framerate)
+		{
+			Renderer().SetAnimationFramerate(framerate);
+		}
+
+		int SetConfiguration(const int setting, const int value)
+		{
+			return Renderer().SetConfiguration(setting, value);
+		}
+
+		int GetConfiguration(const int setting, int& out_value)
+		{
+			return Renderer().GetConfiguration(setting, out_value);
+		}
+	}
+
+	namespace ColorSettings
+	{
+		void SetLUT(const char* LUT)
+		{
+			Renderer().SetLUT(std::string(LUT));
+		}
+
+		void SetWhitePoint(GFXVec3 whitePoint)
+		{
+			Renderer().SetWhitepoint(whitePoint);
+		}
+
+		void SetExposure(float exposure)
+		{
+			Renderer().SetExposure(exposure);
 		}
 	}
 }
@@ -228,18 +382,19 @@ namespace GFX
 		DebugDrawing().AddPoint(p);
 	}
 
-	void Debug::DrawLine(GFXVec3 p1, GFXVec3 p2, GFXColor color)
+	void Debug::DrawLine(GFXVec3 p1, GFXVec3 p2, GFXColor color, bool useDepth)
 	{
-		Debug::DrawLine(p1, p2, color, 1.0f);
+		Debug::DrawLine(p1, p2, color, 1.0f, useDepth);
 	}
 
-	void Debug::DrawLine(GFXVec3 p1, GFXVec3 p2, GFXColor color, float thickness)
+	void Debug::DrawLine(GFXVec3 p1, GFXVec3 p2, GFXColor color, float thickness, bool useDepth)
 	{
 		DebugLine l;
 		l.color = color;
 		l.start = p1;
 		l.end = p2;
 		l.thickness = thickness;
+		l.useDepth = useDepth;
 		DebugDrawing().AddLineWorld(l);
 	}
 
@@ -278,12 +433,13 @@ namespace GFX
 		DebugDrawing().AddRect(r, solid);
 	}
 
-	void Debug::DrawBox(GFXVec3 position, GFXVec3 dimensions, bool solid, GFXColor color)
+	void Debug::DrawBox(GFXVec3 position, GFXVec3 dimensions, bool solid, GFXColor color, bool useDepth)
 	{
 		DebugBox b;
 		b.color = color;
 		b.position = position;
 		b.dimensions = dimensions;
+		b.useDepth = useDepth;
 		DebugDrawing().AddBox(b, solid);
 	}
 	void Debug::DrawCircle(GFXVec2 position, float radius, unsigned int lineWidth, GFXColor color)
@@ -301,13 +457,33 @@ namespace GFX
 		DebugDrawing().AddCircle(c);
 	}
 
-	void Debug::DrawSphere(GFXVec3 position, float radius, GFXColor color)
+	void Debug::DrawSphere(GFXVec3 position, float radius, GFXColor color, bool useDepth)
 	{
 		DebugSphere s;
 		s.position = position;
 		s.radius = radius;
 		s.color = color;
+		s.useDepth = useDepth;
 		DebugDrawing().AddSphere(s);
 	}
 
+	void Debug::DrawFrustum(GFXMat4x4 cameraMatrix, GFXColor color, bool useDepth)
+	{
+		DebugDrawing().AddFrustum(cameraMatrix, color, useDepth);
+	}
+
+    void Debug::SetStatisticsFont(GFX::FontData* font)
+    {
+        Renderer().SetStatisticsFont(font);
+    }
+
+	void Debug::DisplaySystemInfo(bool enabled)
+	{
+		Renderer().ShowStatistics(enabled);
+	}
+
+	void Debug::DisplayFBO(int which)
+	{
+		Renderer().ShowFBO(which);
+	}
 }

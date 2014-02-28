@@ -19,6 +19,8 @@
 
 #define LOGGER_LIMIT 4
 
+#define MESSAGE_LENGTH 2048
+
 class LogHandler;
 
 /*! 
@@ -64,7 +66,7 @@ namespace LogSystem
 
 		const char* GetPrefix() { return m_prefix; }
 
-		char m_message[512];
+		char m_message[MESSAGE_LENGTH];
 
 	private:		
 		LogType m_type;
@@ -99,6 +101,8 @@ namespace LogSystem
 	DLLSETTING void SetNewLogHandler( LogHandler** handlerChannel, LogHandler* newHandler );
 
     DLLSETTING void RegisterLogHandler( LogHandler** handlerChannel, LogHandler* newHandler );
+
+    DLLSETTING void DeregisterLogHandler( LogHandler** handlerChannel, LogHandler* newHandler );
 }
 
 typedef std::basic_ostream<char, std::char_traits<char> > CoutType;
@@ -121,11 +125,12 @@ LogSystem::LogData& operator<< ( const LogSystem::LogData& data, const T& obj )
 
 
 /*! Macros overriding logger::debug etc. to use a temp object. */
-#define LOG_DEBUG	LogSystem::LogData( LogSystem::LogType::logType_debug,		"debug" )
-#define LOG_INFO    LogSystem::LogData( LogSystem::LogType::logType_warning,    "info" )
-#define LOG_FATAL	LogSystem::LogData( LogSystem::LogType::logType_fatal,		"fatal" )
-#define LOG_ERROR	LogSystem::LogData( LogSystem::LogType::logType_error,		"error" )
-#define LOG_WARNING	LogSystem::LogData( LogSystem::LogType::logType_warning,	"warning" )
+#define LOG_DEBUG		LogSystem::LogData( LogSystem::LogType::logType_debug,		"debug" )
+#define LOG_INFO		LogSystem::LogData( LogSystem::LogType::logType_warning,		"info" )
+#define LOG_FATAL		LogSystem::LogData( LogSystem::LogType::logType_fatal,		"fatal" )
+#define LOG_ERROR		LogSystem::LogData( LogSystem::LogType::logType_error,		"error" )
+#define LOG_WARNING		LogSystem::LogData( LogSystem::LogType::logType_warning,	"warning" )
+#define LOG_GFXSPECIAL	LogSystem::LogData( LogSystem::LogType::logType_warning,	"GFX" )
 //#define LOG	LogSystem
 
 // add more here at need...

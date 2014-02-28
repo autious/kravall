@@ -7,8 +7,8 @@ namespace Core
 {
     class LuaLoggerPrint
     {
-        public:
-            static void OpenLibs( lua_State * state );
+    public:
+        LuaLoggerPrint( lua_State * state );
     };
 }
 

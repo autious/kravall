@@ -13,9 +13,11 @@ namespace Core
         BaseAssetLoader();
         virtual ~BaseAssetLoader();
 
-        virtual void* Load(const char* assetName) = 0;
-        virtual void* LoadAsync(const char* assetname, Core::FinisherVector& finisher, std::mutex& finisherMutex) = 0;
+        virtual Core::AssetHandle Load(const char* assetName) = 0;
+        virtual Core::AssetHandle LoadAsync(const char* assetname) = 0;
+        virtual void FinishLoadAsync(Core::AssetHandle& handle) = 0;
         virtual void Destroy(const Core::AssetHandle handle) = 0;
+		virtual bool UseReferenceCounting() { return true; }
     private:
 
     };

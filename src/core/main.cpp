@@ -1,4 +1,4 @@
-
+#include "main.hpp"
 #ifdef RUN_GTEST 
     #include <gtest/gtest.h>
 #endif
@@ -12,82 +12,63 @@
 #include <WindowHandling/GLFWInclude.hpp>
 #include "WindowHandling/InitializeGLFW.hpp"
 
-#include <gfx/GFXInterface.hpp>
-#include <gfx/Material.hpp>
 #include <utility/Colors.hpp>
 #include "Camera/Camera.hpp"
 #include <ComponentFramework/SystemHandlerTemplate.hpp>
 #include <ComponentFramework/EntityHandlerTemplate.hpp>
+#include <ComponentFramework/SystemTypes.hpp>
 
 #include <utility/Colors.hpp>
 
-#include "GLFWInput.hpp"
 #include <World.hpp>
 
-#include "console/console.hpp"
-#include "BGnomeImporter.hpp"
-
-#include "console/clop.hpp"
+#include "Console/Console.hpp"
+#include "Console/CLOP.hpp"
 #include <sstream>
 
 #include <iomanip>
 
 #include <ContentManagement/ContentManager.hpp>
 #include <logger/Logger.hpp>
-#include <logger/internal/ClopHandler.hpp>
+#include <logger/Handlers.hpp>
 
 #include <Lua/LuaState.hpp>
+#include <Input/InputManager.hpp>
 
-void clopLoggerCallback( LogSystem::LogType m_type, const char * message )
-{
-    switch( m_type )
-    {
-    case LogSystem::LogType::logType_debug :
-        Core::Console().PrintLine(std::string( message ), Colors::White );
-        break;
+#include <gfx/BitmaskDefinitions.hpp>
 
-    case LogSystem::LogType::logType_error :
-        Core::Console().PrintLine(std::string( message ), Colors::Red );
-        break;
+static bool killProgram = false;
 
-    case LogSystem::LogType::logType_fatal :
-        Core::Console().PrintLine(std::string( message ), Colors::Red );
-        break;
+#include <DebugRendering.hpp>
+#include <CLOPLoggerCallback.hpp>
 
-    case LogSystem::LogType::logType_warning :
-        Core::Console().PrintLine(std::string( message ), Colors::Yellow);
-        break;
-    }
+GLFWwindow *mainWindow = nullptr;
 
-}
+GFX::FontData* localFontData;
 
 // Just an example of a clop function
 // This function gets registred in Init with clop::Register("exit", ClopCloseWindow);
 // And the command is sent to the command line by pressing 'E' (as seen in run()) with Core::Console().SetInputLine("exit");
 void ClopCloseWindow(clop::ArgList args)
 {
-	exit(0);
+	killProgram = true;
 }
 
 int initScreenHeight;
 int initScreenWidth;
-
 GLFWwindow* init( int argc, char** argv )
 {
 	GLFWwindow* window;
 
-    LogSystem::RegisterLogHandler( LogSystem::debugHandler,     new ClopHandler( clopLoggerCallback, LogSystem::LogType::logType_debug ) );
-    LogSystem::RegisterLogHandler( LogSystem::fatalHandler,     new ClopHandler( clopLoggerCallback, LogSystem::LogType::logType_fatal ) );
-    LogSystem::RegisterLogHandler( LogSystem::errorHandler,     new ClopHandler( clopLoggerCallback, LogSystem::LogType::logType_error ) );
-    LogSystem::RegisterLogHandler( LogSystem::warningHandler,   new ClopHandler( clopLoggerCallback, LogSystem::LogType::logType_warning) );
-
-    Core::world.m_luaState.Execute( "scripts/config.lua" );
+    Core::world.m_luaState.OpenLibs();
+    bool worked = Core::world.m_luaState.Execute( "scripts/config.lua" ) && Core::world.m_luaState.Execute( "scripts/main.lua" );
+    assert( worked );
 
     for( int i = 0; i < argc-1; i++ )
     {
         if( strcmp( argv[i], "--conf" ) == 0 )
         {
-            Core::world.m_luaState.DoBlock( argv[i+1] ); 
+            Core::world.m_luaState.DoBlock( argv[i+1] );
         }
     }
 
@@ -98,151 +79,160 @@ GLFWwindow* init( int argc, char** argv )
 
 	clop::Register("exit", ClopCloseWindow);
 
+	Core::world.InitWorld();
+
 	if (GFX::Init(initScreenWidth,initScreenHeight) == GFX_FAIL)
 		return nullptr;
 
-    return window;
-}
+    Core::world.m_contentManager.Load<Core::TTFLoader>(Core::world.m_config.GetString("consoleFont", "assets/font/ConsoleFont.font").c_str(), [](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+            {
+                if( handle == nullptr )
+                {
+                    LOG_FATAL << "Unable to load main font" << std::endl;
+                }
+                else
+                { 
+                    localFontData = static_cast<GFX::FontData*>(handle);
+                    Core::Console().Init(localFontData);  
+                    GFX::Debug::SetStatisticsFont(localFontData);
+                }
+            });
 
-void TestRendering()
-{
-	GFX::Debug::DrawBox(glm::vec3(2, 0, 0), glm::vec3(2, 2, 10), false, Colors::Black);
-	GFX::Debug::DrawBox(glm::vec3(2, 0, 0), glm::vec3(2, 2, 10), true, glm::vec4(Colors::Black.x, Colors::Black.y, Colors::Black.z, 0.5f));
-	GFX::Debug::DrawSphere(glm::vec3(2, 0, 0), 2.0f, Colors::Black);
-
-	GFX::Debug::DrawLine(glm::vec2(100, 50), glm::vec2(1200, 600), Colors::CornflowerBlue);
-	GFX::Debug::DrawPoint(glm::vec2(100, 50), Colors::Green, 10);
-	GFX::Debug::DrawPoint(glm::vec2(1200, 600), Colors::Green, 10);
-
-	GFX::Debug::DrawRectangle(glm::vec2(0, 0), glm::vec2(200, 20), true, Colors::Aquamarine);
-	GFX::Debug::DrawRectangle(glm::vec2(100, 20), glm::vec2(100, 40), false, Colors::Chocolate);
-
-	GFX::RenderText(glm::vec2(0, 100), 1.0f, Colors::Black, "The Quick Brown Fox Jumps Over The Lazy Dog");
-	GFX::RenderText(glm::vec2(10, 120), 1.0f, Colors::Blue, "The Quick Brown Fox Jumps Over The Lazy Dog");
-	GFX::RenderText(glm::vec2(20, 140), 1.0f, Colors::Green, "The Quick Brown Fox Jumps Over The Lazy Dog");
-	GFX::RenderText(glm::vec2(30, 160), 1.0f, Colors::CornflowerBlue, "The Quick Brown Fox Jumps Over The Lazy Dog");
-	GFX::RenderText(glm::vec2(40, 180), 1.0f, Colors::White, "The Quick Brown Fox Jumps Over The Lazy Dog????");
-
-	GFX::RenderText(glm::vec2(0, 200), 1.0f, Colors::Gold, "ABCDEFGHIJKLMNOPQRSTUVWXYZASIUHDOIASHUDIOASHDA1234567890*'^&%#!?");
-}
-
-void SystemTimeRender()
-{
-    if( Core::world.m_config.GetBool( "showSystems", false ) )
-    {
-        std::vector<std::pair<const char *,std::chrono::microseconds>> times = Core::world.m_systemHandler.GetFrameTime();
-
-        for( int i = 0; i < (int)times.size(); i++ )
-        {
-            std::stringstream ss;
-            
-            ss << times[i].first << ": " << std::fixed << std::setw( 7 ) << std::setprecision(4) << std::setfill( '0' ) << times[i].second.count() / 1000.0f << "ms";
-	        GFX::RenderText(glm::vec2(5, GFX::GetScreenHeight()-5-20*times.size()+20*i), 1.0f, Colors::White, ss.str().c_str());
-        }
-
-	    GFX::Debug::DrawRectangle(glm::vec2(0,GFX::GetScreenHeight()-5-20-17*times.size() ), 
-            glm::vec2(500, 20*times.size()), true, glm::vec4( 0.5f,0.5f,0.5f,0.5f) );
-    }
+    RegisterCLOPLogger();
+	return window;
 }
 
 void run( GLFWwindow * window )
 {
     LOG_INFO << "Starting program" << std::endl;
 
-	Core::Camera* gCamera;
-	gCamera = new Core::Camera(45.0f, 1.0f, 1000.0f);
-	gCamera->CalculateProjectionMatrix(initScreenWidth, initScreenHeight);
-	gCamera->SetPosition(glm::vec3(0.0f, 0.0f, -700.0f));
-
-	GFX::SetProjectionMatrix(gCamera->GetProjectionMatrix());
-
-	Core::GetInput().Initialize(window);
-
-    
-    Entity ent1 = Core::world.m_entityHandler.CreateEntity<Core::ExampleComponent1,Core::ExampleComponent2>( Core::ExampleComponent1::D1(),
-                                                                                   Core::ExampleComponent2::D2() );
     Core::ContentManager CM;
-
-	GLuint IBO;
-	GLuint VAO;
-    GLint vSize;
-    GLint iSize;
-
-   CM.Load<Core::GnomeLoader>("assets/tomte.gnome", [&VAO, &IBO, &vSize, &iSize](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
-           {
-               Core::GnomeLoader* gnomeLoader = dynamic_cast<Core::GnomeLoader*>(baseLoader);
-               const Core::ModelData* data = gnomeLoader->getData(handle);
-               VAO = data->VAO;
-               IBO = data->IBO;
-               vSize = data->vSize;
-               iSize = data->iSize;
-           });
-   std::cout << "ASDF" << std::endl;
-   
-	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));
-    GFX::Material* m = new GFX::Material();
-	m->diffuse = GFX::Content::LoadTexture2DFromFile("assets/GDM.png");
-
-	for (int i = -100; i < 100; i++)
-	{
-		for (int j = -10; j < 10; j++)
-		{
-			Entity e2 = Core::world.m_entityHandler.CreateEntity<Core::GraphicsComponent, Core::WorldPositionComponent, Core::RotationComponent, Core::ScaleComponent>
-				(Core::GraphicsComponent(), Core::WorldPositionComponent(), Core::RotationComponent(), Core::ScaleComponent());
 	
-			Core::GraphicsComponent* gc = WGETC<Core::GraphicsComponent>(e2);
-	
-			gc->ibo = IBO;
-			gc->iboSize = vSize;
-			gc->vao = VAO;
-			gc->material = m;
-			gc->shader = 0;
-	
-			Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(e2);
-			wpc->position[0] = i * 10;
-			wpc->position[1] = j * 10;
-	
-			Core::ScaleComponent* sc = WGETC<Core::ScaleComponent>(e2);
-			sc->scale = .1f;
-	
-			Core::RotationComponent* rc = WGETC<Core::RotationComponent>(e2);
-		
-			//rc->rotation[0] = sin(3.14f / 2.0f);
-			//rc->rotation[1] = sin(3.14f / 2.0f);
-			rc->rotation[2] = sin(3.14f);
-			rc->rotation[3] = cos(3.14f / 2.0f);
-		}
-	}
+	GFX::SetProjectionMatrix(Core::gameCamera.GetProjectionMatrix(), Core::gameCamera.GetNear(), Core::gameCamera.GetFar());
 
+	std::vector<Core::Entity> rioters;
 
-	std::cout << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " ";
+    Core::GetInputManager().Init( window );
+
+    unsigned int meshID; 
+    unsigned int copMaterialID;
+	unsigned int rioterMaterialID;
+
+	GFX::RenderSplash(Core::world.m_config.GetBool( "showSplash", false ));	
+
+	clop::Register( "showMesh", Core::ToggleDrawOfNavigationMesh );
+
+	LOG_INFO << GFX::GetScreenWidth() << " " << GFX::GetScreenHeight() << " " << std::endl;
+
+    LOG_WARNING << "Startup complete, setting output to \"" << CONF.GetString( "consoleOutputLevel", "debug" ) << "\" level (to change this do lua core.config.consoleOutputLevel=\"debug\" or change the setting in scripts/config.lua" << std::endl;
+
+    //Set output level before calling init
+    std::string consoleOutputLevel = CONF.GetString( "consoleOutputLevel", "debug" );
+    SetCLOPLevel( consoleOutputLevel.c_str() );
+
+    Core::world.m_luaState.Init();
+
+	Core::world.m_threadHandler.Initialize( CONF.GetInt( "numberOfSystemCoresToUse", 1 ) );
+
 
 	//inputline.resize(1);
+	Core::HighresTimer timer;
+	long long lastFrameTime = timer.GetTotal();
+	long long thisFrame = timer.GetTotal();
+    double timeAccumulator = 0.0;
+    const double MAXIMUM_TIME_STEP = 1.0/15.0;
+    const double MINIMUM_TIME_STEP = 1.0/120.0;
 
-	while (!glfwWindowShouldClose(window))
+    const int FPS_COUNTERS_SIZE = 20;
+    double fpsCounters[FPS_COUNTERS_SIZE];
+    int fpsCounterIndex = 0;
+
+    
+
+	while (!glfwWindowShouldClose(window) && killProgram == false)
 	{
-		Core::GetInput().UpdateInput();
-		
-		Core::Console().Update();
+        //Set the output filtering level for the console each frame
+        consoleOutputLevel = CONF.GetString( "consoleOutputLevel", "debug" );
+        SetCLOPLevel( consoleOutputLevel.c_str() );
 
-        CM.CallFinishers();
+		// calc delta time
+		thisFrame = timer.GetTotal();
+		double delta = (thisFrame - lastFrameTime) / 1000.0;
+		lastFrameTime = thisFrame;
 
-		//gCamera->CalculateViewMatrix();
-		gCamera->LookAt(glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		GFX::SetViewMatrix(gCamera->GetViewMatrix());
+        double minimumTimeStep = Core::world.m_config.GetDouble("timeStepMinimum", MINIMUM_TIME_STEP);
+        double maximumTimeStep = Core::world.m_config.GetDouble("timeStepMaximum", MAXIMUM_TIME_STEP);
 
-		TestRendering();
-		
-		GFX::Render();
+        timeAccumulator += delta;
 
-        Core::world.m_systemHandler.Update( 0.1f );
-        SystemTimeRender();
-		Core::GetInput().ResetInput();
-		glfwSwapBuffers(window);
-		glfwPollEvents();
+        if(timeAccumulator > maximumTimeStep)
+        {
+            timeAccumulator = maximumTimeStep;
+        }
 
+        if(timeAccumulator > minimumTimeStep)
+        {            
+            Core::Console().Update();
+
+            GFX::SetOverlayViewMatrix( Core::overlayCamera.GetViewMatrix() );
+            GFX::SetOverlayProjectionMatrix( Core::overlayCamera.GetProjectionMatrix() );
+            GFX::SetViewMatrix(Core::gameCamera.GetViewMatrix());
+            GFX::SetProjectionMatrix(Core::gameCamera.GetProjectionMatrix(), Core::gameCamera.GetNear(), Core::gameCamera.GetFar());
+
+            //TestRendering();
+
+            //TODO: Timing hook
+            SystemTimeRender();
+            GFX::Render(timeAccumulator);
+
+            Core::world.m_contentManager.CallFinishers();
+            Core::world.m_systemHandler.Update(static_cast<float>(timeAccumulator));
+            Core::world.m_luaState.Update(static_cast<float>(timeAccumulator));
+
+            Core::DrawToggledNavigationMesh();
+
+            GFX::Debug::DisplayFBO(Core::world.m_config.GetInt( "showFramebuffers", -1 ));
+            glfwSwapBuffers(window);
+            Core::GetInputManager().PollEvents();
+            Core::GetInputManager().CallListeners();
+
+            //TODO: Timing hook
+            Core::world.m_frameHeap.Rewind();
+
+
+            timeAccumulator = 0.0;
+        }
+
+        fpsCounters[fpsCounterIndex++] = 1.0 / delta;
+        if(fpsCounterIndex == FPS_COUNTERS_SIZE)
+        {
+            double averageFps = 0.0;
+            for(int i=0; i < FPS_COUNTERS_SIZE; ++i)
+            {
+                averageFps += fpsCounters[i];
+            }
+
+            averageFps /= FPS_COUNTERS_SIZE;
+            fpsCounterIndex = 0;
+
+            lua_State* L = Core::world.m_luaState.GetState();
+            lua_getglobal(L, "core");
+                lua_pushstring(L, "framesPerSecond");
+                lua_pushnumber(L, averageFps);
+            lua_settable(L, -3);
+            lua_pop(L, 1);
+        }
     }
 
+    Core::world.m_luaState.Stop();
+
+    //Deregister clop before the stack starts unwinding!
+    DeregisterCLOPLogger();
+
+    Core::world.m_luaState.CloseLibs();
+	Core::world.m_constantHeap.Rewind();
+
+    Core::GLFWWindowCallbackHandler::Free();
     glfwDestroyWindow( window );
 
 	glfwTerminate();
@@ -255,20 +245,22 @@ int main(int argc, char** argv)
     ::testing::InitGoogleTest(&argc, argv);
 #endif
 #ifndef SKIP_RUN
-	GLFWwindow* window = init( argc, argv );
-	if( window == nullptr )
+	mainWindow = init( argc, argv );
+	if( mainWindow == nullptr )
 		return -1; 
 #endif
 #ifdef RUN_GTEST
     int gtestReturn = RUN_ALL_TESTS();
-#ifdef _WIN32 
-	std::cin.get();
-#endif
     if( gtestReturn != 0 )
+	{
+#ifdef _WIN32 
+	    std::cin.get();
+#endif
         return gtestReturn;
+	}
 #endif
 #ifndef SKIP_RUN
-    run( window );
+    run( mainWindow );
 #endif
 
 #ifdef RUN_GTEST

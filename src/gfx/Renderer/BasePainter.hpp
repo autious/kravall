@@ -7,6 +7,11 @@
 
 namespace GFX
 {
+	struct RenderInfo
+	{
+		unsigned int numTris;
+		unsigned int numDrawCalls;
+	};
 	class BasePainter
 	{
 	public:
@@ -29,6 +34,7 @@ namespace GFX
 
 		/*!
 		Empty virtual function for overriding.
+		\return Returns rendering info
 		*/
 		virtual void Render();
 

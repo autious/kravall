@@ -1,4 +1,5 @@
 #include "ShaderManager.hpp"
+#include <logger/Logger.hpp>
 
 namespace GFX
 {
@@ -23,7 +24,7 @@ namespace GFX
 		}
 		catch (std::exception e)
 		{
-			std::cout << (std::string("Could not load file from ") + filepath + ": " + e.what()).c_str();
+			LOG_ERROR << (std::string("Could not load file from ") + filepath + ": " + e.what()).c_str();
 
 		}
 
@@ -31,6 +32,8 @@ namespace GFX
 
 		GLuint shaderID = glCreateShader(type);
 		const char* source = m_textFile->GetCString();
+
+		//TODO: Implement preprocessor defines
 
 		if (shaderID != 0)
 		{
@@ -131,7 +134,7 @@ namespace GFX
 
 	void ShaderManager::UseProgram(std::string shaderProgramKey)
 	{
-		glGetError();
+		//glGetError();
 
 		GLuint shaderProgramID = m_shaderData->GetShaderProgram(shaderProgramKey);
 
@@ -144,10 +147,10 @@ namespace GFX
 			std::cout << ("ERROR: No shader-program with associated key does exist!");
 		}
 
-		if (glGetError() != GL_NO_ERROR)
-		{
-			std::cout << "ERROR: Could not use shaderProgram " + shaderProgramKey + "!\n";
-		}
+		//if (glGetError() != GL_NO_ERROR)
+		//{
+		//	std::cout << "ERROR: Could not use shaderProgram " + shaderProgramKey + "!\n";
+		//}
 	}
 
 	void ShaderManager::LinkProgram(std::string shaderProgramKey)
@@ -240,17 +243,26 @@ namespace GFX
 		glUseProgram(0);
 	}
 
-
+	
 	GLint ShaderManager::GetUniformLocation(std::string shaderProgramKey, std::string uniformName)
 	{
 		return glGetUniformLocation(GetShaderProgramID(shaderProgramKey), uniformName.c_str());
+	}
+
+	GLint ShaderManager::GetUniformLocation(GLuint shaderProgramID, std::string uniformName)
+	{
+		return glGetUniformLocation(shaderProgramID, uniformName.c_str());
 	}
 
 	GLint ShaderManager::GetUniformBlockLocation(std::string shaderProgramKey, std::string uniformBlockName)
 	{
 		return glGetUniformBlockIndex(GetShaderProgramID(shaderProgramKey), uniformBlockName.c_str());
 	}
-
+	
+	void ShaderManager::SetUniform(GLuint x, GLuint uniformLocation)
+	{
+		glUniform1ui(uniformLocation, x);
+	}
 	void ShaderManager::SetUniform(GLfloat x, GLuint uniformLocation)
 	{
 		glUniform1f(uniformLocation, x);

@@ -20,6 +20,7 @@ namespace GFX
 		glm::vec3 end;
 		float thickness;
 		glm::vec4 color;
+		bool useDepth;
 	};
 
 	struct DebugRect
@@ -35,6 +36,7 @@ namespace GFX
 		glm::vec3 position;
 		glm::vec3 dimensions;
 		glm::vec4 color;
+		bool useDepth;
 	};
 
 	struct DebugSphere
@@ -42,6 +44,7 @@ namespace GFX
 		glm::vec3 position;
 		float radius;
 		glm::vec4 color;
+		bool useDepth;
 	};
 
 	class DebugManager
@@ -60,6 +63,7 @@ namespace GFX
 		void AddBox(DebugBox box, bool filled);
 		void AddSphere(DebugSphere sphere);
 		void AddCircle(DebugRect circle);
+		void AddFrustum(glm::mat4x4 frustum, glm::vec4 color, bool useDepth);
 
 		inline std::vector<DebugPoint>& GetPoints(){ return m_points; }
 		inline std::vector<DebugLine>& GetLines(){ return m_lines; }
