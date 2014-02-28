@@ -10,7 +10,11 @@ return function( scen )
     local T = {}
 
     scen.name = "Scenario 1 (DESU DESU)"
-    scen.description = "Protect the peaceful demonstrators from the multiple agitators that attempt to murder them with great fury."
+    scen.description =  [[Deserters and transhumans are equal, or so they say. The rebellion of the lower districts have sparked a revolution filled with violence, blood and tears. All in the name of freedom.
+
+    Not everyone can handle it. That is why some people abandon their cause to seek refuge at the transhuman embassy where they will be assimilated into transhuman society in exchange for valuable information regarding the rebels\' hideouts.
+
+    A group of deserters are on their way to the embassy right now. Bands of rebels are certain to lie in wait for them and it is your job to protect the deserters until they reach the embassy. Keep them safe at any cost.]]
     
     -- Set game to start in prepmode
     scen.gamemode =  require "gamemodes/kravall":new(
