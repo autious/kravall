@@ -4,6 +4,7 @@ vsync = 0,
 windowResizable = true,
 initScreenWidth = 1280,
 initScreenHeight = 720,
+fullscreen = true,
 showSystems = false,
 entityMemoryOutputLevel = "partial", -- full, short or partial
 -- List of components to render debug data for.
