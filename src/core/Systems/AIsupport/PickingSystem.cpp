@@ -52,7 +52,7 @@ Core::Entity Core::PickingSystem::GetHitEntity(int mouseX, int mouseY, Core::Asp
 			float projectedDistanceToSphere = glm::dot( toSphere, rayDir );
 
 			// ray is inside the sphere, ignore...
-			if( squareLength < sphere->radius * sphere->radius ) 
+			if( squareLength < sphere->pickingRadius * sphere->pickingRadius ) 
 			{
 				continue;
 			}
@@ -64,13 +64,13 @@ Core::Entity Core::PickingSystem::GetHitEntity(int mouseX, int mouseY, Core::Asp
 			}
 
 			// the sphere is too far from the line, ignore...
-			if( squareLength - projectedDistanceToSphere * projectedDistanceToSphere > sphere->radius * sphere->radius ) 
+			if( squareLength - projectedDistanceToSphere * projectedDistanceToSphere > sphere->pickingRadius * sphere->pickingRadius ) 
             {
 				continue;
 			}
 
 			// does the ray intersect with the sphere...
-			float sphereIntersectionDelta = sqrt( sphere->radius * sphere->radius - (squareLength - projectedDistanceToSphere * projectedDistanceToSphere) );
+			float sphereIntersectionDelta = sqrt( sphere->pickingRadius * sphere->pickingRadius - (squareLength - projectedDistanceToSphere * projectedDistanceToSphere) );
 
 			// record closest hit sphere...
 			if( projectedDistanceToSphere - sphereIntersectionDelta < closestHit )

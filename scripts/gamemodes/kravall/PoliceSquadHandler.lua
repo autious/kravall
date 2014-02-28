@@ -20,8 +20,10 @@ local PoliceSquadHandler =  {
                                 end,
                                 onMoveToPosition = function( squads, position, success )
                                     core.log.error( "No function set for onMoveToPosition" )
-                                end
-                                 
+                                end,
+                                onEventMessage = function( component )
+                                    core.log.error( "No function set for onEventMessage" )
+                                end                                 
                             }
 local U = require "utility"
 
@@ -36,6 +38,9 @@ local sprinting = (require "game_constants").sprinting
 local policeStamina = (require "game_constants").policeStamina
 
 local Reticule = require "gamemodes/kravall/reticule"
+
+
+local TextLabel = require "gui/component/TextLabel"
 
 local input = require "input"
 
@@ -236,6 +241,7 @@ function PoliceSquadHandler:updateSquadDamageStatus( delta )
                 self.squadDamageQueue[squadComponent.squadID].ttl = guiBehaviour.damageBlinkingLinger
             else
                 self.squadDamageQueue[squadComponent.squadID] = {ttl=guiBehaviour.damageBlinkingLinger}
+                self.onEventMessage(TextLabel:new({label="Unit under attack"}))
             end
         end 
 
@@ -407,7 +413,7 @@ function PoliceSquadHandler:AimTearGas()
     end
 
     if errorMessage then
-        print( errorMessage)
+        self.onEventMessage(TextLabel:new({label=errorMessage}))
     end
 end
 
@@ -763,7 +769,11 @@ function PoliceSquadHandler:update( delta )
     --Click Selection
     if self.leftClicked then        
 		self.boxStartX, self.boxStartY = mouse.getPosition()
-        local selectedEntity = core.system.picking.getLastHitEntity()
+
+          --local aspct = core.entity.generateAspect( core.componentType.AttributeComponent, core.componentType.BoundingVolumeComponent )
+          --local selectedEntity = core.system.picking.getHitEntity(self.boxStartX, self.boxStartY, aspct )
+       local selectedEntity = core.system.picking.getLastHitEntity()
+
         if selectedEntity then
             local unitTypeComponent = selectedEntity:get(core.componentType.UnitTypeComponent);
 

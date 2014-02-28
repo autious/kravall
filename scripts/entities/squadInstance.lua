@@ -76,7 +76,7 @@ local function createMember( scen, pos, groupID, weaponType, memberDef )
 			},
 			{
 				type = core.componentType.BoundingVolumeComponent,
-				data = { sphereOffset = { 0, 0, 0 }, sphereRadius = 0.7, 
+				data = { sphereOffset = { 0, 0, 0 }, sphereRadius = 0.7, pickingRadius = 1.0, 
 						collisionModel = core.BoundingVolumeCollisionModel.DynamicResolution, 
 						type = core.BoundingVolumeType.SphereBoundingType }
 			},

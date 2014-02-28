@@ -128,7 +128,6 @@ extern "C"
     static int LuaGenerateAspect( lua_State * L )
     {
         Core::Aspect asp = 0ULL;
-        LuaAspect* luaAsp = Core::LuaUNewAspect(L);
 
         int params = lua_gettop(L);
         
@@ -137,6 +136,7 @@ extern "C"
             asp |= Core::EntityHandler::GenerateAspect( luau_checkcomponent(L, i));
         }
 
+        LuaAspect* luaAsp = Core::LuaUNewAspect(L);
         luaAsp->aspect = asp;
 
         return 1;

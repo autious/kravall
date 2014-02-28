@@ -43,6 +43,14 @@ Core::ComponentGetters Core::BoundingVolumeComponentBinding::GetGetters()
         return 1;
     };
 
+	getters["pickingRadius"] = []( Core::Entity entity, lua_State *L )
+    {
+        BoundingVolumeComponent *bvc = WGETC<BoundingVolumeComponent>( entity ); 
+
+        lua_pushnumber( L, reinterpret_cast<BoundingSphere*>(bvc->data)->pickingRadius );   
+        return 1;
+    };
+
 	getters["sphereOffset"] = []( Core::Entity entity, lua_State * L )
     {
         BoundingVolumeComponent *bvc = WGETC<BoundingVolumeComponent>( entity ); 
@@ -76,6 +84,20 @@ Core::ComponentSetters Core::BoundingVolumeComponentBinding::GetSetters()
     {
         BoundingVolumeComponent *bvc = WGETC<BoundingVolumeComponent>( entity ); 
         bvc->collisionModel = *(Core::BoundingVolumeCollisionModel*)luaL_checkudata( L, valueindex, BOUNDING_VOLUME_COMPONENT_COLLISIONMODEL_TYPE_META );
+    };
+
+	setters["pickingRadius"] = []( Core::Entity entity, lua_State * L, int valueindex )
+    {
+        BoundingVolumeComponent *bvc = WGETC<BoundingVolumeComponent>( entity ); 
+        
+        if( lua_isnumber(  L, valueindex ) )
+        {
+            reinterpret_cast<Core::BoundingSphere*>(bvc->data)->pickingRadius = static_cast<float>(lua_tonumber( L, valueindex ));
+        }
+        else
+        {
+            luaL_error( L, "Unable to set scale for ent %d, value is not number", entity );
+        }
     };
 
 	// sphere component
