@@ -44,6 +44,23 @@ extern "C"
             return luaL_error(L, "createParticleDefinition(numberOfParticles, [materialId]) expects 2 parameters");
         }
     }
+
+    static int LuaChangeMaterialOfDefinition(lua_State* L)
+    {
+        Core::ParticleSystem* particleSystem = Core::world.m_systemHandler.GetSystem<Core::ParticleSystem>();
+        if(lua_gettop(L) == 2)
+        {
+            LuaParticleDefinition* luaParticleDef = luau_checkparticledefinition(L, 1);
+            unsigned long long int materialId = static_cast<unsigned int>(luaL_checkint(L, 2));
+            
+            particleSystem->ChangeMaterialOfDefinition(luaParticleDef->handle, materialId);
+            return 0;
+        }
+        else
+        {
+            return luaL_error(L, "changeMaterialOfDefinition([definition], [materialId]) expects 2 parameters");
+        }
+    }
 }
 
 namespace Core
@@ -65,6 +82,7 @@ namespace Core
             lua_getfield(L, -1, "system");
                 lua_newtable(L);
                     luau_setfunction(L, "createParticleDefinition", LuaCreateParticleDefinition);                    
+                    luau_setfunction(L, "changeMaterialOfDefinition", LuaChangeMaterialOfDefinition);
                         lua_newtable(L);
                         Core::EmitterType* type = LuaUNewEmitterType(L);
                         (*type) = Core::EmitterType::CONE_EMITTER;

@@ -300,6 +300,10 @@ function PoliceSquadHandler:setAbility( ability )
         if self:CanUseAbility(ability) then
             self:UseFlee() 
         end
+	elseif ability == core.system.squad.abilities.Attack then
+		self.isAiming = true
+		self:SetReticuleRender(false)
+		self.AimingFunction = self.AttackGroup
     end
 end
 

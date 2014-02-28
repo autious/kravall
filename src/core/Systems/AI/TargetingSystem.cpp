@@ -173,6 +173,7 @@ void Core::TargetingSystem::HandleRioterTargeting(Core::Entity rioter, float del
 		tc->target = INVALID_ENTITY;
 	}
 
+	tc->attackTime = 0.0f;
 	tc->target = FindClosestAttacker(tc, wpc);
 	if (tc->target == INVALID_ENTITY)
 		tc->target = FindClosestTarget(wpc, ( 1 << UnitType::Police ) | ( 1 << UnitType::Rioter ), instance->flowfields[ac->rioter.groupID].team, instance );
