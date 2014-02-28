@@ -80,6 +80,10 @@ function Main:new(o)
         onUsableAbilitiesChange = function( abilities )
             o.gui:setUsableAbilities( abilities )
         end,
+        onEventMessage = function( component )
+            o.gui:addEvent(component)
+        end,
+
         particleDefinitions = o.particleDefinitions,
     })	
 
