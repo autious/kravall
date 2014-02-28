@@ -34,7 +34,7 @@ return function( scen )
 									scen.gamemode.camera:lookAt( core.glm.vec3.new( -40, 30, 180 ), core.glm.vec3.new( -40, 0, 155 ) ) 
 									--scen.gamemode.camera.yaw = scen.gamemode.camera.yaw + math.pi
 									local plane = entity.get "plane"
-									plane(scen, 0, -1, 0, 900)
+									plane(scen, 0, -0.3, 0, 900)
 									
 									-- load weapons...
 									fists = core.weaponData.pushWeapon( 1.0, 0.75, 20, 0.2, 0.05, 3.2, 2.9, 0.05, 0.5, "punch" )
@@ -61,18 +61,18 @@ return function( scen )
 		local fists = core.weaponData.pushWeapon( 1.0, 0.75, 20, 0.2, 0.05, 3.2, 2.9, 0.05, 0.5, "punch" )
 		core.gameMetaData.registerEscapePoint( 50, 0, 0 )
 
-		local rGroup = core.system.groups.createGroup();
+		local rGroup = core.system.groups.createGroup( 1 );
 		local centerPoint = { -50, 0, 0 }
 		local side = math.sqrt( 32 )
 		for i = -side/2, side/2 do
 			for p = -side/2, side/2 do
-				--rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rGroup, nil, nil, fists)
+				rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rGroup, nil, nil, fists, nil, 100, 100)
 			end
 		end
 		core.system.groups.setGroupGoal(rGroup, 0, 0, -300)
 
 		local sqads = {}	
-		for i = 0, 10 do
+		for i = 0, 0 do
 			--sqads[#sqads + 1] = squad(scen, 20, 0, 0, math.pi/2, fists);
 			scen.gamemode:addSquad( policeSquad( scen, 20, 0, 0, 0, fists))
 		end

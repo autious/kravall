@@ -37,6 +37,7 @@ namespace Core
             \returns A handle to the newly created particle container.
         */
         Core::ParticleHandle CreateParticle(int numberOfParticles, unsigned long long int materialId);
+        void ChangeMaterialOfDefinition(Core::ParticleHandle, unsigned long long int materialId);
         
     private:       
         std::random_device m_randomDevice;

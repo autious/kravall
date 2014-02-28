@@ -35,7 +35,7 @@ namespace Core
     LuaAspect* LuaUNewAspect( lua_State * L )
     {
         LuaAspect* asp = (LuaAspect*)lua_newuserdata(L, sizeof(LuaAspect));
-        luaL_getmetatable(L, ASPECT_META_TYPE);
+        luaL_newmetatable(L, ASPECT_META_TYPE);
         lua_setmetatable(L, -2);
 
         return asp;
