@@ -288,7 +288,7 @@ return function( scen )
 			verts[i + 1] = verts[i + 1] + wpc.position[3]
 		end
 	    local grp = core.system.groups.createGroup(1)
-		group( scen, ac.vertices, grp, {xsize, ysize}, fists, {0.9,0.3,0,1}, 0, 0,core.RioterAlignment.Pacifist )
+		group( scen, ac.vertices, grp, {xsize, ysize}, fists, {0.9,0.3,0,1}, 1, 1,core.RioterAlignment.Pacifist )
         return grp
 	end
 
@@ -304,7 +304,7 @@ return function( scen )
 			verts[i + 1] = verts[i + 1] + wpc.position[3]
 		end
 	    local grp = core.system.groups.createGroup(2)
-		group( scen, ac.vertices, grp, {xsize, ysize}, fists, nil, 0, 0,core.RioterAlignment.Anarchist )
+		group( scen, ac.vertices, grp, {xsize, ysize}, fists, nil, 1, 1, core.RioterAlignment.Anarchist )
         return grp
 	end
 
