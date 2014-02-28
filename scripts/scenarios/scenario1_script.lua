@@ -210,7 +210,7 @@ return function( scen )
 
         scen.gamemode.camera:lookAt( core.glm.vec3.new( 50, 100, 10), core.glm.vec3.new( -60, 0, -50 ) ) 
         obj1 = scen.gamemode:createObjective()
-        obj1.title = "At least one agitator must survive and reach the goal."
+        obj1.title = "At least one deserter must survive and reach the goal."
 
         -- range, graceDistance, damageToHealth, damageToMorale, damageToMoraleOnMiss, enemyRageIncrease, enemyPressureIncrease, staminaCost, timeWhenAnimationDealsDamage, animationName
 		--fists = core.weaponData.pushWeapon( 1.0, 0.75, 20, 0.2, 0.05, 3.2, 2.9, 0.05, 0.5, "punch" )
@@ -222,7 +222,7 @@ return function( scen )
         scen.gamemode:update(delta) 
         if deserterGroup then
             local count = core.system.groups.getGroupMemberCount( deserterGroup )
-            obj1.title = "At least one agitator must survive and reach the goal. " .. count .. " remain."
+            obj1.title = "At least one deserter must survive and reach the goal. " .. count .. " remain."
             if  count == 0 then
                 obj1.state = "fail"
             end
