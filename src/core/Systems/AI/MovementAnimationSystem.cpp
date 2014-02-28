@@ -52,6 +52,7 @@ namespace Core
 
 
 			bool hasAlteredAnimation = false;
+			bool hasChangedAnimation = false;
 			ac->loop = false;
 			if ( !tc->isAttacking )
 			{
@@ -61,6 +62,9 @@ namespace Core
 						( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle" ) == ac->animationID
 						|| !ac->playing ))
 				{
+					if( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "agitated-run" ) != ac->animationID )
+						hasChangedAnimation = true;
+
 					ac->speed = 1.2f;
 					hasAlteredAnimation = true;
 					Core::AnimationManager::PlayAnimation( *it, "agitated-run" ); // running
@@ -71,6 +75,9 @@ namespace Core
 						( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle" ) == ac->animationID 
 						|| !ac->playing ))
 				{
+					if( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "walk-straight" ) != ac->animationID )
+						hasChangedAnimation = true;
+
 					ac->speed = 1.6f;
 					hasAlteredAnimation = true;
 					Core::AnimationManager::PlayAnimation( *it, "walk-straight" ); // walking
@@ -81,6 +88,9 @@ namespace Core
 						|| !ac->playing) && 
 						frameSpeed < 0.05f )
 				{
+					if( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle" ) != ac->animationID )
+						hasChangedAnimation = true;
+
 					ac->speed = 1.0f;
 					hasAlteredAnimation = true;
 					Core::AnimationManager::PlayAnimation( *it, "idle" ); // still
@@ -90,6 +100,11 @@ namespace Core
 				if( hasAlteredAnimation )
 				{
 					ac->speed = ac->speed + ((std::rand() % 1000) / 1000.0f) * 0.1f;
+				}
+
+				if( hasChangedAnimation )
+				{
+					ac->currentTime = ((std::rand() % 1000) / 1000.0f) * 1.0f;
 				}
 			}
 
