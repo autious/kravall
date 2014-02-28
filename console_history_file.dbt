@@ -1,8 +1,3 @@
-fbo 2
-lua scene = openScenario( "prototype" )
-lua scene = openscenario( "prototype" )
-fbo 3
-lua scenario = openscene( "prototype" )
 lua scenario = openscenario( "prototype" )
 lua showsys()
 lua showSys()
@@ -98,3 +93,8 @@ lua openscenario( "gpupf_tests/1group" )
 sysinfo
 lua openscenario( "gpupf_tests/2group" )
 lua openscenario( "gpupf_tests/4group" )
+exit
+exit
+exit
+exit
+exit
