@@ -130,6 +130,7 @@ uniform int gChargeReceiverIndices[3][6] = {{ 0, 1, 2, 3, 4, 5 },
 //z = pressure
 //w = rage
 uniform vec4 gMoodCurves[6][13] = {{ vec4(20.0f, 0.01f, 0.5f, 0.5f), vec4(0.0f), vec4(5.0f, 0.001f, 0.001f, 0.001f), vec4(5.0f, 0.001f, 0.001f, 0.001f), vec4(5.0f, -0.001f, 0.001f, 0.001f),vec4(0.0f), vec4(10.0f, 0.0f, 0.3f, 0.3f), vec4(10.0f, 0.0f, 0.3f, 0.3f), vec4(10.0f, 0.1f, 1.0f, 1.0f), vec4(0.0f), vec4(20.0f, 10.01f, 10.01f, 10.01f), vec4(0.0f),vec4(0.0f) },
+
 																																																																							   
 								   { vec4(20.0f, 0.01f, 0.01f, 0.01f), vec4(5.0f, -0.001f, -0.001f, -0.001f), vec4(5.0f, 0.0f, 0.0001f, 0.0001f), vec4(5.0f, 0.001f, 0.001f, 0.001f), vec4(5.0f, -0.001f, 0.001f, 0.001f),vec4(0.0f), vec4(10.0f, 0.0f, 1.1f, 1.1f), vec4(10.0f, 0.0f, 1.1f, 1.1f),  vec4(10.0f, 0.0f, 2.5f, 2.5f), vec4(0.0f), vec4(20.0f, 10.01f, 10.01f, 10.01f), vec4(0.0f),vec4(0.0f) },
 																																																																							   
@@ -159,7 +160,7 @@ uniform int gMoodReceiverIndices[3][6] = {{ 0, 1, 2, 3, 4, 5 },
 //Civilian
 
 //Column indices in order
-//reserved
+//Different rioter teams
 //Normal rioter
 //Agitated rioter
 //Attacking rioter
