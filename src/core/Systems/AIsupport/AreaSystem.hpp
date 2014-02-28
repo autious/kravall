@@ -21,6 +21,7 @@ namespace Core
 
         std::vector<Entity> GetAreaRioters( Entity id );
         int GetAreaRioterCount( Entity id );
+        int GetAreaRioterCount( Entity id, int groupId );
         bool IsAreaOnPoint( Entity id, const glm::vec3 &position );
         
     private:

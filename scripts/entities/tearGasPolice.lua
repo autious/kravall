@@ -2,6 +2,7 @@ local tearGasPolice = (require "game_constants").tearGasPolice
 
 return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, groupID, weaponType)
 
+    assert(groupID ~= nil)
 	local meshes = {"assets/model/animated/police/cop/cop-teargas_00.bgnome"}
     
     local T = {}

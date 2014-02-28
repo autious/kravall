@@ -3,7 +3,7 @@ return
 {
     standardPolice = 
     {
-        maxHealth                       = 100,
+        maxHealth                       = 200,
         maxStamina                      = 100,
         maxMorale                       = 2.0,
         damageOutline                   = vec4{"#ff0000",2.0},

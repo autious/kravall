@@ -4,7 +4,7 @@
 #include <World.hpp>
 #include <GameUtility/GameData.hpp>
 
-//#define SHOW_MOOD_STATE_DEBUG 
+#define SHOW_MOOD_STATE_DEBUG 
 #ifdef SHOW_MOOD_STATE_DEBUG
 	#define DRAW_DEBUG( x ) x
 #else
@@ -219,7 +219,7 @@ namespace Core
 						}
 						else if (stateChangeFactor > 50) //Should be set to attacking
 						{
-							atc->rioter.stance = RioterStance::Attacking;
+							//atc->rioter.stance = RioterStance::Attacking;
 						}
 						else if (stateChangeFactor < 20) //Should be set to normal
 						{

@@ -27,12 +27,23 @@ extern "C"
         return 1;
     }
 
+    /*!
+       First param is the area relevant,
+        the second param is the group id, which is free to ignore
+    */
     static int LuaGetAreaRioterCount( lua_State * L )
     {
         Core::AreaSystem *as = Core::world.m_systemHandler.GetSystem<Core::AreaSystem>();
         LuaEntity * ent = luau_checkentity( L, 1 );
-        
-        lua_pushinteger( L, as->GetAreaRioterCount( ent->entity ) );
+
+        if( lua_isnumber( L, 2 ) )
+        {
+            lua_pushinteger( L, as->GetAreaRioterCount( ent->entity, lua_tointeger(L,2) ) );
+        }
+        else
+        { 
+            lua_pushinteger( L, as->GetAreaRioterCount( ent->entity ) );
+        } 
 
         return 1;
     }

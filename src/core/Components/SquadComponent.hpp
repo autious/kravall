@@ -36,6 +36,8 @@ namespace Core
 	struct SquadComponent
 	{
 		Core::PoliceStance squadStance = Core::PoliceStance::Passive;
+		Core::PoliceStance prevSquadStance = Core::PoliceStance::Passive;
+
 		Core::SquadFormation squadFormation = Core::SquadFormation::NO_FORMATION;
 
 		int squadID = -1;
@@ -48,6 +50,8 @@ namespace Core
 		int squadHealth = 0;
 		int squadStamina = 0;
 		float squadMorale = 0.0f;
+		int targetGroup = std::numeric_limits<int>::max();
+
 
 		inline static const char* GetName()
 		{

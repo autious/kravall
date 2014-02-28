@@ -10,7 +10,10 @@ scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
 scen:registerInitCallback( function() scen.gamemode:init() end )
 
 scen.gamemode.camera:lookAt( core.glm.vec3.new( 0, 60, 120 ), core.glm.vec3.new( 0, 20, 50 ) )
-core.gfx.setWhitepoint(5.0, 5.0, 5.0)
+core.gfx.setWhitepoint(1.0, 1.0, 1.0)
+
+scen.name = "Particle editor"
+scen.description = "Edit particles by using the sliders (2particle4me)"
 --Plane
 function scen:load()
 

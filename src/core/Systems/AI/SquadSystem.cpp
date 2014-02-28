@@ -303,7 +303,25 @@ namespace Core
                 Core::SquadComponent* sqdc = WGETC<Core::SquadComponent>(*squad_it);
                 if(sqdc->squadID == squadIDs[i])
                 {
+					if( sqdc->squadStance != Core::PoliceStance::Aggressive && stance == Core::PoliceStance::Aggressive )
+						sqdc->prevSquadStance = sqdc->squadStance;
                     sqdc->squadStance = stance;
+                }
+            }
+        }
+    }
+
+	void SquadSystem::RevertSquadStanceFromAgressive( int* squadIDs, int nSquads )
+    {
+        for(int i=0; i<nSquads; ++i)
+        {
+            for(std::vector<Entity>::iterator squad_it = m_entities.begin(); squad_it != m_entities.end(); ++squad_it)        
+            {
+                Core::SquadComponent* sqdc = WGETC<Core::SquadComponent>(*squad_it);
+                if(sqdc->squadID == squadIDs[i])
+                {
+					if( sqdc->squadStance == Core::PoliceStance::Aggressive )
+						sqdc->squadStance = sqdc->prevSquadStance;
                 }
             }
         }
@@ -321,6 +339,12 @@ namespace Core
         }
         return INVALID_ENTITY;
     }
+
+	void SquadSystem::SetSquadTargetGroup( int squadID, int targetSquadID )
+	{
+		Core::SquadComponent* sq = WGETC<Core::SquadComponent>( GetSquadEntity( squadID ) );
+		sq->targetGroup = targetSquadID;
+	}
 
     void SquadSystem::EnableOutline(int* squadIDs, int nSquads,const glm::vec4& Color)
     {        

@@ -70,6 +70,7 @@ function PoliceSquadHandler:new(o)
     o.groupsSelectedByBox = {}
     o.previousGroupSelectedByBox = {}
     o.selectedSquads = {}
+	o.outlinedRioterGroups = nil
 
     -- List for units recently damaged, with ttl.
     o.squadDamageQueue = {}
@@ -299,6 +300,10 @@ function PoliceSquadHandler:setAbility( ability )
         if self:CanUseAbility(ability) then
             self:UseFlee() 
         end
+	elseif ability == core.system.squad.abilities.Attack then
+		self.isAiming = true
+		self:SetReticuleRender(false)
+		self.AimingFunction = self.AttackGroup
     end
 end
 
@@ -406,6 +411,55 @@ function PoliceSquadHandler:AimTearGas()
     end
 end
 
+function PoliceSquadHandler:AttackGroup()
+	if #self.selectedSquads == 0 or self.rightClicked then
+		self.isAiming = false
+		self:SetReticuleRender(false)
+		self.AimingFunction = nil
+		
+		self.rightClicked = false
+		self.rightPressed = false
+		
+		return
+	end
+	
+	local selectedEntity = core.system.picking.getLastHitEntity()
+	if selectedEntity then
+		local unitTypeComponent = selectedEntity:get(core.componentType.UnitTypeComponent);
+		local attributeComponent = selectedEntity:get(core.componentType.AttributeComponent);
+
+		if attributeComponent and unitTypeComponent then                 
+			
+			--cursor is hovering over rioters
+			if unitTypeComponent.unitType == core.UnitType.Rioter then
+				s_squad.enableOutline( { attributeComponent.groupID }, standardPolice.selectionPrimaryOutline:get() )
+				self.outlinedRioterGroups = attributeComponent.groupID;
+				
+				if self.leftClicked then
+					self.isAiming = false
+					self:SetReticuleRender(false)
+					self.AimingFunction = nil
+					
+					self.leftClicked = false
+					self.leftPressed = false
+					
+					core.orders.attackGroup( self.selectedSquads, attributeComponent.groupID )
+				end				
+			end			
+		end		
+	elseif self.leftClicked then
+	
+		self.leftClicked = false
+		self.leftPressed = false
+	end	
+end
+
+function PoliceSquadHandler:RevertAttackingStateOfSelected()
+	if #self.selectedSquads ~= 0 then
+		core.orders.attackGroup( self.selectedSquads, -1 )
+	end
+end
+
 function PoliceSquadHandler:AimSprint()
     local mouseX, mouseY = mouse.getPosition()
     local x,y,z = core.system.picking.getGroundHit(mouseX, mouseY);
@@ -450,18 +504,18 @@ function PoliceSquadHandler:UseTearGas(entity, x, y, z)
     entity:set(core.componentType.UnitTypeComponent, {unitType = core.UnitType.Object}, true)
     entity:set(core.componentType.WorldPositionComponent, {position = {x, y, z}})
     entity:set(core.componentType.EmitterComponent, {
-            rate = 10,
-            offset = {0, 0, 0},
-            life = 5,
-            lifeVariance = 0,
-            lifeReduction = 1,
+            rate = 100,
+            offset = {0, -2, 0},
+            life = 3,
+            lifeVariance = 0.5,
+            lifeReduction = 1.5,
             lifeReductionVariance = 0,
-            velocity = {0, 0, 6},
-            velocityVariance = {3, 3, 3},
-            acceleration = {0, -2, 0},
+            velocity = {0, 0, 3},
+            velocityVariance = {0, 0, 4},
+            acceleration = {0, 2, 0},
             coneDirection = {0, 1, 0},
-            coneAngle = 30,
-            coneAngleVariance = 60,
+            coneAngle = 60,
+            coneAngleVariance = 30,
             type = core.system.particle.emitters.Cone,
             handle = self.particleDefinitions["TearGas"]
             }, true)
@@ -482,6 +536,7 @@ function PoliceSquadHandler:UseSprint(x, y, z)
         end
     end
     
+	self:RevertAttackingStateOfSelected()
     core.system.squad.setSquadGoal(self.selectedSquads, x, y, z)
 end
 
@@ -502,6 +557,8 @@ function PoliceSquadHandler:UseFlee()
         core.system.squad.setSquadStance({k}, core.PoliceStance.Passive)
         core.system.squad.setSquadGoal({k}, v[1], v[2], v[3])
     end
+	
+	self:RevertAttackingStateOfSelected()
 end
 
 function PoliceSquadHandler:update( delta )
@@ -543,11 +600,16 @@ function PoliceSquadHandler:update( delta )
 
     local function clearOutlines()
         local allSquads = core.system.squad.getAllSquadEntities()
-
+        
         for i,v in pairs( allSquads ) do 
             local squadComponent = v:get( core.componentType.SquadComponent )
             core.system.squad.disableOutline( {squadComponent.squadID} )
         end
+		
+		if self.outlinedRioterGroups then
+			core.system.squad.disableOutline( { self.outlinedRioterGroups } )		
+		end		
+		self.outlinedRioterGroups = nil
     end
 
     clearOutlines()
@@ -614,6 +676,19 @@ function PoliceSquadHandler:update( delta )
             end            
        end
     end
+	
+	-- attack group
+	if keyboard.isKeyDownOnce(keyboard.key.Kp_5) then
+		if self.isAiming and self.AimingFunction == self.AttackGroup then
+			self.isAiming = false
+			self:SetReticuleRender(false)
+			self.AimingFunction = nil
+		else
+			self.isAiming = true
+			self:SetReticuleRender(false)
+			self.AimingFunction = self.AttackGroup
+		end            	
+	end
 
     if keyboard.isKeyDownOnce(keyboard.key.Kp_9) then
         if self:CanUseAbility(core.system.squad.abilities.Flee) then            
@@ -691,6 +766,11 @@ function PoliceSquadHandler:update( delta )
         local selectedEntity = core.system.picking.getLastHitEntity()
         if selectedEntity then
             local unitTypeComponent = selectedEntity:get(core.componentType.UnitTypeComponent);
+
+			if not unitTypeComponent then
+				return
+			end
+
             local attributeComponent = selectedEntity:get(core.componentType.AttributeComponent);
 
             if attributeComponent and unitTypeComponent then                 
@@ -778,9 +858,11 @@ function PoliceSquadHandler:update( delta )
             s_squad.setSquadFormation(self.selectedSquads, self.selectedFormation, self.clickStartX, self.clickStartY, self.clickStartZ, self.clickEndX, self.clickEndY, self.clickEndZ)
             if self.clickEndX and self.clickEndY and self.clickEndZ and self.selectedFormation ~= s_squad.formations.CircleFormation then
 	            s_squad.setSquadGoal(self.selectedSquads, (self.clickStartX + self.clickEndX) / 2, (self.clickStartY + self.clickEndY) / 2, (self.clickStartZ + self.clickEndZ) / 2)
+				self:RevertAttackingStateOfSelected()
             else                
                 --Tell other systems that we are telling things to move.
                 s_squad.setSquadGoal(self.selectedSquads, self.clickStartX, self.clickStartY, self.clickStartZ)
+				self:RevertAttackingStateOfSelected()
             end
 
             local clickPos = core.glm.vec3.new(core.system.picking.getGroundHit(  mouseX, mouseY ))

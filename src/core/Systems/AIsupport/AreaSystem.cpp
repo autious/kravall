@@ -136,6 +136,44 @@ namespace Core
         }
     }
 
+    int AreaSystem::GetAreaRioterCount( Entity id, int groupId )
+    {
+        AreaComponent * areaAC = WGETC<AreaComponent>(id);
+        WorldPositionComponent * areaWPC = WGETC<WorldPositionComponent>(id);
+
+        int count = 0;
+
+        if( areaAC != nullptr && areaWPC != nullptr )
+        {   
+            for (std::vector<Entity>::iterator riotIt = m_bags[1].m_entities.begin();
+                riotIt != m_bags[1].m_entities.end();
+                riotIt++)
+            {
+                WorldPositionComponent *rioterWPC = WGETC<WorldPositionComponent>(*riotIt);
+                UnitTypeComponent *type = WGETC<UnitTypeComponent>(*riotIt);
+                AttributeComponent *attr = WGETC<AttributeComponent>(*riotIt);
+
+                if( type->type == Core::UnitType::Rioter &&
+                     attr->rioter.groupID == groupId )
+                {
+                    if( Core::AreaUtility::CheckPointInsideNode(
+                                WorldPositionComponent::GetVec3(*rioterWPC), 
+                                areaAC->vertices, 
+                                WorldPositionComponent::GetVec3(*areaWPC)))
+                    {
+                        count++;
+                    }
+                }
+            }
+        }
+        else
+        {
+            LOG_ERROR << "Trying to get the rioter count in an entity not and area!" << std::endl;
+        }
+
+        return count;
+    }
+
     bool AreaSystem::IsAreaOnPoint( Entity id, const glm::vec3& position ) 
     {
         AreaComponent * areaAC = WGETC<AreaComponent>(id);
