@@ -116,10 +116,9 @@ return function( scen, squadInstance, weaponList )
     local T = {}
 
     T.members = {}
+    T.type = squadInstance.name
     T.startPosition = {squadInstance.position:get()}
     T.groupId = core.system.groups.createGroup()
-
-    print( "GAVE A GROUP ID: " .. T.groupId )
 
     scen:loadAssembly(
             {
