@@ -9,7 +9,7 @@
 #define MAX_SQR_DISTANCE 441.0f
 
 Core::TargetingSystem::TargetingSystem() : BaseSystem(EntityHandler::GenerateAspect<WorldPositionComponent, UnitTypeComponent, 
-		AttributeComponent, MovementComponent>(), 0ULL), m_lastClickedEntity(INVALID_ENTITY), 
+		AttributeComponent, MovementComponent, TargetingComponent>(), 0ULL), m_lastClickedEntity(INVALID_ENTITY), 
 		m_wasFPressed(false), m_currentTarget(INVALID_ENTITY)
 {}
 

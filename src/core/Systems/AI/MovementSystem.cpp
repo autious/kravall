@@ -4,6 +4,14 @@
 #include <DebugMacros.hpp>
 #include <GameUtility/GameData.hpp>
 
+//#define drawEntityDirection
+#ifdef drawEntityDirection
+#define DEBUGDRAW( x ) x
+#else
+#define DEBUGDRAW( x ) ;
+#endif
+
+
 //const float Core::MovementSystem::TURN_FACTOR = 10.0f;
 const float Core::MovementSystem::TURN_FACTOR = 7.5f;
 
@@ -39,11 +47,9 @@ void Core::MovementSystem::Update(float delta)
 			mc->speed = 0.0f;
 
 		InterpolateDirections(mc, delta);
-		//for( int i = 0; i < 3; i++ )
-		//	mc->direction[i] = mc->newDirection[i];
 
 		wpc->position[0] += mc->direction[0] * mc->speed * delta;
-		wpc->position[1] = 0.0f; //+= mc->direction[1] * mc->speed * delta;
+		wpc->position[1] = 0.0f;
 		wpc->position[2] += mc->direction[2] * mc->speed * delta;
 
 		if (mc->direction[0] != 0 || mc->direction[1] != 0 || mc->direction[2] != 0)
@@ -51,21 +57,17 @@ void Core::MovementSystem::Update(float delta)
 			// Rotate model after direction
 			float angle = static_cast<float>(std::atan2(static_cast<double>(mc->direction[2]), 
 														static_cast<double>(mc->direction[0])));
-
 			RotationComponent* rc = WGETC<RotationComponent>(*it);
-
-			// We need to solve this, model might be wrong or something :) // johan sais wait and see ;) -> blame maya? yes. fin.
 			*rc = RotationComponent::GetComponentRotateY(-angle - 3.141592f * 1.5f); 
 		}
 
-		//GFX::Debug::DrawSphere( glm::vec3( mc->goal[0], 0, mc->goal[2] ), 2.0f, GFXColor( 0.3, 1, 0.45, 1 ), false );
-
 		// Draw the debug lines showing the rioter's direction.
-		/*GFX::Debug::DrawLine(Core::WorldPositionComponent::GetVec3(*wpc),
+		DEBUGDRAW( GFX::Debug::DrawSphere( glm::vec3( mc->goal[0], 0, mc->goal[2] ), 1.0f, GFXColor( 0.3, 1, 0.45, 1 ), false ); )
+		DEBUGDRAW( GFX::Debug::DrawLine(Core::WorldPositionComponent::GetVec3(*wpc),
 							 glm::vec3(wpc->position[0] + mc->direction[0],
 									   wpc->position[1] + mc->direction[1],
 									   wpc->position[2] + mc->direction[2]),
-							 GFXColor(1.0f, 1.0f, 0.0f, 1.0f), false);*/
+							 GFXColor(1.0f, 1.0f, 0.0f, 1.0f), false); )
 	}
 
 
