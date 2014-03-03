@@ -223,7 +223,7 @@ namespace GFX
 
 		m_gamma = 2.2f;
 		m_exposure = 1.0f;
-		m_whitePoint = glm::vec3(2.0f);
+		m_whitePoint = glm::vec3(1.3f);
 
 		m_currentLUT = "identity";
 	}
