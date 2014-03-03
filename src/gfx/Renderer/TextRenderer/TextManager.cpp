@@ -40,9 +40,9 @@ namespace GFX
 		for (int i = 0; it < str.end(); it++, i++)
 		{
 			width += fontData->characters[static_cast<unsigned char>(*it)].advanceX * size;
-			if (width + 5.0f * size >= rectangle.z)
+			std::string line = std::string(start, it);
+			if (width + 5.0f * size >= rectangle.z || line.find_last_of("\n") != line.npos)
 			{
-				std::string line = std::string(start, it);
 				unsigned int lineLength = line.length();
 				std::size_t lastWS = line.find_last_of(trim);
 				if (lastWS == line.npos) // Word is too long for textbox, wrap it!
