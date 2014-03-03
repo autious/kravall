@@ -4,6 +4,7 @@ local MainMenu = require "gui/MainMenu"
 local viewport = require "gui/viewport"
 local image = require "factories/image"
 local viewport = require "gui/viewport" 
+local toolTipHandler = require "gui/tooltip/ToolTipHandler"
 require "console"
 
 local current_scenario = nil
@@ -30,7 +31,9 @@ function core.update( delta )
     camera = nil
     if current_scenario ~= nil then
         current_scenario:update( delta )
-    end 
+    end
+	
+	toolTipHandler:update()
 end
 
 logo = nil
