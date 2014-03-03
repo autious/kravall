@@ -404,25 +404,25 @@ namespace Core
 						gfxc->outlineColor[0] = 0.0f;
 						gfxc->outlineColor[1] = 0.0f;
 						gfxc->outlineColor[2] = 1.0f;
-						gfxc->outlineColor[3] = 1.0f;
+						gfxc->outlineColor[3] = 2.0f;
 						break;
 					case RioterStance::Agitated:
-						gfxc->outlineColor[0] = 0.0f;
-						gfxc->outlineColor[1] = 1.0f;
-						gfxc->outlineColor[2] = 1.0f;
-						gfxc->outlineColor[3] = 1.0f;
+						gfxc->outlineColor[0] = 1.0f;
+						gfxc->outlineColor[1] = 0.5f;
+						gfxc->outlineColor[2] = 0.0f;
+						gfxc->outlineColor[3] = 2.0f;
 						break;
 					case RioterStance::Attacking:
 						gfxc->outlineColor[0] = 1.0f;
 						gfxc->outlineColor[1] = 0.0f;
 						gfxc->outlineColor[2] = 0.0f;
-						gfxc->outlineColor[3] = 1.0f;
+						gfxc->outlineColor[3] = 2.0f;
 						break;
 					case RioterStance::Retreating:
 						gfxc->outlineColor[0] = 1.0f;
 						gfxc->outlineColor[1] = 0.0f;
 						gfxc->outlineColor[2] = 1.0f;
-						gfxc->outlineColor[3] = 1.0f;
+						gfxc->outlineColor[3] = 2.0f;
 						break;
 					case RioterStance::Civilian:
 						break;

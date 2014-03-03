@@ -430,12 +430,12 @@ end
 function PoliceSquadHandler:HighlightMood()
 
 	if #self.selectedSquads == 0 then
-		self.isAiming = false
-		self:SetReticuleRender(false)
-		self.AimingFunction = nil
-		
-		self.rightClicked = false
-		self.rightPressed = false
+		--self.isAiming = false
+		--self:SetReticuleRender(false)
+		--self.AimingFunction = nil
+		--
+		--self.rightClicked = false
+		--self.rightPressed = false
 		
 		return
 	end
@@ -448,18 +448,16 @@ function PoliceSquadHandler:HighlightMood()
 		local unitTypeComponent = selectedEntity:get(core.componentType.UnitTypeComponent);
 		local attributeComponent = selectedEntity:get(core.componentType.AttributeComponent);
 
-		if attributeComponent and unitTypeComponent then                 
-			
-			--cursor is hovering over rioters
+		if attributeComponent and unitTypeComponent then           
 			if unitTypeComponent.unitType == core.UnitType.Rioter then
 				s_squad.enableMoodOutline( { attributeComponent.groupID } )
 				self.outlinedRioterGroups = attributeComponent.groupID;
 			end			
 		end		
 	elseif self.leftClicked then
-	
-		self.leftClicked = false
-		self.leftPressed = false
+		for k,v in pairs(self.selectedSquads) do self.selectedSquads[k]=nil end
+		self.leftClicked = true
+		self.leftPressed = true
 	end	
 
 end
