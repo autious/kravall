@@ -15,6 +15,22 @@
 
 namespace Core
 {
+	void ClopSetDebugmode(clop::ArgList args)
+	{
+		if (args.size() == 2)
+		{
+			bool enabled = (bool)args[1];
+			GFX::Debug::SetEnableDebug(enabled);
+		}
+		else
+		{
+			std::string errStr = "Usage: \'";
+			errStr += std::string(args[0]);
+			errStr += " true/false";
+			Console().PrintLine(errStr, Colors::Chocolate);
+		}
+	}
+
 	void ClopClearConsole(clop::ArgList args)
 	{
 		Console().Clear();
@@ -138,9 +154,10 @@ namespace Core
 		clop::Register("sysinfo",	ClopShowSys);
 		clop::Register("lights",	ClopShowDebugLightVolumes);
 		clop::Register("fbo",		ClopShowFBO);
-		clop::Register("lut", ClopSetLUT);
-		clop::Register("exposure", ClopSetExposure);
-		clop::Register("gamma", ClopSetGamma);
+		clop::Register("lut",		ClopSetLUT);
+		clop::Register("exposure",	ClopSetExposure);
+		clop::Register("gamma",		ClopSetGamma);
+		clop::Register("debug",		ClopSetDebugmode);
 		
 		Line line = {"Welcome to the console, have a nice day.", Colors::Gold};
 		m_console.push_back(line);
