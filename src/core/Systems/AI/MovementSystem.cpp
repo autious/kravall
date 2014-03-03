@@ -115,7 +115,9 @@ void Core::MovementSystem::InterpolateDirections(MovementComponent* mc, float de
 		glm::vec3 oldDir = glm::vec3(mc->direction[0], mc->direction[1], mc->direction[2]);
 		glm::vec3 newDir = glm::vec3(mc->newDirection[0], mc->newDirection[1], mc->newDirection[2]);
 	
-		newDir = glm::lerp(oldDir, newDir, TURN_FACTOR * delta);
+		float differenceFactor = (((glm::dot( oldDir, newDir ) * -1.0f ) + 1.0f) / 2.0f) + 1.0f;
+
+		newDir = glm::lerp(oldDir, newDir, TURN_FACTOR * differenceFactor * delta);
 
         //Must check if the new dir is 0 before normalizing
         if( glm::length( newDir ) > 0 )

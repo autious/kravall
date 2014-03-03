@@ -242,7 +242,7 @@ scen:loadAssembly(
 --    } 
 --    )
 	
-for i = 0, -1 do
+for i = 0, 400 do
 	local color = { math.random(), math.random(), math.random() }
     scen:loadAssembly( 
     {
@@ -273,7 +273,7 @@ for i = 0, -1 do
     )
 end
 -- Spotlight
-for i = 0, -1 do
+for i = 0, 400 do
 	local color = { math.random(), math.random(), math.random() }
     scen:loadAssembly( 
     {
@@ -305,62 +305,62 @@ for i = 0, -1 do
     )
 end
 
---scen:loadAssembly( 
---{
---	{
---		type = core.componentType.LightComponent,
---		data =  { 
---					color = { 0.8, 0.4, 0.2 },
---					speccolor = { 0.8, 0.4, 0.2 },
---					intensity = 15.0,
---					spotangle = 3.14/4.0,
---					spotpenumbra = 0.03,
---					type = core.gfx.objectTypes.Light,
---					lighttype = core.gfx.lightTypes.Spot
---				}
---	},
---	{
---		type = core.componentType.WorldPositionComponent,
---		data = { position = { 20, 15, 20 } }
---	},
---	{
---		type = core.componentType.ScaleComponent,
---		data = { scale = 150.0 }
---	},
---	{
---		type = core.componentType.RotationComponent,
---		data = { rotation = { -1,-1,-1,0 } }
---	}
---} 
---)
---scen:loadAssembly( 
---{
---	{
---		type = core.componentType.LightComponent,
---		data =  { 
---					color = { 0.4, 0.8, 0.2 },
---					speccolor = { 0.4, 0.8, 0.2 },
---					intensity = 15.0,
---					spotangle = 3.14/7.0,
---					spotpenumbra = 0.03,
---					type = core.gfx.objectTypes.Light,
---					lighttype = core.gfx.lightTypes.Spot
---				}
---	},
---	{
---		type = core.componentType.WorldPositionComponent,
---		data = { position = { -20, 15, 20 } }
---	},
---	{
---		type = core.componentType.ScaleComponent,
---		data = { scale = 50.0 }
---	},
---	{
---		type = core.componentType.RotationComponent,
---		data = { rotation = { 1,-0.5,-1,0 } }
---	}
---} 
---)
+scen:loadAssembly( 
+{
+	{
+		type = core.componentType.LightComponent,
+		data =  { 
+					color = { 0.8, 0.4, 0.2 },
+					speccolor = { 0.8, 0.4, 0.2 },
+					intensity = 15.0,
+					spotangle = 3.14/4.0,
+					spotpenumbra = 0.03,
+					type = core.gfx.objectTypes.Light,
+					lighttype = core.gfx.lightTypes.Spot
+				}
+	},
+	{
+		type = core.componentType.WorldPositionComponent,
+		data = { position = { 20, 15, 20 } }
+	},
+	{
+		type = core.componentType.ScaleComponent,
+		data = { scale = 150.0 }
+	},
+	{
+		type = core.componentType.RotationComponent,
+		data = { rotation = { -1,-1,-1,0 } }
+	}
+} 
+)
+scen:loadAssembly( 
+{
+	{
+		type = core.componentType.LightComponent,
+		data =  { 
+					color = { 0.4, 0.8, 0.2 },
+					speccolor = { 0.4, 0.8, 0.2 },
+					intensity = 15.0,
+					spotangle = 3.14/7.0,
+					spotpenumbra = 0.03,
+					type = core.gfx.objectTypes.Light,
+					lighttype = core.gfx.lightTypes.Spot
+				}
+	},
+	{
+		type = core.componentType.WorldPositionComponent,
+		data = { position = { -20, 15, 20 } }
+	},
+	{
+		type = core.componentType.ScaleComponent,
+		data = { scale = 50.0 }
+	},
+	{
+		type = core.componentType.RotationComponent,
+		data = { rotation = { 1,-0.5,-1,0 } }
+	}
+} 
+)
 scen:loadAssembly( 
 {
 	{

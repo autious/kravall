@@ -2,15 +2,21 @@ local tearGasPolice = (require "game_constants").tearGasPolice
 
 return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, groupID, weaponType)
 
+    assert(groupID ~= nil)
 	local meshes = {"assets/model/animated/police/cop/cop-teargas_00.bgnome"}
     
     local T = {}
     
     function T:getAbilities()
         local abilities = core.system.squad.abilities
-        return {abilities.Attack, abilities.ArrestGroup, abilities.Sprint, abilities.TearGas, abilities.Sprint, abilities.Rout }
+        return {abilities.Attack, abilities.ArrestGroup, abilities.Sprint, abilities.TearGas, abilities.Sprint, abilities.Flee }
     end    
 
+    T.maximumHealth = tearGasPolice.maxHealth
+    T.maximumStamina = tearGasPolice.maxStamina
+    T.maximumMorale = tearGasPolice.maxMorale
+
+    T.startOffset = {formationOffsetX, formationOffsetZ}
 	T.entity = asm:loadAssembly( 
 		{
 			{

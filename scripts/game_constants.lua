@@ -3,7 +3,7 @@ return
 {
     standardPolice = 
     {
-        maxHealth                       = 100,
+        maxHealth                       = 200,
         maxStamina                      = 100,
         maxMorale                       = 2.0,
         damageOutline                   = vec4{"#ff0000",2.0},
@@ -32,10 +32,14 @@ return
     sprinting =
     {
         sprintingStaminaCost            = 3.0,
-        sprintingReachThreshold         = 2,
+        sprintingReachThreshold         = 10,
     },
     guiBehaviour = 
     {
-        damageBlinkingLinger = 5
+        damageBlinkingLinger = 5,
+    },
+    policeStamina = 
+    {
+        staminaRegeneration = 2.0,
     }
 }

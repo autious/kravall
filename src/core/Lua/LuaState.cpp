@@ -39,6 +39,7 @@
 #include <Lua/Bridges/LuaParticleBridge.hpp>
 #include <Lua/Bridges/LuaWeaponBridge.hpp>
 #include <Lua/Bridges/LuaGameMetaDataBridge.hpp>
+#include <Lua/Bridges/LuaUnitOrderBridge.hpp>
 
 namespace Core
 {
@@ -70,7 +71,8 @@ namespace Core
         lhtsb(L),
         lprtb(L),
 		lwp(L),
-		lgmdb(L)
+		lgmdb(L),
+		luob(L)
         {}
             
         LuaBitmask lb;
@@ -99,6 +101,7 @@ namespace Core
         LuaParticleBridge lprtb;
 		LuaWeaponBridge lwp;
 		LuaGameMetaDataBridge lgmdb;
+		LuaUnitOrderBridge luob;
     };
 }
 

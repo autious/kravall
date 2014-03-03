@@ -6,6 +6,7 @@ windowResizable = true,
 --initScreenHeight = 1152,
 initScreenWidth = 1280,
 initScreenHeight = 720,
+fullscreen = false,
 showSystems = false,
 entityMemoryOutputLevel = "partial", -- full, short or partial
 -- List of components to render debug data for.
@@ -30,5 +31,5 @@ cameraScrollingSpeed = 0,
 consoleOutputLevel = "warning", -- debug, warning, error, fatal
 stickySelection = false,
 boxSelectionGraceDistance = 0.5,
-numberOfSystemCoresToUse = 4
+numberOfSystemCoresToUse = 1
 }

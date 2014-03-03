@@ -4,16 +4,22 @@ return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, group
 
     assert(groupID, "groupID is nil")
 
-	local meshes = {"assets/model/animated/rioter/rioter-male_00.bgnome", "assets/model/animated/rioter/rioter-female_00.bgnome" }
+	--local meshes = {"assets/model/animated/rioter/rioter-male_00.bgnome", "assets/model/animated/rioter/rioter-female_00.bgnome" }
+	local meshes = {"assets/model/animated/police/cop/cop-shield_00.bgnome"}
     local gender = math.random(1, #meshes)
 
     local T = {}
     
     function T.getAbilities()
         local abilities = core.system.squad.abilities
-        return {abilities.Attack, abilities.ArrestGroup, abilities.Sprints, abilities.Sprint, abilities.Rout }
+        return {abilities.Attack, abilities.ArrestGroup, abilities.Flee, abilities.Sprint }
     end    
 
+    T.maximumHealth = standardPolice.maxHealth
+    T.maximumStamina = standardPolice.maxStamina
+    T.maximumMorale = standardPolice.maxMorale
+
+    T.startOffset = {formationOffsetX, formationOffsetZ}
     T.entity = asm:loadAssembly( 
 		{
 			{
@@ -25,7 +31,8 @@ return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, group
 				data = { render = true, mesh = 2000, material = 2000, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 1, 0, 1} },
 				load = { 
 							mesh = { core.loaders.GnomeLoader, meshes[gender] },
-							material = { core.loaders.MaterialLoader, "assets/texture/animated/police/cop/cop-light_00.material" }
+							--material = { core.loaders.MaterialLoader, "assets/texture/animated/police/cop/cop-light_00.material" }
+							material = { core.loaders.MaterialLoader, "assets/texture/animated/police/cop/cop-shield_00.material" }
 					   }
 			},
 			{
@@ -69,7 +76,7 @@ return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, group
 			},
 			{
 				type = core.componentType.BoundingVolumeComponent,
-				data = { sphereOffset = { 0, 0, 0 }, sphereRadius = 0.7, 
+				data = { sphereOffset = { 0, 0, 0 }, sphereRadius = 0.7, pickingRadius = 1.0,
 						collisionModel = core.BoundingVolumeCollisionModel.DynamicResolution, 
 						type = core.BoundingVolumeType.SphereBoundingType }
 			},
