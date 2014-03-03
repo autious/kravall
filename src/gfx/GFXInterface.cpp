@@ -365,6 +365,11 @@ namespace GFX
 // Separated for debug interface
 namespace GFX
 {
+	void Debug::SetEnableDebug(bool enable)
+	{
+		Renderer().SetEnableDebug(enable);
+	}
+
 	void Debug::DrawPoint(GFXVec2 point, GFXColor color)
 	{
 		Debug::DrawPoint(point, color, 1.0f);

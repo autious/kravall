@@ -44,7 +44,16 @@ function C.new( )
     local function onscroll( x, y )
         local forward = camera:getForward()
         --self.position = self.position + forward * y * 0.5;
+
         self.forwardVelocity = self.forwardVelocity + y * self.accelerationFactor;
+
+        if self.forwardVelocity > 0 and not self.cantGoForward then
+            self.cantGoBack = false
+        elseif self.forwardVelocity < 0 and not self.cantGoBack then
+            self.cantGoForward = false
+        else
+            self.forwardVelocity = 0
+        end
     end
 
     input.registerOnScroll( onscroll )
@@ -80,8 +89,11 @@ function C:update( dt )
     local delta = dt * 30
 
     if core.console.isVisible() == false and self.infocus == true then
+        local prevPosition = self.position
         local ux,uy,uz = camera:getUp():get()
         local rx,ry,rz = camera:getRight():get()
+        local fx,fy,fz = camera:getForward():get()
+
         local xzUp = vec3.new(0,0,0)
         local xzRight = vec3.new(0,0,0)
         local forward = camera:getForward()
@@ -90,15 +102,19 @@ function C:update( dt )
              xzUp = vec3.new( ux,0,uz ):normalize()
         end
 
+        if fx ~= 0 or fz ~= 0 then
+             xzForward = vec3.new( fx,0,fz ):normalize()
+        end
+
         if rx ~= 0 or rz ~= 0 then
              xzRight= vec3.new( rx,0,rz ):normalize()
         end
         
         if keyboard.isKeyDown( key.W ) then
-            self.position = self.position + xzUp * delta
+            self.position = self.position + xzForward * delta
         end
         if keyboard.isKeyDown( key.S ) then
-            self.position = self.position - xzUp * delta
+            self.position = self.position - xzForward * delta
         end
         if keyboard.isKeyDown( key.A ) then
             self.position = self.position - xzRight * delta
@@ -165,14 +181,22 @@ function C:update( dt )
         local px,py,pz = self.position:get()
 
         if py > 250 then
-            py = 250
+            px,py,pz = prevPosition:get()
             self.forwardVelocity = 0
+            self.cantGoBack = true
         elseif py < 10 then
-            py = 10
+            px,py,pz = prevPosition:get()
             self.forwardVelocity = 0
+            self.cantGoForward = true
         end
-        self.position = vec3.new( px,py,pz )
 
+        if self.cantGoForward and self.cantGoBackward then
+            py = 20 
+            self.cantGoForward = false
+            self.cantGoBackward = false
+        end
+
+        self.position = vec3.new( px,py,pz )
 
         local proj = self:getProjection()
         local view = self:getView()

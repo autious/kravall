@@ -1,6 +1,7 @@
 local entities = require "entities"
 local scenario = require "scenario"
 local input = require "input" 
+local decal = entities.get "decal"
 local scen = scenario.new()
 
 local mouse = core.input.mouse
@@ -18,23 +19,40 @@ end
 
 scen:registerInitCallback( Init )
 
+scen.asm:specific_content( core.contentmanager.load(
+		core.loaders.NavigationMeshLoader, "extremeScenario.txt", function( value ) end, false ) )
+
+	
+
+
+
+local directional = entities.get "directionalLight"
+directional( scen, -0.5950919985771179, -0.7691010236740112, 0.23312883079051971, 0.8, 1.0, 1.0, 0.1 )
+
+local ambient = entities.get "ambientLight"
+ambient( scen, 0.7, 1.0, 1.0, 0.001 )
+
+
+local aim = decal( scen, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 2.5, 0.1, 2.5, "assets/texture/tankwars/aim-decal.material", "" )
 
 --local ground = 
 local n = 30
-for i=1,n do
-	for j=1,n do
+for i=0,n do
+	for j=0,n do
+		
+	
 		scen:loadAssembly( 
 		{
 			{
 				type = core.componentType.WorldPositionComponent,
-				data = { position = { (i - n * 0.5) * 15.0, 0, (j - n * 0.5) * 15.0 } }
+				data = { position = { (i - n / 2) * 15, 0, (j - n / 2) * 15 } }
 			},
 			{
 				type = core.componentType.GraphicsComponent,
 				data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 				load = { 
 							mesh = { core.loaders.GnomeLoader, "assets/plane.bgnome", false },
-							material = { core.loaders.MaterialLoader, "assets/texture/tankwars/ground.material", false }
+							material = { core.loaders.MaterialLoader, "assets/texture/tankwars/snow/snow.material", false }
 					   }
 			},
 			{
@@ -43,66 +61,69 @@ for i=1,n do
 			},
 			{
 				type = core.componentType.RotationComponent,
+				--data = { rotation = { 1*math.sin( 0 ), 1*math.sin( 0 ), 0, 1*math.cos( 0 ) } }
 				data = { rotation = { 1*math.sin( -3.14/4 ), 0, 0, 1*math.cos( -3.14/4 ) } }
 			}
 		}
 		)
 	end
 end
---scen:loadAssembly( 
---{
---	{
---		type = core.componentType.WorldPositionComponent,
---		data = { position = { 0, 0, 0 } }
---	},
---	{
---		type = core.componentType.GraphicsComponent,
---		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
---		load = { 
---					mesh = { core.loaders.GnomeLoader, "assets/model/static/building/apartment/s01-h/0-main.bgnome", false },
---					material = { core.loaders.MaterialLoader, "assets/material/static/building/apartment/s01-h/0-main.material", false }
---			   }
---	},
---	{
---		type = core.componentType.ScaleComponent,
---		data = { scale = 1.0 }
---	},
---	{
---		type = core.componentType.RotationComponent,
---		data = { rotation = { 0, 0, 0, 1 } }
---	}
---}
---)
---
---scen:loadAssembly( 
---{
---	{
---		type = core.componentType.WorldPositionComponent,
---		data = { position = { 10, 0, 0 } }
---	},
---	{
---		type = core.componentType.GraphicsComponent,
---		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, render = true },
---		load = { 
---					mesh = { core.loaders.GnomeLoader, "assets/box_maya.bgnome", false },
---					material = { core.loaders.MaterialLoader, "assets/material/simple.material", false }
---			   }
---	},
---	{
---		type = core.componentType.ScaleComponent,
---		data = { scale = 1.0 }
---	},
---	{
---		type = core.componentType.RotationComponent,
---		data = { rotation = { 0, 0, 0, 1 } }
---	}
---}
---)
+for kk=0,10 do
+scen:loadAssembly( 
+{
+	{
+		type = core.componentType.WorldPositionComponent,
+		data = { position = { kk * 5, 0, 0 } }
+	},
+	{
+		type = core.componentType.GraphicsComponent,
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
+		load = { 
+					mesh = { core.loaders.GnomeLoader, "assets/model/tankwars/m270-body.bgnome", false },
+					material = { core.loaders.MaterialLoader, "assets/texture/tankwars/m270-body.material", false }
+			   }
+	},
+	{
+		type = core.componentType.ScaleComponent,
+		data = { scale = 1.0 }
+	},
+	{
+		type = core.componentType.RotationComponent,
+		data = { rotation = { 0, 0, 0, 1 } }
+	}
+}
+)
+
+scen:loadAssembly( 
+{
+	{
+		type = core.componentType.WorldPositionComponent,
+		data = { position = { kk * 5, 0, -1.2 } }
+	},
+	{
+		type = core.componentType.GraphicsComponent,
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
+		load = { 
+					mesh = { core.loaders.GnomeLoader, "assets/model/tankwars/m270-turret.bgnome", false },
+					material = { core.loaders.MaterialLoader, "assets/texture/tankwars/m270-turret.material", false }
+			   }
+	},
+	{
+		type = core.componentType.ScaleComponent,
+		data = { scale = 1.0 }
+	},
+	{
+		type = core.componentType.RotationComponent,
+		--data = { rotation = { 1*math.sin( 0 ), 1*math.sin( 0 ), 0, 1*math.cos( 0 ) } }
+		data = { rotation = { 0, 1*math.sin( math.pi/4/2 ), 0, 1*math.cos( math.pi/4/2 ) } }
+		
+	}
+}
+)
+end
 
 
-
-
-
+local playerGroup = core.system.groups.createGroup();
 local playerTank = scen:loadAssembly( 
 {
 	{
@@ -114,7 +135,7 @@ local playerTank = scen:loadAssembly(
 		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/model/tankwars/Leopard_Body.bgnome", false },
-					material = { core.loaders.MaterialLoader, "assets/material/tankwars/Leopard_Body.material", false }
+					material = { core.loaders.MaterialLoader, "assets/texture/tankwars/leopard-body.material", false }
 			   }
 	},
 	{
@@ -122,8 +143,41 @@ local playerTank = scen:loadAssembly(
 		data = { scale = 1.0 }
 	},
 	{
+		type = core.componentType.UnitTypeComponent,
+		data = { unitType = core.UnitType.Rioter }
+	},
+	{
+		type = core.componentType.MovementComponent,
+		data = { direction = { 0, 0, 0 }, newDirection = { 0, 0, 0 }, speed = 1.5, 
+		desiredSpeed = 1.5, goal = false }
+		,ignoreHard = true
+	},
+	{
+		type = core.componentType.BoundingVolumeComponent,
+		data = { sphereOffset = { 0, 0, 0 }, sphereRadius = 5.0, pickingRadius = 0.0, 
+				collisionModel = core.BoundingVolumeCollisionModel.DynamicResolution, 
+				type = core.BoundingVolumeType.SphereBoundingType }
+	},
+	{
+		type = core.componentType.AttributeComponent,
+		data = { health = 100, stamina = 100, morale = 2.0, 
+			   alignment = core.RioterAlignment.Anarchist, rage = 0, pressure = 0, groupID = playerGroup, stanceRioter = core.RioterStance.Normal}
+		,
+		ignoreHard = true
+	},
+	{
 		type = core.componentType.RotationComponent,
+		--data = { rotation = { 0, 1*math.sin( -3.14/4 ), 0, math.cos( -3.14/4 ) } }
 		data = { rotation = { 0, 0, 0, 1 } }
+	},
+	{
+		type = core.componentType.FlowfieldComponent,
+		data = { node = -1 }
+	},
+	{
+		type = core.componentType.TargetingComponent,
+		data = { weapon = -1 },
+		ignoreHard = true
 	}
 }
 )
@@ -138,8 +192,9 @@ local playerTurret = scen:loadAssembly(
 		type = core.componentType.GraphicsComponent,
 		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 		load = { 
-					mesh = { core.loaders.GnomeLoader, "assets/model/tankwars/Leopard_Turret.bgnome", false },
-					material = { core.loaders.MaterialLoader, "assets/material/tankwars/Leopard_Turret.material", false }
+					mesh = { core.loaders.GnomeLoader, "assets/model/tankwars/leopard-turret.bgnome", false },
+					material = { core.loaders.MaterialLoader, "assets/texture/tankwars/leopard-turret.material", false }
+					--material = { core.loaders.MaterialLoader, "assets/texture/tankwars/snow/snow.material", false }
 			   }
 	},
 	{
@@ -188,34 +243,34 @@ local playerTurret = scen:loadAssembly(
 
 
 ---- Directional light
-scen:loadAssembly( 
-{
-	{
-		type = core.componentType.LightComponent,
-		data =  { 
-					color = { 1.0, 1.0, 0.7 },
-					intensity = 1.01,
-					type = core.gfx.objectTypes.Light,
-					lighttype = core.gfx.lightTypes.Dir,
-					spotangle = 0,
-					spotpenumbra = 0,
-					speccolor = {0.1, 0.1, 0.04}
-				}
-	},
-	{
-		type = core.componentType.WorldPositionComponent,
-		data = { position = { 0, 0, 0 } }
-	},
-	{
-		type = core.componentType.ScaleComponent,
-		data = { scale = 1.0 }
-	},
-	{
-		type = core.componentType.RotationComponent,
-		data = { rotation = { 1, -1, 1, 0 } }
-	}
-} 
-)
+--scen:loadAssembly( 
+--{
+--	{
+--		type = core.componentType.LightComponent,
+--		data =  { 
+--					color = { 0.71765, 0.89804, 0.91373 },
+--					intensity = 1.01,
+--					type = core.gfx.objectTypes.Light,
+--					lighttype = core.gfx.lightTypes.Dir,
+--					spotangle = 0,
+--					spotpenumbra = 0,
+--					speccolor = {0.1, 0.2, 0.03}
+--				}
+--	},
+--	{
+--		type = core.componentType.WorldPositionComponent,
+--		data = { position = { 0, 0, 0 } }
+--	},
+--	{
+--		type = core.componentType.ScaleComponent,
+--		data = { scale = 1.0 }
+--	},
+--	{
+--		type = core.componentType.RotationComponent,
+--		data = { rotation = { 1, -1, 1, 0 } }
+--	}
+--} 
+--)
 
 local function CreateBullet(pos, direction)
 	return scen:loadAssembly( 
@@ -229,7 +284,7 @@ local function CreateBullet(pos, direction)
 		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/model/tankwars/bullet.bgnome", false },
-					material = { core.loaders.MaterialLoader, "assets/material/tankwars/bullet.material", false }
+					material = { core.loaders.MaterialLoader, "assets/texture/tankwars/bullet.material", false }
 			   }
 	},
 	{
@@ -252,7 +307,7 @@ local function CreateBulletLight(pos)
 			data =  { 
 						color = {1.0, 0.7, 0.1},
 						speccolor = {1.0, 0.7, 0.1},
-						intensity = 1.0,
+						intensity = 2.0,
 						spotangle = 0.0,
 						spotpenumbra = 0.0,
 						type = core.gfx.objectTypes.Light,
@@ -309,6 +364,19 @@ end
 
 
 local function CreateMissile(pos, direction, directionUp)
+
+
+	local rotQuattt = { math.sin(directionUp * 0.5) , 0, 0, math.cos(directionUp * 0.5 )}
+
+	local rotQuat = { 0, math.sin(direction * 0.5), 0, math.cos(direction * 0.5 )}
+
+
+	local rotttttt = {	(rotQuat[2]*rotQuattt[3] - rotQuat[3]*rotQuattt[2] + rotQuat[1]*rotQuattt[4] + rotQuat[4]*rotQuattt[1]),
+						(rotQuat[3]*rotQuattt[1] - rotQuat[1]*rotQuattt[3] + rotQuat[2]*rotQuattt[4] + rotQuat[4]*rotQuattt[2]),
+						(rotQuat[1]*rotQuattt[2] - rotQuat[2]*rotQuattt[1] + rotQuat[3]*rotQuattt[4] + rotQuat[4]*rotQuattt[3]),
+						(rotQuat[4]*rotQuattt[4] - rotQuat[1]*rotQuattt[1] - rotQuat[2]*rotQuattt[2] - rotQuat[3]*rotQuattt[3])}
+
+
 	return scen:loadAssembly( 
 	{
 	{
@@ -329,7 +397,7 @@ local function CreateMissile(pos, direction, directionUp)
 	},
 	{
 		type = core.componentType.RotationComponent,
-		data = { rotation = { 0, 0, 0, 1 } }
+		data = { rotation = { rotttttt[1], rotttttt[2], rotttttt[3], rotttttt[4], } }
 	}
 }
 	)
@@ -343,7 +411,7 @@ local function CreateMissileLight(pos)
 			data =  { 
 						color = {1.0, 0.7, 0.1},
 						speccolor = {1.0, 0.7, 0.1},
-						intensity = 1.0,
+						intensity = 5.0,
 						spotangle = 0.0,
 						spotpenumbra = 0.0,
 						type = core.gfx.objectTypes.Light,
@@ -356,7 +424,7 @@ local function CreateMissileLight(pos)
 		},
 		{
 			type = core.componentType.ScaleComponent,
-			data = { scale = 10.0 } 
+			data = { scale = 50.0 } 
 		},
 		{
 			type = core.componentType.RotationComponent,
@@ -380,7 +448,7 @@ local function CreateRailGunBullet(pos, direction)
 		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 		load = { 
 					mesh = { core.loaders.GnomeLoader, "assets/model/tankwars/bullet.bgnome", false },
-					material = { core.loaders.MaterialLoader, "assets/material/tankwars/bullet.material", false }
+					material = { core.loaders.MaterialLoader, "assets/texture/tankwars/bullet.material", false }
 			   }
 	},
 	{
@@ -403,7 +471,7 @@ local function CreateRailGunLight(pos, scale)
 			data =  { 
 						color = {0.5, 0.0, 0.5},
 						speccolor = {0.5, 0.0, 0.5},
-						intensity = 0.1,
+						intensity = 0.3,
 						spotangle = 0.0,
 						spotpenumbra = 0.0,
 						type = core.gfx.objectTypes.Light,
@@ -459,40 +527,7 @@ local function CreateExplosionLight(position, scale)
 end
 
 
---local function CreateMissileExplosionLight(position, scale)
---	return scen:loadAssembly( 
---	{
---		{
---			type = core.componentType.LightComponent,
---			data =  { 
---						color = {1.0, 0.7, 0.1},
---						speccolor = {1.0, 0.7, 0.1},
---						intensity = 20.0,
---						spotangle = 0.0,
---						spotpenumbra = 0.0,
---						type = core.gfx.objectTypes.Light,
---						lighttype = core.gfx.lightTypes.Point
---					}
---		},
---		{
---			type = core.componentType.WorldPositionComponent,
---			data = { position = position }
---		},
---		{
---			type = core.componentType.ScaleComponent,
---			data = { scale = scale } 
---		},
---		{
---			type = core.componentType.RotationComponent,
---			data = { rotation = { 1, 0, 0, 0 } } -- Lights uses rotation component as a direction vector, not a quaternion
---		}
---	} 
---	)
---end
-
-
-
-local function CreateEnemyTankBody(position)
+local function CreateEnemyTankBody(position, group)
 	return scen:loadAssembly( 
 	{
 	{
@@ -500,23 +535,54 @@ local function CreateEnemyTankBody(position)
 		data = { position = { position[1], 0, position[2] } }
 	},
 	{
+		type = core.componentType.UnitTypeComponent,
+		data = { unitType = core.UnitType.Rioter }
+	},
+	{
+		type = core.componentType.MovementComponent,
+		data = { direction = { 0, 0, 0 }, newDirection = { 0, 0, 0 }, speed = 5.0, 
+		desiredSpeed = 50, goal = false }
+		,ignoreHard = true
+	},
+	{
+		type = core.componentType.BoundingVolumeComponent,
+		data = { sphereOffset = { 0, 0, 0 }, sphereRadius = 10.0, pickingRadius = 0.0,
+				collisionModel = core.BoundingVolumeCollisionModel.DynamicResolution, 
+				type = core.BoundingVolumeType.SphereBoundingType }
+	},
+	{
 		type = core.componentType.GraphicsComponent,
 		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 		load = { 
-					mesh = { core.loaders.GnomeLoader, "assets/model/tankwars/Leopard_Body.bgnome", false },
-					material = { core.loaders.MaterialLoader, "assets/material/tankwars/Leopard_Body.material", false }
+					mesh = { core.loaders.GnomeLoader, "assets/model/tankwars/leopard-body.bgnome", false },
+					material = { core.loaders.MaterialLoader, "assets/texture/tankwars/leopard-body.material", false }
 			   }
+	},
+	{
+		type = core.componentType.AttributeComponent,
+		data = { health = 100, stamina = 100, morale = 2.0, 
+			   alignment = core.RioterAlignment.Anarchist, rage = 0, pressure = 0, groupID = group, stanceRioter = core.RioterStance.Normal}
+		,
+		ignoreHard = true
+	},
+	{
+		type = core.componentType.TargetingComponent,
+		data = { weapon = -1 },
+		ignoreHard = true
 	},
 	{
 		type = core.componentType.ScaleComponent,
 		data = { scale = 1.0 }
 	},
 	{
+		type = core.componentType.FlowfieldComponent,
+		data = { node = -1 }
+	},
+	{
 		type = core.componentType.RotationComponent,
 		data = { rotation = { 0, 0, 0, 1 } }
 	}
-}
-	)
+})
 end
 
 local function CreateEnemyTankTurret(position)
@@ -530,8 +596,8 @@ local function CreateEnemyTankTurret(position)
 		type = core.componentType.GraphicsComponent,
 		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
 		load = { 
-					mesh = { core.loaders.GnomeLoader, "assets/model/tankwars/Leopard_Turret.bgnome", false },
-					material = { core.loaders.MaterialLoader, "assets/material/tankwars/Leopard_Turret.material", false }
+					mesh = { core.loaders.GnomeLoader, "assets/model/tankwars/leopard-turret.bgnome", false },
+					material = { core.loaders.MaterialLoader, "assets/texture/tankwars/leopard-turret.material", false }
 			   }
 	},
 	{
@@ -569,7 +635,7 @@ local alive = true
 
 
 
-local playerPosition = {0,0}
+--local playerPosition = {0,0}
 local velocity = {0,0}
 local playerDirection = 0
 local playerTurretDirection = 0
@@ -636,9 +702,10 @@ local enemyTanks = {}
 local enemyTankTurrets = {}
 
 
-
+local tankGroups
 
 local function InitEnemyTanks(n)
+	tankGroups = tankGroups or core.system.groups.createGroup();
 	local minSpawn = 20
 	local maxSpawn = (boundX + boundY) / 2 - minSpawn
 	for i=1,n do
@@ -659,7 +726,7 @@ local function InitEnemyTanks(n)
 		randVec[2] = randVec[2] * randDist
 		
 
-		table.insert( enemyTanks, {entity = CreateEnemyTankBody(randVec), direction = math.pi * 2 * math.random(), velocity = {0,0}, shootTimer = 10.0 * math.random()})
+		table.insert( enemyTanks, {entity = CreateEnemyTankBody(randVec, tankGroups), direction = math.pi * 2 * math.random(), velocity = {0,0}, shootTimer = 10.0 * math.random()})
 		table.insert( enemyTankTurrets, {entity = CreateEnemyTankTurret(randVec), direction = math.pi * 2 * math.random()})
 	end
 end
@@ -667,10 +734,11 @@ end
 InitEnemyTanks(1)
 
 local function ShootBullets(direction, position, playerMade)
-	if position[1] > playerPosition[1] - bulletBoundX
-	or position[1] < playerPosition[1] + bulletBoundX
-	or position[3] > playerPosition[2] - bulletBoundY
-	or position[3] < playerPosition[2] + bulletBoundY
+	local tankPos = playerTank:get(core.componentType.WorldPositionComponent)
+	if position[1] > tankPos.position[1] - bulletBoundX
+	or position[1] < tankPos.position[1] + bulletBoundX
+	or position[3] > tankPos.position[3] - bulletBoundY
+	or position[3] < tankPos.position[3] + bulletBoundY
 	then
 		table.insert(bullets, { entity = CreateBullet(position, direction), direction = direction, playerMade = playerMade })
 		
@@ -683,10 +751,11 @@ end
 
 
 local function ShootMissiles(direction, directionUp, position, playerMade)
-	if position[1] > playerPosition[1] - bulletBoundX
-	or position[1] < playerPosition[1] + bulletBoundX
-	or position[3] > playerPosition[2] - bulletBoundY
-	or position[3] < playerPosition[2] + bulletBoundY
+	local tankPos = playerTank:get(core.componentType.WorldPositionComponent)
+	if position[1] > tankPos.position[1] - bulletBoundX
+	or position[1] < tankPos.position[1] + bulletBoundX
+	or position[3] > tankPos.position[3] - bulletBoundY
+	or position[3] < tankPos.position[3] + bulletBoundY
 	then
 		table.insert(missiles, { entity = CreateMissile(position, direction, directionUp), direction = direction, directionUp = directionUp, playerMade = playerMade })
 		
@@ -706,7 +775,7 @@ local function ShootRailgun(direction, position, playerMade)
 	while i <= 101 do
 		table.insert(railgunParticles, { entity = CreateBullet(tmpPos, direction), direction = direction, playerMade = playerMade })
 		
-		table.insert(railgunLights, { entity = CreateRailGunLight(tmpPos, 20)})
+		table.insert(railgunLights, { entity = CreateRailGunLight(tmpPos, 10)})
 		
 		tmpPos[1] = tmpPos[1] + math.cos(direction) * 0.5
 		tmpPos[2] = position[2]
@@ -870,7 +939,7 @@ end
 
 
 local function UpdateBullets(delta)
-	
+	local tankPos = playerTank:get(core.componentType.WorldPositionComponent)
 	local i = 1
 	while i <= #bullets do
 	
@@ -878,10 +947,10 @@ local function UpdateBullets(delta)
 		wpc = bullets[i].entity:get(core.componentType.WorldPositionComponent)
 		position = wpc.position
 		
-		if position[1] < playerPosition[1] - bulletBoundX
-		or position[1] > playerPosition[1] + bulletBoundX
-		or position[3] < playerPosition[2] - bulletBoundY
-		or position[3] > playerPosition[2] + bulletBoundY
+		if position[1] < tankPos.position[1] - bulletBoundX
+		or position[1] > tankPos.position[1] + bulletBoundX
+		or position[3] < tankPos.position[3] - bulletBoundY
+		or position[3] > tankPos.position[3] + bulletBoundY
 		or BulletHit(i)
 		then            
 			-- Remove bullet outside of bounds
@@ -904,7 +973,7 @@ end
 
 
 local function UpdateMissiles(delta)
-	
+	local tankPos = playerTank:get(core.componentType.WorldPositionComponent)
 	local i = 1
 	while i <= #missiles do
 	
@@ -912,10 +981,10 @@ local function UpdateMissiles(delta)
 		wpc = missiles[i].entity:get(core.componentType.WorldPositionComponent)
 		position = wpc.position
 		
-		if position[1] < playerPosition[1] - bulletBoundX
-		or position[1] > playerPosition[1] + bulletBoundX
-		or position[3] < playerPosition[2] - bulletBoundY
-		or position[3] > playerPosition[2] + bulletBoundY
+		if position[1] < tankPos.position[1] - bulletBoundX
+		or position[1] > tankPos.position[1] + bulletBoundX
+		or position[3] < tankPos.position[3] - bulletBoundY
+		or position[3] > tankPos.position[3] + bulletBoundY
 		or MissileHit(i)
 		then            
 			-- Remove bullet outside of bounds
@@ -947,14 +1016,35 @@ local function UpdateMissiles(delta)
 			
 			
 			--rotQuat = core.glm.quat.new( 0,0,0,1 )
-			rotQuat = core.glm.quat.new( math.sin(missiles[i].directionUp * 0.5) , 0, 0, math.cos(missiles[i].directionUp * 0.5 ))
+			
+			--local missileRot = missiles[i].entity:get(core.componentType.RotationComponent)
+			local rotQuattt = { math.sin(missiles[i].directionUp * 0.5) , 0, 0, math.cos(missiles[i].directionUp * 0.5 )}
+
+			local rotQuat = { 0, math.sin(missiles[i].direction * 0.5), 0, math.cos(missiles[i].direction * 0.5 )}
+
+
+			local rotttttt = {	(rotQuat[2]*rotQuattt[3] - rotQuat[3]*rotQuattt[2] + rotQuat[1]*rotQuattt[4] + rotQuat[4]*rotQuattt[1]),
+								(rotQuat[3]*rotQuattt[1] - rotQuat[1]*rotQuattt[3] + rotQuat[2]*rotQuattt[4] + rotQuat[4]*rotQuattt[2]),
+								(rotQuat[1]*rotQuattt[2] - rotQuat[2]*rotQuattt[1] + rotQuat[3]*rotQuattt[4] + rotQuat[4]*rotQuattt[3]),
+								(rotQuat[4]*rotQuattt[4] - rotQuat[1]*rotQuattt[1] - rotQuat[2]*rotQuattt[2] - rotQuat[3]*rotQuattt[3]) }
+
+			--rotQuat = rotQuat * rotQuattt
 			--core.glm.quat.rotate(rotQuat, missiles[i].direction, core.glm.vec3.new(0,1,0))
 			--rotDir.rotate()
+			
+			
+			
+			
+			--return Quaternion(	y()*rhs.z() - z()*rhs.y() + x()*rhs.w() + w()*rhs.x(),
+			--					z()*rhs.x() - x()*rhs.z() + y()*rhs.w() + w()*rhs.y(),
+			--					x()*rhs.y() - y()*rhs.x() + z()*rhs.w() + w()*rhs.z(),
+			--					w()*rhs.w() - x()*rhs.x() - y()*rhs.y() - z()*rhs.z());
+				
 			local missileRot = missiles[i].entity:get(core.componentType.RotationComponent)
-			missileRot.rotation[1] = rotQuat[1]
-			missileRot.rotation[2] = rotQuat[2]
-			missileRot.rotation[3] = rotQuat[3]
-			missileRot.rotation[4] = rotQuat[4]
+			missileRot.rotation[1] = rotttttt[1]
+			missileRot.rotation[2] = rotttttt[2]
+			missileRot.rotation[3] = rotttttt[3]
+			missileRot.rotation[4] = rotttttt[4]
 			missiles[i].entity:set(core.componentType.RotationComponent, missileRot)
 					
 			i = i + 1
@@ -1028,7 +1118,6 @@ local function UpdateBulletFireLights(delta)
 			bulletFireLights[i].entity:destroy()
 			table.remove(bulletFireLights, i)
 		else
-			--local rnd = (0.95 * (math.random() + 0.4))
 			scale.scale[1] = scale.scale[1] * 0.65
 			scale.scale[2] = scale.scale[2] * 0.65
 			scale.scale[3] = scale.scale[3] * 0.65
@@ -1041,6 +1130,9 @@ end
 
 local function UpdateEnemyTanks(delta)
 	local playerPos = playerTank:get(core.componentType.WorldPositionComponent).position
+	
+	core.system.groups.setGroupGoal(tankGroups, playerPos[1], playerPos[2], playerPos[3] )
+	
 	local i = 1
 	while i <= #enemyTanks do
 	
@@ -1118,44 +1210,44 @@ local function UpdateEnemyTanks(delta)
 		end
 		
 
-		if length > 15.0 then-- and bo == false then
-			enemyTanks[i].velocity[1] = enemyTanks[i].velocity[1] + math.cos(enemyTanks[i].direction) * acc
-			enemyTanks[i].velocity[2] = enemyTanks[i].velocity[2] + math.sin(enemyTanks[i].direction) * acc
-		else
-			enemyTanks[i].velocity[1] = enemyTanks[i].velocity[1] * decc
-			enemyTanks[i].velocity[2] = enemyTanks[i].velocity[2] * decc
-		end
-		
-		
-		local speed = math.sqrt(enemyTanks[i].velocity[1] * enemyTanks[i].velocity[1] + enemyTanks[i].velocity[2] * enemyTanks[i].velocity[2])
-		if speed > enemyTopSpeed then
-			enemyTanks[i].velocity[1] = enemyTopSpeed * (enemyTanks[i].velocity[1] / speed)
-			enemyTanks[i].velocity[2] = enemyTopSpeed * (enemyTanks[i].velocity[2] / speed)
-		elseif speed < 0.001 then
-			enemyTanks[i].velocity[1] = 0
-			enemyTanks[i].velocity[2] = 0
-		end
+		--if length > 15.0 then-- and bo == false then
+		--	enemyTanks[i].velocity[1] = enemyTanks[i].velocity[1] + math.cos(enemyTanks[i].direction) * acc
+		--	enemyTanks[i].velocity[2] = enemyTanks[i].velocity[2] + math.sin(enemyTanks[i].direction) * acc
+		--else
+		--	enemyTanks[i].velocity[1] = enemyTanks[i].velocity[1] * decc
+		--	enemyTanks[i].velocity[2] = enemyTanks[i].velocity[2] * decc
+		--end
+		--
+		--
+		--local speed = math.sqrt(enemyTanks[i].velocity[1] * enemyTanks[i].velocity[1] + enemyTanks[i].velocity[2] * enemyTanks[i].velocity[2])
+		--if speed > enemyTopSpeed then
+		--	enemyTanks[i].velocity[1] = enemyTopSpeed * (enemyTanks[i].velocity[1] / speed)
+		--	enemyTanks[i].velocity[2] = enemyTopSpeed * (enemyTanks[i].velocity[2] / speed)
+		--elseif speed < 0.001 then
+		--	enemyTanks[i].velocity[1] = 0
+		--	enemyTanks[i].velocity[2] = 0
+		--end
 		
 		
 		local tankPos = enemyTanks[i].entity:get(core.componentType.WorldPositionComponent)
-		tankPos.position[1] = tankPos.position[1] + enemyTanks[i].velocity[1] * delta
-		tankPos.position[2] = 0.0
-		tankPos.position[3] = tankPos.position[3] + enemyTanks[i].velocity[2] * delta
-		enemyTanks[i].entity:set(core.componentType.WorldPositionComponent, tankPos)
+		--tankPos.position[1] = tankPos.position[1] + enemyTanks[i].velocity[1] * delta
+		--tankPos.position[2] = 0.0
+		--tankPos.position[3] = tankPos.position[3] + enemyTanks[i].velocity[2] * delta
+		--enemyTanks[i].entity:set(core.componentType.WorldPositionComponent, tankPos)
+		--
+		--local tankRot = enemyTanks[i].entity:get(core.componentType.RotationComponent)
+		--tankRot.rotation[1] = 0
+		--tankRot.rotation[2] = math.sin( (math.pi/2 - enemyTanks[i].direction)/2 )
+		--tankRot.rotation[3] = 0
+		--tankRot.rotation[4] = math.cos( (math.pi/2 - enemyTanks[i].direction)/2 )
+		--enemyTanks[i].entity:set(core.componentType.RotationComponent, tankRot)
 		
-		local tankRot = enemyTanks[i].entity:get(core.componentType.RotationComponent)
-		tankRot.rotation[1] = 0
-		tankRot.rotation[2] = math.sin( (math.pi/2 - enemyTanks[i].direction)/2 )
-		tankRot.rotation[3] = 0
-		tankRot.rotation[4] = math.cos( (math.pi/2 - enemyTanks[i].direction)/2 )
-		enemyTanks[i].entity:set(core.componentType.RotationComponent, tankRot)
 		
-		
-		local turretPos = enemyTankTurrets[i].entity:get(core.componentType.WorldPositionComponent)
-		turretPos.position[1] = turretPos.position[1] + enemyTanks[i].velocity[1] * delta
-		turretPos.position[2] = 0.0
-		turretPos.position[3] = turretPos.position[3] + enemyTanks[i].velocity[2] * delta
-		enemyTankTurrets[i].entity:set(core.componentType.WorldPositionComponent, turretPos)
+		--local turretPos = enemyTankTurrets[i].entity:get(core.componentType.WorldPositionComponent)
+		--turretPos.position[1] = tankPos.position[1]
+		--turretPos.position[2] = tankPos.position[2]
+		--turretPos.position[3] = tankPos.position[3]
+		enemyTankTurrets[i].entity:set(core.componentType.WorldPositionComponent, tankPos)
 
 		local turretRot = enemyTankTurrets[i].entity:get(core.componentType.RotationComponent)
 		turretRot.rotation[1] = 0
@@ -1244,8 +1336,16 @@ local function UpdatePlayerTank(delta)
 		velocity[2] = 0
 	end
 	
-	playerPosition[1] = playerPosition[1] + velocity[1] * delta
-	playerPosition[2] = playerPosition[2] + velocity[2] * delta
+	local tankPos = playerTank:get(core.componentType.WorldPositionComponent)
+
+	tankPos.position[1] = tankPos.position[1] + velocity[1] * delta
+	tankPos.position[2] = 0
+	tankPos.position[3] = tankPos.position[3] + velocity[2] * delta
+	
+	
+	
+	
+	
 	
 	
 	shootTimer = shootTimer - delta
@@ -1260,7 +1360,7 @@ local function UpdatePlayerTank(delta)
 	end
 
 	if shootBullet then
-		ShootBullets(playerTurretDirection, {playerPosition[1] + math.cos(playerTurretDirection) * 3, 1.5, playerPosition[2] + math.sin(playerTurretDirection) * 3}, true)
+		ShootBullets(playerTurretDirection, {tankPos.position[1] + math.cos(playerTurretDirection) * 3, 1.5, tankPos.position[3] + math.sin(playerTurretDirection) * 3}, true)
 	end
 
 
@@ -1268,18 +1368,8 @@ local function UpdatePlayerTank(delta)
 	
 	
 	
-	--shootMissileTimer = shootMissileTimer - delta
-	--if shootMissileTimer < 0 then
-	--	shootMissileTimer = 0
-	--end
-	--
-	--if fireMissile and shootMissileTimer == 0 then 
-	--	shootMissileTimer = shootMissileInterval
-	--else 
-	--	fireMissile = false 
-	--end
 
-	
+	--Missile barrage
 	if not isShootingMissiles then
 		shootMissileTimer = shootMissileTimer - delta
 	end
@@ -1297,7 +1387,7 @@ local function UpdatePlayerTank(delta)
 		if missileLuanchIntervalTimer < 0 then
 			missileLuanchIntervalTimer = missileLuanchInterval
 			currentMissileBarrage = currentMissileBarrage - 1
-			ShootMissiles(playerTurretDirection + math.random() * 0.15, math.pi * 0.5 + math.random() * 0.25, {playerPosition[1] - math.cos(playerTurretDirection) * 3, 1.5, playerPosition[2] - math.sin(playerTurretDirection) * 3}, true)
+			ShootMissiles(playerTurretDirection + math.random() * 0.15, math.pi * 0.5 + math.random() * 0.25, {tankPos.position[1] - math.cos(playerTurretDirection) * 3, 1.5, tankPos.position[3] - math.sin(playerTurretDirection) * 3}, true)
 		end
 		
 		if currentMissileBarrage < 0 then
@@ -1310,6 +1400,8 @@ local function UpdatePlayerTank(delta)
 	
 	
 	
+	
+	--Railgun
 	shootRailgunTimer = shootRailgunTimer - delta
 	
 	if fireRailgun then
@@ -1321,17 +1413,17 @@ local function UpdatePlayerTank(delta)
 	end
 	
 	if shootRailgunBuildUpTimer <= 0 then
-		ShootRailgun(playerTurretDirection, {playerPosition[1] + math.cos(playerTurretDirection) * 3, 1.5, playerPosition[2] + math.sin(playerTurretDirection) * 3}, true)
+		ShootRailgun(playerTurretDirection, {tankPos.position[1] + math.cos(playerTurretDirection) * 3, 1.5, tankPos.position[3] + math.sin(playerTurretDirection) * 3}, true)
 		shootRailgunBuildUpTimer = shootRailgunBuildUpTimerInterval
 		shootRailgunTimer = shootRailgunTimerInterval
 	end
 	
 	
 	
-	local tankPos = playerTank:get(core.componentType.WorldPositionComponent)
-	tankPos.position[1] = playerPosition[1]
-	tankPos.position[2] = 0.0
-	tankPos.position[3] = playerPosition[2]
+	
+	--tankPos.position[1] = playerPosition[1]
+	--tankPos.position[2] = 0.0
+	--tankPos.position[3] = playerPosition[2]
 	playerTank:set(core.componentType.WorldPositionComponent, tankPos)
 	
 	local tankRot = playerTank:get(core.componentType.RotationComponent)
@@ -1344,9 +1436,9 @@ local function UpdatePlayerTank(delta)
 	
 	
 	local turretPos = playerTurret:get(core.componentType.WorldPositionComponent)
-	turretPos.position[1] = playerPosition[1]
+	turretPos.position[1] = tankPos.position[1]
 	turretPos.position[2] = 0.0
-	turretPos.position[3] = playerPosition[2]
+	turretPos.position[3] = tankPos.position[3]
 	playerTurret:set(core.componentType.WorldPositionComponent, turretPos)
 	
 	local turretRot = playerTurret:get(core.componentType.RotationComponent)
@@ -1355,11 +1447,18 @@ local function UpdatePlayerTank(delta)
 	turretRot.rotation[3] = 0
 	turretRot.rotation[4] = math.cos( (math.pi/2 - playerTurretDirection)/2 )
 	playerTurret:set(core.componentType.RotationComponent, turretRot)
+	
+	local aimPos = aim:get(core.componentType.WorldPositionComponent)
+	aimPos.position[1] = tankPos.position[1] + math.cos( playerTurretDirection) * 10.0
+	aimPos.position[2] = 0.0
+	aimPos.position[3] = tankPos.position[3] + math.sin( playerTurretDirection) * 10.0
+	aim:set(core.componentType.WorldPositionComponent, aimPos)
 end
 
 
 local function UpdateCamera()
-	camera:lookAt( core.glm.vec3.new( playerPosition[1] , 50, playerPosition[2] ), core.glm.vec3.new( playerPosition[1], 0, playerPosition[2] ))
+	local tankPos = playerTank:get(core.componentType.WorldPositionComponent)
+	camera:lookAt( core.glm.vec3.new( tankPos.position[1], 50, tankPos.position[3] ), core.glm.vec3.new( tankPos.position[1], 0, tankPos.position[3] ))
 	core.camera.gameCamera:setView( camera:getView( ) )
 end
 
@@ -1393,8 +1492,11 @@ local function RestartGame(diff)
 	alive = true
 	health = maxHealth
 	
-	playerPosition[1] = 0
-	playerPosition[2] = 0
+	local tankPos = playerTank:get(core.componentType.WorldPositionComponent)
+	tankPos.position[1] = 0.0
+	tankPos.position[2] = 0.0
+	tankPos.position[3] = 0.0
+	playerTank:set(core.componentType.WorldPositionComponent, tankPos)
 	
 	velocity = {0,0}
 	playerDirection = 0
@@ -1412,7 +1514,7 @@ function Update(delta)
 	if alive then
 		UpdatePlayerTank(delta)
 		UpdateEnemyTanks(delta)
-		--UpdateCamera()
+		UpdateCamera()
 	end
 	
 	UpdateBullets(delta)
@@ -1484,7 +1586,7 @@ function Update(delta)
 	--	mythingPos.position[3] =  mythingPos.position[3] + 100  * dt
 	--end
 
-	camera:update(delta)
+	--camera:update(delta)
 end
 
 scen:registerUpdateCallback( Update )

@@ -97,6 +97,16 @@ namespace Core
 
                 xSpacing = (xSpacing > static_cast<float>(world.m_config.GetDouble("squadFormationColumnSpacingMinimum", FORMATION_COLUMN_SPACING_MINIMUM))) ? xSpacing : static_cast<float>(world.m_config.GetDouble("squadFormationSpacingMinimum", FORMATION_COLUMN_SPACING_MINIMUM));
 
+                float rowWidth = 0.0f;
+
+                while(rowWidth < (leftDistance + rightDistance))
+                {
+                    rowWidth += xSpacing;
+                }
+                rowWidth -= xSpacing;
+
+                leftDistance = rightDistance = (rowWidth / 2.0f);
+
                 float xOffset = -leftDistance;
                 float zOffset = 0.0f;                
 
@@ -220,6 +230,16 @@ namespace Core
 
                 xSpacing = (xSpacing > static_cast<float>(world.m_config.GetDouble("squadFormationColumnSpacingMinimum", FORMATION_COLUMN_SPACING_MINIMUM))) ? xSpacing : static_cast<float>(world.m_config.GetDouble("squadFormationSpacingMinimum", FORMATION_COLUMN_SPACING_MINIMUM));
 
+                float rowWidth = 0.0f;
+
+                while(rowWidth < (leftDistance + rightDistance))
+                {
+                    rowWidth += xSpacing;
+                }
+                rowWidth -= xSpacing;
+
+                leftDistance = rightDistance = (rowWidth / 2.0f);
+
                 float xOffset = -leftDistance;
                 float zOffset = 0.0f;
 
@@ -229,10 +249,8 @@ namespace Core
                     relPos2D = rotMat2D * relPos2D;
                     glm::vec3 relPos = glm::vec3(relPos2D.x, 0.0f, relPos2D.y);
                     glm::vec3 finalPosition = center + relPos;
-                    //TODO: Replace Debug draw with decals
                     navMesh->GetClosestPointInsideMesh(finalPosition, center, goalNode, 0.2f);
 					PushDecal(finalPosition);
-                    //GFX::Debug::DrawSphere(finalPosition, 0.5f, GFXColor(1.0f, 0.0f, 0.0f, 1.0f), false);
 
                     xOffset += xSpacing;
                     if(xOffset > rightDistance)
@@ -270,10 +288,8 @@ namespace Core
                         int goalNode;
                         glm::vec3 relPos = glm::vec3(relPos2D.x, 0.0f, relPos2D.y);
                         glm::vec3 finalPosition = centerPosition + relPos;
-                        //TODO: Replace Debug draw with decals
                         navMesh->GetClosestPointInsideMesh(finalPosition, centerPosition, goalNode, 0.2f);
 						PushDecal(finalPosition);
-                        //GFX::Debug::DrawSphere(finalPosition, 0.5f, GFXColor(1.0f, 0.0f, 0.0f, 1.0f), false);
 
                         circumferenceOffset += circleSpacing;
                         if(circumferenceOffset >= circumference)
@@ -367,6 +383,57 @@ namespace Core
             }
         }
     }
+
+	void SquadSystem::EnableOutlineMoods(int* squadIDs, int nSquads)
+	{
+		for (int i = 0; i<nSquads; ++i)
+		{
+			std::vector<Core::Entity> squad = Core::world.m_systemHandler.GetSystem<Core::GroupDataSystem>()->GetMembersInGroup(squadIDs[i]);
+
+			for (std::vector<Entity>::iterator it = squad.begin(); it != squad.end(); ++it)
+			{
+				Core::TargetingComponent* tc = WGETC<Core::TargetingComponent>(*it);
+				if (tc)
+				{
+					Core::GraphicsComponent* gfxc = WGETC<Core::GraphicsComponent>(*it);
+					Core::AttributeComponent* atc = WGETC<Core::AttributeComponent>(*it);
+
+					switch (atc->rioter.stance)
+					{
+					case RioterStance::Normal:
+						gfxc->outlineColor[0] = 0.0f;
+						gfxc->outlineColor[1] = 0.0f;
+						gfxc->outlineColor[2] = 1.0f;
+						gfxc->outlineColor[3] = 2.0f;
+						break;
+					case RioterStance::Agitated:
+						gfxc->outlineColor[0] = 1.0f;
+						gfxc->outlineColor[1] = 0.5f;
+						gfxc->outlineColor[2] = 0.0f;
+						gfxc->outlineColor[3] = 2.0f;
+						break;
+					case RioterStance::Attacking:
+						gfxc->outlineColor[0] = 1.0f;
+						gfxc->outlineColor[1] = 0.0f;
+						gfxc->outlineColor[2] = 0.0f;
+						gfxc->outlineColor[3] = 2.0f;
+						break;
+					case RioterStance::Retreating:
+						gfxc->outlineColor[0] = 1.0f;
+						gfxc->outlineColor[1] = 0.0f;
+						gfxc->outlineColor[2] = 1.0f;
+						gfxc->outlineColor[3] = 2.0f;
+						break;
+					case RioterStance::Civilian:
+						break;
+					}
+
+				
+					GFX::SetBitmaskValue(gfxc->bitmask, GFX::BITMASK::LAYER, GFX::LAYER_TYPES::OUTLINE_LAYER);
+				}
+			}
+		}
+	}
 
     void SquadSystem::DisableOutline(int* squadIDs, int nSquads)
     {
