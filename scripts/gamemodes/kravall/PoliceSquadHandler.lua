@@ -96,6 +96,10 @@ function PoliceSquadHandler:new(o)
 
     -- Function to call when aiming
     o.aimingFunction = nil
+
+    -- Used for double click selection
+    o.lastClickTime = os.clock()   
+    o.lastClickType = ""
     
     registerCallbacks(o)
 
@@ -299,11 +303,17 @@ function PoliceSquadHandler:setAbility( ability )
         self:SetReticuleRender(true)
         self.AimingFunction = self.AimTearGas
     elseif ability == core.system.squad.abilities.Sprint then
-        self.isAiming = true
-        self:SetReticuleRender(false)
-        self.AimingFunction = self.AimSprint
+        if self:CanUseAbility(ability) then
+            self.isAiming = false
+            self:SetReticuleRender(false)
+            self.AimingFunction = nil
+            self:UseSprint() 
+        end
     elseif ability == core.system.squad.abilities.Flee then
         if self:CanUseAbility(ability) then
+            self.isAiming = false
+            self:SetReticuleRender(false)
+            self.AimingFunction = nil
             self:UseFlee() 
         end
 	elseif ability == core.system.squad.abilities.Attack then
@@ -463,7 +473,10 @@ function PoliceSquadHandler:AttackGroup()
 		return
 	end
 	
-	local selectedEntity = core.system.picking.getLastHitEntity()
+    local mouseX, mouseY = mouse.getPosition()
+    local aspct = core.entity.generateAspect( core.componentType.AttributeComponent, core.componentType.UnitTypeComponent, core.componentType.BoundingVolumeComponent )
+    local selectedEntity = core.system.picking.getHitEntity(mouseX, mouseY, aspct )
+
 	if selectedEntity then
 		local unitTypeComponent = selectedEntity:get(core.componentType.UnitTypeComponent);
 		local attributeComponent = selectedEntity:get(core.componentType.AttributeComponent);
@@ -498,33 +511,6 @@ function PoliceSquadHandler:RevertAttackingStateOfSelected()
 	if #self.selectedSquads ~= 0 then
 		core.orders.attackGroup( self.selectedSquads, -1 )
 	end
-end
-
-function PoliceSquadHandler:AimSprint()
-    local mouseX, mouseY = mouse.getPosition()
-    local x,y,z = core.system.picking.getGroundHit(mouseX, mouseY);
-    if not self:CanUseAbility(core.system.squad.abilities.Sprint) then
-        self.isAiming = false
-        self:SetReticuleRender(false)
-        self.AimingFunction = nil
-        return
-    end
-
-    if self.leftClicked then
-        --Consume click to avoid deselecting squads
-        self.leftClicked = false
-        self.leftPressed = false
-        
-
-        self:UseSprint(x, y, z)
-        if not keyboard.isKeyDown(keyboard.key.Left_shift) then
-            self.isAiming = false
-            self:SetReticuleRender(false)
-            self.AimingFunction = nil
-        end
-
-
-    end
 end
 
 function PoliceSquadHandler:UseTearGas(entity, x, y, z)
@@ -566,7 +552,7 @@ function PoliceSquadHandler:UseTearGas(entity, x, y, z)
     self.abilityEntities[#(self.abilityEntities) + 1] = pairTable
 end
 
-function PoliceSquadHandler:UseSprint(x, y, z)
+function PoliceSquadHandler:UseSprint()
 
     for member, abilities in pairs(self.usableAbilities) do    
         for i=1, #abilities do
@@ -577,7 +563,6 @@ function PoliceSquadHandler:UseSprint(x, y, z)
     end
     
 	self:RevertAttackingStateOfSelected()
-    core.system.squad.setSquadGoal(self.selectedSquads, x, y, z)
 end
 
 function PoliceSquadHandler:UseFlee()
@@ -738,14 +723,10 @@ function PoliceSquadHandler:update( delta )
 
     if keyboard.isKeyDownOnce(keyboard.key.Kp_3) then
         if self:CanUseAbility(core.system.squad.abilities.Sprint) then            
-            if self.isAiming and self.AimingFunction == self.AimSprint then
-                self.isAiming = false
-                self.AimingFunction = nil
-            else
-                self.isAiming = true
-                self:SetReticuleRender(false)
-                self.AimingFunction = self.AimSprint
-            end            
+            self.isAiming = false
+            self.AimingFunction = nil
+            self:SetReticuleRender(false)
+            self:UseSprint()
        end
     end
 
@@ -801,28 +782,45 @@ function PoliceSquadHandler:update( delta )
 		self:HighlightMood()
     end   
 
+    if keyboard.isKeyDownOnce(keyboard.key.Tab) and #(self.selectedSquads) > 0 then
+        
+        local firstSquad = self.selectedSquads[1]
+        table.remove(self.selectedSquads, 1)
+        table.insert(self.selectedSquads, firstSquad)
+    end
+
     --Formations
     --Click Selection
-    if self.leftClicked then        
+    if self.leftClicked then               
+
+        local clickTime = os.clock()
 		self.boxStartX, self.boxStartY = mouse.getPosition()
 
-          --local aspct = core.entity.generateAspect( core.componentType.AttributeComponent, core.componentType.BoundingVolumeComponent )
-          --local selectedEntity = core.system.picking.getHitEntity(self.boxStartX, self.boxStartY, aspct )
-       local selectedEntity = core.system.picking.getLastHitEntity()
+        local aspct = core.entity.generateAspect( core.componentType.AttributeComponent, core.componentType.UnitTypeComponent, core.componentType.BoundingVolumeComponent )
+        local selectedEntity = core.system.picking.getHitEntity(self.boxStartX, self.boxStartY, aspct )
 
         if selectedEntity then
             local unitTypeComponent = selectedEntity:get(core.componentType.UnitTypeComponent);
+            local attributeComponent = selectedEntity:get(core.componentType.AttributeComponent);            
 
-			if not unitTypeComponent then
-				return
-			end
+            --Selected normal police unit
+            if unitTypeComponent.unitType == core.UnitType.Police then
+                local squad = self:getSquad(attributeComponent.squadID)
 
-            local attributeComponent = selectedEntity:get(core.componentType.AttributeComponent);
+                local deltaTime = (clickTime - self.lastClickTime)
+                print( deltaTime)
+                if deltaTime < core.config.doubleClickDelay and self.lastClickedType == squad.type then
+                    --Double click same unit type, select all units of same type
+                    local selectedSquads = {}
+                    for _,v in pairs(self.createdSquads) do
+                        if v.type == squad.type then
+                            table.insert(selectedSquads, v.groupId)
+                        end
+                    end
 
-            if attributeComponent and unitTypeComponent then                 
-                --Selected normal police unit
-                if unitTypeComponent.unitType == core.UnitType.Police then
-
+                    self:DeselectAllSquads()
+                    self:addSquadsToSelection(selectedSquads)                    
+                else
                     local squadEntity = s_squad.getSquadEntity(attributeComponent.squadID)
                     local squadComponent = squadEntity:get(core.componentType.SquadComponent)
 
@@ -862,11 +860,13 @@ function PoliceSquadHandler:update( delta )
                     self:setStance( self:evaluateStanceForGroups( self.selectedSquads ) )
                     applySelectionOutline( self.selectedSquads )
                 end
+                self.lastClickedType = squad.type
             end
 		elseif not keyboard.isKeyDown(keyboard.key.Left_shift) and not core.config.stickySelection and not self.isClick then
 			self:DeselectAllSquads()
         end
 
+        self.lastClickTime = clickTime
         if self.isClick == true then
             self.isClick = false
         end

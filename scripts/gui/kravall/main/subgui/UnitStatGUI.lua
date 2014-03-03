@@ -64,15 +64,15 @@ function UnitStatGUI:setStance( stance )
 end
 
 function UnitStatGUI:setHealth( health )
-    self.labelUnitHealth:setLabel( "Health: " .. health )
+    self.labelUnitHealth:setLabel( "Health: " .. string.format( "%.0f",health ) )
 end
 
 function UnitStatGUI:setMorale( morale )
-    self.labelUnitMorale:setLabel( "Morale: " .. morale )
+    self.labelUnitMorale:setLabel( "Morale: " .. string.format( "%.2f", morale ) )
 end
 
 function UnitStatGUI:setStamina( stamina )
-    self.labelUnitStamina:setLabel( "Stamina: " .. stamina )
+    self.labelUnitStamina:setLabel( "Stamina: " .. string.format( "%.0f", stamina ) )
 end
 
 function UnitStatGUI:setName( name )
