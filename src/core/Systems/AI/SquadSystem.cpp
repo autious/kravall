@@ -384,6 +384,57 @@ namespace Core
         }
     }
 
+	void SquadSystem::EnableOutlineMoods(int* squadIDs, int nSquads)
+	{
+		for (int i = 0; i<nSquads; ++i)
+		{
+			std::vector<Core::Entity> squad = Core::world.m_systemHandler.GetSystem<Core::GroupDataSystem>()->GetMembersInGroup(squadIDs[i]);
+
+			for (std::vector<Entity>::iterator it = squad.begin(); it != squad.end(); ++it)
+			{
+				Core::TargetingComponent* tc = WGETC<Core::TargetingComponent>(*it);
+				if (tc)
+				{
+					Core::GraphicsComponent* gfxc = WGETC<Core::GraphicsComponent>(*it);
+					Core::AttributeComponent* atc = WGETC<Core::AttributeComponent>(*it);
+
+					switch (atc->rioter.stance)
+					{
+					case RioterStance::Normal:
+						gfxc->outlineColor[0] = 0.0f;
+						gfxc->outlineColor[1] = 0.0f;
+						gfxc->outlineColor[2] = 1.0f;
+						gfxc->outlineColor[3] = 1.0f;
+						break;
+					case RioterStance::Agitated:
+						gfxc->outlineColor[0] = 0.0f;
+						gfxc->outlineColor[1] = 1.0f;
+						gfxc->outlineColor[2] = 1.0f;
+						gfxc->outlineColor[3] = 1.0f;
+						break;
+					case RioterStance::Attacking:
+						gfxc->outlineColor[0] = 1.0f;
+						gfxc->outlineColor[1] = 0.0f;
+						gfxc->outlineColor[2] = 0.0f;
+						gfxc->outlineColor[3] = 1.0f;
+						break;
+					case RioterStance::Retreating:
+						gfxc->outlineColor[0] = 1.0f;
+						gfxc->outlineColor[1] = 0.0f;
+						gfxc->outlineColor[2] = 1.0f;
+						gfxc->outlineColor[3] = 1.0f;
+						break;
+					case RioterStance::Civilian:
+						break;
+					}
+
+				
+					GFX::SetBitmaskValue(gfxc->bitmask, GFX::BITMASK::LAYER, GFX::LAYER_TYPES::OUTLINE_LAYER);
+				}
+			}
+		}
+	}
+
     void SquadSystem::DisableOutline(int* squadIDs, int nSquads)
     {
         for(int i=0; i<nSquads; ++i)

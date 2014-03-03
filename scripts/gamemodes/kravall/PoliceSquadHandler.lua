@@ -417,6 +417,40 @@ function PoliceSquadHandler:AimTearGas()
     end
 end
 
+function PoliceSquadHandler:HighlightMood()
+
+	if #self.selectedSquads == 0 then
+		self.isAiming = false
+		self:SetReticuleRender(false)
+		self.AimingFunction = nil
+		
+		self.rightClicked = false
+		self.rightPressed = false
+		
+		return
+	end
+
+	local selectedEntity = core.system.picking.getLastHitEntity()
+	if selectedEntity then
+		local unitTypeComponent = selectedEntity:get(core.componentType.UnitTypeComponent);
+		local attributeComponent = selectedEntity:get(core.componentType.AttributeComponent);
+
+		if attributeComponent and unitTypeComponent then                 
+			
+			--cursor is hovering over rioters
+			if unitTypeComponent.unitType == core.UnitType.Rioter then
+				s_squad.enableMoodOutline( { attributeComponent.groupID } )
+				self.outlinedRioterGroups = attributeComponent.groupID;
+			end			
+		end		
+	elseif self.leftClicked then
+	
+		self.leftClicked = false
+		self.leftPressed = false
+	end	
+
+end
+
 function PoliceSquadHandler:AttackGroup()
 	if #self.selectedSquads == 0 or self.rightClicked then
 		self.isAiming = false
@@ -763,6 +797,8 @@ function PoliceSquadHandler:update( delta )
 
     if self.isAiming == true then
         self:AimingFunction()
+	else
+		self:HighlightMood()
     end   
 
     --Formations
