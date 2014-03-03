@@ -62,6 +62,7 @@ namespace GFX
 		m_reloadAnimationData = true;
 
 		m_drawSelectionbox = false;
+		m_enableDebug = false;
 	}
 
 	RenderCore::~RenderCore()
@@ -484,7 +485,7 @@ namespace GFX
 		CT(m_overlayPainter->Render(renderJobIndex, m_overlayViewMatrix, m_overlayProjMatrix, renderInfo[4]), "Console");
 
 		// Draw debug information
-		CT(m_debugPainter->Render(m_depthBuffer, m_normalDepth, m_viewMatrix, m_projMatrix, false), "Debug");
+		CT(m_debugPainter->Render(m_depthBuffer, m_normalDepth, m_viewMatrix, m_projMatrix, m_enableDebug), "Debug");
 
 		// Draw the console
 		CT(m_consolePainter->Render(), "Console");
