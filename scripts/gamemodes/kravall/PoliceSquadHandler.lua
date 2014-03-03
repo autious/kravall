@@ -440,7 +440,10 @@ function PoliceSquadHandler:HighlightMood()
 		return
 	end
 
-	local selectedEntity = core.system.picking.getLastHitEntity()
+	local mouseX, mouseY = mouse.getPosition()
+    local aspct = core.entity.generateAspect( core.componentType.AttributeComponent, core.componentType.UnitTypeComponent, core.componentType.BoundingVolumeComponent )
+    local selectedEntity = core.system.picking.getHitEntity(mouseX, mouseY, aspct )
+
 	if selectedEntity then
 		local unitTypeComponent = selectedEntity:get(core.componentType.UnitTypeComponent);
 		local attributeComponent = selectedEntity:get(core.componentType.AttributeComponent);
