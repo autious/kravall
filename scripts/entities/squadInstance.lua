@@ -127,6 +127,7 @@ return function( scen, squadInstance, weaponList )
                     data = {squadID = T.groupId, 
                             squadGoal = {squadInstance.position:get()},
                             squadMoveInFormation = false,
+							squadFormation = core.system.squad.formations.LineFormation,
                             squadTargetForward = {0, -1}},                        
                         ignoreHard = true
                 }
