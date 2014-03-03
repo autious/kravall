@@ -222,7 +222,7 @@ namespace GFX
 
 		m_gamma = 2.2f;
 		m_exposure = 1.0f;
-		m_whitePoint = glm::vec3(1.0f);
+		m_whitePoint = glm::vec3(2.0f);
 
 		m_currentLUT = "identity";
 	}
@@ -484,7 +484,7 @@ namespace GFX
 		CT(m_overlayPainter->Render(renderJobIndex, m_overlayViewMatrix, m_overlayProjMatrix, renderInfo[4]), "Console");
 
 		// Draw debug information
-		CT(m_debugPainter->Render(m_depthBuffer, m_normalDepth, m_viewMatrix, m_projMatrix, true), "Debug");
+		CT(m_debugPainter->Render(m_depthBuffer, m_normalDepth, m_viewMatrix, m_projMatrix, false), "Debug");
 
 		// Draw the console
 		CT(m_consolePainter->Render(), "Console");
