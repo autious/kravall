@@ -298,6 +298,11 @@ namespace GFX
 
 	namespace Debug
 	{
+		/*!
+		Sets whether to draw debug or not.
+		\param enable If true, enables debug drawing.
+		*/
+		DLL_API void SetEnableDebug(bool enable);
 
 		/*!
 		Draws a point on the screen.
