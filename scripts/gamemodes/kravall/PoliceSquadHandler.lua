@@ -299,11 +299,17 @@ function PoliceSquadHandler:setAbility( ability )
         self:SetReticuleRender(true)
         self.AimingFunction = self.AimTearGas
     elseif ability == core.system.squad.abilities.Sprint then
-        self.isAiming = true
-        self:SetReticuleRender(false)
-        self.AimingFunction = self.AimSprint
+        if self:CanUseAbility(ability) then
+            self.isAiming = false
+            self:SetReticuleRender(false)
+            self.AimingFunction = nil
+            self:UseSprint() 
+        end
     elseif ability == core.system.squad.abilities.Flee then
         if self:CanUseAbility(ability) then
+            self.isAiming = false
+            self:SetReticuleRender(false)
+            self.AimingFunction = nil
             self:UseFlee() 
         end
 	elseif ability == core.system.squad.abilities.Attack then
@@ -469,33 +475,6 @@ function PoliceSquadHandler:RevertAttackingStateOfSelected()
 	end
 end
 
-function PoliceSquadHandler:AimSprint()
-    local mouseX, mouseY = mouse.getPosition()
-    local x,y,z = core.system.picking.getGroundHit(mouseX, mouseY);
-    if not self:CanUseAbility(core.system.squad.abilities.Sprint) then
-        self.isAiming = false
-        self:SetReticuleRender(false)
-        self.AimingFunction = nil
-        return
-    end
-
-    if self.leftClicked then
-        --Consume click to avoid deselecting squads
-        self.leftClicked = false
-        self.leftPressed = false
-        
-
-        self:UseSprint(x, y, z)
-        if not keyboard.isKeyDown(keyboard.key.Left_shift) then
-            self.isAiming = false
-            self:SetReticuleRender(false)
-            self.AimingFunction = nil
-        end
-
-
-    end
-end
-
 function PoliceSquadHandler:UseTearGas(entity, x, y, z)
     local attributeComponent = entity:get(core.componentType.AttributeComponent)
     entity:set(core.componentType.AttributeComponent, {stamina = (attributeComponent.stamina - tearGas.tearGasStaminaCost)}, true)
@@ -535,7 +514,7 @@ function PoliceSquadHandler:UseTearGas(entity, x, y, z)
     self.abilityEntities[#(self.abilityEntities) + 1] = pairTable
 end
 
-function PoliceSquadHandler:UseSprint(x, y, z)
+function PoliceSquadHandler:UseSprint()
 
     for member, abilities in pairs(self.usableAbilities) do    
         for i=1, #abilities do
@@ -546,7 +525,6 @@ function PoliceSquadHandler:UseSprint(x, y, z)
     end
     
 	self:RevertAttackingStateOfSelected()
-    core.system.squad.setSquadGoal(self.selectedSquads, x, y, z)
 end
 
 function PoliceSquadHandler:UseFlee()
@@ -707,14 +685,10 @@ function PoliceSquadHandler:update( delta )
 
     if keyboard.isKeyDownOnce(keyboard.key.Kp_3) then
         if self:CanUseAbility(core.system.squad.abilities.Sprint) then            
-            if self.isAiming and self.AimingFunction == self.AimSprint then
-                self.isAiming = false
-                self.AimingFunction = nil
-            else
-                self.isAiming = true
-                self:SetReticuleRender(false)
-                self.AimingFunction = self.AimSprint
-            end            
+            self.isAiming = false
+            self.AimingFunction = nil
+            self:SetReticuleRender(false)
+            self:UseSprint()
        end
     end
 
