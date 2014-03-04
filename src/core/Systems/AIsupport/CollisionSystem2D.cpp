@@ -195,23 +195,6 @@ void Core::CollisionSystem2D::Update( float delta )
 					{
 					case Core::BoundingVolumeCollisionModel::DynamicResolution:
 
-						//if( otherTc != nullptr )
-						//{
-						//	if( otherTc->isAttacking )
-						//		otherIsAttacking = true;
-						//}
-						//
-						//if( otherIsAttacking )
-						//{
-						//	movement = glm::vec3(0);
-						//	movement += collisionNormal * ( deltaDist * 1.0f );
-						//	wpc->position[0] += movement.x;
-						//	wpc->position[2] += movement.z;
-						//
-						//	// update own position for following tests...
-						//	myPosition = glm::vec3( wpc->position[0], 0.0f, wpc->position[2] );
-						//}
-						//else
 						{
 							// Head of list will always bow for tail of list in perfect frontal collision.
 							{
