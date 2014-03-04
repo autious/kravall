@@ -14,7 +14,7 @@ local input = require "input"
 input.registerOnKey( function( key, scancode, action )
     if key == core.input.keyboard.key.F5 
         and action == core.input.action.Press 
-        and current_scenario then
+        and current_scenario_name then
             openscenario( current_scenario_name )
     end
 end)
@@ -75,7 +75,13 @@ function openscenario( name )
         --closescenario()
         core.log.warning( "A scenario now must do all entity and content loading in a function named scen:load. IF YOU LOAD IN ENTITIES FROM THE BODY OF THE SCENARIO YOU*RE DOING SOMETHING WRONG. See protoype_area for example." )
     else
-        current_scenario:load()
+        err, errstr = pcall(current_scenario.load, current_scenario)
+        if err == false then
+            core.log.error( "Unable to load scenario\"" .. name .."\": " .. errstr )
+            _, errstr = pcall( current_scenario.destroy, current_scenario ) 
+            if errstr then core.log.error( errstr ) end
+            current_scenario = nil
+        end
     end
 
     collectgarbage() --For niceness, always good to do right after loading a scenario as the

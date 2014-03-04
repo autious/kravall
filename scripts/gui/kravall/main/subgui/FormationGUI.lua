@@ -51,9 +51,9 @@ function FormationGUI:new(o)
 
     o:addPlacementHandler( require "gui/placement/EastPlacer" )
 
-    for _,v in pairs( o.formations ) do
-        o:addComponent( v )
-    end
+    o:addComponent( o.formations[f_halfcircle] )
+    o:addComponent( o.formations[f_circle] )
+    o:addComponent( o.formations[f_line] )
 
     o.bgImage = Image:new
     { 
