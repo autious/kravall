@@ -600,12 +600,7 @@ namespace Core
 					{
 						if (!frmc->isStraggler)
 						{
-							mc->SetDesiredSpeed(0.0f, Core::DesiredSpeedSetPriority::SquadMoveInFormationDesiredSpeedPriority);
-						}
-						else
-						{
-							// PoliceGoalSystem will make sure that they move to the goal and that they stop there as well.
-							//mc->SetDesiredSpeed( Core::GameData::GetMovementDataWithState( mc->state ).speedToDesire, Core::DesiredSpeedSetPriority::SquadMoveInFormationDesiredSpeedPriority );
+							mc->SetMovementState( Core::MovementState::Movement_idle, Core::MovementStatePriority::MovementState_SquadMoveInFormationPriority );
 						}
 					}
 				}

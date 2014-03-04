@@ -66,9 +66,9 @@ function T:new(o)
 
 	
 	-- set default movementData
-	core.movementData.setMovementMetaData( core.movementData.Walking, 1.5, 17, 17, 0.0 )
-	core.movementData.setMovementMetaData( core.movementData.Jogging, 5.8, 17, 14, 0.0 )
-	core.movementData.setMovementMetaData( core.movementData.Sprinting, 8.8, 17, 14, 0.0 )
+	--core.movementData.setMovementMetaData( core.movementData.Walking, 1.5, 17, 17, 0.0 )
+	--core.movementData.setMovementMetaData( core.movementData.Jogging, 5.8, 17, 14, 0.0 )
+	--core.movementData.setMovementMetaData( core.movementData.Sprinting, 8.8, 17, 14, 0.0 )
 
     return o
 end

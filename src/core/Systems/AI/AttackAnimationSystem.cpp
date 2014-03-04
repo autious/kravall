@@ -6,6 +6,13 @@
 #include <SystemDef.hpp>
 #include <Animation/AnimationManager.hpp>
 
+//#define DRAW_RANGE_AND_TARGET_LINE
+#ifdef DRAW_RANGE_AND_TARGET_LINE
+#define DEBUGDRAW( x ) x
+#else
+#define DEBUGDRAW( x ) ;
+#endif
+
 Core::AttackAnimationSystem::AttackAnimationSystem() : 
 	BaseSystem(EntityHandler::GenerateAspect<WorldPositionComponent, TargetingComponent, AnimationComponent, UnitTypeComponent, 
 	AttributeComponent, MovementComponent, FlowfieldComponent, GraphicsComponent>(), 0ULL)
@@ -37,17 +44,15 @@ void Core::AttackAnimationSystem::Update(float delta)
 							 wpc->GetVec3( *wpc ) - targetWpc->GetVec3( *targetWpc ));
 			if( distSqr < weapon.range * weapon.range )
 				tc->isAttacking = true;
-		
-			mvmc->state = Core::MovementState::Movement_Walking;
 
 			// draw range and target...
-			//GFX::Debug::DrawSphere( wpc->GetVec3( *wpc ), weapon.range, GFXColor( 0.5, 1, 0.5, 1 ), false );
-			//GFX::Debug::DrawLine( targetWpc->GetVec3( *targetWpc ), wpc->GetVec3( *wpc ), GFXColor( 0.5, 1, 0.5, 1 ), false );
+			DEBUGDRAW( GFX::Debug::DrawSphere( wpc->GetVec3( *wpc ), weapon.range, GFXColor( 0.5, 1, 0.5, 1 ), false ); )
+			DEBUGDRAW( GFX::Debug::DrawLine( targetWpc->GetVec3( *targetWpc ), wpc->GetVec3( *wpc ), GFXColor( 0.5, 1, 0.5, 1 ), false ); )
 
 			// if attacking, handle animation and dmg
 			if( tc->isAttacking )
 			{
-				mvmc->SetDesiredSpeed( 0.0f, Core::DesiredSpeedSetPriority::CombatAnimationDesiredSpeedPriority );
+				mvmc->SetMovementState( Core::MovementState::Movement_idle, Core::MovementStatePriority::MovementState_CombatAnimationPriority );
 
 				Core::AnimationComponent* animac = WGETC<Core::AnimationComponent>(*it);
 				Core::GraphicsComponent* grc = WGETC<Core::GraphicsComponent>(*it);
@@ -109,10 +114,6 @@ void Core::AttackAnimationSystem::Update(float delta)
 			{
 				tc->isAttacking = false;
 				tc->hasAttacked = false;
-				
-				Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>(*it);
-				mvmc->SetDesiredSpeed( Core::GameData::GetMovementDataWithState( mvmc->state ).speedToDesire, 
-						Core::DesiredSpeedSetPriority::CombatAnimationDesiredSpeedPriority );
 			}
 		}		
 	}
