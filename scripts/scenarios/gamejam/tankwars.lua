@@ -211,67 +211,6 @@ local playerTurret = scen:loadAssembly(
 
 
 
----- Ambient light
---scen:loadAssembly( 
---{
---	{
---		type = core.componentType.LightComponent,
---		data =  { 
---					color = { 1.0, 1.0, 1.0 },
---					intensity = 0.01,
---					type = core.gfx.objectTypes.Light,
---					lighttype = core.gfx.lightTypes.Ambient,
---					spotangle = 0,
---					spotpenumbra = 0,
---					speccolor = {0,0,0}
---				}
---	},
---	{
---		type = core.componentType.WorldPositionComponent,
---		data = { position = { 0, 0, 0 } }
---	},
---	{
---		type = core.componentType.ScaleComponent,
---		data = { scale = 1.0 }
---	},
---	{
---		type = core.componentType.RotationComponent,
---		data = { rotation = { 0,0,0,0 } }
---	}
---} 
---)
-
-
----- Directional light
---scen:loadAssembly( 
---{
---	{
---		type = core.componentType.LightComponent,
---		data =  { 
---					color = { 0.71765, 0.89804, 0.91373 },
---					intensity = 1.01,
---					type = core.gfx.objectTypes.Light,
---					lighttype = core.gfx.lightTypes.Dir,
---					spotangle = 0,
---					spotpenumbra = 0,
---					speccolor = {0.1, 0.2, 0.03}
---				}
---	},
---	{
---		type = core.componentType.WorldPositionComponent,
---		data = { position = { 0, 0, 0 } }
---	},
---	{
---		type = core.componentType.ScaleComponent,
---		data = { scale = 1.0 }
---	},
---	{
---		type = core.componentType.RotationComponent,
---		data = { rotation = { 1, -1, 1, 0 } }
---	}
---} 
---)
-
 local function CreateBullet(pos, direction)
 	return scen:loadAssembly( 
 	{
@@ -540,8 +479,8 @@ local function CreateEnemyTankBody(position, group)
 	},
 	{
 		type = core.componentType.MovementComponent,
-		data = { direction = { 0, 0, 0 }, newDirection = { 0, 0, 0 }, speed = 5.0, 
-		desiredSpeed = 50, goal = false }
+		data = { direction = { 0, 0, 0 }, newDirection = { 0, 0, 0 }, speed = 5000.0, 
+		desiredSpeed = 5000.0, goal = false }
 		,ignoreHard = true
 	},
 	{
@@ -694,7 +633,7 @@ local railgunLights = {}
 
 
 local enemyTurnSpeed = 0.3
-local enemyTurnSpeedTurret = 1.0
+local enemyTurnSpeedTurret = 0.5
 local enemyShootInterval = 5.0
 local enemyTopSpeed = 5
 
@@ -1018,9 +957,9 @@ local function UpdateMissiles(delta)
 			--rotQuat = core.glm.quat.new( 0,0,0,1 )
 			
 			--local missileRot = missiles[i].entity:get(core.componentType.RotationComponent)
-			local rotQuattt = { math.sin(missiles[i].directionUp * 0.5) , 0, 0, math.cos(missiles[i].directionUp * 0.5 )}
-
-			local rotQuat = { 0, math.sin(missiles[i].direction * 0.5), 0, math.cos(missiles[i].direction * 0.5 )}
+			local rotQuat = { math.sin(missiles[i].directionUp * 0.5) , 0, 0, math.cos(missiles[i].directionUp * 0.5 )}
+--local rotQuat = { 0, math.sin(missiles[i].direction * 0.5), 0, math.cos(missiles[i].direction * 0.5 )}
+			local rotQuattt = { 0, 0, 0, 1}
 
 
 			local rotttttt = {	(rotQuat[2]*rotQuattt[3] - rotQuat[3]*rotQuattt[2] + rotQuat[1]*rotQuattt[4] + rotQuat[4]*rotQuattt[1]),
@@ -1146,15 +1085,17 @@ local function UpdateEnemyTanks(delta)
 		dir[2] = dir[2] / length
 		
 		local toPlayerDir = math.atan2(dir[2], dir[1]) --+ math.pi
+		enemyTankTurrets[i].direction = toPlayerDir
+		
 		
 		--if toPlayerDir < 0 then
 		--	toPlayerDir = toPlayerDir + math.pi * 2
 		--end
 		
 		--print (toPlayerDir)
-		--local dire = toPlayerDir - math.pi
-		
-		--if dire < 0 then
+		--local dire = toPlayerDir-- - math.pi
+		--
+		--while dire < 0 do
 		--	dire = dire + math.pi * 2
 		--end
 		--if dire > math.pi * 2 then
@@ -1162,16 +1103,17 @@ local function UpdateEnemyTanks(delta)
 		--end
 		
 		
-		local direa = toPlayerDir - (math.pi / 4)-- + math.pi / 2)
-		local direb = toPlayerDir + (math.pi / 4)-- + math.pi / 2)
+		--local direa = toPlayerDir - (math.pi / 4)-- + math.pi / 2)
+		--local direb = toPlayerDir + (math.pi / 4)-- + math.pi / 2)
+		--
+		--if direa < 0 then
+		--	direa = direa + math.pi * 2
+		--elseif direb >= 2 * math.pi then
+		--	direb = direb - math.pi * 2
+		--end
 		
-		if direa < 0 then
-			direa = direa + math.pi * 2
-		elseif direb >= 2 * math.pi then
-			direb = direb - math.pi * 2
-		end
-		enemyTanks[i].direction = toPlayerDir
-		enemyTankTurrets[i].direction = toPlayerDir
+		--enemyTanks[i].direction = toPlayerDir
+		
 		--print (direa)
 		--print (direb)
 		--print (enemyTankTurrets[i].direction)
@@ -1181,19 +1123,19 @@ local function UpdateEnemyTanks(delta)
 		--elseif dire >= enemyTanks[i].direction then
 		--	enemyTanks[i].direction = enemyTanks[i].direction + enemyTurnSpeed * delta
 		--end
-		--
-		--if dire < enemyTankTurrets[i].direction then
+		
+		--if dire < enemyTankTurrets[i].direction - math.pi then
 		--	enemyTankTurrets[i].direction = enemyTankTurrets[i].direction - enemyTurnSpeedTurret * delta
-		--elseif dire >= enemyTankTurrets[i].direction then
+		--else--if dire >= enemyTankTurrets[i].direction then
 		--	enemyTankTurrets[i].direction = enemyTankTurrets[i].direction + enemyTurnSpeedTurret * delta
 		--end
-		--
+		
 		--if enemyTanks[i].direction < 0 then
 		--	enemyTanks[i].direction = enemyTanks[i].direction + math.pi * 2
 		--elseif enemyTanks[i].direction >= 2 * math.pi then
 		--	enemyTanks[i].direction = enemyTanks[i].direction - math.pi * 2
 		--end
-		--
+		
 		--if enemyTankTurrets[i].direction < 0 then
 		--	enemyTankTurrets[i].direction = enemyTankTurrets[i].direction + math.pi * 2
 		--elseif enemyTankTurrets[i].direction >= 2 * math.pi then
@@ -1202,12 +1144,12 @@ local function UpdateEnemyTanks(delta)
 		
 		
 		
-		local bo = false
-		if (direa < enemyTanks[i].direction)
-		or (direb > enemyTanks[i].direction)
-		then
-			bo = true
-		end
+		--local bo = false
+		--if (direa < enemyTanks[i].direction)
+		--or (direb > enemyTanks[i].direction)
+		--then
+		--	bo = true
+		--end
 		
 
 		--if length > 15.0 then-- and bo == false then
