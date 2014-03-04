@@ -45,7 +45,8 @@ namespace Core
 		MovementState_RioterGoalSystemPriority,
 		MovementState_PoliceGoalSytemPriority,
 		MovementState_SquadMoveInFormationPriority,
-		MovementState_CombatAnimationPriority,
+		MovementState_FleeAnimationPriority,
+		MovementState_CombatAnimationPriority,		
 	};
 
 	/*!

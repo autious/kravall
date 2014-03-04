@@ -62,21 +62,21 @@ return function( scen )
 		core.gameMetaData.registerEscapePoint( 50, 0, 0 )
 
 		local rGroup = core.system.groups.createGroup( 1 );
-		local centerPoint = { -50, 0, 0 }
-		local side = math.sqrt( 300 )
+		local centerPoint = { -25, 0, 0 }
+		local side = math.sqrt( 10 )
 		for i = -side/2, side/2 do
 			for p = -side/2, side/2 do
-				rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rGroup, nil, nil, fists, nil,100, 100)
+				rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rGroup, nil, nil, fists, nil,100, 100, core.RioterAlignment.Anarchist)
 			end
 		end
 		core.system.groups.setGroupGoal(rGroup, 50, 0, 0)
 
 		local rGroup2 = core.system.groups.createGroup( 2 );
-		local centerPoint2 = { 50, 0, 0 }
-		local side = math.sqrt( 300 )
+		local centerPoint2 = { 25, 0, 0 }
+		local side = math.sqrt( 10 )
 		for i = -side/2, side/2 do
 			for p = -side/2, side/2 do
-				rioter( scen, p * 1.5 + centerPoint2[1], 0  + centerPoint2[2], i * 1.5  + centerPoint[3], rGroup2, nil, nil, fists, nil, 100, 100)
+				rioter( scen, p * 1.5 + centerPoint2[1], 0  + centerPoint2[2], i * 1.5  + centerPoint[3], rGroup2, nil, nil, fists, nil, 0, 0, core.RioterAlignment.Pacifist)
 			end
 		end
 		core.system.groups.setGroupGoal(rGroup2, -50, 0, 0)
