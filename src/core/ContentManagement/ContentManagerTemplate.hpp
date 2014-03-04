@@ -400,7 +400,7 @@ namespace Core
             }           
 
             LOGCM_FATAL << "Trying to get reference count of unexisting asset with hash: " << assetHash << std::endl;
-            assert(false);
+            //assert(false);
             return -1;
         }
 
