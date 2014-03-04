@@ -114,3 +114,65 @@ function deepPrint( table, counter )
         end
     end
 end
+
+function core.saveHomeConfiguration()
+    local filename = core.configuration.getConfigurationPath()
+
+    if filename then 
+        local configFile,err = io.open( filename, "w")
+        if configFile then
+            configFile:write( "return {\n" )
+            for _,v in  pairs(core.config.locallySavedVars) do
+                configFile:write( v .. " = " )
+
+                local t = type(core.config[v])
+
+                if t == "number" then
+                    configFile:write(core.config[v])
+                elseif t == "boolean" then
+                    configFile:write( core.config[t] and "true" or "false" )
+                    configFile:write( ",\n" )
+                else
+                    core.log.error( "Unable to save parameter: " .. v .. " there is no writer for type")
+                    configFile:write("nil,\n")
+                end
+            end
+            configFile:write("}\n")
+
+            configFile:close()
+
+            core.log.info( "Saving configuration to: " .. filename )
+        else
+            core.log.error("Unable to open configuration file for saving: " .. err )
+        end
+
+    else
+        core.log.error("Unable to save configuration file into user home folder")
+    end
+    
+end
+
+function core.loadHomeConfiguration()
+    local filename = core.configuration.getConfigurationPath()
+
+    core.log.info( "Loading home configuration file" )
+    if filename then
+        local success, val = pcall( dofile, filename )    
+
+        if success then
+            -- Loop through locallySavedVars to protect environment to be polluted unintentionally.
+            for i,v in pairs(core.config.locallySavedVars) do
+                print( v )
+                if val[v] ~= nil  then
+                    core.config[v] = val[v]
+                    core.log.info( "Loaded :" .. v .. ":" .. tostring( val[v] ) )
+                end
+            end  
+            core.log.info( "Loaded configuration file " .. filename )
+        else
+            core.log.warning("Unable to load configuration file: " .. val )
+        end
+    else
+        core.log.error( "Unable to load config file, can't find config path" )
+    end 
+end
