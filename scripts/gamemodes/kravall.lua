@@ -64,12 +64,6 @@ function T:new(o)
     o.onStateChangeFunctions = {}
     o.asm = ASM.loadPack({})
 
-	
-	-- set default movementData
-	core.movementData.setMovementMetaData( core.movementData.Walking, 1.5, 17, 17, 0.0 )
-	core.movementData.setMovementMetaData( core.movementData.Jogging, 5.8, 17, 14, 0.0 )
-	core.movementData.setMovementMetaData( core.movementData.Sprinting, 8.8, 17, 14, 0.0 )
-
     return o
 end
 
@@ -148,8 +142,16 @@ function T:destroy()
         self.gamestate:destroy()
     end
 
-    self.objectiveHandler:destroy()
-    self.asm:destroy()
+    if self.objectiveHandler then
+        self.objectiveHandler:destroy()
+        self.objectiveHandler = nil
+    end
+
+    if self.asm then
+        self.asm:destroy()
+        self.asm = nil
+    end
+
     -- Remove all weapons that was created.
 	core.gameMetaData.clearGameData()
     

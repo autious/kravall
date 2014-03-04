@@ -913,7 +913,14 @@ function PoliceSquadHandler:update( delta )
             end
 
             local clickPos = core.glm.vec3.new(core.system.picking.getGroundHit(  mouseX, mouseY ))
-            self.onMoveToPosition( self.selectedSquads, clickPos, core.system.picking.getIsInsideNavigationMesh(clickPos) )
+
+            local clickStart = core.glm.vec3.new( self.clickStartX, self.clickStartY, self.clickStartZ )
+            local clickEnd = core.glm.vec3.new( self.clickEndX, self.clickEndY, self.clickEndZ )
+            --Event that create move marker
+            local clickDiff = clickEnd - clickStart 
+            if clickDiff:dot(clickDiff) < 10.0 then
+                self.onMoveToPosition( self.selectedSquads, clickPos, core.system.picking.getIsInsideNavigationMesh(clickPos) )
+            end
 
 
             self.clickStartX, self.clickStartY, self.clickStartZ = nil, nil, nil

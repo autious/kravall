@@ -516,6 +516,7 @@ namespace Core
 		{
 			m_lightBitmask = 0;
 			m_bitmask = 0;
+
 			Core::world.m_contentManager.Load<Core::GnomeLoader>("assets/model/dev/cube.bgnome", [this](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
 			{
 				Core::ModelData data = *static_cast<Core::ModelData*>(handle);
@@ -651,12 +652,7 @@ namespace Core
 					{
 						if (!frmc->isStraggler)
 						{
-							mc->SetDesiredSpeed(0.0f, Core::DesiredSpeedSetPriority::SquadMoveInFormationDesiredSpeedPriority);
-						}
-						else
-						{
-							// PoliceGoalSystem will make sure that they move to the goal and that they stop there as well.
-							//mc->SetDesiredSpeed( Core::GameData::GetMovementDataWithState( mc->state ).speedToDesire, Core::DesiredSpeedSetPriority::SquadMoveInFormationDesiredSpeedPriority );
+							mc->SetMovementState( Core::MovementState::Movement_idle, Core::MovementStatePriority::MovementState_SquadMoveInFormationPriority );
 						}
 					}
 				}

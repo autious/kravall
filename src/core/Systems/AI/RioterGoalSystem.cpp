@@ -29,7 +29,7 @@ void Core::RioterGoalSystem::Update( float delta )
 			continue;
 
 		Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>( *it );
-		mvmc->state = Core::MovementState::Movement_Walking;
+		mvmc->SetMovementState( Core::MovementState::Movement_Walking, Core::MovementStatePriority::MovementState_RioterGoalSystemPriority );
 
 		glm::vec3 goal = glm::vec3( mvmc->goal[0], mvmc->goal[1], mvmc->goal[2] );
 
@@ -45,13 +45,11 @@ void Core::RioterGoalSystem::Update( float delta )
 			{
 				Core::AttributeComponent* owmAttribc = WGETC<Core::AttributeComponent>( *it );
 				if( owmAttribc->stamina > 30.0f )
-					mvmc->state = Core::MovementState::Movement_Sprinting;
+					mvmc->SetMovementState( Core::MovementState::Movement_Jogging, Core::MovementStatePriority::MovementState_RioterGoalSystemPriority );
 
 				delta = glm::normalize( delta );
 				MovementComponent::SetDirection( mvmc, delta.x, 0.0f, delta.z );
 			}
 		}
-
-		mvmc->SetDesiredSpeed( Core::GameData::GetMovementDataWithState( mvmc->state ).speedToDesire, Core::DesiredSpeedSetPriority::RioterGoalSystemDesiredSpeedPriority );
 	}
 }
