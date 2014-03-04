@@ -105,8 +105,10 @@ void Core::MovementSystem::InterpolateDirections(MovementComponent* mc, float de
 	{
 		glm::vec3 oldDir = glm::vec3(mc->direction[0], mc->direction[1], mc->direction[2]);
 		glm::vec3 newDir = glm::vec3(mc->newDirection[0], mc->newDirection[1], mc->newDirection[2]);
-	
-		float differenceFactor = (((glm::dot( oldDir, newDir ) * -1.0f ) + 1.0f) / 2.0f) + 1.0f;
+		
+		#define DIFFERENCE_FACTOR_INFLUENCE 0.4f
+
+		float differenceFactor = (((glm::dot( oldDir, newDir ) * -1.0f ) + 1.0f) / 2.0f) * DIFFERENCE_FACTOR_INFLUENCE + 1.0f;
 
 		newDir = glm::lerp(oldDir, newDir, TURN_FACTOR * differenceFactor * delta);
 
