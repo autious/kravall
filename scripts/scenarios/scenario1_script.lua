@@ -230,8 +230,9 @@ return function( scen )
     end )
 
     scen:registerTickCallback( function( )
-        if getCurrentWaypoint() then 
-            if core.system.area.getAreaRioterCount( getCurrentWaypoint(), deserterGroup ) > 10 then
+        if getCurrentWaypoint() and deserterGroup then 
+            local memberCount = core.system.groups.getGroupMemberCount( deserterGroup )
+            if core.system.area.getAreaRioterCount( getCurrentWaypoint(), deserterGroup ) > math.max(memberCount/2 - 5,0) then
                 currentWaypoint = currentWaypoint + 1
                 if getCurrentWaypoint() then
                     print( "Set new goal!" )
@@ -350,7 +351,7 @@ return function( scen )
         
         waypoints[nc.name] = ent 
         waypoint_positions[nc.name] = wpc.position
-        print( "Regestering waypoint: " .. nc.name )
+        print( "Registering waypoint: " .. nc.name )
     end
 
     local ag1Spawns = {}
