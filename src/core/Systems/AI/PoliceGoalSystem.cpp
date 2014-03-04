@@ -21,6 +21,12 @@ Core::PoliceGoalSystem::PoliceGoalSystem()
 {
 }
 
+//#define DRAW_GOAL_LINES
+#ifdef DRAW_GOAL_LINES
+#define DEBUG_DRAW( x ) x
+#else
+#define DEBUG_DRAW( x ) ;
+#endif
 
 
 void Core::PoliceGoalSystem::Update( float delta )
@@ -85,6 +91,8 @@ void Core::PoliceGoalSystem::Update( float delta )
 				glm::vec3 target = glm::vec3( mvmc->goal[0], 0.0f, mvmc->goal[2] );	
 
 				bool move = true;
+
+				DEBUG_DRAW( GFX::Debug::DrawLine( position, target, GFXColor( 1, 1, 0, 1 ), false ) );
 
 				if( !PathFinder::CheckLineVsNavMesh( position, target, 3.0f, ffc->node ) ) 
 				{

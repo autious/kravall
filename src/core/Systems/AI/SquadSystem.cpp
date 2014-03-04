@@ -566,6 +566,8 @@ namespace Core
 
 				glm::vec3 leaderPosition = Core::WorldPositionComponent::GetVec3(*leader_wpc);
 
+				sqdc->squadMoveInFormation = false; // NO COMMIT // ABSOLUTELY NO COMMIT // DERP
+
 				float rotation = 0.0f;
 				if (sqdc->squadMoveInFormation)
 				{
