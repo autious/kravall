@@ -75,6 +75,9 @@ namespace Core
 		/*! Priority value for the current movement state. If new state has higher priority the current value may be repalced. */
 		MovementStatePriority currentMovementStatePriority;
 
+		/*! The preferred normal movement state of the unit. */
+		Core::MovementState preferredState;
+
 		/*!
 			An array specifying the object's goal, ceasing movement when the goal is reached. The index 0 corresponds
 			to the x component, 1 to y and 2 to z. An x-value of FLT_MAX disables the goal.
@@ -106,6 +109,7 @@ namespace Core
 			NavMeshGoalNodeIndex = -1;
 
 			state = MovementState::Movement_Walking;
+			preferredState = MovementState::Movement_Walking;
 
 			std::memset( desiredSpeed, 0, sizeof(float) * MovementState::MOVEMENTSTATE_COUNT );
 		}

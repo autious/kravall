@@ -1,7 +1,7 @@
 local ent = require "entities"
 
-return function(asm, posX, posY, posZ, rotation, weaponType)
-
+return function(asm, posX, posY, posZ, rotation, weaponType, mobility)
+	mobility = mobility or core.movementData.jogging
     local T = {}
     local police = ent.get "police"
 
@@ -35,7 +35,7 @@ return function(asm, posX, posY, posZ, rotation, weaponType)
             local x_p = x*math.cos(rotation) - z*math.sin(rotation)
             local z_p = x*math.sin(rotation) + z*math.cos(rotation)
     
-            T.members[#(T.members)+1] = police(asm, posX + x_p, 0, posZ + z_p, x_p, z_p, T.groupId, weaponType)
+            T.members[#(T.members)+1] = police(asm, posX + x_p, 0, posZ + z_p, x_p, z_p, T.groupId, weaponType, mobility)
         end
     end
 

@@ -66,7 +66,7 @@ return function( scen )
 		local side = math.sqrt( 10 )
 		for i = -side/2, side/2 do
 			for p = -side/2, side/2 do
-				rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rGroup, nil, nil, fists, nil,100, 100, core.RioterAlignment.Anarchist)
+				rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rGroup, nil, nil, fists, nil,100, 100, core.RioterAlignment.Anarchist, core.movementData.Jogging )
 			end
 		end
 		core.system.groups.setGroupGoal(rGroup, 50, 0, 0)
@@ -76,7 +76,7 @@ return function( scen )
 		local side = math.sqrt( 10 )
 		for i = -side/2, side/2 do
 			for p = -side/2, side/2 do
-				rioter( scen, p * 1.5 + centerPoint2[1], 0  + centerPoint2[2], i * 1.5  + centerPoint[3], rGroup2, nil, nil, fists, nil, 0, 0, core.RioterAlignment.Pacifist)
+				rioter( scen, p * 1.5 + centerPoint2[1], 0  + centerPoint2[2], i * 1.5  + centerPoint[3], rGroup2, nil, nil, fists, nil, 100, 100, core.RioterAlignment.Pacifist, core.movementData.Jogging )
 			end
 		end
 		core.system.groups.setGroupGoal(rGroup2, -50, 0, 0)

@@ -44,6 +44,7 @@ namespace Core
 			mdc->prevDt = delta;
 
 			float walkingSpeed = mvmc->desiredSpeed[ Core::MovementState::Movement_Walking ];
+			float joggingSpeed = mvmc->desiredSpeed[ Core::MovementState::Movement_Jogging ];
 			
 			mdc->movedThisFrame = false;
 			if( frameSpeed > MOVEDTHISFRAME_THRESHOLD )
@@ -55,9 +56,8 @@ namespace Core
 			ac->loop = false;
 			if ( !tc->isAttacking )
 			{
-
-				// if moving faster than walking but not already playing running animation or if not playing any animation...
-				if( frameSpeed > walkingSpeed + GRACE_THRESHOLD &&
+				// if moving faster than jogging but not already playing running animation or if not playing any animation...
+				if( frameSpeed > joggingSpeed + GRACE_THRESHOLD &&
 						( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle" ) == ac->animationID
 						|| !ac->playing ))
 				{
@@ -67,6 +67,19 @@ namespace Core
 					ac->speed = 1.2f;
 					hasAlteredAnimation = true;
 					Core::AnimationManager::PlayAnimation( *it, "agitated-run" ); // running
+				}
+				
+				// if moving faster than walking but not already playing joggin animation or if not playing any animation...
+				else if( frameSpeed > walkingSpeed + GRACE_THRESHOLD &&
+						( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle" ) == ac->animationID
+						|| !ac->playing ))
+				{
+					if( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "jogging" ) != ac->animationID )
+						hasChangedAnimation = true;
+
+					ac->speed = 1.2f;
+					hasAlteredAnimation = true;
+					Core::AnimationManager::PlayAnimation( *it, "jogging" ); // running
 				}
 
 				// if moving but not running and not already playing walk-animation or if not playing any animation
