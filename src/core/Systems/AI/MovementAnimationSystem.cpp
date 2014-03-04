@@ -6,8 +6,6 @@
 #include <Animation/AnimationManager.hpp>
 #include <GameUtility/GameData.hpp>
 
-#define GRACE_THRESHOLD 0.3f
-#define STILL_THRESHOLD 0.35f
 
 namespace Core
 {
@@ -50,7 +48,7 @@ namespace Core
 			mdc->movedThisFrame = false;
 			if( frameSpeed > MOVEDTHISFRAME_THRESHOLD )
 				mdc->movedThisFrame = true;
-
+			mdc->frameSpeed = frameSpeed;
 
 			bool hasAlteredAnimation = false;
 			bool hasChangedAnimation = false;
