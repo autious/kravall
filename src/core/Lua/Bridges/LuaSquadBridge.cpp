@@ -339,6 +339,48 @@ extern "C"
         }
     }
 
+	static int LuaEnableMoodOutline(lua_State* L)
+	{
+		Core::SquadSystem* squadSystem = Core::world.m_systemHandler.GetSystem<Core::SquadSystem>();
+
+		if (lua_gettop(L) == 1)
+		{
+			if (lua_istable(L, 1))
+			{
+				int nSquads = 0;
+				int* squads = nullptr;
+
+				lua_pushnil(L);
+				while (lua_next(L, 1))
+				{
+					lua_pop(L, 1);
+					++nSquads;
+				}
+
+				squads = Core::world.m_frameHeap.NewPODArray<int>(nSquads);
+
+				lua_pushnil(L);
+				for (int i = 0; lua_next(L, 1); ++i)
+				{
+					squads[i] = static_cast<int>(luaL_checknumber(L, -1));
+					lua_pop(L, 1);
+				}
+
+				squadSystem->EnableOutlineMoods(squads, nSquads);
+				return 0;
+			}
+			else
+			{
+				return luaL_error(L, "argument 1 of enableOutline is not a table");
+			}
+		}
+		else
+		{
+			return luaL_error(L, "enableMoodOutline([squadIDs])  expects 1 parameter");
+		}
+	}
+
+
     static int LuaDisableOutline(lua_State* L)    
     {
         Core::SquadSystem* squadSystem = Core::world.m_systemHandler.GetSystem<Core::SquadSystem>();
@@ -456,6 +498,7 @@ namespace Core
                     luau_setfunction(L, "setSquadStance", LuaSetSquadStance);
                     luau_setfunction(L, "getSquadEntity", LuaGetSquadEntity);
                     luau_setfunction(L, "enableOutline", LuaEnableOutline);
+					luau_setfunction(L, "enableMoodOutline", LuaEnableMoodOutline);
                     luau_setfunction(L, "disableOutline", LuaDisableOutline);
                     luau_setfunction(L, "getPossibleAbilities", LuaGetPossibleAbilities );
                     luau_setfunction(L, "getAllSquads", LuaGetAllSquads );
