@@ -34,11 +34,13 @@ namespace clop
 		void operator=( int i );
 		void operator=( double d );
 		operator int() const;
+		operator bool() const;
 		operator double() const;
 		operator CLOPSTR() const;
 	private:
 		void set( CLOPSTR s );
 		void set( int i );
+		void set( bool i );
 		void set( double d );
 
 		CLOPSTR val;

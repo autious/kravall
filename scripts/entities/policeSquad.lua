@@ -15,7 +15,8 @@ return function(asm, posX, posY, posZ, rotation, weaponType)
                     type = core.componentType.SquadComponent,
                     data = {squadID = T.groupId, 
                             squadGoal = {posX, posY, posZ},
-                            squadMoveInFormation = false,
+                            squadMoveInFormation = true,
+							squadFormation = core.system.squad.formations.LineFormation,
                             squadTargetForward = {math.sin(rotation), -math.cos(rotation)}},                        
                         ignoreHard = true
                 }
