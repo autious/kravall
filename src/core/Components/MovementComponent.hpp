@@ -45,7 +45,8 @@ namespace Core
 		MovementState_RioterGoalSystemPriority,
 		MovementState_PoliceGoalSytemPriority,
 		MovementState_SquadMoveInFormationPriority,
-		MovementState_CombatAnimationPriority,
+		MovementState_FleeAnimationPriority,
+		MovementState_CombatAnimationPriority,		
 	};
 
 	/*!
@@ -73,6 +74,9 @@ namespace Core
 
 		/*! Priority value for the current movement state. If new state has higher priority the current value may be repalced. */
 		MovementStatePriority currentMovementStatePriority;
+
+		/*! The preferred normal movement state of the unit. */
+		Core::MovementState preferredState;
 
 		/*!
 			An array specifying the object's goal, ceasing movement when the goal is reached. The index 0 corresponds
@@ -105,6 +109,7 @@ namespace Core
 			NavMeshGoalNodeIndex = -1;
 
 			state = MovementState::Movement_Walking;
+			preferredState = MovementState::Movement_Walking;
 
 			std::memset( desiredSpeed, 0, sizeof(float) * MovementState::MOVEMENTSTATE_COUNT );
 		}

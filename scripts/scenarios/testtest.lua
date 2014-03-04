@@ -63,25 +63,48 @@ return function( scen )
 
 		local rGroup = core.system.groups.createGroup( 1 );
 		local centerPoint = { -50, 0, 0 }
-		local side = math.sqrt( 300 )
+		local side = math.sqrt( 800 )
 		for i = -side/2, side/2 do
 			for p = -side/2, side/2 do
-				rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rGroup, nil, nil, fists, nil,100, 100)
+				rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], 
+				rGroup, nil, nil, fists, nil,100, 100, core.RioterAlignment.Anarchist, core.movementData.Jogging )
 			end
 		end
 		core.system.groups.setGroupGoal(rGroup, 50, 0, 0)
 
 		local rGroup2 = core.system.groups.createGroup( 2 );
 		local centerPoint2 = { 50, 0, 0 }
-		local side = math.sqrt( 300 )
+		local side = math.sqrt( 800 )
 		for i = -side/2, side/2 do
 			for p = -side/2, side/2 do
-				rioter( scen, p * 1.5 + centerPoint2[1], 0  + centerPoint2[2], i * 1.5  + centerPoint[3], rGroup2, nil, nil, fists, nil, 100, 100)
+				rioter( scen, p * 1.5 + centerPoint2[1], 0  + centerPoint2[2], i * 1.5  + centerPoint[3], 
+				rGroup2, nil, nil, fists, nil, 100, 100, core.RioterAlignment.Anarchist, core.movementData.Jogging )
 			end
 		end
 		core.system.groups.setGroupGoal(rGroup2, -50, 0, 0)
 		
 		
+		--local rGroup3 = core.system.groups.createGroup( 3 );
+		--local centerPoint3 = { 0, 0, -25 }
+		--local side = math.sqrt( 480 )
+		--for i = -side/2, side/2 do
+		--	for p = -side/2, side/2 do
+		--		rioter( scen, p * 1.5 + centerPoint3[1], 0  + centerPoint3[2], i * 1.5  + centerPoint3[3], 
+		--		rGroup3, nil, nil, fists, nil,100, 100, core.RioterAlignment.Anarchist, core.movementData.Jogging )
+		--	end
+		--end
+		--core.system.groups.setGroupGoal(rGroup3, 0, 0, 50)
+        --
+		--local rGroup4 = core.system.groups.createGroup( 4 );
+		--local centerPoint4 = { 0, 0, 25 }
+		--local side = math.sqrt( 480 )
+		--for i = -side/2, side/2 do
+		--	for p = -side/2, side/2 do
+		--		rioter( scen, p * 1.5 + centerPoint4[1], 0  + centerPoint4[2], i * 1.5  + centerPoint4[3], 
+		--		rGroup4, nil, nil, fists, nil, 100, 100, core.RioterAlignment.Anarchist, core.movementData.Jogging )
+		--	end
+		--end
+		--core.system.groups.setGroupGoal(rGroup4, 0, 0, -50)
 		
 		
 		local sqads = {}	

@@ -79,8 +79,8 @@ void Core::MovementSystem::Update(float delta)
 		AttributeComponent* attribc = WGETC<AttributeComponent>(*it);
 		MovementComponent* mvmc = WGETC<MovementComponent>(*it);
 
-		if( attribc->stamina > 30.0f )
-			mvmc->SetMovementState( Core::MovementState::Movement_Jogging, Core::MovementStatePriority::MovementState_MovementSystemPriority );
+		if( attribc->stamina > 30.0f && mvmc->preferredState > Core::MovementState::Movement_Walking )
+			mvmc->SetMovementState( mvmc->preferredState, Core::MovementStatePriority::MovementState_MovementSystemPriority );
 		else
 			mvmc->SetMovementState( Core::MovementState::Movement_Walking, Core::MovementStatePriority::MovementState_MovementSystemPriority );
 	}

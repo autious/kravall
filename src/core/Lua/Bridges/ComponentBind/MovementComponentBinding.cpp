@@ -197,6 +197,14 @@ Core::ComponentSetters Core::MovementComponentBinding::GetSetters()
         mvc->state = state;
     };
 
+	setters["preferredState"] = [](Core::Entity entity, lua_State * L, int valueindex )
+    {
+        MovementComponent *mvc = WGETC<MovementComponent>( entity );
+	
+        Core::MovementState state = *(Core::MovementState*)luaL_checkudata(L, valueindex, UNIT_MOVEMENT_META_DATA_TYPE_META);
+        mvc->preferredState = state;
+    };
+
     return setters;
 }
 
