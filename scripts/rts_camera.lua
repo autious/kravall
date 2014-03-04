@@ -189,6 +189,13 @@ function C:update( dt )
             self.forwardVelocity = 0
             self.cantGoForward = true
         end
+
+        if self.cantGoForward and self.cantGoBackward then
+            py = 20 
+            self.cantGoForward = false
+            self.cantGoBackward = false
+        end
+
         self.position = vec3.new( px,py,pz )
 
         local proj = self:getProjection()

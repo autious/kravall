@@ -48,6 +48,16 @@ namespace clop
 		}
 		return rv;
 	}
+	Arg::operator bool() const
+	{
+		int rv = 0;
+		if( !val.empty() ){
+			bool b = false;
+			if( val == " true" || val == "true" )
+				rv = true;
+		}
+		return rv;
+	}
 	Arg::operator double() const
 	{
 		double rv = 0.0;
@@ -64,6 +74,7 @@ namespace clop
 	Arg::operator CLOPSTR() const{ return val; }
 	void Arg::set( CLOPSTR s ){ val = s; }
 	void Arg::set( int i ){ val = TOSTRING( i ); }
+	void Arg::set( bool i ){ val = TOSTRING( i ); }
 	void Arg::set( double d ){ val = TOSTRING( d ); }
 
 	CLI::CLI(){};

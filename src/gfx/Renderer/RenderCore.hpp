@@ -79,7 +79,7 @@ namespace GFX
 		unsigned int m_settings[GFX_SETTINGS_COUNT];
 
 	public:
-		/*!     
+		/*!
 		Friend function to get singleton
 		\return RenderCore Returns the RenderCore instance
 		*/
@@ -129,19 +129,19 @@ namespace GFX
 		*/
 		void SetProjMatrix(glm::mat4 proj, float nearZ, float farZ);
 
-        /*!
-        Sets the view matrix used by the overlay camera
-        */
-        void SetOverlayViewMatrix( glm::mat4 view );
+		/*!
+		Sets the view matrix used by the overlay camera
+		*/
+		void SetOverlayViewMatrix(glm::mat4 view);
 
-        /*!
-        Sets the projection matrix used by the overlay camera
-        */
-        void SetOverlayProjMatrix( glm::mat4 proj );
+		/*!
+		Sets the projection matrix used by the overlay camera
+		*/
+		void SetOverlayProjMatrix(glm::mat4 proj);
 
 		/*!
 		Get window width
-		\return window width 
+		\return window width
 		*/
 		inline int GetWindowWidth() const { return m_windowWidth; }
 
@@ -181,12 +181,12 @@ namespace GFX
 
 		void LoadTexture(unsigned int& id, unsigned char* data, int width, int height, bool decal);
 		void DeleteTexture(unsigned long long int id);
-		
+
 		void CreateMaterial(unsigned long long int& id);
 		void DeleteMaterial(const unsigned long long int& id);
 		int AddTextureToMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID);
 		void RemoveTextureFromMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID);
-        int GetShaderId(unsigned int& shaderId, const char* shaderName);
+		int GetShaderId(unsigned int& shaderId, const char* shaderName);
 		int SetShaderToMaterial(const unsigned long long int& materialID, const unsigned int& shaderID);
 		int CreateSkeleton(int& out_skeletonID);
 		int DeleteSkeleton(const int& skeletonID);
@@ -194,22 +194,24 @@ namespace GFX
 		int BindSkeletonToMesh(const unsigned int& meshID, const int& skeletonID);
 		int AddAnimationToSkeleton(const int& skeletonID, glm::mat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame);
 		int GetAnimationInfo(const int& skeletonID, const int& animationID, unsigned int& out_frameCount, unsigned int& out_bonesPerFrame, unsigned int& out_animationOffset);
-        void CreateParticleBuffer(unsigned int& bufferId, unsigned int particleCount);
-        void DeleteParticleBuffer(unsigned int bufferId);
-        void BufferParticleData(unsigned int bufferId, GFX::Particle* data);
+		void CreateParticleBuffer(unsigned int& bufferId, unsigned int particleCount);
+		void DeleteParticleBuffer(unsigned int bufferId);
+		void BufferParticleData(unsigned int bufferId, GFX::Particle* data);
 
-        /*!
-        Sets the font used for rendering SubSystem statistics.
-        \param font The font used for rendering.
-        */
-        inline void SetStatisticsFont(GFX::FontData* font) { m_font = font; }
+		/*!
+		Sets the font used for rendering SubSystem statistics.
+		\param font The font used for rendering.
+		*/
+		inline void SetStatisticsFont(GFX::FontData* font) { m_font = font; }
 		inline void ShowStatistics(bool enabled){ m_showStatistics = enabled; }
-		inline void ShowFBO(int which){ m_showFBO = ( which >= 0 && which <= 6 ) ? which : 0; }
-		
+		inline void ShowFBO(int which){ m_showFBO = (which >= 0 && which <= 6) ? which : 0; }
+
 		void SetAnimationFramerate(unsigned int framerate);
 		inline unsigned int GetAnimationFramerate(){ return m_animationFramerate; }
 
 		inline void DrawSelectionbox(const glm::vec4& posdim, const glm::vec4& color){ m_selectionBoxColor = color; m_selectionBoxPosDim = posdim; m_drawSelectionbox = true; }
+
+		inline void SetEnableDebug(bool enable) { m_enableDebug = enable; }
 
 	private:
 		RenderCore();
@@ -313,6 +315,8 @@ namespace GFX
 		glm::vec4 m_selectionBoxColor;
 		bool m_drawSelectionbox;
 		RenderInfo totalRenderInfo;
+
+		bool m_enableDebug;
 	};
 
 	/*!
