@@ -10,7 +10,6 @@
 #include <Lua/LuaState.hpp>
 #include <logger/Logger.hpp>
 
-
 Core::ConfigurationHandler::ConfigurationHandler( LuaState* state )
 {
     m_luaState = state;
