@@ -176,15 +176,15 @@ void Core::CollisionSystem2D::Update( float delta )
 					
 
 					// test code...
-					//Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>(it);
-					//Core::MovementComponent* mvmcOther = WGETC<Core::MovementComponent>(other);
-					//if( mvmc != nullptr || mvmcOther != nullptr )
-					//{
-					//	float dot = glm::dot( glm::vec3( mvmc->direction[0], mvmc->direction[1], mvmc->direction[2] ), 
-					//		glm::normalize( otherPosition - myPosition ) );
-					//	if( dot > 0.5f )
-					//		mvmc->speed *= 0.0f;
-					//}
+					Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>(it);
+					Core::MovementComponent* mvmcOther = WGETC<Core::MovementComponent>(other);
+					if( mvmc != nullptr || mvmcOther != nullptr )
+					{
+						float dot = glm::dot( glm::vec3( mvmc->direction[0], mvmc->direction[1], mvmc->direction[2] ), 
+							glm::normalize( otherPosition - myPosition ) );
+						if( dot > 0.5f && mvmc->speed > mvmc->desiredSpeed[ Core::MovementState::Movement_Walking ])
+							mvmc->speed -= 14.85f * delta;
+					}
 
 					// move myself away from collision. If the other entity is static, move the entire overlap away from the entity,
 					// otherwise move half the distance as to achieve mutual collision resolution

@@ -7,6 +7,7 @@
 #include <GameUtility/GameData.hpp>
 
 #define GRACE_THRESHOLD 0.3f
+#define STILL_THRESHOLD 0.35f
 
 namespace Core
 {
@@ -71,7 +72,7 @@ namespace Core
 				}
 
 				// if moving but not running and not already playing walk-animation or if not playing any animation
-				else if( frameSpeed > 0.05f &&  
+				else if( frameSpeed > STILL_THRESHOLD &&  
 						( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle" ) == ac->animationID 
 						|| !ac->playing ))
 				{
@@ -86,7 +87,7 @@ namespace Core
 				// if not moving and not already playing idle-animation or if not playing any animation
 				else if( (Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle" ) != ac->animationID 
 						|| !ac->playing) && 
-						frameSpeed < 0.05f )
+						frameSpeed < STILL_THRESHOLD )
 				{
 					if( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle" ) != ac->animationID )
 						hasChangedAnimation = true;
