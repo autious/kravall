@@ -19,8 +19,11 @@ function C.new( )
     self.yaw = 0
     self.forwardVelocity = 0
     self.accelerationFactor = 1
+    self.acceleration = 1.0
     self.deaccelerationFactor = 0.5
     self.mousePressLocation = nil
+    self.movementSpeed = 0
+
 
     self.width = core.config.initScreenWidth
     self.height = core.config.initScreenHeight
@@ -109,25 +112,37 @@ function C:update( dt )
         if rx ~= 0 or rz ~= 0 then
              xzRight= vec3.new( rx,0,rz ):normalize()
         end
-        
+       
+        local direction = vec3.new(0,0,0)
+
         if keyboard.isKeyDown( key.W ) then
-            self.position = self.position + xzForward * delta
+            direction = direction + xzForward
         end
         if keyboard.isKeyDown( key.S ) then
-            self.position = self.position - xzForward * delta
+            direction = direction - xzForward
         end
         if keyboard.isKeyDown( key.A ) then
-            self.position = self.position - xzRight * delta
+            direction = direction - xzRight
         end
         if keyboard.isKeyDown( key.D ) then
-            self.position = self.position + xzRight * delta
+            direction = direction + xzRight 
         end
         if keyboard.isKeyDown( key.Space ) then
-            self.position = self.position + vec3.new(0,1,0) * delta
+            direction = direction + vec3.new(0,1,0)
         end
         if keyboard.isKeyDown( key.Left_control ) then
-            self.position = self.position - vec3.new(0,1,0) * delta
+            direction = direction - vec3.new(0,1,0) 
         end
+        
+        if direction:length() > 0 then
+            local force = self.acceleration - 0.0884 * self.movementSpeed * self.movementSpeed 
+            self.movementSpeed = self.movementSpeed + force * delta
+            direction:normalize()
+        else
+            self.movementSpeed = 0
+        end
+
+        self.position = self.position + direction * delta * self.movementSpeed
         
         local x,y = mouse.getPosition()
 
@@ -148,6 +163,7 @@ function C:update( dt )
             end
         end
 
+        
         self.position = self.position + forward * self.forwardVelocity * delta;
     
         if self.forwardVelocity > 0 then
@@ -161,7 +177,7 @@ function C:update( dt )
                 self.forwardVelocity = 0
             end
         end
-
+        
         if x < 20 then 
             self.position = self.position - xzRight  * core.config.cameraScrollingSpeed * delta
         end
@@ -177,10 +193,10 @@ function C:update( dt )
 
         self.px = x
         self.py = y
-
+        
         local px,py,pz = self.position:get()
 
-        if py > 250 then
+        if py > 10000 then
             px,py,pz = prevPosition:get()
             self.forwardVelocity = 0
             self.cantGoBack = true
