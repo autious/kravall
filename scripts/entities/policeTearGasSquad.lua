@@ -2,7 +2,7 @@ local ent = require "entities"
 
 return function(asm, posX, posY, posZ, rotation, weaponType, mobility)
 	
-	mobility = mobility or core.movementData.jogging
+	mobility = mobility or core.movementData.Jogging
     local T = {}
     local police = ent.get "police"
     local tearGasPolice = ent.get "tearGasPolice"
