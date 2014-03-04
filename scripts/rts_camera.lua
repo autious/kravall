@@ -115,16 +115,16 @@ function C:update( dt )
        
         local direction = vec3.new(0,0,0)
 
-        if keyboard.isKeyDown( key.W ) then
+        if keyboard.isKeyDown( key.W ) or keyboard.isKeyDown(key.Up )then
             direction = direction + xzForward
         end
-        if keyboard.isKeyDown( key.S ) then
+        if keyboard.isKeyDown( key.S ) or keyboard.isKeyDown(key.Down )then
             direction = direction - xzForward
         end
-        if keyboard.isKeyDown( key.A ) then
+        if keyboard.isKeyDown( key.A ) or keyboard.isKeyDown(key.Left )then
             direction = direction - xzRight
         end
-        if keyboard.isKeyDown( key.D ) then
+        if keyboard.isKeyDown( key.D ) or keyboard.isKeyDown(key.Right )then
             direction = direction + xzRight 
         end
         if keyboard.isKeyDown( key.Q ) then
