@@ -4,6 +4,7 @@ local SetupMenu = require "gui/SetupMenu"
 local ScenarioMenu = require "gui/ScenarioMenu"
 local SettingsMenu = require "gui/SettingsMenu"
 local CreditsMenu = require "gui/CreditsMenu"
+local TutorialMenu = require "gui/TutorialMenu"
 
 local MenuScrollSpeed = 500
 
