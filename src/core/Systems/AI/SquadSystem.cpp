@@ -516,6 +516,7 @@ namespace Core
 		{
 			m_lightBitmask = 0;
 			m_bitmask = 0;
+
 			Core::world.m_contentManager.Load<Core::GnomeLoader>("assets/model/dev/cube.bgnome", [this](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
 			{
 				Core::ModelData data = *static_cast<Core::ModelData*>(handle);
