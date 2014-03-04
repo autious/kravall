@@ -135,7 +135,7 @@ function C:update( dt )
         end
         
         if direction:length() > 0 then
-            local force = self.acceleration - 0.0884 * self.movementSpeed * self.movementSpeed 
+            local force = self.acceleration - 0.1884 * self.movementSpeed * self.movementSpeed 
             force = math.max(force, 0)
             self.movementSpeed = self.movementSpeed + force * delta
             direction:normalize()
