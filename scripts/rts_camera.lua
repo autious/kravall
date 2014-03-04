@@ -127,6 +127,12 @@ function C:update( dt )
         if keyboard.isKeyDown( key.D ) then
             direction = direction + xzRight 
         end
+        if keyboard.isKeyDown( key.Q ) then
+            self.yaw = self.yaw - 3.5 * delta
+        end
+        if keyboard.isKeyDown( key.E ) then
+            self.yaw = self.yaw + 3.5 * delta
+        end
         if keyboard.isKeyDown( key.Space ) then
             direction = direction + vec3.new(0,1,0)
         end
@@ -135,7 +141,8 @@ function C:update( dt )
         end
         
         if direction:length() > 0 then
-            local force = self.acceleration - 0.0884 * self.movementSpeed * self.movementSpeed 
+            local force = self.acceleration - 0.1884 * self.movementSpeed * self.movementSpeed 
+            force = math.max(force, 0)
             self.movementSpeed = self.movementSpeed + force * delta
             direction:normalize()
         else
@@ -205,6 +212,13 @@ function C:update( dt )
             self.forwardVelocity = 0
             self.cantGoForward = true
         end
+
+        if self.cantGoForward and self.cantGoBackward then
+            py = 20 
+            self.cantGoForward = false
+            self.cantGoBackward = false
+        end
+
         self.position = vec3.new( px,py,pz )
 
         local proj = self:getProjection()
