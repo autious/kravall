@@ -3,6 +3,8 @@
 
 #include <ComponentFramework/BaseSystem.hpp>
 
+#include <gfx/BitmaskDefinitions.hpp>
+#include <glm/glm.hpp>
 namespace Core
 {
 	class RemovalSystem : public BaseSystem
@@ -16,6 +18,17 @@ namespace Core
 		virtual const char* GetHumanName(){ return "RemovalSystem"; }
 
 	private:
+		bool m_foundAssets;
+		int m_mesh;
+		int m_material;
+		GFX::GFXBitmask m_bloodBitmask;
+
+		void CreateBloodDecal(glm::vec3 position, float dirX, float dirY, float dirZ);
+
+		inline float rand_FloatRange(float a, float b)
+		{
+			return ((b - a)*((float)rand() / RAND_MAX)) + a;
+		}
 	};
 }
 

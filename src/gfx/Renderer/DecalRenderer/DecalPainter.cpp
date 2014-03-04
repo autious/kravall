@@ -21,6 +21,7 @@ extern "C"
 	static GLint m_invModelMatrixUniform;
 	static GLint m_decalSizeUniform;
 	static GLint m_diffuseTextureUniform;
+	static GLint m_specularTextureUniform;
 	static GLint m_glowTextureUniform;
 	static GLint m_normalDepthUniform;
 	static GLint m_gammaUniform;
@@ -67,6 +68,7 @@ namespace GFX
 		m_invViewProjUniform = m_shaderManager->GetUniformLocation("DecalShader", "invProjView");
 
 		m_diffuseTextureUniform = m_shaderManager->GetUniformLocation("DecalShader", "gDiffuse");
+		m_specularTextureUniform = m_shaderManager->GetUniformLocation("DecalShader", "gSpecular");
 		m_glowTextureUniform = m_shaderManager->GetUniformLocation("DecalShader", "gGlow");
 		m_normalDepthUniform = m_shaderManager->GetUniformLocation("DecalShader", "gNormalDepth");
 		m_gammaUniform = m_shaderManager->GetUniformLocation("DecalShader", "gGamma");
@@ -153,8 +155,8 @@ namespace GFX
 				//set textures
 				m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[0]).textureHandle, m_diffuseTextureUniform, 1, GL_TEXTURE_2D);
 				//m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[1]).textureHandle, m_uniformTexture1, 2, GL_TEXTURE_2D);
-				//m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[2]).textureHandle, m_uniformTexture2, 3, GL_TEXTURE_2D);
-				m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[3]).textureHandle, m_glowTextureUniform, 2, GL_TEXTURE_2D);
+				m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[2]).textureHandle, m_specularTextureUniform, 2, GL_TEXTURE_2D);
+				m_textureManager->BindTexture(m_textureManager->GetTexture(mat.textures[3]).textureHandle, m_glowTextureUniform, 3, GL_TEXTURE_2D);
 			}
 
 			if (meshID != currentMesh)
