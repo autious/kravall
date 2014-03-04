@@ -11,8 +11,9 @@
 #define DEBUGDRAW( x ) ;
 #endif
 
+#define MOVEMENT_ACCELERATION 16.0f
+#define MOVEMENT_DECELERATION -17.0f
 
-//const float Core::MovementSystem::TURN_FACTOR = 10.0f;
 const float Core::MovementSystem::TURN_FACTOR = 7.5f;
 
 Core::MovementSystem::MovementSystem()  
@@ -23,10 +24,8 @@ Core::MovementSystem::MovementSystem()
 }
 
 
-
 void Core::MovementSystem::Update(float delta)
 {
-
 	for (std::vector<Entity>::iterator it = m_bags[0].m_entities.begin();
 		it != m_bags[0].m_entities.end();
 		it++)
@@ -35,14 +34,13 @@ void Core::MovementSystem::Update(float delta)
 		MovementComponent* mc = WGETC<MovementComponent>(*it);
 
 		// process speed...
-		const Core::MovementData& movementData = Core::GameData::GetMovementDataWithState( mc->state );
-		float mod = mc->desiredSpeed > mc->speed ? movementData.acceleration : movementData.deceleration;
+		float mod = mc->desiredSpeed[ mc->state ] > mc->speed ? MOVEMENT_ACCELERATION : MOVEMENT_DECELERATION;
 		
 		mc->speed += mod * delta;
 		
 		// cap speed...
-		if (mc->speed > mc->desiredSpeed)
-			mc->speed = mc->desiredSpeed;
+		if (mc->speed > mc->desiredSpeed[ mc->state ])
+			mc->speed = mc->desiredSpeed[ mc->state ];
 		else if ( mc->speed < 0.0f )
 			mc->speed = 0.0f;
 
@@ -80,21 +78,12 @@ void Core::MovementSystem::Update(float delta)
 
 		AttributeComponent* attribc = WGETC<AttributeComponent>(*it);
 		MovementComponent* mvmc = WGETC<MovementComponent>(*it);
-		MovementDataComponent *mdc = WGETC<MovementDataComponent>( *it );
 
 		if( attribc->stamina > 30.0f )
-		{
-			mvmc->state = Core::MovementState::Movement_Sprinting;
-		}
+			mvmc->SetMovementState( Core::MovementState::Movement_Jogging, Core::MovementStatePriority::MovementState_MovementSystemPriority );
 		else
-		{
-			mvmc->state = Core::MovementState::Movement_Walking;
-		}
-
-		if( mdc->movedThisFrame )
-			attribc->stamina -= Core::GameData::GetMovementDataWithState( mvmc->state ).staminaCostPerSecond * delta;
+			mvmc->SetMovementState( Core::MovementState::Movement_Walking, Core::MovementStatePriority::MovementState_MovementSystemPriority );
 	}
-
 
 }
 
@@ -116,8 +105,10 @@ void Core::MovementSystem::InterpolateDirections(MovementComponent* mc, float de
 	{
 		glm::vec3 oldDir = glm::vec3(mc->direction[0], mc->direction[1], mc->direction[2]);
 		glm::vec3 newDir = glm::vec3(mc->newDirection[0], mc->newDirection[1], mc->newDirection[2]);
-	
-		float differenceFactor = (((glm::dot( oldDir, newDir ) * -1.0f ) + 1.0f) / 2.0f) + 1.0f;
+		
+		#define DIFFERENCE_FACTOR_INFLUENCE 0.4f
+
+		float differenceFactor = (((glm::dot( oldDir, newDir ) * -1.0f ) + 1.0f) / 2.0f) * DIFFERENCE_FACTOR_INFLUENCE + 1.0f;
 
 		newDir = glm::lerp(oldDir, newDir, TURN_FACTOR * differenceFactor * delta);
 
@@ -131,8 +122,6 @@ void Core::MovementSystem::InterpolateDirections(MovementComponent* mc, float de
         mc->direction[1] = newDir.y;
         mc->direction[2] = newDir.z;
 	}
-
-	//mc->direction[0] = mc->newDirection[0];
-	//mc->direction[1] = mc->newDirection[1];
-	//mc->direction[2] = mc->newDirection[2];
 }
+
+#undef drawEntityDirection

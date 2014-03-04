@@ -51,8 +51,14 @@ Core::ComponentGetters Core::MovementComponentBinding::GetGetters()
 	getters["desiredSpeed"] = []( Core::Entity entity, lua_State *L )
     {
         MovementComponent *mvc = WGETC<MovementComponent>( entity );
-
-        lua_pushnumber( L, mvc->desiredSpeed );
+		
+		lua_newtable( L );  
+        for( int i = 0; i < Core::MovementState::MOVEMENTSTATE_COUNT; i++ )
+        {
+            lua_pushinteger( L, i+1 );
+            lua_pushnumber( L, mvc->goal[i] );
+            lua_settable( L, -3 );
+        }
 
         return 1;
     };
@@ -141,14 +147,21 @@ Core::ComponentSetters Core::MovementComponentBinding::GetSetters()
     {
         MovementComponent *mvc = WGETC<MovementComponent>( entity );
         
-        if( lua_isnumber(  L, valueindex ) )
-        {
-            mvc->desiredSpeed = static_cast<float>(lua_tonumber( L, valueindex ));
-        }
-        else
-        {
-            luaL_error( L, "Unable to set maxSpeed for ent %d, value is not number", entity );
-        }
+		if (lua_istable(L, valueindex))
+		{
+			for (int i = 0; i < Core::MovementState::MOVEMENTSTATE_COUNT; i++)
+			{
+				lua_pushinteger(L, i + 1);
+				lua_gettable(L, valueindex);
+
+				if (lua_isnumber(L, -1))
+				{
+					mvc->desiredSpeed[i] = static_cast<float>(lua_tonumber(L, -1));
+				}
+
+				lua_pop(L, 1);
+			}
+		}
     };
 
 	setters["goal"] = [](Core::Entity entity, lua_State * L, int valueindex )

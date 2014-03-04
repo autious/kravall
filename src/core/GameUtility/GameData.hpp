@@ -12,29 +12,6 @@ struct TempInitGameData;
 namespace Core
 {
 	/*!
-		Struct used for storing metadata for moveing entities.
-	*/
-	struct MovementData
-	{
-		/*!
-			These values is the default ones. Use lua to change them.
-		*/
-		MovementData()
-		{
-			speedToDesire = 5.8f;
-			acceleration = 17.0f;
-			deceleration = 17.0f;
-			staminaCostPerSecond = 0.02f;
-		}
-
-		float speedToDesire;
-		float acceleration;
-		float deceleration;
-		float staminaCostPerSecond;
-	};
-
-
-	/*!
 		Struct used for storing metadata for weaponTypes.
 	*/
 	struct WeaponData
@@ -79,22 +56,11 @@ namespace Core
 
 
 	public:
-
-		/*!
-			Will return the MovementData for the respective state.
-		*/
-		static const MovementData& GetMovementDataWithState( MovementState state );
-
 		/*!
 			Will return the respective data for the weapon.
 		*/
 		static const WeaponData& GetWeaponDataFromWeapon( int weapon );
 
-		/*!
-			Will set the MovementData for the respective state. Should not be used carelessly form C.
-		*/
-		static void SetMovementDataForState( MovementState state, float speedToDesire, float acceleration, float deceleration, float staminaCostPerSecond );
-		
 		/*!
 			Will push weaponData to the list and return the id for the weapon. This function is meant to be used form lua.
 		*/
@@ -117,11 +83,9 @@ namespace Core
 
 	private:
 
-		static MovementData m_movementData[ MovementState::MOVEMENTSTATE_COUNT ];
 		static std::vector< WeaponData > m_weaponData;
 		static std::vector< int > m_escapePointGroups;
 
-		friend TempInitGameData;
 	};
 }
 
