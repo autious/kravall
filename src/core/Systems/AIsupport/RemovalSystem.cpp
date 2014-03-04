@@ -147,7 +147,7 @@ namespace Core
 		GraphicsComponent gc;
 		gc.bitmask = m_bloodBitmask;
 		gc.outlineColor[0] = 0.0f;
-		gc.outlineColor[1] = 1.0f;
+		gc.outlineColor[1] = rand_FloatRange(0.05f, 0.2f);
 		gc.outlineColor[2] = 0.0f;
 		gc.outlineColor[3] = 0.0f;
 
@@ -164,7 +164,7 @@ namespace Core
 
 		bc.scaleSpeed[0] = 0.4f;
 		bc.scaleSpeed[1] = 0.4f;
-		bc.maxSize = rand_FloatRange(0, 3.14f);
+		bc.maxSize = rand_FloatRange(1.0f, 3.14f);
 
 		Core::world.m_entityHandler.CreateEntity(gc, wpc, rc, sc, bc);
 	}
