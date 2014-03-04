@@ -4,27 +4,12 @@
 #include <logger/Logger.hpp>
 
 
-struct TempInitGameData
-{
-	TempInitGameData()
-	{
-		for( int i = 0; i < Core::MovementState::MOVEMENTSTATE_COUNT; i++ )
-			Core::GameData::m_movementData[ i ] = Core::MovementData();
-	}
-
-} dummyInit;
-
 
 namespace Core
 {
-	MovementData GameData::m_movementData[ Core::MovementState::MOVEMENTSTATE_COUNT ];
 	std::vector< WeaponData > GameData::m_weaponData;
 	std::vector< int > GameData::m_escapePointGroups;	
 
-	const MovementData& Core::GameData::GetMovementDataWithState( MovementState state )
-	{
-		return m_movementData[ state ];
-	}
 
 	const WeaponData& Core::GameData::GetWeaponDataFromWeapon( int weapon )
 	{
@@ -32,14 +17,6 @@ namespace Core
 		return m_weaponData[ weapon ];
 	}
 
-
-	void Core::GameData::SetMovementDataForState( MovementState state, float speedToDesire, float acceleration, float deceleration, float staminaCostPerSecond )
-	{
-		m_movementData[ state ].speedToDesire			= speedToDesire;
-		m_movementData[ state ].acceleration			= acceleration;
-		m_movementData[ state ].deceleration			= deceleration;
-		m_movementData[ state ].staminaCostPerSecond	= staminaCostPerSecond;
-	}
 
 	int Core::GameData::PushWeaponData( float range, float graceDistance, float weaponDamage, float moraleDamage, float moralDamageOnMiss, float rageBuff, float pressureBuff, float staminaCost, float animationDmgDealingtime, std::string animationName )
 	{
@@ -98,9 +75,6 @@ namespace Core
 
 	void Core::GameData::ClearData()
 	{
-		// reset movementData
-		dummyInit = TempInitGameData();
-
 		// remove weapons
 		m_weaponData.clear();
 
