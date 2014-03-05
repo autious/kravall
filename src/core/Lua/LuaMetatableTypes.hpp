@@ -137,7 +137,6 @@ namespace Core
     Camera** LuaUNewCamera( lua_State * L );
 
     LuaTTFFont* LuaUNewTTFFont( lua_State * L );
-    LuaTimer* LuaUNewTimer( lua_State * L );
+    LuaTimer* LuaUNewTimer( lua_State * L, Core::HighresTimer* t );
 }
-
 #endif
