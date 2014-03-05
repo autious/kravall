@@ -40,6 +40,8 @@
 #include <Lua/Bridges/LuaWeaponBridge.hpp>
 #include <Lua/Bridges/LuaGameMetaDataBridge.hpp>
 #include <Lua/Bridges/LuaUnitOrderBridge.hpp>
+#include <Lua/Bridges/LuaConfigurationBridge.hpp>
+#include <Lua/Bridges/LuaTimerBridge.hpp>
 
 namespace Core
 {
@@ -72,7 +74,9 @@ namespace Core
         lprtb(L),
 		lwp(L),
 		lgmdb(L),
-		luob(L)
+		luob(L),
+        lcb(L),
+        ltb(L)
         {}
             
         LuaBitmask lb;
@@ -102,6 +106,8 @@ namespace Core
 		LuaWeaponBridge lwp;
 		LuaGameMetaDataBridge lgmdb;
 		LuaUnitOrderBridge luob;
+        LuaConfigurationBridge lcb;
+        LuaTimerBridge ltb;
     };
 }
 
@@ -291,6 +297,22 @@ bool Core::LuaState::Stop( )
     lua_pop( m_state, 1 );
 
     return error == 0;
+}
+
+void Core::LuaState::LoadHomeConfiguration( )
+{
+    lua_getglobal( m_state, "core" );
+    lua_getfield( m_state, -1, "loadHomeConfiguration" );
+
+    int error = lua_pcall( m_state, 0,0,0 );
+
+    if( error )
+    {
+        LOG_ERROR << "Unable to call loadHomeConfiguration: " << lua_tostring( m_state, -1 ) << std::endl;
+        lua_pop( m_state, 1 );
+    }
+
+    lua_pop( m_state, 1 );
 }
 
 void Core::LuaState::Update( float delta )

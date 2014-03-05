@@ -26,7 +26,7 @@ static bool sortCullData( const cullData& me, const cullData& other )
 
 void DrawCullingQuads( cullData* cullingList, int nrEntities, int gridNodeSize )
 {
-	for( int i = 0; i < nrEntities; i++)
+	for( int i = 0; i < nrEntities; i++ )
 	{
 		Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(cullingList[i].ent);
 		GFX::Debug::DrawSphere( glm::vec3(wpc->position[0], 0, wpc->position[2] ), 0.05f, GFXColor( 1, 0, 0, 1 ), false );
@@ -169,54 +169,61 @@ void Core::CollisionSystem2D::Update( float delta )
 					}
 					
 					glm::vec3 collisionNormal = glm::normalize( myPosition - otherPosition );
-				
-					// buggy code, and prob. not neccecery...
-					//// check if entity should step aside to get around object...
-					//if( glm::dot( collisionNormal, *reinterpret_cast<glm::vec3*>(mvmc->direction) ) < -0.999 )
-					//{							
-					//		glm::vec3 moveDir = glm::normalize( glm::cross( collisionNormal, glm::vec3( 0.0f, 1.0f, 0.0f ) ));
-					//		*reinterpret_cast<glm::vec3*>(wpc->position) += moveDir * 0.1f;
-					//		
-					//		// update data
-					//		myPosition = *reinterpret_cast<glm::vec3*>(wpc->position);
-					//		collisionNormal = glm::normalize( myPosition - otherPosition );
-					//		sqareDistance = glm::dot( myPosition - otherPosition, myPosition - otherPosition );
-					//}
 					
 					float deltaDist = ((otherSphere->radius + mySphere->radius) - std::sqrt( sqareDistance ));
 					glm::vec3 movement;
 
+					float mod = 0.5f;
+
+					Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>(it);
+					Core::MovementComponent* mvmcOther = WGETC<Core::MovementComponent>(other);
+					if( mvmc != nullptr || mvmcOther != nullptr )
+					{
+						float dot = glm::dot( glm::vec3( mvmc->direction[0], mvmc->direction[1], mvmc->direction[2] ), 
+							glm::normalize( otherPosition - myPosition ) );
+						if( dot > 0.3f )
+						{	
+							if( mvmc->speed > mvmc->desiredSpeed[ Core::MovementState::Movement_Walking ] * 0.8f )
+								mvmc->speed -= 8.85f * delta;
+
+							mod = 0.75f;
+						}
+					}
+
 					// move myself away from collision. If the other entity is static, move the entire overlap away from the entity,
 					// otherwise move half the distance as to achieve mutual collision resolution
+					bool otherIsAttacking = false;
+					TargetingComponent* otherTc = WGETC<Core::TargetingComponent>(other);
+
 					switch( bvcOther->collisionModel )
 					{
 					case Core::BoundingVolumeCollisionModel::DynamicResolution:
 
-
-						// Head of list will always bow for tail of list in perfect frontal collision.
 						{
-							movement = glm::vec3(0);
-							movement += collisionNormal * ( deltaDist * 0.5f );
-							wpc->position[0] += movement.x;
-							wpc->position[2] += movement.z;
-						}
+							// Head of list will always bow for tail of list in perfect frontal collision.
+							{
+								movement = glm::vec3(0);
+								movement += collisionNormal * ( deltaDist * mod );
+								wpc->position[0] += movement.x;
+								wpc->position[2] += movement.z;
+							}
 
-						// Head and tail is equal when in perfect frontal collision. Would theoretically results in 
-						// less flow but potentially better crowd dynamics when in a closed environment. 
-						{
-							movement = glm::vec3(0);
-							movement -= collisionNormal * ( deltaDist * 0.5f );
-							wpcOther->position[0] += movement.x;
-							wpcOther->position[2] += movement.z;
-						}
+							// Head and tail is equal when in perfect frontal collision. Would theoretically results in 
+							// less flow but potentially better crowd dynamics when in a closed environment. 
+							{
+								movement = glm::vec3(0);
+								movement -= collisionNormal * ( deltaDist * ( 1.0f - mod ) );
+								wpcOther->position[0] += movement.x;
+								wpcOther->position[2] += movement.z;
+							}
 
-						// update own position for following tests...
-						myPosition = glm::vec3( wpc->position[0], 0.0f, wpc->position[2] );
+							// update own position for following tests...
+							myPosition = glm::vec3( wpc->position[0], 0.0f, wpc->position[2] );
+						}
 
 						break;
 
 					case Core::BoundingVolumeCollisionModel::StaticResolution:
-						//*reinterpret_cast<glm::vec3*>(wpc->position) += collisionNormal * deltaDist;
 						movement = glm::vec3(0);
 						movement += collisionNormal * ( deltaDist * 1.0f );
 						wpc->position[0] += movement.x;
@@ -227,10 +234,8 @@ void Core::CollisionSystem2D::Update( float delta )
 
 						break;
 
-					//default:
-					//	GFX::Debug::DrawSphere( myPosition, 10.0f, GFXColor( 1.0f, 0.0f, 0.0f, 1.0f ), false );
-					//	GFX::Debug::DrawSphere( otherPosition, 10.0f, GFXColor( 1.0f, 0.0f, 0.0f, 1.0f ), false );
-					//	break;
+					default:
+						break;
 					}
 				}
 			}

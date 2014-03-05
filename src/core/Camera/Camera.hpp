@@ -26,6 +26,10 @@ namespace Core
 		
 		float GetNear() const;
 		float GetFar() const;
+        float GetYaw() const;
+        float GetPitch() const;
+
+        void LookAt(const glm::vec3& position, const glm::vec3& target);
 
     private:
 		glm::mat4x4 m_viewMatrix;

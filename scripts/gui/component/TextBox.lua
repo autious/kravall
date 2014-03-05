@@ -33,9 +33,10 @@ function TextBox:new(o)
                                             onPress = function()  o:onPress() end,
                                             onRelease = function() o:onRelease() end,
                                             onEnter = function() o:onEnter() end,
-                                            onExit = function() o:onExit() end
+                                            onExit = function() o:onExit() end,
+											toolTip = o.toolTip
                                         }
-    o.text = text( o.x, o.y, o.body, nil, true, {o.width,o.height})
+    o.text = text( o.x, o.y, o.body, nil, nil, true, {o.width,o.height})
     o:setPosition( o.x, o.y )
 
     o.text:show( show )

@@ -1,4 +1,5 @@
 core.config = {
+locallySavedVars = {"fullscreen"}, --Variables to save into the users home folder.
 showSplash = false,
 vsync = 0,
 windowResizable = true,

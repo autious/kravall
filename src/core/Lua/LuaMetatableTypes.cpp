@@ -196,6 +196,19 @@ namespace Core
     {
         LuaHoverText* hover = static_cast<LuaHoverText*>( lua_newuserdata( L, sizeof( LuaHoverText) ) );
         hover->hoverTextId = -1;
+        hover->light = false;
+           
+        luaL_getmetatable( L, HOVER_TEXT_META_TYPE );
+        lua_setmetatable( L, -2 );
+
+        return hover;
+    }
+
+    LuaHoverText* LuaUNewLightHoverText( lua_State * L, int id )
+    {
+        LuaHoverText* hover = static_cast<LuaHoverText*>( lua_newuserdata( L, sizeof( LuaHoverText) ) );
+        hover->hoverTextId = id;
+        hover->light = true;
            
         luaL_getmetatable( L, HOVER_TEXT_META_TYPE );
         lua_setmetatable( L, -2 );
@@ -213,5 +226,17 @@ namespace Core
         lua_setmetatable( L, -2 );
 
         return font;
+    }
+
+    LuaTimer* LuaUNewTimer( lua_State * L, Core::HighresTimer * t )
+    {
+        LuaTimer* timer = static_cast<LuaTimer*>( lua_newuserdata( L, sizeof(LuaTimer) ) );
+
+        timer->timer = t;
+
+        luaL_getmetatable( L, TIMER_META_TYPE );
+        lua_setmetatable( L, -2 );
+
+        return timer;
     }
 }

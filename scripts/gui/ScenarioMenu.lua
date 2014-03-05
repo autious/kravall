@@ -17,7 +17,7 @@ function ScenarioMenu:new(o,menuState)
 
     o.gui = GUI:new()
     
-    local descriptionBox = TextBox:new({anchor="East", yoffset=180, body="", width = 600, height = 500})
+    local descriptionBox = TextBox:new({anchor="East", yoffset=-180, body="", width = 600, height = 500})
     --local scenarioLabel = TextLabel:new({ xoffset=-50, yoffset=250, anchor="NorthEast", label=""})
 
     local function onScenarioSelect( object )

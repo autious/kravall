@@ -81,13 +81,17 @@ uniform uint gEntityCount;
 //z = repel
 //w = decline
 
-uniform vec4 gChargeCurves[6][13]= {{ vec4(-5000.0f, 40.0f, 40.0f, -5000.0f / (40.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 300.0f, 1.0f, -5000.0f / (300.0f)),vec4(0.0f),vec4(0.0f)},
+uniform vec4 gChargeCurves[6][13]= {{ vec4(-5000.0f, 40.0f, 40.0f, -5000.0f / (40.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)),  vec4(-5000.0f, 20.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 20.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 20.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 20.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 300.0f, 1.0f, -5000.0f / (300.0f)),vec4(0.0f),vec4(0.0f)},
 									
-								   { vec4(0.0f),vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 300.0f, 1.0f, -5000.0f / (300.0f)),vec4(0.0f),vec4(0.0f) },
+								   { vec4(0.0f),vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 20.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 20.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 20.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 300.0f, 1.0f, -5000.0f / (300.0f)),vec4(0.0f),vec4(0.0f) },
 
-								   { vec4(0.0f), vec4(0.0f, 0.0f, 1.5f, 0.0f / (1.0f)), vec4(0.0f, 0.0f, 1.5f, 0.0f / (1.0f)), vec4(10.0f, 100.0f, 1.5f, 10.0f / (100.0f)), vec4(0.0f, 0.0f, 1.5f, 0.0f / (1.0f)), vec4(0.0f, 0.0f, 1.5f, 0.0f / (1.0f)), vec4(-5000.0f, 0.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 0.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 0.0f, 1.0f, -5000.0f / (30.0f)), vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 300.0f, 1.0f, -5000.0f / (300.0f)), vec4(0.0f),vec4(0.0f)  }, 								   
+								   { vec4(0.0f), vec4(0.0f, 0.0f, 0.0f, 0.0f / (1.0f)), vec4(0.0f, 0.0f, 1.5f, 0.0f / (1.0f)), vec4(10.0f, 0.0f, 0.0f, 10.0f / (100.0f)), vec4(0.0f, 0.0f, 0.0f, 0.0f / (1.0f)), vec4(0.0f, 0.0f, 0.0f, 0.0f / (1.0f)), vec4(-5000.0f, 0.0f, 0.0f, -5000.0f / (30.0f)), vec4(-5000.0f, 0.0f, 0.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 0.0f, 0.0f, -5000.0f / (30.0f)), vec4(-5000.0f, 0.0f, 0.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 0.0f, 0.0f, -5000.0f / (300.0f)), vec4(0.0f),vec4(0.0f)  }, 								   
 								   
-								   { vec4(0.0f),vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 300.0f, 1.0f, -5000.0f / (300.0f)),vec4(0.0f),vec4(0.0f)  },
+								  
+								  
+								  
+								  
+								   { vec4(0.0f),vec4(3.0f, 5.0f, 0.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 0.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 0.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 0.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 0.5f, 3.0f / (5.0f)),  vec4(-5000.0f, 0.0f, 0.5f, -5000.0f / (30.0f)),  vec4(-5000.0f, 0.0f, 0.5f, -5000.0f / (30.0f)),  vec4(-5000.0f, 0.0f, 0.5f, -5000.0f / (30.0f)),  vec4(-5000.0f, 0.0f, 0.5f, -5000.0f / (30.0f)),  vec4(-5000.0f, 0.0f, 0.5f, -5000.0f / (300.0f)),vec4(0.0f),vec4(0.0f)  },
 
 								   { vec4(0.0f),vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)), vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f)),  vec4(-5000.0f, 300.0f, 1.0f, -5000.0f / (300.0f)),vec4(0.0f),vec4(0.0f)  },
 
@@ -129,12 +133,12 @@ uniform int gChargeReceiverIndices[3][6] = {{ 0, 1, 2, 3, 4, 5 },
 //y = morale
 //z = pressure
 //w = rage
-uniform vec4 gMoodCurves[6][13] = {{ vec4(20.0f, 0.01f, 0.5f, 0.5f), vec4(0.0f), vec4(5.0f, 0.001f, 0.001f, 0.001f), vec4(5.0f, 0.001f, 0.001f, 0.001f), vec4(5.0f, -0.001f, 0.001f, 0.001f),vec4(0.0f), vec4(10.0f, 0.0f, 0.3f, 0.3f), vec4(10.0f, 0.0f, 0.3f, 0.3f), vec4(10.0f, 0.1f, 1.0f, 1.0f), vec4(0.0f), vec4(20.0f, 10.01f, 10.01f, 10.01f), vec4(0.0f),vec4(0.0f) },
+uniform vec4 gMoodCurves[6][13] = {{ vec4(20.0f, 0.01f, 0.5f, 0.5f), vec4(0.0f), vec4(5.0f, 0.001f, 0.001f, 0.001f), vec4(5.0f, 0.001f, 0.001f, 0.001f), vec4(5.0f, -0.001f, 0.001f, 0.001f),vec4(0.0f), vec4(20.0f, 0.0f, 0.7f, 0.0f), vec4(10.0f, 0.0f, 0.3f, 0.3f), vec4(20.0f, 0.1f, 1.0f, 1.0f), vec4(0.0f), vec4(20.0f, -0.04f, 10.01f, 10.01f), vec4(0.0f),vec4(0.0f) },
 
 																																																																							   
-								   { vec4(20.0f, 0.01f, 0.01f, 0.01f), vec4(5.0f, -0.001f, -0.001f, -0.001f), vec4(5.0f, 0.0f, 0.0001f, 0.0001f), vec4(5.0f, 0.001f, 0.001f, 0.001f), vec4(5.0f, -0.001f, 0.001f, 0.001f),vec4(0.0f), vec4(10.0f, 0.0f, 1.1f, 1.1f), vec4(10.0f, 0.0f, 1.1f, 1.1f),  vec4(10.0f, 0.0f, 2.5f, 2.5f), vec4(0.0f), vec4(20.0f, 10.01f, 10.01f, 10.01f), vec4(0.0f),vec4(0.0f) },
+								   { vec4(20.0f, 0.01f, 0.01f, 0.01f), vec4(5.0f, -0.001f, -0.001f, -0.001f), vec4(5.0f, 0.0f, 0.0001f, 0.0001f), vec4(5.0f, 0.001f, 0.001f, 0.001f), vec4(5.0f, -0.001f, 0.001f, 0.001f),vec4(0.0f), vec4(20.0f, 0.0f, 1.1f, 1.1f), vec4(10.0f, 0.0f, 1.1f, 1.1f),  vec4(20.0f, 0.0f, 2.5f, 2.5f), vec4(0.0f), vec4(20.0f, -0.04f, 10.01f, 10.01f), vec4(0.0f),vec4(0.0f) },
 																																																																							   
-								   { vec4(20.0f, 0.01f, 0.01f, 0.01f), vec4(5.0f, 0.001f, -0.01f, -0.01f), vec4(5.0f, 0.001f, -0.005f, -0.005f), vec4(5.0f, 0.001f, 0.001f, 0.001f), vec4(5.0f, -0.001f, 0.001f, 0.001f),vec4(0.0f), vec4(10.0f, 0.0f, 1.1f, 1.1f), vec4(10.0f, 0.0f, 1.1f, 1.1f),  vec4(10.0f, -0.01f, 2.5f, 2.5f), vec4(0.0f), vec4(20.0f, 10.01f, 10.01f, 10.01f), vec4(0.0f),vec4(0.0f) },
+								   { vec4(20.0f, 0.01f, 0.01f, 0.01f), vec4(5.0f, 0.001f, -0.01f, -0.01f), vec4(5.0f, 0.001f, -0.005f, -0.005f), vec4(5.0f, 0.001f, 0.001f, 0.001f), vec4(5.0f, -0.001f, 0.001f, 0.001f),vec4(0.0f), vec4(10.0f, 0.0f, 1.1f, 1.1f), vec4(10.0f, 0.0f, 1.1f, 1.1f),  vec4(10.0f, -0.01f, 2.5f, 2.5f), vec4(0.0f), vec4(20.0f, -0.04f, 10.01f, 10.01f), vec4(0.0f),vec4(0.0f) },
 																																																																							   
 								   { vec4(20.0f, 0.01f, 0.01f, 0.01f), vec4(0.0f), vec4(5.0f, 0.001f, 0.001f, 0.001f), vec4(5.0f, 0.001f, 0.001f, 0.001f), vec4(5.0f, -0.001f, 0.001f, 0.001f),vec4(0.0f),vec4(10.0f, 0.0f, 1.1f, 1.1f), vec4(10.0f, 0.0f, 1.1f, 1.1f),  vec4(10.0f, 0.1f, 1.0f, 1.0f), vec4(0.0f), vec4(20.0f, 10.01f, 10.01f, 10.01f), vec4(0.0f),vec4(0.0f)  },
 																																																																							   
@@ -360,189 +364,6 @@ vec3 GetMoodOnAgent(vec2 queryPosition, int groupID, int index)
 
 void main()
 {
-/*
-	//normal
-	gMoodSenderIndices[0][0] = 6;
-	gMoodReceiverIndices[RIOTER_TYPE][0] = 0;
-
-	//agitated
-	gMoodSenderIndices[RIOTER_TYPE][1] = 7;
-	gMoodReceiverIndices[RIOTER_TYPE][1] = 1;
-	
-	//attacking
-	gMoodSenderIndices[RIOTER_TYPE][2] = 8;
-	gMoodReceiverIndices[RIOTER_TYPE][2] = 2;
-	
-	//retreating
-	gMoodSenderIndices[RIOTER_TYPE][3] = 9;
-	gMoodReceiverIndices[RIOTER_TYPE][3] = 3;
-	
-	//civilian
-	gMoodSenderIndices[RIOTER_TYPE][4] = 10;
-	gMoodReceiverIndices[RIOTER_TYPE][4] = 4;
-	
-	//passive
-	gMoodSenderIndices[POLICE_TYPE][0] = 0;
-	gMoodReceiverIndices[POLICE_TYPE][0] = 5;
-	
-	//defensive
-	gMoodSenderIndices[POLICE_TYPE][1] = 1;
-	gMoodReceiverIndices[POLICE_TYPE][1] = 5;
-	
-	//aggresive
-	gMoodSenderIndices[POLICE_TYPE][2] = 2;
-	gMoodReceiverIndices[POLICE_TYPE][2] = 5;
-	
-	//attacking
-	gMoodSenderIndices[POLICE_TYPE][3] = 3;
-	gMoodReceiverIndices[POLICE_TYPE][3] = 5;
-	*/
-	//barrier();
-	
-	//if (gl_LocalInvocationIndex == 0)
-	//{
-	//	gChargeCurves[0][0].ch_cu_re_dec = vec4(3.0f, 5.0f, 1.5f, 3.0f / (5.0f)); //0.3 makes them stick into a huge blob
-	//	gChargeCurves[0][1].ch_cu_re_dec = vec4(-5000.0f, 30.0f, 1.0f, -5000.0f / (30.0f));
-
-		//MOOD CURVE INDICES/PLACEMENT CAN BE FOUND AT THE BOTTOM OF THIS DOCUMENT
-		/*
-		//Init all curves to no effect
-		for (int i = 0; i < 6; i++)
-		{
-			for(int j = 0; j < 13; j++)
-			{
-				gMoodCurves[i][j].range_mo_pre_rage = vec4(0);
-			}
-		}
-
-		//barrier();
-		//normal rioter vs passive police
-		gMoodCurves[0][0].range_mo_pre_rage = vec4(5, -0.001f, 0.01f, 0.01f);
-
-		//normal rioter vs defensive police
-		gMoodCurves[0][1].range_mo_pre_rage = vec4(5, 0.0f, 0.0f, 0.01f);
-
-		//normal rioter vs agggresive police
-		gMoodCurves[0][2].range_mo_pre_rage = vec4(15, 0.0f, 0.5f, 0.1f);
-
-		//normal rioter vs Attacking police
-		gMoodCurves[0][3].range_mo_pre_rage = vec4(15, -0.5f, 5000.0f, 5000.0f);//Attacking state doesn't actually exist yet, fix this
-
-		//normal rioter vs normal rioter
-		//No effect
-		
-		//normal rioter vs rioter agitated
-		gMoodCurves[0][7].range_mo_pre_rage = vec4(3, 0.0f, 0.0001f, 0.00001f);
-		
-		//normal rioter vs rioter attacking
-		gMoodCurves[0][8].range_mo_pre_rage = vec4(5, 0.0f, 0.0002f, 0.0002f);
-		
-		//normal rioter vs rioter retreat
-		gMoodCurves[0][9].range_mo_pre_rage = vec4(3, -0.0001f, 0.0001f, 0.0001f);
-		
-		//normal rioter vs rioter civilian
-		//No effect
-
-		//agitated rioter vs passive police
-		gMoodCurves[1][0].range_mo_pre_rage = vec4(5, 0.0f, 0.01f, 0.1f);
-
-		//agitated rioter vs defensive police
-		gMoodCurves[1][1].range_mo_pre_rage = vec4(5, 0.0f, 0.01f, 0.1f);
-
-		//agitated rioter vs agggresive police
-		gMoodCurves[1][2].range_mo_pre_rage = vec4(15, 0.0f, 0.5f, 0.1f);
-
-		//agitated rioter vs normal rioter
-		gMoodCurves[1][6].range_mo_pre_rage = vec4(15, 0.0f, 0.5f, 0.1f);
-
-		//agitated rioter vs agitated rioter
-		gMoodCurves[1][7].range_mo_pre_rage = vec4(15, 0.0f, 0.005f, 0.1f);
-
-		//agitated rioter vs rioter attacking
-		gMoodCurves[1][8].range_mo_pre_rage = vec4(5, 0.0f, 0.0001f, 0.0002f);
-
-		//agitated rioter vs rioter retreat
-		gMoodCurves[1][9].range_mo_pre_rage = vec4(3, -0.0001f, 0.0001f, 0.0002f);
-			
-		//agitated rioter vs rioter civilian
-		//No effect
-		
-		//barrier();
-
-		//attacking rioter vs passive police
-		gMoodCurves[2][0].range_mo_pre_rage = vec4(5, 0.0f, 0.01f, 0.1f);
-
-		//attacking rioter vs defensive police
-		gMoodCurves[2][1].range_mo_pre_rage = vec4(5, 0.0, 0.0, 0.1f);
-
-		//attacking rioter vs agggresive police
-		gMoodCurves[2][2].range_mo_pre_rage = vec4(15, 0.0f, 0.5f, 0.1f);
-
-		//attacking rioter vs normal rioter
-		//No effect
-
-		//attacking rioter vs agitated rioter
-		//No effect
-
-		//attacking rioter vs rioter attacking
-		gMoodCurves[2][8].range_mo_pre_rage = vec4(5, 0.0001f, 0.0001f, 0.0002f);
-
-		//attacking rioter vs rioter retreat
-		gMoodCurves[2][9].range_mo_pre_rage = vec4(3, -0.0001f, 0.0001f, 0.0f);
-			
-		//agitated rioter vs rioter civilian
-		//No effect
-
-		//barrier();
-
-		//retreating rioter
-		//No effects
-
-
-		//civilian rioter vs passive police
-		//No effect
-
-		//civilian rioter vs defensive police
-		//No effect
-
-		// civilian rioter vs agggresive police
-		gMoodCurves[4][2].range_mo_pre_rage = vec4(15, 0.0f, 0.5f, 0.1f);
-
-		//civilian rioter vs normal rioter
-		//No effect
-
-		//civilian rioter vs agitated rioter
-		gMoodCurves[4][7].range_mo_pre_rage = vec4(5, 0.0f, 0.005f, 0.001f);
-
-		//civilian rioter vs rioter attacking
-		gMoodCurves[4][8].range_mo_pre_rage = vec4(5, 0.0f, 0.001f, 0.002f);
-
-		//civilian rioter vs rioter retreat
-		gMoodCurves[4][9].range_mo_pre_rage = vec4(3, -0.0001f, 0.0f, 0.0f);
-
-		//civilian rioter vs rioter civilian
-		//No effect
-
-
-		//police vs rioter neut 
-		//No effect
-
-		//police vs rioter agi
-		gMoodCurves[5][7].range_mo_pre_rage = vec4(1, -0.0001f, 0.0f, 0.0f);
-
-		//police vs rioter att
-		gMoodCurves[5][8].range_mo_pre_rage = vec4(15, -0.001f, 0.0f, 0.0f);
-
-		//police vs rioter ret
-		gMoodCurves[5][9].range_mo_pre_rage = vec4(15, -0.001f, 0.0f, 0.0f);
-
-		//pol vs rioter civ
-		//No effect
-		*/
-	//}
-	
-	barrier();
-	
 	uint passCount = 0;
 	passCount = ( gEntityCount + WORK_GROUP_SIZE - 1) / WORK_GROUP_SIZE;
 	
@@ -709,72 +530,4 @@ void main()
 		gOutput[index].morale_rage_pressure_empty = vec4(morale + moods.x, rage + moods.y, pressure + moods.z, 0);
 	}
 	
-	//barrier();
 }
-
-//Rioter == 0
-//Rioter stance indices
-//Normal = 0
-//Agitated = 1
-//Attacking = 2
-//Retreating = 3
-//Civilian = 4
-
-
-//MOOD CURVES
-//x vs passive police
-//gMoodCurves[x][0]
-
-//x vs defensive police
-//gMoodCurves[x][1]
-
-//x vs aggresive police
-//gMoodCurves[x][2]
-
-//x vs attacking police
-//gMoodCurves[x][3]
-
-//x vs weapons police
-//gMoodCurves[x][4]
-
-//x vs police car
-//gMoodCurves[x][5]
-
-//x vs rioter neutral
-//gMoodCurves[x][6]
-
-//x vs rioter agitated
-//gMoodCurves[x][7]
-
-//x vs rioter attacking
-//gMoodCurves[x][8]
-
-//x vs rioter retreat
-//gMoodCurves[x][9]
-
-//x vs rioter civilian
-//gMoodCurves[x][10]
-
-//x vs weapon rioter
-//gMoodCurves[x][11]
-
-//x vs megaphone
-//gMoodCurves[x][12]
-
-//Rioter neutral vs x
-//gMoodCurves[0][x]
-
-//Rioter agitated vs x
-//gMoodCurves[1][x]
-
-//Rioter attack vs x
-//gMoodCurves[2][x]
-
-//Rioter retreating vs x
-//gMoodCurves[3][x]
-
-//Rioter civilian vs x
-//gMoodCurves[4][x]
-
-//Police all states vs x
-//gMoodCurves[5][x]

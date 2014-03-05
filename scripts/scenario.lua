@@ -71,12 +71,11 @@ end
 function S:update( delta )
     -- If we finish loading all assets, run the init functions.
     if self.asm:isLoading() == false and self.ranInit == false then
-        self.icindex = self.icindex + 1
-        if self.icindex > self.iccount then
-            self.ranInit = true
-        else
+        while self.icindex < self.iccount do
+            self.icindex = self.icindex + 1
             self.initCallbacks[self.icindex]()
         end
+        self.ranInit = true
     else
 
         for k,v in ipairs( self.updateCallbacks ) do

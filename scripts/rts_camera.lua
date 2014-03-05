@@ -15,12 +15,18 @@ local key = keyboard.key
 function C.new( )
     local self = {}
     self.position = vec3.new( 0,0,0 )
-    self.pitch = 0
-    self.yaw = 0
+    self.previousInterpolationPoint = self.position
     self.forwardVelocity = 0
+    self.quatRotation = quat.new()
     self.accelerationFactor = 1
+    self.acceleration = 1.0
     self.deaccelerationFactor = 0.5
     self.mousePressLocation = nil
+    self.movementSpeed = 0
+    self.interpolationSpeed = 10
+    self.interpolationFactor = 0
+    self.interpolationPoints = {}
+
 
     self.width = core.config.initScreenWidth
     self.height = core.config.initScreenHeight
@@ -79,10 +85,7 @@ local unit_up = vec3.new(0,1,0)
 local mat_ident = mat4.new(1)
 
 function C:getView()
-    local qp = quat.angleAxis( self.pitch, unit_right  )
-    qp = qp:rotate( self.yaw, unit_up )
-
-    return qp:mat4Cast() * mat_ident:translate( self.position * (-1))
+    return self.quatRotation:mat4Cast() * mat_ident:translate( self.position * (-1))
 end
 
 function C:update( dt )
@@ -109,88 +112,173 @@ function C:update( dt )
         if rx ~= 0 or rz ~= 0 then
              xzRight= vec3.new( rx,0,rz ):normalize()
         end
+       
+        local direction = vec3.new(0,0,0)
+
+        if #(self.interpolationPoints) > 0 then
+            if #(self.interpolationPoints) > 2 then
+                --catmul spline                
+                local p0 = self.previousInterpolationPoint.position
+                local p1 = self.interpolationPoints[1].position
+                local p2 = self.interpolationPoints[2].position
+                local p3 = self.interpolationPoints[3].position
+
+                local pointOne = {self.previousInterpolationPoint.position:get()}
+                local pointTwo = {self.interpolationPoints[1].position:get()}
+                local pointThree = {self.interpolationPoints[2].position:get()}
+                local pointFour = {self.interpolationPoints[3].position:get()}
+
+                self.interpolationPointsDistance = math.sqrt((pointThree[1] - pointTwo[1]) * (pointThree[1] - pointTwo[1]) + (pointThree[2] - pointTwo[2]) * (pointThree[2] - pointTwo[2]) + (pointThree[3] - pointTwo[3]) * (pointThree[3] - pointTwo[3]))
+
+                self.interpolationFactor = self.interpolationFactor + (self.interpolationSpeed / self.interpolationPointsDistance) * delta
+                self.interpolationFactor = math.min(1.0, self.interpolationFactor)
+
+                local t = self.interpolationFactor
+                local tt = t * self.interpolationFactor
+                local ttt = tt * self.interpolationFactor
+
+                self.position = ((p1 * 2) + (p0 * (-1) + p2) * t + (p0 * 2 -p1 * 5 + p2 * 4 - p3) * tt + (p0 * (-1) + p1 * 3 - p2 * 3 + p3) * ttt) * 0.5
+                self.quatRotation = self.interpolationPoints[1].rotation:slerp(self.interpolationPoints[2].rotation, self.interpolationFactor) 
+
+                if self.interpolationFactor >= 1.0 then
+                    self.interpolationFactor = 0
+                    self.previousInterpolationPoint = self.interpolationPoints[1]
+                    table.remove(self.interpolationPoints, 1)
+                end                
+            else
+                --smoothstep interpolation
+                local function SmoothStep(x)
+                    return x * x * (3 - 2 * x)
+                end
+
+                local pointOne = {self.previousInterpolationPoint.position:get()}
+                local pointTwo = {self.interpolationPoints[1].position:get()}
+
+                self.interpolationPointsDistance = math.sqrt((pointOne[1] - pointTwo[1]) * (pointOne[1] - pointTwo[1]) + (pointOne[2] - pointTwo[2]) * (pointOne[2] - pointTwo[2]) + (pointOne[3] - pointTwo[3]) * (pointOne[3] - pointTwo[3]))
+
+                self.interpolationFactor = self.interpolationFactor + (self.interpolationSpeed / self.interpolationPointsDistance) * delta
+                self.interpolationFactor = math.min(1.0, self.interpolationFactor)
+
+                local factor = SmoothStep(SmoothStep(SmoothStep(self.interpolationFactor)))
+                self.position = self.previousInterpolationPoint.position * (1.0 - factor) + self.interpolationPoints[1].position * factor
+                self.quatRotation = self.previousInterpolationPoint.rotation:slerp(self.interpolationPoints[1].rotation, factor)               
+
+                if self.interpolationFactor >= 1.0 then
+                    self.interpolationFactor = 0
+                    self.previousInterpolationPoint = self.interpolationPoints[1]
+                    table.remove(self.interpolationPoints, 1)
+                end                
+            end
+        else 
+            if keyboard.isKeyDown( key.W ) or keyboard.isKeyDown(key.Up )then
+                direction = direction + xzForward
+            end
+            if keyboard.isKeyDown( key.S ) or keyboard.isKeyDown(key.Down )then
+                direction = direction - xzForward
+            end
+            if keyboard.isKeyDown( key.A ) or keyboard.isKeyDown(key.Left )then
+                direction = direction - xzRight
+            end
+            if keyboard.isKeyDown( key.D ) or keyboard.isKeyDown(key.Right )then
+                direction = direction + xzRight 
+            end
+            if keyboard.isKeyDown( key.Q ) then
+                self.quatRotation = self.quatRotation:rotate( -3.5*delta , vec3.new(0, 1, 0) )
+            end
+            if keyboard.isKeyDown( key.E ) then
+                self.quatRotation = self.quatRotation:rotate( 3.5*delta , vec3.new(0, 1, 0) )
+            end
+            if keyboard.isKeyDown( key.Space ) then
+                direction = direction + vec3.new(0,1,0)
+            end
+            if keyboard.isKeyDown( key.Left_control ) then
+                direction = direction - vec3.new(0,1,0) 
+            end
+            
+            if direction:length() > 0 then
+                local force = self.acceleration - 0.1884 * self.movementSpeed * self.movementSpeed 
+                force = math.max(force, 0)
+                self.movementSpeed = self.movementSpeed + force * delta
+                direction:normalize()
+            else
+                self.movementSpeed = 0
+            end
+
+            self.position = self.position + direction * delta * self.movementSpeed
+            
+            local x,y = mouse.getPosition()
+
+            if mouse.isButtonDown( mouse.button.Middle ) then
+                self.quatRotation = self.quatRotation:rotate( (y-self.py) * 0.3 , camera:getRight() )
+                self.quatRotation = self.quatRotation:rotate( (x-self.px) * 0.3 , vec3.new(0, 1, 0) )
+            end 
+
+            if self.mousePressLocation ~= nil then
+                self.position = self.position + xzRight * (x-self.mousePressLocation.x) * 0.01 * delta
+                self.position = self.position - xzUp * (y-self.mousePressLocation.y) * 0.01 * delta
+                if mouse.isButtonDown( mouse.button[5] ) == false then
+                    self.mousePressLocation = nil
+                end
+            else
+                if mouse.isButtonDown( mouse.button[5] ) then
+                    self.mousePressLocation = {x=x,y=y}
+                end
+            end
+
+            
+            self.position = self.position + forward * self.forwardVelocity * delta;
         
-        if keyboard.isKeyDown( key.W ) then
-            self.position = self.position + xzForward * delta
-        end
-        if keyboard.isKeyDown( key.S ) then
-            self.position = self.position - xzForward * delta
-        end
-        if keyboard.isKeyDown( key.A ) then
-            self.position = self.position - xzRight * delta
-        end
-        if keyboard.isKeyDown( key.D ) then
-            self.position = self.position + xzRight * delta
-        end
-        if keyboard.isKeyDown( key.Space ) then
-            self.position = self.position + vec3.new(0,1,0) * delta
-        end
-        if keyboard.isKeyDown( key.Left_control ) then
-            self.position = self.position - vec3.new(0,1,0) * delta
-        end
-        
-        local x,y = mouse.getPosition()
-
-        if mouse.isButtonDown( mouse.button.Middle ) then
-            self.pitch = self.pitch + (y-self.py) * 0.3
-            self.yaw = self.yaw + (x-self.px) * 0.3
-        end 
-
-        if self.mousePressLocation ~= nil then
-            self.position = self.position + xzRight * (x-self.mousePressLocation.x) * 0.01 * delta
-            self.position = self.position - xzUp * (y-self.mousePressLocation.y) * 0.01 * delta
-            if mouse.isButtonDown( mouse.button[5] ) == false then
-                self.mousePressLocation = nil
-            end
-        else
-            if mouse.isButtonDown( mouse.button[5] ) then
-                self.mousePressLocation = {x=x,y=y}
-            end
-        end
-
-        self.position = self.position + forward * self.forwardVelocity * delta;
-    
-        if self.forwardVelocity > 0 then
-            self.forwardVelocity = self.forwardVelocity - self.deaccelerationFactor * delta;
-            if self.forwardVelocity < 0 then
-                self.forwardVelocity = 0
-            end
-        elseif self.forwardVelocity < 0 then
-            self.forwardVelocity = self.forwardVelocity + self.deaccelerationFactor * delta;
             if self.forwardVelocity > 0 then
-                self.forwardVelocity = 0
+                self.forwardVelocity = self.forwardVelocity - self.deaccelerationFactor * delta;
+                if self.forwardVelocity < 0 then
+                    self.forwardVelocity = 0
+                end
+            elseif self.forwardVelocity < 0 then
+                self.forwardVelocity = self.forwardVelocity + self.deaccelerationFactor * delta;
+                if self.forwardVelocity > 0 then
+                    self.forwardVelocity = 0
+                end
             end
-        end
+            
+            if x < 20 then 
+                self.position = self.position - xzRight  * core.config.cameraScrollingSpeed * delta
+            end
+            if self.width-x < 20 then
+                self.position = self.position + xzRight  * core.config.cameraScrollingSpeed * delta
+            end
+            if y < 20 then
+                self.position = self.position + xzUp * core.config.cameraScrollingSpeed * delta
+            end
+            if self.height-y < 20 then
+                self.position = self.position - xzUp * core.config.cameraScrollingSpeed * delta
+            end
 
-        if x < 20 then 
-            self.position = self.position - xzRight  * core.config.cameraScrollingSpeed * delta
-        end
-        if self.width-x < 20 then
-            self.position = self.position + xzRight  * core.config.cameraScrollingSpeed * delta
-        end
-        if y < 20 then
-            self.position = self.position + xzUp * core.config.cameraScrollingSpeed * delta
-        end
-        if self.height-y < 20 then
-            self.position = self.position - xzUp * core.config.cameraScrollingSpeed * delta
-        end
+            self.px = x
+            self.py = y
+            
+            local px,py,pz = self.position:get()
 
-        self.px = x
-        self.py = y
+            if py > 500 then
+                px,py,pz = prevPosition:get()
+                self.forwardVelocity = 0
+                self.cantGoBack = true
+            elseif py < 10 then
+                px,py,pz = prevPosition:get()
+                self.forwardVelocity = 0
+                self.cantGoForward = true
+            end
 
-        local px,py,pz = self.position:get()
+            if self.cantGoForward and self.cantGoBackward then
+                py = 20 
+                self.cantGoForward = false
+                self.cantGoBackward = false
+            end
 
-        if py > 250 then
-            px,py,pz = prevPosition:get()
-            self.forwardVelocity = 0
-            self.cantGoBack = true
-        elseif py < 10 then
-            px,py,pz = prevPosition:get()
-            self.forwardVelocity = 0
-            self.cantGoForward = true
+            self.position = vec3.new( px,py,pz )
+
+            self.previousInterpolationPoint = {position = self.position, rotation = self.quatRotation}
         end
-        self.position = vec3.new( px,py,pz )
-
+        
         local proj = self:getProjection()
         local view = self:getView()
         camera:setProjection( proj )
@@ -200,23 +288,17 @@ end
 
 function C:setPosition( pos )
 	self.position = pos	
+    self.previousInterpolationPoint = {position = self.position, lookat = self.position + camera:getForward()}
 end
 
 function C:lookAt( position, target )
-	self.position = position
-	
-	local dir = core.glm.vec3.normalize( core.glm.vec3.subtract( target, position ) )
-	local x, y, z = core.glm.vec3.get(dir)
-	self.yaw = math.atan( x/-y ) * 180 / math.pi
-	--self.yaw = math.atan2( y, x ) * 180 / math.pi
-	self.pitch = math.asin( -y ) * 180 / math.pi
-	
-	self.px, self.py = mouse.getPosition()
-	
-	local proj = self:getProjection()
-    local view = self:getView()
-    camera:setProjection( proj )
-    camera:setView( view )
+    camera:lookAt(position, target)
+    self.position = camera:getPosition()
+end
+
+
+function C:addInterpolationPoint(position, rotation)
+    table.insert(self.interpolationPoints, {position = position, rotation = rotation})
 end
 
 return C

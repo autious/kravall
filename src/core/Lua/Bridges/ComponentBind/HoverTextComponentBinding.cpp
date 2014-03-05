@@ -12,11 +12,10 @@ namespace Core
         ComponentGetters getters; 
         getters["hoverTextId"] = []( Core::Entity entity, lua_State * L )
         {
-            LuaHoverText *lht = LuaUNewHoverText( L );
             HoverTextComponent *htc = WGETC<HoverTextComponent>( entity );
-            
-            lht->hoverTextId = htc->hoverTextId;
 
+            LuaHoverText *lht = LuaUNewLightHoverText( L, htc->hoverTextId );
+            
             return 1;
         };
 
@@ -58,7 +57,6 @@ namespace Core
             }
             
             return 1;
-
         };
 
         getters["dim"] = []( Core::Entity entity, lua_State * L )

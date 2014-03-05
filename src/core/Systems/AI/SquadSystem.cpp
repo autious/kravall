@@ -10,6 +10,7 @@
 
 #define FORMATION_COLUMN_SPACING_MINIMUM 2.0f
 #define FORMATION_ROW_SPACING 2.0f
+#define ALLOW_MOVE_IN_FORMATION false
 
 namespace Core
 {
@@ -404,25 +405,25 @@ namespace Core
 						gfxc->outlineColor[0] = 0.0f;
 						gfxc->outlineColor[1] = 0.0f;
 						gfxc->outlineColor[2] = 1.0f;
-						gfxc->outlineColor[3] = 1.0f;
+						gfxc->outlineColor[3] = 2.0f;
 						break;
 					case RioterStance::Agitated:
-						gfxc->outlineColor[0] = 0.0f;
-						gfxc->outlineColor[1] = 1.0f;
-						gfxc->outlineColor[2] = 1.0f;
-						gfxc->outlineColor[3] = 1.0f;
+						gfxc->outlineColor[0] = 1.0f;
+						gfxc->outlineColor[1] = 0.5f;
+						gfxc->outlineColor[2] = 0.0f;
+						gfxc->outlineColor[3] = 2.0f;
 						break;
 					case RioterStance::Attacking:
 						gfxc->outlineColor[0] = 1.0f;
 						gfxc->outlineColor[1] = 0.0f;
 						gfxc->outlineColor[2] = 0.0f;
-						gfxc->outlineColor[3] = 1.0f;
+						gfxc->outlineColor[3] = 2.0f;
 						break;
 					case RioterStance::Retreating:
 						gfxc->outlineColor[0] = 1.0f;
 						gfxc->outlineColor[1] = 0.0f;
 						gfxc->outlineColor[2] = 1.0f;
-						gfxc->outlineColor[3] = 1.0f;
+						gfxc->outlineColor[3] = 2.0f;
 						break;
 					case RioterStance::Civilian:
 						break;
@@ -516,6 +517,7 @@ namespace Core
 		{
 			m_lightBitmask = 0;
 			m_bitmask = 0;
+
 			Core::world.m_contentManager.Load<Core::GnomeLoader>("assets/model/dev/cube.bgnome", [this](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
 			{
 				Core::ModelData data = *static_cast<Core::ModelData*>(handle);
@@ -566,7 +568,7 @@ namespace Core
 				glm::vec3 leaderPosition = Core::WorldPositionComponent::GetVec3(*leader_wpc);
 
 				float rotation = 0.0f;
-				if (sqdc->squadMoveInFormation)
+				if (sqdc->squadMoveInFormation && ALLOW_MOVE_IN_FORMATION )
 				{
 					//TODO: If squad leader is not in combat, set squadForward to his facing
 					//sqdc->squadForward[0] = leaderForward[0];
@@ -596,7 +598,7 @@ namespace Core
 					relPos2D = rotMat * relPos2D;
 
 					glm::vec3 relativePosition = glm::vec3(relPos2D.x, 0.0f, relPos2D.y);
-					if (sqdc->squadMoveInFormation)
+					if (sqdc->squadMoveInFormation && ALLOW_MOVE_IN_FORMATION )
 					{
 						glm::vec3 formationPosition = leaderPosition + relativePosition;
 						int goalNode;
@@ -651,12 +653,7 @@ namespace Core
 					{
 						if (!frmc->isStraggler)
 						{
-							mc->SetDesiredSpeed(0.0f, Core::DesiredSpeedSetPriority::SquadMoveInFormationDesiredSpeedPriority);
-						}
-						else
-						{
-							// PoliceGoalSystem will make sure that they move to the goal and that they stop there as well.
-							//mc->SetDesiredSpeed( Core::GameData::GetMovementDataWithState( mc->state ).speedToDesire, Core::DesiredSpeedSetPriority::SquadMoveInFormationDesiredSpeedPriority );
+							mc->SetMovementState( Core::MovementState::Movement_idle, Core::MovementStatePriority::MovementState_SquadMoveInFormationPriority );
 						}
 					}
 				}

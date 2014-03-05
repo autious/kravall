@@ -2,6 +2,8 @@ local fac_image = require "factories/image"
 local window = require "window"
 local Camera = require "rts_camera"
 local ObjectiveHandler = require "gui/component/ObjectiveHandler"
+local input = require "input"
+local PauseMenuGUI = require "gui/kravall/PauseMenuGUI"
 
 local keyboard = core.input.keyboard
 local mouse = core.input.mouse
@@ -16,6 +18,7 @@ local abilities = core.system.squad.abilities
 local standardPolice = (require "game_constants").standardPolice
 
 local ASM = require "assembly_loader"
+
 
 local T = 
     { 
@@ -64,12 +67,6 @@ function T:new(o)
     o.onStateChangeFunctions = {}
     o.asm = ASM.loadPack({})
 
-	
-	-- set default movementData
-	core.movementData.setMovementMetaData( core.movementData.Walking, 1.5, 17, 17, 0.0 )
-	core.movementData.setMovementMetaData( core.movementData.Jogging, 5.8, 17, 14, 0.0 )
-	core.movementData.setMovementMetaData( core.movementData.Sprinting, 8.8, 17, 14, 0.0 )
-
     return o
 end
 
@@ -96,6 +93,7 @@ function T:setState( state )
                 self:setState( "Main" ) 
             end,
         }
+		self.objectiveHandler:setShow(false)
 
     elseif state == "End" then
         print( "State set to \"End\"" )
@@ -112,11 +110,28 @@ function T:init()
 
     self.activeWeaponList = {}
 
+    self.onKeyCallback = function( key, scancode, action )
+        if key == keyboard.key.Escape and action == core.input.action.Press then
+            self:togglePause()      
+        end
+    end
+
+    input.registerOnKey( self.onKeyCallback )
+
     for i,v in pairs( self.weapons ) do
         self.activeWeaponList[i] = core.weaponData.pushWeapon(unpack(v))
     end 
 
     self:setState( self.initGamestate )
+end
+
+function T:togglePause()
+    if self.pauseGUI then
+        self.pauseGUI:destroy()
+        self.pauseGUI = nil
+    else
+        self.pauseGUI = PauseMenuGUI:new()
+    end  
 end
 
 --This function should not be used once squad creation is moved to inside Kravall game mode
@@ -137,6 +152,13 @@ function T:update( delta )
     self.camera:update( delta )
     self.gamestate:update( delta )
 
+    
+    if core.input.keyboard.isKeyDownOnce(core.input.keyboard.key.G) then
+        local cameraPosition = {self.camera.position:get()}
+        self.camera:addInterpolationPoint(core.glm.vec3.new(cameraPosition[1],250,cameraPosition[3]), core.glm.quat.new(math.sin(math.pi/4), 0, 0, math.cos(math.pi/4) ))
+    end
+
+
     if self.objectiveHandler:isEnd() and self.gamestate.name ~= "End" then
         self:setState( "End" )
     end
@@ -144,12 +166,27 @@ end
 
 function T:destroy()
     
+    input.deregisterOnKey( self.onKeyCallback )
+
+    if self.pauseGUI then
+        self.pauseGUI:destroy()
+        self.pauseGUI = nil
+    end
+
     if type( self.gamestate ) == "table" then
         self.gamestate:destroy()
     end
 
-    self.objectiveHandler:destroy()
-    self.asm:destroy()
+    if self.objectiveHandler then
+        self.objectiveHandler:destroy()
+        self.objectiveHandler = nil
+    end
+
+    if self.asm then
+        self.asm:destroy()
+        self.asm = nil
+    end
+
     -- Remove all weapons that was created.
 	core.gameMetaData.clearGameData()
     

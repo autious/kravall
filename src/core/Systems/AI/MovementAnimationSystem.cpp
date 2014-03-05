@@ -6,17 +6,20 @@
 #include <Animation/AnimationManager.hpp>
 #include <GameUtility/GameData.hpp>
 
+// this value needs to be mirrored in the panicAnimationSystem, otherwise full recompile will be needed at change.
 #define GRACE_THRESHOLD 0.3f
+#define STILL_THRESHOLD 0.35f 
+
+#define IDLE_MINIMUM_TIME 0.25f
+#define MINIMUM_MOVEMENT_ANIMATION_TIME 0.9f
 
 namespace Core
 {
     MovementAnimationSystem::MovementAnimationSystem() : BaseSystem(EntityHandler::GenerateAspect<
-		TargetingComponent, Core::GraphicsComponent, Core::AnimationComponent, 
+		TargetingComponent, Core::GraphicsComponent, Core::AnimationComponent, Core::MovementComponent,
 		Core::AttributeComponent, Core::MovementDataComponent, Core::WorldPositionComponent, GraphicsComponent>(), 0ULL)
     {
     }
-
-
 
 	void MovementAnimationSystem::Update(float delta)
 	{
@@ -29,6 +32,9 @@ namespace Core
 			Core::TargetingComponent* tc		= WGETC<Core::TargetingComponent>(*it);
 			Core::GraphicsComponent* grc		= WGETC<Core::GraphicsComponent>(*it);
 			Core::MovementDataComponent *mdc	= WGETC<Core::MovementDataComponent>( *it );
+			Core::MovementComponent *mvmc		= WGETC<Core::MovementComponent>( *it );
+
+			ac->playTime += delta;
 
 			// if prevPos has yet to be calculated, copy from wpc...
 			if( mdc->prevPos[0] == std::numeric_limits<float>::max() )
@@ -43,23 +49,22 @@ namespace Core
 				mdc->prevPos[i] = wpc->position[i];
 			mdc->prevDt = delta;
 
-
-			const Core::MovementData& walkingData = Core::GameData::GetMovementDataWithState( Core::MovementState::Movement_Walking );
+			float walkingSpeed = mvmc->desiredSpeed[ Core::MovementState::Movement_Walking ];
+			float joggingSpeed = mvmc->desiredSpeed[ Core::MovementState::Movement_Jogging ];
 			
 			mdc->movedThisFrame = false;
 			if( frameSpeed > MOVEDTHISFRAME_THRESHOLD )
 				mdc->movedThisFrame = true;
-
+			mdc->frameSpeed = frameSpeed;
 
 			bool hasAlteredAnimation = false;
 			bool hasChangedAnimation = false;
 			ac->loop = false;
 			if ( !tc->isAttacking )
 			{
-
-				// if moving faster than walking but not already playing running animation or if not playing any animation...
-				if( frameSpeed > walkingData.speedToDesire + GRACE_THRESHOLD &&
-						( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle" ) == ac->animationID
+				// if moving faster than jogging but not already playing running animation or if not playing any animation...
+				if( frameSpeed > joggingSpeed + GRACE_THRESHOLD &&
+						(( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle" ) == ac->animationID && ac->playTime > IDLE_MINIMUM_TIME )
 						|| !ac->playing ))
 				{
 					if( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "agitated-run" ) != ac->animationID )
@@ -69,10 +74,23 @@ namespace Core
 					hasAlteredAnimation = true;
 					Core::AnimationManager::PlayAnimation( *it, "agitated-run" ); // running
 				}
+				
+				// if moving faster than walking but not already playing joggin animation or if not playing any animation...
+				else if( frameSpeed > walkingSpeed + GRACE_THRESHOLD &&
+						(( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle" ) == ac->animationID && ac->playTime > IDLE_MINIMUM_TIME )
+						|| !ac->playing ))
+				{
+					if( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "jogging" ) != ac->animationID )
+						hasChangedAnimation = true;
+
+					ac->speed = 1.2f;
+					hasAlteredAnimation = true;
+					Core::AnimationManager::PlayAnimation( *it, "jogging" ); // running
+				}
 
 				// if moving but not running and not already playing walk-animation or if not playing any animation
-				else if( frameSpeed > 0.05f &&  
-						( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle" ) == ac->animationID 
+				else if( frameSpeed > STILL_THRESHOLD &&  
+						(( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle" ) == ac->animationID && ac->playTime > IDLE_MINIMUM_TIME )
 						|| !ac->playing ))
 				{
 					if( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "walk-straight" ) != ac->animationID )
@@ -84,9 +102,9 @@ namespace Core
 				}
 
 				// if not moving and not already playing idle-animation or if not playing any animation
-				else if( (Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle" ) != ac->animationID 
+				else if( ((Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle" ) != ac->animationID && ac->playTime > MINIMUM_MOVEMENT_ANIMATION_TIME )
 						|| !ac->playing) && 
-						frameSpeed < 0.05f )
+						frameSpeed < STILL_THRESHOLD )
 				{
 					if( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle" ) != ac->animationID )
 						hasChangedAnimation = true;
@@ -107,8 +125,6 @@ namespace Core
 					ac->currentTime = ((std::rand() % 1000) / 1000.0f) * 1.0f;
 				}
 			}
-
-
 
 		}
 	}

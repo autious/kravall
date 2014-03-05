@@ -13,7 +13,7 @@ function SetupMenu:new(o,menuState)
 
     o.gui = GUI:new()
 
-    local scenarioNameLabel = TextLabel:new({ xoffset=0, yoffset=0, anchor="Center", label="Undefined scenario"})
+    local scenarioNameLabel = TextLabel:new({ xoffset=0, yoffset=50, anchor="Center", label="Undefined scenario"})
 
     if menuState.selectedScenario ~= nil then
         scenarioNameLabel:setLabel( menuState.selectedScenario.name )    
@@ -35,7 +35,7 @@ Hint: Different points of interest are marked either on the ground or with a col
 
 Hint: The more police, the quicker rioters get
 angry and agitated.]]
-    ,width=700, height=600, yoffset=50, anchor="Center"}))
+    ,width=700, height=600, yoffset=-250, anchor="Center"}))
     o.gui:addComponent(Button:new({
 
                                     matReleased = "assets/texture/ui/go-button-release.material",

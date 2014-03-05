@@ -56,6 +56,29 @@ extern "C"
         } 
     }
 
+    static int LuaGetTextboxDimensions( lua_State * L )
+    {
+        LuaHoverText * lht = luau_checkhovertext( L, 1 );
+		LuaEntity * ent = luau_checkentity(L, 2);
+		float width = luaL_checknumber(L, 3);
+
+        Core::HoverTextSystem *hts = Core::world.m_systemHandler.GetSystem<Core::HoverTextSystem>();
+        if( lht->hoverTextId != -1 )
+        {
+			Core::HoverTextComponent * htc = WGETC<Core::HoverTextComponent>(ent->entity);
+			glm::vec2 dim = hts->GetTextboxDimensions(htc->font, width, htc->size, lht->hoverTextId);			
+
+            lua_pushinteger( L, dim[0] );
+            lua_pushinteger( L, dim[1] );
+
+            return 2;
+        }
+        else
+        {
+            return luaL_error( L, "Attempting to fetch dimensions of invalid text object" );
+        } 
+    }
+
     static int LuaFreeString( lua_State * L )
     {
         LuaHoverText * lht = luau_checkhovertext( L, 1 );
@@ -63,8 +86,15 @@ extern "C"
 
         if( lht->hoverTextId != -1 )
         {
-            hts->FreeString( lht->hoverTextId );
-            lht->hoverTextId = -1;
+            if( lht->light )
+            {
+                LOG_DEBUG << "Ignoring free of light hover text id." << std::endl;
+            }
+            else
+            {
+                hts->FreeString( lht->hoverTextId );
+                lht->hoverTextId = -1;
+            }
         }
         else
         {
@@ -96,6 +126,7 @@ namespace Core
                         luau_setfunction( L, "reallocate", LuaReallocateString );
                         luau_setfunction( L, "free", LuaFreeString );
                         luau_setfunction( L, "getDimensions", LuaGetStringDimensions );
+                        luau_setfunction( L, "getTextboxDimensions", LuaGetTextboxDimensions );
                     lua_setfield( L, -2, "string" );
                 lua_setfield( L, -2, "hoverText" );
         lua_pop( L, 2 );

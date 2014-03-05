@@ -26,7 +26,23 @@ function Text:getPosition( x,y )
 end 
 
 function Text:getDim( )
-    return self.textId:getDimensions()
+
+	local data = self.ent:get( core.componentType.HoverTextComponent )
+	if data.box then	
+		return self.textId:getTextboxDimensions(self.ent, data.dim[1])
+	else
+		return self.textId:getTextboxDimensions(self.ent, 2147483648)
+	end
+    --return self.textId:getDimensions()
+	--data = self.ent:get( core.componentType.HoverTextComponent )
+	--print( "Old value: " .. self.textId:getDimensions() )
+	--
+	--if data.box then	
+	--	return self.textId:getTextboxDimensions(self.ent, data.dim[1])
+	--else
+	--	print ( "New value: " .. self.textId:getTextboxDimensions(self.ent, 5000) )
+	--	return self.textId:getTextboxDimensions(self.ent, 5000)
+	--end
 end
 
 function Text:setColor( r,g,b,a )
@@ -43,13 +59,13 @@ end
 
 Text.__index = Text
 
-return function( x,y, string, color, box, boxdim )
+return function( x,y, string, color, fontPath, box, boxdim )
     local self = {}
 
+    color = color or {1,1,1,1}
+	fontPath = fontPath or "assets/font/ingame-hud.font"
     box = box or false
     boxdim = boxdim or {0,0}
-
-    color = color or {1,1,1,1}
     
     setmetatable( self, Text )
     
@@ -61,7 +77,7 @@ return function( x,y, string, color, box, boxdim )
 
     self.font = core.contentmanager.load( 
         core.loaders.TTFLoader, 
-        "assets/font/ingame-hud.font",
+        fontPath,
         function( fontUD )
             if self.ent and self.ent:isValid() then
                 self.ent:set( core.componentType.HoverTextComponent, {font = fontUD, hoverTextId = self.textId, color = color, render = true, box = box, dim = boxdim} )

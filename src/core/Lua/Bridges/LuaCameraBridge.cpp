@@ -25,6 +25,16 @@ extern "C"
         (*cam)->SetViewMatrix( *mat4 ); 
         return 0;
     }
+
+    static int LuaLookAt( lua_State* L )
+    {
+        Core::Camera ** cam = luau_checkcamera( L, 1 );
+        glm::vec3* position = luau_checkglmvec3(L, 2);
+        glm::vec3* target = luau_checkglmvec3(L, 3);
+        (*cam)->LookAt(*position, *target);
+        return 0;
+    }
+
     static int LuaGetProjection( lua_State *L )
     {
         Core::Camera ** cam = luau_checkcamera( L, 1 );
@@ -72,6 +82,20 @@ extern "C"
         *vec3 = (*cam)->GetPosition();
         return 1;
     }
+
+    static int LuaGetYaw( lua_State* L)
+    {
+        Core::Camera ** cam = luau_checkcamera( L, 1 );
+        lua_pushnumber(L, (*cam)->GetYaw());
+        return 1;
+    }
+
+    static int LuaGetPitch( lua_State* L)
+    {
+        Core::Camera ** cam = luau_checkcamera( L, 1 );
+        lua_pushnumber(L, (*cam)->GetPitch());
+        return 1;
+    }
 }
 
 namespace Core
@@ -89,6 +113,9 @@ namespace Core
                 luau_setfunction( L, "getUp", LuaGetUp);
                 luau_setfunction( L, "getRight", LuaGetRight );
                 luau_setfunction( L, "getPosition", LuaGetPosition );
+                luau_setfunction( L, "getYaw", LuaGetYaw );
+                luau_setfunction( L, "getPitch", LuaGetPitch );
+                luau_setfunction( L, "lookAt", LuaLookAt );
 
                 luaL_newmetatable( L, CAMERA_META_TYPE );
                     lua_pushvalue( L, camera_table );

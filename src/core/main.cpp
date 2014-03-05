@@ -62,7 +62,9 @@ GLFWwindow* init( int argc, char** argv )
 
     Core::world.m_luaState.OpenLibs();
     bool worked = Core::world.m_luaState.Execute( "scripts/config.lua" ) && Core::world.m_luaState.Execute( "scripts/main.lua" );
+
     assert( worked );
+    Core::world.m_luaState.LoadHomeConfiguration();
 
     for( int i = 0; i < argc-1; i++ )
     {

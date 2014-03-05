@@ -35,7 +35,8 @@ function TextSelectList:new(o)
                                             onPress = function(x,y)  o:onPress(x,y) end,
                                             onRelease = function() o:onRelease() end,
                                             onEnter = function() o:onEnter() end,
-                                            onExit = function() o:onExit() end
+                                            onExit = function() o:onExit() end,
+											toolTip = o.toolTip
                                         }
 
     o:setShow( o.show )

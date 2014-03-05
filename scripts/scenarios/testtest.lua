@@ -57,26 +57,63 @@ return function( scen )
 	
 	--====================== MAIN FUNCTIONS ======================--
 	
+	function Killzone()
+		local rGroup2 = core.system.groups.createGroup( 2 );
+		local centerPoint2 = { 50, 0, 0 }
+		local side = math.sqrt( 300 )
+		for i = -side/2, side/2 do
+			for p = -side/2, side/2 do
+				rioter( scen, p * 1.5 + centerPoint2[1], 0  + centerPoint2[2], i * 1.5  + centerPoint2[3], 
+				rGroup2, nil, nil, fists, nil, 100, 100, core.RioterAlignment.Anarchist, core.movementData.Jogging )
+			end
+		end
+		core.system.groups.setGroupGoal(rGroup2, -50, 0, 0)		
+		
+		local rGroup3 = core.system.groups.createGroup( 1 );
+		local centerPoint3 = { -50, 0, 0 }
+		local side = math.sqrt( 300 )
+		for i = -side/2, side/2 do
+			for p = -side/2, side/2 do
+				rioter( scen, p * 1.5 + centerPoint3[1], 0  + centerPoint3[2], i * 1.5  + centerPoint3[3], 
+				rGroup3, nil, nil, fists, nil, 100, 100, core.RioterAlignment.Anarchist, core.movementData.Jogging )
+			end
+		end
+		core.system.groups.setGroupGoal(rGroup3, 50, 0, 0)		
+	end
+	
+	
+	
+	
+	
 	function T.makeASquadYo()
 		local fists = core.weaponData.pushWeapon( 1.0, 0.75, 20, 0.2, 0.05, 3.2, 2.9, 0.05, 0.5, "punch" )
 		core.gameMetaData.registerEscapePoint( 50, 0, 0 )
 
 		local rGroup = core.system.groups.createGroup( 1 );
-		local centerPoint = { -50, 0, 0 }
-		local side = math.sqrt( 32 )
+		local centerPoint = { -90, 0, 0 }
+		local side = math.sqrt( 30 )
 		for i = -side/2, side/2 do
 			for p = -side/2, side/2 do
-				rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], rGroup, nil, nil, fists, nil, 100, 100)
+				rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], 
+				rGroup, nil, nil, fists, nil, 0, 0, core.RioterAlignment.Anarchist, core.movementData.Jogging )
 			end
 		end
-		core.system.groups.setGroupGoal(rGroup, 0, 0, -300)
-
+		core.system.groups.setGroupGoal(rGroup, 200, 0, 0)			
+		
+		
+		
 		local sqads = {}	
-		for i = 0, 30 do
-			--sqads[#sqads + 1] = squad(scen, 20, 0, 0, math.pi/2, fists);
-			scen.gamemode:addSquad( policeSquad( scen, 20, 0, 0, 0, fists))
+		for i = 0, 3 do
+			scen.gamemode:addSquad( policeSquad( scen, -45, 0, 0, 0, fists ))
 		end
+		
+		
 	end
+	
+	
+	
+	
+	
 		
 	---- Returns amount of rioters in an area
 	function T.checkObjCount( ent )
