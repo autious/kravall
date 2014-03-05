@@ -13,7 +13,7 @@
 #include <functional>
 
 #define POLICE_GOAL_ARRIVAL_THRESHOLD 0.2f
-
+#define POLICE_CLOSE_GOAL_WALK_DISTANCE 1.8f
 
 Core::PoliceGoalSystem::PoliceGoalSystem()
 	: BaseSystem( EntityHandler::GenerateAspect< WorldPositionComponent, MovementComponent, 
@@ -21,8 +21,12 @@ Core::PoliceGoalSystem::PoliceGoalSystem()
 {
 }
 
-
-
+//#define DRAW_GOAL_LINES
+#ifdef DRAW_GOAL_LINES
+#define DEBUG_DRAW( x ) x
+#else
+#define DEBUG_DRAW( x ) ;
+#endif
 
 
 void Core::PoliceGoalSystem::Update( float delta )
@@ -88,12 +92,17 @@ void Core::PoliceGoalSystem::Update( float delta )
 
 				bool move = true;
 
+				DEBUG_DRAW( GFX::Debug::DrawLine( position, target, GFXColor( 1, 1, 0, 1 ), false ) );
+
 				if( !PathFinder::CheckLineVsNavMesh( position, target, 3.0f, ffc->node ) ) 
 				{
 					glm::vec2 deltaVector = glm::vec2(target.x, target.z ) - glm::vec2( wpc->position[0], wpc->position[2] );
 					float dot = glm::dot( deltaVector, deltaVector );
 					if( dot > POLICE_GOAL_ARRIVAL_THRESHOLD )
 					{
+						if( dot < POLICE_CLOSE_GOAL_WALK_DISTANCE )
+							mvmc->SetMovementState( Core::MovementState::Movement_Walking, Core::MovementStatePriority::MovementState_PoliceGoalSytemPriority );	
+						
 						glm::vec3 direction = glm::normalize( target - position );
 						MovementComponent::SetDirection( mvmc, direction.x, 0.0f, direction.z );
 					}
@@ -133,21 +142,13 @@ void Core::PoliceGoalSystem::Update( float delta )
 						targetPosition = path.point;
 					}
 
-					//GFX::Debug::DrawLine( position, targetPosition, GFXColor( 1, 1, 0, 1 ), false );
-
 					glm::vec3 flowfieldDirection = glm::normalize( targetPosition - position );
 					MovementComponent::SetDirection( mvmc, flowfieldDirection.x, 0, flowfieldDirection.z );
 				}
 
-				if( move )
-				{
-					// set speed according to state...
-					mvmc->SetDesiredSpeed( Core::GameData::GetMovementDataWithState( mvmc->state ).speedToDesire, Core::DesiredSpeedSetPriority::PoliceGoalSytemDesiredSpeedPriority ); 
-				}
-				else
-				{
-					mvmc->SetDesiredSpeed( 0.0f, Core::DesiredSpeedSetPriority::PoliceGoalSytemDesiredSpeedPriority ); 
-				}
+				if( !move )
+					mvmc->SetMovementState( Core::MovementState::Movement_idle, Core::MovementStatePriority::MovementState_PoliceGoalSytemPriority );
+
 			}
 		});
 	}

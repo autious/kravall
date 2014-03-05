@@ -99,4 +99,53 @@ namespace GFX
 			m_text.push_back(t);
 		}
 	}
+	void TextManager::GetTextboxSize(GFX::FontData* fontData, float width, float size, const char* text, float& out_actualWidth, float& out_actualHeight)
+	{
+		
+		std::string trim = " \n\r\t";
+		std::string str = text;
+		float l_off = 0.0f;		
+		float l_width = 0.0f;
+
+		std::string::iterator start = str.begin();
+		std::string::iterator it = str.begin();
+		for (int i = 0; it < str.end(); it++, i++)
+		{
+			l_width += fontData->characters[static_cast<unsigned char>(*it)].advanceX * size;
+			std::string line = std::string(start, it);
+			if (width + 5.0f * size >= width || line.find_last_of("\n") != line.npos)
+			{
+				unsigned int lineLength = line.length();
+				std::size_t lastWS = line.find_last_of(trim);
+				if (lastWS == line.npos) // Word is too long for textbox, wrap it!
+				{
+					str.insert(it, '\n');
+					i++;
+					it = str.begin() + i;
+					start = it;
+				}
+				else // Last word doesnt fit, but all the others do!
+				{
+					*(start + lastWS) = '\n';
+					i = i - (lineLength - lastWS) + 1;
+					it = str.begin() + i;
+					start = it;
+				}
+				out_actualWidth = std::max(out_actualWidth, l_width);
+				l_width = 0.0f;
+			}
+		}
+
+		start = str.begin();
+		for (auto it = str.begin(); it < str.end(); it++)
+		{
+			if (*it == '\n')
+			{
+				l_off += 20.0f * size;
+				start = it + 1;
+			}
+		}
+		l_off += 20.0f * size;
+		out_actualHeight = l_off;
+	}
 }

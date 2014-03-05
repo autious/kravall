@@ -18,7 +18,7 @@ void Core::PriorityResetSystem::Update(float delta)
 	{
 		Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>(*it);
 		mvmc->currentGoalPriority = Core::MovementGoalPriority::NoGoalPriority;
-		mvmc->currentDesiredSpeedPriority = Core::DesiredSpeedSetPriority::NoDesiredSpeedPriority;
+		mvmc->currentMovementStatePriority = Core::MovementStatePriority::MovementState_NoPriority;
 	}
 
 }

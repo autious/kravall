@@ -156,6 +156,10 @@ namespace GFX
 	{
 		GetTextManager().AddTextbox(fontData, rectangle, offset, size, color, text);
 	}
+	void GetActualTextboxSize(GFX::FontData* fontData, float width, float size, const char* text, float& out_actualWidth, float& out_actualHeight)
+	{
+		GetTextManager().GetTextboxSize(fontData, width, size, text, out_actualWidth, out_actualHeight);
+	}
 	void ShowConsole()
 	{
 		Renderer().SetConsoleVisible(true);

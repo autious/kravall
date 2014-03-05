@@ -27,6 +27,15 @@ end
 
 function Text:getDim( )
     return self.textId:getDimensions()
+	--data = self.ent:get( core.componentType.HoverTextComponent )
+	--print( "Old value: " .. self.textId:getDimensions() )
+	--
+	--if data.box then	
+	--	return self.textId:getTextboxDimensions(self.ent, data.dim[1])
+	--else
+	--	print ( "New value: " .. self.textId:getTextboxDimensions(self.ent, 5000) )
+	--	return self.textId:getTextboxDimensions(self.ent, 5000)
+	--end
 end
 
 function Text:setColor( r,g,b,a )

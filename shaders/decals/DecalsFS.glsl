@@ -14,6 +14,7 @@ layout (shared) uniform PerFrameBlock
 
 uniform sampler2D gNormalDepth;
 uniform sampler2D gDiffuse;
+uniform sampler2D gSpecular;
 uniform sampler2D gGlow;
 
 uniform float gGamma;
@@ -59,12 +60,17 @@ void main()
 		vec4 glowColor = texture2D(gGlow, uv);
 		glowColor.xyz = pow(glowColor.xyz, vec3(gGamma));
 
+		vec4 specColor = texture2D(gSpecular, uv);
+		specColor.xyz = pow(specColor.xyz, vec3(gGamma));
+
 		diffuseRT = diffuseColor;
 		glowMatIDRT = glowColor;
+		specularRT = specColor;
 	}
 	else
 	{
 		diffuseRT = vec4(0.0f);
 		glowMatIDRT = vec4(0.0f);
+		specularRT = vec4(0.0f);
 	}
 }

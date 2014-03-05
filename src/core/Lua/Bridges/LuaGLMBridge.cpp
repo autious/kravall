@@ -314,6 +314,19 @@ extern "C"
         return 1;
     }
 
+    static int LuaVec3ToString( lua_State *L )
+    {
+        glm::vec3 * vec3_first = luau_checkglmvec3( L, 1 );
+        
+        std::stringstream ss;
+        
+        ss << "glm::vec3( " << vec3_first->x << ", " << vec3_first->y << ", " << vec3_first->z << ")";
+
+        lua_pushstring( L, ss.str().c_str() );
+
+        return 1;
+    }
+
     static int LuaVec4Newindex( lua_State * L )
     {
         return luaL_error( L, "Read only" );
@@ -958,6 +971,7 @@ namespace Core
                         luau_setfunction( L, "__sub", LuaVec3Subtract );
                         luau_setfunction( L, "__eq", LuaVec3Eq );
                         luau_setfunction( L, "__mul", LuaVec3Multiply );
+                        luau_setfunction( L, "__tostring", LuaVec3ToString );
                     lua_pop( L, 1 );
                 lua_setfield( L, -2, "vec3" );
 

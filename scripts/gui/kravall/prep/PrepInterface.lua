@@ -49,16 +49,50 @@ function PrepInterface:new(o)
 	o.cashSubGUI:addPlacementHandler( AnchorPlacer )
 	o.gui:addComponent( o.cashSubGUI )
 	
-	o.shieldThumb = Image:new( { mat="assets/texture/ui/aa-temp_prep_shieldPolice.material", ignoreConstrict=true, yoffset=250, xoffset=leftXOffset } )
-	o.gasThumb = Image:new( { mat="assets/texture/ui/aa-temp_prep_tearGasPolice.material", ignoreConstrict=true, yoffset=250, xoffset=leftXOffset } )
-	o.gui:addComponent( o.shieldThumb )
-	o.gui:addComponent( o.gasThumb )
-	--o.shieldThumb:setShow( false )
-	o.gasThumb:setShow( false )
+	--Shield Unit Stats Sub-GUI
+	o.shieldStatsSubGUI = GUI:new{ width=210, height=118, xoffset=leftXOffset, yoffset=188 }
 	
+	o.shieldStatsSubGUI:addComponent( Image:new( { mat="assets/texture/ui/aa-temp_prep_shieldPolice.material" } ) )
+	o.shieldStatsSubGUI:addComponent( TextLabel:new( { label="Cost: $" .. standardPolice.cost, font="assets/font/toolTip.font", 
+														xoffset=110 } ) )
+	o.shieldStatsSubGUI:addComponent( TextLabel:new( { label="Health: " .. standardPolice.maxHealth, font="assets/font/toolTip.font", 
+														xoffset=110, yoffset=18} ) )
+	o.shieldStatsSubGUI:addComponent( TextLabel:new( { label="Stamina: " .. standardPolice.maxStamina, font="assets/font/toolTip.font", 
+														xoffset=110, yoffset=36  } ) )
+	o.shieldStatsSubGUI:addComponent( TextLabel:new( { label="Morale: " .. standardPolice.maxMorale, font="assets/font/toolTip.font", 
+														xoffset=110, yoffset=54 } ) )
+	o.shieldStatsSubGUI:addComponent( TextLabel:new( { label="Abilities: ", font="assets/font/toolTip.font", 
+														xoffset=110, yoffset=72 } ) )
+	o.shieldStatsSubGUI:addComponent( TextLabel:new( { label="None", font="assets/font/toolTip.font", 
+														xoffset=110+leftXOffset, yoffset=90 } ) )
+	
+	o.shieldStatsSubGUI:addPlacementHandler( SimplePlacer )
+	
+	--Teargas Unit Stats Sub-GUI
+	o.tgStatsSubGUI = GUI:new{ width=210, height=118, xoffset=leftXOffset, yoffset=188 }
+	
+	o.tgStatsSubGUI:addComponent( Image:new( { mat="assets/texture/ui/aa-temp_prep_tearGasPolice.material" } ) )
+	o.tgStatsSubGUI:addComponent( TextLabel:new( { label="Cost: $" .. tearGasPolice.cost, font="assets/font/toolTip.font", 
+														xoffset=110 } ) )
+	o.tgStatsSubGUI:addComponent( TextLabel:new( { label="Health: " .. tearGasPolice.maxHealth, font="assets/font/toolTip.font", 
+														xoffset=110, yoffset=18 } ) )
+	o.tgStatsSubGUI:addComponent( TextLabel:new( { label="Stamina: " .. tearGasPolice.maxStamina, font="assets/font/toolTip.font", 
+														xoffset=110, yoffset=36  } ) )
+	o.tgStatsSubGUI:addComponent( TextLabel:new( { label="Morale: " .. tearGasPolice.maxMorale, font="assets/font/toolTip.font", 
+														xoffset=110, yoffset=54 } ) )
+	o.tgStatsSubGUI:addComponent( TextLabel:new( { label="Abilities: ", font="assets/font/toolTip.font", 
+														xoffset=110, yoffset=72 } ) )
+	o.tgStatsSubGUI:addComponent( TextLabel:new( { label="TearGas", font="assets/font/toolTip.font", 
+														xoffset=110+leftXOffset, yoffset=90 } ) )
+	
+	o.tgStatsSubGUI:addPlacementHandler( SimplePlacer )
+
 	-- Units Sub-GUI
 	o.unitsSubGUI = GUI:new{ width=240, height=330, anchor="SouthWest" }
-
+	
+	o.unitsSubGUI:addComponent( o.shieldStatsSubGUI )
+	o.unitsSubGUI:addComponent( o.tgStatsSubGUI )
+	
 	o.unitsSubGUI:addComponent( Image:new( { mat="assets/texture/ui/aa-temp_prep_leftPanel.material" } ) )
 	o.unitsSubGUI:addComponent( TextLabel:new( { label="Available units", xoffset=leftXOffset, yoffset=12 } ) )
 	o.unitSelection = TextSelectList:new(
@@ -69,18 +103,14 @@ function PrepInterface:new(o)
 											onSelect = function( squadDef )
 												if squadDef then
 													if squadDef.name == "Common Shield Squad" then
-														o.shieldThumb:setShow( true )
 														o.shieldStatsSubGUI:setShow( true )
 													else
-														o.shieldThumb:setShow( false )
 														o.shieldStatsSubGUI:setShow( false )
 													end
 													
 													if squadDef.name == "Teargas Squad" then
-														o.gasThumb:setShow( true )
 														o.tgStatsSubGUI:setShow( true )
 													else
-														o.gasThumb:setShow( false )
 														o.tgStatsSubGUI:setShow( false )
 													end
 												end
@@ -92,32 +122,6 @@ function PrepInterface:new(o)
 	
 	o.unitsSubGUI:addPlacementHandler( SimplePlacer )
 	o.gui:addComponent( o.unitsSubGUI )
-	
-	--Shield Unit Stats Sub-GUI
-	o.shieldStatsSubGUI = GUI:new{ width=97, height=118, xoffset=120, yoffset=188 }
-	o.shieldStatsSubGUI:addComponent( TextLabel:new( { label="Cost: $" .. standardPolice.cost, font="assets/font/toolTip.font" } ) )
-	o.shieldStatsSubGUI:addComponent( TextLabel:new( { label="Health: " .. standardPolice.maxHealth, font="assets/font/toolTip.font", yoffset=18} ) )
-	o.shieldStatsSubGUI:addComponent( TextLabel:new( { label="Stamina: " .. standardPolice.maxStamina, font="assets/font/toolTip.font", yoffset=36  } ) )
-	o.shieldStatsSubGUI:addComponent( TextLabel:new( { label="Morale: " .. standardPolice.maxMorale, font="assets/font/toolTip.font", yoffset=54 } ) )
-	o.shieldStatsSubGUI:addComponent( TextLabel:new( { label="Abilities: ", font="assets/font/toolTip.font", yoffset=72 } ) )
-	o.shieldStatsSubGUI:addComponent( TextLabel:new( { label="None", font="assets/font/toolTip.font", xoffset=leftXOffset, yoffset=90 } ) )
-	
-	o.shieldStatsSubGUI:addPlacementHandler( SimplePlacer )
-	o.unitsSubGUI:addComponent( o.shieldStatsSubGUI )
-	o.shieldStatsSubGUI:setShow( false )
-	
-	--Teargas Unit Stats Sub-GUI
-	o.tgStatsSubGUI = GUI:new{ width=97, height=118, anchor="East", xoffset=120, yoffset=188 }
-	o.tgStatsSubGUI:addComponent( TextLabel:new( { label="Cost: $" .. tearGasPolice.cost, font="assets/font/toolTip.font" } ) )
-	o.tgStatsSubGUI:addComponent( TextLabel:new( { label="Health: " .. tearGasPolice.maxHealth, font="assets/font/toolTip.font", yoffset=18 } ) )
-	o.tgStatsSubGUI:addComponent( TextLabel:new( { label="Stamina: " .. tearGasPolice.maxStamina, font="assets/font/toolTip.font", yoffset=36  } ) )
-	o.tgStatsSubGUI:addComponent( TextLabel:new( { label="Morale: " .. tearGasPolice.maxMorale, font="assets/font/toolTip.font", yoffset=54 } ) )
-	o.tgStatsSubGUI:addComponent( TextLabel:new( { label="Abilities: ", font="assets/font/toolTip.font", yoffset=72 } ) )
-	o.tgStatsSubGUI:addComponent( TextLabel:new( { label="TearGas", font="assets/font/toolTip.font", xoffset=leftXOffset, yoffset=90 } ) )
-	
-	o.tgStatsSubGUI:addPlacementHandler( SimplePlacer )
-	o.unitsSubGUI:addComponent( o.tgStatsSubGUI )
-	o.tgStatsSubGUI:setShow( false )
 	
 	-- Purchased Units Sub-GUI
 	o.purchaseSubGUI = GUI:new{ width=240, height=322, anchor="SouthWest", yoffset }
@@ -153,6 +157,9 @@ function PrepInterface:new(o)
 											
 	o.gui:addPlacementHandler( AnchorPlacer )
 
+	o.shieldStatsSubGUI:setShow( false )
+	o.tgStatsSubGUI:setShow( false )
+	
     return o
 end
 
