@@ -54,13 +54,15 @@
 #include <Systems/AI/PoliceGoalSystem.hpp>
 #include <Systems/EngineSupport/ParticleSystem.hpp>
 #include <Systems/AIsupport/BloodSystem.hpp>
+#include <Systems/AI/PanicAnimationSystem.hpp>
+
 
 namespace Core
 {
     typedef SystemHandlerTemplate<PriorityResetSystem, LightSystem, FlowfieldPositioningSystem, PoliceGoalSystem, NavMeshCollisionSystem, 
-	CollisionSystem2D, PickingSystem, TargetingSystem, MovementAnimationSystem, AttackAnimationSystem, AIDebugSystem, FlowfieldSystem, RioterGoalSystem, RemovalSystem, BloodSystem, GroupDataSystem,
-	GPUPFSystem, ParticleSystem, MovementSystem, NameSystem, AreaSystem, NavMeshBlockingSystem, MoodStateSystem, 
-	AnimationSystem, SquadSystem,  HoverTextSystem, RenderingSystem> SystemHandler;
+	CollisionSystem2D, PickingSystem, TargetingSystem, AttackAnimationSystem, MovementAnimationSystem, AIDebugSystem, FlowfieldSystem, 
+	PanicAnimationSystem, RioterGoalSystem, RemovalSystem, BloodSystem, GroupDataSystem, GPUPFSystem, ParticleSystem, MovementSystem, NameSystem, 
+	AreaSystem, NavMeshBlockingSystem, MoodStateSystem, AnimationSystem, SquadSystem,  HoverTextSystem, RenderingSystem> SystemHandler;
 
     typedef EntityHandlerTemplate<SystemHandler, WorldPositionComponent, RotationComponent, ScaleComponent, 
 		GraphicsComponent, LightComponent, MovementComponent, UnitTypeComponent, AttributeComponent,

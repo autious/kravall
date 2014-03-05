@@ -1,6 +1,6 @@
 local tearGasPolice = (require "game_constants").tearGasPolice
 
-return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, groupID, weaponType)
+return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, groupID, weaponType, mobility)
 
     assert(groupID ~= nil)
 	local meshes = {"assets/model/animated/police/cop/cop-teargas_00.bgnome"}
@@ -46,7 +46,7 @@ return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, group
 			{
 				type = core.componentType.MovementComponent,
 				data = { direction = { 0, 0, 0 }, newDirection = { 0, 0, 0 }, speed = 0, 
-			    desiredSpeed = { 0, 1.6, 4.5, 5.8, 8.8  }, goal = false },
+			    desiredSpeed = { 0, 1.6, 4.5, 5.8, 8.8  }, goal = false, preferredState = mobility },
                 ignoreHard = true 
 			},
 			{

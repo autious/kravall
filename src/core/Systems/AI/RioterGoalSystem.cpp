@@ -29,7 +29,7 @@ void Core::RioterGoalSystem::Update( float delta )
 			continue;
 
 		Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>( *it );
-		mvmc->SetMovementState( Core::MovementState::Movement_Walking, Core::MovementStatePriority::MovementState_RioterGoalSystemPriority );
+		mvmc->SetMovementState( mvmc->preferredState, Core::MovementStatePriority::MovementState_RioterGoalSystemPriority );
 
 		glm::vec3 goal = glm::vec3( mvmc->goal[0], mvmc->goal[1], mvmc->goal[2] );
 

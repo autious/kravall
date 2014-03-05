@@ -1,6 +1,6 @@
 local standardPolice = (require "game_constants").standardPolice
 
-return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, groupID, weaponType)
+return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, groupID, weaponType, mobility)
 
     assert(groupID, "groupID is nil")
 
@@ -50,7 +50,7 @@ return function(asm, posX, posY, posZ, formationOffsetX, formationOffsetZ, group
 			{
 				type = core.componentType.MovementComponent,
 				data = { direction = { 0, 0, 0 }, newDirection = { 0, 0, 0 }, speed = 5.8, 
-			    desiredSpeed = { 0, 1.6, 4.5, 5.8, 8.8  }, goal = false },
+			    desiredSpeed = { 0, 1.6, 4.5, 5.8, 8.8  }, goal = false, preferredState = mobility },
                 ignoreHard = true 
 			},
 			{

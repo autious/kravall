@@ -1,7 +1,9 @@
-return function(asm, posX, posY, posZ, group, gender, material, weaponType, outlineColor, rage, pressure, alignment)
-    rage = rage or 1
+return function(asm, posX, posY, posZ, group, gender, material, weaponType, outlineColor, rage, pressure, alignment, mobility)
+	
+	rage = rage or 1
     pressure = pressure or 1
     alignment = alignment or core.RioterAlignment.Anarchist
+	mobility = mobility or core.movementData.Walking
     
     if alignment == core.RioterAlignment.Anarchist then 
        -- print( "ALIGNMENT: anarchist" )
@@ -35,7 +37,7 @@ return function(asm, posX, posY, posZ, group, gender, material, weaponType, outl
 			{
 				type = core.componentType.MovementComponent,
 				data = { direction = { 0, 0, 0 }, newDirection = { 0, 0, 0 }, speed = 1.5, 
-				desiredSpeed = { 0, 1.6, 4.5, 5.8, 8.8  }, goal = false }
+				desiredSpeed = { 0, 1.6, 4.5, 5.8, 8.8  }, goal = false, preferredState = mobility }
                 ,ignoreHard = true
 			},
 			{
