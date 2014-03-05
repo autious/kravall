@@ -4,6 +4,7 @@
 
 #include <cfgpath.h>
 
+
 #include <logger/Logger.hpp>
 #include <Lua/LuaUtility.hpp>
 #include <cassert>

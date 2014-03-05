@@ -4,6 +4,15 @@
 
 #include <SystemDef.hpp>
 #include <gfx/GFXInterface.hpp>
+#include <GameUtility/GameData.hpp>
+
+//#define DRAW_BLOCKED_LINE_SPHERES
+
+#ifdef DRAW_BLOCKED_LINE_SPHERES
+#define DEBUG_BLOCKED_LINES( x ) x
+#else
+#define DEBUG_BLOCKED_LINES( x ) ;
+#endif
 
 
 Core::NavMeshBlockingSystem::NavMeshBlockingSystem()
@@ -14,8 +23,6 @@ Core::NavMeshBlockingSystem::NavMeshBlockingSystem()
 
 void Core::NavMeshBlockingSystem::CalculateBlockedNodes( int targetRioterGroup )
 {
-	return; // turning this off for the moment / John
-
 	Core::NavigationMesh* instance = Core::GetNavigationMesh();
 	if( instance )
 	{
@@ -37,49 +44,33 @@ void Core::NavMeshBlockingSystem::CalculateBlockedNodes( int targetRioterGroup )
 				int nrCorners = instance->nodes[ ffc->node ].corners[3].length < 0.0f ? 3 : 4;
 				for( int i = 0; i < nrCorners; i++ )
 				{
-					int ii = i * 2;
-					int oo = (ii + 2) % 8;	
+					//int ii = i * 2;
+					//int oo = (ii + 2) % 8;	
+					//
+					//// define lines...
+					//glm::vec3 lineStart = glm::vec3( points[ ii ], 0.0f, points[ ii + 1 ] );
+					//glm::vec3 lineEnd	= glm::vec3( points[ oo ], 0.0f, points[ oo + 1 ] );
+					//glm::vec3 fromStartToObject = position - lineStart;
+					//
+					//glm::vec3 cross = glm::normalize( glm::cross( (lineEnd - lineStart), glm::vec3( 0.0f, 1.0f, 0.0f ) ) );
+					//float distanceToLine = glm::dot( cross, fromStartToObject );
+					//
+					//instance->flowfields[ targetRioterGroup ].blocked[ ffc->node * 4 + i ] += 5.0f / ( distanceToLine * distanceToLine + 1 );
 
-					// define lines...
-					glm::vec3 lineStart = glm::vec3( points[ ii ], 0.0f, points[ ii + 1 ] );
-					glm::vec3 lineEnd	= glm::vec3( points[ oo ], 0.0f, points[ oo + 1 ] );
-					glm::vec3 fromStartToObject = position - lineStart;
-
-					glm::vec3 cross = glm::normalize( glm::cross( (lineEnd - lineStart), glm::vec3( 0.0f, 1.0f, 0.0f ) ) );
-					float distanceToLine = glm::dot( cross, fromStartToObject );
-
-					instance->flowfields[ targetRioterGroup ].blocked[ ffc->node * 4 + i ] += 5.0f / ( distanceToLine * distanceToLine + 1 );
+					instance->flowfields[ targetRioterGroup ].blocked[ ffc->node * 4 + i ] += 10.0f;
+					
+					if( instance->nodes[ ffc->node ].corners[i].linksTo >= 0 )
+						instance->flowfields[ targetRioterGroup ].blocked[ instance->nodes[ ffc->node ].corners[i].linksTo * 4 + instance->nodes[ ffc->node ].corners[i].linksToEdge ] += 1.0f;
 				}
 			}
 		}
 
-		//for( int i = 0; i < instance->nrNodes; i++ )
-		//{
-		//	for( int pp = 0; pp < 4; pp++ )
-		//	{
-		//		if( instance->flowfields[ targetRioterGroup ].blocked[ i * 4 + pp ] > 5.0f )
-		//		{
-		//			int ii = pp * 2;
-		//			int oo = (ii + 2) % 8;	
-		//			float* points = instance->nodes[ i ].points;
-		//			glm::vec3 lineStart = glm::vec3( points[ ii ], 0.0f, points[ ii + 1 ] );
-		//			glm::vec3 lineEnd	= glm::vec3( points[ oo ], 0.0f, points[ oo + 1 ] );
-		//
-		//			GFX::Debug::DrawSphere( lineStart + ( lineEnd - lineStart ) * 0.5f, 
-		//				instance->flowfields[ targetRioterGroup ].blocked[ i * 4 + pp ], GFXColor( 0.5f, 1.0f, 0.2f, 1.0f ), false );
-		//
-		//
-		//			//float* points = instance->nodes[i].points;
-		//			//glm::vec3 temp = glm::vec3(0.0f);
-		//			//for( int g = 0; g < 4; g++ )
-		//			//	temp += glm::vec3( points[ g * 2 ], 0.0f, points[ g * 2 + 1] );
-		//			//temp *= 0.25f;
-		//			//GFX::Debug::DrawSphere( temp, 5, GFXColor( 0.5f, 1.0f, 0.2f, 1.0f ), false );
-		//		}
-		//	}
-		//}
 
+		float a[4];
+		for( int i = 0; i < 4; i++ )
+			a[i] = instance->flowfields[ targetRioterGroup ].blocked[ 4 * 4 + i ];
 
+		int o = 0;
 	}
 }
 
@@ -95,10 +86,13 @@ void Core::NavMeshBlockingSystem::FreeBlockedNodes( int targetRioterGroup )
 
 #define GROUP_CHECK_STUCK_TIMER 5.0f
 #define GROUP_IS_STUCK_DISTANCE 5.0f
-#define GROUP_FIND_NEW_PATH_TIMER 10.0f
+#define GROUP_FIND_NEW_PATH_TIMER 5.0f
+
 
 void Core::NavMeshBlockingSystem::Update( float delta )
 {
+	return;
+
 	Core::NavigationMesh* instance = Core::GetNavigationMesh();
 	if( instance )
 	{
@@ -107,25 +101,22 @@ void Core::NavMeshBlockingSystem::Update( float delta )
 			// currently, police squads will never recieve a ff goal...
 			if( instance->flowfields[i].goal[0] != std::numeric_limits<float>::max() )
 			{
+				if( Core::GameData::CheckIfEscapeSquad( i ) )
+					continue;
+
 				Core::NavigationMesh::Flowfield& meta = instance->flowfields[i];
 
 				glm::vec3 currentPosition = Core::world.m_systemHandler.GetSystem<Core::GroupDataSystem>()->GetMedianPosition(i);
-				//GFX::Debug::DrawSphere( currentPosition, meta.stuckTimer + 2.0f, GFXColor( 0, 0, 1, 1 ), false );
 
 				if( meta.timeSinceLastCheck > GROUP_CHECK_STUCK_TIMER )
 				{
 					meta.timeSinceLastCheck = 0.0f;
-
 					
 					glm::vec3 lastPosition = glm::vec3( meta.recordedPosition[0], 0.0f, meta.recordedPosition[1] );
-
-					
-					//GFX::Debug::DrawLine( currentPosition, lastPosition, GFXColor( 1, 0, 1, 1 ), false );
 
 					if( glm::distance( currentPosition, lastPosition ) < GROUP_IS_STUCK_DISTANCE )
 					{
 						meta.stuckTimer += meta.stuckTimer == 0.0f ? delta : GROUP_CHECK_STUCK_TIMER;
-						//GFX::Debug::DrawSphere( currentPosition, 4.0f, GFXColor( 1, 1, 0, 1 ), false );
 						if( meta.stuckTimer > GROUP_FIND_NEW_PATH_TIMER )
 						{
 							// squad appears to be stuck...
@@ -136,7 +127,6 @@ void Core::NavMeshBlockingSystem::Update( float delta )
 					}
 					else
 					{
-						//GFX::Debug::DrawSphere( currentPosition, 4.0f, GFXColor( 1, 0, 0, 1 ), false );
 						meta.stuckTimer = 0.0f;
 					}
 
@@ -152,6 +142,32 @@ void Core::NavMeshBlockingSystem::Update( float delta )
 				}
 
 				meta.timeSinceLastCheck += delta;
+
+				for( int t = 0; t < instance->nrNodes; t++ )
+				{
+					for( int pp = 0; pp < 4; pp++ )
+					{
+						if( instance->flowfields[ i ].blocked[ t * 4 + pp ] > 5.0f )
+						{
+							int ii = pp * 2;
+							int oo = (ii + 2) % 8;	
+							float* points = instance->nodes[ t ].points;
+							glm::vec3 lineStart = glm::vec3( points[ ii ], 0.0f, points[ ii + 1 ] );
+							glm::vec3 lineEnd	= glm::vec3( points[ oo ], 0.0f, points[ oo + 1 ] );
+		
+							DEBUG_BLOCKED_LINES( GFX::Debug::DrawSphere( lineStart + ( lineEnd - lineStart ) * 0.5f, 
+								instance->flowfields[ i ].blocked[ t * 4 + pp ], GFXColor( 0.5f, 1.0f, 0.2f, 1.0f ), false ); )
+
+
+							//float* points = instance->nodes[i].points;
+							//glm::vec3 temp = glm::vec3(0.0f);
+							//for( int g = 0; g < 4; g++ )
+							//	temp += glm::vec3( points[ g * 2 ], 0.0f, points[ g * 2 + 1] );
+							//temp *= 0.25f;
+							//GFX::Debug::DrawSphere( temp, 5, GFXColor( 0.5f, 1.0f, 0.2f, 1.0f ), false );
+						}
+					}
+				}
 			}
 		}
 	}

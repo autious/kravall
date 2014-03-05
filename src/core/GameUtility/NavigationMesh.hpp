@@ -163,9 +163,14 @@ namespace Core
 			float* distanceToGoal;
 
 			/*!
-				if above zero the respective edge cannot be traversed in the navmesh.
+				If above zero the respective edge cannot be traversed in the navmesh.
 			*/
 			float* blocked;
+
+			/*!
+				Will mark the direction of a node as unvalid for primary path. If no adjacent nodes are alive, follow this node anyways.
+			*/
+			bool* deadNodes;
 
 			/*!
 				The assigned goal positing for the flowfield instance. Same position that was used for calculation.
