@@ -15,6 +15,7 @@ namespace Core
 		bool playing;
 		float speed;
 		unsigned int currentFrame;
+		float playTime;
 
 		AnimationComponent()
 		{
@@ -25,6 +26,7 @@ namespace Core
 			playing = false;
 			speed = 1.0f;
 			currentFrame = 0;
+			playTime = 0.0f;
 		}
 		inline static const char * GetName()
 		{
