@@ -1,6 +1,8 @@
 #include "Camera.hpp"
 #include <algorithm>
 
+#include <glm/gtc/matrix_transform.hpp>
+
 namespace Core
 {
 	Camera gameCamera;
@@ -61,6 +63,51 @@ namespace Core
 		return m_farZ;
 	}
 
+    float Camera::GetYaw() const
+    {
+        glm::vec4 forward_p = m_viewMatrix * glm::vec4(0.0f, 0.0f, -1.0f, 0.0f);
+        forward_p = glm::normalize(glm::vec4(forward_p.x, forward_p.y, 0.0f, 0.0f));
+
+        if(forward_p.x == 0.0f && forward_p.y == 0.0f)
+        {
+           if(forward_p.z > 0.0f)
+           {
+                return 3.14f;
+           }
+           else           
+           {
+                return 0.0f;
+           }
+        }
+        return glm::atan(forward_p.y, forward_p.x);
+    }
+
+    float Camera::GetPitch() const
+    {
+        glm::vec4 forward_p = m_viewMatrix * glm::vec4(0.0f, 0.0f, -1.0f, 0.0f);
+
+        if(forward_p.y == 0.0f && forward_p.z == 0.0f)
+        {
+           if(forward_p.x > 0.0f)
+           {
+                return (3.14f/2.0f);
+           }
+           else           
+           {
+                return -(3.14f/2.0f);
+           }
+        }
+
+        forward_p = glm::normalize(glm::vec4(0.0f, forward_p.y, forward_p.z, 0.0f));
+        return -glm::atan(forward_p.y / forward_p.z);
+    }
+
+	void Camera::LookAt(const glm::vec3& position, const glm::vec3& target)
+	{
+        glm::mat4 viewMatrix = glm::lookAt(position, target, glm::vec3(0.0f, 1.0f, 0.0f));
+        SetViewMatrix(viewMatrix);
+	}
+
     /*
 	Camera::Camera(const float& fov, const float& nearZ, const float& farZ)
 	{
@@ -79,13 +126,6 @@ namespace Core
 	Camera::~Camera()
 	{
 
-	}
-
-	void Camera::LookAt(glm::vec3 lookAtTarget, glm::vec3 up)
-	{
-		m_forward = glm::normalize(m_position + lookAtTarget);
-		m_up = up;
-		CalculateViewMatrix();
 	}
 
     void Camera::SetDirection( glm::vec3 forward, glm::vec3 up )

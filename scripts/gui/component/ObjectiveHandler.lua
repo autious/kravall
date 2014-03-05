@@ -38,7 +38,7 @@ function ObjectiveHandler:new(o)
             else
                 self:setLabel( "(+) Objectives" )
             end
-        end   
+        end
     } )
 
     return o

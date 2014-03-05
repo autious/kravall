@@ -3,6 +3,7 @@ return
 {
     standardPolice = 
     {
+		cost							= 100,
         maxHealth                       = 200,
         maxStamina                      = 100,
         maxMorale                       = 2.0,
@@ -14,6 +15,7 @@ return
     },
     tearGasPolice = 
     {
+		cost							= 100,
         maxHealth                       = 100,
         maxStamina                      = 100,
         maxMorale                       = 2.0,

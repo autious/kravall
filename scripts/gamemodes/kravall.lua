@@ -19,6 +19,7 @@ local standardPolice = (require "game_constants").standardPolice
 
 local ASM = require "assembly_loader"
 
+
 local T = 
     { 
         initGamestate = "Main",
@@ -92,6 +93,7 @@ function T:setState( state )
                 self:setState( "Main" ) 
             end,
         }
+		self.objectiveHandler:setShow(false)
 
     elseif state == "End" then
         print( "State set to \"End\"" )
@@ -149,6 +151,13 @@ end
 function T:update( delta )
     self.camera:update( delta )
     self.gamestate:update( delta )
+
+    
+    if core.input.keyboard.isKeyDownOnce(core.input.keyboard.key.G) then
+        local cameraPosition = {self.camera.position:get()}
+        self.camera:addInterpolationPoint(core.glm.vec3.new(cameraPosition[1],250,cameraPosition[3]), core.glm.quat.new(math.sin(math.pi/4), 0, 0, math.cos(math.pi/4) ))
+    end
+
 
     if self.objectiveHandler:isEnd() and self.gamestate.name ~= "End" then
         self:setState( "End" )
