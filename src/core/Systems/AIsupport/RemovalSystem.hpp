@@ -23,7 +23,7 @@ namespace Core
 		int m_material;
 		GFX::GFXBitmask m_bloodBitmask;
 
-		void CreateBloodDecal(glm::vec3 position, float dirX, float dirY, float dirZ);
+		void CreateBloodDecal(glm::vec3 position);
 
 		inline float rand_FloatRange(float a, float b)
 		{

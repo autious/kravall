@@ -1,9 +1,19 @@
 local input = require"input"
 local image = require"factories/image"
 local AABB = require"collision/aabb"
+local toolTipHandler = require "gui/tooltip/ToolTipHandler"
 
 local mouse = core.input.mouse
-local GUIComponent = { x=0,y=0,width=0,height=0,inside = false, press = false, show = true }
+local GUIComponent = { 
+						x=0,
+						y=0,
+						width=0,
+						height=0,
+						inside = false,
+						press = false,
+						show = true,
+						toolTip = nil
+					 }
 
 function GUIComponent:new(o)
     o = o or {}
@@ -22,7 +32,10 @@ function GUIComponent:new(o)
         curr_mouse_y = y
         if AABB:new({o.x,o.y,o.width,o.height}):collides( x, y ) and o.show then
             if o.inside == false then
-                o.onEnter()  
+                o.onEnter()
+				if o.toolTip ~= nil then
+					toolTipHandler:register(o.toolTip)
+				end
             end
             o.inside = true
 
@@ -32,6 +45,9 @@ function GUIComponent:new(o)
         else
             if o.inside then 
                 o.onExit()
+				if o.toolTip ~= nil then
+					toolTipHandler:deregister()
+				end
             end
             o.inside = false
         end

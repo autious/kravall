@@ -2,7 +2,7 @@
 #define SRC_CORE_SYSTEMS_HOVERTEXTSYSTEM_H
 
 #include <ComponentFramework/BaseSystem.hpp>
-
+#include <gfx/GFXInterface.hpp>
 #include <glm/glm.hpp>
 
 #include <string>

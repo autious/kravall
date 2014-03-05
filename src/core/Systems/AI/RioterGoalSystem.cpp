@@ -45,7 +45,7 @@ void Core::RioterGoalSystem::Update( float delta )
 			{
 				Core::AttributeComponent* owmAttribc = WGETC<Core::AttributeComponent>( *it );
 				if( owmAttribc->stamina > 30.0f )
-					mvmc->SetMovementState( Core::MovementState::Movement_Jogging, Core::MovementStatePriority::MovementState_RioterGoalSystemPriority );
+					mvmc->SetMovementState( Core::MovementState::Movement_Sprinting, Core::MovementStatePriority::MovementState_RioterGoalSystemPriority );
 
 				delta = glm::normalize( delta );
 				MovementComponent::SetDirection( mvmc, delta.x, 0.0f, delta.z );

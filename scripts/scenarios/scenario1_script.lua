@@ -32,7 +32,7 @@ return function( scen )
             {
                 name = "Common Shield Squad",
                 description = "Can beat the fuck out of you",
-                cost = 100,
+                cost = standardPolice.cost,
                 setup = 
                 {
 
@@ -125,7 +125,7 @@ return function( scen )
             {
                 name = "Teargas Squad",
                 description = "Can make people cry ='D",
-                cost = 100,
+                cost = tearGasPolice.cost,
                 setup = 
                 {
                     {
@@ -308,7 +308,7 @@ return function( scen )
                 verts[i] = verts[i] + wpc.position[1]
                 verts[i + 1] = verts[i + 1] + wpc.position[3]
             end
-            group( scen, ac.vertices, grp, {xsize, ysize}, fists, nil, 1, 1, core.RioterAlignment.Anarchist )
+            group( scen, ac.vertices, grp, {xsize, ysize}, fists, nil, 1, 1, core.RioterAlignment.Anarchist, core.movementData.Jogging )
         end
 
         return grp

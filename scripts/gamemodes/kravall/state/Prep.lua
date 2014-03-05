@@ -55,10 +55,11 @@ function Prep:new(o)
                 o.createdVisualRepresentation[o.selectedSquadInstance] = nil
                 for i,v in pairs( o.createdSquads ) do
                     if v == o.selectedSquadInstance then
-                        table.remove( o.createdSquads, i ) 
+                        table.remove( o.createdSquads, i )
                         break
                     end
                 end
+				o.prepInterface:setRemainingMoney( o.cashLimit - o:totalCost() )
                 o.prepInterface:updatePurchasedList()
                 o.selectedSquadInstance = nil
             end 
