@@ -7,6 +7,7 @@
 #include <limits>
 #include <glm/glm.hpp>
 #include <memory>
+#include <cstring>
 
 #define MOVEDTHISFRAME_THRESHOLD 0.1f
 

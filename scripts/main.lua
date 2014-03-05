@@ -127,10 +127,19 @@ function core.saveHomeConfiguration()
 
                 local t = type(core.config[v])
 
-                if t == "number" then
+                if t == "string" then
+                    configFile:write("[[")
+                    configFile:write(core.config[v])
+                    configFile:write("]]")
+                elseif t == "number" then
                     configFile:write(core.config[v])
                 elseif t == "boolean" then
-                    configFile:write( core.config[t] and "true" or "false" )
+                    if core.config[v] then
+                        configFile:write( "true" )
+                    else
+                        configFile:write( "false" )
+                    end
+
                     configFile:write( ",\n" )
                 else
                     core.log.error( "Unable to save parameter: " .. v .. " there is no writer for type")
