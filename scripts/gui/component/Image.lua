@@ -30,7 +30,8 @@ function Image:new(o)
                                             onPress = function()  o:onPress() end,
                                             onRelease = function() o:onRelease() end,
                                             onEnter = function() o:onEnter() end,
-                                            onExit = function() o:onExit() end
+                                            onExit = function() o:onExit() end,
+											toolTip = o.toolTip
                                         }
 
     o.img:show( o.show )

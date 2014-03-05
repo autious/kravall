@@ -32,7 +32,7 @@ return function( scen )
             {
                 name = "Common Shield Squad",
                 description = "Can beat the fuck out of you",
-                cost = 100,
+                cost = standardPolice.cost,
                 setup = 
                 {
 
@@ -125,7 +125,7 @@ return function( scen )
             {
                 name = "Teargas Squad",
                 description = "Can make people cry ='D",
-                cost = 100,
+                cost = tearGasPolice.cost,
                 setup = 
                 {
                     {

@@ -1,6 +1,8 @@
 local GUI = require "gui/GUI"
 local Checkbox = require "gui/component/Checkbox"
 local Image = require "gui/component/Image"
+local toolTipHandler = require "gui/tooltip/ToolTipHandler"
+local createTT = require "gui/tooltip/ToolTip"
 
 local xoffset = -20
 
@@ -28,7 +30,8 @@ function StanceGUI:new(o)
                         matHoverOpen = "assets/texture/ui/aggressive-hover_00.material",
                         matHoverSelected = "assets/texture/ui/aggressive-extra_00.material",
                         onClick = function( self, value ) o.onStanceSelect( s_aggressive ) end,
-                        xoffset = xoffset
+                        xoffset = xoffset,
+						toolTip	= createTT:new( { handler=toolTipHandler, text="Aggressive Stance - I" } )
                       })
 
 
@@ -40,7 +43,8 @@ function StanceGUI:new(o)
                         matHoverOpen = "assets/texture/ui/defensive-hover_00.material",
                         matHoverSelected = "assets/texture/ui/defensive-extra_00.material",
                         onClick = function( self, value ) o.onStanceSelect( s_defensive ) end,
-                        xoffset = xoffset
+                        xoffset = xoffset,
+						toolTip	= createTT:new( { handler=toolTipHandler, text="Defensive Stance - O" } )
                       })
 
     o.stances[s_passive] = Checkbox:new({
@@ -51,7 +55,8 @@ function StanceGUI:new(o)
                         matHoverOpen = "assets/texture/ui/passive-hover_00.material",
                         matHoverSelected = "assets/texture/ui/passive-extra_00.material",
                         onClick = function( self, value ) o.onStanceSelect( s_passive ) end,
-                        xoffset = xoffset
+                        xoffset = xoffset,
+						toolTip	= createTT:new( { handler=toolTipHandler, text="Passive Stance - P" } )
                       })
 
     o.bgImage = Image:new

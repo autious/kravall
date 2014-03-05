@@ -12,7 +12,7 @@ local TextLabel =
                     height=0,
                     padding=4,
                     show = true,
-                    label = "default" 
+                    label = "Default Label" 
                 }
 
 function TextLabel:new(o)
@@ -24,7 +24,7 @@ function TextLabel:new(o)
 
     o.textElements = {}
 
-    o.text = text( o.x, o.y, o.label)
+    o.text = text( o.x, o.y, o.label, o.color, o.font )
     o.width, o.height = o.text:getDim()
 
     o.GUIComponent = GUIComponent:new
@@ -36,7 +36,8 @@ function TextLabel:new(o)
                                             onPress = function()  o:onPress() end,
                                             onRelease = function() o:onRelease() end,
                                             onEnter = function() o:onEnter() end,
-                                            onExit = function() o:onExit() end
+                                            onExit = function() o:onExit() end,
+											toolTip = o.toolTip
                                         }
     o:setPosition( o.x, o.y )
 

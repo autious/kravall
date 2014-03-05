@@ -53,7 +53,8 @@ function Checkbox:new(o)
                                             onPress = function()  o:onPress() end,
                                             onRelease = function() o:onRelease() end,
                                             onEnter = function() o:onEnter() end,
-                                            onExit = function() o:onExtExit() end
+                                            onExit = function() o:onExtExit() end,
+											toolTip = o.toolTip
                                         }
 
     o.openImg.ent:set( core.componentType.GraphicsComponent, { render = true }, true )

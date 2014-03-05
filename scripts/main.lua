@@ -4,12 +4,14 @@ local MainMenu = require "gui/MainMenu"
 local viewport = require "gui/viewport"
 local image = require "factories/image"
 local viewport = require "gui/viewport" 
+local toolTipHandler = require "gui/tooltip/ToolTipHandler"
 require "console"
 
 local current_scenario = nil
 local current_scenario_name = ""
 
 local input = require "input"
+local createTT = require "gui/tooltip/ToolTip"
 
 input.registerOnKey( function( key, scancode, action )
     if key == core.input.keyboard.key.F5 
@@ -30,16 +32,25 @@ function core.update( delta )
     camera = nil
     if current_scenario ~= nil then
         current_scenario:update( delta )
-    end 
+    end
+	
+	if core.input.keyboard.isKeyDown( core.input.keyboard.key.K ) then
+		toolTipHandler:register( createTT:new({
+										handler=toolTipHandler
+								   })
+					 )
+	end
+	
+	toolTipHandler:update()
 end
 
-logo = nil
+--logo = nil
 current_scenario = nil
 current_scenario_name = nil
 -- Called when program starts
 function core.init() 
     print( "Program starting in lua" )
-    logo = image( 10,10, "assets/texture/ui/ekswaised-logo_00.material", false )
+    --logo = image( 10,10, "assets/texture/ui/ekswaised-logo_00.material", false )
 
     if core.config.init then
         core.config.init()

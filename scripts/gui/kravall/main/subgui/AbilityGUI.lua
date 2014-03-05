@@ -3,6 +3,8 @@ local Checkbox = require "gui/component/Checkbox"
 local TextLabel = require "gui/component/TextLabel" 
 local U = require "gui/placement/util"
 local Image = require "gui/component/Image"
+local toolTipHandler = require "gui/tooltip/ToolTipHandler"
+local createTT = require "gui/tooltip/ToolTip"
 
 local xoffset = -20
 
@@ -62,6 +64,7 @@ function AbilityGUI:new(o)
                             onHover             = onHoverAbility,
                             onClick             = onClickAbility,
                             onExit              = onExit,
+							toolTip				= createTT:new( { handler=toolTipHandler, text="Flee - 9" } )
                         }
 
     o.localComponents[s_ability.Rout] = Checkbox:new {  
@@ -74,6 +77,7 @@ function AbilityGUI:new(o)
                             onHover             = onHoverAbility,
                             onClick             = onClickAbility,
                             onExit              = onExit,
+							toolTip				= createTT:new( { handler=toolTipHandler, text="Rout" } )
                         }
      
 
@@ -87,6 +91,7 @@ function AbilityGUI:new(o)
                             onHover             = onHoverAbility,
                             onClick             = onClickAbility,
                             onExit              = onExit,
+							toolTip				= createTT:new( { handler=toolTipHandler, text="Sprint - 3" } )
                         }
 
     o.localComponents[s_ability.Attack] = Checkbox:new {  
@@ -99,6 +104,7 @@ function AbilityGUI:new(o)
                             onHover             = onHoverAbility,
                             onClick             = onClickAbility,
                             onExit              = onExit,
+							toolTip				= createTT:new( { handler=toolTipHandler, text="Attack - 7" } )
                         }
 
     o.localComponents[s_ability.ArrestIndividual] = Checkbox:new {  
@@ -111,6 +117,7 @@ function AbilityGUI:new(o)
                             onHover             = onHoverAbility,
                             onClick             = onClickAbility,
                             onExit              = onExit,
+							toolTip				= createTT:new( { handler=toolTipHandler, text="Arrest Single Rioter" } )
                         }
 
     o.localComponents[s_ability.ArrestGroup] = Checkbox:new {  
@@ -123,6 +130,7 @@ function AbilityGUI:new(o)
                             onHover             = onHoverAbility,
                             onClick             = onClickAbility,
                             onExit              = onExit,
+							toolTip				= createTT:new( { handler=toolTipHandler, text="Arrest Group of Rioters - 5" } )
                         }
 
     o.localComponents[s_ability.TearGas] = Checkbox:new {  
@@ -135,6 +143,7 @@ function AbilityGUI:new(o)
                             onHover             = onHoverAbility,
                             onClick             = onClickAbility,
                             onExit              = onExit,
+							toolTip				= createTT:new( { handler=toolTipHandler, text="Tear Gas - 8" } )
                         }
 
     o.localComponents[s_ability.Taze] = Checkbox:new {  
@@ -147,6 +156,7 @@ function AbilityGUI:new(o)
                             onHover             = onHoverAbility,
                             onClick             = onClickAbility,
                             onExit              = onExit,
+							toolTip				= createTT:new( { handler=toolTipHandler, text="Taze Rioter" } )
                         }
 
     o.localComponents[s_ability.Blitz] = Checkbox:new {  
@@ -159,6 +169,7 @@ function AbilityGUI:new(o)
                             onHover             = onHoverAbility,
                             onClick             = onClickAbility,
                             onExit              = onExit,
+							toolTip				= createTT:new( { handler=toolTipHandler, text="Blitz" } )
                         }
 
     local standardAbilities = 
