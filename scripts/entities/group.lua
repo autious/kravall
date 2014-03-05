@@ -1,8 +1,9 @@
 local entities = require "entities"
 local rioter = entities.get "rioter"
 
-return function(scen, verts, group, amount, weaponType, outlineColor,rage,pressure, alignment )
-    rage = rage or 1
+return function(scen, verts, group, amount, weaponType, outlineColor,rage,pressure, alignment, mobility )
+    mobility = mobility or core.movementData.Walking
+	rage = rage or 1
     pressure = pressure or 1
 	--local center = {(verts[1] + verts[3] + verts[5] + verts[7]) / 4,
 	--	(verts[2] + verts[4] + verts[6] + verts[8]) / 4}
@@ -18,7 +19,7 @@ return function(scen, verts, group, amount, weaponType, outlineColor,rage,pressu
 				lowestX - ( ( (highestX - lowestX) / amount[1] ) / 2 ) + ((highestX - lowestX) * ((1 / amount[1]) * i)),
 				0,
 				lowestY - ( ( (highestY - lowestY) / amount[2] ) / 2 ) + ((highestY - lowestY) * ((1 / amount[2]) * k)),
-				group, nil, nil, weaponType, outlineColor,rage,pressure, alignment)
+				group, nil, nil, weaponType, outlineColor,rage,pressure, alignment, mobility)
 		end
 	end
 end
