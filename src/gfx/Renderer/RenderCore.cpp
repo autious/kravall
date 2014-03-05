@@ -62,7 +62,7 @@ namespace GFX
 		m_reloadAnimationData = true;
 
 		m_drawSelectionbox = false;
-		m_enableDebug = true;
+		m_enableDebug = false;
 	}
 
 	RenderCore::~RenderCore()
