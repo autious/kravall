@@ -13,6 +13,10 @@ local EastPlacer = require "gui/placement/EastPlacer"
 local NorthPlacer = require "gui/placement/NorthPlacer"
 local WestPlacer = require "gui/placement/WestPlacer"
 local CenterPlacer = require "gui/placement/CenterPlacer"
+local SimplePlacer = require "gui/placement/SimplePlacer"
+
+local standardPolice = (require "game_constants").standardPolice
+local tearGasPolice = (require "game_constants").tearGasPolice
 
 local Util = require "gui/placement/util"
 
@@ -30,82 +34,124 @@ function PrepInterface:new(o)
     setmetatable(o,self)
     self.__index = self
 
+	local leftXOffset = 10
+	
     o.gui = GUI:new()
+	o.gui:addComponent( TextLabel:new( { label="Select units to purchase and assign them to a spawning position", anchor="North" } ) )
+	
+	-- Cash Sub-GUI
+	o.cashSubGUI = GUI:new { width=240, height=30, anchor="NorthWest" }
+	
+	o.cashLabel = TextLabel:new( { label="Cash: $" .. o.cashLimit, anchor="NorthWest", xoffset=leftXOffset, yoffset=2 } )
+	o.cashSubGUI:addComponent( o.cashLabel )
+	o.cashSubGUI:addComponent( Image:new( { mat="assets/texture/ui/aa-temp_prep_cashPanel.material", ignoreConstrict=true, anchor="NorthWest" } ) )
+	
+	o.cashSubGUI:addPlacementHandler( AnchorPlacer )
+	o.gui:addComponent( o.cashSubGUI )
+	
+	o.shieldThumb = Image:new( { mat="assets/texture/ui/aa-temp_prep_shieldPolice.material", ignoreConstrict=true, yoffset=250, xoffset=leftXOffset } )
+	o.gasThumb = Image:new( { mat="assets/texture/ui/aa-temp_prep_tearGasPolice.material", ignoreConstrict=true, yoffset=250, xoffset=leftXOffset } )
+	o.gui:addComponent( o.shieldThumb )
+	o.gui:addComponent( o.gasThumb )
+	--o.shieldThumb:setShow( false )
+	o.gasThumb:setShow( false )
+	
+	-- Units Sub-GUI
+	o.unitsSubGUI = GUI:new{ width=240, height=330, anchor="SouthWest" }
 
-
-    o.totalCash = TextLabel:new{ label="Cash: $" .. o.cashLimit , xoffset=20,  anchor="West" }
-    o.title = TextLabel:new{ label="\\/ Purchase menu \\/", xoffset=20, anchor="West" }
-    o.selectedCost = TextLabel:new{ label ="Cost: $0", xoffset=20,  anchor="West" }
-
-    o.unitSelection = TextSelectList:new
-    { 
-        xoffset=30,
-        anchor="West", 
-        elements=o.policeTypes,
-        onSelect = function( squadDef )
-            if squadDef then
-                o.selectedCost:setLabel( "Cost: $" .. squadDef.cost )
-            else
-                o.selectedCost:setLabel( "Cost: $0" )
-            end
-
-            o.onSelectCurrentSquad(squadDef)
-        end
-    }
-
-    o.unitPurchasedTitle = TextLabel:new{ label="\\/ Bought \\/", xoffset=20,yoffset=-5, anchor="West" }
-
-    o.unitPurchased = TextSelectList:new
-    { 
-        xoffset=30,
-        anchor="West", 
-        elements= o.createdSquads,
-        onSelect = o.onSelectCreatedSquad,
-    }
-
-    o.removeSelectedButton = Button:new
-    { 
-        xoffset = 20,
-        yoffset = -20,
-        anchor = "SouthWest",
-        matReleased = "assets/texture/ui/remove-button-release.material",
-        matPressed = "assets/texture/ui/remove-button-press.material",
-        matHover = "assets/texture/ui/remove-button-hover.material",
-        
-        onClick = o.onRemoveSelected,
-    }
-
-    o.doneButton = Button:new{ anchor = "SouthEast", xoffset=-10, yoffset=-10, onClick = o.onFinished }
-
-    local comps = {}
-    table.insert( comps, o.totalCash )
-    table.insert( comps, o.title )
-    table.insert( comps, o.selectedCost )
-    table.insert( comps, o.unitSelection )
-    table.insert( comps, o.unitPurchasedTitle )
-
-    o.background = Image:new
-    { 
-        mat = "assets/texture/ui/prep-background_00.material",
-        ignoreConstrict = true,
-        yoffset = -10,
-    }
-    
-    local width,height = Util.getTotalDimHeight( comps, 10,10 )
-    o.menuSubGUI = GUI:new{ width = width, height = height, anchor="West" }
-
-    table.insert( comps, o.background )
-
-    o.menuSubGUI:addComponents( comps )
-    o.menuSubGUI:addPlacementHandler( AnchorPlacer )
-    
-    o.gui:addComponent( o.menuSubGUI  )
-    o.gui:addComponent( o.unitPurchased )
-    o.gui:addComponent( o.doneButton )
-
-    o.gui:addComponent( o.removeSelectedButton )
-
-    o.gui:addPlacementHandler( AnchorPlacer )
+	o.unitsSubGUI:addComponent( Image:new( { mat="assets/texture/ui/aa-temp_prep_leftPanel.material" } ) )
+	o.unitsSubGUI:addComponent( TextLabel:new( { label="Available units", xoffset=leftXOffset, yoffset=12 } ) )
+	o.unitSelection = TextSelectList:new(
+										{ 
+											xoffset=leftXOffset,
+											yoffset=50,
+											elements=o.policeTypes,
+											onSelect = function( squadDef )
+												if squadDef then
+													if squadDef.name == "Common Shield Squad" then
+														o.shieldThumb:setShow( true )
+														o.shieldStatsSubGUI:setShow( true )
+													else
+														o.shieldThumb:setShow( false )
+														o.shieldStatsSubGUI:setShow( false )
+													end
+													
+													if squadDef.name == "Teargas Squad" then
+														o.gasThumb:setShow( true )
+														o.tgStatsSubGUI:setShow( true )
+													else
+														o.gasThumb:setShow( false )
+														o.tgStatsSubGUI:setShow( false )
+													end
+												end
+												
+												o.onSelectCurrentSquad( squadDef )
+											end
+										} )
+	o.unitsSubGUI:addComponent( o.unitSelection )	
+	
+	o.unitsSubGUI:addPlacementHandler( SimplePlacer )
+	o.gui:addComponent( o.unitsSubGUI )
+	
+	--Shield Unit Stats Sub-GUI
+	o.shieldStatsSubGUI = GUI:new{ width=97, height=118, xoffset=120, yoffset=188 }
+	o.shieldStatsSubGUI:addComponent( TextLabel:new( { label="Cost: $" .. standardPolice.cost, font="assets/font/toolTip.font" } ) )
+	o.shieldStatsSubGUI:addComponent( TextLabel:new( { label="Health: " .. standardPolice.maxHealth, font="assets/font/toolTip.font", yoffset=18} ) )
+	o.shieldStatsSubGUI:addComponent( TextLabel:new( { label="Stamina: " .. standardPolice.maxStamina, font="assets/font/toolTip.font", yoffset=36  } ) )
+	o.shieldStatsSubGUI:addComponent( TextLabel:new( { label="Morale: " .. standardPolice.maxMorale, font="assets/font/toolTip.font", yoffset=54 } ) )
+	o.shieldStatsSubGUI:addComponent( TextLabel:new( { label="Abilities: ", font="assets/font/toolTip.font", yoffset=72 } ) )
+	o.shieldStatsSubGUI:addComponent( TextLabel:new( { label="None", font="assets/font/toolTip.font", xoffset=leftXOffset, yoffset=90 } ) )
+	
+	o.shieldStatsSubGUI:addPlacementHandler( SimplePlacer )
+	o.unitsSubGUI:addComponent( o.shieldStatsSubGUI )
+	o.shieldStatsSubGUI:setShow( false )
+	
+	--Teargas Unit Stats Sub-GUI
+	o.tgStatsSubGUI = GUI:new{ width=97, height=118, anchor="East", xoffset=120, yoffset=188 }
+	o.tgStatsSubGUI:addComponent( TextLabel:new( { label="Cost: $" .. tearGasPolice.cost, font="assets/font/toolTip.font" } ) )
+	o.tgStatsSubGUI:addComponent( TextLabel:new( { label="Health: " .. tearGasPolice.maxHealth, font="assets/font/toolTip.font", yoffset=18 } ) )
+	o.tgStatsSubGUI:addComponent( TextLabel:new( { label="Stamina: " .. tearGasPolice.maxStamina, font="assets/font/toolTip.font", yoffset=36  } ) )
+	o.tgStatsSubGUI:addComponent( TextLabel:new( { label="Morale: " .. tearGasPolice.maxMorale, font="assets/font/toolTip.font", yoffset=54 } ) )
+	o.tgStatsSubGUI:addComponent( TextLabel:new( { label="Abilities: ", font="assets/font/toolTip.font", yoffset=72 } ) )
+	o.tgStatsSubGUI:addComponent( TextLabel:new( { label="TearGas", font="assets/font/toolTip.font", xoffset=leftXOffset, yoffset=90 } ) )
+	
+	o.tgStatsSubGUI:addPlacementHandler( SimplePlacer )
+	o.unitsSubGUI:addComponent( o.tgStatsSubGUI )
+	o.tgStatsSubGUI:setShow( false )
+	
+	-- Purchased Units Sub-GUI
+	o.purchaseSubGUI = GUI:new{ width=240, height=322, anchor="SouthWest", yoffset }
+	
+	o.purchaseSubGUI:addComponent( Button:new
+											{ 
+												xoffset=-5,
+												yoffset=10,
+												anchor="South",
+												matReleased="assets/texture/ui/remove-button-release.material",
+												matPressed="assets/texture/ui/remove-button-press.material",
+												matHover="assets/texture/ui/remove-button-hover.material",
+												onClick=o.onRemoveSelected,
+											} )
+	
+	o.purchaseSubGUI:addComponent( Image:new( { mat="assets/texture/ui/aa-temp_prep_buyPanel.material", ignoreConstrict=true } ) )
+	o.purchaseSubGUI:addComponent( TextLabel:new( { label="Bought units", anchor="NorthWest", xoffset=leftXOffset, yoffset=12 } ) )
+	
+	o.unitPurchased = TextSelectList:new
+										{ 
+											xoffset=leftXOffset,
+											yoffset=30,
+											anchor="NorthWest", 
+											elements=o.createdSquads,
+											onSelect=o.onSelectCreatedSquad
+										}
+	o.purchaseSubGUI:addComponent( o.unitPurchased )
+	
+	o.purchaseSubGUI:addPlacementHandler( AnchorPlacer )
+	o.gui:addComponent( o.purchaseSubGUI )
+	
+	o.gui:addComponent( Button:new{ anchor = "SouthEast", xoffset=-10, yoffset=-10, onClick = o.onFinished } )
+											
+	o.gui:addPlacementHandler( AnchorPlacer )
 
     return o
 end
@@ -115,7 +161,7 @@ function PrepInterface:setSelected( squad )
 end
 
 function PrepInterface:setRemainingMoney( value )
-    self.totalCash:setLabel( "Cash: $" .. value )
+    self.cashLabel:setLabel( "Cash: $" .. value )
 end
 
 function PrepInterface:updatePurchasedList()

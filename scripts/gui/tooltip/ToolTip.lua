@@ -1,3 +1,4 @@
+local text = require "factories/text"
 
 local ToolTip = 
                 {
@@ -6,121 +7,63 @@ local ToolTip =
 					show=true,
 					width=30,
 					height=10
-                    --x=0,
-                    --y=0,
-                    --xoffset=0,
-                    --yoffset=0,
-                    --show = true,
-                    --matReleased = "assets/texture/ui/button-release_00.material",
-                    --matPressed = "assets/texture/ui/button-press_00.material",
-                    --matHover = "assets/texture/ui/button-hover_00.material",
-                    --onClick = function( self ) end
                 }
 
-function ToolTip:new(o)
+local textOff = { x = 3, y = 3 }
+
+function ToolTip:new( o )
     o = o or {}
-    setmetatable( o,self )
+    setmetatable( o, self )
     self.__index = self
 	
-	o.x = x
-	o.y = y
-	o.width = width
-	o.height = height
-	o.show = show
-    
-    --o.pressedImg = image( o.x, o.y, o.matPressed )
-    --o.releasedImg = image( o.x, o.y, o.matReleased )
-    --o.hoverImg = image( o.x, o.y, o.matHover )
-    --
-    --o.width = o.pressedImg.width
-    --o.height = o.pressedImg.height
-    --
-    --o.GUIComponent = GUIComponent:new
-    --                                    {
-    --                                        x=o.x,
-    --                                        y=o.y,
-    --                                        width=o.width,
-    --                                        height=o.height,
-    --                                        onPress = function()  o:onPress() end,
-    --                                        onRelease = function() o:onRelease() end,
-    --                                        onEnter = function() o:onEnter() end,
-    --                                        onExit = function() o:onExit() end
-    --                                    }
-    --
-    --o.pressedImg:show(false)
-    --o.releasedImg:show(true)
-    --o.hoverImg:show(false)
-    --
-    --o:setShow( o.show )
-
-    return o
+	o.text = text( 1, 1, o.text or "Empty ToolTip", nil, "assets/font/toolTip.font" )
+	local textDimX, textDimY = o.text:getDim()
+	o.width = textDimX + textOff.x * 2
+	o.height = 24
+	o.show = false
+	o.text:show( false )
+	
+	print( "ToolTip created!" )
+	
+	return o
 end
 
 function ToolTip:update()
-	--mouseX, mouseY = core.input.mouse.getPosition()
-	--print("mousePos : " .. mouseX .. ", " .. mouseY
 	--						  pos.x, pos.y, dim.x, dim.y, solid
 	--core.draw.drawRectangle(float, float, float, float, bool)
-	core.draw.drawRectangle(60.0, 60.0, 10.0, 10.0, true)
+	
+	core.draw.drawRectangle( self.x, self.y, self.width, self.height, true, 0.05, 0.21, 0.27, 0.75 )
+	
+	if core.input.keyboard.isKeyDown( core.input.keyboard.key.L ) then
+		self.handler:deregister()
+	end
 end
 
 function ToolTip:setShow( flag )
     self.show = flag
-    --self.GUIComponent:setShow(flag)
-    --self.releasedImg:show(flag)
-    --
-    --if flag == false then
-    --    self.pressedImg:show(false)
-    --    self.hoverImg:show(false)
-    --end
+	self.text:show(flag)
 end
 
-function ToolTip:setPosition(x,y)
-    --self.GUIComponent:setPosition(x,y)
-    --self.pressedImg:setPosition(x,y)
-    --self.releasedImg:setPosition(x,y)
-    --self.hoverImg:setPosition(x,y)
-end
-
-function ToolTip:onPress() 
-    --if self.show then
-    --    self.pressedImg:show(true)
-    --    self.releasedImg:show(false)
-    --    self.hoverImg:show(false)
-    --end
-end
-
-function ToolTip:onRelease()
-    --if self.show then
-    --    self.pressedImg:show(false)
-    --    self.releasedImg:show(false)
-    --    self.hoverImg:show(true)
-    --
-    --    self:onClick()
-    --end
-end
-
-function ToolTip:onEnter()
-    --if self.show then
-    --    self.pressedImg:show( false )
-    --    self.releasedImg:show( false )
-    --    self.hoverImg:show( true )
-    --end
-end
-
-function ToolTip:onExit()
-    --if self.show then
-    --    self.pressedImg:show(false)
-    --    self.releasedImg:show(true)
-    --    self.hoverImg:show(false)
-    --end
+function ToolTip:setPosition( x, y )
+	x = x or 0
+	y = y or 0
+	
+	self.x, self.y = x, y + 20
+	screenWidth, screenHeight = core.window.getSize()
+	-- TODO: Insert screenWidth and screenHeight when width works
+	if self.x + self.width > screenWidth then
+		self.x = screenWidth - self.width
+	end
+	
+	if self.y + self.height > screenHeight then
+		self.y = screenHeight - self.height
+	end
+	
+	self.text:setPosition( self.x + textOff.x, self.y + textOff.y)
 end
 
 function ToolTip:destroy()
-    --self.pressedImg:destroy()
-    --self.releasedImg:destroy()
-    --self.hoverImg:destroy()
-    --self.GUIComponent:destroy()
+    self.text:destroy()
 end
 
 return ToolTip

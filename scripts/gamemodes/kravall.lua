@@ -96,6 +96,7 @@ function T:setState( state )
                 self:setState( "Main" ) 
             end,
         }
+		self.objectiveHandler:setShow(false)
 
     elseif state == "End" then
         print( "State set to \"End\"" )

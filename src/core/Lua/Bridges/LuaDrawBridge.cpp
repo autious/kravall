@@ -32,14 +32,28 @@ extern "C"
 
     static int LuaDrawRectangle( lua_State * L )
     {
-        GFX::Debug::DrawRectangle( glm::vec2( luau_tofloat( L, 1 ), luau_tofloat( L, 2 ) ), glm::vec2( luau_tofloat( L, 3 ), luau_tofloat( L , 4 ) ), lua_toboolean( L, 5 ), Colors::Blue );
+		int paramCount = lua_gettop(L);
+
+		if (paramCount == 5)
+		{
+			GFX::Debug::DrawRectangle(glm::vec2(luau_checkfloat(L, 1), luau_checkfloat(L, 2)), glm::vec2(luau_checkfloat(L, 3), luau_checkfloat(L, 4)), lua_toboolean(L, 5), Colors::Blue);
+		}
+		else if (paramCount == 9)
+		{
+			GFX::Debug::DrawRectangle(glm::vec2(luau_checkfloat(L, 1), luau_checkfloat(L, 2)), glm::vec2(luau_checkfloat(L, 3), luau_checkfloat(L, 4)), lua_toboolean(L, 5), 
+									  Color(luau_checkfloat(L, 6), luau_checkfloat(L, 7), luau_checkfloat(L, 8), luau_checkfloat(L, 9)));
+		}
+		else
+			luaL_error(L, "Wrong number of arguments in lua function drawRectangle: %d specified, needs to be 5 or 9.", paramCount);
 
         return 0;
     }
 
     static int LuaDrawLine( lua_State * L )
     {
-        GFX::Debug::DrawLine( glm::vec3( luau_tofloat( L, 1 ), luau_tofloat( L, 2 ), luau_tofloat( L, 3 )), glm::vec3( luau_tofloat( L, 4 ), luau_tofloat( L , 5 ), luau_tofloat( L, 6 )), Color(luau_tofloat(L, 7), luau_tofloat(L, 8), luau_tofloat(L, 9), 1.0f), luau_tofloat(L, 10), true );
+		GFX::Debug::DrawLine(glm::vec3(luau_checkfloat(L, 1), luau_checkfloat(L, 2), luau_checkfloat(L, 3)), 
+							 glm::vec3(luau_checkfloat(L, 4), luau_checkfloat(L, 5), luau_checkfloat(L, 6)), 
+							 Color(luau_checkfloat(L, 7), luau_checkfloat(L, 8), luau_checkfloat(L, 9), 1.0f), luau_checkfloat(L, 10), true);
         
         return 0;
     }

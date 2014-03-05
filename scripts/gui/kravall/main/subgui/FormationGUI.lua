@@ -1,6 +1,8 @@
 local GUI = require "gui/GUI"
 local Checkbox = require "gui/component/Checkbox"
 local Image = require "gui/component/Image"
+local toolTipHandler = require "gui/tooltip/ToolTipHandler"
+local createTT = require "gui/tooltip/ToolTip"
 
 local FormationGUI  = GUI:new{height=150,width=100, anchor="SouthEast", onFormationSelect = function(formation) core.log.error("No handler set for formation callback") end }
 
@@ -23,8 +25,9 @@ function FormationGUI:new(o)
                             matSelected         = "assets/texture/ui/form-line-selected_00.material",
                             matHoverOpen        = "assets/texture/ui/form-line-hover_00.material",
                             matHoverSelected    = "assets/texture/ui/form-line-extra_00.material",
-                            onClick            = function(self,value) if value then o.onFormationSelect( f_line ) else o.onFormationSelect( f_no ) end end,
-                            xoffset             = xoffset
+                            onClick            	= function(self,value) if value then o.onFormationSelect( f_line ) else o.onFormationSelect( f_no ) end end,
+                            xoffset             = xoffset,
+							toolTip				= createTT:new( { handler=toolTipHandler, text="Line Formation - L" } )
                         }
 
     o.formations[f_circle] = Checkbox:new {  
@@ -34,8 +37,9 @@ function FormationGUI:new(o)
                             matSelected         = "assets/texture/ui/form-circle-selected_00.material",
                             matHoverOpen        = "assets/texture/ui/form-circle-hover_00.material",
                             matHoverSelected    = "assets/texture/ui/form-circle-extra_00.material",
-                            onClick            = function(self,value) if value then o.onFormationSelect( f_circle ) else o.onFormationSelect( f_no ) end end,
-                            xoffset             = xoffset
+                            onClick            	= function(self,value) if value then o.onFormationSelect( f_circle ) else o.onFormationSelect( f_no ) end end,
+                            xoffset             = xoffset,
+							toolTip				= createTT:new( { handler=toolTipHandler, text="Circle Formation - C" } )
                         }
 
     o.formations[f_halfcircle] = Checkbox:new {  
@@ -45,8 +49,9 @@ function FormationGUI:new(o)
                             matSelected         = "assets/texture/ui/form-halfcircle-selected_00.material",
                             matHoverOpen        = "assets/texture/ui/form-halfcircle-hover_00.material",
                             matHoverSelected    = "assets/texture/ui/form-halfcircle-extra_00.material",
-                            onClick            = function(self,value) if value then o.onFormationSelect( f_halfcircle ) else o.onFormationSelect( f_no ) end end,
-                            xoffset             = xoffset
+                            onClick            	= function(self,value) if value then o.onFormationSelect( f_halfcircle ) else o.onFormationSelect( f_no ) end end,
+                            xoffset             = xoffset,
+							toolTip				= createTT:new( { handler=toolTipHandler, text="Semi-Circle Formation - H" } )
                         }
 
     o:addPlacementHandler( require "gui/placement/EastPlacer" )
