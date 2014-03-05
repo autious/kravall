@@ -6,6 +6,7 @@
 
 #include <logger/Logger.hpp>
 #include <Lua/LuaUtility.hpp>
+#include <cassert>
 
 extern "C"
 {

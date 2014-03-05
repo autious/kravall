@@ -4,6 +4,7 @@ local SetupMenu = require "gui/SetupMenu"
 local ScenarioMenu = require "gui/ScenarioMenu"
 local SettingsMenu = require "gui/SettingsMenu"
 local CreditsMenu = require "gui/CreditsMenu"
+local TutorialMenu = require "gui/TutorialMenu"
 
 local MenuScrollSpeed = 500
 
@@ -72,6 +73,16 @@ return function( scen )
             scen.gui = nil
         end
         scen.gui = SettingsMenu:new({},menuState)
+    end
+
+	 function menuState.goTutorial()
+        scen.gamemode.camera:setGoal( scen.cameras.settings.view, MenuScrollSpeed )
+
+        if scen.gui ~= nil then
+            scen.gui:destroy()
+            scen.gui = nil
+        end
+        scen.gui = TutorialMenu:new({scen = scen},menuState)
     end
 
     local function onKey( key, scancode, action )
