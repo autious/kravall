@@ -86,8 +86,15 @@ extern "C"
 
         if( lht->hoverTextId != -1 )
         {
-            hts->FreeString( lht->hoverTextId );
-            lht->hoverTextId = -1;
+            if( lht->light )
+            {
+                LOG_DEBUG << "Ignoring free of light hover text id." << std::endl;
+            }
+            else
+            {
+                hts->FreeString( lht->hoverTextId );
+                lht->hoverTextId = -1;
+            }
         }
         else
         {
