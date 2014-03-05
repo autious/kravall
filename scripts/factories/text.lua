@@ -26,6 +26,13 @@ function Text:getPosition( x,y )
 end 
 
 function Text:getDim( )
+
+	local data = self.ent:get( core.componentType.HoverTextComponent )
+	--if data.box then	
+	--	--return self.textId:getTextboxDimensions(self.ent, data.dim[1])
+	--else
+	--	--return self.textId:getTextboxDimensions(self.ent, 2147483648)
+	--end
     return self.textId:getDimensions()
 	--data = self.ent:get( core.componentType.HoverTextComponent )
 	--print( "Old value: " .. self.textId:getDimensions() )
