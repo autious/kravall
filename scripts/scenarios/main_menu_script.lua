@@ -75,6 +75,16 @@ return function( scen )
         scen.gui = SettingsMenu:new({},menuState)
     end
 
+	 function menuState.goTutorial()
+        scen.gamemode.camera:setGoal( scen.cameras.settings.view, MenuScrollSpeed )
+
+        if scen.gui ~= nil then
+            scen.gui:destroy()
+            scen.gui = nil
+        end
+        scen.gui = TutorialMenu:new({scen = scen},menuState)
+    end
+
     local function onKey( key, scancode, action )
         if key == core.input.keyboard.key.A and action == core.input.action.Release then
             menuState.goMain()

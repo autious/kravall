@@ -40,6 +40,13 @@ function MainMenu:new(o,menuState)
                                     xoffset=-10,yoffset=20,onClick = menuState.goCredits
                                     }))
 
+	 o.gui:addComponent(Button:new({
+                                    matReleased = "assets/texture/ui/credits-button-release_00.material",
+                                    matPressed = "assets/texture/ui/credits-button-press_00.material",
+                                    matHover = "assets/texture/ui/credits-button-hover_00.material",
+                                    xoffset=-10,yoffset=50,onClick = menuState.goTutorial
+                                    }))
+
     o.gui:addPlacementHandler( CenterPlacer )
 
     setmetatable( o, self )
