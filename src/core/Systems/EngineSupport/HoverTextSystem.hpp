@@ -2,7 +2,7 @@
 #define SRC_CORE_SYSTEMS_HOVERTEXTSYSTEM_H
 
 #include <ComponentFramework/BaseSystem.hpp>
-
+#include <gfx/GFXInterface.hpp>
 #include <glm/glm.hpp>
 
 #include <string>
@@ -37,6 +37,7 @@ namespace Core
             void SetString( int id, const char * string, glm::vec2 offset, glm::vec2 dimensions );
             void FreeString( int id );
             glm::vec2 GetStringDimensions( int id );
+			glm::vec2 GetTextboxDimensions( GFX::FontData* font, float width, float size, int id );
     };
 }
 

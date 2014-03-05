@@ -115,6 +115,14 @@ namespace GFX
 	DLL_API void RenderTextbox(GFX::FontData* fontData, GFXVec4 rectangle, float offset, float size, GFXVec4 color, const char* text);
 
 	/*!
+	Returns the actual width and height of a textbox of specified size
+	\param width The width of the textbox after which text is wrapped
+	\param size Vertical size of each letter
+	\param text The text to use
+	*/
+	DLL_API void GetActualTextboxSize(GFX::FontData* fontData, float width, float size, const char* text, float& out_actualWidth, float& out_actualHeight);
+
+	/*!
 	Shows the console window
 	*/
 	DLL_API void ShowConsole();

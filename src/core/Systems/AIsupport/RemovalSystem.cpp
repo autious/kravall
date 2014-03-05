@@ -59,7 +59,7 @@ namespace Core
 						WorldPositionComponent* wpc = WGETC<WorldPositionComponent>(*it);
 						MovementComponent* mc = WGETC<MovementComponent>(*it);
 					
-						CreateBloodDecal(WorldPositionComponent::GetVec3(*wpc), mc->newDirection[0], mc->newDirection[3], mc->newDirection[2]);
+						CreateBloodDecal(WorldPositionComponent::GetVec3(*wpc));
 						rioterEntities[rioterCount++] = *it;
 					}
 					else if (atc->stamina <= 0)//Some kind of formula shiet here
@@ -75,7 +75,7 @@ namespace Core
 						WorldPositionComponent* wpc = WGETC<WorldPositionComponent>(*it);
 						MovementComponent* mc = WGETC<MovementComponent>(*it);
 
-						CreateBloodDecal(WorldPositionComponent::GetVec3(*wpc), mc->newDirection[0], mc->newDirection[3], mc->newDirection[2]);
+						CreateBloodDecal(WorldPositionComponent::GetVec3(*wpc));
 						policeEntities[policeCount++] = *it;
 					}
 				}
@@ -141,7 +141,7 @@ namespace Core
 		}
 	}
 
-	void RemovalSystem::CreateBloodDecal(glm::vec3 position, float dirX, float dirY, float dirZ)
+	void RemovalSystem::CreateBloodDecal(glm::vec3 position)
 	{
 
 		GraphicsComponent gc;

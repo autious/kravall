@@ -52,8 +52,6 @@ function StanceGUI:new(o)
                         matHoverSelected = "assets/texture/ui/passive-extra_00.material",
                         onClick = function( self, value ) o.onStanceSelect( s_passive ) end,
                         xoffset = xoffset
-                    
-                
                       })
 
     o.bgImage = Image:new
