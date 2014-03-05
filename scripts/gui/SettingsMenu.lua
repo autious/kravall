@@ -28,7 +28,7 @@ function SettingsMenu:new(o,menuState)
                                     end}))
         
 
-    o.fullscreenGUI = GUI:new{xoffset=200, yoffset= 100, width=2,height=2,anchor="NorthWest"}
+    o.fullscreenGUI = GUI:new{xoffset=200, yoffset= 150, width=2,height=2,anchor="NorthWest"}
     o.fullscreenGUI:addPlacementHandler( WestHorizontalPlacer )
 
     o.fullscreenGUI:addComponent(Checkbox:new
@@ -42,6 +42,7 @@ function SettingsMenu:new(o,menuState)
 
     o.fullscreenGUI:addComponent( TextLabel:new{label="Fullscreen (requires restart to take effect)"} )
 
+    o.gui:addComponent( TextLabel:new{xoffset=200, yoffset= 125,label="Options", anchor="NorthWest"} )
     o.gui:addComponent( o.fullscreenGUI  )
     o.gui:addPlacementHandler( AnchorPlacer )
 
