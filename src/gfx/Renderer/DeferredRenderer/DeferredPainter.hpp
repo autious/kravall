@@ -73,6 +73,7 @@ namespace GFX
 
 		InstanceData* m_staticInstances;
 		GLuint m_instanceOffsetUniform;
+		GLuint m_instanceOffsetBuffer;
 	};
 }
 

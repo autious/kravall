@@ -16,9 +16,12 @@ layout (std140, binding = 4) readonly buffer buffah
     InstanceData gInstances[];
 };
 
-layout (std140, binding = 3) readonly buffer instanceBufferOffset
+layout (std140, binding = 3) uniform instanceBufferOffset
 {
     uint gInstanceOffset;
+	uint pad0;
+	uint pad1;
+	uint pad2;
 };
 
 layout (shared) uniform PerFrameBlock
@@ -47,7 +50,8 @@ void main()
 	uint instanceID = gInstanceOffset + gl_InstanceID;
 	//Move position to clip space
 	posW = gInstances[instanceID].mm * positionIN;
-	posFS = gProjection * gView * gInstances[instanceID].mm * positionIN;
+	//posFS = gProjection * gView * gInstances[instanceID].mm * (positionIN+vec4(50*gInstanceOffset,0,0,0));
+	posFS = gProjection * gView * (positionIN+vec4(50*gInstanceOffset,0,0,0));
 	
 	//Transform normal with model matrix
 	normalFS = gInstances[instanceID].mm * normalIN;

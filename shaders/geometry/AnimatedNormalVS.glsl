@@ -16,9 +16,12 @@ layout (std140, binding = 4) readonly buffer instanceBuffer
     InstanceData gInstances[];
 };
 
-layout (std140, binding = 3) readonly buffer instanceBufferOffset
+layout (std140, binding = 3) uniform instanceBufferOffset
 {
     uint gInstanceOffset;
+	uint pad0;
+	uint pad1;
+	uint pad2;
 };
 
 layout (std140, binding = 6) readonly buffer animationBuffer

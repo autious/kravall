@@ -150,9 +150,9 @@ namespace GFX
 
 		m_instanceOffsetUniform = m_shaderManager->GetUniformBlockLocation("StaticNormal", "instanceBufferOffset");
 
-		glGenBuffers(1, &m_instanceOffsetUniform);
-		glBindBufferBase(GL_UNIFORM_BUFFER, 3, m_instanceOffsetUniform);
-		glBufferData(GL_UNIFORM_BUFFER, sizeof(unsigned int), NULL, GL_STREAM_DRAW);
+		glGenBuffers(1, &m_instanceOffsetBuffer);
+		glBindBufferBase(GL_UNIFORM_BUFFER, 3, m_instanceOffsetBuffer);
+		glBufferData(GL_UNIFORM_BUFFER, sizeof(unsigned int), NULL, GL_DYNAMIC_DRAW);
 		glBindBufferBase(GL_UNIFORM_BUFFER, 3, 0);
 
 	}
@@ -342,9 +342,6 @@ namespace GFX
 			{
 				if (i > 0)
 				{
-					//glBindBufferBase(GL_UNIFORM_BUFFER, 3, m_instanceOffsetUniform);
-					//glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(unsigned int), &instanceOffset);
-					//glBindBufferBase(GL_UNIFORM_BUFFER, 3, 0);
 
 					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IBO);
 
@@ -372,6 +369,10 @@ namespace GFX
 							m_shaderManager->UseProgram("StaticOutline");
 						else if (currentShader == m_animatedBlend || currentShader == m_animatedNormal)
 							m_shaderManager->UseProgram("AnimatedOutline");
+						
+						glBindBufferBase(GL_UNIFORM_BUFFER, 3, m_instanceOffsetBuffer);
+						glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(unsigned int), &instanceOffset);
+						glBindBufferBase(GL_UNIFORM_BUFFER, 3, 0);
 
 						glDrawElementsInstanced(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0, instanceCount);
 						numDrawCalls++;
