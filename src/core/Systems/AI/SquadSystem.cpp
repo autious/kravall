@@ -10,6 +10,7 @@
 
 #define FORMATION_COLUMN_SPACING_MINIMUM 2.0f
 #define FORMATION_ROW_SPACING 2.0f
+#define ALLOW_MOVE_IN_FORMATION false
 
 namespace Core
 {
@@ -567,7 +568,7 @@ namespace Core
 				glm::vec3 leaderPosition = Core::WorldPositionComponent::GetVec3(*leader_wpc);
 
 				float rotation = 0.0f;
-				if (sqdc->squadMoveInFormation)
+				if (sqdc->squadMoveInFormation && ALLOW_MOVE_IN_FORMATION )
 				{
 					//TODO: If squad leader is not in combat, set squadForward to his facing
 					//sqdc->squadForward[0] = leaderForward[0];
@@ -597,7 +598,7 @@ namespace Core
 					relPos2D = rotMat * relPos2D;
 
 					glm::vec3 relativePosition = glm::vec3(relPos2D.x, 0.0f, relPos2D.y);
-					if (sqdc->squadMoveInFormation)
+					if (sqdc->squadMoveInFormation && ALLOW_MOVE_IN_FORMATION )
 					{
 						glm::vec3 formationPosition = leaderPosition + relativePosition;
 						int goalNode;

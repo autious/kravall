@@ -41,6 +41,7 @@
 #include <Lua/Bridges/LuaGameMetaDataBridge.hpp>
 #include <Lua/Bridges/LuaUnitOrderBridge.hpp>
 #include <Lua/Bridges/LuaConfigurationBridge.hpp>
+#include <Lua/Bridges/LuaTimerBridge.hpp>
 
 namespace Core
 {
@@ -74,7 +75,8 @@ namespace Core
 		lwp(L),
 		lgmdb(L),
 		luob(L),
-        lcb(L)
+        lcb(L),
+        ltb(L)
         {}
             
         LuaBitmask lb;
@@ -105,6 +107,7 @@ namespace Core
 		LuaGameMetaDataBridge lgmdb;
 		LuaUnitOrderBridge luob;
         LuaConfigurationBridge lcb;
+        LuaTimerBridge ltb;
     };
 }
 

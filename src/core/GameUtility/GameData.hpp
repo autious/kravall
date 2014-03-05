@@ -52,8 +52,6 @@ namespace Core
 	class GameData
 	{
 	private:
-		GameData();
-
 
 	public:
 		/*!
@@ -77,6 +75,11 @@ namespace Core
 		static int GetEscapePointGroup( int node );
 
 		/*!
+			Will return true if the param group is a successful of unsuccessful escape-group ( meaning goal is invalid ).
+		*/
+		static bool CheckIfEscapeSquad( int groupID );
+
+		/*!
 			Will deallocate all dynamic game data and reset all other data.
 		*/
 		static void ClearData();
@@ -84,8 +87,8 @@ namespace Core
 	private:
 
 		static std::vector< WeaponData > m_weaponData;
-		static std::vector< int > m_escapePointGroups;
-
+		static std::vector< int > m_validEscapePointGroups;
+		static std::vector< int > m_reqisteredEscapePointGroups;
 	};
 }
 

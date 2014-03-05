@@ -8,8 +8,8 @@
 namespace Core
 {
 	std::vector< WeaponData > GameData::m_weaponData;
-	std::vector< int > GameData::m_escapePointGroups;	
-
+	std::vector< int > GameData::m_validEscapePointGroups;	
+	std::vector< int > GameData::m_reqisteredEscapePointGroups;
 
 	const WeaponData& Core::GameData::GetWeaponDataFromWeapon( int weapon )
 	{
@@ -45,16 +45,18 @@ namespace Core
 
 		int escapeGroup = instance->CreateGroup();
 		
+		m_reqisteredEscapePointGroups.push_back( escapeGroup );
+
 		if( !instance->CalculateFlowfieldForGroup( point, escapeGroup ) )
 			return -1;
 
-		m_escapePointGroups.push_back( escapeGroup );
+		m_validEscapePointGroups.push_back( escapeGroup );
 		return escapeGroup;
 	}
 	
 	int Core::GameData::GetEscapePointGroup( int node )
 	{
-		if( m_escapePointGroups.size() == 0 )
+		if( m_validEscapePointGroups.size() == 0 )
 			return -1;
 
 		Core::NavigationMesh* instance = Core::GetNavigationMesh();
@@ -63,13 +65,22 @@ namespace Core
 
 		float closest = std::numeric_limits<float>::max();
 		int index = -1;
-		for( int i = 0; i < m_escapePointGroups.size(); i++ )
+		for( int i = 0; i < m_validEscapePointGroups.size(); i++ )
 		{
-			float dist = instance->flowfields[ m_escapePointGroups[i] ].distanceToGoal[node];
+			float dist = instance->flowfields[ m_validEscapePointGroups[i] ].distanceToGoal[node];
 			dist < closest ? closest = dist, index = i : index = index ;
 		}
 
 		return index;
+	}
+
+	bool Core::GameData::CheckIfEscapeSquad( int groupID )
+	{
+		int size = m_reqisteredEscapePointGroups.size();
+		for( int i = 0; i < size; i++ )
+			if( m_reqisteredEscapePointGroups[i] == groupID )
+				return true;
+		return false;
 	}
 
 
@@ -79,7 +90,8 @@ namespace Core
 		m_weaponData.clear();
 
 		// clear all stored escape routes
-		m_escapePointGroups.clear();
+		m_validEscapePointGroups.clear();
+		m_reqisteredEscapePointGroups.clear();
 	}
 
 
