@@ -77,9 +77,16 @@ namespace Core
     {
         m_strings.erase( id ); 
     }
-
+	
     glm::vec2 HoverTextSystem::GetStringDimensions( int id )
     {
         return glm::vec2(m_strings[id].size() * 10, 14);
+    }
+
+    glm::vec2 HoverTextSystem::GetTextboxDimensions( GFX::FontData* font, float width, float size, int id )
+    {
+		glm::vec2 result;
+		GFX::GetActualTextboxSize(font, width, size, m_strings[id].c_str(), result.x, result.y);
+        return result;
     }
 }

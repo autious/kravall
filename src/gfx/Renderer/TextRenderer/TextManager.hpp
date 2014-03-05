@@ -27,6 +27,8 @@ namespace GFX
 		*/
 		void AddText(Text t);
 		void AddTextbox(GFX::FontData* fontData, glm::vec4 rectangle, float offset, float size, glm::vec4 color, const char* text);
+
+		void GetTextboxSize(GFX::FontData* fontData, float width, float size, const char* text, float& out_actualWidth, float& out_actualHeight);
 		
 		/*!
 		Return entire vector of text objects
