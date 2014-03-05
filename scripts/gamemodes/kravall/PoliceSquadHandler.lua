@@ -429,16 +429,16 @@ end
 
 function PoliceSquadHandler:HighlightMood()
 
-	if #self.selectedSquads == 0 then
-		--self.isAiming = false
-		--self:SetReticuleRender(false)
-		--self.AimingFunction = nil
-		--
-		--self.rightClicked = false
-		--self.rightPressed = false
-		
-		return
-	end
+	--if #self.selectedSquads == 0 then
+	--	--self.isAiming = false
+	--	--self:SetReticuleRender(false)
+	--	--self.AimingFunction = nil
+	--	--
+	--	--self.rightClicked = false
+	--	--self.rightPressed = false
+	--	
+	--	return
+	--end
 
 	local mouseX, mouseY = mouse.getPosition()
     local aspct = core.entity.generateAspect( core.componentType.AttributeComponent, core.componentType.UnitTypeComponent, core.componentType.BoundingVolumeComponent )
