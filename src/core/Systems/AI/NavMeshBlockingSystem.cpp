@@ -91,6 +91,8 @@ void Core::NavMeshBlockingSystem::FreeBlockedNodes( int targetRioterGroup )
 
 void Core::NavMeshBlockingSystem::Update( float delta )
 {
+	return;
+
 	Core::NavigationMesh* instance = Core::GetNavigationMesh();
 	if( instance )
 	{

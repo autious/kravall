@@ -81,7 +81,7 @@ void Core::AIDebugSystem::Update( float delta )
 	//GetPlanePoint();
 
 
-	//return; //////////////////////////////////////////
+	return; //////////////////////////////////////////
 
 
 	if( Core::GetNavigationMesh() )
