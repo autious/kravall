@@ -51,6 +51,7 @@ namespace Core
 				ac->currentTime = 0.0;
 				ac->playing = true;
 				ac->loop = false;
+				ac->playTime = 0.0f;
 			}
 		}
 		else
@@ -70,7 +71,8 @@ namespace Core
 			ac->animationID = animationID;
 			ac->currentTime = 0.0;
 			ac->playing = true;
-			ac->loop = false;			
+			ac->loop = false;
+			ac->playTime = 0.0f;
 		}
 		else
 		{
@@ -96,6 +98,7 @@ namespace Core
 				ac->currentTime = 0.0;
 				ac->playing = true;
 				ac->loop = true;
+				ac->playTime = 0.0f;
 			}
 		}
 		else
@@ -115,6 +118,7 @@ namespace Core
 			ac->currentTime = 0.0;
 			ac->playing = true;
 			ac->loop = true;
+			ac->playTime = 0.0f;
 		}
 		else
 		{

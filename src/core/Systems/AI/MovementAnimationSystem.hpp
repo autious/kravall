@@ -9,9 +9,6 @@
 #include <string>
 #include <map>
 
-#define GRACE_THRESHOLD 0.3f
-#define STILL_THRESHOLD 0.35f
-
 namespace Core 
 {
     /*!

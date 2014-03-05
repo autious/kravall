@@ -308,7 +308,7 @@ return function( scen )
                 verts[i] = verts[i] + wpc.position[1]
                 verts[i + 1] = verts[i + 1] + wpc.position[3]
             end
-            group( scen, ac.vertices, grp, {xsize, ysize}, fists, nil, 1, 1, core.RioterAlignment.Anarchist )
+            group( scen, ac.vertices, grp, {xsize, ysize}, fists, nil, 1, 1, core.RioterAlignment.Anarchist, core.movementData.Jogging )
         end
 
         return grp

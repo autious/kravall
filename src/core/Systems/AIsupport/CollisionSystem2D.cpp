@@ -26,7 +26,7 @@ static bool sortCullData( const cullData& me, const cullData& other )
 
 void DrawCullingQuads( cullData* cullingList, int nrEntities, int gridNodeSize )
 {
-	for( int i = 0; i < nrEntities; i++)
+	for( int i = 0; i < nrEntities; i++ )
 	{
 		Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(cullingList[i].ent);
 		GFX::Debug::DrawSphere( glm::vec3(wpc->position[0], 0, wpc->position[2] ), 0.05f, GFXColor( 1, 0, 0, 1 ), false );
@@ -173,17 +173,21 @@ void Core::CollisionSystem2D::Update( float delta )
 					float deltaDist = ((otherSphere->radius + mySphere->radius) - std::sqrt( sqareDistance ));
 					glm::vec3 movement;
 
-					
+					float mod = 0.5f;
 
-					// test code...
 					Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>(it);
 					Core::MovementComponent* mvmcOther = WGETC<Core::MovementComponent>(other);
 					if( mvmc != nullptr || mvmcOther != nullptr )
 					{
 						float dot = glm::dot( glm::vec3( mvmc->direction[0], mvmc->direction[1], mvmc->direction[2] ), 
 							glm::normalize( otherPosition - myPosition ) );
-						if( dot > 0.5f && mvmc->speed > mvmc->desiredSpeed[ Core::MovementState::Movement_Walking ])
-							mvmc->speed -= 14.85f * delta;
+						if( dot > 0.3f )
+						{	
+							if( mvmc->speed > mvmc->desiredSpeed[ Core::MovementState::Movement_Walking ] * 0.8f )
+								mvmc->speed -= 8.85f * delta;
+
+							mod = 0.75f;
+						}
 					}
 
 					// move myself away from collision. If the other entity is static, move the entire overlap away from the entity,
@@ -199,7 +203,7 @@ void Core::CollisionSystem2D::Update( float delta )
 							// Head of list will always bow for tail of list in perfect frontal collision.
 							{
 								movement = glm::vec3(0);
-								movement += collisionNormal * ( deltaDist * 0.5f );
+								movement += collisionNormal * ( deltaDist * mod );
 								wpc->position[0] += movement.x;
 								wpc->position[2] += movement.z;
 							}
@@ -208,7 +212,7 @@ void Core::CollisionSystem2D::Update( float delta )
 							// less flow but potentially better crowd dynamics when in a closed environment. 
 							{
 								movement = glm::vec3(0);
-								movement -= collisionNormal * ( deltaDist * 0.5f );
+								movement -= collisionNormal * ( deltaDist * ( 1.0f - mod ) );
 								wpcOther->position[0] += movement.x;
 								wpcOther->position[2] += movement.z;
 							}

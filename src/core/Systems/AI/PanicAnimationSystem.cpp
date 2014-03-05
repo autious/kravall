@@ -5,12 +5,15 @@
 #include "World.hpp"
 #include <SystemDef.hpp>
 #include <Animation/AnimationManager.hpp>
-#include <Systems/AI/MovementAnimationSystem.hpp>
+
+// this value needs to be mirrored in the movementAnimationSystem, otherwise full recompile will be needed at change.
+#define GRACE_THRESHOLD 0.3f
+#define STILL_THRESHOLD 0.35f
 
 
 Core::PanicAnimationSystem::PanicAnimationSystem() : 
 	BaseSystem(EntityHandler::GenerateAspect<WorldPositionComponent, TargetingComponent, AnimationComponent, UnitTypeComponent, 
-	AttributeComponent, MovementComponent, FlowfieldComponent, GraphicsComponent>(), 0ULL)
+	AttributeComponent, MovementComponent, GraphicsComponent, MovementDataComponent>(), 0ULL)
 {
 }
 
