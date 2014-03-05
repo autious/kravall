@@ -2,6 +2,8 @@ local fac_image = require "factories/image"
 local window = require "window"
 local Camera = require "rts_camera"
 local ObjectiveHandler = require "gui/component/ObjectiveHandler"
+local input = require "input"
+local PauseMenuGUI = require "gui/kravall/PauseMenuGUI"
 
 local keyboard = core.input.keyboard
 local mouse = core.input.mouse
@@ -106,11 +108,28 @@ function T:init()
 
     self.activeWeaponList = {}
 
+    self.onKeyCallback = function( key, scancode, action )
+        if key == keyboard.key.Escape and action == core.input.action.Press then
+            self:togglePause()      
+        end
+    end
+
+    input.registerOnKey( self.onKeyCallback )
+
     for i,v in pairs( self.weapons ) do
         self.activeWeaponList[i] = core.weaponData.pushWeapon(unpack(v))
     end 
 
     self:setState( self.initGamestate )
+end
+
+function T:togglePause()
+    if self.pauseGUI then
+        self.pauseGUI:destroy()
+        self.pauseGUI = nil
+    else
+        self.pauseGUI = PauseMenuGUI:new()
+    end  
 end
 
 --This function should not be used once squad creation is moved to inside Kravall game mode
@@ -138,6 +157,13 @@ end
 
 function T:destroy()
     
+    input.deregisterOnKey( self.onKeyCallback )
+
+    if self.pauseGUI then
+        self.pauseGUI:destroy()
+        self.pauseGUI = nil
+    end
+
     if type( self.gamestate ) == "table" then
         self.gamestate:destroy()
     end
