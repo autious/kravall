@@ -6,6 +6,8 @@
 #include <cmath>
 #include <limits>
 #include <glm/glm.hpp>
+#include <memory>
+#include <cstring>
 
 #define MOVEDTHISFRAME_THRESHOLD 0.1f
 
@@ -16,6 +18,7 @@ namespace Core
 	*/
 	enum MovementState
 	{
+		Movement_idle,
 		Movement_Walking,
         Movement_Jogging,
 		Movement_Sprinting,
@@ -34,15 +37,17 @@ namespace Core
 	};
 
 	/*!
-		Used to determine who has the stronger case when several systems want to change desiredSpeed in the same frame.
+		Used to determine who has the stronger case when several systems want to change movementState in the same frame.
 	*/
-	enum DesiredSpeedSetPriority : short
+	enum MovementStatePriority : short
 	{
-		NoDesiredSpeedPriority,
-		RioterGoalSystemDesiredSpeedPriority,
-		PoliceGoalSytemDesiredSpeedPriority,
-		SquadMoveInFormationDesiredSpeedPriority,
-		CombatAnimationDesiredSpeedPriority,
+		MovementState_NoPriority,
+		MovementState_MovementSystemPriority,
+		MovementState_RioterGoalSystemPriority,
+		MovementState_PoliceGoalSytemPriority,
+		MovementState_SquadMoveInFormationPriority,
+		MovementState_FleeAnimationPriority,
+		MovementState_CombatAnimationPriority,		
 	};
 
 	/*!
@@ -53,8 +58,8 @@ namespace Core
 		/*! The object's current speed. */
 		float speed;
 
-		/*! The object's desired speed. The speed will attempt to reach this speed. */
-		float desiredSpeed;
+		/*! The object's desired speed for each movement state. The speed will attempt to reach this speed. */
+		float desiredSpeed[ MovementState::MOVEMENTSTATE_COUNT ];
 
 		/*! 
 			Should NEVER be set directly - use the static function SetDirection instead. An array specifying the 
@@ -68,8 +73,11 @@ namespace Core
 		/*! Priority value for the current set goal. If new value has higher priority the current value may be repalced. */
 		MovementGoalPriority currentGoalPriority;
 
-		/*! Priority value for the current desiredSpeed. If new value has higher priority the current value may be repalced. */
-		DesiredSpeedSetPriority currentDesiredSpeedPriority;
+		/*! Priority value for the current movement state. If new state has higher priority the current value may be repalced. */
+		MovementStatePriority currentMovementStatePriority;
+
+		/*! The preferred normal movement state of the unit. */
+		Core::MovementState preferredState;
 
 		/*!
 			An array specifying the object's goal, ceasing movement when the goal is reached. The index 0 corresponds
@@ -84,8 +92,8 @@ namespace Core
 		MovementState state;
 
 		/*! Default constructor. Initialising all members to 0. */
-		MovementComponent() : speed(0.0f), desiredSpeed(0.0f), currentGoalPriority( MovementGoalPriority::NoGoalPriority ), 
-			currentDesiredSpeedPriority( DesiredSpeedSetPriority::NoDesiredSpeedPriority )
+		MovementComponent() : speed(0.0f), currentGoalPriority( MovementGoalPriority::NoGoalPriority ),
+			currentMovementStatePriority( MovementStatePriority::MovementState_NoPriority )
 		{
 			direction[0] = 0.0f;
 			direction[1] = 0.0f;
@@ -102,31 +110,9 @@ namespace Core
 			NavMeshGoalNodeIndex = -1;
 
 			state = MovementState::Movement_Walking;
-		}
+			preferredState = MovementState::Movement_Walking;
 
-		/*!
-			Constructor setting all members to starting values.
-			\param dirX The x-component of the movement direction vector.
-			\param dirY The y-component of the movement direction vector.
-			\param dirZ The z-component of the movement direction vector.
-			\param startSpeed The initial speed of the object.
-		*/
-		MovementComponent(const float& dirX, const float& dirY, const float& dirZ, const float& startSpeed)
-			: speed(startSpeed), desiredSpeed(startSpeed)
-		{
-			direction[0] = dirX;
-			direction[1] = dirY;
-			direction[2] = dirZ;
-
-			newDirection[0] = 0.0f;
-			newDirection[1] = 0.0f;
-			newDirection[2] = 0.0f;
-
-			goal[0] = FLT_MAX;
-			goal[1] = 0.0f;
-			goal[2] = 0.0f;
-
-			state = MovementState::Movement_Walking;
+			std::memset( desiredSpeed, 0, sizeof(float) * MovementState::MOVEMENTSTATE_COUNT );
 		}
 
 		inline static const char* GetName()
@@ -168,12 +154,12 @@ namespace Core
 			}
 		}
 
-		inline void SetDesiredSpeed( float speed, DesiredSpeedSetPriority prio )
+		inline void SetMovementState( MovementState newState, MovementStatePriority prio )
 		{
-			if( currentDesiredSpeedPriority <= prio )
+			if( currentMovementStatePriority <= prio )
 			{
-				desiredSpeed = speed;
-				currentDesiredSpeedPriority = prio;
+				state = newState;
+				currentMovementStatePriority = prio;
 			}
 		}
 

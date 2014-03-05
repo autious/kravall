@@ -62,7 +62,7 @@ namespace GFX
 		m_reloadAnimationData = true;
 
 		m_drawSelectionbox = false;
-		m_enableDebug = false;
+		m_enableDebug = true;
 	}
 
 	RenderCore::~RenderCore()
@@ -223,7 +223,7 @@ namespace GFX
 
 		m_gamma = 2.2f;
 		m_exposure = 1.0f;
-		m_whitePoint = glm::vec3(2.0f);
+		m_whitePoint = glm::vec3(1.3f);
 
 		m_currentLUT = "identity";
 	}

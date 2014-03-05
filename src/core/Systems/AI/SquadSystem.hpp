@@ -68,6 +68,8 @@ namespace Core
 
         void EnableOutline(int* squadIDs, int nSqauds, const glm::vec4& Color);
 
+		void EnableOutlineMoods(int* squadIDs, int nSquads);
+
         void DisableOutline(int* squadIDs, int nSqauds);
 
         std::vector<int> GetAllSquads( );

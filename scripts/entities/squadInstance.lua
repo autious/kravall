@@ -50,7 +50,7 @@ local function createMember( scen, pos, groupID, weaponType, memberDef )
 			{
 				type = core.componentType.MovementComponent,
 				data = { direction = { 0, 0, 0 }, newDirection = { 0, 0, 0 }, speed = 5.8, 
-			    desiredSpeed = 5.8, goal = false },
+			    desiredSpeed = { 0, 1.6, 4.5, 5.8, 8.8  }, goal = false },
                 ignoreHard = true 
 			},
 			{
@@ -116,10 +116,9 @@ return function( scen, squadInstance, weaponList )
     local T = {}
 
     T.members = {}
+    T.type = squadInstance.name
     T.startPosition = {squadInstance.position:get()}
     T.groupId = core.system.groups.createGroup()
-
-    print( "GAVE A GROUP ID: " .. T.groupId )
 
     scen:loadAssembly(
             {
@@ -128,6 +127,7 @@ return function( scen, squadInstance, weaponList )
                     data = {squadID = T.groupId, 
                             squadGoal = {squadInstance.position:get()},
                             squadMoveInFormation = false,
+							squadFormation = core.system.squad.formations.LineFormation,
                             squadTargetForward = {0, -1}},                        
                         ignoreHard = true
                 }

@@ -40,6 +40,7 @@ namespace Core
             bool Init( );
             bool Stop( );
             void Update( float delta );
+            void LoadHomeConfiguration();
 
             std::chrono::microseconds GetUpdateTiming();
             int GetMemoryUse();

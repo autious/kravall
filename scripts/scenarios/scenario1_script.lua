@@ -230,8 +230,9 @@ return function( scen )
     end )
 
     scen:registerTickCallback( function( )
-        if getCurrentWaypoint() then 
-            if core.system.area.getAreaRioterCount( getCurrentWaypoint(), deserterGroup ) > 10 then
+        if getCurrentWaypoint() and deserterGroup then 
+            local memberCount = core.system.groups.getGroupMemberCount( deserterGroup )
+            if core.system.area.getAreaRioterCount( getCurrentWaypoint(), deserterGroup ) > math.max(memberCount/2 - 5,0) then
                 currentWaypoint = currentWaypoint + 1
                 if getCurrentWaypoint() then
                     print( "Set new goal!" )
@@ -293,18 +294,23 @@ return function( scen )
 	end
 
     -- Create rioter on area:
-	function T.createAgitator( ent, xsize, ysize )
-		local wpc = ent:get( core.componentType.WorldPositionComponent )
-		local ac = ent:get( core.componentType.AreaComponent )
-		verts = ac.vertices
+	function T.createAgitators( ents, xsize, ysize )
 
-		-- Make vertex positions from local space to world space
-		for i = 1, 8, 2 do
-			verts[i] = verts[i] + wpc.position[1]
-			verts[i + 1] = verts[i + 1] + wpc.position[3]
-		end
-	    local grp = core.system.groups.createGroup(2)
-		group( scen, ac.vertices, grp, {xsize, ysize}, fists, nil, 1, 1, core.RioterAlignment.Anarchist )
+        local grp = core.system.groups.createGroup(2)
+
+        for i,ent in pairs( ents ) do
+            local wpc = ent:get( core.componentType.WorldPositionComponent )
+            local ac = ent:get( core.componentType.AreaComponent )
+            verts = ac.vertices
+
+            -- Make vertex positions from local space to world space
+            for i = 1, 8, 2 do
+                verts[i] = verts[i] + wpc.position[1]
+                verts[i + 1] = verts[i + 1] + wpc.position[3]
+            end
+            group( scen, ac.vertices, grp, {xsize, ysize}, fists, nil, 1, 1, core.RioterAlignment.Anarchist )
+        end
+
         return grp
 	end
 
@@ -345,14 +351,14 @@ return function( scen )
         
         waypoints[nc.name] = ent 
         waypoint_positions[nc.name] = wpc.position
-        print( "Regestering waypoint: " .. nc.name )
+        print( "Registering waypoint: " .. nc.name )
     end
 
-    local ag1Spawn = nil
+    local ag1Spawns = {}
     function T.checkAg1Enter( ent )
-        if ag1Spawn and core.system.area.getAreaRioterCount( ent, deserterGroup ) > 0 then
-            table.insert( agitatorGroups, T.createAgitator( ag1Spawn, 10,10 ) ) 
-            ag1Spawn = nil
+        if #ag1Spawns > 0 and core.system.area.getAreaRioterCount( ent, deserterGroup ) > 0 then
+            table.insert( agitatorGroups, T.createAgitators( ag1Spawns, 10,10 ) ) 
+            ag1Spawns = {}
         end
     end
 
@@ -360,14 +366,14 @@ return function( scen )
         print( "Registering Ag1" )
 		local wpc = ent:get(core.componentType.WorldPositionComponent)
 		core.gameMetaData.registerEscapePoint( wpc.position[1], wpc.position[2], wpc.position[3] )
-        ag1Spawn = ent 
+        table.insert( ag1Spawns, ent )
     end
 
-    local ag2Spawn = nil
+    local ag2Spawns = {}
     function T.checkAg2Enter( ent )
-        if ag2Spawn and core.system.area.getAreaRioterCount( ent, deserterGroup ) > 0 then
-            table.insert( agitatorGroups, T.createAgitator( ag2Spawn, 10,10 ) ) 
-            ag2Spawn = nil
+        if #ag2Spawns > 0 and core.system.area.getAreaRioterCount( ent, deserterGroup ) > 0 then
+            table.insert( agitatorGroups, T.createAgitators( ag2Spawns, 10,10 ) ) 
+            ag2Spawns = {}
         end
     end
 
@@ -375,14 +381,14 @@ return function( scen )
         print( "Registering Ag2" )
 		local wpc = ent:get(core.componentType.WorldPositionComponent)
 		core.gameMetaData.registerEscapePoint( wpc.position[1], wpc.position[2], wpc.position[3] )
-        ag2Spawn = ent 
+        table.insert( ag2Spawns, ent )
     end
 
-    local ag3Spawn = nil
+    local ag3Spawns = {}
     function T.checkAg3Enter( ent )
-        if ag3Spawn and core.system.area.getAreaRioterCount( ent, deserterGroup ) > 0 then
-            table.insert( agitatorGroups, T.createAgitator( ag3Spawn, 10,10 ) ) 
-            ag3Spawn = nil
+        if #ag3Spawns > 0 and core.system.area.getAreaRioterCount( ent, deserterGroup ) > 0 then
+            table.insert( agitatorGroups, T.createAgitators( ag3Spawns, 10,10 ) ) 
+            ag3Spawns = {}
         end
     end
 
@@ -390,7 +396,7 @@ return function( scen )
         print( "Registering Ag3" )
 		local wpc = ent:get(core.componentType.WorldPositionComponent)
 		core.gameMetaData.registerEscapePoint( wpc.position[1], wpc.position[2], wpc.position[3] )
-        ag3Spawn = ent 
+        table.insert(ag3Spawns, ent )
     end
 
     function T.rotateY( ent, delta )
