@@ -479,13 +479,13 @@ local function CreateEnemyTankBody(position, group)
 	},
 	{
 		type = core.componentType.MovementComponent,
-		data = { direction = { 0, 0, 0 }, newDirection = { 0, 0, 0 }, speed = 5000.0, 
-		desiredSpeed = 5000.0, goal = false }
+		data = { direction = { 0, 0, 0 }, newDirection = { 0, 0, 0 }, speed = 5.0, 
+		desiredSpeed = { 5.0, 5.0, 5.0, 5.0 }, goal = false }
 		,ignoreHard = true
 	},
 	{
 		type = core.componentType.BoundingVolumeComponent,
-		data = { sphereOffset = { 0, 0, 0 }, sphereRadius = 10.0, pickingRadius = 0.0,
+		data = { sphereOffset = { 0, 0, 0 }, sphereRadius = 3.0, pickingRadius = 0.0,
 				collisionModel = core.BoundingVolumeCollisionModel.DynamicResolution, 
 				type = core.BoundingVolumeType.SphereBoundingType }
 	},
