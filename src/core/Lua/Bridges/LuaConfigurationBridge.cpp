@@ -12,7 +12,8 @@ extern "C"
 {
     static int LuaGetConfigurationFile( lua_State * L )
     {
-        char cfgdir[MAX_PATH];     
+        char cfgdir[MAX_PATH];   
+		std::memset(cfgdir, 0, MAX_PATH * sizeof(char));
 
         get_user_config_file( cfgdir, sizeof(cfgdir), "ekswaised-kravall-game" );
 
