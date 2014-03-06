@@ -103,7 +103,7 @@ function PrepInterface:new(o)
 											elements=o.policeTypes,
 											onSelect = function( squadDef )
 												if squadDef then
-													if squadDef.name == "Common Shield Squad" then
+													if squadDef.name == "Shield Squad" then
 														o.shieldStatsSubGUI:setShow( true )
 													else
 														o.shieldStatsSubGUI:setShow( false )
