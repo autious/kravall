@@ -91,19 +91,19 @@ return function( scen )
 
 		local rGroup = core.system.groups.createGroup( 1 );
 		local centerPoint = { -90, 0, 0 }
-		local side = math.sqrt( 30 )
+		local side = math.sqrt( 10 )
 		for i = -side/2, side/2 do
 			for p = -side/2, side/2 do
 				rioter( scen, p * 1.5 + centerPoint[1], 0  + centerPoint[2], i * 1.5  + centerPoint[3], 
 				rGroup, nil, nil, fists, nil, 0, 0, core.RioterAlignment.Anarchist, core.movementData.Jogging )
 			end
 		end
-		core.system.groups.setGroupGoal(rGroup, 200, 0, 0)			
+		--core.system.groups.setGroupGoal(rGroup, 200, 0, 0)			
 		
 		
 		
 		local sqads = {}	
-		for i = 0, 3 do
+		for i = 0, 1 do
 			scen.gamemode:addSquad( policeSquad( scen, -45, 0, 0, 0, fists ))
 		end
 		
