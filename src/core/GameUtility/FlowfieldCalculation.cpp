@@ -39,7 +39,8 @@ namespace Core
 		// reset group metadata...
 		flowfields[group].goal[ 0 ] = std::numeric_limits<float>::max();
 		flowfields[group].goal[ 1 ] = std::numeric_limits<float>::max();
-		std::memset( flowfields[group].list, 0, nrNodes * sizeof( glm::vec3 ) );
+		//std::memset( flowfields[group].list, 0, nrNodes * sizeof( glm::vec3 ) );
+		std::memset( flowfields[group].deadNodes, 0x1, nrNodes * sizeof( bool) );
 
 
 		// find out what node we want to go to...
@@ -209,6 +210,7 @@ namespace Core
 				flowfields[group].list[ prioList[0].node ] = ownMidLine;
 				flowfields[group].edges[ prioList[0].node ] = prioList[0].entryEdge;
 				flowfields[group].distanceToGoal[ prioList[0].node ] = prioList[0].entryDistance;
+				flowfields[group].deadNodes[ prioList[0].node ] = false;
 				distances[ prioList[0].node ] = prioList[0].entryDistance;
 				points[ prioList[0].node ] = ownMidLine;
 
@@ -244,6 +246,7 @@ namespace Core
 			flowfields[group].list[ prioList[0].node ] = points[ prioList[0].parentNode ];
 			flowfields[group].edges[ prioList[0].node ] = prioList[0].entryEdge;
 			flowfields[group].distanceToGoal[ prioList[0].node ] = prioList[0].entryDistance;
+			flowfields[group].deadNodes[ prioList[0].node ] = false;
 
 			// utility
 			distances[ prioList[0].node ] = prioList[0].entryDistance;

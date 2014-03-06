@@ -169,6 +169,5 @@ namespace GFX
 
 		out_actualHeight = l_off;
 		out_actualWidth = maxWidth;
-		std::cout << "width: " << out_actualWidth << " height: "  << out_actualHeight << "\n";
 	}
 }

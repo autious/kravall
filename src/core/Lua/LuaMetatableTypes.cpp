@@ -228,11 +228,11 @@ namespace Core
         return font;
     }
 
-    LuaTimer* LuaUNewTimer( lua_State * L )
+    LuaTimer* LuaUNewTimer( lua_State * L, Core::HighresTimer * t )
     {
         LuaTimer* timer = static_cast<LuaTimer*>( lua_newuserdata( L, sizeof(LuaTimer) ) );
 
-        timer->timer = new Core::HighresTimer();
+        timer->timer = t;
 
         luaL_getmetatable( L, TIMER_META_TYPE );
         lua_setmetatable( L, -2 );
