@@ -12,13 +12,9 @@ local squadInstance = ent.get "squadInstance"
 local Main = { name = "Main" }
 
 local function registerCallbacks(o)
-    input.registerOnButton( function( button, action, mods, consumed )
-        consumed = o.overviewHandler:onButton(button, action, mods, consumed)        
-
-        o.policeHandler:onButton(button, action, mods, consumed)
-        return consumed
-    end, "GAME")
+    input.registerOnButton( o.onButton, "GAME" )
 end
+
 
 function Main:new(o)
     o = o or {}
@@ -33,6 +29,12 @@ function Main:new(o)
         TearGas = PDC:createParticleDefinition(o.asm, 5000, "assets/texture/particle/smoke.material")
     }
 
+    o.onButton = function(button, action, mods, consumed)
+        consumed = o.overviewHandler:onButton(button, action, mods, consumed)        
+
+        o.policeHandler:onButton(button, action, mods, consumed)
+        return consumed
+    end
 
     --Init the things that are required.
     o.moveMarker = MoveMarker:new()
@@ -165,6 +167,7 @@ function Main:exitOverview(target)
 end
 
 function Main:destroy()
+    input.deregisterOnButton(self.onButton)
     self.moveMarker:destroy()
     self.policeHandler:destroy()
     self.gui:destroy()
