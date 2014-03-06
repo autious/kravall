@@ -125,7 +125,9 @@ namespace Core
 					{
 						in[i].health_stamina_morale_stancealignment = glm::vec4(ac->health, ac->stamina, ac->morale, ac->rioter.stance); //Attacking state should override stance here
 						in[i].groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance = glm::vec4(ac->rioter.groupID, 1, 1, navMeshValue);
-						team = Core::GetNavigationMesh()->flowfields[ ac->police.squadID ].team;
+
+						// police will always be seen as an enemy group in the pf calculation
+						team = 0; //Core::GetNavigationMesh()->flowfields[ ac->police.squadID ].team;
 					}
 					else if (utc->type == UnitType::Object)
 					{

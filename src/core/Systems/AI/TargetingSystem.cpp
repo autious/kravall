@@ -26,7 +26,7 @@ void Core::TargetingSystem::Update(float delta)
 		Core::UnitTypeComponent* utc = WGETC<Core::UnitTypeComponent>(*it);
 		
 		if (utc->type == UnitType::Police)
-			HandlePoliceTargeting(*it, delta, squadSystem );
+			HandlePoliceTargeting(*it, delta, squadSystem, instance );
 		else if (utc->type == UnitType::Rioter)
 			HandleRioterTargeting(*it, delta, instance );
 	}
@@ -34,7 +34,7 @@ void Core::TargetingSystem::Update(float delta)
 	//TemporaryFunction();
 }
 
-void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police, float delta, Core::SquadSystem* squadSystem)
+void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police, float delta, Core::SquadSystem* squadSystem, Core::NavigationMesh* instance )
 {
 	Core::TargetingComponent* tc = WGETC<Core::TargetingComponent>(police);
 
@@ -90,7 +90,7 @@ void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police, float del
 				if( sqc->targetGroup != std::numeric_limits<int>::max() )
 					tc->target = FindClosestTarget(wpc, 1 << UnitType::Rioter, -1, nullptr, sqc->targetGroup );
 				else
-					tc->target = FindClosestTarget(wpc, 1 << UnitType::Rioter, -1, nullptr );
+					tc->target = FindClosestTarget(wpc, 1 << UnitType::Rioter, instance->flowfields[ sqc->squadID ].team, instance );
 				tc->attackTime = 0.0f;
 			}
 			else
@@ -236,7 +236,7 @@ Core::Entity Core::TargetingSystem::FindClosestTarget(Core::WorldPositionCompone
 		if( !(1 << utc->type & targetType) )
 			continue;
 		
-		assert( utc->type != Core::UnitType::Object);// "Police cannot currently attack UnitType::Objects" );
+		assert( utc->type != Core::UnitType::Object); // "Police cannot currently attack UnitType::Objects"
 
 		Core::AttributeComponent* attribc = WGETC<Core::AttributeComponent>(*it);
 		if( utc->type == Core::UnitType::Rioter ? attribc->rioter.groupID != targetGroup : attribc->police.squadID != targetGroup )
