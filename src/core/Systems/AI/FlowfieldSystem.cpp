@@ -5,6 +5,8 @@
 #include <gfx/GFXInterface.hpp>
 #include <GameUtility/PathfindingUtility.hpp>
 
+
+
 Core::FlowfieldSystem::FlowfieldSystem()
 	: BaseSystem( EntityHandler::GenerateAspect<
 		WorldPositionComponent, UnitTypeComponent, AttributeComponent, FlowfieldComponent >(), 0ULL )
@@ -49,7 +51,12 @@ void Core::FlowfieldSystem::Update( float delta )
 			float* navMeshGoal = instance->flowfields[ attribc->rioter.groupID ].goal;
 			glm::vec3 navGoal = glm::vec3( navMeshGoal[0], 0.0f, navMeshGoal[1] );
 
-			if( !Core::PathFinder::CheckLineVsNavMesh( position, navGoal, 3.0f, ffc->node ) )
+			if( instance->flowfields[ groupID ].deadNodes[ ffc->node ] )
+			{
+				// calculate path out of police occupied node here
+				CalculatePathInDeadNode( *it, groupID );
+			}
+			else if( !Core::PathFinder::CheckLineVsNavMesh( position, navGoal, 3.0f, ffc->node ) )
 			{
 				if( glm::dot( navGoal - position, navGoal - position ) == 0.0f )
 					MovementComponent::SetDirection( mvmc, 0.0f, 0.0f, 0.0f );
@@ -95,4 +102,59 @@ void Core::FlowfieldSystem::Update( float delta )
 			}
 		}
 	}
+}
+
+
+//#define DRAW_LINE_TO_POLICE
+
+
+#ifdef DRAW_LINE_TO_POLICE
+#define DRAW_POLICE_LINE( x ) x
+#else
+#define DRAW_POLICE_LINE( x ) ;
+#endif
+
+#define SQR_SEARCH_DISTANCE 250
+
+void Core::FlowfieldSystem::CalculatePathInDeadNode( Core::Entity rioter, int group )
+{
+	glm::vec3 toPolice = glm::vec3( 0.0f );
+
+	Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>( rioter );
+	glm::vec3 myPos = glm::vec3( wpc->position[0], wpc->position[1], wpc->position[2] );
+
+	for( std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); it++ )
+	{
+		UnitTypeComponent* utc = WGETC<UnitTypeComponent>(*it);
+		if( utc->type != Core::UnitType::Police )
+			continue;
+
+		Core::WorldPositionComponent* policeWpc = WGETC<Core::WorldPositionComponent>( *it );
+		toPolice += float(glm::distance2( glm::vec3( policeWpc->position[0], policeWpc->position[1], policeWpc->position[2] ), myPos ) < SQR_SEARCH_DISTANCE) 
+			* (glm::vec3( policeWpc->position[0], policeWpc->position[1], policeWpc->position[2] ) - myPos);
+	}
+
+	if( glm::dot( toPolice, toPolice ) != 0.0f )
+		toPolice = glm::normalize( toPolice );
+
+	// find to which of the adjacent nodes you want to walk...
+	Core::NavigationMesh* instance = Core::GetNavigationMesh();
+	Core::FlowfieldComponent* ffc = WGETC<Core::FlowfieldComponent>(rioter);
+	int edgesInNode = instance->nodes[ffc->node].corners[3].length < 0 ? 3 : 4;
+	for( int i = 0; i < edgesInNode; i++ )
+	{
+		int nextNode = instance->nodes[ffc->node].corners[i].linksTo;
+		if( !instance->flowfields[group].deadNodes[nextNode] )
+		{
+			glm::vec3 toNodeEdge = glm::normalize( instance->nodes[ffc->node].GetMidPoint( i ));
+			if( glm::dot(toPolice, toNodeEdge ) < 0.3f )
+			{
+				Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>(rioter);
+				mvmc->SetDirection( mvmc, toNodeEdge.x, toNodeEdge.y, toNodeEdge.z );
+				return;
+			}			
+		}
+	}
+
+	DRAW_POLICE_LINE( GFX::Debug::DrawLine( myPos, myPos + toPolice * 2.0f, GFXColor( 1.0f, 1.0f, 0.0f, 1.0f ), false ) );
 }

@@ -70,7 +70,7 @@ function GUIComponent:new(o)
                 end
             elseif action == core.input.action.Release then
                 if o.inside == true then
-                    o.onRelease()         
+                    o.onRelease()        
                 end
                 o.press = false
                 o.drag = false

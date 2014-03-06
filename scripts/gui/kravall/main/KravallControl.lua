@@ -13,14 +13,16 @@ local WestPlacer = require "gui/placement/WestPlacer"
 local CenterPlacer = require "gui/placement/CenterPlacer"
 
 local EventListerGUI = require "gui/kravall/main/subgui/EventListerGUI"
+local OverviewGUI = require "gui/kravall/main/subgui/OverviewGUI"
 local UnitStatGUI = require "gui/kravall/main/subgui/UnitStatGUI"
 local SquadMenuGUI = require "gui/kravall/main/subgui/SquadMenuGUI"
 
 local KravallControl = 
 { 
-    onFormationSelect = function(formation) core.log.error("No handler set for onFormationChange in KravallControl") end,
-    onStanceSelect = function(stance) core.log.error("No handler set for onStanceChange in KravallControl") end,
-    onAbilitySelect = function(ability) end
+    onFormationSelect = function(formation) core.log.error("No handler set for onFormationChange in KravallControl.") end,
+    onStanceSelect = function(stance) core.log.error("No handler set for onStanceChange in KravallControl.") end,
+    onAbilitySelect = function(ability) end,
+    onUseOverview = function() core.log.error("No function ser for onUseOverview in KravallControl.") end
 }
                             
 function KravallControl:new(o)
@@ -64,6 +66,10 @@ function KravallControl:new(o)
     --o.rightControlGUI:addComponent( o.stanceGUI )
     --o.rightControlGUI:addComponent( o.abilitiesGUI )
     --o.rightControlGUI:addComponent( o.formationGUI )
+
+    --o.overviewGUI = OverviewGUI:new( {        
+    --    onUseOverview = function() o.onUseOverview() end
+    --})
     -------
 
     --o.gui:addComponent( o.rightControlGUI )
@@ -87,6 +93,10 @@ end
 function KravallControl:setAbility( ability )
     --self.abilitiesGUI:setAbility( ability ) 
 	self.squadMenuGUI:setAbility( ability ) 
+end
+
+function KravallControl:setOverview( state )
+    self.overviewGUI:setOverview( state ) 
 end
 
 function KravallControl:setUnitInformation( data )
