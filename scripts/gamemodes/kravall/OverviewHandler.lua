@@ -31,7 +31,8 @@ function OverviewHandler:onButton(button, action, mods, consumed)
         elseif button == mouse.button.Right then
             self.rightPressed = false
         end
-    end   
+    end  
+    return consumed
 end
 function OverviewHandler:new(o)
     o = o or {}
@@ -68,7 +69,7 @@ function OverviewHandler:SetOutlines()
             local utc = members[1]:get(core.componentType.UnitTypeComponent)
             if utc.unitType == core.UnitType.Rioter then
                 table.insert(rioterGroupIds, attrbComponent.groupID)
-                self.outlinedGroups[#self.outlinedGroups] = attrbComponent.groupID    
+                self.outlinedGroups[attrbComponent.groupID] = attrbComponent.groupID    
             elseif utc.unitType == core.UnitType.Police then
                 table.insert(policeGroupIds, attrbComponent.squadID)
                 self.outlinedGroups[#self.outlinedGroups] = attrbComponent.squadID    
