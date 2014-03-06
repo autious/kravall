@@ -724,6 +724,7 @@ function PoliceSquadHandler:update( delta )
     end
 
     --Ability: Sprint
+    -- This block is expensive (~2ms) should be put in a c-system
     for _,squad in pairs(self.createdSquads) do
         local squadEntity = core.system.squad.getSquadEntity(squad.groupId)
         assert( squadEntity, "no squad entity bound to " .. squad.groupId )
