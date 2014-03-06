@@ -16,6 +16,14 @@ layout (std140, binding = 4) readonly buffer buffah
     InstanceData gInstances[];
 };
 
+layout (std140) uniform instanceBufferOffset
+{
+    uint gInstanceOffset;
+	uint pad0;
+	uint pad1;
+	uint pad2;
+};
+
 layout (shared) uniform PerFrameBlock
 {
 	mat4 gView;
@@ -39,29 +47,15 @@ out vec2 uvFS;
 
 void main()
 {
-#define INSTANCED
-#ifdef INSTANCED
+	uint instanceID = gInstanceOffset + gl_InstanceID;
 	//Move position to clip space
-	posW = gInstances[gl_InstanceID].mm * positionIN;
-	posFS = gProjection * gView * gInstances[gl_InstanceID].mm * positionIN;
+	posW = gInstances[instanceID].mm * positionIN;
+	posFS = gProjection * gView * gInstances[instanceID].mm * positionIN;
 	
 	//Transform normal with model matrix
-	normalFS = gInstances[gl_InstanceID].mm * normalIN;
-	tangentFS = gInstances[gl_InstanceID].mm * tangentIN;
-	//binormalFS = gInstances[gl_InstanceID].mm * binormalIN;
-
-#else
-
-	//Move position to clip space
-	posW = modelMatrix * positionIN;
-	posFS = gProjection * gView * modelMatrix * positionIN;
-	
-	//Transform normal with model matrix
-	normalFS = modelMatrix * normalIN;
-	tangentFS = modelMatrix * tangentIN;
-	//binormalFS = modelMatrix * binormalIN;
-
-#endif
+	normalFS = gInstances[instanceID].mm * normalIN;
+	tangentFS = gInstances[instanceID].mm * tangentIN;
+	//binormalFS = gInstances[instanceID].mm * binormalIN;
 
 	uvFS = uvIN;
 

@@ -3,6 +3,7 @@
 namespace GFX
 {
     const GLuint UniformBufferManager::CAMERA_BINDING_INDEX = 0;
+    const GLuint UniformBufferManager::INSTANCE_ID_OFFSET_INDEX = 3;
     
 
 	UniformBufferManager::UniformBufferManager()

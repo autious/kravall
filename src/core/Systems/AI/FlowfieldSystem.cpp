@@ -48,7 +48,7 @@ void Core::FlowfieldSystem::Update( float delta )
 
 			float* navMeshGoal = instance->flowfields[ attribc->rioter.groupID ].goal;
 			glm::vec3 navGoal = glm::vec3( navMeshGoal[0], 0.0f, navMeshGoal[1] );
-				
+
 			if( !Core::PathFinder::CheckLineVsNavMesh( position, navGoal, 3.0f, ffc->node ) )
 			{
 				if( glm::dot( navGoal - position, navGoal - position ) == 0.0f )

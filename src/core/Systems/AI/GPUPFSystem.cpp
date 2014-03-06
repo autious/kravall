@@ -125,7 +125,9 @@ namespace Core
 					{
 						in[i].health_stamina_morale_stancealignment = glm::vec4(ac->health, ac->stamina, ac->morale, ac->rioter.stance); //Attacking state should override stance here
 						in[i].groupSquadID_defenseRage_mobilityPressure_navMeshIndexAndDistance = glm::vec4(ac->rioter.groupID, 1, 1, navMeshValue);
-						team = Core::GetNavigationMesh()->flowfields[ ac->police.squadID ].team;
+
+						// police will always be seen as an enemy group in the pf calculation
+						team = 0; //Core::GetNavigationMesh()->flowfields[ ac->police.squadID ].team;
 					}
 					else if (utc->type == UnitType::Object)
 					{
@@ -201,9 +203,12 @@ namespace Core
 					if (glm::length(newDir) > 0.1f)
 						newDir = glm::normalize(newDir);
 
-					mc->newDirection[0] = newDir.x;
-					mc->newDirection[1] = newDir.y;
-					mc->newDirection[2] = newDir.z;
+					if( utc->type == Core::UnitType::Rioter )
+					{
+						mc->newDirection[0] = newDir.x;
+						mc->newDirection[1] = newDir.y;
+						mc->newDirection[2] = newDir.z;
+					}
 
 					i++;
 				}
@@ -250,14 +255,14 @@ namespace Core
 					if (glm::length(newDir) > 0.1f)
 						newDir = glm::normalize(newDir);
 
-					mc->newDirection[0] = newDir.x;
-					mc->newDirection[1] = newDir.y;
-					mc->newDirection[2] = newDir.z;
-
 					ac->morale = out[i].morale_rage_pressure_empty.x;
 
 					if (utc->type == UnitType::Rioter)
 					{
+						mc->newDirection[0] = newDir.x;
+						mc->newDirection[1] = newDir.y;
+						mc->newDirection[2] = newDir.z;
+
 						ac->rioter.rage = out[i].morale_rage_pressure_empty.y;
 						ac->rioter.pressure = out[i].morale_rage_pressure_empty.z;
 

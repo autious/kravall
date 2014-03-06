@@ -129,28 +129,44 @@ namespace GFX
 		m_shaderManager->AttachShader("StaticOutlineVS", "StaticOutline");
 		m_shaderManager->AttachShader("StaticOutlineFS", "StaticOutline");
 		m_shaderManager->LinkProgram("StaticOutline");
-
-        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("StaticMesh"), "PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
-        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("NormalMappedStatic"), "PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
-        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("StaticNormal"), "PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
-        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("AnimatedNormal"), "PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
-        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("StaticBlend"), "PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
-        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("AnimatedBlend"), "PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
-        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("AnimatedOutline"), "PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
-        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("StaticOutline"), "PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
+		
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("StaticMesh"),			"PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("NormalMappedStatic"),	"PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("StaticNormal"),		"PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("AnimatedNormal"),		"PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("StaticBlend"),			"PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("AnimatedBlend"),		"PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("AnimatedOutline"),		"PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("StaticOutline"),		"PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
+		
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("StaticMesh"),			"instanceBufferOffset", UniformBufferManager::INSTANCE_ID_OFFSET_INDEX);
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("NormalMappedStatic"),	"instanceBufferOffset", UniformBufferManager::INSTANCE_ID_OFFSET_INDEX);
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("StaticNormal"),		"instanceBufferOffset", UniformBufferManager::INSTANCE_ID_OFFSET_INDEX);
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("AnimatedNormal"),		"instanceBufferOffset", UniformBufferManager::INSTANCE_ID_OFFSET_INDEX);
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("StaticBlend"),			"instanceBufferOffset", UniformBufferManager::INSTANCE_ID_OFFSET_INDEX);
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("AnimatedBlend"),		"instanceBufferOffset", UniformBufferManager::INSTANCE_ID_OFFSET_INDEX);
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("AnimatedOutline"),		"instanceBufferOffset", UniformBufferManager::INSTANCE_ID_OFFSET_INDEX);
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("StaticOutline"),		"instanceBufferOffset", UniformBufferManager::INSTANCE_ID_OFFSET_INDEX);
 
 		m_outlineThickness = 2;
-		m_staticInstances = new InstanceData[1024];
+		m_staticInstances = new InstanceData[MAX_INSTANCES];
+		
 
 		glGenBuffers(1, &m_instanceBuffer);
-		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_instanceBuffer);
-		glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_INSTANCES * sizeof(InstanceData), NULL, GL_STREAM_COPY);
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_instanceBuffer);
+		glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_INSTANCES * sizeof(InstanceData), NULL, GL_STREAM_COPY);
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, 0);
+
+		glGenBuffers(1, &m_instanceOffsetBuffer);
+		glBindBuffer(GL_UNIFORM_BUFFER, m_instanceOffsetBuffer);
+		glBufferData(GL_UNIFORM_BUFFER, 4*sizeof(unsigned int), NULL, GL_DYNAMIC_DRAW);
+		glBindBufferBase(GL_UNIFORM_BUFFER, UniformBufferManager::INSTANCE_ID_OFFSET_INDEX, 0);
+
 	}
 
-	void DeferredPainter::Render(AnimationManagerGFX* animationManager, unsigned int& renderIndex, 
-	FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular, 
-	FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix, const float& gamma, RenderInfo& out_RenderInfo)
+	void DeferredPainter::Render(AnimationManagerGFX* animationManager, unsigned int& renderIndex,
+		FBOTexture* depthBuffer, FBOTexture* normalDepth, FBOTexture* diffuse, FBOTexture* specular,
+		FBOTexture* glowMatID, glm::mat4 viewMatrix, glm::mat4 projMatrix, const float& gamma, RenderInfo& out_RenderInfo)
 	{
 		BasePainter::Render();
 		unsigned int numDrawCalls = 0;
@@ -190,13 +206,115 @@ namespace GFX
 		unsigned int material = std::numeric_limits<decltype(material)>::max();
 		unsigned int depth = std::numeric_limits<decltype(depth)>::max();
 
+		int instanceBufferSize = 0;
+
+		{
+			Material mat;
+			Mesh mesh;
+			GFXBitmask bitmask;
+			int instanceCount = 0;
+			unsigned int instanceOffset = 0;
+			unsigned int i;
+			
+			bool endMe = false;
+			for (i = renderIndex; i < renderJobs.size(); i++)
+			{
+				bitmask = renderJobs[i].bitmask;
+
+				objType = GetBitmaskValue(bitmask, BITMASK::TYPE);
+
+				// Break if no opaque object
+				if (objType != GFX::OBJECT_TYPES::OPAQUE_GEOMETRY)
+				{
+					endMe = true;
+				}
+
+				if (!endMe)
+				{
+					viewport = GetBitmaskValue(bitmask, BITMASK::VIEWPORT_ID);
+					layer = GetBitmaskValue(bitmask, BITMASK::LAYER);
+					translucency = GetBitmaskValue(bitmask, BITMASK::TRANSLUCENCY_TYPE);
+					meshID = GetBitmaskValue(bitmask, BITMASK::MESH_ID);
+					material = GetBitmaskValue(bitmask, BITMASK::MATERIAL_ID);
+					depth = GetBitmaskValue(bitmask, BITMASK::DEPTH);
+				}
+
+				if (material == currentMaterial && meshID == currentMesh && !endMe && instanceCount < MAX_INSTANCES && layer == currentLayer)
+				{
+					InstanceData smid = *(InstanceData*)renderJobs.at(i).value;
+					m_staticInstances[instanceOffset + instanceCount] = smid;
+					instanceCount++;
+					instanceBufferSize++;
+				}
+				else
+				{
+					if (i > 0)
+					{
+						instanceOffset += instanceCount;
+						instanceCount = 0;
+					}
+
+					if (endMe)
+						break;
+
+					if (material != currentMaterial)
+					{
+						mat = m_materialManager->GetMaterial(material);
+
+						currentMaterial = material;
+
+						//compare shader
+						if (mat.shaderProgramID != currentShader)
+						{
+							currentShader = mat.shaderProgramID;
+						}
+					}
+
+					if (meshID != currentMesh)
+					{
+						mesh = m_meshManager->GetMesh(meshID);
+						currentMesh = meshID;
+					}
+
+					if (layer != currentLayer)
+					{
+						currentLayer = layer;
+					}
+					InstanceData smid = *(InstanceData*)renderJobs.at(i).value;
+					m_staticInstances[instanceOffset + instanceCount] = smid;
+					instanceCount++;
+					instanceBufferSize++;
+				}
+			}
+		}
+		
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_instanceBuffer);
+		InstanceData* pData = (InstanceData*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, MAX_INSTANCES * sizeof(InstanceData),
+			GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
+
+		memcpy(pData, m_staticInstances, instanceBufferSize * sizeof(InstanceData));
+
+		glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+
+		
+		currentShader = std::numeric_limits<decltype(currentShader)>::max();
+		currentMaterial = std::numeric_limits<decltype(currentMaterial)>::max();
+		currentMesh = std::numeric_limits<decltype(currentMesh)>::max();
+		currentLayer = std::numeric_limits<decltype(currentMesh)>::max();
+		objType = std::numeric_limits<decltype(objType)>::max();
+		viewport = std::numeric_limits<decltype(viewport)>::max();
+		layer = std::numeric_limits<decltype(layer)>::max();
+		translucency = std::numeric_limits<decltype(translucency)>::max();
+		meshID = std::numeric_limits<decltype(meshID)>::max();
+		material = std::numeric_limits<decltype(material)>::max();
+		depth = std::numeric_limits<decltype(depth)>::max();
 
 		Material mat;
 		Mesh mesh;
 		GFXBitmask bitmask;
 		int instanceCount = 0;
+		unsigned int instanceOffset = 0;
 		unsigned int i;
-
 		bool endMe = false;
 		for (i = renderIndex; i < renderJobs.size(); i++)
 		{
@@ -222,20 +340,18 @@ namespace GFX
 
 			if (material == currentMaterial && meshID == currentMesh && !endMe && instanceCount < MAX_INSTANCES && layer == currentLayer)
 			{
-				InstanceData smid = *(InstanceData*)renderJobs.at(i).value;
-				m_staticInstances[instanceCount++] = smid;
+				//InstanceData smid = *(InstanceData*)renderJobs.at(i).value;
+				//m_staticInstances[instanceOffset+instanceCount] = smid;
+				instanceCount++;
 			}
 			else
 			{
 				if (i > 0)
 				{
-					glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_instanceBuffer);
-					InstanceData* pData = (InstanceData*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, MAX_INSTANCES * sizeof(InstanceData),
-
-						GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
-					memcpy(pData, m_staticInstances, instanceCount * sizeof(InstanceData));
-
-					glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+						
+					unsigned int asd[4] = {instanceOffset, 0U, 0U, 0U};
+					glBindBufferBase(GL_UNIFORM_BUFFER, UniformBufferManager::INSTANCE_ID_OFFSET_INDEX, m_instanceOffsetBuffer);
+					glBufferSubData(GL_UNIFORM_BUFFER, 0, 4*sizeof(unsigned int), asd);
 
 					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IBO);
 
@@ -256,7 +372,7 @@ namespace GFX
 						glDisable(GL_DEPTH_TEST);
 						glStencilFunc(GL_NOTEQUAL, 1, -1);
 						glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-						glLineWidth(m_staticInstances[0].outlineColor[3]);
+						glLineWidth(m_staticInstances[instanceOffset + instanceCount - 1].outlineColor[3]);
 						glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 						if (currentShader == m_staticBlend || currentShader == m_staticNormal)
@@ -275,7 +391,8 @@ namespace GFX
 						glEnable(GL_DEPTH_TEST);
 						glDisable(GL_STENCIL_TEST);
 					}
-
+					
+					instanceOffset += instanceCount;
 					instanceCount = 0;
 				}
 
@@ -334,9 +451,7 @@ namespace GFX
 				{
 					currentLayer = layer;
 				}
-
-				InstanceData smid = *(InstanceData*)renderJobs.at(i).value;
-				m_staticInstances[instanceCount++] = smid;
+				instanceCount++;
 			}
 
 

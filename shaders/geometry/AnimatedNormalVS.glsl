@@ -16,6 +16,14 @@ layout (std140, binding = 4) readonly buffer instanceBuffer
     InstanceData gInstances[];
 };
 
+layout (std140) uniform instanceBufferOffset
+{
+    uint gInstanceOffset;
+	uint pad0;
+	uint pad1;
+	uint pad2;
+};
+
 layout (std140, binding = 6) readonly buffer animationBuffer
 {
 	mat4x4 gBones[];
@@ -49,7 +57,8 @@ mat4x4 GetBoneMatrix(InstanceData instanceData, int boneIndex)
 
 void main()
 {
-	InstanceData instance = gInstances[gl_InstanceID];
+	uint instanceID = gInstanceOffset + gl_InstanceID;
+	InstanceData instance = gInstances[instanceID];
 	// Apply animations
 	vec4 posA = vec4(0.0f);
 	vec4 normalA = vec4(0.0f);

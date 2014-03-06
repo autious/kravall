@@ -196,7 +196,7 @@ function C:update( dt )
             end
             
             if direction:length() > 0 then
-                local force = self.acceleration - 0.1884 * self.movementSpeed * self.movementSpeed 
+                local force = self.acceleration - 0.1984 * self.movementSpeed * self.movementSpeed 
                 force = math.max(force, 0)
                 self.movementSpeed = self.movementSpeed + force * delta
                 direction:normalize()
@@ -294,6 +294,7 @@ end
 function C:lookAt( position, target )
     camera:lookAt(position, target)
     self.position = camera:getPosition()
+    --self.quatRotation = quat.new(camera:getView())
 end
 
 

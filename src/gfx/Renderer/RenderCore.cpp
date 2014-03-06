@@ -62,7 +62,7 @@ namespace GFX
 		m_reloadAnimationData = true;
 
 		m_drawSelectionbox = false;
-		m_enableDebug = false;
+		m_enableDebug = true;
 	}
 
 	RenderCore::~RenderCore()
@@ -405,7 +405,7 @@ namespace GFX
 		// Render last frame statistics
 		bool updateStats = false;
 
-		if (m_showStatistics)
+		if (m_showStatistics || true)
 		{
 			SubSystemTimeRender();
 			m_curTime = Timer().GetTotal() + 1024;
@@ -511,7 +511,7 @@ namespace GFX
 
 	void RenderCore::SubSystemTimeRender()
 	{
-		if( m_showStatistics && m_font)
+		if( m_font && m_showStatistics)
 		{
 
 			for( int i = 0; i < (int)m_subsystemTimes.size(); i++ )
