@@ -80,7 +80,7 @@ return function( scen )
     end
 
 	 function menuState.goTutorial()
-        scen.gamemode.camera:setGoal( scen.cameras.settings.view, MenuScrollSpeed )
+        scen.gamemode.camera:setGoal( scen.cameras.tutorial.view, MenuScrollSpeed )
 
         if scen.gui ~= nil then
             scen.gui:destroy()
