@@ -3,6 +3,8 @@
 
 #include <Animation/AnimationManager.hpp>
 
+#define BLEED_LIMIT 50
+
 namespace Core
 {
 
@@ -24,16 +26,30 @@ namespace Core
 				this->m_mesh = data.meshID;
 			});
 
-			Core::world.m_contentManager.Load<Core::MaterialLoader>("assets/texture/decal/blood-decal.material", [this](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+			Core::world.m_contentManager.Load<Core::MaterialLoader>("assets/texture/decal/blood-decal_00.material", [this](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
 			{
 				Core::MaterialData data = *static_cast<Core::MaterialData*>(handle);
 				this->m_material = data.materialId;
 			});
 
+			Core::world.m_contentManager.Load<Core::MaterialLoader>("assets/texture/decal/blood-decal_01.material", [this](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
+			{
+				Core::MaterialData data2 = *static_cast<Core::MaterialData*>(handle);
+				this->m_materialTwo = data2.materialId;
+			});
+
+
 			GFX::SetBitmaskValue(m_bloodBitmask, GFX::BITMASK::MESH_ID, m_mesh);
 			GFX::SetBitmaskValue(m_bloodBitmask, GFX::BITMASK::MATERIAL_ID, m_material);
 			GFX::SetBitmaskValue(m_bloodBitmask, GFX::BITMASK::LAYER, GFX::LAYER_TYPES::MESH_LAYER);
 			GFX::SetBitmaskValue(m_bloodBitmask, GFX::BITMASK::TYPE, GFX::OBJECT_TYPES::DECAL_GEOMETRY);
+
+			GFX::SetBitmaskValue(m_bloodBitmaskTwo, GFX::BITMASK::MESH_ID, m_mesh);
+			GFX::SetBitmaskValue(m_bloodBitmaskTwo, GFX::BITMASK::MATERIAL_ID, m_materialTwo);
+			GFX::SetBitmaskValue(m_bloodBitmaskTwo, GFX::BITMASK::LAYER, GFX::LAYER_TYPES::MESH_LAYER);
+			GFX::SetBitmaskValue(m_bloodBitmaskTwo, GFX::BITMASK::TYPE, GFX::OBJECT_TYPES::DECAL_GEOMETRY);
+
+			
 
 			m_foundAssets = true;
 		}
@@ -57,8 +73,6 @@ namespace Core
 					if (atc->health <= 0)
 					{
 						WorldPositionComponent* wpc = WGETC<WorldPositionComponent>(*it);
-						MovementComponent* mc = WGETC<MovementComponent>(*it);
-					
 						CreateBloodDecal(WorldPositionComponent::GetVec3(*wpc));
 						rioterEntities[rioterCount++] = *it;
 					}
@@ -73,7 +87,6 @@ namespace Core
 					if (atc->health <= 0)
 					{
 						WorldPositionComponent* wpc = WGETC<WorldPositionComponent>(*it);
-						MovementComponent* mc = WGETC<MovementComponent>(*it);
 
 						CreateBloodDecal(WorldPositionComponent::GetVec3(*wpc));
 						policeEntities[policeCount++] = *it;
@@ -143,9 +156,15 @@ namespace Core
 
 	void RemovalSystem::CreateBloodDecal(glm::vec3 position)
 	{
+		float bloodChance = rand_FloatRange(0.0f, 100.0f);
+
+		if (bloodChance < BLEED_LIMIT)
+			return;
+
+		float decal = rand_FloatRange(0.0f, 100.0f);
 
 		GraphicsComponent gc;
-		gc.bitmask = m_bloodBitmask;
+		gc.bitmask = decal > 50.0f ? m_bloodBitmask : m_bloodBitmaskTwo;
 		gc.outlineColor[0] = 0.0f;
 		gc.outlineColor[1] = rand_FloatRange(0.05f, 0.2f);
 		gc.outlineColor[2] = 0.0f;
@@ -164,7 +183,7 @@ namespace Core
 
 		bc.scaleSpeed[0] = 0.4f;
 		bc.scaleSpeed[1] = 0.4f;
-		bc.maxSize = rand_FloatRange(1.0f, 3.14f);
+		bc.maxSize = rand_FloatRange(1.0f, 2.5f);
 
 		Core::world.m_entityHandler.CreateEntity(gc, wpc, rc, sc, bc);
 	}
