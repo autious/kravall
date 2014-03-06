@@ -38,6 +38,7 @@ function Prep:new(o)
         onSelectCurrentSquad = function(squadDef)
             o.activeSquad = squadDef
             o.squadPositionDecal:setActiveSquad(squadDef)
+            o.prepInterface:setBoughtSelected( nil ) 
         end,
         onSelectCreatedSquad = function (squadInstance)
             for _,v in  pairs( o.createdVisualRepresentation ) do
@@ -72,7 +73,6 @@ function Prep:new(o)
            and consumed == false then 
             if o.activeSquad then
                 if o.canPlace then 
-
                     if o.activeSquad.cost <= (o.cashLimit - o:totalCost() ) then
                         --pLace unit
                         local squadInstance = 
@@ -90,7 +90,21 @@ function Prep:new(o)
                         print( "Not enough money" ) 
                     end
                 end
-            end 
+            else --We could pick squads on ground.
+                local hit = core.system.picking.getLastHitEntity()
+
+                if hit then
+                    for i,v in pairs( o.createdVisualRepresentation ) do
+                        for ii,ent in ipairs( v ) do
+                            print( "mem" .. ii )
+                            if ent:isSameEntity( hit ) then
+                                o.prepInterface:setBoughtSelected( i ) 
+                                o.prepInterface:updatePurchasedList()
+                            end 
+                        end
+                    end
+                end
+            end
         elseif button == core.input.mouse.button.Right
            and action == core.input.action.Press then 
             if o.activeSquad then
@@ -107,6 +121,8 @@ function Prep:new(o)
         o.activePosition= core.glm.vec3.new(core.system.picking.getGroundHit( x,y ))
         o.squadPositionDecal:setPosition( o.activePosition:get() )
         o.canPlace = o.squadPositionDecal:verifyPlacement( o.spawnAreas )
+
+        
     end 
 
     input.registerOnPosition( o.onPosition )
