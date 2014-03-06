@@ -38,8 +38,8 @@ function ScenarioMenu:new(o,menuState)
     o.gui:addComponent(Button:new({
 
                                     matReleased = "assets/texture/ui/go-button-release.material",
-                                    matPressed = "assets/texture/ui/go-button-press.material",
-                                    matHover = "assets/texture/ui/go-button-hover.material",
+                                    matPressed = "assets/texture/ui/go-button-release.material",
+                                    matHover = "assets/texture/ui/go-button-release.material",
                                     anchor="SouthEast",xoffset=0,yoffset=0,onClick = menuState.goSetup }))
     o.gui:addComponent( selectionList )
     --o.gui:addComponent( scenarioLabel )
