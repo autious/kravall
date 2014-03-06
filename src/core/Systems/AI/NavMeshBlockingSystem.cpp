@@ -44,19 +44,6 @@ void Core::NavMeshBlockingSystem::CalculateBlockedNodes( int targetRioterGroup )
 				int nrCorners = instance->nodes[ ffc->node ].corners[3].length < 0.0f ? 3 : 4;
 				for( int i = 0; i < nrCorners; i++ )
 				{
-					//int ii = i * 2;
-					//int oo = (ii + 2) % 8;	
-					//
-					//// define lines...
-					//glm::vec3 lineStart = glm::vec3( points[ ii ], 0.0f, points[ ii + 1 ] );
-					//glm::vec3 lineEnd	= glm::vec3( points[ oo ], 0.0f, points[ oo + 1 ] );
-					//glm::vec3 fromStartToObject = position - lineStart;
-					//
-					//glm::vec3 cross = glm::normalize( glm::cross( (lineEnd - lineStart), glm::vec3( 0.0f, 1.0f, 0.0f ) ) );
-					//float distanceToLine = glm::dot( cross, fromStartToObject );
-					//
-					//instance->flowfields[ targetRioterGroup ].blocked[ ffc->node * 4 + i ] += 5.0f / ( distanceToLine * distanceToLine + 1 );
-
 					instance->flowfields[ targetRioterGroup ].blocked[ ffc->node * 4 + i ] += 10.0f;
 					
 					if( instance->nodes[ ffc->node ].corners[i].linksTo >= 0 )
@@ -64,13 +51,6 @@ void Core::NavMeshBlockingSystem::CalculateBlockedNodes( int targetRioterGroup )
 				}
 			}
 		}
-
-
-		float a[4];
-		for( int i = 0; i < 4; i++ )
-			a[i] = instance->flowfields[ targetRioterGroup ].blocked[ 4 * 4 + i ];
-
-		int o = 0;
 	}
 }
 
@@ -91,8 +71,6 @@ void Core::NavMeshBlockingSystem::FreeBlockedNodes( int targetRioterGroup )
 
 void Core::NavMeshBlockingSystem::Update( float delta )
 {
-	return;
-
 	Core::NavigationMesh* instance = Core::GetNavigationMesh();
 	if( instance )
 	{
@@ -120,9 +98,9 @@ void Core::NavMeshBlockingSystem::Update( float delta )
 						if( meta.stuckTimer > GROUP_FIND_NEW_PATH_TIMER )
 						{
 							// squad appears to be stuck...
-							FreeBlockedNodes( i );
 							CalculateBlockedNodes( i );
 							instance->CalculateFlowfieldForGroup( glm::vec3( meta.goal[0], 0.0f, meta.goal[1] ), i  );
+							FreeBlockedNodes( i );
 						}
 					}
 					else

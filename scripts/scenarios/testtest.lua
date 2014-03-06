@@ -42,11 +42,11 @@ return function( scen )
 
     scen:registerInitCallback( function()
         print( "Creating objectives.." )
-        objDontDie      = scen.gamemode:createObjective()
-        objLeadThrough  = scen.gamemode:createObjective()
-
-        objDontDie.title      = DONT_DIE_MSG 
-        objLeadThrough.title  = ESCORT_MSG
+        --objDontDie      = scen.gamemode:createObjective()
+        --objLeadThrough  = scen.gamemode:createObjective()
+        --
+        --objDontDie.title      = DONT_DIE_MSG 
+        --objLeadThrough.title  = ESCORT_MSG
     end)
 
 	
@@ -84,13 +84,9 @@ return function( scen )
 	
 	
 	
-	
-	function T.makeASquadYo()
-		local fists = core.weaponData.pushWeapon( 1.0, 0.75, 20, 0.2, 0.05, 3.2, 2.9, 0.05, 0.5, "punch" )
-		core.gameMetaData.registerEscapePoint( 50, 0, 0 )
-
+	function NavMeshBlockTest()
 		local rGroup = core.system.groups.createGroup( 1 );
-		local centerPoint = { -90, 0, 0 }
+		local centerPoint = { -110, 0, 0 }
 		local side = math.sqrt( 10 )
 		for i = -side/2, side/2 do
 			for p = -side/2, side/2 do
@@ -98,7 +94,7 @@ return function( scen )
 				rGroup, nil, nil, fists, nil, 0, 0, core.RioterAlignment.Anarchist, core.movementData.Jogging )
 			end
 		end
-		--core.system.groups.setGroupGoal(rGroup, 200, 0, 0)			
+		core.system.groups.setGroupGoal(rGroup, 200, 0, 0)			
 		
 		
 		
@@ -106,6 +102,17 @@ return function( scen )
 		for i = 0, 1 do
 			scen.gamemode:addSquad( policeSquad( scen, -45, 0, 0, 0, fists ))
 		end
+	end	
+	
+	
+	
+	
+	function T.makeASquadYo()
+		local fists = core.weaponData.pushWeapon( 1.0, 0.75, 20, 0.2, 0.05, 3.2, 2.9, 0.05, 0.5, "punch" )
+		core.gameMetaData.registerEscapePoint( 50, 0, 0 )
+
+		--Killzone()
+		NavMeshBlockTest()		
 		
 		
 	end

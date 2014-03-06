@@ -11,6 +11,8 @@ namespace Core
 	*/
     class FlowfieldSystem : public BaseSystem
     {
+	private:
+		void CalculatePathInDeadNode( Core::Entity rioter, int group );
 
     public:
         virtual void Update( float delta ) override;
