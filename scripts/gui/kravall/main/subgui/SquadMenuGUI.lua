@@ -86,7 +86,7 @@ function SquadMenuGUI:new(o)
 													matHoverOpen="assets/texture/ui/attack-hover_00.material",
 													matHoverSelected="assets/texture/ui/attack-extra_00.material",
 													onHover=onHoverAbility,
-													onClick=onClickAbility,
+													onClick= function(self) o.onAbilitySelect( s_ability.Attack ) end,
 													onExit=onExit,
 													toolTip=createTT:new( { handler=toolTipHandler, text="Attack - 7" } )
 												} )
@@ -101,7 +101,7 @@ function SquadMenuGUI:new(o)
 													matHoverOpen="assets/texture/ui/tear-gas-hover_00.material",
 													matHoverSelected="assets/texture/ui/tear-gas-extra_00.material",
 													onHover=onHoverAbility,
-													onClick=onClickAbility,
+													onClick= function(self) o.onAbilitySelect( s_ability.TearGas ) end,
 													onExit=onExit,
 													toolTip=createTT:new( { handler=toolTipHandler, text="Tear Gas - 8" } )
 												} )
@@ -116,7 +116,7 @@ function SquadMenuGUI:new(o)
 													matHoverOpen="assets/texture/ui/power-hover_00.material",
 													matHoverSelected="assets/texture/ui/power-extra_00.material",
 													onHover=onHoverAbility,
-													onClick=onClickAbility,
+													onClick= function(self) o.onAbilitySelect( s_ability.Sprint ) end,
 													onExit=onExit,
 													toolTip=createTT:new( { handler=toolTipHandler, text="Sprint - 3" } )
 												} )
@@ -131,7 +131,7 @@ function SquadMenuGUI:new(o)
 													matHoverOpen="assets/texture/ui/grenade-hover_00.material",
 													matHoverSelected="assets/texture/ui/grenade-extra_00.material",
 													onHover=onHoverAbility,
-													onClick=onClickAbility,
+													onClick= function(self) o.onAbilitySelect( s_ability.Flee ) end,
 													onExit=onExit,
 													toolTip=createTT:new( { handler=toolTipHandler, text="Flee - 9" } )
 												} )

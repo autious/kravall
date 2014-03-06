@@ -12,12 +12,9 @@ local NorthPlacer = require "gui/placement/NorthPlacer"
 local WestPlacer = require "gui/placement/WestPlacer"
 local CenterPlacer = require "gui/placement/CenterPlacer"
 
-local EventListerGUI = require "gui/kravall/main/EventListerGUI"
---local StanceGUI = require "gui/kravall/main/subgui/StanceGUI"
---local AbilityGUI = require "gui/kravall/main/subgui/AbilityGUI" 
---local FormationGUI = require "gui/kravall/main/subgui/FormationGUI"
+local EventListerGUI = require "gui/kravall/main/subgui/EventListerGUI"
 local UnitStatGUI = require "gui/kravall/main/subgui/UnitStatGUI"
-local SquadMenuGUI = require "gui/kravall/main/SquadMenuGUI"
+local SquadMenuGUI = require "gui/kravall/main/subgui/SquadMenuGUI"
 
 local KravallControl = 
 { 
@@ -38,7 +35,7 @@ function KravallControl:new(o)
 									{ 
 										width=57, height=553, anchor="NorthEast",
 										onStanceSelect = function(stance) o.onStanceSelect( stance ) end,
-										onAbilitySelect = function(ability) o.onAbilitySelect( ability ) end,
+										onAbilitySelect = function(ability) print( "select ability" ); o.onAbilitySelect( ability ) end,
 										onFormationSelect = function(form) o.onFormationSelect(form) end
 									} )
 	o.gui:addComponent( o.squadMenuGUI )
