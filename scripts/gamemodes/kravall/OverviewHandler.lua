@@ -23,7 +23,7 @@ function OverviewHandler:onButton(button, action, mods, consumed)
                 self.rightClicked = true
             end
 
-            return not self.inOverview
+            return self.inOverview
         end
     elseif action == core.input.action.Release then
         if button == mouse.button.Left then
@@ -31,7 +31,8 @@ function OverviewHandler:onButton(button, action, mods, consumed)
         elseif button == mouse.button.Right then
             self.rightPressed = false
         end
-    end   
+    end  
+    return consumed
 end
 function OverviewHandler:new(o)
     o = o or {}
@@ -57,22 +58,27 @@ end
 
 function OverviewHandler:SetOutlines()
     local groupCount = core.system.groups.getNumberOfGroups()
-    
+    local policeGroupIds = {}
+    local rioterGroupIds = {}
+
     for i=0, groupCount-1 do 
         local members = core.system.groups.getMembersInGroup(i)
-        
-        for _,v in pairs(members) do
-            local attrbComponent = v:get(core.componentType.AttributeComponent)
-            local utc = v:get(core.componentType.UnitTypeComponent)
+       
+        if #members > 0 then
+            local attrbComponent = members[1]:get(core.componentType.AttributeComponent)
+            local utc = members[1]:get(core.componentType.UnitTypeComponent)
             if utc.unitType == core.UnitType.Rioter then
-                self.outlinedGroups[#self.outlinedGroups] = attrbComponent.groupID
-                core.system.squad.enableMoodOutline({attrbComponent.groupID})
+                table.insert(rioterGroupIds, attrbComponent.groupID)
+                self.outlinedGroups[attrbComponent.groupID] = attrbComponent.groupID    
             elseif utc.unitType == core.UnitType.Police then
-                core.system.squad.enableOutline({attrbComponent.squadID}, 1, 1, 1, 1)
+                table.insert(policeGroupIds, attrbComponent.squadID)
                 self.outlinedGroups[#self.outlinedGroups] = attrbComponent.squadID    
             end
         end
     end
+
+    core.system.squad.enableMoodOutline(rioterGroupIds)
+    core.system.squad.enableOutline(policeGroupIds, 1, 1, 1, 1)
 end
 
 function OverviewHandler:RemoveOutlines()
