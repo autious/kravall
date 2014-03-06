@@ -62,9 +62,9 @@ function Main:new(o)
         -- Could be empty
         onSelectedSquadsChange = function( squads )
             if squads == nil or #squads == 0 then
-                o.gui:setShow( false ) 
+                o.gui.squadMenuGUI:setShow( false ) 
             else
-                o.gui:setShow( true ) 
+                o.gui.squadMenuGUI:setShow( true ) 
             end
             o.gui:setSelectedSquads( squads )
         end,
