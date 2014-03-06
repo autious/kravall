@@ -88,7 +88,7 @@ function SquadMenuGUI:new(o)
 													onHover=onHoverAbility,
 													onClick= function(self) o.onAbilitySelect( s_ability.Attack ) end,
 													onExit=onExit,
-													toolTip=createTT:new( { handler=toolTipHandler, text="Attack - 7" } )
+													toolTip=createTT:new( { handler=toolTipHandler, text="Attack - 1" } )
 												} )
     o.abilities[s_ability.TearGas] = Checkbox:new( 
 												{  
@@ -103,7 +103,7 @@ function SquadMenuGUI:new(o)
 													onHover=onHoverAbility,
 													onClick= function(self) o.onAbilitySelect( s_ability.TearGas ) end,
 													onExit=onExit,
-													toolTip=createTT:new( { handler=toolTipHandler, text="Tear Gas - 8" } )
+													toolTip=createTT:new( { handler=toolTipHandler, text="Tear Gas - 2" } )
 												} )
     o.abilities[s_ability.Sprint] = Checkbox:new( 
 												{  
@@ -133,7 +133,7 @@ function SquadMenuGUI:new(o)
 													onHover=onHoverAbility,
 													onClick= function(self) o.onAbilitySelect( s_ability.Flee ) end,
 													onExit=onExit,
-													toolTip=createTT:new( { handler=toolTipHandler, text="Flee - 9" } )
+													toolTip=createTT:new( { handler=toolTipHandler, text="Flee - 4" } )
 												} )
 						
 	o:addComponent( o.abilities[s_ability.Attack] )									

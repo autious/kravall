@@ -15,14 +15,16 @@ local CenterPlacer = require "gui/placement/CenterPlacer"
 local SimplePlacer = require "gui/placement/SimplePlacer"
 
 local EventListerGUI = require "gui/kravall/main/subgui/EventListerGUI"
+local OverviewGUI = require "gui/kravall/main/subgui/OverviewGUI"
 local UnitStatGUI = require "gui/kravall/main/subgui/UnitStatGUI"
 local SquadMenuGUI = require "gui/kravall/main/subgui/SquadMenuGUI"
 
 local KravallControl = 
 { 
-    onFormationSelect = function(formation) core.log.error("No handler set for onFormationChange in KravallControl") end,
-    onStanceSelect = function(stance) core.log.error("No handler set for onStanceChange in KravallControl") end,
-    onAbilitySelect = function(ability) end
+    onFormationSelect = function(formation) core.log.error("No handler set for onFormationChange in KravallControl.") end,
+    onStanceSelect = function(stance) core.log.error("No handler set for onStanceChange in KravallControl.") end,
+    onAbilitySelect = function(ability) end,
+    onUseOverview = function() core.log.error("No function ser for onUseOverview in KravallControl.") end
 }
                             
 function KravallControl:new(o)
@@ -61,6 +63,16 @@ function KravallControl:new(o)
 						} )
 	o.globalGUI:addComponent( Image:new( { mat="assets/texture/ui/non-contextual-abilities_00.material" } ) )
 	
+	o.globalGUI:addComponent( Button:new (
+										{ 
+											--xoffset=-5,
+											--yoffset=-10,
+											matReleased="assets/texture/ui/remove-button-release.material",
+											matPressed="assets/texture/ui/remove-button-press.material",
+											matHover="assets/texture/ui/remove-button-hover.material",
+											onClick=o.onRemoveSelected,
+										} ) )
+	
 	o.globalGUI:addPlacementHandler( SimplePlacer )
 	o.leftCornerGUI:addComponent( o.globalGUI )
 	------------------
@@ -72,6 +84,9 @@ function KravallControl:new(o)
 	o.eventGUIPadder:addPlacementHandler( CenterPlacer )
 	o.leftCornerGUI:addComponent( o.eventGUIPadder )
     ------------------
+	--o.overviewGUI = OverviewGUI:new( {        
+    --    onUseOverview = function() o.onUseOverview() end
+    --})
 	
     o.gui:addPlacementHandler( AnchorPlacer )
 
@@ -91,6 +106,10 @@ end
 function KravallControl:setAbility( ability )
     --self.abilitiesGUI:setAbility( ability ) 
 	self.squadMenuGUI:setAbility( ability ) 
+end
+
+function KravallControl:setOverview( state )
+    self.overviewGUI:setOverview( state ) 
 end
 
 function KravallControl:setUnitInformation( data )
