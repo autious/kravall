@@ -98,7 +98,7 @@ void Core::AttackAnimationSystem::Update(float delta)
 			}
 
 			// always set this, even when speed = 0, so that the unit is turned correctly
-			Core::FlowfieldComponent* enemyFfc = WGETC<Core::FlowfieldComponent>(*it);
+			Core::FlowfieldComponent* enemyFfc = WGETC<Core::FlowfieldComponent>( tc->target );
 			mvmc->SetGoal( targetWpc->position, enemyFfc->node, Core::MovementGoalPriority::AttackGoalPriority );
 		}
 		else
