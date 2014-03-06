@@ -38,16 +38,17 @@ angry and agitated.]]
     ,width=700, height=600, yoffset=-250, anchor="Center"}))
     o.gui:addComponent(Button:new({
 
-                                    matReleased = "assets/texture/ui/go-button-release.material",
-                                    matPressed = "assets/texture/ui/go-button-press.material",
-                                    matHover = "assets/texture/ui/go-button-hover.material",
-                                    anchor="SouthEast",xoffset=0,yoffset=0,onClick = function() openscenario( menuState.selectedScenario.filename ) end }))
+                                    matReleased="assets/texture/ui/go-button-release.material",
+                                    matPressed="assets/texture/ui/go-button-press.material",
+                                    matHover="assets/texture/ui/go-button-hover.material",
+                                    anchor="SouthEast", xoffset=-66, yoffset=-11,
+									onClick=function() openscenario( menuState.selectedScenario.filename ) end }))
 
     o.gui:addComponent(Button:new({
-                                    matReleased = "assets/texture/ui/back-button-release.material",
-                                    matPressed = "assets/texture/ui/back-button-press.material",
-                                    matHover = "assets/texture/ui/back-button-hover.material",
-                                    anchor="SouthWest",xoffset=0,yoffset=0,onClick = menuState.goScenario }))
+                                    matReleased="assets/texture/ui/back-button-release.material",
+                                    matPressed="assets/texture/ui/back-button-press.material",
+                                    matHover="assets/texture/ui/back-button-hover.material",
+                                    anchor="SouthWest", xoffset=30, yoffset=-11, onClick=menuState.goScenario }))
 
     o.gui:addPlacementHandler( AnchorPlacer )
 
