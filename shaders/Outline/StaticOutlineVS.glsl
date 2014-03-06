@@ -16,6 +16,14 @@ layout (std140, binding = 4) readonly buffer buffah
     InstanceData gInstances[];
 };
 
+layout (std140) uniform instanceBufferOffset
+{
+    uint gInstanceOffset;
+	uint pad0;
+	uint pad1;
+	uint pad2;
+};
+
 layout (shared) uniform PerFrameBlock
 {
 	mat4 gView;
@@ -36,10 +44,11 @@ out vec4 outlineColor;
 
 void main()
 {
+	uint instanceID = gInstanceOffset + gl_InstanceID;
 	//Move position to clip space
-	posFS = gProjection * gView * gInstances[gl_InstanceID].mm * positionIN;
+	posFS = gProjection * gView * gInstances[instanceID].mm * positionIN;
 	
-	outlineColor = gInstances[gl_InstanceID].outlineColor;
+	outlineColor = gInstances[instanceID].outlineColor;
 
 	gl_Position = posFS;
 }

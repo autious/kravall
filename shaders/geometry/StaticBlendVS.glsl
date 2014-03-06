@@ -16,6 +16,14 @@ layout (std140, binding = 4) readonly buffer buffah
     InstanceData gInstances[];
 };
 
+layout (std140) uniform instanceBufferOffset
+{
+    uint gInstanceOffset;
+	uint pad0;
+	uint pad1;
+	uint pad2;
+};
+
 layout (shared) uniform PerFrameBlock
 {
 	mat4 gView;
@@ -40,15 +48,16 @@ flat out uint rnd_seed;
 
 void main()
 {
+	uint instanceID = gInstanceOffset + gl_InstanceID;
 	//Move position to clip space
-	posW = gInstances[gl_InstanceID].mm * positionIN;
-	posFS = gProjection * gView * gInstances[gl_InstanceID].mm * positionIN;
+	posW = gInstances[instanceID].mm * positionIN;
+	posFS = gProjection * gView * gInstances[instanceID].mm * positionIN;
 	
 	//Transform normal with model matrix
-	normalFS = gInstances[gl_InstanceID].mm * normalIN;
-	tangentFS = gInstances[gl_InstanceID].mm * tangentIN;
-	//binormalFS = gInstances[gl_InstanceID].mm * binormalIN;
-	rnd_seed = gInstances[gl_InstanceID].rnd_seed;
+	normalFS = gInstances[instanceID].mm * normalIN;
+	tangentFS = gInstances[instanceID].mm * tangentIN;
+	//binormalFS = gInstances[instanceID].mm * binormalIN;
+	rnd_seed = gInstances[instanceID].rnd_seed;
 
 	uvFS = uvIN;
 

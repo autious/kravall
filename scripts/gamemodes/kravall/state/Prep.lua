@@ -68,42 +68,46 @@ function Prep:new(o)
     })
 
     o.onButton = function( button, action, mods, consumed )
-        if button == core.input.mouse.button.Left 
-           and action == core.input.action.Press 
-           and consumed == false then 
-            if o.activeSquad then
-                if o.canPlace then 
-                    if o.activeSquad.cost <= (o.cashLimit - o:totalCost() ) then
-                        --pLace unit
-                        local squadInstance = 
-                        { 
-                            name        = o.activeSquad.name,
-                            squadDef    = o.activeSquad,
-                            position    = o.activePosition,
-                        }
-                        table.insert(o.createdSquads, squadInstance )
+        if button == core.input.mouse.button.Left then
+            if  action == core.input.action.Press 
+                and consumed == false then 
+                if o.activeSquad then
+                    if o.canPlace then 
+                        if o.activeSquad.cost <= (o.cashLimit - o:totalCost() ) then
+                            --pLace unit
+                            local squadInstance = 
+                            { 
+                                name        = o.activeSquad.name,
+                                squadDef    = o.activeSquad,
+                                position    = o.activePosition,
+                            }
+                            table.insert(o.createdSquads, squadInstance )
 
-                        o.createdVisualRepresentation[squadInstance] = ent.get "squadInstanceStatic" ( o.asm, squadInstance )
-                        o.prepInterface:updatePurchasedList()
-                        o.prepInterface:setRemainingMoney( o.cashLimit - o:totalCost() )
-                    else
-                        print( "Not enough money" ) 
+                            o.createdVisualRepresentation[squadInstance] = ent.get "squadInstanceStatic" ( o.asm, squadInstance )
+                            o.prepInterface:updatePurchasedList()
+                            o.prepInterface:setRemainingMoney( o.cashLimit - o:totalCost() )
+                        else
+                            print( "Not enough money" ) 
+                        end
                     end
-                end
-            else --We could pick squads on ground.
-                local hit = core.system.picking.getLastHitEntity()
+                else --We could pick squads on ground.
+                    local hit = core.system.picking.getLastHitEntity()
 
-                if hit then
-                    for i,v in pairs( o.createdVisualRepresentation ) do
-                        for ii,ent in ipairs( v ) do
-                            print( "mem" .. ii )
-                            if ent:isSameEntity( hit ) then
-                                o.prepInterface:setBoughtSelected( i ) 
-                                o.prepInterface:updatePurchasedList()
-                            end 
+                    if hit then
+                        for i,v in pairs( o.createdVisualRepresentation ) do
+                            for ii,ent in ipairs( v ) do
+                                print( "mem" .. ii )
+                                if ent:isSameEntity( hit ) then
+                                    o.prepInterface:setBoughtSelected( i ) 
+                                    o.prepInterface:updatePurchasedList()
+                                    o.draggingSquad = i
+                                end 
+                            end
                         end
                     end
                 end
+            elseif action == core.input.action.Release then
+                o.draggingSquad = nil
             end
         elseif button == core.input.mouse.button.Right
            and action == core.input.action.Press then 
@@ -122,12 +126,34 @@ function Prep:new(o)
         o.squadPositionDecal:setPosition( o.activePosition:get() )
         o.canPlace = o.squadPositionDecal:verifyPlacement( o.spawnAreas )
 
+        if o.draggingSquad then
+            local oldPos = o.draggingSquad.position
+            local newPos = core.glm.vec3.new( core.system.picking.getGroundHit(x,y) )
+            o.draggingSquad.position = newPos
+            if o:isInside( o.spawnAreas, o.draggingSquad ) then
+                o.createdVisualRepresentation[o.draggingSquad]:updatePosition()
+            else
+                o.draggingSquad.position = oldPos
+            end
+        end
         
     end 
 
     input.registerOnPosition( o.onPosition )
 
     return o
+end
+
+function Prep:isInside( areas, squadInstance )
+    local isInside = false
+    for _,h in pairs( squadInstance.squadDef.setup ) do
+        for _,v in pairs( areas ) do
+            local vec3 = core.glm.vec3
+            isInside = isInside or core.system.area.isPointInside( v, vec3.new(unpack(h))+squadInstance.position )
+        end
+    end
+    
+    return isInside
 end
 
 function Prep:totalCost() 

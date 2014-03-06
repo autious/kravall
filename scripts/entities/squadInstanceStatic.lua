@@ -68,14 +68,27 @@ return function( scen, squadInstance )
         end
     end
 
+    function e:updatePosition()
+        self:setPosition(squadInstance.position)
+    end
+
+    function e:setPosition( pos )
+        for i,v in ipairs( self ) do
+            local p = pos + e.offsets[v]
+            v:set( core.componentType.WorldPositionComponent, {position={p:get()}}, true )
+        end
+    end
+
     function e:destroy()
         for _,v in ipairs(self) do
             v:destroy()
         end
     end
-
+    e.offsets = {}
     for i,v in pairs( squadInstance.squadDef.setup ) do
-        table.insert( e, createMember(scen, squadInstance.position + core.glm.vec3.new( unpack( v.positionOffset ) ), v ) )
+        local mem = createMember(scen, squadInstance.position + core.glm.vec3.new( unpack( v.positionOffset ) ), v )
+        table.insert( e, mem )
+        e.offsets[mem] = core.glm.vec3.new( unpack( v.positionOffset ) )
     end
 
     return e

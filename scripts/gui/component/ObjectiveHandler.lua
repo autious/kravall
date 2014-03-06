@@ -41,7 +41,31 @@ function ObjectiveHandler:new(o)
         end
     } )
 
+    self.cwin = function()
+        o:win()
+    end
+     
+    win = self.cwin
+
+    self.closs = function()
+        o:loss() 
+    end
+   
+    loss = self.closs
+
     return o
+end
+
+function ObjectiveHandler:destroy()
+    if win == self.cwin then
+        win = nil
+    end
+
+    if loss == self.closs then
+        loss = nil
+    end
+
+    GUI.destroy( self )
 end
 
 function ObjectiveHandler:setObjectivesShow( state )

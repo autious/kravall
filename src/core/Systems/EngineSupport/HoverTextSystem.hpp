@@ -7,6 +7,7 @@
 
 #include <string>
 #include <map>
+#include <gfx/GFXInterface.hpp>
 
 namespace Core
 {

@@ -111,14 +111,14 @@ local function createMember( scen, pos, groupID, weaponType, memberDef )
     return T
 end
 
-return function( scen, squadInstance, weaponList )
-
+return function( scen, squadInstance, weaponList, team )
     local T = {}
 
+	team = team or 0
     T.members = {}
     T.type = squadInstance.name
     T.startPosition = {squadInstance.position:get()}
-    T.groupId = core.system.groups.createGroup()
+    T.groupId = core.system.groups.createGroup( team )
 
     scen:loadAssembly(
             {

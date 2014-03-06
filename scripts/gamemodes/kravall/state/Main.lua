@@ -96,10 +96,11 @@ function Main:new(o)
             o:exitOverview(pos)
         end,
     })
-
+	
+	local policeTeam = 1
     if o.unitInstances then
         for _,v in  pairs( o.unitInstances ) do
-            o.policeHandler:addSquad( squadInstance( o.asm, v, o.activeWeaponList ) )
+            o.policeHandler:addSquad( squadInstance( o.asm, v, o.activeWeaponList, policeTeam ) )
         end
     end
 
