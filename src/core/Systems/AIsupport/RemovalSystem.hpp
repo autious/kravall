@@ -21,7 +21,9 @@ namespace Core
 		bool m_foundAssets;
 		int m_mesh;
 		int m_material;
+		int m_materialTwo;
 		GFX::GFXBitmask m_bloodBitmask;
+		GFX::GFXBitmask m_bloodBitmaskTwo;
 
 		void CreateBloodDecal(glm::vec3 position);
 

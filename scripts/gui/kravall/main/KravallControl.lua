@@ -12,17 +12,17 @@ local NorthPlacer = require "gui/placement/NorthPlacer"
 local WestPlacer = require "gui/placement/WestPlacer"
 local CenterPlacer = require "gui/placement/CenterPlacer"
 
-local EventListerGUI = require "gui/kravall/main/EventListerGUI"
-local StanceGUI = require "gui/kravall/main/subgui/StanceGUI"
-local AbilityGUI = require "gui/kravall/main/subgui/AbilityGUI" 
-local FormationGUI = require "gui/kravall/main/subgui/FormationGUI"
+local EventListerGUI = require "gui/kravall/main/subgui/EventListerGUI"
+local OverviewGUI = require "gui/kravall/main/subgui/OverviewGUI"
 local UnitStatGUI = require "gui/kravall/main/subgui/UnitStatGUI"
+local SquadMenuGUI = require "gui/kravall/main/subgui/SquadMenuGUI"
 
 local KravallControl = 
 { 
-    onFormationSelect = function(formation) core.log.error("No handler set for onFormationChange in KravallControl") end,
-    onStanceSelect = function(stance) core.log.error("No handler set for onStanceChange in KravallControl") end,
-    onAbilitySelect = function(ability) end
+    onFormationSelect = function(formation) core.log.error("No handler set for onFormationChange in KravallControl.") end,
+    onStanceSelect = function(stance) core.log.error("No handler set for onStanceChange in KravallControl.") end,
+    onAbilitySelect = function(ability) end,
+    onUseOverview = function() core.log.error("No function ser for onUseOverview in KravallControl.") end
 }
                             
 function KravallControl:new(o)
@@ -32,7 +32,16 @@ function KravallControl:new(o)
     self.__index = self
 
     o.gui = GUI:new()
-     
+    
+	o.squadMenuGUI = SquadMenuGUI:new( 
+									{ 
+										width=57, height=553, anchor="NorthEast",
+										onStanceSelect = function(stance) o.onStanceSelect( stance ) end,
+										onAbilitySelect = function(ability) print( "select ability" ); o.onAbilitySelect( ability ) end,
+										onFormationSelect = function(form) o.onFormationSelect(form) end
+									} )
+	o.gui:addComponent( o.squadMenuGUI )
+	
     ------------------
     o.statusGUI = UnitStatGUI:new( { show = false } )
     --------------
@@ -41,25 +50,29 @@ function KravallControl:new(o)
     o.eventGUI = EventListerGUI:new( {x=0,y=0, width=200, height=200, anchor="SouthWest"} )
     o.eventGUIPadder:addComponent( o.eventGUI )
     ----------
-    o.stanceGUI = StanceGUI:new( {
-        onStanceSelect = function(stance) o.onStanceSelect( stance ) end 
-    })
-    o.abilitiesGUI = AbilityGUI:new( {
-        onAbilitySelect = function(ability) o.onAbilitySelect( ability ) end 
-    })
-    o.formationGUI = FormationGUI:new( { 
-        onFormationSelect = function(form) o.onFormationSelect(form) end 
-    })
+    --o.stanceGUI = StanceGUI:new( {
+    --    onStanceSelect = function(stance) o.onStanceSelect( stance ) end 
+    --})
+    --o.abilitiesGUI = AbilityGUI:new( {
+    --    onAbilitySelect = function(ability) o.onAbilitySelect( ability ) end 
+    --})
+    --o.formationGUI = FormationGUI:new( { 
+    --    onFormationSelect = function(form) o.onFormationSelect(form) end 
+    --})
 
-    o.rightControlGUI = GUI:new{x=0,y=0, width=150,height=600, anchor="NorthEast"}
-    o.rightControlGUI:addPlacementHandler( AnchorPlacer )
+    --o.rightControlGUI = GUI:new{x=0,y=0, width=150,height=600, anchor="NorthEast"}
+    --o.rightControlGUI:addPlacementHandler( AnchorPlacer )
 
-    o.rightControlGUI:addComponent( o.stanceGUI )
-    o.rightControlGUI:addComponent( o.abilitiesGUI )
-    o.rightControlGUI:addComponent( o.formationGUI )
+    --o.rightControlGUI:addComponent( o.stanceGUI )
+    --o.rightControlGUI:addComponent( o.abilitiesGUI )
+    --o.rightControlGUI:addComponent( o.formationGUI )
+
+    --o.overviewGUI = OverviewGUI:new( {        
+    --    onUseOverview = function() o.onUseOverview() end
+    --})
     -------
 
-    o.gui:addComponent( o.rightControlGUI )
+    --o.gui:addComponent( o.rightControlGUI )
     o.gui:addComponent( o.statusGUI )
     o.gui:addComponent( o.eventGUIPadder )
     o.gui:addPlacementHandler( AnchorPlacer )
@@ -68,15 +81,22 @@ function KravallControl:new(o)
 end
 
 function KravallControl:setFormation( formation )
-    self.formationGUI:setFormation( formation )
+    --self.formationGUI:setFormation( formation )
+	self.squadMenuGUI:setFormation( formation )
 end
 
 function KravallControl:setStance( stance )
-    self.stanceGUI:setStance( stance )
+    --self.stanceGUI:setStance( stance )
+	self.squadMenuGUI:setStance( stance )
 end
 
 function KravallControl:setAbility( ability )
-    self.abilitiesGUI:setAbility( ability ) 
+    --self.abilitiesGUI:setAbility( ability ) 
+	self.squadMenuGUI:setAbility( ability ) 
+end
+
+function KravallControl:setOverview( state )
+    self.overviewGUI:setOverview( state ) 
 end
 
 function KravallControl:setUnitInformation( data )
@@ -98,7 +118,8 @@ function KravallControl:setSelectedSquads( squads )
 end
 
 function KravallControl:setUsableAbilities(abilities)
-    self.abilitiesGUI:setUsableAbilities(abilities)
+    --self.abilitiesGUI:setUsableAbilities(abilities)
+	self.squadMenuGUI:setUsableAbilities(abilities)
 end
 
 
@@ -131,6 +152,10 @@ function KravallControl:update( delta )
 
     -- constrict each frame to give animation like results.
     self.eventGUI:constrict( delta )
+end
+
+function KravallControl:setShow( flag )
+    self.gui:setShow( flag ) 
 end
 
 function KravallControl:destroy()

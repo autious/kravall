@@ -208,7 +208,9 @@ return function( scen )
         local plane = entity.get "plane"
         plane(scen, 0, -1, 0, 900)
 
-        scen.gamemode.camera:lookAt( core.glm.vec3.new( 50, 100, 10), core.glm.vec3.new( -60, 0, -50 ) ) 
+        --scen.gamemode.camera:lookAt( core.glm.vec3.new( 50, 100, 10), core.glm.vec3.new( -60, 0, -50 ) )
+        scen.gamemode.camera:addInterpolationPoint(scen.cameras.startcam.translation, scen.cameras.startcam.quaternion)
+        scen.gamemode.camera:addInterpolationPoint(scen.cameras.devcam.translation, scen.cameras.devcam.quaternion)
         obj1 = scen.gamemode:createObjective()
         obj1.title = "At least one deserter must survive and reach the goal."
 
@@ -397,6 +399,26 @@ return function( scen )
 		local wpc = ent:get(core.componentType.WorldPositionComponent)
 		core.gameMetaData.registerEscapePoint( wpc.position[1], wpc.position[2], wpc.position[3] )
         table.insert(ag3Spawns, ent )
+    end
+
+    local ag4Spawns = {}
+    function T.checkAg4Enter( ent )
+        if #ag4Spawns > 0 and core.system.area.getAreaRioterCount( ent, deserterGroup ) > 0 then
+            table.insert( agitatorGroups, T.createAgitators( ag4Spawns, 10,10 ) ) 
+            ag4Spawns = {}
+        end
+    end
+
+    function T.registerAg4Spawn( ent )
+        print( "Registering Ag4" )
+		local wpc = ent:get(core.componentType.WorldPositionComponent)
+		core.gameMetaData.registerEscapePoint( wpc.position[1], wpc.position[2], wpc.position[3] )
+        table.insert(ag4Spawns, ent )
+    end
+
+    function T.checkAg2And4Enter( ent )
+        T.checkAg2Enter( ent )
+        T.checkAg4Enter( ent ) 
     end
 
     function T.rotateY( ent, delta )
