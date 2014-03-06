@@ -173,6 +173,10 @@ function PrepInterface:setSelected( squad )
    self.unitSelection:setActive( squad )
 end
 
+function PrepInterface:setBoughtSelected( instance )
+    self.unitPurchased:setActive( instance )
+end
+
 function PrepInterface:setRemainingMoney( value )
     self.cashLabel:setLabel( "$" .. value )
 end
