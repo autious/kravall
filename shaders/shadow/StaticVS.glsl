@@ -15,6 +15,14 @@ layout (std140, binding = 4) readonly buffer instanceBuffer
     InstanceData gInstances[];
 };
 
+layout (std140) uniform instanceBufferOffset
+{
+    uint gInstanceOffset;
+	uint pad0;
+	uint pad1;
+	uint pad2;
+};
+
 layout (shared) uniform PerFrameBlock
 {
 	mat4 gView;
@@ -32,7 +40,8 @@ out vec4 posFS;
 
 void main()
 {
+	uint instanceID = gInstanceOffset + gl_InstanceID;
 	//Move position to clip space
-	posFS = gProjection * gView * gInstances[gl_InstanceID].mm * positionIN;
+	posFS = gProjection * gView * gInstances[instanceID].mm * positionIN;
 	gl_Position = posFS;
 }

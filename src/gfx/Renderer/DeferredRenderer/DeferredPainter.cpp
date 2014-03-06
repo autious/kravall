@@ -129,15 +129,24 @@ namespace GFX
 		m_shaderManager->AttachShader("StaticOutlineVS", "StaticOutline");
 		m_shaderManager->AttachShader("StaticOutlineFS", "StaticOutline");
 		m_shaderManager->LinkProgram("StaticOutline");
-
-        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("StaticMesh"), "PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
-        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("NormalMappedStatic"), "PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
-        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("StaticNormal"), "PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
-        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("AnimatedNormal"), "PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
-        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("StaticBlend"), "PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
-        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("AnimatedBlend"), "PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
-        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("AnimatedOutline"), "PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
-        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("StaticOutline"), "PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
+		
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("StaticMesh"),			"PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("NormalMappedStatic"),	"PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("StaticNormal"),		"PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("AnimatedNormal"),		"PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("StaticBlend"),			"PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("AnimatedBlend"),		"PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("AnimatedOutline"),		"PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("StaticOutline"),		"PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
+		
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("StaticMesh"),			"instanceBufferOffset", UniformBufferManager::INSTANCE_ID_OFFSET_INDEX);
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("NormalMappedStatic"),	"instanceBufferOffset", UniformBufferManager::INSTANCE_ID_OFFSET_INDEX);
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("StaticNormal"),		"instanceBufferOffset", UniformBufferManager::INSTANCE_ID_OFFSET_INDEX);
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("AnimatedNormal"),		"instanceBufferOffset", UniformBufferManager::INSTANCE_ID_OFFSET_INDEX);
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("StaticBlend"),			"instanceBufferOffset", UniformBufferManager::INSTANCE_ID_OFFSET_INDEX);
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("AnimatedBlend"),		"instanceBufferOffset", UniformBufferManager::INSTANCE_ID_OFFSET_INDEX);
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("AnimatedOutline"),		"instanceBufferOffset", UniformBufferManager::INSTANCE_ID_OFFSET_INDEX);
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("StaticOutline"),		"instanceBufferOffset", UniformBufferManager::INSTANCE_ID_OFFSET_INDEX);
 
 		m_outlineThickness = 2;
 		m_staticInstances = new InstanceData[MAX_INSTANCES];
@@ -148,12 +157,10 @@ namespace GFX
 		glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_INSTANCES * sizeof(InstanceData), NULL, GL_STREAM_COPY);
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, 0);
 
-		m_instanceOffsetUniform = m_shaderManager->GetUniformBlockLocation("StaticNormal", "instanceBufferOffset");
-
 		glGenBuffers(1, &m_instanceOffsetBuffer);
-		glBindBufferBase(GL_UNIFORM_BUFFER, 3, m_instanceOffsetBuffer);
-		glBufferData(GL_UNIFORM_BUFFER, sizeof(unsigned int), NULL, GL_DYNAMIC_DRAW);
-		glBindBufferBase(GL_UNIFORM_BUFFER, 3, 0);
+		glBindBuffer(GL_UNIFORM_BUFFER, m_instanceOffsetBuffer);
+		glBufferData(GL_UNIFORM_BUFFER, 4*sizeof(unsigned int), NULL, GL_DYNAMIC_DRAW);
+		glBindBufferBase(GL_UNIFORM_BUFFER, UniformBufferManager::INSTANCE_ID_OFFSET_INDEX, 0);
 
 	}
 
@@ -243,6 +250,7 @@ namespace GFX
 				{
 					if (i > 0)
 					{
+						instanceOffset += instanceCount;
 						instanceCount = 0;
 					}
 
@@ -276,10 +284,8 @@ namespace GFX
 					m_staticInstances[instanceOffset + instanceCount] = smid;
 					instanceCount++;
 					instanceBufferSize++;
-					instanceOffset += instanceCount;
 				}
 			}
-			unsigned int iiiiiiii = 0;
 		}
 		
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_instanceBuffer);
@@ -342,6 +348,10 @@ namespace GFX
 			{
 				if (i > 0)
 				{
+						
+					unsigned int asd[4] = {instanceOffset, 0U, 0U, 0U};
+					glBindBufferBase(GL_UNIFORM_BUFFER, UniformBufferManager::INSTANCE_ID_OFFSET_INDEX, m_instanceOffsetBuffer);
+					glBufferSubData(GL_UNIFORM_BUFFER, 0, 4*sizeof(unsigned int), asd);
 
 					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IBO);
 
@@ -362,17 +372,13 @@ namespace GFX
 						glDisable(GL_DEPTH_TEST);
 						glStencilFunc(GL_NOTEQUAL, 1, -1);
 						glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-						glLineWidth(m_staticInstances[0].outlineColor[3]);
+						glLineWidth(m_staticInstances[instanceOffset + instanceCount - 1].outlineColor[3]);
 						glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 						if (currentShader == m_staticBlend || currentShader == m_staticNormal)
 							m_shaderManager->UseProgram("StaticOutline");
 						else if (currentShader == m_animatedBlend || currentShader == m_animatedNormal)
 							m_shaderManager->UseProgram("AnimatedOutline");
-						
-						glBindBufferBase(GL_UNIFORM_BUFFER, 3, m_instanceOffsetBuffer);
-						glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(unsigned int), &instanceOffset);
-						glBindBufferBase(GL_UNIFORM_BUFFER, 3, 0);
 
 						glDrawElementsInstanced(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0, instanceCount);
 						numDrawCalls++;
@@ -385,9 +391,9 @@ namespace GFX
 						glEnable(GL_DEPTH_TEST);
 						glDisable(GL_STENCIL_TEST);
 					}
-
-					instanceCount = 0;
+					
 					instanceOffset += instanceCount;
+					instanceCount = 0;
 				}
 
 				if (endMe)

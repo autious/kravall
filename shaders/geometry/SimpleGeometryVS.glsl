@@ -16,7 +16,7 @@ layout (std140, binding = 4) readonly buffer buffah
     InstanceData gInstances[];
 };
 
-layout (std140, binding = 3) uniform instanceBufferOffset
+layout (std140) uniform instanceBufferOffset
 {
     uint gInstanceOffset;
 	uint pad0;

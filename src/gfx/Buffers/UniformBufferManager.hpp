@@ -32,6 +32,7 @@ namespace GFX
 		void SetBasicCameraUBO(const BasicCamera& basicCamera);
         
         static const GLuint CAMERA_BINDING_INDEX;
+        static const GLuint INSTANCE_ID_OFFSET_INDEX;
 
 	private:
 		void CreateBasicCameraUBO();

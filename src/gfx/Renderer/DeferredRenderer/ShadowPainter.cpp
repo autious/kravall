@@ -65,13 +65,20 @@ namespace GFX
 		m_shaderManager->AttachShader("SMAV_FS", "SMAV");
 		m_shaderManager->LinkProgram("SMAV");
 
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("SMSV"), "instanceBufferOffset", UniformBufferManager::INSTANCE_ID_OFFSET_INDEX);
+        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("SMAV"), "instanceBufferOffset", UniformBufferManager::INSTANCE_ID_OFFSET_INDEX);
+
 		m_staticInstances = new InstanceData[MAX_INSTANCES];
 
 		glGenBuffers(1, &m_instanceBuffer);
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_instanceBuffer);
 		glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_INSTANCES * sizeof(InstanceData), NULL, GL_STREAM_COPY);
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_instanceBuffer);
-
+		
+		glGenBuffers(1, &m_instanceOffsetBuffer);
+		glBindBuffer(GL_UNIFORM_BUFFER, m_instanceOffsetBuffer);
+		glBufferData(GL_UNIFORM_BUFFER, 4*sizeof(unsigned int), NULL, GL_DYNAMIC_DRAW);
+		glBindBufferBase(GL_UNIFORM_BUFFER, UniformBufferManager::INSTANCE_ID_OFFSET_INDEX, 0);
 
 
 	}
@@ -335,9 +342,48 @@ namespace GFX
 			{
 				break; // Break if no shadowcasting light
 			}
-
 			
+			// Assemble instance data
+			int instanceBufferSize = 0;
+			{
+				unsigned int instanceOffset = 0;
+				for (unsigned int i = startIndex; i < endIndex;)
+				{
+					GFXBitmask geometryBitmask = renderJobs[i].bitmask;
+					objType = GetBitmaskValue(geometryBitmask, BITMASK::TYPE);
+					meshID = GetBitmaskValue(geometryBitmask, BITMASK::MESH_ID);
+					currentMesh = meshID;
+
+					if (objType != GFX::OBJECT_TYPES::OPAQUE_GEOMETRY)
+						break;
+
+					unsigned int instanceCount = 0;
+					do
+					{
+						InstanceData smid = *(InstanceData*)renderJobs.at(i).value;
+						m_staticInstances[instanceOffset + instanceCount] = smid;
+						instanceCount++;
+						instanceBufferSize++;
+						i++;
+						geometryBitmask = renderJobs[i].bitmask;
+						meshID = GetBitmaskValue(geometryBitmask, BITMASK::MESH_ID);
+					} while (meshID == currentMesh && i < endIndex);
+					instanceOffset += instanceCount;
+				}
+			}
+			
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_instanceBuffer);
+			InstanceData* pData = (InstanceData*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, MAX_INSTANCES * sizeof(InstanceData),
+				GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
+
+			memcpy(pData, m_staticInstances, instanceBufferSize * sizeof(InstanceData));
+
+			glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+
+
+
 			// Loop through all the geometry
+			unsigned int instanceOffset = 0;
 			for (unsigned int i = startIndex; i < endIndex;)
 			{
 				GFXBitmask geometryBitmask = renderJobs[i].bitmask;
@@ -347,13 +393,12 @@ namespace GFX
 
 				if (objType != GFX::OBJECT_TYPES::OPAQUE_GEOMETRY)
 					break;
-				
+
 				unsigned int instanceCount = 0;
 				do
 				{
-					InstanceData smid = *(InstanceData*)renderJobs.at(i).value;
-					m_staticInstances[instanceCount] = smid;
 					instanceCount++;
+					instanceBufferSize++;
 					i++;
 					geometryBitmask = renderJobs[i].bitmask;
 					meshID = GetBitmaskValue(geometryBitmask, BITMASK::MESH_ID);
@@ -373,11 +418,15 @@ namespace GFX
 				}
 				
 
-				glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_instanceBuffer);
-				InstanceData* pData = (InstanceData*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, MAX_INSTANCES * sizeof(InstanceData),
-					GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
-				memcpy(pData, m_staticInstances, instanceCount * sizeof(InstanceData));
-				glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+				//glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_instanceBuffer);
+				//InstanceData* pData = (InstanceData*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, MAX_INSTANCES * sizeof(InstanceData),
+				//	GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
+				//memcpy(pData, m_staticInstances, instanceCount * sizeof(InstanceData));
+				//glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+				
+				unsigned int asd[4] = {instanceOffset, 0U, 0U, 0U};
+				glBindBufferBase(GL_UNIFORM_BUFFER, UniformBufferManager::INSTANCE_ID_OFFSET_INDEX, m_instanceOffsetBuffer);
+				glBufferSubData(GL_UNIFORM_BUFFER, 0, 4*sizeof(unsigned int), asd);
 
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IBO);
 
@@ -410,6 +459,7 @@ namespace GFX
 				numTris += (mesh.indexCount / 3) * instanceCount * 4;
 
 				//instanceCount = 0;
+				instanceOffset += instanceCount;
 
 			}
 		}

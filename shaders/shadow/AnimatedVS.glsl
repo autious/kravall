@@ -21,6 +21,14 @@ layout (std140, binding = 6) readonly buffer animationBuffer
 };
 
 
+layout (std140) uniform instanceBufferOffset
+{
+    uint gInstanceOffset;
+	uint pad0;
+	uint pad1;
+	uint pad2;
+};
+
 layout (shared) uniform PerFrameBlock
 {
 	mat4 gView;
@@ -43,7 +51,8 @@ mat4x4 GetBoneMatrix(InstanceData instanceData, int boneIndex)
 
 void main()
 {
-	InstanceData instance = gInstances[gl_InstanceID];
+	uint instanceID = gInstanceOffset + gl_InstanceID;
+	InstanceData instance = gInstances[instanceID];
 
 	// Apply animations
 	vec4 posA = vec4(0.0f);
