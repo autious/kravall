@@ -86,16 +86,16 @@ void Core::NavMeshBlockingSystem::Update( float delta )
 
 				glm::vec3 currentPosition = Core::world.m_systemHandler.GetSystem<Core::GroupDataSystem>()->GetMedianPosition(i);
 
-				if( meta.timeSinceLastCheck > GROUP_CHECK_STUCK_TIMER )
+				if( meta.timeSinceLastCheck > (float)world.m_config.GetDouble("blockingOfNavMesh_Checktimer", GROUP_CHECK_STUCK_TIMER) )
 				{
 					meta.timeSinceLastCheck = 0.0f;
 					
 					glm::vec3 lastPosition = glm::vec3( meta.recordedPosition[0], 0.0f, meta.recordedPosition[1] );
 
-					if( glm::distance( currentPosition, lastPosition ) < GROUP_IS_STUCK_DISTANCE )
+					if( glm::distance( currentPosition, lastPosition ) < (float)world.m_config.GetDouble("blockingOfNavMesh_StuckDistance", GROUP_IS_STUCK_DISTANCE) )
 					{
-						meta.stuckTimer += meta.stuckTimer == 0.0f ? delta : GROUP_CHECK_STUCK_TIMER;
-						if( meta.stuckTimer > GROUP_FIND_NEW_PATH_TIMER )
+						meta.stuckTimer += meta.stuckTimer == 0.0f ? delta : (float)world.m_config.GetDouble("blockingOfNavMesh_Checktimer", GROUP_CHECK_STUCK_TIMER);
+						if( meta.stuckTimer > (float)world.m_config.GetDouble("blockingOfNavMesh_StuckTimerBeforeNewPath", GROUP_FIND_NEW_PATH_TIMER) )
 						{
 							// squad appears to be stuck...
 							CalculateBlockedNodes( i );

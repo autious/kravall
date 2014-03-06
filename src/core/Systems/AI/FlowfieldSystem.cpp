@@ -105,7 +105,9 @@ void Core::FlowfieldSystem::Update( float delta )
 }
 
 
-#define DRAW_LINE_TO_POLICE
+//#define DRAW_LINE_TO_POLICE
+
+
 #ifdef DRAW_LINE_TO_POLICE
 #define DRAW_POLICE_LINE( x ) x
 #else
