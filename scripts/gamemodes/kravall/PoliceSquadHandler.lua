@@ -702,22 +702,22 @@ function PoliceSquadHandler:update( delta )
         end
     end
 
-    if keyboard.isKeyDownOnce(keyboard.key.Kp_8) or keyboard.isKeyDownOnce(keyboard.key[8]) then
-        self:setAbility(core.system.squad.abilities.TearGas)
-    end
-	
-	-- attack group
-	if keyboard.isKeyDownOnce(keyboard.key.Kp_7) or keyboard.isKeyDownOnce(keyboard.key[7]) then
+	if keyboard.isKeyDownOnce(keyboard.key.Kp_1) or keyboard.isKeyDownOnce(keyboard.key[1]) then
         self:setAbility(core.system.squad.abilities.Attack)
 	end
 
-    if keyboard.isKeyDownOnce(keyboard.key.Kp_9) or keyboard.isKeyDownOnce(keyboard.key[9]) then
-        self:setAbility(core.system.squad.abilities.Flee)
-    end
+    if keyboard.isKeyDownOnce(keyboard.key.Kp_2) or keyboard.isKeyDownOnce(keyboard.key[2]) then
+        self:setAbility(core.system.squad.abilities.TearGas)
+    end	
 
     if keyboard.isKeyDownOnce(keyboard.key.Kp_3) or keyboard.isKeyDownOnce(keyboard.key[3]) then
         self:setAbility(core.system.squad.abilities.Sprint)
     end
+
+    if keyboard.isKeyDownOnce(keyboard.key.Kp_4) or keyboard.isKeyDownOnce(keyboard.key[4]) then
+        self:setAbility(core.system.squad.abilities.Flee)
+    end
+
 
     --Ability: Sprint
     -- This block is expensive (~2ms) should be put in a c-system
