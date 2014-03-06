@@ -100,7 +100,10 @@ function T:setState( state )
 
     elseif state == "End" then
         print( "State set to \"End\"" )
-        self.gamestate = End:new( {won = self.objectiveHandler:isWin() })
+		
+        self.gamestate = End:new( { won=self.objectiveHandler:isWin(), objectiveList=self.objectiveHandler.objectiveComponents } )
+		
+		self.objectiveHandler:setShow( false )
     else
         error( "Invalid state set" )
     end

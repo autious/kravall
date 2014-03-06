@@ -13,12 +13,12 @@ function UnitStatGUI:new(o)
 
     local wrapperGUI = GUI:new{width=2,height=2, yoffset=-10, anchor="SouthWest"}
 
-    o.labelUnitName =  TextLabel:new( { label="Police Unit" })
-    o.labelUnitHealth = TextLabel:new( { label="Health: NaN", yoffset=20  } )
-    o.labelUnitMorale = TextLabel:new( { label="Morale: NaN", yoffset=40  } )
-    o.labelUnitStamina = TextLabel:new( { label="Stamina: NaN", yoffset=60  } )
-    o.labelUnitStance = TextLabel:new( { label="Stance: NaN", yoffset=80 } )
-    o.labelUnitFormation = TextLabel:new( { label="Formation: NaN", yoffset=100  } )
+    o.labelUnitName =  TextLabel:new( { label="Police Unit", yoffset=0, font="assets/font/toolTip.font" })
+    o.labelUnitHealth = TextLabel:new( { label="Health: NaN", yoffset=18, font="assets/font/toolTip.font"  } )
+    o.labelUnitMorale = TextLabel:new( { label="Morale: NaN", yoffset=36, font="assets/font/toolTip.font"  } )
+    o.labelUnitStamina = TextLabel:new( { label="Stamina: NaN", yoffset=54, font="assets/font/toolTip.font"  } )
+    o.labelUnitStance = TextLabel:new( { label="Stance: NaN", yoffset=72, font="assets/font/toolTip.font" } )
+    o.labelUnitFormation = TextLabel:new( { label="Formation: NaN", yoffset=90, font="assets/font/toolTip.font"  } )
 
     wrapperGUI:addComponent( o.labelUnitName )
     wrapperGUI:addComponent( o.labelUnitHealth )
@@ -28,6 +28,7 @@ function UnitStatGUI:new(o)
     wrapperGUI:addComponent( o.labelUnitFormation )
 	
 	wrapperGUI:addPlacementHandler( SimplePlacer )
+	wrapperGUI:setShow( false )
 	
     o:addComponent( wrapperGUI )
 	
@@ -43,7 +44,7 @@ function UnitStatGUI:setFormation( formation )
     elseif formation == formations.CircleFormation then
         self.labelUnitFormation:setLabel( "Formation: Circle" )
     elseif formation == formations.HalfCircleFormation then
-        self.labelUnitFormation:setLabel( "Formation: Half Circle" )
+        self.labelUnitFormation:setLabel( "Formation: Semi-Circle" )
     elseif formation == formations.NoFormation then
         self.labelUnitFormation:setLabel( "Formation: None" )
     else
