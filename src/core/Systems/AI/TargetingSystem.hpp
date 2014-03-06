@@ -41,7 +41,7 @@ namespace Core
 		Entity m_currentTarget;
 		bool m_wasFPressed;
 
-		void HandlePoliceTargeting(Entity police, float delta, Core::SquadSystem* sqSystem );
+		void HandlePoliceTargeting(Entity police, float delta, Core::SquadSystem* sqSystem, Core::NavigationMesh* instance );
 		void HandleRioterTargeting(Entity rioter, float delta, Core::NavigationMesh* instance );
 		Entity FindClosestTarget( WorldPositionComponent* origin, int targetType, int ownTeam, Core::NavigationMesh* instance );
 		Entity FindClosestTarget( WorldPositionComponent* origin, int targetType, int ownTeam, Core::NavigationMesh* instance, int targetGroup );
