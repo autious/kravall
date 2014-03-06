@@ -39,6 +39,16 @@ local function createMember( scen, pos, memberDef )
 					queuedAnimationID = 0
 				}
 			},
+            {
+                type = core.componentType.BoundingVolumeComponent,
+                data = {
+                    sphereOffset = { 0, 0, 0 }, 
+                    sphereRadius = 0.1, 
+                    pickingRadius = 3,
+                    collisionModel = core.BoundingVolumeCollisionModel.StaticResolution, 
+                    type = core.BoundingVolumeType.SphereBoundingType
+                } 
+            }
 		}
 	)
 end
