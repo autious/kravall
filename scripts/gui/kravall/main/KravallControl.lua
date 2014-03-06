@@ -38,7 +38,7 @@ function KravallControl:new(o)
 									{ 
 										width=57, height=553, anchor="NorthEast",
 										onStanceSelect = function(stance) o.onStanceSelect( stance ) end,
-										onAbilitySelect = function(ability) o.onAbilitySelect( ability ) end,
+										onAbilitySelect = function(ability) print( "select ability" ); o.onAbilitySelect( ability ) end,
 										onFormationSelect = function(form) o.onFormationSelect(form) end
 									} )
 	o.gui:addComponent( o.squadMenuGUI )
