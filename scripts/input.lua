@@ -29,7 +29,7 @@ function core.input.mouse.onButton( button, action, mods )
 
     for k,v in pairs( onbutton["GAME"] ) do
         tmp = k( button, action, mods, consumed )
-        consumed = consumed or tmp  or false
+        consumed = consumed or tmp or false
     end 
 
     for k,v in pairs( onbutton["DEFAULT"] ) do
@@ -67,7 +67,6 @@ function input.deregisterOnScroll( func )
 end
 
 function input.registerOnButton( func, group )
-
     if group then
         local exist = false
         for _,v in pairs( onbutton_groups ) do
