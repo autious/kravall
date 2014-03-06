@@ -19,7 +19,6 @@ local standardPolice = (require "game_constants").standardPolice
 
 local ASM = require "assembly_loader"
 
-
 local T = 
     { 
         initGamestate = "Main",

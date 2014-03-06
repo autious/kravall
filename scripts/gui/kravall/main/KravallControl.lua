@@ -144,6 +144,10 @@ function KravallControl:update( delta )
     self.eventGUI:constrict( delta )
 end
 
+function KravallControl:setShow( flag )
+    self.gui:setShow( flag ) 
+end
+
 function KravallControl:destroy()
     self.gui:destroy() 
 end

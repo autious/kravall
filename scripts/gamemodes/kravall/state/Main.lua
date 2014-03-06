@@ -61,6 +61,11 @@ function Main:new(o)
         -- might contain previously sent units.
         -- Could be empty
         onSelectedSquadsChange = function( squads )
+            if squads == nil or #squads == 0 then
+                o.gui:setShow( false ) 
+            else
+                o.gui:setShow( true ) 
+            end
             o.gui:setSelectedSquads( squads )
         end,
 
