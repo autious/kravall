@@ -511,7 +511,7 @@ namespace GFX
 
 	void RenderCore::SubSystemTimeRender()
 	{
-		if( m_font)
+		if( m_font && m_showStatistics)
 		{
 
 			for( int i = 0; i < (int)m_subsystemTimes.size(); i++ )
