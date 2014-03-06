@@ -26,7 +26,7 @@ function C.new( )
     self.interpolationSpeed = 10
     self.interpolationFactor = 0
     self.interpolationPoints = {}
-
+    self.previousInterpolationPoint = {position = self.position, rotation = self.quatRotation}
 
     self.width = core.config.initScreenWidth
     self.height = core.config.initScreenHeight
