@@ -8,6 +8,7 @@ local TutorialMenu = require "gui/TutorialMenu"
 
 local entity = require "entities"
 local group = entity.get "group"
+local rioter = entity.get "rioter"
 
 local MenuScrollSpeed = 500
 
@@ -147,18 +148,22 @@ return function( scen )
 			verts[i + 1] = verts[i + 1] + wpc.position[3]
 		end
 	    local grp = core.system.groups.createGroup(1)
-		group( scen, ac.vertices, grp, {xsize, ysize}, fists, {0.9,0.3,0,1}, 1, 1,core.RioterAlignment.Pacifist )
+		group( scen, ac.vertices, grp, {xsize, ysize}, fists, nil, 1, 1,core.RioterAlignment.Anarchists )
         return grp
 	end
 	
 	local endPosition
 	local startPosition
 	local grp
+
+    T.spawn = function(e)
+		grp = T.createDeserter( e, 100,2 )
+    end
+
 	T.registerStart = function( entity )
 		--print( "REGGING START" )
 		startPosition = entity:get( core.componentType.WorldPositionComponent ).position
 		
-		grp = T.createDeserter( entity, 20,20 )
 	end
 	
 	T.registerEnd = function( entity )
