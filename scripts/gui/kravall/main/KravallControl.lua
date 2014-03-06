@@ -78,7 +78,8 @@ function KravallControl:new(o)
 end
 
 function KravallControl:setFormation( formation )
-    self.formationGUI:setFormation( formation )
+    --self.formationGUI:setFormation( formation )
+	self.squadMenuGUI:setFormation( formation )
 end
 
 function KravallControl:setStance( stance )
