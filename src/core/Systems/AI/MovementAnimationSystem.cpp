@@ -11,7 +11,7 @@
 #define STILL_THRESHOLD 0.35f 
 
 #define IDLE_MINIMUM_TIME 0.25f
-#define MINIMUM_MOVEMENT_ANIMATION_TIME 0.9f
+#define MINIMUM_MOVEMENT_ANIMATION_TIME 0.35f
 
 namespace Core
 {
@@ -64,8 +64,9 @@ namespace Core
 			{
 				// if moving faster than jogging but not already playing running animation or if not playing any animation...
 				if( frameSpeed > joggingSpeed + GRACE_THRESHOLD &&
-						(( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle" ) == ac->animationID && ac->playTime > IDLE_MINIMUM_TIME )
-						|| !ac->playing ))
+					(( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle" )
+					== ac->animationID && ac->playTime > IDLE_MINIMUM_TIME )
+					|| !ac->playing ))
 				{
 					if( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "agitated-run" ) != ac->animationID )
 						hasChangedAnimation = true;
@@ -77,8 +78,9 @@ namespace Core
 				
 				// if moving faster than walking but not already playing joggin animation or if not playing any animation...
 				else if( frameSpeed > walkingSpeed + GRACE_THRESHOLD &&
-						(( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle" ) == ac->animationID && ac->playTime > IDLE_MINIMUM_TIME )
-						|| !ac->playing ))
+					(( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle" ) 
+					== ac->animationID && ac->playTime > IDLE_MINIMUM_TIME )
+					|| !ac->playing ))
 				{
 					if( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "jogging" ) != ac->animationID )
 						hasChangedAnimation = true;
@@ -90,8 +92,9 @@ namespace Core
 
 				// if moving but not running and not already playing walk-animation or if not playing any animation
 				else if( frameSpeed > STILL_THRESHOLD &&  
-						(( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle" ) == ac->animationID && ac->playTime > IDLE_MINIMUM_TIME )
-						|| !ac->playing ))
+					(( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle" )
+					== ac->animationID && ac->playTime > IDLE_MINIMUM_TIME )
+					|| !ac->playing ))
 				{
 					if( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "walk-straight" ) != ac->animationID )
 						hasChangedAnimation = true;
@@ -102,9 +105,10 @@ namespace Core
 				}
 
 				// if not moving and not already playing idle-animation or if not playing any animation
-				else if( ((Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle" ) != ac->animationID && ac->playTime > MINIMUM_MOVEMENT_ANIMATION_TIME )
-						|| !ac->playing) && 
-						frameSpeed < STILL_THRESHOLD )
+				else if( ((Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle" )
+					!= ac->animationID && ac->playTime > MINIMUM_MOVEMENT_ANIMATION_TIME )
+					|| !ac->playing) && 
+					frameSpeed < STILL_THRESHOLD )
 				{
 					if( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle" ) != ac->animationID )
 						hasChangedAnimation = true;
