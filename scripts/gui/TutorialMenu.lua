@@ -70,7 +70,7 @@ function TutorialMenu:SetImage(id, o)
 
 	if id == 0 then
 		tutImage = Image:new { ignoreConstrict=true, mat="assets/texture/tutorial/keybindTut.material" }
-		tBox:setText([[DOES THIS ONE NEED A DESCRIPTION OR JUST THE IMAGE?]])
+		tBox:setText([[]])
 		headline:setText([[Keybindings]])
 	elseif id == 1 then
 		tutImage = Image:new { ignoreConstrict=true, mat="assets/texture/tutorial/policeSpawnTut.material" }
