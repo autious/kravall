@@ -20,7 +20,7 @@ function TextBox:new(o)
     setmetatable( o,self )
     self.__index = self
 
-    o.onClick = o.onClick or function()  end
+    o.onClick = o.onClick or function() end
 
     o.textElements = {}
 
@@ -36,7 +36,7 @@ function TextBox:new(o)
                                             onExit = function() o:onExit() end,
 											toolTip = o.toolTip
                                         }
-    o.text = text( o.x, o.y, o.body, nil, nil, true, {o.width,o.height})
+    o.text = text( o.x, o.y, o.body, o.color, o.font, true, {o.width, o.height})
     o:setPosition( o.x, o.y )
 
     o.text:show( show )
@@ -47,7 +47,7 @@ end
 function TextBox:setShow( flag )
     self.show = flag 
    
-    self.text:show(flag)     
+    self.text:show(flag)
 end
 
 function TextBox:setText( string )
@@ -55,10 +55,14 @@ function TextBox:setText( string )
 end
 
 function TextBox:setPosition( x, y )
-    self.x = x;
-    self.y = y 
-    
+    self.x = x
+    self.y = y
+	
     self.text:setPosition( self.x, self.y )
+end
+
+function TextBox:getPosition( x, y )
+    return self.x, self.y
 end
 
 function TextBox:onPress() 

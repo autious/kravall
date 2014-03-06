@@ -1,18 +1,12 @@
 local GUI = require "gui/GUI"
+local Statistics = require "factories/Statistics"
 
-local Button = require "gui/component/Button"
-local Slider = require "gui/component/Slider"
-local Checkbox = require "gui/component/Checkbox"
-local TextSelectList = require "gui/component/TextSelectList"
 local TextLabel = require "gui/component/TextLabel"
 local TextBox = require "gui/component/TextBox"
 local Image = require "gui/component/Image"
+local Button = require "gui/component/Button"
+local Objective = require "gui/component/objective_handler/Objective"
 
-local AnchorPlacer = require "gui/placement/AnchorPlacer"
-local EastPlacer = require "gui/placement/EastPlacer"
-local NorthPlacer = require "gui/placement/NorthPlacer"
-local WestPlacer = require "gui/placement/WestPlacer"
-local CenterPlacer = require "gui/placement/CenterPlacer"
 local SimplePlacer = require "gui/placement/SimplePlacer"
 
 local Util = require "gui/placement/util"
@@ -34,155 +28,76 @@ function EndScreen:new(o)
     setmetatable(o,self)
     self.__index = self
 
-	local leftXOffset = 15
+	local guiWidth = 500
+	local offsetX = 15
+	local indentX = 30
+	local offsetY = 0
+	local newSectionY = 50
+	local newLineY = 20
 	
-    o.gui = GUI:new()
+    o.gui = GUI:new( { width=guiWidth, height=600, anchor="Center" } )
 	
 	if o.won then
-		o.gui:addComponent( TextLabel:new( { label="Game is over, you won", anchor="North" } ) )
+		--o.gui:addComponent( TextLabel:new( { label="Game is over, you won", xoffset=offsetX, yoffset=offsetY } ) )
+		o.gui:addComponent( Image:new{ mat = "assets/texture/ui/win.material" } )
 	else
-		o.gui:addComponent( TextLabel:new( { label="Game is over, you lost", anchor="North" } ) )
+		--o.gui:addComponent( TextLabel:new( { label="Game is over, you lost", xoffset=offsetX, yoffset=offsetY  } ) )
+		o.gui:addComponent( Image:new{ mat = "assets/texture/ui/loss.material" } )
 	end
 	
-	o.gui:addComponent( TextLabel:new( { label="Number of objectives: " .. #o.objectives, anchor="Left" } ) )
+	o.gui:addComponent( Button:new
+    {
+        onClick = function() openscenario( "main_menu" ) end 
+    } )
 	
-	if o.objectives then
-		for i,v in pairs( o.objectives ) do
-			o.gui:addComponent( TextLabel:new( { label=v.title, anchor="Left" } ) )
-		end
-	end
-	
-	o.gui:addPlacementHandler( AnchorPlacer )
-	
-	--o.gui:addComponent( TextLabel:new( { label="Select units to purchase and assign them to a spawning position", anchor="North" } ) )
+	--offsetY = offsetY + newSectionY
+	--o.gui:addComponent( TextLabel:new( { label="Objectives", xoffset=offsetX, yoffset=offsetY } ) )
+	--offsetY = offsetY + newLineY
 	--
-	---- Cash Sub-GUI
-	--o.cashSubGUI = GUI:new { width=240, height=30, anchor="NorthWest" }
+	--table.insert( o.objectives, Objective:new( { title="This is a very very very long objective title. At least that's what it is supposed to be. Use your imagination!! ;) ", state="fail", show=true } ) )
+	--table.insert( o.objectives, Objective:new( { title="Another objective...", state="fail", show=true } ) )
 	--
-	--o.cashSubGUI:addComponent( TextLabel:new( { label="Cash:", anchor="NorthWest", xoffset=leftXOffset, yoffset=-3 } ) )
-	--o.cashLabel = TextLabel:new( { label="$" .. o.cashLimit, anchor="NorthEast", xoffset=-leftXOffset-2, yoffset=-3 } )
-	--o.cashSubGUI:addComponent( o.cashLabel )
-	--o.cashSubGUI:addComponent( Image:new( { mat="assets/texture/ui/aa-temp_prep_cashPanel.material", ignoreConstrict=true, anchor="NorthWest" } ) )
-	--
-	--o.cashSubGUI:addPlacementHandler( AnchorPlacer )
-	--o.gui:addComponent( o.cashSubGUI )
-	--
-	----Shield Unit Stats Sub-GUI
-	--o.shieldStatsSubGUI = GUI:new{ width=210, height=118, xoffset=leftXOffset-6, yoffset=192 }
-	--
-	--o.shieldStatsSubGUI:addComponent( Image:new( { mat="assets/texture/ui/aa-temp_prep_shieldPolice.material" } ) )
-	--o.shieldStatsSubGUI:addComponent( TextLabel:new( { label="Cost: $" .. standardPolice.cost, font="assets/font/toolTip.font", 
-	--													xoffset=110, yoffset=-9 } ) )
-	--o.shieldStatsSubGUI:addComponent( TextLabel:new( { label="Health: " .. standardPolice.maxHealth, font="assets/font/toolTip.font", 
-	--													xoffset=110, yoffset=9} ) )
-	--o.shieldStatsSubGUI:addComponent( TextLabel:new( { label="Stamina: " .. standardPolice.maxStamina, font="assets/font/toolTip.font", 
-	--													xoffset=110, yoffset=27  } ) )
-	--o.shieldStatsSubGUI:addComponent( TextLabel:new( { label="Morale: " .. standardPolice.maxMorale, font="assets/font/toolTip.font", 
-	--													xoffset=110, yoffset=45 } ) )
-	--o.shieldStatsSubGUI:addComponent( TextLabel:new( { label="Abilities: ", font="assets/font/toolTip.font", 
-	--													xoffset=110, yoffset=63 } ) )
-	--o.shieldStatsSubGUI:addComponent( TextLabel:new( { label="None", font="assets/font/toolTip.font", 
-	--													xoffset=110+leftXOffset, yoffset=81 } ) )
-	--
-	--o.shieldStatsSubGUI:addPlacementHandler( SimplePlacer )
-	--
-	----Teargas Unit Stats Sub-GUI
-	--o.tgStatsSubGUI = GUI:new{ width=210, height=118, xoffset=leftXOffset-6, yoffset=192 }
-	--
-	--o.tgStatsSubGUI:addComponent( Image:new( { mat="assets/texture/ui/aa-temp_prep_tearGasPolice.material" } ) )
-	--o.tgStatsSubGUI:addComponent( TextLabel:new( { label="Cost: $" .. tearGasPolice.cost, font="assets/font/toolTip.font", 
-	--												xoffset=110, yoffset=-9 } ) )
-	--o.tgStatsSubGUI:addComponent( TextLabel:new( { label="Health: " .. tearGasPolice.maxHealth, font="assets/font/toolTip.font", 
-	--												xoffset=110, yoffset=9 } ) )
-	--o.tgStatsSubGUI:addComponent( TextLabel:new( { label="Stamina: " .. tearGasPolice.maxStamina, font="assets/font/toolTip.font", 
-	--												xoffset=110, yoffset=27  } ) )
-	--o.tgStatsSubGUI:addComponent( TextLabel:new( { label="Morale: " .. tearGasPolice.maxMorale, font="assets/font/toolTip.font", 
-	--												xoffset=110, yoffset=45 } ) )
-	--o.tgStatsSubGUI:addComponent( TextLabel:new( { label="Abilities: ", font="assets/font/toolTip.font", 
-	--												xoffset=110, yoffset=63 } ) )
-	--o.tgStatsSubGUI:addComponent( TextLabel:new( { label="TearGas", font="assets/font/toolTip.font", 
-	--												xoffset=110+leftXOffset, yoffset=81 } ) )
-	--
-	--o.tgStatsSubGUI:addPlacementHandler( SimplePlacer )
-    --
-	---- Units Sub-GUI
-	--o.unitsSubGUI = GUI:new{ width=240, height=330, anchor="SouthWest" }
-	--
-	--o.unitsSubGUI:addComponent( o.shieldStatsSubGUI )
-	--o.unitsSubGUI:addComponent( o.tgStatsSubGUI )
-	--
-	--o.unitsSubGUI:addComponent( Image:new( { mat="assets/texture/ui/aa-temp_prep_leftPanel.material" } ) )
-	--o.unitsSubGUI:addComponent( TextLabel:new( { label="Available units", xoffset=leftXOffset, yoffset=9 } ) )
-	--o.unitSelection = TextSelectList:new(
-	--									{ 
-	--										xoffset=leftXOffset,
-	--										yoffset=40,
-	--										elements=o.policeTypes,
-	--										onSelect = function( squadDef )
-	--											if squadDef then
-	--												if squadDef.name == "Common Shield Squad" then
-	--													o.shieldStatsSubGUI:setShow( true )
-	--												else
-	--													o.shieldStatsSubGUI:setShow( false )
-	--												end
-	--												
-	--												if squadDef.name == "Teargas Squad" then
-	--													o.tgStatsSubGUI:setShow( true )
-	--												else
-	--													o.tgStatsSubGUI:setShow( false )
-	--												end
-	--											end
-	--											
-	--											o.onSelectCurrentSquad( squadDef )
-	--										end
-	--									} )
-	--o.unitsSubGUI:addComponent( o.unitSelection )	
-	--
-	--o.unitsSubGUI:addPlacementHandler( SimplePlacer )
-	--o.gui:addComponent( o.unitsSubGUI )
-	--
-	---- Purchased Units Sub-GUI
-	--o.purchaseSubGUI = GUI:new{ width=240, height=322, anchor="SouthWest" }
-	--
-	--o.purchaseSubGUI:addComponent( Button:new
+	--local tempY = offsetY
+	--if o.objectives then
+	--	for i,v in pairs( o.objectives ) do
+	--		local colour = {1,1,1,1}
+	--		local objIndent=100
+	--		
+	--		print(offsetY)
+	--		if v.state == "fail" then
+	--			colour = {1,0,0,1}
+	--			o.gui:addComponent( TextLabel:new( { label="[FAIL]", color=colour, xoffset=offsetX+indentX, yoffset=offsetY  } ) )
+	--		else
+	--			colour = {0,1,0,1}
+	--			o.gui:addComponent( TextLabel:new( { label="[SUCCESS]", color=colour, xoffset=offsetX+indentX, yoffset=offsetY } ) )
+	--		end
+	--		
+	--		local currObjective = TextBox:new( 
 	--										{ 
-	--											xoffset=-5,
-	--											yoffset=-10,
-	--											anchor="South",
-	--											matReleased="assets/texture/ui/remove-button-release.material",
-	--											matPressed="assets/texture/ui/remove-button-press.material",
-	--											matHover="assets/texture/ui/remove-button-hover.material",
-	--											onClick=o.onRemoveSelected,
+	--											body=v.title, color=colour, xoffset=offsetX+objIndent+indentX, yoffset=offsetY,
+	--											width=guiWidth-(offsetX+objIndent+indentX), height=200
 	--										} )
+	--		local dimX, dimY = currObjective.text:getDim()
+	--		currObjective:destroy()
+	--		currObjective = TextBox:new( 
+	--										{ 
+	--											body=v.title, color=colour, xoffset=offsetX+objIndent+indentX, yoffset=offsetY-dimY,
+	--											width=guiWidth-(offsetX+objIndent+indentX), height=200
+	--										} )							
+	--		o.gui:addComponent( currObjective )
+	--		offsetY = offsetY + dimY
+	--	end
+	--end
 	--
-	--o.purchaseSubGUI:addComponent( Image:new( { mat="assets/texture/ui/aa-temp_prep_buyPanel.material", ignoreConstrict=true } ) )
-	--o.purchaseSubGUI:addComponent( TextLabel:new( { label="Bought units", anchor="NorthWest", xoffset=leftXOffset, yoffset=12 } ) )
-	--
-	--o.unitPurchased = TextSelectList:new
-	--									{ 
-	--										xoffset=leftXOffset,
-	--										yoffset=20,
-	--										anchor="NorthWest", 
-	--										elements=o.createdSquads,
-	--										onSelect=o.onSelectCreatedSquad
-	--									}
-	--o.purchaseSubGUI:addComponent( o.unitPurchased )
-	--
-	--o.purchaseSubGUI:addPlacementHandler( AnchorPlacer )
-	--o.gui:addComponent( o.purchaseSubGUI )
-	--
-	--o.gui:addComponent( Button:new	{ 
-	--									anchor = "SouthEast", xoffset=-66, yoffset=-11, onClick = o.onFinished,
-	--									matReleased="assets/texture/ui/go-button-release.material",
-	--									matPressed="assets/texture/ui/go-button-press.material",
-	--									matHover="assets/texture/ui/go-button-hover.material",
-	--								} )
-	--										
-	--o.gui:addPlacementHandler( AnchorPlacer )
-    --
-	--o.shieldStatsSubGUI:setShow( false )
-	--o.tgStatsSubGUI:setShow( false )
+	--offsetY = offsetY + newSectionY
+	--o.gui:addComponent( TextLabel:new( { label="Units", xoffset=offsetX, yoffset=offsetY } ) )
+	--offsetY = offsetY + newLineY
+	--o.gui:addComponent( TextLabel:new( { label="Rioters killed: 322", xoffset=offsetX+indentX, yoffset=offsetY } ) )
+	--offsetY = offsetY + newLineY
+	--o.gui:addComponent( TextLabel:new( { label="Police killed: 25", xoffset=offsetX+indentX, yoffset=offsetY } ) )
 	
+	--o.gui:addPlacementHandler( SimplePlacer )
+	o.gui:addPlacementHandler( require "gui/placement/CenterPlacer" )
     return o
 end
 

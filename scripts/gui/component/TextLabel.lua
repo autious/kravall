@@ -52,6 +52,7 @@ function TextLabel:setShow( flag )
 end
 
 function TextLabel:setLabel( string )
+    self.label = string
     self.text:setText( string ) 
     self.width, self.height = self.text:getDim()
     self.GUIComponent.width =  self.width
