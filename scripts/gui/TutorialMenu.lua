@@ -141,15 +141,18 @@ function TutorialMenu:SetImage(id, o)
 		tBox:setText([[Depending on your actions, rioters will become angrier or calm themselves. This can be seen by hovering with your mouse over a rioter group, giving the group an outline where the color shows their mood.
 		
 		Blue: Neutral, this rioter is not angry or aggresive.
+
 		Orange: Agitated, this rioter is starting to get angry.
+
 		Red: Angry, this rioter is angry and will attack any hostile rioters or police within sight.
+
 		Pink: Broken, this rioter has been broken and will retreat, leaving the map.]])
 		headline:setText([[Moods]])
 	end 
 	activeImage = id
 
 	if id > 5 then
-		tBox.yoffset = 300
+		tBox.yoffset = 290
 	else
 		tBox.yoffset= 350
 	end
