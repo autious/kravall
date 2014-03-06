@@ -96,8 +96,8 @@ function Prep:new(o)
                     if hit then
                         for i,v in pairs( o.createdVisualRepresentation ) do
                             for ii,ent in ipairs( v ) do
-                                print( "mem" .. ii )
                                 if ent:isSameEntity( hit ) then
+                                    local mouse
                                     o.prepInterface:setBoughtSelected( i ) 
                                     o.prepInterface:updatePurchasedList()
                                     o.draggingSquad = i
@@ -108,6 +108,7 @@ function Prep:new(o)
                 end
             elseif action == core.input.action.Release then
                 o.draggingSquad = nil
+                o.draggingOffset = nil
             end
         elseif button == core.input.mouse.button.Right
            and action == core.input.action.Press then 
@@ -126,9 +127,14 @@ function Prep:new(o)
         o.squadPositionDecal:setPosition( o.activePosition:get() )
         o.canPlace = o.squadPositionDecal:verifyPlacement( o.spawnAreas )
 
+
         if o.draggingSquad then
+            if o.draggingOffset == nil then
+                o.draggingOffset = o.draggingSquad.position - core.glm.vec3.new( core.system.picking.getGroundHit(x,y) )
+            end
+
             local oldPos = o.draggingSquad.position
-            local newPos = core.glm.vec3.new( core.system.picking.getGroundHit(x,y) )
+            local newPos = core.glm.vec3.new( core.system.picking.getGroundHit(x,y) ) + o.draggingOffset
             o.draggingSquad.position = newPos
             if o:isInside( o.spawnAreas, o.draggingSquad ) then
                 o.createdVisualRepresentation[o.draggingSquad]:updatePosition()

@@ -5,6 +5,13 @@
 #include <algorithm>
 #include <logger/Logger.hpp>
 
+//#define DRAW_GOAL_VISION_LINES
+#ifdef DRAW_GOAL_VISION_LINES
+#define DEBUG_DRAW_VISION( x ) x
+#else
+#define DEBUG_DRAW_VISION( x ) ;
+#endif
+
 
 namespace Core
 {
@@ -89,7 +96,7 @@ namespace Core
 			}
 		}
 
-		//GFX::Debug::DrawLine( start, start + glm::normalize( goal - start ) * hitDistance, GFXColor( 1, 1, 0 , 1 ), true );
+		DEBUG_DRAW_VISION( GFX::Debug::DrawLine( start, start + glm::normalize( goal - start ) * hitDistance, GFXColor( 1, 1, 0 , 1 ), true ) );
 
 
 		if( hitDistance < distanceToTarget )
