@@ -11,7 +11,28 @@ local OverviewHandler = {
 local keyboard = core.input.keyboard
 local mouse = core.input.mouse
 
+function OverviewHandler:onButton(button, action, mods, consumed)
+    if action == core.input.action.Press then
+        --Only allow press if UI element hasn't been pressed
+        if not consumed then
+            if button == mouse.button.Left then
+                self.leftPressed = true   
+                self.leftClicked = true
+            elseif button == mouse.button.Right then
+                self.rightPressed = true
+                self.rightClicked = true
+            end
 
+            return not self.inOverview
+        end
+    elseif action == core.input.action.Release then
+        if button == mouse.button.Left then
+            self.leftPressed = false
+        elseif button == mouse.button.Right then
+            self.rightPressed = false
+        end
+    end   
+end
 function OverviewHandler:new(o)
     o = o or {}
     setmetatable(o, self)
@@ -66,12 +87,15 @@ function OverviewHandler:update(delta)
         end
     else
         self:SetOutlines() 
-        if mouse.isButtonDownOnce(mouse.button.Left) then
+        if self.leftClicked then
             local mouseX, mouseY = mouse.getPosition()
             local x,y,z = core.system.picking.getGroundHit(mouseX, mouseY);
             self:ExitOverview(core.glm.vec3.new(x,y,z))
         end
     end
+
+    self.leftClicked = false
+    self.rightClciked = false
 end
 
 return OverviewHandler
