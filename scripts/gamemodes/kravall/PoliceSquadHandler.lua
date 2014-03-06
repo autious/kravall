@@ -317,9 +317,15 @@ function PoliceSquadHandler:setAbility( ability )
             self:UseFlee() 
         end
 	elseif ability == core.system.squad.abilities.Attack then
-		self.isAiming = true
+        if self:CanUseAbility(ability) then
+		    self.isAiming = true
+		    self:SetReticuleRender(false)
+		    self.AimingFunction = self.AttackGroup
+        end
+    else        
+		self.isAiming = false
 		self:SetReticuleRender(false)
-		self.AimingFunction = self.AttackGroup
+		self.AimingFunction = nil
     end
 end
 
@@ -367,9 +373,7 @@ function PoliceSquadHandler:AimTearGas()
     self.reticule:SetPosition(x, y, z)
 
     if not self:CanUseAbility(core.system.squad.abilities.TearGas) then
-        self.isAiming = false
-        self.AimingFunction = nil
-        self:SetReticuleRender(false)
+        self:setAbility(nil)
         return
     end
 
@@ -392,9 +396,7 @@ function PoliceSquadHandler:AimTearGas()
                             self:UseTearGas(member.entity, x, y, z) 
 
                             if not keyboard.isKeyDown(keyboard.key.Left_shift) then
-                                self.isAiming = false
-                                self:SetReticuleRender(false)
-                                self.AimingFunction = nil
+                                self:setAbility(nil)
                             end
 
                             return
@@ -429,16 +431,16 @@ end
 
 function PoliceSquadHandler:HighlightMood()
 
-	if #self.selectedSquads == 0 then
-		--self.isAiming = false
-		--self:SetReticuleRender(false)
-		--self.AimingFunction = nil
-		--
-		--self.rightClicked = false
-		--self.rightPressed = false
-		
-		return
-	end
+	--if #self.selectedSquads == 0 then
+	--	--self.isAiming = false
+	--	--self:SetReticuleRender(false)
+	--	--self.AimingFunction = nil
+	--	--
+	--	--self.rightClicked = false
+	--	--self.rightPressed = false
+	--	
+	--	return
+	--end
 
 	local mouseX, mouseY = mouse.getPosition()
     local aspct = core.entity.generateAspect( core.componentType.AttributeComponent, core.componentType.UnitTypeComponent, core.componentType.BoundingVolumeComponent )
@@ -464,10 +466,7 @@ end
 
 function PoliceSquadHandler:AttackGroup()
 	if #self.selectedSquads == 0 or self.rightClicked then
-		self.isAiming = false
-		self:SetReticuleRender(false)
-		self.AimingFunction = nil
-		
+	    self:setAbility(nil)	
 		self.rightClicked = false
 		self.rightPressed = false
 		
@@ -564,6 +563,7 @@ function PoliceSquadHandler:UseSprint()
     end
     
 	self:RevertAttackingStateOfSelected()
+    self:setAbility(nil)
 end
 
 function PoliceSquadHandler:UseFlee()
@@ -585,6 +585,7 @@ function PoliceSquadHandler:UseFlee()
     end
 	
 	self:RevertAttackingStateOfSelected()
+    self:setAbility(nil)
 end
 
 function PoliceSquadHandler:update( delta )
@@ -670,8 +671,7 @@ function PoliceSquadHandler:update( delta )
 
     --Abilities
     if self.isAiming and self.rightClicked then
-        self:SetReticuleRender(false)
-        self.isAiming = false
+        self:setAbility(nil)
         --Consume event to prevent setting goals
         self.rightClicked = false
         self.rightPressed = false
@@ -689,46 +689,21 @@ function PoliceSquadHandler:update( delta )
         end
     end
 
-    if keyboard.isKeyDownOnce(keyboard.key.Kp_8) then
-        if self:CanUseAbility(core.system.squad.abilities.TearGas) then            
-            if self.isAiming and self.AimingFunction == self.AimTearGas then
-                self.isAiming = false
-                self:SetReticuleRender(false)
-                self.AimingFunction = nil
-            else
-                self.isAiming = true
-                self:SetReticuleRender(true)
-                self.AimingFunction = self.AimTearGas
-            end            
-       end
+    if keyboard.isKeyDownOnce(keyboard.key.Kp_8) or keyboard.isKeyDownOnce(keyboard.key[8]) then
+        self:setAbility(core.system.squad.abilities.TearGas)
     end
 	
 	-- attack group
-	if keyboard.isKeyDownOnce(keyboard.key.Kp_5) then
-		if self.isAiming and self.AimingFunction == self.AttackGroup then
-			self.isAiming = false
-			self:SetReticuleRender(false)
-			self.AimingFunction = nil
-		else
-			self.isAiming = true
-			self:SetReticuleRender(false)
-			self.AimingFunction = self.AttackGroup
-		end            	
+	if keyboard.isKeyDownOnce(keyboard.key.Kp_7) or keyboard.isKeyDownOnce(keyboard.key[7]) then
+        self:setAbility(core.system.squad.abilities.Attack)
 	end
 
-    if keyboard.isKeyDownOnce(keyboard.key.Kp_9) then
-        if self:CanUseAbility(core.system.squad.abilities.Flee) then            
-            self:UseFlee()
-       end
+    if keyboard.isKeyDownOnce(keyboard.key.Kp_9) or keyboard.isKeyDownOnce(keyboard.key[9]) then
+        self:setAbility(core.system.squad.abilities.Flee)
     end
 
-    if keyboard.isKeyDownOnce(keyboard.key.Kp_3) then
-        if self:CanUseAbility(core.system.squad.abilities.Sprint) then            
-            self.isAiming = false
-            self.AimingFunction = nil
-            self:SetReticuleRender(false)
-            self:UseSprint()
-       end
+    if keyboard.isKeyDownOnce(keyboard.key.Kp_3) or keyboard.isKeyDownOnce(keyboard.key[3]) then
+        self:setAbility(core.system.squad.abilities.Sprint)
     end
 
     --Ability: Sprint

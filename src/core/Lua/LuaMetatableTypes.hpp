@@ -1,7 +1,6 @@
 #ifndef SRC_CORE_LUA_LUAMETATABLETYPES_H
 #define SRC_CORE_LUA_LUAMETATABLETYPES_H
 
-
 #define COMPONENT_META_TYPE "metatype_core_component"
 #define ENTITY_META_TYPE "metatype_core_entity"
 #define BITMASK_META_TYPE "metatype_bitmask"
@@ -24,6 +23,7 @@
 #define PARTICLE_DEFINITION_META_TYPE "particle_definition_meta_type"
 #define EMITTER_TYPE_META_TYPE "emitter_type_meta_type"
 #define TTF_FONT_META_TYPE "metatype_ttf_font"
+#define TIMER_META_TYPE "metatype_timer"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
@@ -41,6 +41,7 @@
 #include <Components/SquadComponent.hpp>
 #include <Components/EmitterComponent.hpp>
 #include <Camera/Camera.hpp>
+#include <Timer.hpp>
 
 #include <gfx/GFXInterface.hpp>
 
@@ -66,6 +67,7 @@ struct LuaAspect
 struct LuaHoverText
 {
     int hoverTextId;
+    bool light;
 };
 
 struct LuaParticleDefinition
@@ -76,6 +78,11 @@ struct LuaParticleDefinition
 struct LuaTTFFont
 {
     GFX::FontData * fontPtr;
+};
+
+struct LuaTimer
+{
+    Core::HighresTimer* timer;
 };
 
 inline glm::vec2* luau_checkglmvec2( lua_State* state, int pos ) { return static_cast<glm::vec2*>(luaL_checkudata( state, pos, GLMVEC2_META_TYPE )); }
@@ -96,6 +103,7 @@ inline Core::PoliceStance* luau_checkpolicestance( lua_State* state, int pos) { 
 inline LuaParticleDefinition* luau_checkparticledefinition( lua_State* state, int pos) { return static_cast<LuaParticleDefinition*>(luaL_checkudata(state, pos, PARTICLE_DEFINITION_META_TYPE)); }
 inline Core::EmitterType* luau_checkemittertype( lua_State* state, int pos) { return static_cast<Core::EmitterType*>(luaL_checkudata(state, pos, EMITTER_TYPE_META_TYPE)); }
 inline LuaTTFFont* luau_checkttffont( lua_State* state, int pos ) { return static_cast<LuaTTFFont*>(luaL_checkudata( state, pos, TTF_FONT_META_TYPE ) ); }
+inline LuaTimer* luau_checktimer( lua_State* state, int pos ) { return static_cast<LuaTimer*>(luaL_checkudata( state, pos, TIMER_META_TYPE ) ); }
 
 namespace Core
 {
@@ -124,10 +132,11 @@ namespace Core
     LuaLog* LuaUNewLog( lua_State * L );
 
     LuaHoverText* LuaUNewHoverText( lua_State * L );
+    LuaHoverText* LuaUNewLightHoverText( lua_State* L, int id );
     
     Camera** LuaUNewCamera( lua_State * L );
 
     LuaTTFFont* LuaUNewTTFFont( lua_State * L );
+    LuaTimer* LuaUNewTimer( lua_State * L, Core::HighresTimer* t );
 }
-
 #endif

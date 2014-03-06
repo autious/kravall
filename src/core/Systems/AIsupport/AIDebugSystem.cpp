@@ -87,6 +87,8 @@ void Core::AIDebugSystem::Update( float delta )
 	if( Core::GetNavigationMesh() )
 	{
 		Core::NavigationMesh* instance = Core::GetNavigationMesh();
+		if( instance->nrUsedFlowfields < 1 )
+			return;
 
 		for( int i = 0; i < instance->nrNodes; i++ )
 		{
@@ -96,9 +98,13 @@ void Core::AIDebugSystem::Update( float delta )
 			for( int g = 0; g < 4; g++ )
 				temp += glm::vec3( points[ g * 2 ], 0.0f, points[ g * 2 + 1] );
 			temp *= 0.25f;
-			GFX::Debug::DrawSphere( temp, 5, GFXColor( 0.5f, 1.0f, 0.2f, 1.0f ), false );
-			if( instance->flowfields[4].list != nullptr )
-				GFX::Debug::DrawLine( temp, instance->flowfields[4].list[i], GFXColor( 0, 0, 1, 1 ), false  );
+			
+			// draw sphere in center of all dead nodes...
+			if( instance->flowfields[ 1 ].deadNodes[ i ] )
+				GFX::Debug::DrawSphere( temp, 5, GFXColor( 0.5f, 1.0f, 0.2f, 1.0f ), false );
+			
+			//if( instance->flowfields[4].list != nullptr )
+			//	GFX::Debug::DrawLine( temp, instance->flowfields[4].list[i], GFXColor( 0, 0, 1, 1 ), false  );
 
 		}
 	}

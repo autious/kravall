@@ -12,7 +12,7 @@ local tutImage = nil
 local mainGameTutButtons = {}
 local tBox = nil
 local activeImage = 1
-local prevActiveImageIndex = -1
+local prevActiveImage = -1
 function TutorialMenu:new(o, menuState)
     o = o or {}
     o.gui = GUI:new()
@@ -43,7 +43,7 @@ function TutorialMenu:new(o, menuState)
                                     matReleased = "assets/texture/ui/back-button-release.material",
                                     matPressed = "assets/texture/ui/back-button-press.material",
                                     matHover = "assets/texture/ui/back-button-hover.material",
-                                    anchor="NorthWest",xoffset=0,yoffset=0, onClick = function()  if tutImage then tutImage:destroy() end TutorialMenu:SetImage(0, o) end }))
+                                    anchor="NorthWest",xoffset=0,yoffset=0, onClick = function()  if tutImage then tutImage:destroy() end TutorialMenu:AddButtons(o, -1) TutorialMenu:SetImage(0, o) end }))
 
 	tBox = TextBox:new({ ignoreConstrict = true, body=[[]], width=700, height=600, xoffset = 500, yoffset= 450, anchor="Center"})
 	o.gui:addComponent(tBox)
@@ -97,7 +97,7 @@ function TutorialMenu:SetImage(id, o)
 		tutImage = Image:new { ignoreConstrict=true, mat="assets/texture/tutorial/moodTut.material" }
 		tBox:setText([[ANGRY AS HELL]])
 	end 
-	activeImageIndex = id
+	activeImage = id
 	tutImage:setPosition(500, 100)
 end
 
@@ -252,21 +252,23 @@ function TutorialMenu:AddButtons(tm, index)
 		tm.gui:addComponent(mainGameTutButtons.moodsButton)
 	end
 
-	mainGameTutButtons.forward = Button:new({
-											matReleased = "assets/texture/ui/back-button-release.material",
-											matPressed = "assets/texture/ui/back-button-press.material",
-											matHover = "assets/texture/ui/back-button-hover.material",
-											anchor="East",xoffset = 0,yoffset= -100, onClick = function() activeImage = (activeImage + 1) % 11 TutorialMenu:SetImage(activeImage, o) end })
+	if index == 0 or index == 1 then
+		mainGameTutButtons.forward = Button:new({
+												matReleased = "assets/texture/ui/back-button-release.material",
+												matPressed = "assets/texture/ui/back-button-press.material",
+												matHover = "assets/texture/ui/back-button-hover.material",
+												anchor="East",xoffset = 0,yoffset= -100, onClick = function() activeImage = (activeImage + 1) % 11 TutorialMenu:SetImage(activeImage, o) end })
 	
-	tm.gui:addComponent(mainGameTutButtons.forward )
+		tm.gui:addComponent(mainGameTutButtons.forward )
 
-	mainGameTutButtons.back = Button:new({
-											matReleased = "assets/texture/ui/back-button-release.material",
-											matPressed = "assets/texture/ui/back-button-press.material",
-											matHover = "assets/texture/ui/back-button-hover.material",
-											anchor="East" ,xoffset = 0 ,yoffset= -100, onClick = function() activeImage = (activeImage - 1) % 11 TutorialMenu:SetImage(activeImage, o) end })
+		mainGameTutButtons.back = Button:new({
+												matReleased = "assets/texture/ui/back-button-release.material",
+												matPressed = "assets/texture/ui/back-button-press.material",
+												matHover = "assets/texture/ui/back-button-hover.material",
+												anchor="East" ,xoffset = 0 ,yoffset= -100, onClick = function() activeImage = (activeImage - 1) % 11 TutorialMenu:SetImage(activeImage, o) end })
 	
-	tm.gui:addComponent(mainGameTutButtons.back )
+		tm.gui:addComponent(mainGameTutButtons.back )
+	end
 end
 
 function TutorialMenu:update(delta)
