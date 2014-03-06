@@ -9,14 +9,14 @@ local ToolTip =
 					height=10
                 }
 
-local textOff = { x = 3, y = 3 }
+local textOff = { x = 2, y = 0 }
 
 function ToolTip:new( o )
     o = o or {}
     setmetatable( o, self )
     self.__index = self
 	
-	o.text = text( 1, 1, o.text or "Empty ToolTip", nil, "assets/font/toolTip.font" )
+	o.text = text( 1, 1, o.text or "Empty ToolTip", { 0, 0, 0, 1}, "assets/font/toolTip.font" )
 	local textDimX, textDimY = o.text:getDim()
 	o.width = textDimX + textOff.x * 2
 	o.height = 24
@@ -32,7 +32,7 @@ function ToolTip:update()
 	--						  pos.x, pos.y, dim.x, dim.y, solid
 	--core.draw.drawRectangle(float, float, float, float, bool)
 	
-	core.draw.drawRectangle( self.x, self.y, self.width, self.height, true, 0.05, 0.21, 0.27, 0.75 )
+	core.draw.drawRectangle( self.x, self.y, self.width, self.height, true, 0.66, 0.66, 0.66, 0.75 )
 	
 	if core.input.keyboard.isKeyDown( core.input.keyboard.key.L ) then
 		self.handler:deregister()
@@ -59,7 +59,7 @@ function ToolTip:setPosition( x, y )
 		self.y = screenHeight - self.height
 	end
 	
-	self.text:setPosition( self.x + textOff.x, self.y + textOff.y)
+	self.text:setPosition( self.x + textOff.x + 2, self.y + textOff.y - 4)
 end
 
 function ToolTip:destroy()
