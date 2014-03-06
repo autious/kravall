@@ -28,7 +28,7 @@ function AbilityGUI:new(o)
                 o.selectionLabel:setLabel( meta.__tostring(i) )
             end
         end
-        -- Rencenter the label.
+        -- Recenter the label.
         o.labelWrapperGUI:constrict()
     end
 
@@ -39,7 +39,7 @@ function AbilityGUI:new(o)
         else
             o.selectionLabel:setLabel( "" )
         end
-        -- Rencenter the label.
+        -- Recenter the label.
         o.labelWrapperGUI:constrict()
     end
 

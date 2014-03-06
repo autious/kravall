@@ -44,27 +44,25 @@ local TextLabel = require "gui/component/TextLabel"
 
 local input = require "input"
 
-local function registerCallbacks(o)
-    input.registerOnButton( function( button, action, mods, consumed )
-        if action == core.input.action.Press then
-            --Only allow press if UI element hasn't been pressed
-            if not consumed then
-                if button == mouse.button.Left then
-                    o.leftPressed = true   
-                    o.leftClicked = true
-                elseif button == mouse.button.Right then
-                    o.rightPressed = true
-                    o.rightClicked = true
-                end
-            end
-        elseif action == core.input.action.Release then
+function PoliceSquadHandler:onButton(button, action, mods, consumed)
+    if action == core.input.action.Press then
+        --Only allow press if UI element hasn't been pressed
+        if not consumed then
             if button == mouse.button.Left then
-                o.leftPressed = false
+                self.leftPressed = true   
+                self.leftClicked = true
             elseif button == mouse.button.Right then
-                o.rightPressed = false
+                self.rightPressed = true
+                self.rightClicked = true
             end
-        end        
-    end, "GAME")
+        end
+    elseif action == core.input.action.Release then
+        if button == mouse.button.Left then
+            self.leftPressed = false
+        elseif button == mouse.button.Right then
+            self.rightPressed = false
+        end
+    end        
 end
 
 function PoliceSquadHandler:new(o)
@@ -100,8 +98,6 @@ function PoliceSquadHandler:new(o)
     -- Used for double click selection
     o.lastClickTime = os.clock()   
     o.lastClickType = ""
-    
-    registerCallbacks(o)
 
     return o
 end

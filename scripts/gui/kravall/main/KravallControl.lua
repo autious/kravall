@@ -16,13 +16,15 @@ local EventListerGUI = require "gui/kravall/main/EventListerGUI"
 local StanceGUI = require "gui/kravall/main/subgui/StanceGUI"
 local AbilityGUI = require "gui/kravall/main/subgui/AbilityGUI" 
 local FormationGUI = require "gui/kravall/main/subgui/FormationGUI"
+local OverviewGUI = require "gui/kravall/main/subgui/OverviewGUI"
 local UnitStatGUI = require "gui/kravall/main/subgui/UnitStatGUI"
 
 local KravallControl = 
 { 
-    onFormationSelect = function(formation) core.log.error("No handler set for onFormationChange in KravallControl") end,
-    onStanceSelect = function(stance) core.log.error("No handler set for onStanceChange in KravallControl") end,
-    onAbilitySelect = function(ability) end
+    onFormationSelect = function(formation) core.log.error("No handler set for onFormationChange in KravallControl.") end,
+    onStanceSelect = function(stance) core.log.error("No handler set for onStanceChange in KravallControl.") end,
+    onAbilitySelect = function(ability) end,
+    onUseOverview = function() core.log.error("No function ser for onUseOverview in KravallControl.") end
 }
                             
 function KravallControl:new(o)
@@ -50,6 +52,9 @@ function KravallControl:new(o)
     o.formationGUI = FormationGUI:new( { 
         onFormationSelect = function(form) o.onFormationSelect(form) end 
     })
+    o.overviewGUI = OverviewGUI:new( {        
+        onUseOverview = function() o.onUseOverview() end
+    })
 
     o.rightControlGUI = GUI:new{x=0,y=0, width=150,height=600, anchor="NorthEast"}
     o.rightControlGUI:addPlacementHandler( AnchorPlacer )
@@ -57,6 +62,7 @@ function KravallControl:new(o)
     o.rightControlGUI:addComponent( o.stanceGUI )
     o.rightControlGUI:addComponent( o.abilitiesGUI )
     o.rightControlGUI:addComponent( o.formationGUI )
+    o.rightControlGUI:addComponent( o.overviewGUI )
     -------
 
     o.gui:addComponent( o.rightControlGUI )
@@ -77,6 +83,10 @@ end
 
 function KravallControl:setAbility( ability )
     self.abilitiesGUI:setAbility( ability ) 
+end
+
+function KravallControl:setOverview( state )
+    self.overviewGUI:setOverview( state ) 
 end
 
 function KravallControl:setUnitInformation( data )
