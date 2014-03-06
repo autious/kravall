@@ -44,7 +44,7 @@ function KravallControl:new(o)
 	o.gui:addComponent( o.squadMenuGUI )
 	
     ------------------
-    o.statusGUI = UnitStatGUI:new( { show = false } )
+    o.statusGUI = UnitStatGUI:new( { show = false, width=200, height=130 } )
     --------------
     o.eventGUIPadder = GUI:new( {width=220,height=220, anchor="SouthWest"} )
     o.eventGUIPadder:addPlacementHandler( CenterPlacer )

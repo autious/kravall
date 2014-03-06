@@ -1,8 +1,9 @@
 local GUI = require "gui/GUI"
 local Checkbox = require "gui/component/Checkbox"
 local TextLabel = require "gui/component/TextLabel"
+local SimplePlacer = require "gui/placement/SimplePlacer"
 
-local UnitStatGUI = GUI:new{x=0,y=0, width=250, height=130, anchor="SouthEast"}
+local UnitStatGUI = GUI:new{x=0,y=0, width=300, height=120, anchor="SouthEast"}
 
 function UnitStatGUI:new(o)
     o = GUI.new(self,o)
@@ -12,15 +13,12 @@ function UnitStatGUI:new(o)
 
     local wrapperGUI = GUI:new{width=2,height=2, yoffset=-10, anchor="SouthWest"}
 
-    o.labelUnitName =  TextLabel:new( { label="Police Unit", anchor="SouthWest" })
-    o.labelUnitHealth = TextLabel:new( { label="Health: NaN", anchor="SouthWest" } )
-    o.labelUnitMorale = TextLabel:new( { label="Morale: NaN", anchor="SouthWest" } )
-    o.labelUnitStamina = TextLabel:new( { label="Stamina: NaN", anchor="SouthWest" } )
-    o.labelUnitStance = TextLabel:new( { label="Stance: NaN", anchor="SouthWest" } )
-    o.labelUnitFormation = TextLabel:new( { label="Formation: NaN", anchor="SouthWest" } )
-
-    o:addPlacementHandler(require "gui/placement/AnchorPlacer")
-    wrapperGUI:addPlacementHandler(require "gui/placement/AnchorPlacer")
+    o.labelUnitName =  TextLabel:new( { label="Police Unit" })
+    o.labelUnitHealth = TextLabel:new( { label="Health: NaN", yoffset=20  } )
+    o.labelUnitMorale = TextLabel:new( { label="Morale: NaN", yoffset=40  } )
+    o.labelUnitStamina = TextLabel:new( { label="Stamina: NaN", yoffset=60  } )
+    o.labelUnitStance = TextLabel:new( { label="Stance: NaN", yoffset=80 } )
+    o.labelUnitFormation = TextLabel:new( { label="Formation: NaN", yoffset=100  } )
 
     wrapperGUI:addComponent( o.labelUnitName )
     wrapperGUI:addComponent( o.labelUnitHealth )
@@ -28,9 +26,13 @@ function UnitStatGUI:new(o)
     wrapperGUI:addComponent( o.labelUnitStamina )
     wrapperGUI:addComponent( o.labelUnitStance )
     wrapperGUI:addComponent( o.labelUnitFormation )
-    
+	
+	wrapperGUI:addPlacementHandler( SimplePlacer )
+	
     o:addComponent( wrapperGUI )
-
+	
+	o:addPlacementHandler( SimplePlacer )
+	
     return o
 end
 
