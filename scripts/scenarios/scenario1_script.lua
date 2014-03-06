@@ -401,6 +401,21 @@ return function( scen )
         table.insert(ag3Spawns, ent )
     end
 
+    local ag4Spawns = {}
+    function T.checkAg3Enter( ent )
+        if #ag4Spawns > 0 and core.system.area.getAreaRioterCount( ent, deserterGroup ) > 0 then
+            table.insert( agitatorGroups, T.createAgitators( ag4Spawns, 10,10 ) ) 
+            ag4Spawns = {}
+        end
+    end
+
+    function T.registerAg3Spawn( ent )
+        print( "Registering Ag4" )
+		local wpc = ent:get(core.componentType.WorldPositionComponent)
+		core.gameMetaData.registerEscapePoint( wpc.position[1], wpc.position[2], wpc.position[3] )
+        table.insert(ag4Spawns, ent )
+    end
+
     function T.rotateY( ent, delta )
         local rotation = ent:get( core.componentType.RotationComponent ).rotation
 
