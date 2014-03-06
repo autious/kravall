@@ -24,8 +24,7 @@ function MainMenu:new(o,menuState)
                                     matReleased = "assets/texture/ui/start-button-release_00.material",
                                     matPressed = "assets/texture/ui/start-button-press_00.material",
                                     matHover = "assets/texture/ui/start-button-hover_00.material",
-                                    xoffset=-20, yoffset=10, onClick = menuState.goScenario,
-									toolTip=createTT:new( { handler=toolTipHandler, text="Start the game!" } )
+                                    xoffset=-20, yoffset=10, onClick = menuState.goScenario
                                   }))
 
     o.gui:addComponent(Button:new({
@@ -47,7 +46,8 @@ function MainMenu:new(o,menuState)
                                     matReleased = "assets/texture/ui/credits-button-release_00.material",
                                     matPressed = "assets/texture/ui/credits-button-press_00.material",
                                     matHover = "assets/texture/ui/credits-button-hover_00.material",
-                                    xoffset=-10,yoffset=50,onClick = menuState.goTutorial
+                                    xoffset=-10,yoffset=50,onClick = menuState.goTutorial,
+									toolTip=createTT:new( { handler=toolTipHandler, text="Don't mind the text, it is confused. It means to say 'Tutorial'!" } )
                                     }))
 
     o.gui:addPlacementHandler( CenterPlacer )
