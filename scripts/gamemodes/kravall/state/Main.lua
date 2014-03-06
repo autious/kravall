@@ -13,8 +13,6 @@ local Main = { name = "Main" }
 
 local function registerCallbacks(o)
     input.registerOnButton( function( button, action, mods, consumed )
-        print(consumed)
-        
         consumed = o.overviewHandler:onButton(button, action, mods, consumed)        
 
         o.policeHandler:onButton(button, action, mods, consumed)
@@ -121,11 +119,11 @@ function Main:new(o)
     {
         onEnterOverview = function()
             o:enterOverview()
-            o.gui:setOverview(true)
+            --o.gui:setOverview(true)
         end,
         onExitOverview = function(pos)
             o:exitOverview(pos)
-            o.gui:setOverview(false)
+            --o.gui:setOverview(false)
         end,       
     })
 	
