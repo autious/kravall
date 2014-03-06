@@ -1,5 +1,6 @@
 local MoveMarker = require "visual_objects/MoveMarker"
 local PoliceSquadHandler = require "gamemodes/kravall/PoliceSquadHandler"
+local OverviewHandler = require "gamemodes/kravall/OverviewHandler"
 local KravallControl = require "gui/kravall/main/KravallControl"
 local PDC = require "particle_definition"
 local ASM = require "assembly_loader"
@@ -35,10 +36,9 @@ function Main:new(o)
         onStanceSelect = function( stance )
             o.policeHandler:setStance( stance )
         end,
-
         -- Called when the user is changing the current active ability in the gui.
         onAbilitySelect = function( ability )
-            o.policeHandler:setAbility( ability )
+            o.policeHandler:setAbility( ability )          
         end
     })
 
@@ -87,9 +87,20 @@ function Main:new(o)
         particleDefinitions = o.particleDefinitions,
     })	
 
+    o.overviewHandler = OverviewHandler:new(
+    {
+        onEnterOverview = function()
+            o:enterOverview()
+        end,
+        onExitOverview = function(pos)
+            o:exitOverview(pos)
+        end,
+    })
+	
+	local policeTeam = 1
     if o.unitInstances then
         for _,v in  pairs( o.unitInstances ) do
-            o.policeHandler:addSquad( squadInstance( o.asm, v, o.activeWeaponList ) )
+            o.policeHandler:addSquad( squadInstance( o.asm, v, o.activeWeaponList, policeTeam ) )
         end
     end
 
@@ -97,9 +108,26 @@ function Main:new(o)
 end
 
 function Main:update(delta)
+
     self.gui:update(delta)
-    self.policeHandler:update(delta)
+
+    if self.overviewHandler.inOverview == false then
+        self.policeHandler:update(delta)
+    end
+   
+    self.overviewHandler:update(delta)
     self.moveMarker:update( delta )
+
+end
+
+function Main:enterOverview()
+    local pos = {self.camera.position:get()}
+    self.camera:addInterpolationPoint(core.glm.vec3.new(pos[1], 250, pos[3]), core.glm.quat.new(math.sin(math.pi/4), 0, 0, math.cos(math.pi/4)))
+end
+
+function Main:exitOverview(target)
+    local pos = {target:get()}
+    self.camera:addInterpolationPoint(core.glm.vec3.new(pos[1], pos[2] + 50, pos[3]), core.glm.quat.new(math.sin(math.pi/4), 0, 0, math.cos(math.pi/4)))
 end
 
 function Main:destroy()

@@ -9,9 +9,9 @@
 //#define DRAW_BLOCKED_LINE_SPHERES
 
 #ifdef DRAW_BLOCKED_LINE_SPHERES
-#define DEBUG_BLOCKED_LINES( x ) x
+#define DEBUG_BLOCKED_LINES( Will_be_run ) x
 #else
-#define DEBUG_BLOCKED_LINES( x ) ;
+#define DEBUG_BLOCKED_LINES( Will_not_be_run ) ;
 #endif
 
 

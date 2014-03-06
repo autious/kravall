@@ -63,7 +63,7 @@ local function registerCallbacks(o)
             elseif button == mouse.button.Right then
                 o.rightPressed = false
             end
-        end
+        end        
     end, "GAME")
 end
 
