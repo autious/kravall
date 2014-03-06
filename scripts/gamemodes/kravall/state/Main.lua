@@ -5,10 +5,23 @@ local KravallControl = require "gui/kravall/main/KravallControl"
 local PDC = require "particle_definition"
 local ASM = require "assembly_loader"
 
+local input = require "input"
 local ent = require "entities"
 local squadInstance = ent.get "squadInstance"
 
 local Main = { name = "Main" }
+
+local function registerCallbacks(o)
+    input.registerOnButton( function( button, action, mods, consumed )
+        print(consumed)
+        
+        consumed = o.overviewHandler:onButton(button, action, mods, consumed)        
+
+        o.policeHandler:onButton(button, action, mods, consumed)
+        return consumed
+    end, "GAME")
+end
+
 function Main:new(o)
     o = o or {}
     setmetatable( o, self )
@@ -39,7 +52,17 @@ function Main:new(o)
         -- Called when the user is changing the current active ability in the gui.
         onAbilitySelect = function( ability )
             o.policeHandler:setAbility( ability )          
+        end,
+
+        onUseOverview = function()
+            if o.overviewHandler.inOverview then
+                local pos = {o.camera.position:get()}
+                o.overviewHandler:ExitOverview(core.glm.vec3.new(pos[1], 0, pos[3]))
+            else
+                o.overviewHandler:EnterOverview()
+            end
         end
+
     })
 
     o.policeHandler = PoliceSquadHandler:new( 
@@ -74,6 +97,7 @@ function Main:new(o)
         onSelectedUnitInformationChange = function( data )
             o.gui:setUnitInformation( data ) 
         end,
+
         onMoveToPosition = function( squads, position, accept )
             if accept then
                 o.moveMarker:playAccept(  position )
@@ -85,6 +109,7 @@ function Main:new(o)
         onUsableAbilitiesChange = function( abilities )
             o.gui:setUsableAbilities( abilities )
         end,
+
         onEventMessage = function( component )
             o.gui:addEvent(component)
         end,
@@ -96,10 +121,12 @@ function Main:new(o)
     {
         onEnterOverview = function()
             o:enterOverview()
+            o.gui:setOverview(true)
         end,
         onExitOverview = function(pos)
             o:exitOverview(pos)
-        end,
+            o.gui:setOverview(false)
+        end,       
     })
 	
 	local policeTeam = 1
@@ -108,6 +135,8 @@ function Main:new(o)
             o.policeHandler:addSquad( squadInstance( o.asm, v, o.activeWeaponList, policeTeam ) )
         end
     end
+
+    registerCallbacks(o)
 
     return o
 end
@@ -126,13 +155,15 @@ function Main:update(delta)
 end
 
 function Main:enterOverview()
+    self.cameraPosition = self.camera.position
     local pos = {self.camera.position:get()}
     self.camera:addInterpolationPoint(core.glm.vec3.new(pos[1], 250, pos[3]), core.glm.quat.new(math.sin(math.pi/4), 0, 0, math.cos(math.pi/4)))
 end
 
 function Main:exitOverview(target)
     local pos = {target:get()}
-    self.camera:addInterpolationPoint(core.glm.vec3.new(pos[1], pos[2] + 50, pos[3]), core.glm.quat.new(math.sin(math.pi/4), 0, 0, math.cos(math.pi/4)))
+    local camPos = {self.cameraPosition:get()}
+    self.camera:addInterpolationPoint(core.glm.vec3.new(pos[1], camPos[2], pos[3]), core.glm.quat.new(math.sin(math.pi/4), 0, 0, math.cos(math.pi/4)))
 end
 
 function Main:destroy()
