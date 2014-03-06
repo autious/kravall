@@ -5,6 +5,7 @@
 #include <utility/Colors.hpp>
 #include <GFXDefines.hpp>
 #include "ShadowData.hpp"
+#include "RenderSettings.hpp"
 
 ShadowData ShadowDataContainer::data[MAXIMUM_SHADOWCASTERS];
 
@@ -104,7 +105,7 @@ namespace GFX
 	{
 		if (setting >= 0 && setting < GFX_SETTINGS_COUNT)
 		{
-			m_settings[setting] = value;
+			RenderSettings::settings[setting] = value;
 			return GFX_SUCCESS;
 		}
 		else
@@ -117,7 +118,7 @@ namespace GFX
 	{
 		if (setting >= 0 && setting < GFX_SETTINGS_COUNT)
 		{
-			out_value = m_settings[setting];
+			out_value = RenderSettings::settings[setting];
 			return GFX_SUCCESS;
 		}
 		else
@@ -133,8 +134,8 @@ namespace GFX
 		totalRenderInfo = { 0, 0 };
 		
 		// Set default settings
-		m_settings[GFX_SHADOW_QUALITY] = GFX_SHADOWS_VARIANCE; // TODO: Implement basic shadow mapping as low res option
-		m_settings[GFX_SHADOW_RESOLUTION] = 512;
+		RenderSettings::settings[GFX_SHADOW_QUALITY] = GFX_SHADOWS_VARIANCE_2C; // TODO: Implement basic shadow mapping as low res option
+		RenderSettings::settings[GFX_SHADOW_RESOLUTION] = 512;
 
 		m_normalDepth = new FBOTexture();
 		m_diffuse = new FBOTexture();
@@ -148,11 +149,18 @@ namespace GFX
 		m_shadowMapTextures[2] = new FBOTexture();
 		m_shadowMapTextures[3] = new FBOTexture();
 
-		// Fill shadowmap with reds!
-		m_shadowMapTextures[0]->CreateShadowmap(m_settings[GFX_SHADOW_RESOLUTION], m_settings[GFX_SHADOW_QUALITY]);
-		m_shadowMapTextures[1]->CreateShadowmap(m_settings[GFX_SHADOW_RESOLUTION], m_settings[GFX_SHADOW_QUALITY]);
-		m_shadowMapTextures[2]->CreateShadowmap(m_settings[GFX_SHADOW_RESOLUTION], m_settings[GFX_SHADOW_QUALITY]);
-		m_shadowMapTextures[3]->CreateShadowmap(m_settings[GFX_SHADOW_RESOLUTION], m_settings[GFX_SHADOW_QUALITY]);
+		// Create shadowmaps
+		if (RenderSettings::settings[GFX_SHADOW_QUALITY] != GFX_SHADOWS_DISABLED)
+		{
+			m_shadowMapTextures[0]->CreateShadowmap(RenderSettings::settings[GFX_SHADOW_RESOLUTION], RenderSettings::settings[GFX_SHADOW_QUALITY]);
+			m_shadowMapTextures[1]->CreateShadowmap(RenderSettings::settings[GFX_SHADOW_RESOLUTION], RenderSettings::settings[GFX_SHADOW_QUALITY]);
+
+			if (RenderSettings::settings[GFX_SHADOW_QUALITY] == GFX_SHADOWS_VARIANCE_4C)
+			{
+				m_shadowMapTextures[2]->CreateShadowmap(RenderSettings::settings[GFX_SHADOW_RESOLUTION], RenderSettings::settings[GFX_SHADOW_QUALITY]);
+				m_shadowMapTextures[3]->CreateShadowmap(RenderSettings::settings[GFX_SHADOW_RESOLUTION], RenderSettings::settings[GFX_SHADOW_QUALITY]);
+			}
+		}
 
         m_particleTarget = new FBOTexture();
 
@@ -202,7 +210,7 @@ namespace GFX
 
 		m_deferredPainter->Initialize(m_FBO, m_dummyVAO);
         m_particlePainter->Initialize(m_FBO, m_dummyVAO);
-		m_shadowPainter->Initialize(m_FBO, m_dummyVAO, m_blurPainter, m_settings[GFX_SHADOW_RESOLUTION]);
+		m_shadowPainter->Initialize(m_FBO, m_dummyVAO, m_blurPainter, RenderSettings::settings[GFX_SHADOW_RESOLUTION]);
 		m_lightPainter->Initialize(m_FBO, m_dummyVAO, m_windowWidth, m_windowHeight);
 		m_debugPainter->Initialize(m_FBO, m_dummyVAO);
 		m_textPainter->Initialize(m_FBO, m_dummyVAO);
