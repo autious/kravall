@@ -1,5 +1,6 @@
 local entity = require "entities"
 local group = entity.get "group"
+local Statistics = require "factories/Statistics"
 
 --For the kravall defintions
 local abilities = core.system.squad.abilities
@@ -8,7 +9,7 @@ local tearGasPolice = (require "game_constants").tearGasPolice
 
 return function( scen )
     local T = {}
-
+	
     scen.name = "Save the deserters!"
     scen.description =  [[Deserters and transhumans are equal, or so they say. The rebellion of the lower districts have sparked a revolution filled with violence, blood and tears. All in the name of freedom.
 
@@ -201,7 +202,7 @@ return function( scen )
     local function getCurrentWaypoint()
         return waypoints["waypoint"..currentWaypoint]
     end
-
+	
     -- Setup callbacks for gamemode
     scen:registerInitCallback( function() 
         scen.gamemode:init() 
@@ -213,7 +214,9 @@ return function( scen )
         --scen.gamemode.camera:addInterpolationPoint(scen.cameras.devcam.translation, scen.cameras.devcam.quaternion)
         obj1 = scen.gamemode:createObjective()
         obj1.title = "At least one deserter must survive and reach the goal."
-
+		
+		Statistics.addObjectives( { obj1 } )
+		
         -- range, graceDistance, damageToHealth, damageToMorale, damageToMoraleOnMiss, enemyRageIncrease, enemyPressureIncrease, staminaCost, timeWhenAnimationDealsDamage, animationName
 		--fists = core.weaponData.pushWeapon( 1.0, 0.75, 20, 0.2, 0.05, 3.2, 2.9, 0.05, 0.5, "punch" )
 		fists = core.weaponData.pushWeapon( 1.0, 0.75, 10, 0.05, 0.01, 3.2, 2.9, 0.05, 0.5, "punch" )
@@ -274,7 +277,7 @@ return function( scen )
     end
 
     function T.winOnRioterInside( ent )
-        if core.system.area.getAreaRioterCount(ent,deserterGroup) > 5 then
+        if core.system.area.getAreaRioterCount(ent,deserterGroup) > 0 then
             obj1.state = "success"
         end
     end

@@ -6,6 +6,7 @@
 #include <gfx/LightData.hpp>
 #include "../ShadowData.hpp"
 #include <algorithm>
+#include "../RenderSettings.hpp"
 
 #include "../DebugRenderer/DebugManager.hpp"
 namespace GFX
@@ -27,10 +28,20 @@ namespace GFX
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 
-		for (int i = 0; i < 4; i++)
+		unsigned int ss = RenderSettings::settings[GFX_SHADOW_QUALITY];
+		int numShadowmaps = (ss == GFX_SHADOWS_VARIANCE_4C) ? 4 : (ss == GFX_SHADOWS_VARIANCE_2C) ? 2 : 0;
+		for (int i = 0; i < numShadowmaps; i++)
 		{
 			glBindRenderbuffer(GL_RENDERBUFFER, m_RBO[i]);
 			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32, shadowmapResolution, shadowmapResolution);
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_RBO[i]);
+		}
+
+		// Resize unused renderbuffers to zero
+		for (int i = numShadowmaps; i < 4; i++)
+		{
+			glBindRenderbuffer(GL_RENDERBUFFER, m_RBO[i]);
+			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32, 0, 0);
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_RBO[i]);
 		}
 	}
@@ -154,6 +165,8 @@ namespace GFX
 	{
 		BasePainter::Render();
 
+		unsigned int shadowQuality = RenderSettings::settings[GFX_SHADOW_QUALITY];
+
 		unsigned int numDrawCalls = 0;
 		unsigned int numTris = 0;
 
@@ -189,10 +202,14 @@ namespace GFX
 		glClear(GL_DEPTH_BUFFER_BIT);
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_RBO[1]);
 		glClear(GL_DEPTH_BUFFER_BIT);
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_RBO[2]);
-		glClear(GL_DEPTH_BUFFER_BIT);
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_RBO[3]);
-		glClear(GL_DEPTH_BUFFER_BIT);
+		
+		if (shadowQuality == GFX_SHADOWS_VARIANCE_4C)
+		{
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_RBO[2]);
+			glClear(GL_DEPTH_BUFFER_BIT);
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_RBO[3]);
+			glClear(GL_DEPTH_BUFFER_BIT);
+		}
 		
 		glDrawBuffer(GL_COLOR_ATTACHMENT0);
 		glClearBufferfv(GL_COLOR, 0, &glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)[0]);
@@ -227,6 +244,9 @@ namespace GFX
 		unsigned int l = renderIndex;
 		for (l = renderIndex; l < renderJobs.size(); l++)
 		{
+			if (shadowQuality == GFX_SHADOWS_DISABLED)
+				break;
+
 			lightBitmask = renderJobs[l].bitmask;
 			lightType = GetBitmaskValue(lightBitmask, BITMASK::LIGHT_TYPE);
 
@@ -252,24 +272,39 @@ namespace GFX
 				bc.viewMatrix = glm::lookAt<float>(-glm::normalize(lightData.orientation) * 50.0f, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 				//bc.projMatrix = projMatrix;
 
-
+				float fovY = glm::degrees(2.0f * atan(1.0f / (projMatrix[1][1])));
+				float aspect = projMatrix[1][1] / projMatrix[0][0];
 				
 				float nz = nearFar.x;
 				float fz = nearFar.y;
-				matrices[0] = glm::perspective<float>(45.0f, 1280.0f/720.0f, 5.0f,	 fz/10.0f);
-				matrices[1] = glm::perspective<float>(45.0f, 1280.0f/720.0f, fz/10.0f, fz/5.0f);
-				matrices[2] = glm::perspective<float>(45.0f, 1280.0f/720.0f, fz/5.0f, fz/2.0f);
-				matrices[3] = glm::perspective<float>(45.0f, 1280.0f/720.0f, fz/2.0f, fz);
+				glm::vec4 limits;
+				if (shadowQuality == GFX_SHADOWS_VARIANCE_2C)
+				{
+					limits = glm::vec4(5.0f, fz / 2.0f, 1000*fz, 1000*fz);
+					matrices[0] = glm::perspective<float>(fovY, aspect, 5.0f, fz / 2.0f);
+					matrices[1] = glm::perspective<float>(fovY, aspect, fz / 2.0f, fz);
 
+					matrices[4] = FitFrustum(matrices[0] * viewMatrix, bc.viewMatrix, shadowmapRes);
+					matrices[5] = FitFrustum(matrices[1] * viewMatrix, bc.viewMatrix, shadowmapRes);
+				}
+				else if (shadowQuality == GFX_SHADOWS_VARIANCE_4C)
+				{
+					limits = glm::vec4(5.0f, fz / 10.0f, fz / 5.0f, fz / 2.0f);
+					matrices[0] = glm::perspective<float>(fovY, aspect, 5.0f, fz / 10.0f);
+					matrices[1] = glm::perspective<float>(fovY, aspect, fz / 10.0f, fz / 5.0f);
+					matrices[2] = glm::perspective<float>(fovY, aspect, fz / 5.0f, fz / 2.0f);
+					matrices[3] = glm::perspective<float>(fovY, aspect, fz / 2.0f, fz);
 
-				matrices[4] = FitFrustum(matrices[0] * viewMatrix, bc.viewMatrix, shadowmapRes);
-				matrices[5] = FitFrustum(matrices[1] * viewMatrix, bc.viewMatrix, shadowmapRes);
-				matrices[6] = FitFrustum(matrices[2] * viewMatrix, bc.viewMatrix, shadowmapRes);
-				matrices[7] = FitFrustum(matrices[3] * viewMatrix, bc.viewMatrix, shadowmapRes);
+					matrices[4] = FitFrustum(matrices[0] * viewMatrix, bc.viewMatrix, shadowmapRes);
+					matrices[5] = FitFrustum(matrices[1] * viewMatrix, bc.viewMatrix, shadowmapRes);
+					matrices[6] = FitFrustum(matrices[2] * viewMatrix, bc.viewMatrix, shadowmapRes);
+					matrices[7] = FitFrustum(matrices[3] * viewMatrix, bc.viewMatrix, shadowmapRes);
+				}
+
 
 				
-				glm::mat4x4 dummyProjMat = glm::perspective<float>(45.0f, 1280.0f/720.0f, 5.0f, 125.0f);
-				bc.projMatrix = FitFrustum(dummyProjMat * viewMatrix, bc.viewMatrix, shadowmapRes);
+				//glm::mat4x4 dummyProjMat = glm::perspective<float>(45.0f, 1280.0f/720.0f, 5.0f, 125.0f);
+				//bc.projMatrix = FitFrustum(dummyProjMat * viewMatrix, bc.viewMatrix, shadowmapRes);
 				//bc.projMatrix = glm::perspective<float>(45.0f, 1.0f, 20.0f, 100.0f);
 
 				// Add the data to the global array of shadow data for use in LightPainter
@@ -278,64 +313,18 @@ namespace GFX
 				shadowData.lightMatrix2 = matrices[5] * bc.viewMatrix;
 				shadowData.lightMatrix3 = matrices[6] * bc.viewMatrix;
 				shadowData.lightMatrix4 = matrices[7] * bc.viewMatrix;
+				shadowData.limits = limits;
 				//shadowData.lightMatrix = bc.projMatrix * bc.viewMatrix;
-				shadowData.atlasCoords = glm::vec4(0.0f);
 				ShadowDataContainer::data[totalShadowcasters] = shadowData;
 				ShadowDataContainer::numDirLights++;
-
-				
-//#ifdef _WIN32
-//				if (GetAsyncKeyState(VK_F1))
-//				{
-//					m_dbgmat1 = matrices[0] * viewMatrix;
-//					m_dbgmat2 = matrices[1] * viewMatrix;
-//					m_dbgmat3 = matrices[2] * viewMatrix;
-//					m_dbgmat4 = matrices[3] * viewMatrix;
-//
-//					m_dbgmat5 = shadowData.lightMatrix1;
-//					m_dbgmat6 = shadowData.lightMatrix2;
-//					m_dbgmat7 = shadowData.lightMatrix3;
-//					m_dbgmat8 = shadowData.lightMatrix4;
-//				}
-//#endif
-//				
-//				DebugDrawing().AddFrustum(m_dbgmat1, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), true);
-//				DebugDrawing().AddFrustum(m_dbgmat2, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f), true);
-//				DebugDrawing().AddFrustum(m_dbgmat3, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f), true);
-//				DebugDrawing().AddFrustum(m_dbgmat4, glm::vec4(0.0f, 1.0f, 1.0f, 1.0f), true);
-//				
-//				DebugDrawing().AddFrustum(m_dbgmat5, glm::vec4(1.0f, 0.5f, 0.5f, 1.0f), true);
-//				DebugDrawing().AddFrustum(m_dbgmat6, glm::vec4(0.5f, 1.0f, 0.5f, 1.0f), true);
-//				DebugDrawing().AddFrustum(m_dbgmat7, glm::vec4(0.5f, 0.5f, 1.0f, 1.0f), true);
-//				DebugDrawing().AddFrustum(m_dbgmat8, glm::vec4(0.5f, 1.0f, 1.0f, 1.0f), true);
 				
 			}
 			else if (lightType == GFX::LIGHT_TYPES::SPOT_SHADOW)
 			{
 				break; // TODO: Implement spot shadowmapping
-				//LightData lightData = *(LightData*)renderJobs.at(l).value;
-				//if (lightData.orientation.x == 0.0f)
-				//{
-				//	lightData.orientation.x = 0.0001f;
-				//}
-				//// Create matrices for the lights
-				//bc.viewMatrix = glm::lookAt<float>(lightData.position, lightData.orientation, glm::vec3(0.0f, 1.0f, 0.0f));
-				//bc.projMatrix = glm::perspective<float>(glm::degrees(lightData.spot_angle), 1.0f, 0.001f, lightData.radius_length);
-				//// Add the data to the global array of shadow data for use in LightPainter
-				//ShadowData shadowData;
-				//shadowData.lightMatrix = bc.projMatrix * bc.viewMatrix;
-				//shadowData.atlasCoords = glm::vec4(1.0f);
-				//ShadowDataContainer::data[totalShadowcasters] = shadowData;
-				//ShadowDataContainer::numSpotLights++;
 			}
 			else if (lightType == GFX::LIGHT_TYPES::POINT_SHADOW)
 			{
-				//// Add the data to the global array of shadow data for use in LightPainter
-				//ShadowData shadowData;
-				//shadowData.lightMatrix = bc.projMatrix * bc.viewMatrix;
-				//shadowData.atlasCoords = glm::vec4(1.0f);
-				//ShadowDataContainer::data[totalShadowcasters] = shadowData;
-				//ShadowDataContainer::numPointLights+=6;
 				break; // TODO: Implement point shadowmapping
 			}
 			else
@@ -384,7 +373,7 @@ namespace GFX
 
 			// Loop through all the geometry
 			unsigned int instanceOffset = 0;
-			for (unsigned int i = endIndex; i < endIndex;)
+			for (unsigned int i = startIndex; i < endIndex;)
 			{
 				GFXBitmask geometryBitmask = renderJobs[i].bitmask;
 				objType = GetBitmaskValue(geometryBitmask, BITMASK::TYPE);
@@ -442,21 +431,26 @@ namespace GFX
 				glDrawBuffer(GL_COLOR_ATTACHMENT1);
 				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_RBO[1]);
 				glDrawElementsInstanced(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0, instanceCount);
+				numDrawCalls += 2;
+				numTris += (mesh.indexCount / 3) * instanceCount * 2;
 				
-				bc.projMatrix = matrices[6];
-				m_uniformBufferManager->SetBasicCameraUBO(bc);
-				glDrawBuffer(GL_COLOR_ATTACHMENT2);
-				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_RBO[2]);
-				glDrawElementsInstanced(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0, instanceCount);
-				
-				bc.projMatrix = matrices[7];
-				m_uniformBufferManager->SetBasicCameraUBO(bc);
-				glDrawBuffer(GL_COLOR_ATTACHMENT3);
-				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_RBO[3]);
-				glDrawElementsInstanced(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0, instanceCount);
+				if (shadowQuality == GFX_SHADOWS_VARIANCE_4C)
+				{
+					bc.projMatrix = matrices[6];
+					m_uniformBufferManager->SetBasicCameraUBO(bc);
+					glDrawBuffer(GL_COLOR_ATTACHMENT2);
+					glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_RBO[2]);
+					glDrawElementsInstanced(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0, instanceCount);
 
-				numDrawCalls += 4;
-				numTris += (mesh.indexCount / 3) * instanceCount * 4;
+					bc.projMatrix = matrices[7];
+					m_uniformBufferManager->SetBasicCameraUBO(bc);
+					glDrawBuffer(GL_COLOR_ATTACHMENT3);
+					glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_RBO[3]);
+					glDrawElementsInstanced(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0, instanceCount);
+					numDrawCalls += 2;
+					numTris += (mesh.indexCount / 3) * instanceCount * 2;
+
+				}
 
 				//instanceCount = 0;
 				instanceOffset += instanceCount;
@@ -470,10 +464,16 @@ namespace GFX
 		ClearFBO();
 
 		// Apply gaussain blur to the shadowmap
-		m_blurPainter->GaussianBlur(shadowMaps[0], 0.7);
-		m_blurPainter->GaussianBlur(shadowMaps[1], 0.5);
-		m_blurPainter->GaussianBlur(shadowMaps[2], 0.3);
-		m_blurPainter->GaussianBlur(shadowMaps[3], 0.1);
+		if (shadowQuality != GFX_SHADOWS_DISABLED)
+		{
+			m_blurPainter->GaussianBlur(shadowMaps[0], 0.7);
+			m_blurPainter->GaussianBlur(shadowMaps[1], 0.5);
+			if (shadowQuality == GFX_SHADOWS_VARIANCE_4C)
+			{
+				m_blurPainter->GaussianBlur(shadowMaps[2], 0.3);
+				m_blurPainter->GaussianBlur(shadowMaps[3], 0.1);
+			}
+		}
 
 		glViewport(0, 0, width, height);
 		

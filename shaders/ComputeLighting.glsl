@@ -32,7 +32,7 @@ struct ShadowData
 	mat4x4 lightMatrix2;
 	mat4x4 lightMatrix3;
 	mat4x4 lightMatrix4;
-	vec4 reserved_for_atlas_coordinates;
+	vec4 shadow_limits;
 };
 
 
@@ -205,9 +205,10 @@ float linstep(float low, float high, float v)
 
 vec3 GetDepthData(ShadowData shadowData, float dist, vec4 wPos, float farZ)
 {
+	vec4 limits = shadowData.shadow_limits;
 	vec2 moments;
 	float depth;
-	if(dist < farZ/10.0f)
+	if(dist < limits.y)
 	{
 		vec4 shadowCoords = shadowData.lightMatrix1 * vec4(wPos.xyz, 1.0);
 		shadowCoords.xyz /= shadowCoords.w;
@@ -217,7 +218,7 @@ vec3 GetDepthData(ShadowData shadowData, float dist, vec4 wPos, float farZ)
 		depth = (shadowCoords.z);
 		//return vec3(1.0, 0.0, 0.0);
 	}
-	else if(dist < farZ/5.0f)
+	else if(dist < limits.z)
 	{
 		vec4 shadowCoords = shadowData.lightMatrix2 * vec4(wPos.xyz, 1.0);
 		shadowCoords.xyz /= shadowCoords.w;
@@ -227,7 +228,7 @@ vec3 GetDepthData(ShadowData shadowData, float dist, vec4 wPos, float farZ)
 		depth = (shadowCoords.z);
 		//return vec3(0.0, 1.0, 0.0);
 	}
-	else if(dist < farZ/2.0f)
+	else if(dist < limits.w)
 	{
 		vec4 shadowCoords = shadowData.lightMatrix3 * vec4(wPos.xyz, 1.0);
 		shadowCoords.xyz /= shadowCoords.w;

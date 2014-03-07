@@ -23,8 +23,6 @@ function ToolTip:new( o )
 	o.show = false
 	o.text:show( false )
 	
-	print( "ToolTip created!" )
-	
 	return o
 end
 

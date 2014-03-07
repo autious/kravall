@@ -82,6 +82,11 @@ extern "C"
         return entityBridge.CreateEntity( L );    
     }
 
+    static int LuaEntityAddComponent( lua_State * L )
+    {
+        return entityBridge.AddComponent( L );
+    }
+
     static int LuaEntityDestroy( lua_State * L )
     {
         return entityBridge.DestroyEntity( L );    
@@ -170,6 +175,8 @@ Core::LuaEntityBridge::LuaEntityBridge( lua_State * L  )
             lua_pushstring( L, "destroy" );
             lua_pushcfunction( L, LuaEntityDestroy );
             lua_settable( L, -3 );
+
+            luau_setfunction( L, "addComponent", LuaEntityAddComponent );
             
             luau_setfunction( L, "isValid", LuaEntityIsValid );
             luau_setfunction( L, "isSameEntity", LuaEntityIsSameEntity );

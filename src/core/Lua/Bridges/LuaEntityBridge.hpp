@@ -219,6 +219,41 @@ namespace Core
     private:
 
     public:
+        static int AddComponent( lua_State *L ) 
+        {
+            int parameterCount = lua_gettop( L );
+
+            LuaEntity* lent = luau_checkentity(L,1);
+            Entity ent = lent->entity;
+
+            if( ent != INVALID_ENTITY  )
+            {
+
+                Aspect asp = 0ULL;
+            
+                for( int i = 2; i <= parameterCount; i++ )
+                {
+                    if( lua_isuserdata( L, i ) )
+                    {
+                        ComponentType type = *(ComponentType*)lua_touserdata( L, i );
+                        asp |= Core::world.m_entityHandler.GenerateAspect( type );
+                    }
+                    else
+                    {
+                        return luaL_error( L, "%s: Parameter %d is not a userdata" ,__FUNCTION__ , i );
+                    }
+                }
+
+                Core::world.m_entityHandler.AddComponentsAspect( ent, asp );
+
+                return 0;
+            }
+            else
+            {
+                return luaL_error( L, "Entity is invalid" ); 
+            }
+        }
+
         /*!
             Entity creation function, takes a series of component types and creates an entity 
             with that aspect configuration, component data is undefined

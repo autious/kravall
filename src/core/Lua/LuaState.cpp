@@ -42,6 +42,7 @@
 #include <Lua/Bridges/LuaUnitOrderBridge.hpp>
 #include <Lua/Bridges/LuaConfigurationBridge.hpp>
 #include <Lua/Bridges/LuaTimerBridge.hpp>
+#include <Lua/Bridges/LuaCoreBridge.hpp>
 
 namespace Core
 {
@@ -76,7 +77,8 @@ namespace Core
 		lgmdb(L),
 		luob(L),
         lcb(L),
-        ltb(L)
+        ltb(L),
+        lccb(L)
         {}
             
         LuaBitmask lb;
@@ -108,6 +110,7 @@ namespace Core
 		LuaUnitOrderBridge luob;
         LuaConfigurationBridge lcb;
         LuaTimerBridge ltb;
+        LuaCoreBridge lccb;
     };
 }
 

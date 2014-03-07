@@ -10,7 +10,7 @@ struct ShadowData
 	glm::mat4x4 lightMatrix2;
 	glm::mat4x4 lightMatrix3;
 	glm::mat4x4 lightMatrix4;
-	glm::vec4 atlasCoords;
+	glm::vec4 limits;
 };
 
 static const unsigned int MAXIMUM_SHADOWCASTERS = 16;

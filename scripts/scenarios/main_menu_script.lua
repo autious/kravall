@@ -138,10 +138,45 @@ return function( scen )
     local T = {}
 	
 	T.initPolice = function( entity )
-		print( "SNUTEN KOMMER!!!!!" )
+		--print( "SNUTEN KOMMER!!!!!" )
 
-		--entity:addComponent( core.componentType.AnimationComponent)
-		--core.animations.loop(entity, "idle")
+		entity:addComponent( core.componentType.AnimationComponent)
+		core.animations.loop(entity, "idle")
+		--local theTime = math.random() * 10.0
+		core.animations.setTime(entity, math.random(1, 200) / 200)
+		
+	end
+	
+	
+	local hovercraftPos
+	local hovercraftPosY
+	--local hovercraftRot
+	
+	T.initHovercraft = function( entity )
+		hovercraftPosY = hovercraftPosY or 0.0
+		hovercraftPos = entity:get(core.componentType.WorldPositionComponent).position
+		--hovercraftRot = entity:get(core.componentType.RotationComponent).rotation
+	end
+	
+	local HCtval = 0.0
+	T.updateHovercraft = function( entity, delta )
+		
+		HCtval = HCtval + delta * 0.5
+		
+		
+		--print ( "I belive I can fly!!!!!!" )
+		
+		local pos = { hovercraftPos[1], (hovercraftPos[2] + math.sin(HCtval)), hovercraftPos[3]}
+		--local rot = { hovercraftRot[1], (hovercraftRot[2] + math.sin(HCtval)), hovercraftRot[3], hovercraftRot[4]}
+		local angle = 3.5 + 0.2*math.cos(HCtval)+ 0.1*math.cos(HCtval*1.2)
+		
+		local shenanigans = 0.5*(math.pi+0.1*math.sin(HCtval))
+		local axis = {0, math.sin(shenanigans), math.cos(shenanigans)}
+		
+		local rot = { axis[1]*math.sin(angle/2), axis[2]*math.sin(angle/2), axis[3]*math.sin(angle/2), math.cos(angle/2)}
+		--local rot 
+		entity:set( core.componentType.WorldPositionComponent, {position=pos} )
+		entity:set(core.componentType.RotationComponent, {rotation=rot})
 		
 	end
 	
