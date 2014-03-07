@@ -277,7 +277,7 @@ return function( scen )
     end
 
     function T.winOnRioterInside( ent )
-        if core.system.area.getAreaRioterCount(ent,deserterGroup) > 5 then
+        if core.system.area.getAreaRioterCount(ent,deserterGroup) > 0 then
             obj1.state = "success"
         end
     end

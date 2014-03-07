@@ -28,8 +28,43 @@ int AnimationManagerGFX::DeleteSkeleton(const int& skeletonID)
 {
 	if (m_skeletons.find(skeletonID) != m_skeletons.end())
 	{
+		int animationCount = m_skeletons[skeletonID]->GetAnimationCount();
+		for (int i = 0; i < animationCount; i++)
+		{
+			unsigned int numFrames;
+			unsigned int bonesPerFrame;
+			unsigned int animationOffset;
+			m_skeletons[skeletonID]->GetInfo(i, numFrames, bonesPerFrame, animationOffset);
+			unsigned int totalOffset = animationOffset;
+			m_animations.erase(m_animations.begin() + animationOffset, m_animations.begin() + numFrames * bonesPerFrame + animationOffset);
+
+			// Rearrange animations and rebind skeletons
+			for (auto it = m_skeletons.begin(); it != m_skeletons.end(); it++)
+			{
+				Skeleton* skeleton = it->second;
+				for (int animationID = 0; animationID < skeleton->GetAnimationCount(); animationID++)
+				{
+					unsigned int i_numFrames;
+					unsigned int i_bonesPerFrame;
+					unsigned int i_animationOffset;
+					skeleton->GetInfo(animationID, i_numFrames, i_bonesPerFrame, i_animationOffset);
+					unsigned int i_animationLength = i_numFrames * i_bonesPerFrame;
+
+					if (i_animationOffset > animationOffset)
+					{
+						skeleton->UpdateInfo(animationID, totalOffset, i_numFrames, i_bonesPerFrame);
+						totalOffset += i_animationLength;
+					}
+				}
+			}
+		}
+
+
 		delete m_skeletons[skeletonID];
 		m_skeletons.erase(skeletonID);
+
+
+
 		return GFX_SUCCESS;
 	}
 	else
