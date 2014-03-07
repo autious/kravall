@@ -51,7 +51,12 @@ GFX::FontData* localFontData;
 // And the command is sent to the command line by pressing 'E' (as seen in run()) with Core::Console().SetInputLine("exit");
 void ClopCloseWindow(clop::ArgList args)
 {
-	killProgram = true;
+    KillProgram();
+}
+
+void KillProgram()
+{
+    killProgram = true;
 }
 
 int initScreenHeight;

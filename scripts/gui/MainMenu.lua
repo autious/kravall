@@ -48,7 +48,7 @@ function MainMenu:new(o,menuState)
 										matReleased = "assets/texture/ui/exit-game-button-release_00.material",
 										matPressed = "assets/texture/ui/exit-game-button-press_00.material",
 										matHover = "assets/texture/ui/exit-game-button-hover_00.material",
-										xoffset=offsetX,yoffset=offsetY,onClick = menuState.goTutorial,
+										xoffset=offsetX,yoffset=offsetY,onClick = core.flagExit,
                                     } ) )
 
     o.gui:addPlacementHandler( CenterPlacer )
