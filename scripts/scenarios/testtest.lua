@@ -60,7 +60,7 @@ return function( scen )
 	function Killzone()
 		local rGroup2 = core.system.groups.createGroup( 2 );
 		local centerPoint2 = { 50, 0, 0 }
-		local side = math.sqrt( 300 )
+		local side = math.sqrt( 5 )
 		for i = -side/2, side/2 do
 			for p = -side/2, side/2 do
 				rioter( scen, p * 1.5 + centerPoint2[1], 0  + centerPoint2[2], i * 1.5  + centerPoint2[3], 
@@ -71,7 +71,7 @@ return function( scen )
 		
 		local rGroup3 = core.system.groups.createGroup( 1 );
 		local centerPoint3 = { -50, 0, 0 }
-		local side = math.sqrt( 300 )
+		local side = math.sqrt( 5 )
 		for i = -side/2, side/2 do
 			for p = -side/2, side/2 do
 				rioter( scen, p * 1.5 + centerPoint3[1], 0  + centerPoint3[2], i * 1.5  + centerPoint3[3], 

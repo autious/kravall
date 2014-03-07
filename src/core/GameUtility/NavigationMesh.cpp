@@ -108,13 +108,11 @@ namespace Core
 				// calculate corner connections...
 				for( int q = 0; q < nrNodes; ++q )
 				{
-					//if( q == i )
-					//	continue;
-
 					// for every edge in the node
 					int nrCorners = 4;
 					if( nodes[q].corners[3].length < 0 )
 						nrCorners = 3;
+
 
 					for( int v = 0; v < nrCorners; ++v ) 
 					{						
@@ -122,38 +120,52 @@ namespace Core
 						glm::vec2 otherCornerPos = glm::vec2( nodes[q].points[otherCurrent], nodes[q].points[ otherCurrent + 1 ] );
 
 						// check square distance to other corner
-						if( glm::dot( cornerPos - otherCornerPos, cornerPos - otherCornerPos ) < 0.05f )
+						float dist = glm::distance( cornerPos, otherCornerPos );
+						if( dist < 0.05f )
 						{
 							// check which edge the corner connects to...
 							int prevIndex = v-1;
 							if( prevIndex < 0 )
 								prevIndex = nrCorners - 1;
 
-							int nextIndex = (v+1) % nrCorners;
+							int linkIndex = nodes[i].corners[p].cornerConnectsToNode[0] < 0 ? 0 : 1;
 
 							// set connecting corner
 							if( nodes[q].corners[prevIndex].linksTo < 0 )
 							{
 								if( q != i )
-								{	
-									nodes[i].corners[p].cornerConnectsToNode = q;								
-									nodes[i].corners[p].cornerConnectsToCorner = prevIndex;
+								{
+									nodes[i].corners[p].cornerConnectsToNode[linkIndex] = q;								
+									nodes[i].corners[p].cornerConnectsToCorner[linkIndex] = prevIndex;
 								}
 							}
 							else if( nodes[q].corners[v].linksTo < 0 && q != i )
 							{
 								if( q != i )
 								{
-									nodes[i].corners[p].cornerConnectsToNode = q;
-									nodes[i].corners[p].cornerConnectsToCorner = nextIndex;
+									nodes[i].corners[p].cornerConnectsToNode[linkIndex] = q;
+									nodes[i].corners[p].cornerConnectsToCorner[linkIndex] = v;
 								}
 							}
-							else if( q == i )
+							else if( q == i && nodes[q].corners[v].linksTo < 0 )
 							{
-								nodes[i].corners[p].cornerConnectsToNode = NAVMESH_CONCAVE_CORNER_NODE;
-								nodes[i].corners[p].cornerConnectsToCorner = NAVMESH_CONCAVE_CORNER_NODE;
+								nodes[i].corners[p].cornerConnectsToNode[linkIndex] = i;
+								nodes[i].corners[p].cornerConnectsToCorner[linkIndex] = p;
 							}
 						}
+					}
+				}
+			}
+
+			int nrEdges = nodes[i].corners[3].length < 0 ? 3 : 4;
+			for( int k = 0; k < nrEdges; k++ )
+			{
+				for( int l = 0; l < 2; l++ )
+				{
+					if( nodes[i].corners[k].cornerConnectsToNode[l] < 0 )
+					{
+						nodes[i].corners[k].cornerConnectsToNode[l] = i;
+						nodes[i].corners[k].cornerConnectsToCorner[l] = k;
 					}
 				}
 			}
@@ -183,7 +195,8 @@ std::fstream& operator>> ( std::fstream& ff, Core::NavigationMesh::Node& node )
 	// handle meta...
 	for( int i = 0; i < 4; i++ )
 	{
-		node.corners[i].cornerConnectsToNode = NAVMESH_NO_CONNECTING_CORNERS;
+		node.corners[i].cornerConnectsToNode[0] = NAVMESH_NO_CONNECTING_CORNERS;
+		node.corners[i].cornerConnectsToNode[1] = NAVMESH_NO_CONNECTING_CORNERS;
 
 		ff >> node.corners[i].linksTo;
 
