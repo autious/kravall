@@ -138,12 +138,40 @@ return function( scen )
     local T = {}
 	
 	T.initPolice = function( entity )
-		print( "SNUTEN KOMMER!!!!!" )
+		--print( "SNUTEN KOMMER!!!!!" )
 
 		entity:addComponent( core.componentType.AnimationComponent)
 		core.animations.loop(entity, "idle")
+		--local theTime = math.random() * 10.0
+		core.animations.setTime(entity, math.random(1, 200) / 200)
 		
 	end
+	
+	
+	--local hovercraftPos
+	--local hovercraftPosY
+	--local hovercraftRot
+	--
+	--T.initHovercraft = function( entity )
+	--	hovercraftPosY = hovercraftPosY or 0.0
+	--	hovercraftPos = entity:get(core.componentType.WorldPositionComponent).position
+	--	hovercraftRot = entity:get(core.componentType.RotationComponent).rotation
+	--end
+	--
+	--
+	--T.updateHovercraft = function( delta, entity )
+	--	
+	--	
+	--	
+	--	
+	--	--print ( "I belive I can fly!!!!!!" )
+	--	
+	--	local pos = { hovercraftPos[1], (hovercraftPos[2] + math.sin(delta)), hovercraftPos[3]}
+	--	--local rot 
+	--	entity:set( core.componentType.WorldPositionComponent, {position=pos} )
+	--	--entity:set(core.componentType.RotationComponent, missileRot)
+	--	
+	--end
 	
 	
 	function T.createDeserter( ent, xsize, ysize )
