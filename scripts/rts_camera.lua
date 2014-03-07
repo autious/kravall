@@ -26,7 +26,7 @@ function C.new( )
     self.interpolationSpeed = 10
     self.interpolationFactor = 0
     self.interpolationPoints = {}
-
+    self.previousInterpolationPoint = {position = self.position, rotation = self.quatRotation}
 
     self.width = core.config.initScreenWidth
     self.height = core.config.initScreenHeight
@@ -115,6 +115,12 @@ function C:update( dt )
        
         local direction = vec3.new(0,0,0)
 
+        if self.previousInterpolationPoint.passCallback
+           and not self.previousInterpolationPoint.calledPass  then
+            self.previousInterpolationPoint:passCallback()
+            self.previousInterpolationPoint.calledPass = true
+        end
+
         if #(self.interpolationPoints) > 0 then
             if #(self.interpolationPoints) > 2 then
                 --catmul spline                
@@ -130,7 +136,7 @@ function C:update( dt )
 
                 self.interpolationPointsDistance = math.sqrt((pointThree[1] - pointTwo[1]) * (pointThree[1] - pointTwo[1]) + (pointThree[2] - pointTwo[2]) * (pointThree[2] - pointTwo[2]) + (pointThree[3] - pointTwo[3]) * (pointThree[3] - pointTwo[3]))
 
-                self.interpolationFactor = self.interpolationFactor + (self.interpolationSpeed / self.interpolationPointsDistance) * delta
+                self.interpolationFactor = self.interpolationFactor + (self.interpolationPoints[2].speed / self.interpolationPointsDistance) * delta
                 self.interpolationFactor = math.min(1.0, self.interpolationFactor)
 
                 local t = self.interpolationFactor
@@ -143,6 +149,7 @@ function C:update( dt )
                 if self.interpolationFactor >= 1.0 then
                     self.interpolationFactor = 0
                     self.previousInterpolationPoint = self.interpolationPoints[1]
+
                     table.remove(self.interpolationPoints, 1)
                 end                
             else
@@ -156,19 +163,22 @@ function C:update( dt )
 
                 self.interpolationPointsDistance = math.sqrt((pointOne[1] - pointTwo[1]) * (pointOne[1] - pointTwo[1]) + (pointOne[2] - pointTwo[2]) * (pointOne[2] - pointTwo[2]) + (pointOne[3] - pointTwo[3]) * (pointOne[3] - pointTwo[3]))
 
-                self.interpolationFactor = self.interpolationFactor + (self.interpolationSpeed / self.interpolationPointsDistance) * delta
+                self.interpolationFactor = self.interpolationFactor + (self.interpolationPoints[1].speed / self.interpolationPointsDistance) * delta
                 self.interpolationFactor = math.min(1.0, self.interpolationFactor)
 
                 local factor = SmoothStep(SmoothStep(SmoothStep(self.interpolationFactor)))
                 self.position = self.previousInterpolationPoint.position * (1.0 - factor) + self.interpolationPoints[1].position * factor
                 self.quatRotation = self.previousInterpolationPoint.rotation:slerp(self.interpolationPoints[1].rotation, factor)               
 
+
                 if self.interpolationFactor >= 1.0 then
                     self.interpolationFactor = 0
                     self.previousInterpolationPoint = self.interpolationPoints[1]
+
                     table.remove(self.interpolationPoints, 1)
                 end                
             end
+
         else 
             if keyboard.isKeyDown( key.W ) or keyboard.isKeyDown(key.Up )then
                 direction = direction + xzForward
@@ -298,8 +308,10 @@ function C:lookAt( position, target )
 end
 
 
-function C:addInterpolationPoint(position, rotation)
-    table.insert(self.interpolationPoints, {position = position, rotation = rotation})
+function C:addInterpolationPoint( position, rotation, speed, passCallback )
+    speed = speed or self.interpolationSpeed
+    assert( speed )
+    table.insert(self.interpolationPoints, {position = position, rotation = rotation, speed = speed, passCallback = passCallback })
 end
 
 return C

@@ -17,7 +17,7 @@ function ScenarioMenu:new(o,menuState)
 
     o.gui = GUI:new()
     
-    local descriptionBox = TextBox:new({anchor="East", yoffset=-180, body="", width = 600, height = 500})
+    local descriptionBox = TextBox:new({anchor="East", yoffset=-180, body="", width=600, height=500})
     --local scenarioLabel = TextLabel:new({ xoffset=-50, yoffset=250, anchor="NorthEast", label=""})
 
     local function onScenarioSelect( object )
@@ -31,16 +31,16 @@ function ScenarioMenu:new(o,menuState)
     local selectionList = TextSelectList:new({ anchor="NorthWest", yoffset=310, xoffset=300, elements=o.scenarios, onSelect = onScenarioSelect })
 
     o.gui:addComponent(Button:new({
-                                    matReleased = "assets/texture/ui/back-button-release.material",
-                                    matPressed = "assets/texture/ui/back-button-press.material",
-                                    matHover = "assets/texture/ui/back-button-hover.material",
-                                    anchor="SouthWest",xoffset=0,yoffset=0,onClick = menuState.goMain }))
+                                    matReleased="assets/texture/ui/back-button-release.material",
+                                    matPressed="assets/texture/ui/back-button-press.material",
+                                    matHover="assets/texture/ui/back-button-hover.material",
+                                    anchor="SouthWest", xoffset=30, yoffset=-11, onClick=menuState.goMain }))
     o.gui:addComponent(Button:new({
 
-                                    matReleased = "assets/texture/ui/go-button-release.material",
-                                    matPressed = "assets/texture/ui/go-button-release.material",
-                                    matHover = "assets/texture/ui/go-button-release.material",
-                                    anchor="SouthEast",xoffset=0,yoffset=0,onClick = menuState.goSetup }))
+                                    matReleased="assets/texture/ui/go-button-release.material",
+                                    matPressed="assets/texture/ui/go-button-press.material",
+                                    matHover="assets/texture/ui/go-button-hover.material",
+                                    anchor="SouthEast", xoffset=-66, yoffset=-11, onClick=menuState.goSetup }))
     o.gui:addComponent( selectionList )
     --o.gui:addComponent( scenarioLabel )
     o.gui:addComponent( descriptionBox )

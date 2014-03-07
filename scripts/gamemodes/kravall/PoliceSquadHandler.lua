@@ -44,27 +44,25 @@ local TextLabel = require "gui/component/TextLabel"
 
 local input = require "input"
 
-local function registerCallbacks(o)
-    input.registerOnButton( function( button, action, mods, consumed )
-        if action == core.input.action.Press then
-            --Only allow press if UI element hasn't been pressed
-            if not consumed then
-                if button == mouse.button.Left then
-                    o.leftPressed = true   
-                    o.leftClicked = true
-                elseif button == mouse.button.Right then
-                    o.rightPressed = true
-                    o.rightClicked = true
-                end
-            end
-        elseif action == core.input.action.Release then
+function PoliceSquadHandler:onButton(button, action, mods, consumed)
+    if action == core.input.action.Press then
+        --Only allow press if UI element hasn't been pressed
+        if not consumed then
             if button == mouse.button.Left then
-                o.leftPressed = false
+                self.leftPressed = true   
+                self.leftClicked = true
             elseif button == mouse.button.Right then
-                o.rightPressed = false
+                self.rightPressed = true
+                self.rightClicked = true
             end
-        end        
-    end, "GAME")
+        end
+    elseif action == core.input.action.Release then
+        if button == mouse.button.Left then
+            self.leftPressed = false
+        elseif button == mouse.button.Right then
+            self.rightPressed = false
+        end
+    end        
 end
 
 function PoliceSquadHandler:new(o)
@@ -100,8 +98,6 @@ function PoliceSquadHandler:new(o)
     -- Used for double click selection
     o.lastClickTime = os.clock()   
     o.lastClickType = ""
-    
-    registerCallbacks(o)
 
     return o
 end
@@ -218,6 +214,7 @@ function PoliceSquadHandler:setUsableAbilities(squads)
 end
 
 function PoliceSquadHandler:evaluateUsableAbilities()
+
     local abilities = {}
     local aggregatedAbilities = {}
     for i=1, #self.selectedSquads do
@@ -225,11 +222,21 @@ function PoliceSquadHandler:evaluateUsableAbilities()
         for _,member in pairs(squad.members) do
             abilities[member] = member.getAbilities()
             for i=1, #(member.getAbilities()) do
-                aggregatedAbilities[#aggregatedAbilities+1] = abilities[member][i]
+
+                local has = false
+
+                for _,ag_bill in ipairs( aggregatedAbilities ) do
+                    has = has or ag_bill == abilities[member][i]
+                end
+
+                if has == false then
+                    table.insert( aggregatedAbilities, abilities[member][i] )
+                end
             end
         end                 
     end
     self.usableAbilities = abilities;
+
     self.onUsableAbilitiesChange(aggregatedAbilities)
 end
 
@@ -589,7 +596,6 @@ function PoliceSquadHandler:UseFlee()
 end
 
 function PoliceSquadHandler:update( delta )
-   
     -- Sets the box selection outline to the given squads
     -- If any of the given squads match the primary selection, it gets a different tint
     local function applyBoxOutline( squads )
@@ -642,8 +648,10 @@ function PoliceSquadHandler:update( delta )
     clearOutlines()
 
     local function updateSquads()
+
         for k,v in pairs(self.createdSquads) do
             local groupId = v.groupId  
+
             local squadMembers = core.system.groups.getMembersInGroup(groupId)
 
             local i=1
@@ -663,10 +671,15 @@ function PoliceSquadHandler:update( delta )
                 end
             end            
         end
+
+
         self:evaluateUsableAbilities()
+
     end
 
+
     updateSquads()
+
 
 
     --Abilities
@@ -689,24 +702,25 @@ function PoliceSquadHandler:update( delta )
         end
     end
 
-    if keyboard.isKeyDownOnce(keyboard.key.Kp_8) or keyboard.isKeyDownOnce(keyboard.key[8]) then
-        self:setAbility(core.system.squad.abilities.TearGas)
-    end
-	
-	-- attack group
-	if keyboard.isKeyDownOnce(keyboard.key.Kp_7) or keyboard.isKeyDownOnce(keyboard.key[7]) then
+	if keyboard.isKeyDownOnce(keyboard.key.Kp_1) or keyboard.isKeyDownOnce(keyboard.key[1]) then
         self:setAbility(core.system.squad.abilities.Attack)
 	end
 
-    if keyboard.isKeyDownOnce(keyboard.key.Kp_9) or keyboard.isKeyDownOnce(keyboard.key[9]) then
-        self:setAbility(core.system.squad.abilities.Flee)
-    end
+    if keyboard.isKeyDownOnce(keyboard.key.Kp_2) or keyboard.isKeyDownOnce(keyboard.key[2]) then
+        self:setAbility(core.system.squad.abilities.TearGas)
+    end	
 
     if keyboard.isKeyDownOnce(keyboard.key.Kp_3) or keyboard.isKeyDownOnce(keyboard.key[3]) then
         self:setAbility(core.system.squad.abilities.Sprint)
     end
 
+    if keyboard.isKeyDownOnce(keyboard.key.Kp_4) or keyboard.isKeyDownOnce(keyboard.key[4]) then
+        self:setAbility(core.system.squad.abilities.Flee)
+    end
+
+
     --Ability: Sprint
+    -- This block is expensive (~2ms) should be put in a c-system
     for _,squad in pairs(self.createdSquads) do
         local squadEntity = core.system.squad.getSquadEntity(squad.groupId)
         assert( squadEntity, "no squad entity bound to " .. squad.groupId )
@@ -986,6 +1000,7 @@ function PoliceSquadHandler:update( delta )
         -- as the gui elements should hide when there is no selection.
         self.onSelectedUnitInformationChange( {name = "", health=0, morale=0, stamina=0} )
     end
+
 end
 
 return PoliceSquadHandler

@@ -203,9 +203,12 @@ namespace Core
 					if (glm::length(newDir) > 0.1f)
 						newDir = glm::normalize(newDir);
 
-					mc->newDirection[0] = newDir.x;
-					mc->newDirection[1] = newDir.y;
-					mc->newDirection[2] = newDir.z;
+					if( utc->type == Core::UnitType::Rioter )
+					{
+						mc->newDirection[0] = newDir.x;
+						mc->newDirection[1] = newDir.y;
+						mc->newDirection[2] = newDir.z;
+					}
 
 					i++;
 				}
@@ -252,14 +255,14 @@ namespace Core
 					if (glm::length(newDir) > 0.1f)
 						newDir = glm::normalize(newDir);
 
-					mc->newDirection[0] = newDir.x;
-					mc->newDirection[1] = newDir.y;
-					mc->newDirection[2] = newDir.z;
-
 					ac->morale = out[i].morale_rage_pressure_empty.x;
 
 					if (utc->type == UnitType::Rioter)
 					{
+						mc->newDirection[0] = newDir.x;
+						mc->newDirection[1] = newDir.y;
+						mc->newDirection[2] = newDir.z;
+
 						ac->rioter.rage = out[i].morale_rage_pressure_empty.y;
 						ac->rioter.pressure = out[i].morale_rage_pressure_empty.z;
 

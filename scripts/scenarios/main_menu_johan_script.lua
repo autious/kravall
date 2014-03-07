@@ -137,20 +137,11 @@ return function( scen )
 
     local T = {}
 	
-	T.initPolice = function( entity )
-		print( "SNUTEN KOMMER!!!!!" )
-
-		--entity:addComponent( core.componentType.AnimationComponent)
-		--core.animations.loop(entity, "idle")
-		
-	end
-	
-	
 	function T.createDeserter( ent, xsize, ysize )
 		local wpc = ent:get( core.componentType.WorldPositionComponent )
 		local ac = ent:get( core.componentType.AreaComponent )
 		verts = ac.vertices
-    
+
 		-- Make vertex positions from local space to world space
 		for i = 1, 8, 2 do
 			verts[i] = verts[i] + wpc.position[1]
@@ -164,19 +155,19 @@ return function( scen )
 	local endPosition
 	local startPosition
 	local grp
-    
-   T.spawn = function(e)
+
+    T.spawn = function(e)
 		grp = T.createDeserter( e, 100,2 )
-   end
-    
+    end
+
 	T.registerStart = function( entity )
-		print( "REGGING START" )
+		--print( "REGGING START" )
 		startPosition = entity:get( core.componentType.WorldPositionComponent ).position
 		
 	end
 	
 	T.registerEnd = function( entity )
-		print( "REGGING END" )
+		--print( "REGGING END" )
 		endPosition = entity:get( core.componentType.WorldPositionComponent ).position
 	end
 	
@@ -190,7 +181,6 @@ return function( scen )
 		
 		for i,v in  pairs( rioters ) do
 			v:set( core.componentType.WorldPositionComponent, {position=startPosition} )
-			v:set( core.componentType.FlowfieldComponent, {node=-1} )
 		end
 	end
 	

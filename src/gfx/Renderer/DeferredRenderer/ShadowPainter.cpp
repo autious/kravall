@@ -372,7 +372,7 @@ namespace GFX
 
 			// Loop through all the geometry
 			unsigned int instanceOffset = 0;
-			for (unsigned int i = startIndex; i < endIndex;)
+			for (unsigned int i = endIndex; i < endIndex;)
 			{
 				GFXBitmask geometryBitmask = renderJobs[i].bitmask;
 				objType = GetBitmaskValue(geometryBitmask, BITMASK::TYPE);

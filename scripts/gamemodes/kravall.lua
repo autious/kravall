@@ -19,7 +19,6 @@ local standardPolice = (require "game_constants").standardPolice
 
 local ASM = require "assembly_loader"
 
-
 local T = 
     { 
         initGamestate = "Main",
@@ -84,6 +83,8 @@ function T:setState( state )
             camera = self.camera,
             asm = self.asm,
         } )
+		
+		self.objectiveHandler:setShow( true )
     elseif state == "Prep" then
         print( "State set to \"Prep\"" )
         self.gamestate = Prep:new
@@ -94,7 +95,7 @@ function T:setState( state )
                 self:setState( "Main" ) 
             end,
         }
-		self.objectiveHandler:setShow(false)
+		self.objectiveHandler:setShow( false )
 
     elseif state == "End" then
         print( "State set to \"End\"" )

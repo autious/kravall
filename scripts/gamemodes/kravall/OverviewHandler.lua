@@ -11,7 +11,29 @@ local OverviewHandler = {
 local keyboard = core.input.keyboard
 local mouse = core.input.mouse
 
+function OverviewHandler:onButton(button, action, mods, consumed)
+    if action == core.input.action.Press then
+        --Only allow press if UI element hasn't been pressed
+        if not consumed then
+            if button == mouse.button.Left then
+                self.leftPressed = true   
+                self.leftClicked = true
+            elseif button == mouse.button.Right then
+                self.rightPressed = true
+                self.rightClicked = true
+            end
 
+            return self.inOverview
+        end
+    elseif action == core.input.action.Release then
+        if button == mouse.button.Left then
+            self.leftPressed = false
+        elseif button == mouse.button.Right then
+            self.rightPressed = false
+        end
+    end  
+    return consumed
+end
 function OverviewHandler:new(o)
     o = o or {}
     setmetatable(o, self)
@@ -36,22 +58,27 @@ end
 
 function OverviewHandler:SetOutlines()
     local groupCount = core.system.groups.getNumberOfGroups()
-    
+    local policeGroupIds = {}
+    local rioterGroupIds = {}
+
     for i=0, groupCount-1 do 
         local members = core.system.groups.getMembersInGroup(i)
-        
-        for _,v in pairs(members) do
-            local attrbComponent = v:get(core.componentType.AttributeComponent)
-            local utc = v:get(core.componentType.UnitTypeComponent)
+       
+        if #members > 0 then
+            local attrbComponent = members[1]:get(core.componentType.AttributeComponent)
+            local utc = members[1]:get(core.componentType.UnitTypeComponent)
             if utc.unitType == core.UnitType.Rioter then
-                self.outlinedGroups[#self.outlinedGroups] = attrbComponent.groupID
-                core.system.squad.enableMoodOutline({attrbComponent.groupID})
+                table.insert(rioterGroupIds, attrbComponent.groupID)
+                self.outlinedGroups[attrbComponent.groupID] = attrbComponent.groupID    
             elseif utc.unitType == core.UnitType.Police then
-                core.system.squad.enableOutline({attrbComponent.squadID}, 1, 1, 1, 1)
+                table.insert(policeGroupIds, attrbComponent.squadID)
                 self.outlinedGroups[#self.outlinedGroups] = attrbComponent.squadID    
             end
         end
     end
+
+    core.system.squad.enableMoodOutline(rioterGroupIds)
+    core.system.squad.enableOutline(policeGroupIds, 1, 1, 1, 1)
 end
 
 function OverviewHandler:RemoveOutlines()
@@ -66,12 +93,15 @@ function OverviewHandler:update(delta)
         end
     else
         self:SetOutlines() 
-        if mouse.isButtonDownOnce(mouse.button.Left) then
+        if self.leftClicked then
             local mouseX, mouseY = mouse.getPosition()
             local x,y,z = core.system.picking.getGroundHit(mouseX, mouseY);
             self:ExitOverview(core.glm.vec3.new(x,y,z))
         end
     end
+
+    self.leftClicked = false
+    self.rightClciked = false
 end
 
 return OverviewHandler
