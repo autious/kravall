@@ -99,6 +99,9 @@ function PoliceSquadHandler:new(o)
     o.lastClickTime = os.clock()   
     o.lastClickType = ""
 
+    -- Used for cycling squads
+    o.cycleSquad = 1
+
     return o
 end
 
@@ -593,6 +596,43 @@ function PoliceSquadHandler:UseFlee()
 	
 	self:RevertAttackingStateOfSelected()
     self:setAbility(nil)
+end
+
+function PoliceSquadHandler:CycleSquad()
+    if self.cycleSquad > #(self.createdSquads) then
+        self.cycleSquad = 1
+    end
+
+    if #(self.createdSquads) > 0 then
+        if #(self.selectedSquads) > 0 then
+            if #(self.selectedSquads) == #(self.createdSquads) then
+                return core.system.groups.getGroupMedianPosition(self.createdSquads[self.cycleSquad].groupId)   
+            end
+            
+            while true do
+                for _,v in pairs(self.selectedSquads) do
+                    if v ~= self.createdSquads[self.cycleSquad].groupId then
+                        self:DeselectAllSquads()
+                        self:addSquadsToSelection({self.createdSquads[self.cycleSquad].groupId})
+                        return core.system.groups.getGroupMedianPosition(self.createdSquads[self.cycleSquad].groupId)
+                    end 
+                end       
+
+                self.cycleSquad = self.cycleSquad + 1
+
+                if self.cycleSquad > #(self.createdSquads) then
+                    self.cycleSquad = 1
+                end
+            end
+         else
+            self:DeselectAllSquads()
+            self:addSquadsToSelection({self.createdSquads[self.cycleSquad].groupId})
+        end
+    end
+
+    local x,y,z = core.system.groups.getGroupMedianPosition(self.createdSquads[self.cycleSquad].groupId)
+    self.cycleSquad = self.cycleSquad + 1
+    return x,y,z 
 end
 
 function PoliceSquadHandler:update( delta )

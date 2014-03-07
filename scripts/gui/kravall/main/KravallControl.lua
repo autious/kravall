@@ -1,7 +1,7 @@
 local GUI = require "gui/GUI"
 local Button = require "gui/component/Button"
+local Checkbox = require "gui/component/Checkbox"
 --local Slider = require "gui/component/Slider"
---local Checkbox = require "gui/component/Checkbox"
 --local TextSelectList = require "gui/component/TextSelectList"
 --local TextLabel = require "gui/component/TextLabel"
 --local TextBox = require "gui/component/TextBox"
@@ -15,7 +15,6 @@ local CenterPlacer = require "gui/placement/CenterPlacer"
 local SimplePlacer = require "gui/placement/SimplePlacer"
 
 local EventListerGUI = require "gui/kravall/main/subgui/EventListerGUI"
-local OverviewGUI = require "gui/kravall/main/subgui/OverviewGUI"
 local UnitStatGUI = require "gui/kravall/main/subgui/UnitStatGUI"
 local SquadMenuGUI = require "gui/kravall/main/subgui/SquadMenuGUI"
 
@@ -27,7 +26,8 @@ local KravallControl =
     onFormationSelect = function(formation) core.log.error("No handler set for onFormationChange in KravallControl.") end,
     onStanceSelect = function(stance) core.log.error("No handler set for onStanceChange in KravallControl.") end,
     onAbilitySelect = function(ability) end,
-    onUseOverview = function() core.log.error("No function ser for onUseOverview in KravallControl.") end
+    onUseOverview = function() core.log.error("No function set for onUseOverview in KravallControl.") end,
+    onCycleSquads = function() core.log.error("No function set for onCycleSquads in KravallControl.") end
 }
                             
 function KravallControl:new(o)
@@ -64,17 +64,20 @@ function KravallControl:new(o)
 						{
 							width=globalWidth, height=leftCornerHeight
 						} )
-	
-	o.globalGUI:addComponent( Button:new (
-										{ 
-											xoffset=9,
-											yoffset=19,
-											matReleased="assets/texture/ui/overveiw-unselected_00.material",
-											matPressed="assets/texture/ui/overveiw-selected_00.material",
-											matHover="assets/texture/ui/overveiw-hover_00.material",
-											onClick=o.onRemoveSelected,
-											toolTip=createTT:new( { handler=toolTipHandler, text="Go to overview mode - G" } )
-										} ) )
+
+    o.overviewButton = Checkbox:new(
+                                {
+                                    checked = false,
+                                    xoffset=9,
+                                    yoffset=19,
+                                    matOpen="assets/texture/ui/overveiw-unselected_00.material",
+                                    matSelected="assets/texture/ui/overveiw-selected_00.material",
+                                    matHoverOpen="assets/texture/ui/overveiw-hover_00.material",
+                                    matHoverSelected="assets/texture/ui/overveiw-hover_00.material",
+                                    onClick=o.onUseOverview,
+                                    toolTip=createTT:new( { handler=toolTipHandler, text="Go to overview mode - G" } )
+                                })
+	o.globalGUI:addComponent( o.overviewButton ) 
 										
 	o.globalGUI:addComponent( Button:new (
 										{ 
@@ -83,7 +86,7 @@ function KravallControl:new(o)
 											matReleased="assets/texture/ui/circle-squads-unselected_00.material",
 											matPressed="assets/texture/ui/circle-squads-selected_00.material",
 											matHover="assets/texture/ui/circle-squads-hover_00.material",
-											onClick=o.onRemoveSelected,
+											onClick=o.onCycleSquads,
 											toolTip=createTT:new( { handler=toolTipHandler, text="Cycle through the police squads" } )
 										} ) )									
 	
@@ -125,7 +128,7 @@ function KravallControl:setAbility( ability )
 end
 
 function KravallControl:setOverview( state )
-    self.overviewGUI:setOverview( state ) 
+    self.overviewButton:setChecked(state) 
 end
 
 function KravallControl:setUnitInformation( data )
