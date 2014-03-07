@@ -6,7 +6,7 @@ scen.name = "Default Scenario Name"
 scen.description = "Default Description"
 
 scen.cameras = scen.cameras or {}
-scen.cameras["settings1"] = {
+scen.cameras["settings"] = {
     view = core.glm.mat4.new(
     -1.3907092011322675e-07, -7.549795810746218e-08, -1.0, 0.0,
     -3.8941436741879443e-07, 1.0, -7.549789415861596e-08, 0.0,
@@ -14,7 +14,7 @@ scen.cameras["settings1"] = {
     155.24668884277344, -2.733031988143921, 4.756381034851074, 1.0 ),
     fov = 0.8575560450553894
 }
-scen.cameras["settings"] = {
+scen.cameras["tutorial"] = {
     view = core.glm.mat4.new(
     -1.0, -3.01991519791045e-07, 5.642600058308744e-07, -0.0,
     5.642599489874556e-07, 1.5099580252808664e-07, 1.0, -0.0,
@@ -86,7 +86,7 @@ function scen:load()
     ent = area( scen, {-56.9846076965332, 0, -115.30433654785156}, {-53.02605056762695, 8.605384826660156, -53.02605056762695, -8.605384826660156, 53.026058197021484, -8.605384826660156, 53.026058197021484, 8.605384826660156}, "" )
     scen:registerInitCallback( genF( ent, "spawn" ) )
 
-    ent = area( scen, {-101.01323699951172, 0, -67.68685913085938}, {-9.243232727050781, 7.0267791748046875, -9.243232727050781, -7.0267791748046875, 9.243232727050781, -7.0267791748046875, 9.243232727050781, 7.0267791748046875}, "" )
+    ent = area( scen, {-101.01323699951172, 0, -154.1151123046875}, {-9.243232727050781, 7.0023040771484375, -9.243232727050781, -7.0512542724609375, 9.243232727050781, -7.0512542724609375, 9.243232727050781, 7.0023040771484375}, "" )
     scen:registerInitCallback( genF( ent, "registerEnd" ) )
     scen:registerTickCallback( genF( ent, "checkEndEnter" ) )
 
@@ -244,7 +244,6 @@ function scen:load()
     ent = staticModel( scen, -9.078628540039062, 2.0583410263061523, -104.67601776123047, 0.0, 1.0, 0.0, 7.549790126404332e-08, 1.0, "assets/model/static/props/lamp-1_00.bgnome", "assets/texture/static/building/lamp_00.material", "" )
     ent = staticModel( scen, -5.106092929840088, 2.0583410263061523, -104.67601776123047, 0.0, 1.0, 0.0, 7.549790126404332e-08, 1.0, "assets/model/static/props/lamp-1_00.bgnome", "assets/texture/static/building/lamp_00.material", "" )
     ent = staticModel( scen, -0.5418338775634766, 2.0583410263061523, -104.67601776123047, 0.0, 1.0, 0.0, 7.549790126404332e-08, 1.0, "assets/model/static/props/lamp-1_00.bgnome", "assets/texture/static/building/lamp_00.material", "" )
-    ent = staticModel( scen, -110.0176010131836, -0.39760684967041016, -131.25242614746094, 0.0, 0.7071068286895752, 0.0, 0.7071068286895752, 1.0, "assets/model/static/building/apartment/s01-i/4-windows_00.bgnome", "assets/texture/static/building/window-cracked-128_00.material", "" )
     ent = staticModel( scen, 35.55451202392578, 40.23910903930664, -87.41168212890625, 0.0, 0.7071068286895752, 0.0, 0.7071068286895752, 1.0, "assets/model/static/building/apartment/s01-i/4-roof_00.bgnome", "assets/texture/static/building/roof-tiles-64_00.material", "" )
     ent = staticModel( scen, 35.55451202392578, 40.23910903930664, -87.41168212890625, 0.0, 0.7071068286895752, 0.0, 0.7071068286895752, 1.0, "assets/model/static/building/apartment/s01-i/4-main_00.bgnome", "assets/texture/static/building/brickwall-32_00.material", "" )
     ent = staticModel( scen, 35.55451202392578, 40.23910903930664, -87.41168212890625, 0.0, 0.7071068286895752, 0.0, 0.7071068286895752, 1.0, "assets/model/static/building/apartment/s01-i/4-frame_00.bgnome", "assets/texture/static/building/concrete-32_00.material", "" )

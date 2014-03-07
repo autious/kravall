@@ -68,7 +68,7 @@ function EndScreen:new(o)
 											matReleased="assets/texture/ui/menu-button-release.material",
 											matPressed="assets/texture/ui/menu-button-press.material",
 											matHover="assets/texture/ui/menu-button-hover.material",
-											onClick=o.onRemoveSelected
+											onClick=function() openscenario( "main_menu" ) end
 										} ) )	
 	
 	o.screenGUI:addComponent( o.inBoxGUI )

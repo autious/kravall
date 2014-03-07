@@ -31,7 +31,7 @@ return function( scen )
         policeTypes =
         {
             {
-                name = "Common Shield Squad",
+                name = "Shield Squad",
                 description = "Can beat the fuck out of you",
                 cost = standardPolice.cost,
                 setup = 
