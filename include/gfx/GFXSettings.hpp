@@ -11,8 +11,8 @@ namespace GFX
 	};
 		
 
-	const int GFX_SHADOWS_BASIC			= 0;
-	const int GFX_SHADOWS_VARIANCE		= 1;
+	const int GFX_SHADOWS_VARIANCE_2C	= 0;
+	const int GFX_SHADOWS_VARIANCE_4C	= 1;
 	const int GFX_SHADOWS_DISABLED		= 3;
 
 	const int GFX_AA_2X 				= 0;
