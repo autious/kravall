@@ -24,7 +24,7 @@ namespace GFX
 			//NO MIPMAP FOR UUU
 			//FOR NOW
 			LoadTexture(id, data, GL_TEXTURE_2D, GL_RGBA, GL_RGBA, GL_NEAREST, GL_NEAREST,
-				GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, width, height);
+				GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, width, height);
 		}
 		else
 		{
