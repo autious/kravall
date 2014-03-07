@@ -13,6 +13,9 @@
 #define IDLE_MINIMUM_TIME 0.25f
 #define MINIMUM_MOVEMENT_ANIMATION_TIME 0.35f
 
+#include <vector>
+std::vector<glm::vec3> derps;
+
 namespace Core
 {
     MovementAnimationSystem::MovementAnimationSystem() : BaseSystem(EntityHandler::GenerateAspect<
@@ -44,6 +47,50 @@ namespace Core
 				glm::distance( glm::vec3( wpc->position[0], wpc->position[1], wpc->position[2] ),
 				glm::vec3( mdc->prevPos[0], mdc->prevPos[1], mdc->prevPos[2] )) / mdc->prevDt;
 
+
+
+
+
+
+			glm::vec3 cur = glm::vec3( mdc->prevPos[0], mdc->prevPos[1], mdc->prevPos[2] );
+			glm::vec3 prev = glm::vec3( wpc->position[0], wpc->position[1], wpc->position[2] );
+			Core::NavigationMesh* instance = Core::GetNavigationMesh();
+			if( instance )
+			{
+				Core::FlowfieldComponent* ffc = WGETC<Core::FlowfieldComponent>(*it);
+				float* points = instance->nodes[ffc->node].points;
+				glm::vec3 temp = glm::vec3( 0.0f );
+				for( int g = 0; g < 4; g++ )
+					temp += glm::vec3( points[ g * 2 ], 0.0f, points[ g * 2 + 1] );
+				temp *= 0.25f;
+			
+				if( glm::distance( cur, prev ) > 10.0f )
+				{
+					derps.push_back( cur );
+					derps.push_back( prev );
+					derps.push_back( temp );
+				}
+
+				for( int i = 0; i < derps.size(); i += 3 )
+				{
+					GFX::Debug::DrawLine( derps[i], derps[i+1], GFXColor( 1, 1, 0, 1 ), false );
+					//GFX::Debug::DrawSphere( derps[i+2], 3.0f, GFXColor( 0, 1, 0, 1 ), false );
+				}
+			}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 			// update prevPos...
 			for( char i = 0; i < 3; i++ )
 				mdc->prevPos[i] = wpc->position[i];
@@ -52,6 +99,8 @@ namespace Core
 			float walkingSpeed = mvmc->desiredSpeed[ Core::MovementState::Movement_Walking ];
 			float joggingSpeed = mvmc->desiredSpeed[ Core::MovementState::Movement_Jogging ];
 			
+			
+
 			mdc->movedThisFrame = false;
 			if( frameSpeed > MOVEDTHISFRAME_THRESHOLD )
 				mdc->movedThisFrame = true;
