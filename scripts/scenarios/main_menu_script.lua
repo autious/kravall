@@ -113,14 +113,21 @@ return function( scen )
     end
 	local fists
 	
+	
+	
     local function init()
+		--print ("Hej")
+		
+		--core.contentmanager.load(core.loaders.MaterialLoader, "assets/texture/particle/smoke.material", 
+        --function(value)        
+        --    scen.smoke = core.system.particle.createParticleDefinition(200, value)
+        --end, false)		
+		
 		fists = core.weaponData.pushWeapon( 1.0, 0.75, 10, 0.05, 0.01, 3.2, 2.9, 0.05, 0.5, "punch" )
         scen.gamemode.camera:setView( scen.cameras.main.view ) 
         input.registerOnKey( onKey )
         menuState.goMain()
-		
-		scen.particleDefinitions = { smoke = PDC:createParticleDefinition(scen.asm, 5000, "assets/texture/particle/smoke.material")}
-		
+			
     end
 
     local function destroy()
@@ -154,8 +161,8 @@ return function( scen )
 	T.initHovercraft = function( entity )
 		hovercraftPos = entity:get(core.componentType.WorldPositionComponent).position
 		
-		
-		
+		--print ("bye")
+		--
 		--local particleEntity = core.entity.create(core.componentType.EmitterComponent
 		--							, core.componentType.WorldPositionComponent)
 		--							--, core.componentType.MovementComponent
@@ -165,7 +172,7 @@ return function( scen )
 		--							--, core.componentType.AttributeComponent
 		--							--, core.componentType.FlowfieldComponent
 		--							
-		--particleEntity:set(core.componentType.WorldPositionComponent, { position = { 0.0, 0.0, 0.0 } })
+		--particleEntity:set(core.componentType.WorldPositionComponent, { position = {0, 0, 0}})--hovercraftPos })
 		--particleEntity:set(core.componentType.EmitterComponent, {
 		--	rate = 100,
 		--	offset = {0, -2, 0},
@@ -180,7 +187,7 @@ return function( scen )
 		--	coneAngle = 60,
 		--	coneAngleVariance = 30,
 		--	type = core.system.particle.emitters.Cone,
-		--	handle = scen.particleDefinitions["smoke"]
+		--	handle = scen.smoke
 		--	}, true)
 	end
 	

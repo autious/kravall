@@ -952,6 +952,10 @@ local function UpdateMissiles(delta)
 			
 			--rotQuat = core.glm.quat.new( 0,0,0,1 )
 			
+			
+			local axis = { 0.0, 0.0, 0.0 }
+			
+			
 			--local missileRot = missiles[i].entity:get(core.componentType.RotationComponent)
 			local rotQuat = { math.sin(missiles[i].directionUp * 0.5) , 0, 0, math.cos(missiles[i].directionUp * 0.5 )}
 --local rotQuat = { 0, math.sin(missiles[i].direction * 0.5), 0, math.cos(missiles[i].direction * 0.5 )}
