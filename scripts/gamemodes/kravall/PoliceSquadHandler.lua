@@ -605,31 +605,42 @@ function PoliceSquadHandler:CycleSquad()
 
     if #(self.createdSquads) > 0 then
         if #(self.selectedSquads) > 0 then
-            if #(self.selectedSquads) == #(self.createdSquads) then
-                return core.system.groups.getGroupMedianPosition(self.createdSquads[self.cycleSquad].groupId)   
-            end
-            
-            while true do
+
+            for i=1, #(self.createdSquads) do
+                local found = false
+
                 for _,v in pairs(self.selectedSquads) do
-                    if v ~= self.createdSquads[self.cycleSquad].groupId then
-                        self:DeselectAllSquads()
-                        self:addSquadsToSelection({self.createdSquads[self.cycleSquad].groupId})
-                        return core.system.groups.getGroupMedianPosition(self.createdSquads[self.cycleSquad].groupId)
+                    if v == self.createdSquads[self.cycleSquad].groupId or #(self.createdSquads[self.cycleSquad].members) > 0 then
+                        found = true
                     end 
                 end       
 
-                self.cycleSquad = self.cycleSquad + 1
+                if found then
+                    self.cycleSquad = self.cycleSquad + 1
 
+                    if self.cycleSquad > #(self.createdSquads) then
+                        self.cycleSquad = 1
+                    end
+                else
+                    break
+                end
+            end
+        else
+            for i=1, #(self.createdSquads) do
+                if #(self.createdSquads[self.cycleSquad].members) > 0 then
+                    break
+                end                
+
+                self.cycleSquad = self.cycleSquad + 1
                 if self.cycleSquad > #(self.createdSquads) then
                     self.cycleSquad = 1
                 end
             end
-         else
-            self:DeselectAllSquads()
-            self:addSquadsToSelection({self.createdSquads[self.cycleSquad].groupId})
         end
     end
 
+    self:DeselectAllSquads()
+    self:addSquadsToSelection({self.createdSquads[self.cycleSquad].groupId})
     local x,y,z = core.system.groups.getGroupMedianPosition(self.createdSquads[self.cycleSquad].groupId)
     self.cycleSquad = self.cycleSquad + 1
     return x,y,z 
@@ -810,8 +821,7 @@ function PoliceSquadHandler:update( delta )
 		self:HighlightMood()
     end   
 
-    if keyboard.isKeyDownOnce(keyboard.key.Tab) and #(self.selectedSquads) > 0 then
-        
+    if keyboard.isKeyDownOnce(keyboard.key.Tab) and #(self.selectedSquads) > 0 then        
         local firstSquad = self.selectedSquads[1]
         table.remove(self.selectedSquads, 1)
         table.insert(self.selectedSquads, firstSquad)

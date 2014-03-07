@@ -284,8 +284,7 @@ namespace Core
 		*/
 		int nrNodes;
 
-		private : 
-
+		private: 
 			Flowfield** tempField;
 			bool** visited;
 			float** distances;
