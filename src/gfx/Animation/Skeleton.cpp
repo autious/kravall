@@ -13,21 +13,40 @@ Skeleton::~Skeleton()
 {
 }
 
-int Skeleton::AddAnimationInfo(const unsigned int& offset, const unsigned int& numFrames, const unsigned int& numBonesPerFrame)
+int Skeleton::UpdateInfo(const int& animationID, const unsigned int& offset, const unsigned int& numFrames, const unsigned int& numBonesPerFrame)
 {
+	if (animationID >= 0 && animationID < m_animationInfo.size())
+	{
 		AnimationInfo info;
 		info.offset = offset;
 		info.numFrames = numFrames;
 		m_numFrames += numFrames;
 		info.numBonesPerFrame = numBonesPerFrame;
-		m_animationInfo.push_back(info);
+		m_animationInfo[animationID] = info;
 
 		// Loop through all animations currently bound to this skeleton to find the frame offset
 		// m_animationInfo[i].numFrames * m_animationInfo[i].numBonesPerFrame + m_animationInfo[i].offset;
 
-		unsigned int ret = m_numAnimations;
-		m_numAnimations++;
-		return ret;
+		return GFX_SUCCESS;
+	}
+	return GFX_INVALID_ANIMATION;
+}
+
+int Skeleton::AddAnimationInfo(const unsigned int& offset, const unsigned int& numFrames, const unsigned int& numBonesPerFrame)
+{
+	AnimationInfo info;
+	info.offset = offset;
+	info.numFrames = numFrames;
+	m_numFrames += numFrames;
+	info.numBonesPerFrame = numBonesPerFrame;
+	m_animationInfo.push_back(info);
+
+	// Loop through all animations currently bound to this skeleton to find the frame offset
+	// m_animationInfo[i].numFrames * m_animationInfo[i].numBonesPerFrame + m_animationInfo[i].offset;
+
+	unsigned int ret = m_numAnimations;
+	m_numAnimations++;
+	return ret;
 }
 
 int Skeleton::GetInfo(const int& animationID, unsigned int& out_frameCount, unsigned int& out_bonesPerFrame, unsigned int& out_animationOffset)
@@ -43,7 +62,6 @@ int Skeleton::GetInfo(const int& animationID, unsigned int& out_frameCount, unsi
 	else
 		return GFX_INVALID_ANIMATION;
 }
-
 
 
 //
