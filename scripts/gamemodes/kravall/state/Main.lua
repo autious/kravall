@@ -61,8 +61,24 @@ function Main:new(o)
             else
                 o.overviewHandler:EnterOverview()
             end
-        end
+        end,
 
+        onCycleSquads = function()
+            local x,y,z = o.policeHandler:CycleSquad()
+            
+            local cameraPosition = {o.camera.position:get()}
+            local cameraBackward = core.glm.vec3.normalize(core.camera.gameCamera:getForward() * (-1))
+            local alpha = math.acos(core.glm.vec3.dot(cameraBackward, core.glm.vec3.new(0, 1, 0)))
+            local angle = (math.pi/2) - alpha
+            local distance = cameraPosition[2]
+           
+            if angle < math.pi/2 then
+                distance = distance / math.sin(angle)
+            end
+
+            local pos = core.glm.vec3.new(x, y, z) + (cameraBackward * distance)
+            o:AddCameraPoint(pos, o.camera.quatRotation) 
+        end
     })
 
     o.policeHandler = PoliceSquadHandler:new( 
@@ -121,11 +137,11 @@ function Main:new(o)
     {
         onEnterOverview = function()
             o:enterOverview()
-            --o.gui:setOverview(true)
+            o.gui:setOverview(true)
         end,
         onExitOverview = function(pos)
             o:exitOverview(pos)
-            --o.gui:setOverview(false)
+            o.gui:setOverview(false)
         end,       
     })
 	
@@ -157,13 +173,17 @@ end
 function Main:enterOverview()
     self.cameraPosition = self.camera.position
     local pos = {self.camera.position:get()}
-    self.camera:addInterpolationPoint(core.glm.vec3.new(pos[1], 250, pos[3]), core.glm.quat.new(math.sin(math.pi/4), 0, 0, math.cos(math.pi/4)))
+    self:AddCameraPoint(core.glm.vec3.new(pos[1], 250, pos[3]), core.glm.quat.new(math.sin(math.pi/4), 0, 0, math.cos(math.pi/4)))
 end
 
 function Main:exitOverview(target)
     local pos = {target:get()}
     local camPos = {self.cameraPosition:get()}
-    self.camera:addInterpolationPoint(core.glm.vec3.new(pos[1], camPos[2], pos[3]), core.glm.quat.new(math.sin(math.pi/4), 0, 0, math.cos(math.pi/4)))
+    self:AddCameraPoint(core.glm.vec3.new(pos[1], camPos[2], pos[3]), core.glm.quat.new(math.sin(math.pi/4), 0, 0, math.cos(math.pi/4)))
+end
+
+function Main:AddCameraPoint(position, rotation)
+    self.camera:addInterpolationPoint(position, rotation)
 end
 
 function Main:destroy()
