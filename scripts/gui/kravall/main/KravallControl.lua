@@ -1,16 +1,16 @@
 local GUI = require "gui/GUI"
 local Button = require "gui/component/Button"
-local Slider = require "gui/component/Slider"
-local Checkbox = require "gui/component/Checkbox"
-local TextSelectList = require "gui/component/TextSelectList"
-local TextLabel = require "gui/component/TextLabel"
-local TextBox = require "gui/component/TextBox"
+--local Slider = require "gui/component/Slider"
+--local Checkbox = require "gui/component/Checkbox"
+--local TextSelectList = require "gui/component/TextSelectList"
+--local TextLabel = require "gui/component/TextLabel"
+--local TextBox = require "gui/component/TextBox"
 local Image = require "gui/component/Image"
 
 local AnchorPlacer = require "gui/placement/AnchorPlacer"
-local EastPlacer = require "gui/placement/EastPlacer"
-local NorthPlacer = require "gui/placement/NorthPlacer"
-local WestPlacer = require "gui/placement/WestPlacer"
+--local EastPlacer = require "gui/placement/EastPlacer"
+--local NorthPlacer = require "gui/placement/NorthPlacer"
+--local WestPlacer = require "gui/placement/WestPlacer"
 local CenterPlacer = require "gui/placement/CenterPlacer"
 local SimplePlacer = require "gui/placement/SimplePlacer"
 
@@ -18,6 +18,9 @@ local EventListerGUI = require "gui/kravall/main/subgui/EventListerGUI"
 local OverviewGUI = require "gui/kravall/main/subgui/OverviewGUI"
 local UnitStatGUI = require "gui/kravall/main/subgui/UnitStatGUI"
 local SquadMenuGUI = require "gui/kravall/main/subgui/SquadMenuGUI"
+
+local toolTipHandler = require "gui/tooltip/ToolTipHandler"
+local createTT = require "gui/tooltip/ToolTip"
 
 local KravallControl = 
 { 
@@ -61,17 +64,30 @@ function KravallControl:new(o)
 						{
 							width=globalWidth, height=leftCornerHeight
 						} )
-	o.globalGUI:addComponent( Image:new( { mat="assets/texture/ui/non-contextual-abilities_00.material" } ) )
 	
 	o.globalGUI:addComponent( Button:new (
 										{ 
-											--xoffset=-5,
-											--yoffset=-10,
-											matReleased="assets/texture/ui/remove-button-release.material",
-											matPressed="assets/texture/ui/remove-button-press.material",
-											matHover="assets/texture/ui/remove-button-hover.material",
+											xoffset=9,
+											yoffset=19,
+											matReleased="assets/texture/ui/overveiw-unselected_00.material",
+											matPressed="assets/texture/ui/overveiw-selected_00.material",
+											matHover="assets/texture/ui/overveiw-hover_00.material",
 											onClick=o.onRemoveSelected,
+											toolTip=createTT:new( { handler=toolTipHandler, text="Go to overview mode - G" } )
 										} ) )
+										
+	o.globalGUI:addComponent( Button:new (
+										{ 
+											xoffset=9,
+											yoffset=66,
+											matReleased="assets/texture/ui/circle-squads-unselected_00.material",
+											matPressed="assets/texture/ui/circle-squads-selected_00.material",
+											matHover="assets/texture/ui/circle-squads-hover_00.material",
+											onClick=o.onRemoveSelected,
+											toolTip=createTT:new( { handler=toolTipHandler, text="Cycle through the police squads" } )
+										} ) )									
+	
+	o.globalGUI:addComponent( Image:new( { mat="assets/texture/ui/non-contextual-abilities_00.material" } ) )
 	
 	o.globalGUI:addPlacementHandler( SimplePlacer )
 	o.leftCornerGUI:addComponent( o.globalGUI )

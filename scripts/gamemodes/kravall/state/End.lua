@@ -32,11 +32,8 @@ function End:new(o)
 	o.objectives = {}
 	
 	for i,v in pairs( o.objectiveList ) do
-		print( i.title )
 		table.insert(o.objectives, Objective:new( { title=i.title, active=i.active, state=i.state, show=true } ) )
     end
-	
-	print( "Objectives length: " .. #o.objectives )
 	
     o.gui = EndScreen:new( { won=o.won, objectives=o.objectives } )
 	
