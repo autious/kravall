@@ -23,6 +23,12 @@ function PauseMenuGUI:new(o)
         matHover = "assets/texture/ui/exit-pause-button-hover.material",
       
     })
+    o:addComponent( Button:new{
+        onClick = core.flagExit,
+        matReleased = "assets/texture/ui/exit-pause-button-release.material",
+        matPressed = "assets/texture/ui/exit-pause-button-press.material",
+        matHover = "assets/texture/ui/exit-pause-button-hover.material",
+    })
     return o
 end
 
