@@ -11,9 +11,7 @@ local offsetX = 15
 local indentX = 30
 local newSectionY = 50
 local newLineY = 20
-local objIndent=100
-
-Statistics.__index = Statistics
+local objIndent = 100
 
 --function Statistics:new( o )
 --    o = o or {}
@@ -30,24 +28,26 @@ Statistics.__index = Statistics
 --	return o
 --end
 
-function Statistics:addObjectives( rows )
-	self.categories[ "objectives" ] = rows
+function Statistics.addObjectives( rows )
+	Statistics.categories[ "objectives" ] = rows
 	print( "Adding objectives..." )
-	for i,v in pairs( self.categories[ "objectives" ] ) do
+	for i,v in pairs( Statistics.categories[ "objectives" ] ) do
 		print ( i .. ": " .. v.title )
 	end
 end
 
-function Statistics:addCategory( name, rows )
-	self.categories[ name ] = rows
+function Statistics.addCategory( name, rows )
+	Statistics.categories[ name ] = rows
 end
 
-function Statistics:clear()
-	self.categories = {}
+function Statistics.clear()
+	Statistics.categories = {}
+	
+	Statistics.text:destroy()
 end
 
-function Statistics:getCategoryAsSubGUI( name )
-	if self.categories[ name ] then
+function Statistics.getCategoryAsSubGUI( name )
+	if Statistics.categories[ name ] then
 		local subGUI = GUI:new( {
 									--width=
 								} )
@@ -57,7 +57,7 @@ function Statistics:getCategoryAsSubGUI( name )
 	end
 end
 
-function Statistics:getObjectivesAsSubGUI()
+function Statistics.getObjectivesAsSubGUI()
 	objectivesGUI = GUI:new ( {
 							} )
 							
@@ -94,10 +94,6 @@ function Statistics:getObjectivesAsSubGUI()
 	end
 	
 	return objectivesGUI
-end
-
-function Statistics:destroy()
-    self.text:destroy()
 end
 
 return Statistics
