@@ -140,8 +140,8 @@ return function( scen )
 	T.initPolice = function( entity )
 		print( "SNUTEN KOMMER!!!!!" )
 
-		--entity:addComponent( core.componentType.AnimationComponent)
-		--core.animations.loop(entity, "idle")
+		entity:addComponent( core.componentType.AnimationComponent)
+		core.animations.loop(entity, "idle")
 		
 	end
 	

@@ -74,10 +74,6 @@ namespace GFX
 {
 	class RenderCore
 	{
-	private:
-		/* Holds settings data for the graphics system */
-		unsigned int m_settings[GFX_SETTINGS_COUNT];
-
 	public:
 		/*!
 		Friend function to get singleton
