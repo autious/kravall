@@ -5,6 +5,7 @@ local ScenarioMenu = require "gui/ScenarioMenu"
 local SettingsMenu = require "gui/SettingsMenu"
 local CreditsMenu = require "gui/CreditsMenu"
 local TutorialMenu = require "gui/TutorialMenu"
+local PDC = require "particle_definition"
 
 local entity = require "entities"
 local group = entity.get "group"
@@ -117,6 +118,9 @@ return function( scen )
         scen.gamemode.camera:setView( scen.cameras.main.view ) 
         input.registerOnKey( onKey )
         menuState.goMain()
+		
+		scen.particleDefinitions = { smoke = PDC:createParticleDefinition(scen.asm, 5000, "assets/texture/particle/smoke.material")}
+		
     end
 
     local function destroy()
@@ -138,23 +142,46 @@ return function( scen )
     local T = {}
 	
 	T.initPolice = function( entity )
-		--print( "SNUTEN KOMMER!!!!!" )
-
 		entity:addComponent( core.componentType.AnimationComponent)
 		core.animations.loop(entity, "idle")
-		--local theTime = math.random() * 10.0
 		core.animations.setTime(entity, math.random(1, 200) / 200)
-		
 	end
 	
 	
 	local hovercraftPos
-	local hovercraftPosY
-	--local hovercraftRot
+
 	
 	T.initHovercraft = function( entity )
-		hovercraftPosY = hovercraftPosY or 0.0
 		hovercraftPos = entity:get(core.componentType.WorldPositionComponent).position
+		
+		
+		
+		--local particleEntity = core.entity.create(core.componentType.EmitterComponent
+		--							, core.componentType.WorldPositionComponent)
+		--							--, core.componentType.MovementComponent
+		--							--, core.componentType.MovementDataComponent
+		--							--, core.componentType.RotationComponent
+		--							--, core.componentType.UnitTypeComponent
+		--							--, core.componentType.AttributeComponent
+		--							--, core.componentType.FlowfieldComponent
+		--							
+		--particleEntity:set(core.componentType.WorldPositionComponent, { position = { 0.0, 0.0, 0.0 } })
+		--particleEntity:set(core.componentType.EmitterComponent, {
+		--	rate = 100,
+		--	offset = {0, -2, 0},
+		--	life = 3,
+		--	lifeVariance = 0.5,
+		--	lifeReduction = 1.5,
+		--	lifeReductionVariance = 0,
+		--	velocity = {0, 0, 3},
+		--	velocityVariance = {0, 0, 4},
+		--	acceleration = {0, 2, 0},
+		--	coneDirection = {0, 1, 0},
+		--	coneAngle = 60,
+		--	coneAngleVariance = 30,
+		--	type = core.system.particle.emitters.Cone,
+		--	handle = scen.particleDefinitions["smoke"]
+		--	}, true)
 	end
 	
 	local HCtval = 0.0
@@ -172,7 +199,7 @@ return function( scen )
 		local rot = { axis[1]*math.sin(angle/2), axis[2]*math.sin(angle/2), axis[3]*math.sin(angle/2), math.cos(angle/2)}
 
 		entity:set( core.componentType.WorldPositionComponent, {position=pos} )
-		entity:set(core.componentType.RotationComponent, {rotation=rot})
+		entity:set( core.componentType.RotationComponent, {rotation=rot} )
 		
 	end
 	

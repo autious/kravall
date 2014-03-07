@@ -800,12 +800,10 @@ local function MissileHit(missileID)
 				
 				score = score + 10
 				
-				enemyTanks[i].entity:destroy()
-				enemyTanks[i] = nil
+				scen.asm:destroyEntity(enemyTanks[i].entity)
 				table.remove(enemyTanks, i)
 				
-				enemyTankTurrets[i].entity:destroy()
-				enemyTankTurrets[i] = nil
+				scen.asm:destroyEntity(enemyTankTurrets[i].entity)
 				table.remove(enemyTankTurrets, i)
 				
 				
