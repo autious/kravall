@@ -23,6 +23,8 @@ public:
 	Skeleton();
 	~Skeleton();
 
+	int UpdateInfo(const int& animationID, const unsigned int& offset, const unsigned int& numFrames, const unsigned int& numBonesPerFrame);
+	
 	/*!
 	Adds info about an animation to a skeleton.
 	\param offset Offset describing where the animation is stored

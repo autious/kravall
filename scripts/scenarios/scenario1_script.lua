@@ -202,8 +202,6 @@ return function( scen )
     local function getCurrentWaypoint()
         return waypoints["waypoint"..currentWaypoint]
     end
-
-	--local stats = Statistics:new()
 	
     -- Setup callbacks for gamemode
     scen:registerInitCallback( function() 
@@ -213,11 +211,11 @@ return function( scen )
 
         --scen.gamemode.camera:lookAt( core.glm.vec3.new( 50, 100, 10), core.glm.vec3.new( -60, 0, -50 ) )
         scen.gamemode.camera:addInterpolationPoint(scen.cameras.startcam.translation, scen.cameras.startcam.quaternion)
-        scen.gamemode.camera:addInterpolationPoint(scen.cameras.devcam.translation, scen.cameras.devcam.quaternion)
+        --scen.gamemode.camera:addInterpolationPoint(scen.cameras.devcam.translation, scen.cameras.devcam.quaternion)
         obj1 = scen.gamemode:createObjective()
         obj1.title = "At least one deserter must survive and reach the goal."
 		
-		Statistics:addObjectives( { obj1 } )
+		Statistics.addObjectives( { obj1 } )
 		
         -- range, graceDistance, damageToHealth, damageToMorale, damageToMoraleOnMiss, enemyRageIncrease, enemyPressureIncrease, staminaCost, timeWhenAnimationDealsDamage, animationName
 		--fists = core.weaponData.pushWeapon( 1.0, 0.75, 20, 0.2, 0.05, 3.2, 2.9, 0.05, 0.5, "punch" )
@@ -279,7 +277,7 @@ return function( scen )
     end
 
     function T.winOnRioterInside( ent )
-        if core.system.area.getAreaRioterCount(ent,deserterGroup) > 5 then
+        if core.system.area.getAreaRioterCount(ent,deserterGroup) > 0 then
             obj1.state = "success"
         end
     end
