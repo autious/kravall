@@ -59,7 +59,7 @@ function EndScreen:new(o)
 											matReleased="assets/texture/ui/replay-button-release.material",
 											matPressed="assets/texture/ui/replay-button-press.material",
 											matHover="assets/texture/ui/replay-button-hover.material",
-											onClick=o.onRemoveSelected
+											onClick=reopenScenario
 										} ) )	
 	o.screenGUI:addComponent( Button:new (
 										{ 
