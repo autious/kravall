@@ -135,7 +135,7 @@ function T:togglePause()
         self.pauseGUI:destroy()
         self.pauseGUI = nil
     else
-        self.pauseGUI = PauseMenuGUI:new()
+        self.pauseGUI = PauseMenuGUI:new( { onClickReturn = function() self:togglePause() end } )
     end  
 end
 

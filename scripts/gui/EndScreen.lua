@@ -62,16 +62,16 @@ function EndScreen:new(o)
 	
 	o.screenGUI:addComponent( Button:new (
 										{ 
-											xoffset=23,
+											xoffset=20,
 											yoffset=429,
-											matReleased="assets/texture/ui/replay-button-release.material",
-											matPressed="assets/texture/ui/replay-button-press.material",
-											matHover="assets/texture/ui/replay-button-hover.material",
+											matReleased="assets/texture/ui/restart-button-release.material",
+											matPressed="assets/texture/ui/restart-button-press.material",
+											matHover="assets/texture/ui/restart-button-hover.material",
 											onClick=reopenScenario
 										} ) )	
 	o.screenGUI:addComponent( Button:new (
 										{ 
-											xoffset=358,
+											xoffset=260,
 											yoffset=429,
 											matReleased="assets/texture/ui/menu-button-release.material",
 											matPressed="assets/texture/ui/menu-button-press.material",
