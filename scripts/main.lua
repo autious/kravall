@@ -21,6 +21,10 @@ input.registerOnKey( function( key, scancode, action )
     end
 end)
 
+function reopenScenario()
+    openscenario( current_scenario_name )
+end
+
 --For initial camera placment.
 camera = Camera.new()
 
