@@ -40,17 +40,25 @@ function EndScreen:new(o)
 	o.gui = GUI:new( { } )
 	
 	o.screenGUI = GUI:new( { width=488, height=488, anchor="Center" } )
-	
 	o.inBoxGUI = GUI:new( { width=488-(32*2), height=488-(57+67), xoffset=32, yoffset=57, anchor="North" } )
-	--aa-temp_prep_endgame_Panel
+	
+	o.inBoxGUI:addComponent( TextLabel:new( { label="Rank: " .. Statistics.rank, xoffset=offsetX, yoffset=0 } ) )
+	offsetY = offsetY + newLineY
 	
 	if o.won then
-		o.inBoxGUI:addComponent( TextLabel:new( { label="Game is over, you won! :D", xoffset=offsetX, yoffset=0 } ) )
+		o.inBoxGUI:addComponent( TextLabel:new( { label="Game is over, you won! :D", xoffset=offsetX, yoffset=offsetY } ) )
 	else
-		o.inBoxGUI:addComponent( TextLabel:new( { label="Game is over, you lost. Awwww :(", xoffset=offsetX, yoffset=0 } ) )
+		o.inBoxGUI:addComponent( TextLabel:new( { label="Game is over, you lost. Awwww :(", xoffset=offsetX, yoffset=offsetY } ) )
 	end
+	offsetY = offsetY + newLineY
 	
+	offsetY = offsetY + newLineY
 	o.inBoxGUI:addPlacementHandler( SimplePlacer )
+	
+	local label = TextLabel:new( { label="GAME SUMMARY", yoffset=18 } )
+	local dimX, dimY = label.text:getDim()
+	label.xoffset = ( o.screenGUI.width - dimX ) * 0.5
+	o.screenGUI:addComponent( label )
 	
 	o.screenGUI:addComponent( Button:new (
 										{ 
@@ -77,6 +85,9 @@ function EndScreen:new(o)
 	o.screenGUI:addPlacementHandler( SimplePlacer )
 	o.gui:addComponent( o.screenGUI )
 	o.gui:addPlacementHandler( AnchorPlacer )
+	
+	Statistics.guiWidth = o.inBoxGUI.width - offsetX
+	o.inBoxGUI:addComponent( Statistics.getObjectivesAsSubGUI(offsetX, offsetY) )
 	-----
     --o.gui = GUI:new( { width=guiWidth, height=600, anchor="Center" } )
 	--
