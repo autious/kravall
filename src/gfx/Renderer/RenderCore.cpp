@@ -134,7 +134,7 @@ namespace GFX
 		totalRenderInfo = { 0, 0 };
 		
 		// Set default settings
-		RenderSettings::settings[GFX_SHADOW_QUALITY] = GFX_SHADOWS_VARIANCE_2C; // TODO: Implement basic shadow mapping as low res option
+		RenderSettings::settings[GFX_SHADOW_QUALITY] = GFX_SHADOWS_VARIANCE_4C; // TODO: Implement basic shadow mapping as low res option
 		RenderSettings::settings[GFX_SHADOW_RESOLUTION] = 512;
 
 		m_normalDepth = new FBOTexture();

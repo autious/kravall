@@ -272,7 +272,8 @@ namespace GFX
 				bc.viewMatrix = glm::lookAt<float>(-glm::normalize(lightData.orientation) * 50.0f, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 				//bc.projMatrix = projMatrix;
 
-
+				float fovY = glm::degrees(2.0f * atan(1.0f / (projMatrix[1][1])));
+				float aspect = projMatrix[1][1] / projMatrix[0][0];
 				
 				float nz = nearFar.x;
 				float fz = nearFar.y;
@@ -280,8 +281,8 @@ namespace GFX
 				if (shadowQuality == GFX_SHADOWS_VARIANCE_2C)
 				{
 					limits = glm::vec4(5.0f, fz / 2.0f, 1000*fz, 1000*fz);
-					matrices[0] = glm::perspective<float>(45.0f, 1280.0f / 720.0f, 5.0f, fz / 2.0f);
-					matrices[1] = glm::perspective<float>(45.0f, 1280.0f / 720.0f, fz / 2.0f, fz);
+					matrices[0] = glm::perspective<float>(fovY, aspect, 5.0f, fz / 2.0f);
+					matrices[1] = glm::perspective<float>(fovY, aspect, fz / 2.0f, fz);
 
 					matrices[4] = FitFrustum(matrices[0] * viewMatrix, bc.viewMatrix, shadowmapRes);
 					matrices[5] = FitFrustum(matrices[1] * viewMatrix, bc.viewMatrix, shadowmapRes);
@@ -289,10 +290,10 @@ namespace GFX
 				else if (shadowQuality == GFX_SHADOWS_VARIANCE_4C)
 				{
 					limits = glm::vec4(5.0f, fz / 10.0f, fz / 5.0f, fz / 2.0f);
-					matrices[0] = glm::perspective<float>(45.0f, 1280.0f / 720.0f, 5.0f, fz / 10.0f);
-					matrices[1] = glm::perspective<float>(45.0f, 1280.0f / 720.0f, fz / 10.0f, fz / 5.0f);
-					matrices[2] = glm::perspective<float>(45.0f, 1280.0f / 720.0f, fz / 5.0f, fz / 2.0f);
-					matrices[3] = glm::perspective<float>(45.0f, 1280.0f / 720.0f, fz / 2.0f, fz);
+					matrices[0] = glm::perspective<float>(fovY, aspect, 5.0f, fz / 10.0f);
+					matrices[1] = glm::perspective<float>(fovY, aspect, fz / 10.0f, fz / 5.0f);
+					matrices[2] = glm::perspective<float>(fovY, aspect, fz / 5.0f, fz / 2.0f);
+					matrices[3] = glm::perspective<float>(fovY, aspect, fz / 2.0f, fz);
 
 					matrices[4] = FitFrustum(matrices[0] * viewMatrix, bc.viewMatrix, shadowmapRes);
 					matrices[5] = FitFrustum(matrices[1] * viewMatrix, bc.viewMatrix, shadowmapRes);
@@ -372,7 +373,7 @@ namespace GFX
 
 			// Loop through all the geometry
 			unsigned int instanceOffset = 0;
-			for (unsigned int i = endIndex; i < endIndex;)
+			for (unsigned int i = startIndex; i < endIndex;)
 			{
 				GFXBitmask geometryBitmask = renderJobs[i].bitmask;
 				objType = GetBitmaskValue(geometryBitmask, BITMASK::TYPE);
