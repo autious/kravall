@@ -10,7 +10,7 @@ local key = keyboard.key
 
 
 local camera = require "rts_camera".new()
-camera:lookAt( core.glm.vec3.new( 0, 10, 0 ), core.glm.vec3.new( 0, 0, 0 ) )
+--camera:lookAt( core.glm.vec3.new( 0, 0, 0 ), core.glm.vec3.new( 0, 0, 0 ) )
 
 local function Init()
 	core.camera.gameCamera:setView( camera:getView( ) )
@@ -753,12 +753,10 @@ local function BulletHit(bulletID)
 			
 			score = score + 10
 			
-			enemyTanks[i].entity:destroy()
-			enemyTanks[i] = nil
+			scen.asm:destroyEntity(enemyTanks[i].entity)
 			table.remove(enemyTanks, i)
 			
-			enemyTankTurrets[i].entity:destroy()
-			enemyTankTurrets[i] = nil
+			scen.asm:destroyEntity(enemyTankTurrets[i].entity)
 			table.remove(enemyTankTurrets, i)
 			
 			
@@ -802,12 +800,10 @@ local function MissileHit(missileID)
 				
 				score = score + 10
 				
-				enemyTanks[i].entity:destroy()
-				enemyTanks[i] = nil
+				scen.asm:destroyEntity(enemyTanks[i].entity)
 				table.remove(enemyTanks, i)
 				
-				enemyTankTurrets[i].entity:destroy()
-				enemyTankTurrets[i] = nil
+				scen.asm:destroyEntity(enemyTankTurrets[i].entity)
 				table.remove(enemyTankTurrets, i)
 				
 				
@@ -955,6 +951,10 @@ local function UpdateMissiles(delta)
 			
 			
 			--rotQuat = core.glm.quat.new( 0,0,0,1 )
+			
+			
+			local axis = { 0.0, 0.0, 0.0 }
+			
 			
 			--local missileRot = missiles[i].entity:get(core.componentType.RotationComponent)
 			local rotQuat = { math.sin(missiles[i].directionUp * 0.5) , 0, 0, math.cos(missiles[i].directionUp * 0.5 )}
@@ -1400,7 +1400,7 @@ end
 
 local function UpdateCamera()
 	local tankPos = playerTank:get(core.componentType.WorldPositionComponent)
-	camera:lookAt( core.glm.vec3.new( tankPos.position[1], 50, tankPos.position[3] ), core.glm.vec3.new( tankPos.position[1], 0, tankPos.position[3] ))
+	camera:lookAt( core.glm.vec3.new( tankPos.position[1], -50, tankPos.position[3] ), core.glm.vec3.new( tankPos.position[1], 0, tankPos.position[3] ))
 	core.camera.gameCamera:setView( camera:getView( ) )
 end
 
@@ -1456,7 +1456,7 @@ function Update(delta)
 	if alive then
 		UpdatePlayerTank(delta)
 		UpdateEnemyTanks(delta)
-		UpdateCamera()
+		--UpdateCamera()
 	end
 	
 	UpdateBullets(delta)
@@ -1528,7 +1528,7 @@ function Update(delta)
 	--	mythingPos.position[3] =  mythingPos.position[3] + 100  * dt
 	--end
 
-	--camera:update(delta)
+	camera:update(delta)
 end
 
 scen:registerUpdateCallback( Update )
