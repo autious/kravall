@@ -44,9 +44,9 @@ function core.input.keyboard.onChar( codepoint, text )
     end 
 end
 
-function core.input.keyboard.onKey( key, scancode, action )
+function core.input.keyboard.onKey( key, scancode, action, mods )
     for k,v in pairs( onkey ) do
-       k( key, scancode, action )
+       k( key, scancode, action, mods )
     end 
 end
 

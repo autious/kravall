@@ -52,44 +52,46 @@ namespace GFX
 
 		m_dummyVAO = dummyVAO;
 		m_blurPainter = blurPainter;
+		if (RenderSettings::settings[GFX_SHADOW_QUALITY] != GFX_SHADOWS_DISABLED)
+		{
+			// Init the fbo
+			m_RBO = new GLuint[4];
+			glGenFramebuffers(1, &m_FBO);
+			glGenRenderbuffers(4, m_RBO);
+			glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 
-		// Init the fbo
-		m_RBO = new GLuint[4];
-		glGenFramebuffers(1, &m_FBO);
-		glGenRenderbuffers(4, m_RBO);
-		glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
+			Resize(shadowmapResolution);
 
-		Resize(shadowmapResolution);
-
-		// Normal map shaders
-		m_shaderManager->CreateProgram("SMSV"); // Shadowmap Static Variance
-		m_shaderManager->LoadShader("shaders/shadow/StaticVS.glsl", "SMSV_VS", GL_VERTEX_SHADER);
-		m_shaderManager->LoadShader("shaders/shadow/VarianceFS.glsl", "SMSV_FS", GL_FRAGMENT_SHADER);
-		m_shaderManager->AttachShader("SMSV_VS", "SMSV");
-		m_shaderManager->AttachShader("SMSV_FS", "SMSV");
-		m_shaderManager->LinkProgram("SMSV");
+			// Normal map shaders
+			m_shaderManager->CreateProgram("SMSV"); // Shadowmap Static Variance
+			m_shaderManager->LoadShader("shaders/shadow/StaticVS.glsl", "SMSV_VS", GL_VERTEX_SHADER);
+			m_shaderManager->LoadShader("shaders/shadow/VarianceFS.glsl", "SMSV_FS", GL_FRAGMENT_SHADER);
+			m_shaderManager->AttachShader("SMSV_VS", "SMSV");
+			m_shaderManager->AttachShader("SMSV_FS", "SMSV");
+			m_shaderManager->LinkProgram("SMSV");
 		
-		m_shaderManager->CreateProgram("SMAV"); // Shadowmap Animated Variance
-		m_shaderManager->LoadShader("shaders/shadow/AnimatedVS.glsl", "SMAV_VS", GL_VERTEX_SHADER);
-		m_shaderManager->LoadShader("shaders/shadow/VarianceFS.glsl",   "SMAV_FS", GL_FRAGMENT_SHADER);
-		m_shaderManager->AttachShader("SMAV_VS", "SMAV");
-		m_shaderManager->AttachShader("SMAV_FS", "SMAV");
-		m_shaderManager->LinkProgram("SMAV");
+			m_shaderManager->CreateProgram("SMAV"); // Shadowmap Animated Variance
+			m_shaderManager->LoadShader("shaders/shadow/AnimatedVS.glsl", "SMAV_VS", GL_VERTEX_SHADER);
+			m_shaderManager->LoadShader("shaders/shadow/VarianceFS.glsl",   "SMAV_FS", GL_FRAGMENT_SHADER);
+			m_shaderManager->AttachShader("SMAV_VS", "SMAV");
+			m_shaderManager->AttachShader("SMAV_FS", "SMAV");
+			m_shaderManager->LinkProgram("SMAV");
 
-        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("SMSV"), "instanceBufferOffset", UniformBufferManager::INSTANCE_ID_OFFSET_INDEX);
-        m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("SMAV"), "instanceBufferOffset", UniformBufferManager::INSTANCE_ID_OFFSET_INDEX);
+			m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("SMSV"), "instanceBufferOffset", UniformBufferManager::INSTANCE_ID_OFFSET_INDEX);
+			m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("SMAV"), "instanceBufferOffset", UniformBufferManager::INSTANCE_ID_OFFSET_INDEX);
 
-		m_staticInstances = new InstanceData[MAX_INSTANCES];
+			m_staticInstances = new InstanceData[MAX_INSTANCES];
 
-		glGenBuffers(1, &m_instanceBuffer);
-		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_instanceBuffer);
-		glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_INSTANCES * sizeof(InstanceData), NULL, GL_STREAM_COPY);
-		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_instanceBuffer);
-		
-		glGenBuffers(1, &m_instanceOffsetBuffer);
-		glBindBuffer(GL_UNIFORM_BUFFER, m_instanceOffsetBuffer);
-		glBufferData(GL_UNIFORM_BUFFER, 4*sizeof(unsigned int), NULL, GL_DYNAMIC_DRAW);
-		glBindBufferBase(GL_UNIFORM_BUFFER, UniformBufferManager::INSTANCE_ID_OFFSET_INDEX, 0);
+			glGenBuffers(1, &m_instanceBuffer);
+			glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_instanceBuffer);
+			glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_INSTANCES * sizeof(InstanceData), NULL, GL_STREAM_COPY);
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_instanceBuffer);
+
+			glGenBuffers(1, &m_instanceOffsetBuffer);
+			glBindBuffer(GL_UNIFORM_BUFFER, m_instanceOffsetBuffer);
+			glBufferData(GL_UNIFORM_BUFFER, 4 * sizeof(unsigned int), NULL, GL_DYNAMIC_DRAW);
+			glBindBufferBase(GL_UNIFORM_BUFFER, UniformBufferManager::INSTANCE_ID_OFFSET_INDEX, 0);
+		}
 
 
 	}
@@ -173,70 +175,73 @@ namespace GFX
 		unsigned int startIndex = geometryStartIndex;
 		unsigned int endIndex = geometryEndIndex;
 		//GLenum error;
-
-		glEnable(GL_DEPTH_TEST);
-		glDisable(GL_BLEND);
-
+		
 		int shadowmapRes = shadowMaps[0]->GetWidth();
-		glViewport(0, 0, shadowmapRes, shadowmapRes);
 
-		// Set framebuffers for shadowmapping
-
-		glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
-
-		//glActiveTexture(GL_TEXTURE0);
-		//glBindTexture(GL_TEXTURE_2D, shadowMaps[0]->GetTextureHandle());
-		//glActiveTexture(GL_TEXTURE1);
-		//glBindTexture(GL_TEXTURE_2D, shadowMaps[1]->GetTextureHandle());
-		//glActiveTexture(GL_TEXTURE2);
-		//glBindTexture(GL_TEXTURE_2D, shadowMaps[2]->GetTextureHandle());
-		//glActiveTexture(GL_TEXTURE3);
-		//glBindTexture(GL_TEXTURE_2D, shadowMaps[3]->GetTextureHandle());
-		
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, shadowMaps[0]->GetTextureHandle(), 0);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, shadowMaps[1]->GetTextureHandle(), 0);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, shadowMaps[2]->GetTextureHandle(), 0);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, shadowMaps[3]->GetTextureHandle(), 0);
-		
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_RBO[0]);
-		glClear(GL_DEPTH_BUFFER_BIT);
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_RBO[1]);
-		glClear(GL_DEPTH_BUFFER_BIT);
-		
-		if (shadowQuality == GFX_SHADOWS_VARIANCE_4C)
+		if (shadowQuality != GFX_SHADOWS_DISABLED)
 		{
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_RBO[2]);
+			glEnable(GL_DEPTH_TEST);
+			glDisable(GL_BLEND);
+
+			glViewport(0, 0, shadowmapRes, shadowmapRes);
+
+			// Set framebuffers for shadowmapping
+
+			glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
+
+			//glActiveTexture(GL_TEXTURE0);
+			//glBindTexture(GL_TEXTURE_2D, shadowMaps[0]->GetTextureHandle());
+			//glActiveTexture(GL_TEXTURE1);
+			//glBindTexture(GL_TEXTURE_2D, shadowMaps[1]->GetTextureHandle());
+			//glActiveTexture(GL_TEXTURE2);
+			//glBindTexture(GL_TEXTURE_2D, shadowMaps[2]->GetTextureHandle());
+			//glActiveTexture(GL_TEXTURE3);
+			//glBindTexture(GL_TEXTURE_2D, shadowMaps[3]->GetTextureHandle());
+		
+		
+		
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, shadowMaps[0]->GetTextureHandle(), 0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, shadowMaps[1]->GetTextureHandle(), 0);
+
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_RBO[0]);
 			glClear(GL_DEPTH_BUFFER_BIT);
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_RBO[3]);
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_RBO[1]);
 			glClear(GL_DEPTH_BUFFER_BIT);
+
+			glDrawBuffer(GL_COLOR_ATTACHMENT0);
+			glClearBufferfv(GL_COLOR, 0, &glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)[0]);
+			glDrawBuffer(GL_COLOR_ATTACHMENT1);
+			glClearBufferfv(GL_COLOR, 0, &glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)[0]);
+
+			if (shadowQuality == GFX_SHADOWS_VARIANCE_4C)
+			{
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, shadowMaps[2]->GetTextureHandle(), 0);
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, shadowMaps[3]->GetTextureHandle(), 0);
+
+				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_RBO[2]);
+				glClear(GL_DEPTH_BUFFER_BIT);
+				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_RBO[3]);
+				glClear(GL_DEPTH_BUFFER_BIT);
+
+				glDrawBuffer(GL_COLOR_ATTACHMENT2);
+				glClearBufferfv(GL_COLOR, 0, &glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)[0]);
+				glDrawBuffer(GL_COLOR_ATTACHMENT3);
+				glClearBufferfv(GL_COLOR, 0, &glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)[0]);
+			}
 		}
-		
-		glDrawBuffer(GL_COLOR_ATTACHMENT0);
-		glClearBufferfv(GL_COLOR, 0, &glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)[0]);
-		glDrawBuffer(GL_COLOR_ATTACHMENT1);
-		glClearBufferfv(GL_COLOR, 0, &glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)[0]);
-		glDrawBuffer(GL_COLOR_ATTACHMENT2);
-		glClearBufferfv(GL_COLOR, 0, &glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)[0]);
-		glDrawBuffer(GL_COLOR_ATTACHMENT3);
-		glClearBufferfv(GL_COLOR, 0, &glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)[0]);
-
-
-
-		
-
 		std::vector<RenderJobManager::RenderJob> renderJobs = m_renderJobManager->GetJobs();
 
-		unsigned int currentMesh =	std::numeric_limits<decltype(currentMesh)>::max();
-		unsigned int objType =		std::numeric_limits<decltype(objType	)>::max();
-		unsigned int lightType =	std::numeric_limits<decltype(objType	)>::max();
-		unsigned int viewport =		std::numeric_limits<decltype(viewport	)>::max();
-		unsigned int layer =		std::numeric_limits<decltype(layer		)>::max();
+		unsigned int currentMesh = std::numeric_limits<decltype(currentMesh)>::max();
+		unsigned int objType = std::numeric_limits<decltype(objType)>::max();
+		unsigned int lightType = std::numeric_limits<decltype(objType)>::max();
+		unsigned int viewport = std::numeric_limits<decltype(viewport)>::max();
+		unsigned int layer = std::numeric_limits<decltype(layer)>::max();
 		unsigned int translucency = std::numeric_limits<decltype(translucency)>::max();
-		unsigned int meshID =		std::numeric_limits<decltype(meshID		)>::max();
-		unsigned int depth =		std::numeric_limits<decltype(depth		)>::max();
-		
+		unsigned int meshID = std::numeric_limits<decltype(meshID)>::max();
+		unsigned int depth = std::numeric_limits<decltype(depth)>::max();
+
 		bool endLights = false;
-		
+
 		BasicCamera bc;
 		GFXBitmask lightBitmask;
 
@@ -244,8 +249,6 @@ namespace GFX
 		unsigned int l = renderIndex;
 		for (l = renderIndex; l < renderJobs.size(); l++)
 		{
-			if (shadowQuality == GFX_SHADOWS_DISABLED)
-				break;
 
 			lightBitmask = renderJobs[l].bitmask;
 			lightType = GetBitmaskValue(lightBitmask, BITMASK::LIGHT_TYPE);
@@ -274,13 +277,13 @@ namespace GFX
 
 				float fovY = glm::degrees(2.0f * atan(1.0f / (projMatrix[1][1])));
 				float aspect = projMatrix[1][1] / projMatrix[0][0];
-				
+
 				float nz = nearFar.x;
 				float fz = nearFar.y;
 				glm::vec4 limits;
 				if (shadowQuality == GFX_SHADOWS_VARIANCE_2C)
 				{
-					limits = glm::vec4(5.0f, fz / 2.0f, 1000*fz, 1000*fz);
+					limits = glm::vec4(fz / 2.0f, 1000 * fz, 1000 * fz, 2.0f);
 					matrices[0] = glm::perspective<float>(fovY, aspect, 5.0f, fz / 2.0f);
 					matrices[1] = glm::perspective<float>(fovY, aspect, fz / 2.0f, fz);
 
@@ -289,7 +292,7 @@ namespace GFX
 				}
 				else if (shadowQuality == GFX_SHADOWS_VARIANCE_4C)
 				{
-					limits = glm::vec4(5.0f, fz / 10.0f, fz / 5.0f, fz / 2.0f);
+					limits = glm::vec4(fz / 10.0f, fz / 5.0f, fz / 2.0f, 4.0f);
 					matrices[0] = glm::perspective<float>(fovY, aspect, 5.0f, fz / 10.0f);
 					matrices[1] = glm::perspective<float>(fovY, aspect, fz / 10.0f, fz / 5.0f);
 					matrices[2] = glm::perspective<float>(fovY, aspect, fz / 5.0f, fz / 2.0f);
@@ -300,15 +303,19 @@ namespace GFX
 					matrices[6] = FitFrustum(matrices[2] * viewMatrix, bc.viewMatrix, shadowmapRes);
 					matrices[7] = FitFrustum(matrices[3] * viewMatrix, bc.viewMatrix, shadowmapRes);
 				}
+				else
+				{
+					limits = glm::vec4(1000 * fz, 1000 * fz, 1000 * fz, -100.0f);
+				}
 
 
-				
+
 				//glm::mat4x4 dummyProjMat = glm::perspective<float>(45.0f, 1280.0f/720.0f, 5.0f, 125.0f);
 				//bc.projMatrix = FitFrustum(dummyProjMat * viewMatrix, bc.viewMatrix, shadowmapRes);
 				//bc.projMatrix = glm::perspective<float>(45.0f, 1.0f, 20.0f, 100.0f);
 
 				// Add the data to the global array of shadow data for use in LightPainter
-				
+
 				shadowData.lightMatrix1 = matrices[4] * bc.viewMatrix;
 				shadowData.lightMatrix2 = matrices[5] * bc.viewMatrix;
 				shadowData.lightMatrix3 = matrices[6] * bc.viewMatrix;
@@ -317,7 +324,7 @@ namespace GFX
 				//shadowData.lightMatrix = bc.projMatrix * bc.viewMatrix;
 				ShadowDataContainer::data[totalShadowcasters] = shadowData;
 				ShadowDataContainer::numDirLights++;
-				
+
 			}
 			else if (lightType == GFX::LIGHT_TYPES::SPOT_SHADOW)
 			{
@@ -331,10 +338,48 @@ namespace GFX
 			{
 				break; // Break if no shadowcasting light
 			}
-			
-			// Assemble instance data
-			int instanceBufferSize = 0;
+			if (shadowQuality != GFX_SHADOWS_DISABLED)
 			{
+				// Assemble instance data
+				int instanceBufferSize = 0;
+				{
+					unsigned int instanceOffset = 0;
+					for (unsigned int i = startIndex; i < endIndex;)
+					{
+						GFXBitmask geometryBitmask = renderJobs[i].bitmask;
+						objType = GetBitmaskValue(geometryBitmask, BITMASK::TYPE);
+						meshID = GetBitmaskValue(geometryBitmask, BITMASK::MESH_ID);
+						currentMesh = meshID;
+
+						if (objType != GFX::OBJECT_TYPES::OPAQUE_GEOMETRY)
+							break;
+
+						unsigned int instanceCount = 0;
+						do
+						{
+							InstanceData smid = *(InstanceData*)renderJobs.at(i).value;
+							m_staticInstances[instanceOffset + instanceCount] = smid;
+							instanceCount++;
+							instanceBufferSize++;
+							i++;
+							geometryBitmask = renderJobs[i].bitmask;
+							meshID = GetBitmaskValue(geometryBitmask, BITMASK::MESH_ID);
+						} while (meshID == currentMesh && i < endIndex);
+						instanceOffset += instanceCount;
+					}
+				}
+
+				glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_instanceBuffer);
+				InstanceData* pData = (InstanceData*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, MAX_INSTANCES * sizeof(InstanceData),
+					GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
+
+				memcpy(pData, m_staticInstances, instanceBufferSize * sizeof(InstanceData));
+
+				glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+
+
+
+				// Loop through all the geometry
 				unsigned int instanceOffset = 0;
 				for (unsigned int i = startIndex; i < endIndex;)
 				{
@@ -349,123 +394,87 @@ namespace GFX
 					unsigned int instanceCount = 0;
 					do
 					{
-						InstanceData smid = *(InstanceData*)renderJobs.at(i).value;
-						m_staticInstances[instanceOffset + instanceCount] = smid;
 						instanceCount++;
 						instanceBufferSize++;
 						i++;
 						geometryBitmask = renderJobs[i].bitmask;
 						meshID = GetBitmaskValue(geometryBitmask, BITMASK::MESH_ID);
 					} while (meshID == currentMesh && i < endIndex);
-					instanceOffset += instanceCount;
-				}
-			}
-			
-			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_instanceBuffer);
-			InstanceData* pData = (InstanceData*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, MAX_INSTANCES * sizeof(InstanceData),
-				GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
 
-			memcpy(pData, m_staticInstances, instanceBufferSize * sizeof(InstanceData));
+					// Bind mesh for drawing
+					Mesh mesh = m_meshManager->GetMesh(currentMesh);
+					glBindVertexArray(mesh.VAO);
 
-			glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+					if (mesh.skeletonID >= 0)
+					{
+						m_shaderManager->UseProgram("SMAV");
+					}
+					else
+					{
+						m_shaderManager->UseProgram("SMSV");
+					}
 
 
+					//glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_instanceBuffer);
+					//InstanceData* pData = (InstanceData*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, MAX_INSTANCES * sizeof(InstanceData),
+					//	GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
+					//memcpy(pData, m_staticInstances, instanceCount * sizeof(InstanceData));
+					//glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
-			// Loop through all the geometry
-			unsigned int instanceOffset = 0;
-			for (unsigned int i = startIndex; i < endIndex;)
-			{
-				GFXBitmask geometryBitmask = renderJobs[i].bitmask;
-				objType = GetBitmaskValue(geometryBitmask, BITMASK::TYPE);
-				meshID = GetBitmaskValue(geometryBitmask, BITMASK::MESH_ID);
-				currentMesh = meshID;
+					unsigned int asd[4] = { instanceOffset, 0U, 0U, 0U };
+					glBindBufferBase(GL_UNIFORM_BUFFER, UniformBufferManager::INSTANCE_ID_OFFSET_INDEX, m_instanceOffsetBuffer);
+					glBufferSubData(GL_UNIFORM_BUFFER, 0, 4 * sizeof(unsigned int), asd);
 
-				if (objType != GFX::OBJECT_TYPES::OPAQUE_GEOMETRY)
-					break;
+					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IBO);
 
-				unsigned int instanceCount = 0;
-				do
-				{
-					instanceCount++;
-					instanceBufferSize++;
-					i++;
-					geometryBitmask = renderJobs[i].bitmask;
-					meshID = GetBitmaskValue(geometryBitmask, BITMASK::MESH_ID);
-				} while (meshID == currentMesh && i < endIndex);
-
-				// Bind mesh for drawing
-				Mesh mesh = m_meshManager->GetMesh(currentMesh);
-				glBindVertexArray(mesh.VAO);
-
-				if (mesh.skeletonID >= 0)
-				{
-					m_shaderManager->UseProgram("SMAV");
-				}
-				else
-				{
-					m_shaderManager->UseProgram("SMSV");
-				}
-				
-
-				//glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_instanceBuffer);
-				//InstanceData* pData = (InstanceData*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, MAX_INSTANCES * sizeof(InstanceData),
-				//	GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
-				//memcpy(pData, m_staticInstances, instanceCount * sizeof(InstanceData));
-				//glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
-				
-				unsigned int asd[4] = {instanceOffset, 0U, 0U, 0U};
-				glBindBufferBase(GL_UNIFORM_BUFFER, UniformBufferManager::INSTANCE_ID_OFFSET_INDEX, m_instanceOffsetBuffer);
-				glBufferSubData(GL_UNIFORM_BUFFER, 0, 4*sizeof(unsigned int), asd);
-
-				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IBO);
-
-				// Draw each cascade
-				bc.projMatrix = matrices[4];
-				m_uniformBufferManager->SetBasicCameraUBO(bc);
-				glDrawBuffer(GL_COLOR_ATTACHMENT0);
-				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_RBO[0]);
-				glDrawElementsInstanced(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0, instanceCount);
-				
-				bc.projMatrix = matrices[5];
-				m_uniformBufferManager->SetBasicCameraUBO(bc);
-				glDrawBuffer(GL_COLOR_ATTACHMENT1);
-				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_RBO[1]);
-				glDrawElementsInstanced(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0, instanceCount);
-				numDrawCalls += 2;
-				numTris += (mesh.indexCount / 3) * instanceCount * 2;
-				
-				if (shadowQuality == GFX_SHADOWS_VARIANCE_4C)
-				{
-					bc.projMatrix = matrices[6];
+					// Draw each cascade
+					bc.projMatrix = matrices[4];
 					m_uniformBufferManager->SetBasicCameraUBO(bc);
-					glDrawBuffer(GL_COLOR_ATTACHMENT2);
-					glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_RBO[2]);
+					glDrawBuffer(GL_COLOR_ATTACHMENT0);
+					glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_RBO[0]);
 					glDrawElementsInstanced(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0, instanceCount);
 
-					bc.projMatrix = matrices[7];
+					bc.projMatrix = matrices[5];
 					m_uniformBufferManager->SetBasicCameraUBO(bc);
-					glDrawBuffer(GL_COLOR_ATTACHMENT3);
-					glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_RBO[3]);
+					glDrawBuffer(GL_COLOR_ATTACHMENT1);
+					glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_RBO[1]);
 					glDrawElementsInstanced(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0, instanceCount);
 					numDrawCalls += 2;
 					numTris += (mesh.indexCount / 3) * instanceCount * 2;
 
+					if (shadowQuality == GFX_SHADOWS_VARIANCE_4C)
+					{
+						bc.projMatrix = matrices[6];
+						m_uniformBufferManager->SetBasicCameraUBO(bc);
+						glDrawBuffer(GL_COLOR_ATTACHMENT2);
+						glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_RBO[2]);
+						glDrawElementsInstanced(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0, instanceCount);
+
+						bc.projMatrix = matrices[7];
+						m_uniformBufferManager->SetBasicCameraUBO(bc);
+						glDrawBuffer(GL_COLOR_ATTACHMENT3);
+						glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_RBO[3]);
+						glDrawElementsInstanced(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (GLvoid*)0, instanceCount);
+						numDrawCalls += 2;
+						numTris += (mesh.indexCount / 3) * instanceCount * 2;
+
+					}
+
+					//instanceCount = 0;
+					instanceOffset += instanceCount;
+
 				}
-
-				//instanceCount = 0;
-				instanceOffset += instanceCount;
-
 			}
 		}
 
 		m_shaderManager->ResetProgram();
-		
+
 		glBindRenderbuffer(GL_RENDERBUFFER, 0);
 		ClearFBO();
 
-		// Apply gaussain blur to the shadowmap
 		if (shadowQuality != GFX_SHADOWS_DISABLED)
 		{
+			// Apply gaussain blur to the shadowmap
 			m_blurPainter->GaussianBlur(shadowMaps[0], 0.7);
 			m_blurPainter->GaussianBlur(shadowMaps[1], 0.5);
 			if (shadowQuality == GFX_SHADOWS_VARIANCE_4C)
@@ -474,6 +483,8 @@ namespace GFX
 				m_blurPainter->GaussianBlur(shadowMaps[3], 0.1);
 			}
 		}
+		
+		m_shaderManager->ResetProgram();
 
 		glViewport(0, 0, width, height);
 		
