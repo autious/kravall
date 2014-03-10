@@ -50,7 +50,7 @@ function KravallControl:new(o)
 	
     ------------------
     o.statusGUI = UnitStatGUI:new( { show = false, width=185, height=110 } )
-	
+	o.statusGUI:setShow( false )
 	o.gui:addComponent( o.statusGUI )
 	------------------
 	local eventWidth = 220
