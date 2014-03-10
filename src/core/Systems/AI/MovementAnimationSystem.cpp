@@ -13,6 +13,7 @@
 #define IDLE_MINIMUM_TIME 0.25f
 #define MINIMUM_MOVEMENT_ANIMATION_TIME 0.35f
 
+
 namespace Core
 {
     MovementAnimationSystem::MovementAnimationSystem() : BaseSystem(EntityHandler::GenerateAspect<
@@ -43,6 +44,7 @@ namespace Core
 			float frameSpeed = 
 				glm::distance( glm::vec3( wpc->position[0], wpc->position[1], wpc->position[2] ),
 				glm::vec3( mdc->prevPos[0], mdc->prevPos[1], mdc->prevPos[2] )) / mdc->prevDt;
+			
 
 			// update prevPos...
 			for( char i = 0; i < 3; i++ )
@@ -52,6 +54,8 @@ namespace Core
 			float walkingSpeed = mvmc->desiredSpeed[ Core::MovementState::Movement_Walking ];
 			float joggingSpeed = mvmc->desiredSpeed[ Core::MovementState::Movement_Jogging ];
 			
+			
+
 			mdc->movedThisFrame = false;
 			if( frameSpeed > MOVEDTHISFRAME_THRESHOLD )
 				mdc->movedThisFrame = true;

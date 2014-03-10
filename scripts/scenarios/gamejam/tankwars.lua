@@ -800,12 +800,10 @@ local function MissileHit(missileID)
 				
 				score = score + 10
 				
-				enemyTanks[i].entity:destroy()
-				enemyTanks[i] = nil
+				scen.asm:destroyEntity(enemyTanks[i].entity)
 				table.remove(enemyTanks, i)
 				
-				enemyTankTurrets[i].entity:destroy()
-				enemyTankTurrets[i] = nil
+				scen.asm:destroyEntity(enemyTankTurrets[i].entity)
 				table.remove(enemyTankTurrets, i)
 				
 				
@@ -953,6 +951,10 @@ local function UpdateMissiles(delta)
 			
 			
 			--rotQuat = core.glm.quat.new( 0,0,0,1 )
+			
+			
+			local axis = { 0.0, 0.0, 0.0 }
+			
 			
 			--local missileRot = missiles[i].entity:get(core.componentType.RotationComponent)
 			local rotQuat = { math.sin(missiles[i].directionUp * 0.5) , 0, 0, math.cos(missiles[i].directionUp * 0.5 )}

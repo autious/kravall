@@ -101,12 +101,12 @@ namespace Core
 				/*
 					This corner links to the following edge and node.
 				*/
-				int cornerConnectsToNode;
+				int cornerConnectsToNode[2];
 
 				/*
 					This corner links to the following edge and node.
 				*/
-				int cornerConnectsToCorner;
+				int cornerConnectsToCorner[2];
 				
 			} corners[4];
 
@@ -284,8 +284,7 @@ namespace Core
 		*/
 		int nrNodes;
 
-		private : 
-
+		private: 
 			Flowfield** tempField;
 			bool** visited;
 			float** distances;

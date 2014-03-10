@@ -6,6 +6,7 @@
 #include <GameUtility/NavigationMesh.hpp>
 #include <logger/Logger.hpp>
 #include <cassert>
+#include <utility>
 
 #include <World.hpp>
 
@@ -27,14 +28,55 @@ extern "C"
 
     static int LuaGetGroupNavigationMeshMedianPosition(lua_State * L)
     {
-        glm::vec3 medianPosition = Core::world.m_systemHandler.GetSystem<Core::GroupDataSystem>()->GetMedianPosition(luaL_checknumber(L, 1));
+        unsigned int groupId = luaL_checknumber(L, 1);
+        glm::vec3 medianPosition = Core::world.m_systemHandler.GetSystem<Core::GroupDataSystem>()->GetMedianPosition(groupId);
 
-        Core::NavigationMesh* navMesh = Core::GetNavigationMesh();
+        Core::NavigationMesh* navMesh = Core::GetNavigationMesh();       
+
         if(navMesh)
         {
             if(!navMesh->CheckPointInsideNavigationMesh(medianPosition))
             {
-                     
+                std::vector<Core::Entity> entities = Core::world.m_systemHandler.GetSystem<Core::GroupDataSystem>()->GetMembersInGroup(groupId);
+                std::vector<std::pair<int, int>> nodePopulation;
+
+                for(std::vector<Core::Entity>::iterator ent_it = entities.begin(); ent_it != entities.end(); ++ent_it)
+                {
+                    Core::FlowfieldComponent* ffc = WGETC<Core::FlowfieldComponent>(*ent_it);
+                    bool found = false;
+                    for(std::vector<std::pair<int, int>>::iterator it = nodePopulation.begin(); it != nodePopulation.end(); ++it)
+                    {
+                        if((*it).first == ffc->node)
+                        {
+                            (*it).second++;
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if(!found)
+                    {
+                        nodePopulation.push_back(std::make_pair(ffc->node, 1));
+                    }
+                }
+
+                int node = 0;
+                int highestPopulation = -1;
+                for(std::vector<std::pair<int, int>>::iterator it = nodePopulation.begin(); it != nodePopulation.end(); ++it)
+                {
+                    if((*it).second > highestPopulation)
+                    {
+                        node = (*it).first;
+                    }
+                }
+
+                
+                float x = (navMesh->nodes[node].points[0] + navMesh->nodes[node].points[2] + navMesh->nodes[node].points[4] + navMesh->nodes[node].points[6])/4.0f;
+                float z = (navMesh->nodes[node].points[1] + navMesh->nodes[node].points[3] + navMesh->nodes[node].points[5] + navMesh->nodes[node].points[7])/4.0f;
+
+                medianPosition.x = x;
+                medianPosition.y = 0;
+                medianPosition.z = z;
             }
         }
 
