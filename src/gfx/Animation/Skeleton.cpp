@@ -11,6 +11,7 @@ Skeleton::Skeleton()
 
 Skeleton::~Skeleton()
 {
+	m_animationInfo.clear();
 }
 
 int Skeleton::UpdateInfo(const int& animationID, const unsigned int& offset, const unsigned int& numFrames, const unsigned int& numBonesPerFrame)
