@@ -243,7 +243,7 @@ return function( scen )
             if core.system.area.getAreaRioterCount( getCurrentWaypoint(), deserterGroup ) > math.max(memberCount/2 - 5,0) then
                 currentWaypoint = currentWaypoint + 1
                 if getCurrentWaypoint() then
-                    print( "Set new goal!" )
+                    print( "Set new goal to waypoint " .. currentWaypoint .. " at pos: ", core.glm.vec3.new( unpack( waypoint_positions["waypoint"..currentWaypoint] ) ))
                     core.system.groups.setGroupGoal( deserterGroup, unpack( waypoint_positions["waypoint"..currentWaypoint] ) )
                 end   
             end 
