@@ -415,7 +415,7 @@ local function Update(delta)
 		end
 		
 	end
-	camera:update(delta)
+	--camera:update(delta)
 end
 scen:registerUpdateCallback( Update )
 
