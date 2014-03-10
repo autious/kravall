@@ -366,7 +366,22 @@ return function( scen )
         T["registerAg"..i.."Spawn"] = function(ent) 
 		    local wpc = ent:get(core.componentType.WorldPositionComponent)
             print( "Registering Ag"..i )
-		    core.gameMetaData.registerEscapePoint( wpc.position[1], wpc.position[2], wpc.position[3] )
+
+		    local groupId = core.gameMetaData.registerEscapePoint( wpc.position[1], wpc.position[2], wpc.position[3] )
+
+            scen:registerTickCallback(function()
+                if ent:isValid() then
+                    local rioters = core.system.area.getAreaRioters(ent)
+
+                    for _,v in pairs( rioters ) do
+                        local alignmentComponent = v:get( core.componentType.AttributeComponent )
+                        print( alignmentComponent.groupID )
+                        if alignmentComponent.groupID == groupId then
+                            scen.asm:destroyEntity( v )
+                        end  
+                    end
+                end    
+            end)
 
             if T["ag"..i.."spawn"] == nil then
                 T["ag"..i.."spawn"] = {}
@@ -419,7 +434,6 @@ return function( scen )
 
         ent:set( core.componentType.RotationComponent, { rotation = {qrot:get()}})
     end
-
 
     function T.rotateYLight( ent, delta )
 
