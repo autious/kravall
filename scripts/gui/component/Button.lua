@@ -8,9 +8,12 @@ local Button =
                     xoffset=0,
                     yoffset=0,
                     show = true,
+                    pressed = false,
+                    enabled = true,
                     matReleased = "assets/texture/ui/button-release_00.material",
                     matPressed = "assets/texture/ui/button-press_00.material",
                     matHover = "assets/texture/ui/button-hover_00.material",
+                    matDisable = "assets/texture/ui/button-disable_00.material",
                     onClick = function( self ) end
                 }
 
@@ -22,6 +25,7 @@ function Button:new(o)
     o.pressedImg = image( o.x, o.y, o.matPressed )
     o.releasedImg = image( o.x, o.y, o.matReleased )
     o.hoverImg = image( o.x, o.y, o.matHover )
+    o.disableImg = image( o.x, o.y, o.matDisable )
     
     o.width = o.pressedImg.width
     o.height = o.pressedImg.height
@@ -39,24 +43,45 @@ function Button:new(o)
 											toolTip = o.toolTip
                                         }
 
-    o.pressedImg:show(false)
-    o.releasedImg:show(true)
-    o.hoverImg:show(false)
+    o:updateVisual()
 
     o:setShow( o.show )
 
     return o
 end
 
+function Button:updateVisual()
+    self.pressedImg:show( false )
+    self.releasedImg:show( false )
+    self.hoverImg:show( false )
+    self.disableImg:show( false )
+
+    if self.show then
+        if self.enabled then
+            if self.pressed then
+               self.pressedImg:show( true )
+            elseif self.hover then
+               self.hoverImg:show( true ) 
+            else
+               self.releasedImg:show( true )
+            end
+        else
+            self.disableImg:show( true )
+        end
+    end
+end
+
 function Button:setShow( flag )
     self.show = flag
     self.GUIComponent:setShow(flag)
     self.releasedImg:show(flag)
+    
+    self:updateVisual()
+end
 
-    if flag == false then
-        self.pressedImg:show(false)
-        self.hoverImg:show(false)
-    end
+function Button:setEnabled( flag )
+    self.enabled = flag
+    self:updateVisual()
 end
 
 function Button:setPosition(x,y)
@@ -64,46 +89,43 @@ function Button:setPosition(x,y)
     self.pressedImg:setPosition(x,y)
     self.releasedImg:setPosition(x,y)
     self.hoverImg:setPosition(x,y)
+    self.disableImg:setPosition(x,y)
+    self:updateVisual()
 end
 
 function Button:onPress() 
-    if self.show then
-        self.pressedImg:show(true)
-        self.releasedImg:show(false)
-        self.hoverImg:show(false)
-    end
+    self.pressed = true
+    self:updateVisual()
 end
 
 function Button:onRelease()
-    if self.show then
-        self.pressedImg:show(false)
-        self.releasedImg:show(false)
-        self.hoverImg:show(true)
-
+    self.pressed = false
+    self:updateVisual()
+    if self.show and self.enabled then
         self:onClick()
     end
 end
 
 function Button:onEnter()
-    if self.show then
-        self.pressedImg:show( false )
-        self.releasedImg:show( false )
-        self.hoverImg:show( true )
-    end
+    self.hover = true
+    self:updateVisual()
 end
 
 function Button:onExit()
-    if self.show then
-        self.pressedImg:show(false)
-        self.releasedImg:show(true)
-        self.hoverImg:show(false)
-    end
+    self.hover = false
+    self.pressed = false
+    self:updateVisual()
 end
 
 function Button:destroy()
     self.pressedImg:destroy()
+    self.pressedImg = nil
     self.releasedImg:destroy()
+    self.releasedImg = nil
     self.hoverImg:destroy()
+    self.hoverImg = nil
+    self.disableImg:destroy()
+    self.disableImg = nil
     self.GUIComponent:destroy()
 end
 
