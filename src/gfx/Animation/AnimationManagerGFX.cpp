@@ -1,7 +1,7 @@
 #include "AnimationManagerGFX.hpp"
 
 #include <cstring>
-
+#include <iostream>
 AnimationManagerGFX::AnimationManagerGFX()
 {
 	glGenBuffers(1, &m_animationBuffer);
@@ -62,7 +62,7 @@ int AnimationManagerGFX::DeleteSkeleton(const int& skeletonID)
 
 		delete m_skeletons[skeletonID];
 		m_skeletons.erase(skeletonID);
-
+		std::cout << m_skeletons.size() << " " << m_animations.size() << "\n";
 
 
 		return GFX_SUCCESS;
