@@ -439,39 +439,37 @@ function PoliceSquadHandler:AimTearGas()
     end
 end
 
+local moodOutline = 0
+local rioterGroupIds = {}
 function PoliceSquadHandler:HighlightMood()
 
-	--if #self.selectedSquads == 0 then
-	--	--self.isAiming = false
-	--	--self:SetReticuleRender(false)
-	--	--self.AimingFunction = nil
-	--	--
-	--	--self.rightClicked = false
-	--	--self.rightPressed = false
-	--	
-	--	return
-	--end
+	if not keyboard.isKeyDown(keyboard.key.M) then
 
-	local mouseX, mouseY = mouse.getPosition()
-    local aspct = core.entity.generateAspect( core.componentType.AttributeComponent, core.componentType.UnitTypeComponent, core.componentType.BoundingVolumeComponent )
-    local selectedEntity = core.system.picking.getHitEntity(mouseX, mouseY, aspct )
+		if moodOutline == 1 then
+			moodOutline = 0
+			core.system.squad.disableOutline(rioterGroupIds)
+			for k,v in pairs(rioterGroupIds) do rioterGroupIds[k]=nil end
 
-	if selectedEntity then
-		local unitTypeComponent = selectedEntity:get(core.componentType.UnitTypeComponent);
-		local attributeComponent = selectedEntity:get(core.componentType.AttributeComponent);
+		end
+		return;
+	end
 
-		if attributeComponent and unitTypeComponent then           
-			if unitTypeComponent.unitType == core.UnitType.Rioter then
-				s_squad.enableMoodOutline( { attributeComponent.groupID } )
-				self.outlinedRioterGroups = attributeComponent.groupID;
-			end			
-		end		
-	elseif self.leftClicked then
-		for k,v in pairs(self.selectedSquads) do self.selectedSquads[k]=nil end
-		self.leftClicked = true
-		self.leftPressed = true
-	end	
-
+	local groupCount = core.system.groups.getNumberOfGroups()
+	
+    for i=0, groupCount-1 do 
+        local members = core.system.groups.getMembersInGroup(i)
+       
+        if #members > 0 then
+            local attrbComponent = members[1]:get(core.componentType.AttributeComponent)
+            local utc = members[1]:get(core.componentType.UnitTypeComponent)
+            if utc.unitType == core.UnitType.Rioter then
+				 core.system.squad.enableMoodOutline({attrbComponent.groupID})
+				 table.insert(rioterGroupIds, attrbComponent.groupID)
+            end
+        end
+    end
+	moodOutline = 1
+	
 end
 
 function PoliceSquadHandler:AttackGroup()
