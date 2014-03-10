@@ -18,9 +18,9 @@ function C.new( )
     self.previousInterpolationPoint = self.position
     self.forwardVelocity = 0
     self.quatRotation = quat.new()
-    self.accelerationFactor = 2
+    self.accelerationFactor = 5
     self.acceleration = 3.0
-    self.deaccelerationFactor = 0.5
+    self.deaccelerationFactor = 3.5
     self.mousePressLocation = nil
     self.movementSpeed = 0
     self.interpolationSpeed = 10
