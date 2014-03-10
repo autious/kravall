@@ -66,9 +66,9 @@ namespace GFX
 		m_enableDebug = true;
 
 		// Set default settings
-		RenderSettings::settings[GFX_SHADOW_QUALITY] = GFX_SHADOWS_DISABLED; // TODO: Implement basic shadow mapping as low res option
-		//RenderSettings::settings[GFX_SHADOW_QUALITY] = GFX_SHADOWS_VARIANCE_2C; // TODO: Implement basic shadow mapping as low res option
+		RenderSettings::settings[GFX_SHADOW_QUALITY] = GFX_SHADOWS_VARIANCE_2C; // TODO: Implement basic shadow mapping as low res option
 		RenderSettings::settings[GFX_SHADOW_RESOLUTION] = 512;
+		RenderSettings::settings[GFX_MIPMAPS] = GFX_MIPMAPS_ON;
 	}
 
 	RenderCore::~RenderCore()
