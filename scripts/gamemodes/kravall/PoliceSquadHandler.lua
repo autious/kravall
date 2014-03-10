@@ -473,7 +473,7 @@ local moodOutline = 0
 local rioterGroupIds = {}
 function PoliceSquadHandler:HighlightMood()
 
-	if not keyboard.isKeyDown(keyboard.key.M) then
+	if not  keyboard.isKeyDown(core.config.playerBindings.moodHighlight) then
 
 		if moodOutline == 1 then
 			moodOutline = 0
