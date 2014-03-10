@@ -201,9 +201,6 @@ function C:update( dt )
             if keyboard.isKeyDown( key.Space ) then
                 direction = direction + vec3.new(0,1,0)
             end
-            if keyboard.isKeyDown( key.Left_control ) then
-                direction = direction - vec3.new(0,1,0) 
-            end
             
             if direction:length() > 0 then
                 local force = self.acceleration - 0.1984 * self.movementSpeed * self.movementSpeed 
