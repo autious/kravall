@@ -58,6 +58,8 @@ playerBindings =
     halfCircleFormation = core.input.keyboard.key["C"],
     
     rotateSquadSelection = core.input.keyboard.key.Tab, 
+
+	moodHighlight = core.input.keyboard.key["M"], 
 }
 }
 
