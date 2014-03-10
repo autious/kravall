@@ -46,6 +46,7 @@ function KravallControl:new(o)
 										onFormationSelect = function(form) o.onFormationSelect(form) end
 									} )
 	o.gui:addComponent( o.squadMenuGUI )
+	o.squadMenuGUI:setShow( false )
 	
     ------------------
     o.statusGUI = UnitStatGUI:new( { show = false, width=185, height=110 } )

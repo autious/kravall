@@ -1,6 +1,7 @@
 local entity = require "entities"
 local group = entity.get "group"
 local Statistics = require "factories/Statistics"
+local vec4 = require( "utility" ).expandMixxedHexToVec4
 
 --For the kravall defintions
 local abilities = core.system.squad.abilities
@@ -226,7 +227,9 @@ return function( scen )
     function(delta) 
         scen.gamemode:update(delta) 
         if deserterGroup then
-            local count = core.system.groups.getGroupMemberCount( deserterGroup )
+			core.system.squad.enableOutline({deserterGroup}, (vec4{"#09FF00FF",2.0}):get())
+
+            local count = core.system.groups.getGroupMemberCount( deserterGroup)
             obj1.title = "At least one deserter must survive and reach the goal. " .. count .. " remain."
             if  count == 0 then
                 obj1.state = "fail"
