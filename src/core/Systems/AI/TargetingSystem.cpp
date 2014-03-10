@@ -190,6 +190,7 @@ Core::Entity Core::TargetingSystem::FindClosestTarget(Core::WorldPositionCompone
 {
 	float minDist = std::numeric_limits<float>::max();
 	Entity minDistEntity = INVALID_ENTITY;
+
 	for (std::vector<Entity>::iterator it = m_entities.begin();	it != m_entities.end();	it++)
 	{
 		Core::UnitTypeComponent* utc = WGETC<Core::UnitTypeComponent>(*it);
@@ -201,6 +202,10 @@ Core::Entity Core::TargetingSystem::FindClosestTarget(Core::WorldPositionCompone
 			Core::AttributeComponent* attribc = WGETC<Core::AttributeComponent>(*it);
 			int group = utc->type == Core::UnitType::Police ? attribc->police.squadID : attribc->rioter.groupID;
 			if( instance->flowfields[ group ].team == ownTeam )
+				continue;
+
+			Core::AttributeComponent* ac = WGETC<Core::AttributeComponent>( *it );
+			if( utc->type == Rioter && ac->rioter.stance == Core::RioterStance::Retreating )
 				continue;
 		}
 

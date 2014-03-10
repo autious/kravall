@@ -12,8 +12,6 @@ Core::NavMeshCollisionSystem::NavMeshCollisionSystem()
 }
 
 //#define Draw_DEBUG_LINES_TO_SHOW_COLLIDING_EDGES
-
-
 #ifdef Draw_DEBUG_LINES_TO_SHOW_COLLIDING_EDGES
 #define DEBUG_ELIGABLE_EDGES_FOR_COLLISION( x ) x
 #else
