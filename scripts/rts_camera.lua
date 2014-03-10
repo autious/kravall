@@ -18,8 +18,8 @@ function C.new( )
     self.previousInterpolationPoint = self.position
     self.forwardVelocity = 0
     self.quatRotation = quat.new()
-    self.accelerationFactor = 1
-    self.acceleration = 1.0
+    self.accelerationFactor = 2
+    self.acceleration = 3.0
     self.deaccelerationFactor = 0.5
     self.mousePressLocation = nil
     self.movementSpeed = 0
@@ -221,8 +221,8 @@ function C:update( dt )
             end 
 
             if self.mousePressLocation ~= nil then
-                self.position = self.position + xzRight * (x-self.mousePressLocation.x) * 0.01 * delta
-                self.position = self.position - xzUp * (y-self.mousePressLocation.y) * 0.01 * delta
+                self.position = self.position + xzRight * (x - self.mousePressLocation.x) * 0.01 * delta
+                self.position = self.position - xzUp * (y - self.mousePressLocation.y) * 0.01 * delta
                 if mouse.isButtonDown( mouse.button[5] ) == false then
                     self.mousePressLocation = nil
                 end
