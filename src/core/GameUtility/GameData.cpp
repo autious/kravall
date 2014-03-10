@@ -47,10 +47,9 @@ namespace Core
 		
 		m_reqisteredEscapePointGroups.push_back( escapeGroup );
 
-		if( !instance->CalculateFlowfieldForGroup( point, escapeGroup ) )
-			return -1;
+		if( instance->CalculateFlowfieldForGroup( point, escapeGroup ) )
+			m_validEscapePointGroups.push_back( escapeGroup );
 
-		m_validEscapePointGroups.push_back( escapeGroup );
 		return escapeGroup;
 	}
 	
