@@ -50,6 +50,7 @@ function GUIComponent:new(o)
 				end
             end
             o.inside = false
+            o.press = false
         end
 
         if o.drag then
@@ -69,7 +70,7 @@ function GUIComponent:new(o)
                     consumed = true -- we assume that this is consumed, so game can ignore
                 end
             elseif action == core.input.action.Release then
-                if o.inside == true then
+                if o.inside == true and o.press == true then
                     o.onRelease()        
                 end
                 o.press = false
