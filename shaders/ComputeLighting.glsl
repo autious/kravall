@@ -208,7 +208,7 @@ vec3 GetDepthData(ShadowData shadowData, float dist, vec4 wPos, float farZ)
 	vec4 limits = shadowData.shadow_limits;
 	vec2 moments;
 	float depth;
-	if(dist < limits.y)
+	if(dist < limits.x)
 	{
 		vec4 shadowCoords = shadowData.lightMatrix1 * vec4(wPos.xyz, 1.0);
 		shadowCoords.xyz /= shadowCoords.w;
@@ -218,7 +218,7 @@ vec3 GetDepthData(ShadowData shadowData, float dist, vec4 wPos, float farZ)
 		depth = (shadowCoords.z);
 		//return vec3(1.0, 0.0, 0.0);
 	}
-	else if(dist < limits.z)
+	else if(dist < limits.y)
 	{
 		vec4 shadowCoords = shadowData.lightMatrix2 * vec4(wPos.xyz, 1.0);
 		shadowCoords.xyz /= shadowCoords.w;
@@ -228,7 +228,7 @@ vec3 GetDepthData(ShadowData shadowData, float dist, vec4 wPos, float farZ)
 		depth = (shadowCoords.z);
 		//return vec3(0.0, 1.0, 0.0);
 	}
-	else if(dist < limits.w)
+	else if(dist < limits.z)
 	{
 		vec4 shadowCoords = shadowData.lightMatrix3 * vec4(wPos.xyz, 1.0);
 		shadowCoords.xyz /= shadowCoords.w;
@@ -480,7 +480,14 @@ void main()
 		{
 			float localOcclusion = 0.0f;
 			mat4x4 mat = mat4x4(1.0);
-			color += CalculateDirlightShadow((0.5*normalColor.w+0.5)/wPos.w, shadowData[i], lights[i], surface, wPos, eyePos, localOcclusion, zFar);
+			if(shadowData[i].shadow_limits.w > 0.0)
+			{
+				color += CalculateDirlightShadow((0.5*normalColor.w+0.5)/wPos.w, shadowData[i], lights[i], surface, wPos, eyePos, localOcclusion, zFar);
+			}
+			else
+			{
+				color += CalculateDirlight(lights[i],  surface, wPos.xyz, eyePos, localOcclusion);
+			}
 			sumOcclusion += localOcclusion;
 		}
 

@@ -64,6 +64,11 @@ namespace GFX
 
 		m_drawSelectionbox = false;
 		m_enableDebug = true;
+
+		// Set default settings
+		RenderSettings::settings[GFX_SHADOW_QUALITY] = GFX_SHADOWS_VARIANCE_2C; // TODO: Implement basic shadow mapping as low res option
+		RenderSettings::settings[GFX_SHADOW_RESOLUTION] = 512;
+		RenderSettings::settings[GFX_MIPMAPS] = GFX_MIPMAPS_ON;
 	}
 
 	RenderCore::~RenderCore()
@@ -133,9 +138,6 @@ namespace GFX
 		m_windowHeight = 0;
 		totalRenderInfo = { 0, 0 };
 		
-		// Set default settings
-		RenderSettings::settings[GFX_SHADOW_QUALITY] = GFX_SHADOWS_VARIANCE_4C; // TODO: Implement basic shadow mapping as low res option
-		RenderSettings::settings[GFX_SHADOW_RESOLUTION] = 512;
 
 		m_normalDepth = new FBOTexture();
 		m_diffuse = new FBOTexture();
