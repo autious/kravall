@@ -402,9 +402,9 @@ namespace Core
 					switch (atc->rioter.stance)
 					{
 					case RioterStance::Normal:
-						gfxc->outlineColor[0] = 0.0f;
-						gfxc->outlineColor[1] = 0.0f;
-						gfxc->outlineColor[2] = 1.0f;
+						gfxc->outlineColor[0] = 0.0f / 255.0f;
+						gfxc->outlineColor[1] = 225.0f / 255.0f;
+						gfxc->outlineColor[2] = 255.0f / 255.0f;
 						gfxc->outlineColor[3] = 2.0f;
 						break;
 					case RioterStance::Agitated:
@@ -421,7 +421,7 @@ namespace Core
 						break;
 					case RioterStance::Retreating:
 						gfxc->outlineColor[0] = 1.0f;
-						gfxc->outlineColor[1] = 0.0f;
+						gfxc->outlineColor[1] = 1.0f;
 						gfxc->outlineColor[2] = 1.0f;
 						gfxc->outlineColor[3] = 2.0f;
 						break;
