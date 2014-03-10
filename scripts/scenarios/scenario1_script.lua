@@ -362,64 +362,27 @@ return function( scen )
         print( "Registering waypoint: " .. nc.name )
     end
 
-    local ag1Spawns = {}
-    function T.checkAg1Enter( ent )
-        if #ag1Spawns > 0 and core.system.area.getAreaRioterCount( ent, deserterGroup ) > 0 then
-            table.insert( agitatorGroups, T.createAgitators( ag1Spawns, 10,10 ) ) 
-            ag1Spawns = {}
+    for i = 1,4 do
+        T["registerAg"..i.."Spawn"] = function(ent) 
+		    local wpc = ent:get(core.componentType.WorldPositionComponent)
+            print( "Registering Ag"..i )
+		    core.gameMetaData.registerEscapePoint( wpc.position[1], wpc.position[2], wpc.position[3] )
+
+            if T["ag"..i.."spawn"] == nil then
+                T["ag"..i.."spawn"] = {}
+            end
+    
+            table.insert( T["ag"..i.."spawn"], ent )
         end
-    end
 
-    function T.registerAg1Spawn( ent )
-        print( "Registering Ag1" )
-		local wpc = ent:get(core.componentType.WorldPositionComponent)
-		core.gameMetaData.registerEscapePoint( wpc.position[1], wpc.position[2], wpc.position[3] )
-        table.insert( ag1Spawns, ent )
-    end
-
-    local ag2Spawns = {}
-    function T.checkAg2Enter( ent )
-        if #ag2Spawns > 0 and core.system.area.getAreaRioterCount( ent, deserterGroup ) > 0 then
-            table.insert( agitatorGroups, T.createAgitators( ag2Spawns, 10,10 ) ) 
-            ag2Spawns = {}
+        T["checkAg"..i.. "Enter"] = function( ent )
+            local spawns = T["ag"..i.."spawn"]
+    
+            if #spawns > 0 and core.system.area.getAreaRioterCount( ent, deserterGroup ) > 0 then
+                table.insert( agitatorGroups, T.createAgitators( spawns, 10,10 ) ) 
+                T["ag"..i.."spawn"] = {}
+            end
         end
-    end
-
-    function T.registerAg2Spawn( ent )
-        print( "Registering Ag2" )
-		local wpc = ent:get(core.componentType.WorldPositionComponent)
-		core.gameMetaData.registerEscapePoint( wpc.position[1], wpc.position[2], wpc.position[3] )
-        table.insert( ag2Spawns, ent )
-    end
-
-    local ag3Spawns = {}
-    function T.checkAg3Enter( ent )
-        if #ag3Spawns > 0 and core.system.area.getAreaRioterCount( ent, deserterGroup ) > 0 then
-            table.insert( agitatorGroups, T.createAgitators( ag3Spawns, 10,10 ) ) 
-            ag3Spawns = {}
-        end
-    end
-
-    function T.registerAg3Spawn( ent )
-        print( "Registering Ag3" )
-		local wpc = ent:get(core.componentType.WorldPositionComponent)
-		core.gameMetaData.registerEscapePoint( wpc.position[1], wpc.position[2], wpc.position[3] )
-        table.insert(ag3Spawns, ent )
-    end
-
-    local ag4Spawns = {}
-    function T.checkAg4Enter( ent )
-        if #ag4Spawns > 0 and core.system.area.getAreaRioterCount( ent, deserterGroup ) > 0 then
-            table.insert( agitatorGroups, T.createAgitators( ag4Spawns, 10,10 ) ) 
-            ag4Spawns = {}
-        end
-    end
-
-    function T.registerAg4Spawn( ent )
-        print( "Registering Ag4" )
-		local wpc = ent:get(core.componentType.WorldPositionComponent)
-		core.gameMetaData.registerEscapePoint( wpc.position[1], wpc.position[2], wpc.position[3] )
-        table.insert(ag4Spawns, ent )
     end
 
     function T.checkAg2And4Enter( ent )
