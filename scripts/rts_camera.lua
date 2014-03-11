@@ -14,7 +14,7 @@ local key = keyboard.key
 
 function C.new( )
     local self = {}
-    self.position = vec3.new( 0,0,0 )
+    self.position = vec3.new( 0,10,0 )
     self.previousInterpolationPoint = self.position
     self.forwardVelocity = 0
     self.quatRotation = quat.new()

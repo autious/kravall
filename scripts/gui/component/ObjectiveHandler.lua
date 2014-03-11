@@ -122,7 +122,7 @@ function ObjectiveHandler:updateObjective( obj )
         local won = true
         local has = false
         for i,o in pairs( self.objectives ) do
-            if o.state ~= "success" then
+            if o.state ~= "success" and not o.bonus then
                 won = false  
             end
             has = true
@@ -133,7 +133,7 @@ function ObjectiveHandler:updateObjective( obj )
         
         local fail = true
         for i,o in pairs( self.objectives ) do
-            if o.state ~= "fail" then
+            if o.state ~= "fail" or o.bonus then
                 fail = false  
             end
             has = true

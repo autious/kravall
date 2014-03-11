@@ -245,7 +245,7 @@ namespace Core
 
 
 		/*!
-			
+			Allocates nr that can be used to run the algorithm on several concurrent threads.
 		*/
 		bool AllocateFrameMemoryForAstar( int nrInstances );
 
