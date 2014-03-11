@@ -57,6 +57,9 @@ function Prep:new(o)
                 for i,v in pairs( o.createdSquads ) do
                     if v == o.selectedSquadInstance then
                         table.remove( o.createdSquads, i )
+                        if #(o.createdSquads) == 0 then
+                            o.prepInterface:enableGo( false )  
+                        end
                         break
                     end
                 end
@@ -85,6 +88,7 @@ function Prep:new(o)
 
                             o.createdVisualRepresentation[squadInstance] = ent.get "squadInstanceStatic" ( o.asm, squadInstance )
                             o.prepInterface:updatePurchasedList()
+                            o.prepInterface:enableGo( true )
                             o.prepInterface:setRemainingMoney( o.cashLimit - o:totalCost() )
                         else
                             print( "Not enough money" ) 

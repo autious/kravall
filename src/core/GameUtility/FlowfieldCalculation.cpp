@@ -39,9 +39,7 @@ namespace Core
 		// reset group metadata...
 		flowfields[group].goal[ 0 ] = std::numeric_limits<float>::max();
 		flowfields[group].goal[ 1 ] = std::numeric_limits<float>::max();
-		//std::memset( flowfields[group].list, 0, nrNodes * sizeof( glm::vec3 ) );
-		std::memset( flowfields[group].deadNodes, 0x1, nrNodes * sizeof( bool) );
-
+		std::memset( flowfields[group].deadNodes, 1, nrNodes * sizeof( bool ) );
 
 		// find out what node we want to go to...
 		int node = -1;
@@ -60,8 +58,10 @@ namespace Core
 		flowfields[group].goal[ 0 ] = point.x;
 		flowfields[group].goal[ 1 ] = point.z;
 
-
 		std::vector< TraversalData > prioList;
+
+		if( flowfields[ group ].blocked[ node ] < EDGE_HEAT_DENSITY_THREASHOLD_FOR_BLOCKING )
+			flowfields[group].deadNodes[ node ] = false;
 
 		// rig first node...		
 		for( int i = 0; i < 4; i++ )
@@ -172,6 +172,7 @@ namespace Core
 				}
 			}
 
+			// I've used this too often to remove it :)
 			if( prioList[0].node == 4 )
 				int pp = 0;
 				

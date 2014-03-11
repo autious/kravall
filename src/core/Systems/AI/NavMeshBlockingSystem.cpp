@@ -7,11 +7,10 @@
 #include <GameUtility/GameData.hpp>
 
 //#define DRAW_BLOCKED_LINE_SPHERES
-
 #ifdef DRAW_BLOCKED_LINE_SPHERES
-#define DEBUG_BLOCKED_LINES( Will_be_run ) x
+#define DEBUG_BLOCKED_SPHERES( Will_be_run ) Will_be_run
 #else
-#define DEBUG_BLOCKED_LINES( Will_not_be_run ) ;
+#define DEBUG_BLOCKED_SPHERES( Will_not_be_run ) ;
 #endif
 
 
@@ -120,33 +119,35 @@ void Core::NavMeshBlockingSystem::Update( float delta )
 				}
 
 				meta.timeSinceLastCheck += delta;
+			}
 
-				for( int t = 0; t < instance->nrNodes; t++ )
+			DEBUG_BLOCKED_SPHERES(
+			for( int t = 0; t < instance->nrNodes; t++ )
+			{				
+				if( instance->flowfields[ i ].deadNodes[ t ] )
 				{
 					for( int pp = 0; pp < 4; pp++ )
 					{
-						if( instance->flowfields[ i ].blocked[ t * 4 + pp ] > 5.0f )
-						{
-							int ii = pp * 2;
-							int oo = (ii + 2) % 8;	
-							float* points = instance->nodes[ t ].points;
-							glm::vec3 lineStart = glm::vec3( points[ ii ], 0.0f, points[ ii + 1 ] );
-							glm::vec3 lineEnd	= glm::vec3( points[ oo ], 0.0f, points[ oo + 1 ] );
+						//int ii = pp * 2;
+						//int oo = (ii + 2) % 8;	
+						//float* points = instance->nodes[ t ].points;
+						//glm::vec3 lineStart = glm::vec3( points[ ii ], 0.0f, points[ ii + 1 ] );
+						//glm::vec3 lineEnd	= glm::vec3( points[ oo ], 0.0f, points[ oo + 1 ] );
 		
-							DEBUG_BLOCKED_LINES( GFX::Debug::DrawSphere( lineStart + ( lineEnd - lineStart ) * 0.5f, 
-								instance->flowfields[ i ].blocked[ t * 4 + pp ], GFXColor( 0.5f, 1.0f, 0.2f, 1.0f ), false ); )
-
-
-							//float* points = instance->nodes[i].points;
-							//glm::vec3 temp = glm::vec3(0.0f);
-							//for( int g = 0; g < 4; g++ )
-							//	temp += glm::vec3( points[ g * 2 ], 0.0f, points[ g * 2 + 1] );
-							//temp *= 0.25f;
-							//GFX::Debug::DrawSphere( temp, 5, GFXColor( 0.5f, 1.0f, 0.2f, 1.0f ), false );
-						}
+						//GFX::Debug::DrawSphere( lineStart + ( lineEnd - lineStart ) * 0.5f, 
+						//	instance->flowfields[ i ].blocked[ t * 4 + pp ], GFXColor( 0.5f, 1.0f, 0.2f, 1.0f ), false );
 					}
+
+					float* points = instance->nodes[t].points;
+					glm::vec3 temp = glm::vec3(0.0f);
+					for( int g = 0; g < 4; g++ )
+						temp += glm::vec3( points[ g * 2 ], 0.0f, points[ g * 2 + 1] );
+					temp *= 0.25f;
+					GFX::Debug::DrawSphere( temp, 5, GFXColor( 0.5f, 1.0f, 0.2f, 1.0f ), false );
 				}
-			}
+			} );
+
+
 		}
 	}
 	

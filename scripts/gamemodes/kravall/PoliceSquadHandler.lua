@@ -44,6 +44,8 @@ local TextLabel = require "gui/component/TextLabel"
 
 local input = require "input"
 
+local QuickGroupHandler = require "gamemodes/kravall/QuickGroupHandler"
+
 function PoliceSquadHandler:onButton(button, action, mods, consumed)
     if action == core.input.action.Press then
         --Only allow press if UI element hasn't been pressed
@@ -102,10 +104,21 @@ function PoliceSquadHandler:new(o)
     -- Used for cycling squads
     o.cycleSquad = 1
 
+    o.quickGroupHandler = QuickGroupHandler:new{
+        onSelectGroup = function( groupList )
+            o:setSquadSelection( groupList )
+        end,
+        onAddGroup = function( groupList )
+            o:addSquadsToSelection( groupList )
+        end,
+    }
+
     return o
 end
 
 function PoliceSquadHandler:destroy()
+    self.quickGroupHandler:destroy()
+
     for _,v in pairs(self.abilityEntities) do
         v.entity:destroy()
     end 
@@ -136,21 +149,38 @@ end
 -- list of squads, nil is not allowed, instead to
 -- deselect use an empty list
 function PoliceSquadHandler:addSquadsToSelection( squads )
+    local newSquadList = {}
+    for _,sel in pairs( self.selectedSquads ) do
+        table.insert( newSquadList, sel )
+    end
+
     for _,v in pairs( squads ) do
-        self.selectedSquads[#(self.selectedSquads)+1] = v
+        local exists = false
+        for _,sel in pairs( self.selectedSquads ) do
+            if sel == v then
+                exists = true
+            end
+        end
+        
+        if exists == false then
+            table.insert( newSquadList, v )
+        end
     end    
 
-    self:setSquadSelection( self.selectedSquads )
-    self:setUsableAbilities( self.selectedSquads )
+    self:setSquadSelection( newSquadList )
 end
 
 function PoliceSquadHandler:setSquadSelection( squads )
     self.selectedSquads = squads     
     self.onSelectedSquadsChange( squads )
 
+    self:setUsableAbilities( self.selectedSquads )
+
     if #(self.selectedSquads) > 0 then
         self.onSelectedUnitInformationChange( self:evaluateSquadInformation( self.selectedSquads[1] ))
     end
+
+    self.quickGroupHandler:setSquadSelection( self.selectedSquads )
 end
 
 function PoliceSquadHandler:setSquadPrimary( squad )
@@ -220,7 +250,7 @@ function PoliceSquadHandler:evaluateUsableAbilities()
 
     local abilities = {}
     local aggregatedAbilities = {}
-    for i=1, #self.selectedSquads do
+    for i=1, #(self.selectedSquads) do
         local squad = self:getSquad(self.selectedSquads[i])
         for _,member in pairs(squad.members) do
             abilities[member] = member.getAbilities()
@@ -439,43 +469,44 @@ function PoliceSquadHandler:AimTearGas()
     end
 end
 
+local moodOutline = 0
+local rioterGroupIds = {}
 function PoliceSquadHandler:HighlightMood()
 
-	--if #self.selectedSquads == 0 then
-	--	--self.isAiming = false
-	--	--self:SetReticuleRender(false)
-	--	--self.AimingFunction = nil
-	--	--
-	--	--self.rightClicked = false
-	--	--self.rightPressed = false
-	--	
-	--	return
-	--end
+	if not  keyboard.isKeyDown(core.config.playerBindings.moodHighlight) then
 
-	local mouseX, mouseY = mouse.getPosition()
-    local aspct = core.entity.generateAspect( core.componentType.AttributeComponent, core.componentType.UnitTypeComponent, core.componentType.BoundingVolumeComponent )
-    local selectedEntity = core.system.picking.getHitEntity(mouseX, mouseY, aspct )
+		if moodOutline == 1 then
+			moodOutline = 0
+			core.system.squad.disableOutline(rioterGroupIds)
+			for k,v in pairs(rioterGroupIds) do rioterGroupIds[k]=nil end
 
-	if selectedEntity then
-		local unitTypeComponent = selectedEntity:get(core.componentType.UnitTypeComponent);
-		local attributeComponent = selectedEntity:get(core.componentType.AttributeComponent);
+		end
+		return;
+	end
 
-		if attributeComponent and unitTypeComponent then           
-			if unitTypeComponent.unitType == core.UnitType.Rioter then
-				s_squad.enableMoodOutline( { attributeComponent.groupID } )
-				self.outlinedRioterGroups = attributeComponent.groupID;
-			end			
-		end		
-	elseif self.leftClicked then
-		for k,v in pairs(self.selectedSquads) do self.selectedSquads[k]=nil end
-		self.leftClicked = true
-		self.leftPressed = true
-	end	
-
+	if moodOutline == 0 then
+		local groupCount = core.system.groups.getNumberOfGroups()
+	
+		for i=0, groupCount-1 do 
+			local members = core.system.groups.getMembersInGroup(i)
+       
+			if #members > 0 then
+				local attrbComponent = members[1]:get(core.componentType.AttributeComponent)
+				local utc = members[1]:get(core.componentType.UnitTypeComponent)
+				if utc.unitType == core.UnitType.Rioter then
+					 core.system.squad.enableMoodOutline({attrbComponent.groupID})
+					 table.insert(rioterGroupIds, attrbComponent.groupID)
+				end
+			end
+		end
+		moodOutline = 1
+	end
+	
+	
 end
 
 function PoliceSquadHandler:AttackGroup()
-	if #self.selectedSquads == 0 or self.rightClicked then
+	if #(self.selectedSquads) == 0 or self.rightClicked then
 	    self:setAbility(nil)	
 		self.rightClicked = false
 		self.rightPressed = false
@@ -518,7 +549,7 @@ function PoliceSquadHandler:AttackGroup()
 end
 
 function PoliceSquadHandler:RevertAttackingStateOfSelected()
-	if #self.selectedSquads ~= 0 then
+	if #(self.selectedSquads) ~= 0 then
 		core.orders.attackGroup( self.selectedSquads, -1 )
 	end
 end
@@ -753,19 +784,19 @@ function PoliceSquadHandler:update( delta )
         end
     end
 
-	if keyboard.isKeyDownOnce(keyboard.key.Kp_1) or keyboard.isKeyDownOnce(keyboard.key[1]) then
+	if keyboard.isKeyDownOnce(keyboard.key.Kp_1) or keyboard.isKeyDownOnce(core.config.playerBindings.attackAbility) then
         self:setAbility(core.system.squad.abilities.Attack)
 	end
 
-    if keyboard.isKeyDownOnce(keyboard.key.Kp_2) or keyboard.isKeyDownOnce(keyboard.key[2]) then
+    if keyboard.isKeyDownOnce(keyboard.key.Kp_2) or keyboard.isKeyDownOnce(core.config.playerBindings.tearGasAbility) then
         self:setAbility(core.system.squad.abilities.TearGas)
     end	
 
-    if keyboard.isKeyDownOnce(keyboard.key.Kp_3) or keyboard.isKeyDownOnce(keyboard.key[3]) then
+    if keyboard.isKeyDownOnce(keyboard.key.Kp_3) or keyboard.isKeyDownOnce(core.config.playerBindings.sprintAbility) then
         self:setAbility(core.system.squad.abilities.Sprint)
     end
 
-    if keyboard.isKeyDownOnce(keyboard.key.Kp_4) or keyboard.isKeyDownOnce(keyboard.key[4]) then
+    if keyboard.isKeyDownOnce(keyboard.key.Kp_4) or keyboard.isKeyDownOnce(core.config.playerBindings.fleeAbility) then
         self:setAbility(core.system.squad.abilities.Flee)
     end
 
@@ -821,7 +852,7 @@ function PoliceSquadHandler:update( delta )
 		self:HighlightMood()
     end   
 
-    if keyboard.isKeyDownOnce(keyboard.key.Tab) and #(self.selectedSquads) > 0 then        
+    if keyboard.isKeyDownOnce(core.config.playerBindings.rotateSquadSelection) and #(self.selectedSquads) > 0 then        
         local firstSquad = self.selectedSquads[1]
         table.remove(self.selectedSquads, 1)
         table.insert(self.selectedSquads, firstSquad)
@@ -966,24 +997,24 @@ function PoliceSquadHandler:update( delta )
     end
 
     --Formation selection
-    if keyboard.isKeyDown(keyboard.key.H) then
+    if keyboard.isKeyDown(core.config.playerBindings.halfCircleFormation) then
         self:setFormation( s_squad.formations.HalfCircleFormation )
-    elseif keyboard.isKeyDown(keyboard.key.C) then
+    elseif keyboard.isKeyDown(core.config.playerBindings.circleFormation) then
         self:setFormation( s_squad.formations.CircleFormation )
-    elseif keyboard.isKeyDown(keyboard.key.L) then
+    elseif keyboard.isKeyDown(core.config.playerBindings.lineFormation) then
         self:setFormation( s_squad.formations.LineFormation)
     end
 
     --Stances
-    if keyboard.isKeyDown(keyboard.key.I)  then        
+    if keyboard.isKeyDown(core.config.playerBindings.aggressiveStance)  then        
         if #(self.selectedSquads) > 0 then
             self:setStance( core.PoliceStance.Aggressive )
         end   
-    elseif keyboard.isKeyDown(keyboard.key.O) then
+    elseif keyboard.isKeyDown(core.config.playerBindings.defensiveStance) then
         if #(self.selectedSquads) > 0 then
             self:setStance( core.PoliceStance.Defensive )
         end   
-    elseif keyboard.isKeyDown(keyboard.key.P) then
+    elseif keyboard.isKeyDown(core.config.playerBindings.passiveStance) then
         if #(self.selectedSquads) > 0 then
             self:setStance( core.PoliceStance.Passive )
         end

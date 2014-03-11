@@ -12,8 +12,6 @@ Core::NavMeshCollisionSystem::NavMeshCollisionSystem()
 }
 
 //#define Draw_DEBUG_LINES_TO_SHOW_COLLIDING_EDGES
-
-
 #ifdef Draw_DEBUG_LINES_TO_SHOW_COLLIDING_EDGES
 #define DEBUG_ELIGABLE_EDGES_FOR_COLLISION( x ) x
 #else
@@ -74,7 +72,6 @@ void Core::NavMeshCollisionSystem::Update( float delta )
 			// check vs line
 			int nrEdges = instance->nodes[ffc->node].corners[3].length < 0 ? 3 : 4;
 
-			bool okCollision = false;
 			// check vs. own node lines first...
 			for( int i = 0; i < nrEdges; i++ )
 			{
@@ -126,11 +123,7 @@ void Core::NavMeshCollisionSystem::Update( float delta )
 				glm::vec3 cross = glm::normalize( glm::cross( (lineEnd - lineStart), glm::vec3( 0.0f, 1.0f, 0.0f ) ) );
 				float distanceToLine = glm::dot( cross, fromStartToObject );
 				
-				if( instance->nodes[collisionNode].corners[collisionCorner].linksTo >= 0 && distanceToLine < 0 )
-				{
-					okCollision = true;
-				}
-				else if( distanceToLine < sphere.radius && instance->nodes[collisionNode].corners[collisionCorner].linksTo < 0 )
+				if( distanceToLine < sphere.radius && instance->nodes[collisionNode].corners[collisionCorner].linksTo < 0 )
 				{
 					position += cross * (sphere.radius - distanceToLine);
 				}
@@ -143,8 +136,16 @@ void Core::NavMeshCollisionSystem::Update( float delta )
 				}
 			}
 
+			bool insideNodeOrNeighbours = instance->CheckPointInsideNode( position, ffc->node);
+			for( int i = 0; i < 4 && !insideNodeOrNeighbours; i++ )
+			{
+				if( instance->nodes[ ffc->node ].corners[ i ].linksTo >= 0 && instance->nodes[ ffc->node ].corners[ i ].length > 0.0f )
+					insideNodeOrNeighbours = instance->CheckPointInsideNode( position, instance->nodes[ ffc->node ].corners[ i ].linksTo );
+			}
+
+
 			// check vs. adjacent lines as well...
-			if( !instance->CheckPointInsideNode( position, ffc->node ) && !okCollision )
+			if( !insideNodeOrNeighbours )
 			{
 				for( int i = 0; i < nrEdges; i++ )
 				{				

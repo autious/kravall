@@ -5,6 +5,14 @@
 #include <math.h>
 
 #include <SystemDef.hpp>
+
+//#define DRAW_PF_DIRECTION
+#ifdef DRAW_PF_DIRECTION
+#define DEBUG_DRAW_PF_DIRECTION( x ) x
+#else
+#define DEBUG_DRAW_PF_DIRECTION( x ) ;
+#endif
+
 static int frameCount = 0;
 namespace Core
 {
@@ -104,13 +112,6 @@ namespace Core
 					//int y = ((navMeshVal2 >> 28) & 0x3) - 1;
 					//float distance = (navMeshVal2 & 0xFFFFFFF) * 0.0001;
 
-					/* this is how to unpack it...
-					glm::vec3 navMeshWallVector;
-					navMeshWallVector.x = int(navMeshValue * 0.001);
-					navMeshWallVector.y = 0;
-					navMeshWallVector.z = abs( int((navMeshValue - navMeshWallVector.x * 1000) * 0.01) ) - 2;
-					float navMeshWallDistance = abs( navMeshValue - navMeshWallVector.x * 1000 ) - abs( navMeshWallVector.z * 100 ) - 200;
-					*/
 
 					int team = 0; // UnitType::Object will default to zero here.
 					in[i].position_unitType = glm::vec4(wpc->position[0], wpc->position[1], wpc->position[2], utc->type);
@@ -285,7 +286,17 @@ namespace Core
 				glUseProgram(0);
 			}
 
+			DEBUG_DRAW_PF_DIRECTION( 
+				for (std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); it++)
+				{
+					MovementDataComponent *mdc = WGETC<MovementDataComponent>( *it );
+					WorldPositionComponent* wpc = WGETC<WorldPositionComponent>(*it);					
 
+					glm::vec3 pos = glm::vec3( wpc->position[0], wpc->position[1], wpc->position[2] );
+					glm::vec3 dir = glm::vec3( mdc->oldPFDir[0], 0.0f, mdc->oldPFDir[1] );
+
+					GFX::Debug::DrawLine( pos, pos + dir, GFXColor( 1, 1, 0, 1 ), false );
+				} );
 
 
 		}

@@ -22,13 +22,14 @@ extern "C"
 
 	static int LuaRegisterEscapePoint( lua_State * L )
 	{
-
 		float x = luaL_checknumber( L, 1 );
 		float y = luaL_checknumber( L, 2 );
 		float z = luaL_checknumber( L, 3 );
 
-		Core::GameData::RegisterEscapePoint( glm::vec3( x, y, z ) );
-		return 0;
+		int group = Core::GameData::RegisterEscapePoint( glm::vec3( x, y, z ) );
+		lua_pushinteger( L, group );
+
+		return 1;
 	}
 }
 
