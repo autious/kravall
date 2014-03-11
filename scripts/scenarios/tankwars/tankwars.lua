@@ -4,18 +4,54 @@ local input = require "input"
 local decal = entities.get "decal"
 local scen = scenario.new()
 
+local pdc = require "particle_definition"
+
 local mouse = core.input.mouse
 local keyboard = core.input.keyboard
 local key = keyboard.key
 
 
-local camera = require "camera".new()
---camera:lookAt( core.glm.vec3.new( 0.0, 0.0, 0.0 ), core.glm.vec3.new( 0.0, 0.0, 0.0 ) )
---camera:lookAt( { 0, 20, 0 }, { 0, 0, 0 } )
+local camera = require "/scenarios/tankwars/topdown_camera".new()
+camera:lookAt( core.glm.vec3.new( 0.0, 50.0, 0.0 ), core.glm.vec3.new( 0.0, 0.0, 0.0 ) )
+
+
+
+local particleEntity
 
 local function Init()
 	core.camera.gameCamera:setView( camera:getView( ) )
 	core.camera.gameCamera:setProjection( camera:getProjection( ) )
+	pdc
+	
+	
+	particleEntity = particleEntity or core.entity.create(core.componentType.EmitterComponent
+														, core.componentType.WorldPositionComponent)
+														--, core.componentType.MovementComponent
+														--, core.componentType.MovementDataComponent
+														--, core.componentType.RotationComponent
+														--, core.componentType.UnitTypeComponent
+														--, core.componentType.AttributeComponent
+														--, core.componentType.FlowfieldComponent
+	
+	particleEntity:set(core.componentType.WorldPositionComponent, { position = {0, 0, 0}})--hovercraftPos })
+	particleEntity:set(core.componentType.EmitterComponent, {
+		rate = 100,
+		offset = {0, -2, 0},
+		life = 3,
+		lifeVariance = 0.5,
+		lifeReduction = 1.5,
+		lifeReductionVariance = 0,
+		velocity = {0, 0, 3},
+		velocityVariance = {0, 0, 4},
+		acceleration = {0, 2, 0},
+		coneDirection = {0, 1, 0},
+		coneAngle = 60,
+		coneAngleVariance = 30,
+		type = core.system.particle.emitters.Cone,
+		handle = scen.smoke
+		}, true)
+	
+	
 end
 
 scen:registerInitCallback( Init )
@@ -25,6 +61,141 @@ scen.asm:specific_content( core.contentmanager.load(
 
 	
 
+	
+--local function CreateEnemyTankBody(positionIn, group)
+--	local entity = core.entity.create(
+--		core.componentType.WorldPositionComponent,
+--		core.componentType.GraphicsComponent,
+--		core.componentType.RotationComponent
+--		)
+--		
+--	entity:set(core.componentType.WorldPositionComponent, {position = positionIn})
+--	
+--	entity:set(core.componentType.GraphicsComponent,
+--				{data = {
+--					load = { 
+--							mesh = { core.loaders.GnomeLoader, "assets/model/tankwars/leopard-body.bgnome", false },
+--							material = { core.loaders.MaterialLoader, "assets/texture/tankwars/leopard-body.material", false }
+--							}
+--						}
+--				}
+--				)
+--				
+--	entity:set(core.componentType.RotationComponent, {rotation = { 0, 0, 0, 1 }} )
+--	
+--	
+--	--scen:loadAssembly( 
+--	--{
+--	--{
+--	--	type = core.componentType.WorldPositionComponent,
+--	--	data = { position = { position[1], 0, position[2] } }
+--	--},
+--	--{
+--	--	type = core.componentType.GraphicsComponent,
+--	--	data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
+--	--	load = { 
+--	--				mesh = { core.loaders.GnomeLoader, "assets/model/tankwars/leopard-body.bgnome", false },
+--	--				material = { core.loaders.MaterialLoader, "assets/texture/tankwars/leopard-body.material", false }
+--	--		   }
+--	--},
+--	--{
+--	--	core.componentType.GraphicsComponent,
+--	--	data = { scale = 1.0 }
+--	--},
+--	--{
+--	--	type = core.componentType.RotationComponent,
+--	--	data = { rotation = { 0, 0, 0, 1 } }
+--	--}
+--	--})
+--	
+--	
+--	return entity
+--end
+	
+local function CreateEnemyTankBody(position, group)
+	return scen:loadAssembly( 
+	{
+	{
+		type = core.componentType.WorldPositionComponent,
+		data = { position = { position[1], 0, position[2] } }
+	},
+	--{
+	--	type = core.componentType.UnitTypeComponent,
+	--	data = { unitType = core.UnitType.Rioter }
+	--},
+	--{
+	--	type = core.componentType.MovementComponent,
+	--	data = { direction = { 0, 0, 0 }, newDirection = { 0, 0, 0 }, speed = 5.0, 
+	--	desiredSpeed = { 5.0, 5.0, 5.0, 5.0 }, goal = false }
+	--	,ignoreHard = true
+	--},
+	--{
+	--	type = core.componentType.BoundingVolumeComponent,
+	--	data = { sphereOffset = { 0, 0, 0 }, sphereRadius = 3.0, pickingRadius = 0.0,
+	--			collisionModel = core.BoundingVolumeCollisionModel.DynamicResolution, 
+	--			type = core.BoundingVolumeType.SphereBoundingType }
+	--},
+	{
+		type = core.componentType.GraphicsComponent,
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
+		load = { 
+					mesh = { core.loaders.GnomeLoader, "assets/model/tankwars/leopard-body.bgnome", false },
+					material = { core.loaders.MaterialLoader, "assets/texture/tankwars/leopard-body.material", false }
+			   }
+	},
+	--{
+	--	type = core.componentType.AttributeComponent,
+	--	data = { health = 100, stamina = 100, morale = 2.0, 
+	--		   alignment = core.RioterAlignment.Anarchist, rage = 0, pressure = 0, groupID = group, stanceRioter = core.RioterStance.Normal}
+	--	,
+	--	ignoreHard = true
+	--},
+	--{
+	--	type = core.componentType.TargetingComponent,
+	--	data = { weapon = -1 },
+	--	ignoreHard = true
+	--},
+	{
+		type = core.componentType.ScaleComponent,
+		data = { scale = 1.0 }
+	},
+	--{
+	--	type = core.componentType.FlowfieldComponent,
+	--	data = { node = -1 }
+	--},
+	{
+		type = core.componentType.RotationComponent,
+		data = { rotation = { 0, 0, 0, 1 } }
+	}
+})
+end
+
+local function CreateEnemyTankTurret(position)
+	return scen:loadAssembly( 
+	{
+	{
+		type = core.componentType.WorldPositionComponent,
+		data = { position = { position[1], 0, position[2] } }
+	},
+	{
+		type = core.componentType.GraphicsComponent,
+		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
+		load = { 
+					mesh = { core.loaders.GnomeLoader, "assets/model/tankwars/leopard-turret.bgnome", false },
+					material = { core.loaders.MaterialLoader, "assets/texture/tankwars/leopard-turret.material", false }
+			   }
+	},
+	{
+		type = core.componentType.ScaleComponent,
+		data = { scale = 1.0 }
+	},
+	{
+		type = core.componentType.RotationComponent,
+		data = { rotation = { 0, 0, 0, 1 } }
+	}
+}
+	)
+end
 
 
 local directional = entities.get "directionalLight"
@@ -143,43 +314,43 @@ local playerTank = scen:loadAssembly(
 		type = core.componentType.ScaleComponent,
 		data = { scale = 1.0 }
 	},
-	{
-		type = core.componentType.UnitTypeComponent,
-		data = { unitType = core.UnitType.Rioter }
-	},
+	--{
+	--	type = core.componentType.UnitTypeComponent,
+	--	data = { unitType = core.UnitType.Rioter }
+	--},
 	{
 		type = core.componentType.MovementComponent,
 		data = { direction = { 0, 0, 0 }, newDirection = { 0, 0, 0 }, speed = 1.5, 
 		desiredSpeed = 1.5, goal = false }
 		,ignoreHard = true
 	},
-	{
-		type = core.componentType.BoundingVolumeComponent,
-		data = { sphereOffset = { 0, 0, 0 }, sphereRadius = 5.0, pickingRadius = 0.0, 
-				collisionModel = core.BoundingVolumeCollisionModel.DynamicResolution, 
-				type = core.BoundingVolumeType.SphereBoundingType }
-	},
-	{
-		type = core.componentType.AttributeComponent,
-		data = { health = 100, stamina = 100, morale = 2.0, 
-			   alignment = core.RioterAlignment.Anarchist, rage = 0, pressure = 0, groupID = playerGroup, stanceRioter = core.RioterStance.Normal}
-		,
-		ignoreHard = true
-	},
+	--{
+	--	type = core.componentType.BoundingVolumeComponent,
+	--	data = { sphereOffset = { 0, 0, 0 }, sphereRadius = 5.0, pickingRadius = 0.0, 
+	--			collisionModel = core.BoundingVolumeCollisionModel.DynamicResolution, 
+	--			type = core.BoundingVolumeType.SphereBoundingType }
+	--},
+	--{
+	--	type = core.componentType.AttributeComponent,
+	--	data = { health = 100, stamina = 100, morale = 2.0, 
+	--		   alignment = core.RioterAlignment.Anarchist, rage = 0, pressure = 0, groupID = playerGroup, stanceRioter = core.RioterStance.Normal}
+	--	,
+	--	ignoreHard = true
+	--},
 	{
 		type = core.componentType.RotationComponent,
 		--data = { rotation = { 0, 1*math.sin( -3.14/4 ), 0, math.cos( -3.14/4 ) } }
 		data = { rotation = { 0, 0, 0, 1 } }
 	},
-	{
-		type = core.componentType.FlowfieldComponent,
-		data = { node = -1 }
-	},
-	{
-		type = core.componentType.TargetingComponent,
-		data = { weapon = -1 },
-		ignoreHard = true
-	}
+	--{
+	--	type = core.componentType.FlowfieldComponent,
+	--	data = { node = -1 }
+	--},
+	--{
+	--	type = core.componentType.TargetingComponent,
+	--	data = { weapon = -1 },
+	--	ignoreHard = true
+	--}
 }
 )
 
@@ -467,90 +638,6 @@ local function CreateExplosionLight(position, scale)
 end
 
 
-local function CreateEnemyTankBody(position, group)
-	return scen:loadAssembly( 
-	{
-	{
-		type = core.componentType.WorldPositionComponent,
-		data = { position = { position[1], 0, position[2] } }
-	},
-	{
-		type = core.componentType.UnitTypeComponent,
-		data = { unitType = core.UnitType.Rioter }
-	},
-	{
-		type = core.componentType.MovementComponent,
-		data = { direction = { 0, 0, 0 }, newDirection = { 0, 0, 0 }, speed = 5.0, 
-		desiredSpeed = { 5.0, 5.0, 5.0, 5.0 }, goal = false }
-		,ignoreHard = true
-	},
-	{
-		type = core.componentType.BoundingVolumeComponent,
-		data = { sphereOffset = { 0, 0, 0 }, sphereRadius = 3.0, pickingRadius = 0.0,
-				collisionModel = core.BoundingVolumeCollisionModel.DynamicResolution, 
-				type = core.BoundingVolumeType.SphereBoundingType }
-	},
-	{
-		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
-		load = { 
-					mesh = { core.loaders.GnomeLoader, "assets/model/tankwars/leopard-body.bgnome", false },
-					material = { core.loaders.MaterialLoader, "assets/texture/tankwars/leopard-body.material", false }
-			   }
-	},
-	{
-		type = core.componentType.AttributeComponent,
-		data = { health = 100, stamina = 100, morale = 2.0, 
-			   alignment = core.RioterAlignment.Anarchist, rage = 0, pressure = 0, groupID = group, stanceRioter = core.RioterStance.Normal}
-		,
-		ignoreHard = true
-	},
-	{
-		type = core.componentType.TargetingComponent,
-		data = { weapon = -1 },
-		ignoreHard = true
-	},
-	{
-		type = core.componentType.ScaleComponent,
-		data = { scale = 1.0 }
-	},
-	{
-		type = core.componentType.FlowfieldComponent,
-		data = { node = -1 }
-	},
-	{
-		type = core.componentType.RotationComponent,
-		data = { rotation = { 0, 0, 0, 1 } }
-	}
-})
-end
-
-local function CreateEnemyTankTurret(position)
-	return scen:loadAssembly( 
-	{
-	{
-		type = core.componentType.WorldPositionComponent,
-		data = { position = { position[1], 0, position[2] } }
-	},
-	{
-		type = core.componentType.GraphicsComponent,
-		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
-		load = { 
-					mesh = { core.loaders.GnomeLoader, "assets/model/tankwars/leopard-turret.bgnome", false },
-					material = { core.loaders.MaterialLoader, "assets/texture/tankwars/leopard-turret.material", false }
-			   }
-	},
-	{
-		type = core.componentType.ScaleComponent,
-		data = { scale = 1.0 }
-	},
-	{
-		type = core.componentType.RotationComponent,
-		data = { rotation = { 0, 0, 0, 1 } }
-	}
-}
-	)
-end
 
 
 
@@ -645,7 +732,7 @@ local enemyTankTurrets = {}
 local tankGroups
 
 local function InitEnemyTanks(n)
-	tankGroups = tankGroups or core.system.groups.createGroup();
+	--tankGroups = tankGroups or core.system.groups.createGroup();
 	local minSpawn = 20
 	local maxSpawn = (boundX + boundY) / 2 - minSpawn
 	for i=1,n do
@@ -1083,7 +1170,7 @@ end
 local function UpdateEnemyTanks(delta)
 	local playerPos = playerTank:get(core.componentType.WorldPositionComponent).position
 	
-	core.system.groups.setGroupGoal(tankGroups, playerPos[1], playerPos[2], playerPos[3] )
+	--core.system.groups.setGroupGoal(tankGroups, playerPos[1], playerPos[2], playerPos[3] )
 	
 	local i = 1
 	while i <= #enemyTanks do
@@ -1412,8 +1499,8 @@ end
 
 
 local function UpdateCamera()
-	local tankPos = playerTank:get(core.componentType.WorldPositionComponent)
-	camera:lookAt( core.glm.vec3.new( tankPos.position[1], -50, tankPos.position[3] ), core.glm.vec3.new( tankPos.position[1], 0, tankPos.position[3] ))
+	local tankPos = playerTank:get(core.componentType.WorldPositionComponent).position
+	camera:lookAt( core.glm.vec3.new( tankPos[1], 50.0, tankPos[3] ), core.glm.vec3.new( tankPos[1], 0.0, tankPos[3] ))
 	core.camera.gameCamera:setView( camera:getView( ) )
 end
 
@@ -1469,7 +1556,7 @@ function Update(delta)
 	if alive then
 		UpdatePlayerTank(delta)
 		UpdateEnemyTanks(delta)
-		--UpdateCamera()
+		UpdateCamera()
 	end
 	
 	UpdateBullets(delta)
