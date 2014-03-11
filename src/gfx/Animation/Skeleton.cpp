@@ -38,8 +38,8 @@ int Skeleton::RemoveAnimation(const int& animationID)
 {
 	if (animationID >= 0 && animationID < m_animationInfo.size())
 	{
-		m_animationInfo.erase(m_animationInfo.begin() + animationID);
 		m_numFrames -= m_animationInfo[animationID].numFrames;
+		m_animationInfo.erase(m_animationInfo.begin() + animationID);
 		m_numAnimations--;
 		return GFX_SUCCESS;
 	}
