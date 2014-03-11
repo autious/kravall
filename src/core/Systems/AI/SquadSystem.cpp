@@ -450,6 +450,54 @@ namespace Core
         }
     }
 
+	void SquadSystem::StopGroup(int* squadIDs, int nSquads)
+    {
+		if( nSquads <= 0 )
+			return;
+
+		//RevertSquadStanceFromAgressive( squadIDs, nSquads );
+		//glm::vec3 medianPosition = glm::vec3(0);
+		//
+		for(int i=0; i<nSquads; ++i)
+        {
+            for(std::vector<Entity>::iterator squad_it = m_entities.begin(); squad_it != m_entities.end(); ++squad_it)        
+            {
+                Core::SquadComponent* sqdc = WGETC<Core::SquadComponent>(*squad_it);
+                if(sqdc->squadID == squadIDs[i])
+                {
+					sqdc->squadGoal[0] = std::numeric_limits<float>::max();
+                }
+            }
+        }
+		//
+		//medianPosition /= nSquads;
+
+		//for(int i=0; i<nSquads; ++i)
+        //{
+        //    for(std::vector<Entity>::iterator squad_it = m_entities.begin(); squad_it != m_entities.end(); ++squad_it)        
+        //    {
+		//		std::vector<Core::Entity> squad = Core::world.m_systemHandler.GetSystem<Core::GroupDataSystem>()->GetMembersInGroup(squadIDs[i]);
+		//		for(std::vector<Entity>::iterator it = squad.begin(); it != squad.end(); ++it)        
+		//		{
+		//			// check if alive...
+		//			Core::TargetingComponent* tc = WGETC<Core::TargetingComponent>(*it);
+		//			if( tc )
+		//			{
+		//				
+		//			}
+		//		}
+		//
+        //        //Core::SquadComponent* sqdc = WGETC<Core::SquadComponent>(*squad_it);
+        //        //if(sqdc->squadID == squadIDs[i])
+        //        //{
+		//		//	sqdc->squadGoal[0] = medianPosition.x;
+		//		//	sqdc->squadGoal[1] = medianPosition.y;	
+		//		//	sqdc->squadGoal[2] = medianPosition.z;	
+        //        //}
+        //    }
+        //}
+    }
+
     std::vector<Core::SquadAbility> SquadSystem::GetPossibleAbilities( int squadId )
     {
         std::vector<Core::SquadAbility> abilities;
@@ -593,6 +641,14 @@ namespace Core
 					Core::MovementComponent* mc = WGETC<Core::MovementComponent>(*entity_it);
 					Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(*entity_it);
 
+					// if the squad don't have a goal, set goal to current position...
+					if( sqdc->squadGoal[0] == std::numeric_limits<float>::max() )
+					{
+						Core::FlowfieldComponent* ffc = WGETC<Core::FlowfieldComponent>( *entity_it );
+						if( ffc )
+							mc->SetGoal( wpc->position, ffc->node, Core::MovementGoalPriority::FormationGoalPriority );
+						continue;
+					}
 
 					glm::vec2 relPos2D = glm::vec2(frmc->relativePosition[0], frmc->relativePosition[1]);
 					relPos2D = rotMat * relPos2D;

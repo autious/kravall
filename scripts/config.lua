@@ -60,6 +60,8 @@ playerBindings =
     rotateSquadSelection = core.input.keyboard.key.Tab, 
 
 	moodHighlight = core.input.keyboard.key["M"], 
+	
+	haltOrder = core.input.keyboard.key["Z"],
 }
 }
 

@@ -800,7 +800,11 @@ function PoliceSquadHandler:update( delta )
         self:setAbility(core.system.squad.abilities.Flee)
     end
 
-
+	if keyboard.isKeyDownOnce(core.config.playerBindings.haltOrder) then
+		core.orders.haltGroup( self.selectedSquads )
+	end
+	
+	
     --Ability: Sprint
     -- This block is expensive (~2ms) should be put in a c-system
     for _,squad in pairs(self.createdSquads) do
