@@ -442,13 +442,13 @@ namespace GFX
 		Sets a setting to the specified value
 		\return Returns either GFX_SUCCESS or GFX_FAIL
 		*/
-		int SetConfiguration(const int setting, const int value);
+		DLL_API int SetConfiguration(const int setting, const int value);
 
 		/*!
 		Gets the value of a setting
 		\return Returns either GFX_SUCCESS or GFX_FAIL
 		*/
-		int GetConfiguration(const int setting, int& out_value);
+		DLL_API int GetConfiguration(const int setting, int& out_value);
 
 
 		/*!

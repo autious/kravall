@@ -9,8 +9,9 @@ local keyboard = core.input.keyboard
 local key = keyboard.key
 
 
-local camera = require "rts_camera".new()
---camera:lookAt( core.glm.vec3.new( 0, 0, 0 ), core.glm.vec3.new( 0, 0, 0 ) )
+local camera = require "camera".new()
+--camera:lookAt( core.glm.vec3.new( 0.0, 0.0, 0.0 ), core.glm.vec3.new( 0.0, 0.0, 0.0 ) )
+--camera:lookAt( { 0, 20, 0 }, { 0, 0, 0 } )
 
 local function Init()
 	core.camera.gameCamera:setView( camera:getView( ) )
@@ -953,19 +954,31 @@ local function UpdateMissiles(delta)
 			--rotQuat = core.glm.quat.new( 0,0,0,1 )
 			
 			
-			local axis = { 0.0, 0.0, 0.0 }
+			local axis = { 0.0, math.sin(missiles[i].direction), math.sin(missiles[i].directionUp) }
 			
+			
+			
+			local lenght = math.sqrt( axis[1] * axis[1] + axis[2] * axis[2] + axis[3] * axis[3] )
+			
+			axis[1] = axis[1] / lenght
+			axis[2] = axis[2] / lenght
+			axis[3] = axis[3] / lenght
 			
 			--local missileRot = missiles[i].entity:get(core.componentType.RotationComponent)
-			local rotQuat = { math.sin(missiles[i].directionUp * 0.5) , 0, 0, math.cos(missiles[i].directionUp * 0.5 )}
+			
+			
+			
+			local rotQuat = { axis[1] * math.sin(0.0),  axis[2] * math.sin(0.0),  axis[3] * math.sin(0.0), math.cos(0.0) }
+			
+			
 --local rotQuat = { 0, math.sin(missiles[i].direction * 0.5), 0, math.cos(missiles[i].direction * 0.5 )}
-			local rotQuattt = { 0, 0, 0, 1}
+			--local rotQuattt = { 0, 0, 0, 1}
 
 
-			local rotttttt = {	(rotQuat[2]*rotQuattt[3] - rotQuat[3]*rotQuattt[2] + rotQuat[1]*rotQuattt[4] + rotQuat[4]*rotQuattt[1]),
-								(rotQuat[3]*rotQuattt[1] - rotQuat[1]*rotQuattt[3] + rotQuat[2]*rotQuattt[4] + rotQuat[4]*rotQuattt[2]),
-								(rotQuat[1]*rotQuattt[2] - rotQuat[2]*rotQuattt[1] + rotQuat[3]*rotQuattt[4] + rotQuat[4]*rotQuattt[3]),
-								(rotQuat[4]*rotQuattt[4] - rotQuat[1]*rotQuattt[1] - rotQuat[2]*rotQuattt[2] - rotQuat[3]*rotQuattt[3]) }
+			--local rotttttt = {	(rotQuat[2]*rotQuattt[3] - rotQuat[3]*rotQuattt[2] + rotQuat[1]*rotQuattt[4] + rotQuat[4]*rotQuattt[1]),
+			--					(rotQuat[3]*rotQuattt[1] - rotQuat[1]*rotQuattt[3] + rotQuat[2]*rotQuattt[4] + rotQuat[4]*rotQuattt[2]),
+			--					(rotQuat[1]*rotQuattt[2] - rotQuat[2]*rotQuattt[1] + rotQuat[3]*rotQuattt[4] + rotQuat[4]*rotQuattt[3]),
+			--					(rotQuat[4]*rotQuattt[4] - rotQuat[1]*rotQuattt[1] - rotQuat[2]*rotQuattt[2] - rotQuat[3]*rotQuattt[3]) }
 
 			--rotQuat = rotQuat * rotQuattt
 			--core.glm.quat.rotate(rotQuat, missiles[i].direction, core.glm.vec3.new(0,1,0))
@@ -979,12 +992,12 @@ local function UpdateMissiles(delta)
 			--					x()*rhs.y() - y()*rhs.x() + z()*rhs.w() + w()*rhs.z(),
 			--					w()*rhs.w() - x()*rhs.x() - y()*rhs.y() - z()*rhs.z());
 				
-			local missileRot = missiles[i].entity:get(core.componentType.RotationComponent)
-			missileRot.rotation[1] = rotttttt[1]
-			missileRot.rotation[2] = rotttttt[2]
-			missileRot.rotation[3] = rotttttt[3]
-			missileRot.rotation[4] = rotttttt[4]
-			missiles[i].entity:set(core.componentType.RotationComponent, missileRot)
+			--local missileRot = missiles[i].entity:get(core.componentType.RotationComponent)
+			--missileRot.rotation[1] = rott[1]
+			--missileRot.rotation[2] = rotttttt[2]
+			--missileRot.rotation[3] = rotttttt[3]
+			--missileRot.rotation[4] = rotttttt[4]
+			missiles[i].entity:set(core.componentType.RotationComponent, {rotation = rotQuat})
 					
 			i = i + 1
 		end
@@ -1528,7 +1541,7 @@ function Update(delta)
 	--	mythingPos.position[3] =  mythingPos.position[3] + 100  * dt
 	--end
 
-	camera:update(delta)
+	--camera:update(delta)
 end
 
 scen:registerUpdateCallback( Update )

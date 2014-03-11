@@ -14,5 +14,5 @@ void main()
 	gNormalDepthRT = vec4(0);
 	gDiffuseRT	= outlineColor;
 	gSpecularRT = vec4(0);
-	gGlowMatRT = outlineColor * 0.135f;
+	gGlowMatRT = outlineColor * 0.035f;
 }

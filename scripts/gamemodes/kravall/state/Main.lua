@@ -172,14 +172,25 @@ end
 
 function Main:enterOverview()
     self.cameraPosition = self.camera.position
+    self.cameraRotation = self.camera.quatRotation
+    self.cameraBackward = core.camera.gameCamera:getForward() * (-1)
     local pos = {self.camera.position:get()}
     self:AddCameraPoint(core.glm.vec3.new(pos[1], 250, pos[3]), core.glm.quat.new(math.sin(math.pi/4), 0, 0, math.cos(math.pi/4)))
 end
 
 function Main:exitOverview(target)
-    local pos = {target:get()}
     local camPos = {self.cameraPosition:get()}
-    self:AddCameraPoint(core.glm.vec3.new(pos[1], camPos[2], pos[3]), core.glm.quat.new(math.sin(math.pi/4), 0, 0, math.cos(math.pi/4)))
+    local alpha = math.acos(core.glm.vec3.dot(self.cameraBackward, core.glm.vec3.new(0, 1, 0)))
+    local angle = (math.pi/2) - alpha
+    local distance = camPos[2]
+           
+    if angle < math.pi/2 then
+        distance = distance / math.sin(angle)
+    end
+
+    local pos = target + (self.cameraBackward * distance)
+
+    self:AddCameraPoint(pos, self.cameraRotation)
 end
 
 function Main:AddCameraPoint(position, rotation)
