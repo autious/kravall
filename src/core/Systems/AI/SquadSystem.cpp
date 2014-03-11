@@ -135,7 +135,7 @@ namespace Core
                 {           
                     float circumferenceOffset = 0.0f;
                     float radius = glm::distance(startPos, endPos) / 2.0f;
-                    float circumference = 3.14f * radius * 2.0f;
+                    float circumference = 3.14f * radius * (isHalfCircle ? 1.0f : 2.0f);
                     glm::vec3 centerPosition = isHalfCircle ? (startPos + endPos) / 2.0f: startPos;
                     float circleSpacing = circumference / static_cast<float>(membersInGroup);
                     float radiusSpacing = static_cast<float>(world.m_config.GetDouble("squadFormationRowSpacing", FORMATION_ROW_SPACING));
@@ -148,7 +148,7 @@ namespace Core
                     {
                         Core::FormationComponent* frmc = WGETC<Core::FormationComponent>(*it);
 
-                        float radianOffset = -(circumferenceOffset / circumference) * 3.14f * (isHalfCircle ? 1.0f : 2.0f);
+                        float radianOffset = (circumferenceOffset / circumference) * 3.14f * (isHalfCircle ? 1.0f : 2.0f);
                         float cosVal = glm::cos(radianOffset);
                         float sinVal = glm::sin(radianOffset);
                         glm::mat2 rotMat2D = glm::mat2(cosVal, -sinVal, sinVal, cosVal);
@@ -269,7 +269,7 @@ namespace Core
                 {
                     float circumferenceOffset = 0.0f;
                     float radius = glm::distance(startPos, endPos) / 2.0f;
-                    float circumference = 3.14f * radius * 2.0f;
+                    float circumference = 3.14f * radius * (isHalfCircle ? 1.0f : 2.0f);
                     glm::vec3 centerPosition =  isHalfCircle ? (startPos + endPos) / 2.0f: startPos; 
                     float circleSpacing = circumference / static_cast<float>(membersInGroup);
                     float radiusSpacing = static_cast<float>(world.m_config.GetDouble("squadFormationRowSpacing", FORMATION_ROW_SPACING));
@@ -279,7 +279,7 @@ namespace Core
                     circleSpacing = (circleSpacing > static_cast<float>(world.m_config.GetDouble("squadFormationColumnSpacingMinimum", FORMATION_COLUMN_SPACING_MINIMUM))) ? circleSpacing : static_cast<float>(world.m_config.GetDouble("squadFormationSpacingMinimum", FORMATION_COLUMN_SPACING_MINIMUM));
                     for(int i=0; i < membersInGroup; ++i)
                     {
-                        float radianOffset = -(circumferenceOffset / circumference) * 3.14f * (isHalfCircle ? 1.0f : 2.0f);
+                        float radianOffset = -(circumferenceOffset / circumference) * 3.14f * (isHalfCircle ? 1.0f : 2.0f) + 3.14f;
                         float cosVal = glm::cos(rotation + radianOffset);
                         float sinVal = glm::sin(rotation + radianOffset);
                         glm::mat2 rotMat2D = glm::mat2(cosVal, -sinVal, sinVal, cosVal);

@@ -430,6 +430,7 @@ namespace GFX
 		// Reload animations data if changed
 		if (m_reloadAnimationData)
 		{
+			std::cout << "Reloading animations...\n";
 			m_animationManager->BindBufferData();
 			m_reloadAnimationData = false;
 		}
@@ -678,6 +679,7 @@ namespace GFX
 
 	int RenderCore::DeleteSkeleton(const int& skeletonID)
 	{
+		m_reloadAnimationData = true;
 		return m_animationManager->DeleteSkeleton(skeletonID);
 	}
 

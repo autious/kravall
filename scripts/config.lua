@@ -54,8 +54,8 @@ playerBindings =
     fleeAbility = core.input.keyboard.key["X"],
 
     lineFormation = core.input.keyboard.key["L"],
-    circleFormation = core.input.keyboard.key["H"],
-    halfCircleFormation = core.input.keyboard.key["C"],
+    circleFormation = core.input.keyboard.key["C"],
+    halfCircleFormation = core.input.keyboard.key["H"],
     
     rotateSquadSelection = core.input.keyboard.key.Tab, 
 

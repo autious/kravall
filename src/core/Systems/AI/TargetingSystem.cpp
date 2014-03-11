@@ -283,6 +283,8 @@ Core::Entity Core::TargetingSystem::FindClosestAttacker(Core::TargetingComponent
 		for (int i = 0; i < originTC->numberOfAttackers; ++i)
 		{
 			Core::WorldPositionComponent* twpc = WGETC<Core::WorldPositionComponent>(originTC->attackers[i]);
+			if (twpc == nullptr)
+				continue;
 
 			float dx = twpc->position[0] - originWPC->position[0];
 			float dy = twpc->position[1] - originWPC->position[1];
