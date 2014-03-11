@@ -41,9 +41,9 @@ float rand( uint seed )
 
 vec4 randColor( uint seed )
 {
-	float tr = rand(wang_hash(seed+1));
-	float tg = rand(wang_hash(seed+2));
-	float tb = rand(wang_hash(seed+3));
+	float tr = (rand(wang_hash(seed+1)) + 1.0)/(2.0);
+	float tg = (rand(wang_hash(seed+2)) + 1.0)/(2.0);
+	float tb = (rand(wang_hash(seed+3)) + 1.0)/(2.0);
 	return vec4( 
 					tr, 
 					tg, 
@@ -81,6 +81,8 @@ void main()
 	result = mix(result, diffuseColor * colorG, blendMap.g); // Shirt
 	result = mix(result, diffuseColor * colorB, blendMap.b); // Pants
 	//result = mix(result, diffuseColor*colorA, blendMap.a); // Extra
+
+	//result.xyz = pow(result.xyz, vec3(gGamma));
 
 	//result.xyz = pow(result.xyz, vec3(gGamma));
 	specColor.xyz = pow(specColor.xyz, vec3(gGamma));
