@@ -7,6 +7,7 @@ local TextSelectList = require "gui/component/TextSelectList"
 local TextLabel = require "gui/component/TextLabel"
 local TextBox = require "gui/component/TextBox"
 local Image = require "gui/component/Image"
+local MsgBox = require "gui/component/MessageBox"
 
 local AnchorPlacer = require "gui/placement/AnchorPlacer"
 local EastPlacer = require "gui/placement/EastPlacer"
@@ -23,9 +24,9 @@ local Util = require "gui/placement/util"
 local PrepInterface = 
 {
     policeTypes = {},
-    onSelectCurrentSquad = function(squadDef) end,
+    onSelectCurrentSquad = function( squadDef ) end,
     onFinished = function() end,
-    onSelectCreatedSquad = function (squadInstance) end,
+    onSelectCreatedSquad = function ( squadInstance ) end,
     onRemoveSelected = function() end
 }
 
@@ -35,6 +36,17 @@ function PrepInterface:new(o)
     self.__index = self
 
 	local leftXOffset = 15
+	
+	o.msgBox = MsgBox:new( { 
+								buttons="YesNo",
+								message=[[You still have money left in your account.
+								
+								Are you sure you want to continue?]],
+								onPrimaryClick=o.onFinished, onSecondaryClick=function() end
+							} )
+	o.msgBox:setShow( false )
+	
+	o.cashLeft = 0;
 	
     o.gui = GUI:new()
 	o.gui:addComponent( TextLabel:new( { label="Select units to purchase and assign them to a spawning position", anchor="North" } ) )
@@ -155,7 +167,14 @@ function PrepInterface:new(o)
 	o.gui:addComponent( o.purchaseSubGUI )
     
     o.goButton = Button:new	{ 
-										anchor = "SouthEast", xoffset=-66, yoffset=-11, onClick = o.onFinished, enabled = false,
+										anchor = "SouthEast", xoffset=-66, yoffset=-11, enabled=false,
+										onClick=function() 
+													if o.cashLeft == 0 then
+														o.onFinished()
+													else
+														o.msgBox:setShow( true ) 
+													end
+												end,										
 										matReleased="assets/texture/ui/go-button-release.material",
 										matPressed="assets/texture/ui/go-button-press.material",
 										matHover="assets/texture/ui/go-button-hover.material",
@@ -185,7 +204,8 @@ function PrepInterface:setBoughtSelected( instance )
 end
 
 function PrepInterface:setRemainingMoney( value )
-    self.cashLabel:setLabel( "$" .. value )
+	self.cashLeft = value
+    self.cashLabel:setLabel( "$" .. self.cashLeft )
 end
 
 function PrepInterface:updatePurchasedList()
@@ -193,6 +213,7 @@ function PrepInterface:updatePurchasedList()
 end
 
 function PrepInterface:destroy()
+	self.msgBox:destroy()
     self.gui:destroy()  
     self.gui = nil
 end
