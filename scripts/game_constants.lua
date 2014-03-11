@@ -27,9 +27,9 @@ return
     },
     tearGas =
     {
-        tearGasRange                    = 20,
+        tearGasRange                    = 60,
         tearGasStaminaCost              = 60,
-        tearGasDuration                 = 10,
+        tearGasDuration                 = 15,
     },
     sprinting =
     {
