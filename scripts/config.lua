@@ -8,6 +8,9 @@ windowResizable = true,
 initScreenWidth = 1280,
 initScreenHeight = 720,
 fullscreen = false,
+shadowQuality = 1, -- 0: off, 1: 2 cascade, 2: 4 cascade
+shadowResolution = 512, -- min 128, max 2048
+mipmapQuality = 2, -- 0: no mipmap, 1: mipmap, 2: anisotropic filtering
 showSystems = false,
 entityMemoryOutputLevel = "partial", -- full, short or partial
 -- List of components to render debug data for.
@@ -37,6 +40,26 @@ numberOfSystemCoresToUse = 1,
 
 blockingOfNavMesh_Checktimer = 5,
 blockingOfNavMesh_StuckDistance = 5,
-blockingOfNavMesh_StuckTimerBeforeNewPath = 5
+blockingOfNavMesh_StuckTimerBeforeNewPath = 5,
+
+playerBindings = 
+{
+    aggressiveStance = core.input.keyboard.key["I"],
+    defensiveStance = core.input.keyboard.key["U"],
+    passiveStance = core.input.keyboard.key["P"],
+
+    attackAbility = core.input.keyboard.key["R"],
+    tearGasAbility = core.input.keyboard.key["F"],
+    sprintAbility = core.input.keyboard.key["V"],
+    fleeAbility = core.input.keyboard.key["X"],
+
+    lineFormation = core.input.keyboard.key["L"],
+    circleFormation = core.input.keyboard.key["H"],
+    halfCircleFormation = core.input.keyboard.key["C"],
+    
+    rotateSquadSelection = core.input.keyboard.key.Tab, 
+
+	moodHighlight = core.input.keyboard.key["M"], 
+}
 }
 

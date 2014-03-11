@@ -33,6 +33,8 @@ public:
 	\return Returns the animation ID if successful, else returns #GFX_INVALID_ANIMATION or #GFX_INVALID_SKELETON
 	*/
 	int AddAnimationInfo(const unsigned int& offset, const unsigned int& numFrames, const unsigned int& numBonesPerFrame);
+
+	int RemoveAnimation(const int& animationID);
 	
 	/*!
 	Gets the number of frames in a particular animation.

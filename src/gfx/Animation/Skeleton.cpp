@@ -11,6 +11,7 @@ Skeleton::Skeleton()
 
 Skeleton::~Skeleton()
 {
+	m_animationInfo.clear();
 }
 
 int Skeleton::UpdateInfo(const int& animationID, const unsigned int& offset, const unsigned int& numFrames, const unsigned int& numBonesPerFrame)
@@ -20,6 +21,7 @@ int Skeleton::UpdateInfo(const int& animationID, const unsigned int& offset, con
 		AnimationInfo info;
 		info.offset = offset;
 		info.numFrames = numFrames;
+		m_numFrames -= m_animationInfo[animationID].numFrames;
 		m_numFrames += numFrames;
 		info.numBonesPerFrame = numBonesPerFrame;
 		m_animationInfo[animationID] = info;
@@ -27,6 +29,18 @@ int Skeleton::UpdateInfo(const int& animationID, const unsigned int& offset, con
 		// Loop through all animations currently bound to this skeleton to find the frame offset
 		// m_animationInfo[i].numFrames * m_animationInfo[i].numBonesPerFrame + m_animationInfo[i].offset;
 
+		return GFX_SUCCESS;
+	}
+	return GFX_INVALID_ANIMATION;
+}
+
+int Skeleton::RemoveAnimation(const int& animationID)
+{
+	if (animationID >= 0 && animationID < m_animationInfo.size())
+	{
+		m_animationInfo.erase(m_animationInfo.begin() + animationID);
+		m_numFrames -= m_animationInfo[animationID].numFrames;
+		m_numAnimations--;
 		return GFX_SUCCESS;
 	}
 	return GFX_INVALID_ANIMATION;
