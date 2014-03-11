@@ -153,13 +153,16 @@ function PrepInterface:new(o)
 	
 	o.purchaseSubGUI:addPlacementHandler( AnchorPlacer )
 	o.gui:addComponent( o.purchaseSubGUI )
-	
-	o.gui:addComponent( Button:new	{ 
-										anchor = "SouthEast", xoffset=-66, yoffset=-11, onClick = o.onFinished,
+    
+    o.goButton = Button:new	{ 
+										anchor = "SouthEast", xoffset=-66, yoffset=-11, onClick = o.onFinished, enabled = false,
 										matReleased="assets/texture/ui/go-button-release.material",
 										matPressed="assets/texture/ui/go-button-press.material",
 										matHover="assets/texture/ui/go-button-hover.material",
-									} )
+										matDisable="assets/texture/ui/go-button-disable.material",
+									}
+	
+	o.gui:addComponent( o.goButton )
 											
 	o.gui:addPlacementHandler( AnchorPlacer )
 
@@ -167,6 +170,10 @@ function PrepInterface:new(o)
 	o.tgStatsSubGUI:setShow( false )
 	
     return o
+end
+
+function PrepInterface:enableGo( flag )
+    self.goButton:setEnabled( flag )
 end
 
 function PrepInterface:setSelected( squad )

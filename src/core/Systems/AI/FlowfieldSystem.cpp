@@ -13,6 +13,21 @@ Core::FlowfieldSystem::FlowfieldSystem()
 {
 }
 
+//#define DRAW_FF_GOAL
+#ifdef DRAW_FF_GOAL
+#define DEBUG_DRAW_FF_GOAL( x ) x
+#else
+#define DEBUG_DRAW_FF_GOAL( x ) ;
+#endif
+
+//#define DRAW_FF_DIRECTION
+#ifdef DRAW_FF_DIRECTION
+#define DEBUG_DRAW_FF_DIRECTION( x ) x
+#else
+#define DEBUG_DRAW_FF_DIRECTION( x ) ;
+#endif
+
+
 void Core::FlowfieldSystem::Update( float delta )
 {
 	Core::NavigationMesh* instance = Core::GetNavigationMesh();
@@ -50,6 +65,8 @@ void Core::FlowfieldSystem::Update( float delta )
 
 			float* navMeshGoal = instance->flowfields[ attribc->rioter.groupID ].goal;
 			glm::vec3 navGoal = glm::vec3( navMeshGoal[0], 0.0f, navMeshGoal[1] );
+
+			DEBUG_DRAW_FF_GOAL( GFX::Debug::DrawLine( position, navGoal, GFXColor( 1, 1, 0, 1 ), false )); 
 
 			if( instance->flowfields[ groupID ].deadNodes[ ffc->node ] )
 			{
@@ -100,22 +117,25 @@ void Core::FlowfieldSystem::Update( float delta )
 
 				MovementComponent::SetDirection( mvmc, flowfieldDirection.x, 0, flowfieldDirection.z );
 			}
+
+			DEBUG_DRAW_FF_DIRECTION( 
+				GFX::Debug::DrawLine( position, position + glm::vec3( mvmc->newDirection[0], mvmc->newDirection[1], mvmc->newDirection[2] ), GFXColor( 1, 1, 0, 1 ), false ) );
+			
 		}
 	}
 }
 
 
 //#define DRAW_LINE_TO_POLICE
-
-
 #ifdef DRAW_LINE_TO_POLICE
 #define DRAW_POLICE_LINE( x ) x
 #else
 #define DRAW_POLICE_LINE( x ) ;
 #endif
 
-#define SQR_SEARCH_DISTANCE 250
 
+
+#define SQR_SEARCH_DISTANCE 250
 void Core::FlowfieldSystem::CalculatePathInDeadNode( Core::Entity rioter, int group )
 {
 	glm::vec3 toPolice = glm::vec3( 0.0f );
