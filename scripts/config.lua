@@ -24,7 +24,7 @@ initCameraFieldOfView = 45.0,
 initCameraNearClipDistance = 1.0,
 initCameraFarClipDistance = 500.0,
 consoleFont = "assets/font/ConsoleFont.font",
-defaultNrFlowfields = 20,
+--defaultNrFlowfields = 20,
 debugRenderAreas = false,
 debugRenderHoverTextBounding = false,
 debugLightVolumes = false,
@@ -60,6 +60,8 @@ playerBindings =
     rotateSquadSelection = core.input.keyboard.key.Tab, 
 
 	moodHighlight = core.input.keyboard.key["M"], 
+	
+	haltOrder = core.input.keyboard.key["Z"],
 }
 }
 

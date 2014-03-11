@@ -19,13 +19,13 @@ function TutorialMenu:new(o, menuState)
     o.gui = GUI:new()
 	tutGUI = GUI:new()
 
-
+	print("HURFDURF")
 	--back to main menu
     o.gui:addComponent(Button:new({
                                     matReleased = "assets/texture/ui/back-button-release.material",
                                     matPressed = "assets/texture/ui/back-button-press.material",
                                     matHover = "assets/texture/ui/back-button-hover.material",
-                                    anchor="SouthWest",xoffset=0,yoffset=0, onClick = function() if tutImage then tutImage:destroy() end  menuState.goMain() end }))
+                                    anchor="SouthWest",xoffset=0,yoffset=0, onClick = function() if tutImage then tutImage:destroy() end TutorialMenu:DestroyButtons(o) menuState.goMain() end }))
 
 	--prep screen tutorials
 	o.gui:addComponent(Button:new({
@@ -61,6 +61,69 @@ function TutorialMenu:new(o, menuState)
     setmetatable( o, self )
     self.__index = self
     return o
+end
+
+function TutorialMenu:DestroyButtons(o)
+	if mainGameTutButtons.policeSpawnButton then
+		o.gui:removeComponent(mainGameTutButtons.policeSpawnButton)
+		o.gui:removeComponent(mainGameTutButtons.buyInstruct)
+		o.gui:removeComponent(mainGameTutButtons.hostileSpawn)
+		o.gui:removeComponent(mainGameTutButtons.friendlySpawn)
+		o.gui:removeComponent(mainGameTutButtons.escortPath)
+		
+		mainGameTutButtons.policeSpawnButton:destroy()
+		mainGameTutButtons.buyInstruct:destroy()
+		mainGameTutButtons.hostileSpawn:destroy()
+		mainGameTutButtons.friendlySpawn:destroy()
+		mainGameTutButtons.escortPath:destroy()
+		
+		mainGameTutButtons.policeSpawnButton = nil
+		mainGameTutButtons.buyInstruct = nil
+		mainGameTutButtons.hostileSpawn = nil
+		mainGameTutButtons.friendlySpawn = nil
+		mainGameTutButtons.escortPath = nil
+
+		o.gui:removeComponent(mainGameTutButtons.forward)
+		mainGameTutButtons.forward:destroy()
+		mainGameTutButtons.forward = nil
+
+		o.gui:removeComponent(mainGameTutButtons.back)
+		mainGameTutButtons.back:destroy()
+		mainGameTutButtons.back = nil
+		
+	end
+
+	if mainGameTutButtons.moodsButton then
+		
+		o.gui:removeComponent(mainGameTutButtons.objectivesButton)
+		o.gui:removeComponent(mainGameTutButtons.selectingPoliceButton)
+		o.gui:removeComponent(mainGameTutButtons.formationsButton)
+		o.gui:removeComponent(mainGameTutButtons.stancesButton)
+		o.gui:removeComponent(mainGameTutButtons.specialAbilitiesButton)
+		o.gui:removeComponent(mainGameTutButtons.moodsButton)
+
+		mainGameTutButtons.objectivesButton:destroy()
+		mainGameTutButtons.selectingPoliceButton:destroy()
+		mainGameTutButtons.formationsButton:destroy()
+		mainGameTutButtons.stancesButton:destroy()
+		mainGameTutButtons.specialAbilitiesButton:destroy()
+		mainGameTutButtons.moodsButton:destroy()
+
+		mainGameTutButtons.objectivesButton = nil
+		mainGameTutButtons.selectingPoliceButton = nil
+		mainGameTutButtons.specialAbilitiesButton = nil
+		mainGameTutButtons.stancesButton = nil
+		mainGameTutButtons.escortPath = nil
+		mainGameTutButtons.moodsButton = nil
+
+		o.gui:removeComponent(mainGameTutButtons.forward)
+		mainGameTutButtons.forward:destroy()
+		mainGameTutButtons.forward = nil
+
+		o.gui:removeComponent(mainGameTutButtons.back)
+		mainGameTutButtons.back:destroy()
+		mainGameTutButtons.back = nil
+	end
 end
 
 function TutorialMenu:SetImage(id, o)
@@ -157,7 +220,9 @@ function TutorialMenu:SetImage(id, o)
 		tBox.yoffset= 350
 	end
 
-	tutImage:setPosition(500, 30)
+	if tutImage then
+		tutImage:setPosition(500, 30)
+	end
 end
 
 function TutorialMenu:AddButtons(tm, index)
@@ -334,6 +399,9 @@ function TutorialMenu:update(delta)
 end
 
 function TutorialMenu:destroy()
+
+
+
     self.gui:destroy() 
 end
 

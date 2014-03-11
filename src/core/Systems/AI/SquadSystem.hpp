@@ -72,6 +72,11 @@ namespace Core
 
         void DisableOutline(int* squadIDs, int nSqauds);
 
+		/*!
+			Will revert group stance if aggresive and set formation goal to current position.
+		*/
+		void StopGroup(int* squadIDs, int nSqauds);
+
         std::vector<int> GetAllSquads( );
         std::vector<Entity> GetAllSquadEntities();
         std::vector<Core::SquadAbility> GetPossibleAbilities( int squadId );
