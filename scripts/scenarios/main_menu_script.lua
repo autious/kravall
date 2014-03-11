@@ -151,7 +151,7 @@ return function( scen )
 	
 	T.initPolice = function( entity )
 		entity:addComponent( core.componentType.AnimationComponent)
-		core.animations.loop(entity, "idle")
+		core.animations.loop(entity, "idle-defense")
 		core.animations.setTime(entity, math.random(1, 200) / 200)
 	end
 	
