@@ -421,7 +421,8 @@ function PoliceSquadHandler:AimTearGas()
         for i=1, #abilities do
             if abilities[i] == core.system.squad.abilities.TearGas then
                 local wpc = member.entity:get(core.componentType.WorldPositionComponent)
-                if math.sqrt(((wpc.position[1]-x) * (wpc.position[1]-x)) + ((wpc.position[2]-y) * (wpc.position[2]-y)) + ((wpc.position[3]-z) * (wpc.position[3]-z))) < tearGas.tearGasRange then
+                local rangeToTarget = math.sqrt(((wpc.position[1]-x) * (wpc.position[1]-x)) + ((wpc.position[2]-y) * (wpc.position[2]-y)) + ((wpc.position[3]-z) * (wpc.position[3]-z))) 
+                if rangeToTarget < tearGas.tearGasRange then
 
                     if inRange == false then 
                         inRange = true 
@@ -433,7 +434,7 @@ function PoliceSquadHandler:AimTearGas()
                             --Consume click to avoid deselecting squads
                             self.leftClicked = false
                             self.leftPressed = false
-                            self:UseTearGas(member.entity, x, y, z) 
+                            self:UseTearGas(member.entity, x, y, z, rangeToTarget) 
 
                             if not keyboard.isKeyDown(keyboard.key.Left_shift) then
                                 self:setAbility(nil)
@@ -554,43 +555,118 @@ function PoliceSquadHandler:RevertAttackingStateOfSelected()
 	end
 end
 
-function PoliceSquadHandler:UseTearGas(entity, x, y, z)
-    local attributeComponent = entity:get(core.componentType.AttributeComponent)
-    entity:set(core.componentType.AttributeComponent, {stamina = (attributeComponent.stamina - tearGas.tearGasStaminaCost)}, true)
-    local pairTable = {}                
-    local entity = core.entity.create(core.componentType.EmitterComponent
-                                        , core.componentType.WorldPositionComponent
-                                        , core.componentType.MovementComponent
-										, core.componentType.MovementDataComponent
-                                        , core.componentType.RotationComponent
-                                        , core.componentType.UnitTypeComponent
-                                        , core.componentType.AttributeComponent
-                                        , core.componentType.FlowfieldComponent)
+function PoliceSquadHandler:UseTearGas(usingEntity, x, y, z, rangeToTarget)
+    local attributeComponent = usingEntity:get(core.componentType.AttributeComponent)
+    usingEntity:set(core.componentType.AttributeComponent, {stamina = (attributeComponent.stamina - tearGas.tearGasStaminaCost)}, true)
 
-    entity:set(core.componentType.AttributeComponent, {pfObjectType = core.PFObjectType.TearGas}, true)
-    entity:set(core.componentType.UnitTypeComponent, {unitType = core.UnitType.Object}, true)
-    entity:set(core.componentType.WorldPositionComponent, {position = {x, y, z}})
-    entity:set(core.componentType.EmitterComponent, {
-            rate = 100,
-            offset = {0, -2, 0},
-            life = 3,
-            lifeVariance = 0.5,
-            lifeReduction = 1.5,
+    local wpc = usingEntity:get(core.componentType.WorldPositionComponent)        
+    local projectileSpeed = 40
+    local velocities = {(core.glm.vec3.normalize(core.glm.vec3.new(x - wpc.position[1], 0, z - wpc.position[3])) * projectileSpeed):get()}
+
+    local t = (rangeToTarget * 0.5 / projectileSpeed)
+
+    local smokeTrailEntity = {
+        targetDistance = rangeToTarget,
+        traveledDistance = 0,
+        speed = projectileSpeed,
+        v_x = velocities[1],
+        v_y = 9.82 * t, 
+        v_z = velocities[3],
+    }    
+
+    smokeTrailEntity.entity = core.entity.create(core.componentType.EmitterComponent
+                                        , core.componentType.WorldPositionComponent)
+
+    smokeTrailEntity.entity:set(core.componentType.WorldPositionComponent, {position = {wpc.position[1], wpc.position[2] + 1.5, wpc.position[3]}})
+    smokeTrailEntity.entity:set(core.componentType.EmitterComponent, {
+            rate = 400,
+            offset = {0, 0, 0},
+            life = 0.7,
+            lifeVariance = 0.25,
+            lifeReduction = 0.8,
             lifeReductionVariance = 0,
-            velocity = {0, 0, 3},
-            velocityVariance = {0, 0, 4},
+            velocity = {0, 0, 1.5},
+            velocityVariance = {0, 0, 0.5},
             acceleration = {0, 2, 0},
             coneDirection = {0, 1, 0},
-            coneAngle = 60,
-            coneAngleVariance = 30,
+            coneAngle = 180,
+            coneAngleVariance = 0,
             type = core.system.particle.emitters.Cone,
-            handle = self.particleDefinitions["TearGas"]
+            handle = self.particleDefinitions["GrenadeTrail"]
             }, true)
 
-    pairTable.entity = entity
-    pairTable.timer = tearGas.tearGasDuration 
+    smokeTrailEntity.update = function(o, delta)        
+        if o.traveledDistance >= o.targetDistance then
+            local abilityEntity = {life = 10}
+            local wpc = o.entity:get(core.componentType.WorldPositionComponent)
 
-    self.abilityEntities[#(self.abilityEntities) + 1] = pairTable
+            abilityEntity.entity = core.entity.create(core.componentType.EmitterComponent
+                                                , core.componentType.WorldPositionComponent
+                                                , core.componentType.MovementComponent
+                                                , core.componentType.MovementDataComponent
+                                                , core.componentType.RotationComponent
+                                                , core.componentType.UnitTypeComponent
+                                                , core.componentType.AttributeComponent
+                                                , core.componentType.FlowfieldComponent)
+
+            abilityEntity.entity:set(core.componentType.AttributeComponent, {pfObjectType = core.PFObjectType.TearGas}, true)
+            abilityEntity.entity:set(core.componentType.UnitTypeComponent, {unitType = core.UnitType.Object}, true)
+            abilityEntity.entity:set(core.componentType.WorldPositionComponent, {position = {wpc.position[1], wpc.position[2], wpc.position[3]}})
+            abilityEntity.entity:set(core.componentType.EmitterComponent, {
+                    rate = 100,
+                    offset = {0, -2, 0},
+                    life = 3,
+                    lifeVariance = 0.5,
+                    lifeReduction = 1.5,
+                    lifeReductionVariance = 0,
+                    velocity = {0, 0, 2.5},
+                    velocityVariance = {0, 0, 4},
+                    acceleration = {0, 2, 0},
+                    coneDirection = {0, 1, 0},
+                    coneAngle = 60,
+                    coneAngleVariance = 30,
+                    type = core.system.particle.emitters.Cone,
+                    handle = self.particleDefinitions["TearGas"]
+                    }, true)
+
+            abilityEntity.update = function(o, delta)
+                if o.life <= 0 then
+                    print "Removing Smoke"
+                    o.entity:destroy()
+                    local newAbilityEntities = {}
+                    for i=1, #(self.abilityEntities) do
+                        if self.abilityEntities[i] ~= o then
+                            table.insert(newAbilityEntities, self.abilityEntities[i])
+                        end    
+                    end
+                    self.abilityEntities = newAbilityEntities
+                else
+                    o.life = o.life - delta
+                end
+
+            end
+
+            self.abilityEntities[#(self.abilityEntities) + 1] = abilityEntity
+            
+            o.entity:destroy()
+            local newAbilityEntities = {}
+            for i=1, #(self.abilityEntities) do
+                if self.abilityEntities[i] ~= o then
+                    table.insert(newAbilityEntities, self.abilityEntities[i])
+                end    
+            end
+            self.abilityEntities = newAbilityEntities
+        else
+            o.traveledDistance = o.traveledDistance + o.speed * delta
+            o.v_y = o.v_y - 9.82 * delta
+
+            local wpc = o.entity:get(core.componentType.WorldPositionComponent)
+            o.entity:set(core.componentType.WorldPositionComponent, {position = {wpc.position[1] + o.v_x * delta, wpc.position[2] + o.v_y * delta, wpc.position[3] + o.v_z * delta}})           
+        end
+    end
+    
+
+    self.abilityEntities[#(self.abilityEntities) + 1] = smokeTrailEntity
 end
 
 function PoliceSquadHandler:UseSprint()
@@ -774,14 +850,8 @@ function PoliceSquadHandler:update( delta )
 
     local i = 1
     while i <= #(self.abilityEntities) do
-        local e = self.abilityEntities[i]
-        self.abilityEntities[i].timer = self.abilityEntities[i].timer - delta
-        if self.abilityEntities[i].timer <= 0 then
-            self.abilityEntities[i].entity:destroy()
-            table.remove(self.abilityEntities, i)
-        else
-            i=i+1
-        end
+        self.abilityEntities[i]:update(delta)
+        i=i+1
     end
 
 	if keyboard.isKeyDownOnce(keyboard.key.Kp_1) or keyboard.isKeyDownOnce(core.config.playerBindings.attackAbility) then

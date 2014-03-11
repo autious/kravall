@@ -91,25 +91,26 @@ return function( scen )
     end
 
     local function onKey( key, scancode, action )
-        if key == core.input.keyboard.key.A and action == core.input.action.Release then
-            menuState.goMain()
-        end  
-
-        if key == core.input.keyboard.key.B and action == core.input.action.Release then
-            menuState.goScenario()
-        end  
-
-        if key == core.input.keyboard.key.C and action == core.input.action.Release then
-            menuState.goSetup()
-        end  
-
-        if key == core.input.keyboard.key.D and action == core.input.action.Release then
-            menuState.goCredits()
-        end  
-
-        if key == core.input.keyboard.key.E and action == core.input.action.Release then
-            menuState.goSettings()
-        end  
+		--NO FUCKING KEYBINDS HURR DURR RAGE
+        --if key == core.input.keyboard.key.A and action == core.input.action.Release then
+        --    menuState.goMain()
+        --end  
+		--
+        --if key == core.input.keyboard.key.B and action == core.input.action.Release then
+        --    menuState.goScenario()
+        --end  
+		--
+        --if key == core.input.keyboard.key.C and action == core.input.action.Release then
+        --    menuState.goSetup()
+        --end  
+		--
+        --if key == core.input.keyboard.key.D and action == core.input.action.Release then
+        --    menuState.goCredits()
+        --end  
+		--
+        --if key == core.input.keyboard.key.E and action == core.input.action.Release then
+        --    menuState.goSettings()
+        --end  
     end
 	local fists
 	
@@ -150,7 +151,7 @@ return function( scen )
 	
 	T.initPolice = function( entity )
 		entity:addComponent( core.componentType.AnimationComponent)
-		core.animations.loop(entity, "idle")
+		core.animations.loop(entity, "idle-defense")
 		core.animations.setTime(entity, math.random(1, 200) / 200)
 	end
 	

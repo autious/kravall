@@ -26,7 +26,8 @@ function Main:new(o)
 
     o.particleDefinitions =
     {
-        TearGas = PDC:createParticleDefinition(o.asm, 5000, "assets/texture/particle/smoke.material")
+        TearGas = PDC:createParticleDefinition(o.asm, 5000, "assets/texture/particle/smoke.material"),
+        GrenadeTrail = PDC:createParticleDefinition(o.asm, 2000, "assets/texture/particle/smoke_trail.material")
     }
 
     o.onButton = function(button, action, mods, consumed)

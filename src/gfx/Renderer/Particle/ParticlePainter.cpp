@@ -52,6 +52,15 @@ namespace GFX
         m_shaderManager->AttachShader("SmokeGrenadeGS", "SmokeGrenade");
         m_shaderManager->AttachShader("SmokeGrenadeFS", "SmokeGrenade");
         m_shaderManager->LinkProgram("SmokeGrenade");
+        
+        m_shaderManager->CreateProgram("SmokeTrail");
+        m_shaderManager->LoadShader("shaders/particle/SmokeTrailVS.glsl", "SmokeTrailVS", GL_VERTEX_SHADER);
+        m_shaderManager->LoadShader("shaders/particle/SmokeTrailGS.glsl", "SmokeTrailGS", GL_GEOMETRY_SHADER);
+        m_shaderManager->LoadShader("shaders/particle/SmokeTrailFS.glsl", "SmokeTrailFS", GL_FRAGMENT_SHADER);
+        m_shaderManager->AttachShader("SmokeTrailVS", "SmokeTrail");
+        m_shaderManager->AttachShader("SmokeTrailGS", "SmokeTrail");
+        m_shaderManager->AttachShader("SmokeTrailFS", "SmokeTrail");
+        m_shaderManager->LinkProgram("SmokeTrail");
 
         m_uniformBufferManager->SetUniformBlockBindingIndex(m_shaderManager->GetShaderProgramID("SmokeGrenade"), "PerFrameBlock", UniformBufferManager::CAMERA_BINDING_INDEX);
 

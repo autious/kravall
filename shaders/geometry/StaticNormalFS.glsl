@@ -35,7 +35,7 @@ void main()
 	vec3 normal = normalize(normalFS.xyz);
 
 	tangent = normalize(tangent - dot(tangent, normal) * normal);
-	vec3 bitangent = -cross(tangent, normal);
+	vec3 bitangent = cross(tangent, normal);
 	
 	vec3 finalNormal;
 	mat3 TBN = mat3(tangent, bitangent, normal);
