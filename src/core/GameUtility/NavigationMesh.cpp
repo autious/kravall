@@ -149,8 +149,8 @@ namespace Core
 							}
 							else if( q == i && nodes[q].corners[v].linksTo < 0 )
 							{
-								nodes[i].corners[p].cornerConnectsToNode[linkIndex] = i;
-								nodes[i].corners[p].cornerConnectsToCorner[linkIndex] = p;
+								//nodes[i].corners[p].cornerConnectsToNode[linkIndex] = i;
+								//nodes[i].corners[p].cornerConnectsToCorner[linkIndex] = p;
 							}
 						}
 					}

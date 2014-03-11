@@ -200,6 +200,8 @@ function C:update( dt )
             end
             if keyboard.isKeyDown( key.Space ) then
                 direction = direction + vec3.new(0,1,0)
+			elseif keyboard.isKeyDown(key.Left_control) then
+				direction = direction - vec3.new(0,1,0)
             end
             
             if direction:length() > 0 then

@@ -15,14 +15,17 @@
 #define POLICE_GOAL_ARRIVAL_THRESHOLD 0.2f
 #define POLICE_CLOSE_GOAL_WALK_DISTANCE 1.8f
 
-//#define DRAW_GOAL_LINES
-//#define DRAW_DIRECTION_LINES
 
 Core::PoliceGoalSystem::PoliceGoalSystem()
 	: BaseSystem( EntityHandler::GenerateAspect< WorldPositionComponent, MovementComponent, 
 		UnitTypeComponent, AttributeComponent, FlowfieldComponent >(), 0ULL )
 {
 }
+
+
+//#define DRAW_GOAL_LINES
+//#define DRAW_DIRECTION_LINES
+//#define DRAW_NEXT_WAYPOINT
 
 #ifdef DRAW_GOAL_LINES
 #define DEBUG_DRAW_GOAL( x ) x
@@ -35,6 +38,14 @@ Core::PoliceGoalSystem::PoliceGoalSystem()
 #else
 #define DEBUG_DRAW_DIRECTION( x ) ;
 #endif
+
+#ifdef DRAW_NEXT_WAYPOINT
+#define DEBUG_DRAW_WAYPOINT_LINE( x ) x
+#else
+#define DEBUG_DRAW_WAYPOINT_LINE( x ) ;
+#endif
+
+
 
 void Core::PoliceGoalSystem::Update( float delta )
 {
@@ -121,32 +132,40 @@ void Core::PoliceGoalSystem::Update( float delta )
 				else if( ffc->node != mvmc->NavMeshGoalNodeIndex )
 				{
 					Core::PathData path = instance->CalculateShortPath( ffc->node, position,  mvmc->NavMeshGoalNodeIndex, target, memoryIndex );
-				
-					// project position onto target line...
-					int targetEdge = path.entryEdge;
-					int targetNode = ffc->node;
-
-					int ii = targetEdge * 2;
-					int oo = (ii + 2) % 8;
-					glm::vec3 lineStart = glm::vec3( instance->nodes[ targetNode ].points[ ii ], 0.0f, instance->nodes[ targetNode ].points[ ii + 1 ] );
-					glm::vec3 lineEnd	= glm::vec3( instance->nodes[ targetNode ].points[ oo ], 0.0f, instance->nodes[ targetNode ].points[ oo + 1 ] );
-					glm::vec3 lineMid = lineStart + (( lineEnd - lineStart ) * 0.5f );
-					glm::vec3 fromStartToObject = position - lineStart;
-					float distanceAlongLine = glm::dot( (lineEnd - lineStart) * instance->nodes[targetNode].corners[targetEdge].inverseLength, fromStartToObject );
 
 					glm::vec3 targetPosition;
-					if( instance->nodes[ targetNode ].corners[ targetEdge ].length < distanceAlongLine || distanceAlongLine < 0 )
+					if( path.node < 0 )
 					{
-						// is outside edges...
-						if( distanceAlongLine < 0 )
-							targetPosition = lineStart + glm::normalize( lineEnd - lineStart ) * 1.25f;
-						else 
-							targetPosition = lineEnd + glm::normalize( lineStart - lineEnd ) * 1.25f;
-					}
-					else 
-					{
-						// is inside edges...
+						DEBUG_DRAW_WAYPOINT_LINE( GFX::Debug::DrawLine( position, path.point, GFXColor( 1, 1, 0, 1 ), false ) );
 						targetPosition = path.point;
+					}
+					else
+					{
+						// project position onto target line...
+						int targetEdge = path.entryEdge;
+						int targetNode = ffc->node;
+
+						int ii = targetEdge * 2;
+						int oo = (ii + 2) % 8;
+						glm::vec3 lineStart = glm::vec3( instance->nodes[ targetNode ].points[ ii ], 0.0f, instance->nodes[ targetNode ].points[ ii + 1 ] );
+						glm::vec3 lineEnd	= glm::vec3( instance->nodes[ targetNode ].points[ oo ], 0.0f, instance->nodes[ targetNode ].points[ oo + 1 ] );
+						glm::vec3 lineMid = lineStart + (( lineEnd - lineStart ) * 0.5f );
+						glm::vec3 fromStartToObject = position - lineStart;
+						float distanceAlongLine = glm::dot( (lineEnd - lineStart) * instance->nodes[targetNode].corners[targetEdge].inverseLength, fromStartToObject );
+
+						if( instance->nodes[ targetNode ].corners[ targetEdge ].length < distanceAlongLine || distanceAlongLine < 0 )
+						{
+							// is outside edges...
+							if( distanceAlongLine < 0 )
+								targetPosition = lineStart + glm::normalize( lineEnd - lineStart ) * 1.25f;
+							else 
+								targetPosition = lineEnd + glm::normalize( lineStart - lineEnd ) * 1.25f;
+						}
+						else 
+						{
+							// is inside edges...
+							targetPosition = path.point;
+						}
 					}
 
 					glm::vec3 flowfieldDirection = glm::normalize( targetPosition - position );

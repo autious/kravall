@@ -34,6 +34,7 @@ namespace Core
 		FormationGoalPriority,
 		AttackGoalPriority,
 		TargetingGoalPriority,
+		StopGoalPriority,
 	};
 
 	/*!

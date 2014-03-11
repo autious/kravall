@@ -93,7 +93,7 @@ function OverviewHandler:update(delta)
         end
     else
         self:SetOutlines() 
-        if self.leftClicked then
+        if self.rightClicked then
             local mouseX, mouseY = mouse.getPosition()
             local x,y,z = core.system.picking.getGroundHit(mouseX, mouseY);
             self:ExitOverview(core.glm.vec3.new(x,y,z))
@@ -101,7 +101,7 @@ function OverviewHandler:update(delta)
     end
 
     self.leftClicked = false
-    self.rightClciked = false
+    self.rightClicked = false
 end
 
 return OverviewHandler

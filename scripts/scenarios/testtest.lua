@@ -116,8 +116,8 @@ return function( scen )
 		local fists = core.weaponData.pushWeapon( 1.0, 0.75, 20, 0.2, 0.05, 3.2, 2.9, 0.05, 0.5, "punch" )
 		--core.gameMetaData.registerEscapePoint( 50, 0, 0 )
 
-		Killzone()
-		--NavMeshBlockTest()		
+		--Killzone()
+		NavMeshBlockTest()		
 		
 		
 	end
