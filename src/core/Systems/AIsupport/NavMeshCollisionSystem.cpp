@@ -59,7 +59,7 @@ void Core::NavMeshCollisionSystem::Update( float delta )
 			for( int i = 0; i < 4; i++ )
 			{
 				// check for last corner of triangle
-				if( instance->nodes[ffc->node].corners[i].linksTo < -1.5f || instance->nodes[ ffc->node ].corners[i].cornerConnectsToNode[0] < 0 )
+				if( instance->nodes[ffc->node].corners[i].linksTo < -1.5f || instance->nodes[ ffc->node ].corners[i].cornerConnectsToNode[0] == ffc->node )
 					continue;
 
 				int ii = i * 2;
