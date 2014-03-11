@@ -52,7 +52,6 @@ namespace Core
 		float squadMorale = 0.0f;
 		int targetGroup = std::numeric_limits<int>::max();
 
-
 		inline static const char* GetName()
 		{
 			return "SquadComponent";

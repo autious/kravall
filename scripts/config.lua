@@ -24,7 +24,7 @@ initCameraFieldOfView = 45.0,
 initCameraNearClipDistance = 1.0,
 initCameraFarClipDistance = 500.0,
 consoleFont = "assets/font/ConsoleFont.font",
-defaultNrFlowfields = 20,
+--defaultNrFlowfields = 20,
 debugRenderAreas = false,
 debugRenderHoverTextBounding = false,
 debugLightVolumes = false,
@@ -54,12 +54,14 @@ playerBindings =
     fleeAbility = core.input.keyboard.key["X"],
 
     lineFormation = core.input.keyboard.key["L"],
-    circleFormation = core.input.keyboard.key["H"],
-    halfCircleFormation = core.input.keyboard.key["C"],
+    circleFormation = core.input.keyboard.key["C"],
+    halfCircleFormation = core.input.keyboard.key["H"],
     
     rotateSquadSelection = core.input.keyboard.key.Tab, 
 
 	moodHighlight = core.input.keyboard.key["M"], 
+	
+	haltOrder = core.input.keyboard.key["Z"],
 }
 }
 

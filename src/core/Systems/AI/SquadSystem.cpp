@@ -135,7 +135,7 @@ namespace Core
                 {           
                     float circumferenceOffset = 0.0f;
                     float radius = glm::distance(startPos, endPos) / 2.0f;
-                    float circumference = 3.14f * radius * 2.0f;
+                    float circumference = 3.14f * radius * (isHalfCircle ? 1.0f : 2.0f);
                     glm::vec3 centerPosition = isHalfCircle ? (startPos + endPos) / 2.0f: startPos;
                     float circleSpacing = circumference / static_cast<float>(membersInGroup);
                     float radiusSpacing = static_cast<float>(world.m_config.GetDouble("squadFormationRowSpacing", FORMATION_ROW_SPACING));
@@ -148,7 +148,7 @@ namespace Core
                     {
                         Core::FormationComponent* frmc = WGETC<Core::FormationComponent>(*it);
 
-                        float radianOffset = -(circumferenceOffset / circumference) * 3.14f * (isHalfCircle ? 1.0f : 2.0f);
+                        float radianOffset = (circumferenceOffset / circumference) * 3.14f * (isHalfCircle ? 1.0f : 2.0f);
                         float cosVal = glm::cos(radianOffset);
                         float sinVal = glm::sin(radianOffset);
                         glm::mat2 rotMat2D = glm::mat2(cosVal, -sinVal, sinVal, cosVal);
@@ -269,7 +269,7 @@ namespace Core
                 {
                     float circumferenceOffset = 0.0f;
                     float radius = glm::distance(startPos, endPos) / 2.0f;
-                    float circumference = 3.14f * radius * 2.0f;
+                    float circumference = 3.14f * radius * (isHalfCircle ? 1.0f : 2.0f);
                     glm::vec3 centerPosition =  isHalfCircle ? (startPos + endPos) / 2.0f: startPos; 
                     float circleSpacing = circumference / static_cast<float>(membersInGroup);
                     float radiusSpacing = static_cast<float>(world.m_config.GetDouble("squadFormationRowSpacing", FORMATION_ROW_SPACING));
@@ -279,7 +279,7 @@ namespace Core
                     circleSpacing = (circleSpacing > static_cast<float>(world.m_config.GetDouble("squadFormationColumnSpacingMinimum", FORMATION_COLUMN_SPACING_MINIMUM))) ? circleSpacing : static_cast<float>(world.m_config.GetDouble("squadFormationSpacingMinimum", FORMATION_COLUMN_SPACING_MINIMUM));
                     for(int i=0; i < membersInGroup; ++i)
                     {
-                        float radianOffset = -(circumferenceOffset / circumference) * 3.14f * (isHalfCircle ? 1.0f : 2.0f);
+                        float radianOffset = -(circumferenceOffset / circumference) * 3.14f * (isHalfCircle ? 1.0f : 2.0f) + 3.14f;
                         float cosVal = glm::cos(rotation + radianOffset);
                         float sinVal = glm::sin(rotation + radianOffset);
                         glm::mat2 rotMat2D = glm::mat2(cosVal, -sinVal, sinVal, cosVal);
@@ -450,6 +450,25 @@ namespace Core
         }
     }
 
+	void SquadSystem::StopGroup(int* squadIDs, int nSquads)
+    {
+		if( nSquads <= 0 )
+			return;
+
+		RevertSquadStanceFromAgressive( squadIDs, nSquads );
+		for(int i=0; i<nSquads; ++i)
+        {
+            for(std::vector<Entity>::iterator squad_it = m_entities.begin(); squad_it != m_entities.end(); ++squad_it)        
+            {
+                Core::SquadComponent* sqdc = WGETC<Core::SquadComponent>(*squad_it);
+                if(sqdc->squadID == squadIDs[i])
+                {
+					sqdc->squadGoal[0] = std::numeric_limits<float>::max();
+                }
+            }
+        }
+    }
+
     std::vector<Core::SquadAbility> SquadSystem::GetPossibleAbilities( int squadId )
     {
         std::vector<Core::SquadAbility> abilities;
@@ -593,6 +612,14 @@ namespace Core
 					Core::MovementComponent* mc = WGETC<Core::MovementComponent>(*entity_it);
 					Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(*entity_it);
 
+					// if the squad don't have a goal, set goal to current position...
+					if( sqdc->squadGoal[0] == std::numeric_limits<float>::max() )
+					{
+						Core::FlowfieldComponent* ffc = WGETC<Core::FlowfieldComponent>( *entity_it );
+						if( ffc )
+							mc->SetGoal( wpc->position, ffc->node, Core::MovementGoalPriority::FormationGoalPriority );
+						continue;
+					}
 
 					glm::vec2 relPos2D = glm::vec2(frmc->relativePosition[0], frmc->relativePosition[1]);
 					relPos2D = rotMat * relPos2D;
