@@ -560,7 +560,7 @@ function PoliceSquadHandler:UseTearGas(usingEntity, x, y, z, rangeToTarget)
     usingEntity:set(core.componentType.AttributeComponent, {stamina = (attributeComponent.stamina - tearGas.tearGasStaminaCost)}, true)
 
     local wpc = usingEntity:get(core.componentType.WorldPositionComponent)        
-    local projectileSpeed = 15
+    local projectileSpeed = 40
     local velocities = {(core.glm.vec3.normalize(core.glm.vec3.new(x - wpc.position[1], 0, z - wpc.position[3])) * projectileSpeed):get()}
 
     local t = (rangeToTarget * 0.5 / projectileSpeed)
@@ -579,11 +579,11 @@ function PoliceSquadHandler:UseTearGas(usingEntity, x, y, z, rangeToTarget)
 
     smokeTrailEntity.entity:set(core.componentType.WorldPositionComponent, {position = {wpc.position[1], wpc.position[2] + 1.5, wpc.position[3]}})
     smokeTrailEntity.entity:set(core.componentType.EmitterComponent, {
-            rate = 100,
+            rate = 400,
             offset = {0, 0, 0},
-            life = 0.5,
+            life = 0.7,
             lifeVariance = 0.25,
-            lifeReduction = 1.0,
+            lifeReduction = 0.8,
             lifeReductionVariance = 0,
             velocity = {0, 0, 1.5},
             velocityVariance = {0, 0, 0.5},
@@ -619,7 +619,7 @@ function PoliceSquadHandler:UseTearGas(usingEntity, x, y, z, rangeToTarget)
                     lifeVariance = 0.5,
                     lifeReduction = 1.5,
                     lifeReductionVariance = 0,
-                    velocity = {0, 0, 3},
+                    velocity = {0, 0, 2.5},
                     velocityVariance = {0, 0, 4},
                     acceleration = {0, 2, 0},
                     coneDirection = {0, 1, 0},
