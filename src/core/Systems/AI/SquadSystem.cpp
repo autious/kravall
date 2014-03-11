@@ -455,9 +455,7 @@ namespace Core
 		if( nSquads <= 0 )
 			return;
 
-		//RevertSquadStanceFromAgressive( squadIDs, nSquads );
-		//glm::vec3 medianPosition = glm::vec3(0);
-		//
+		RevertSquadStanceFromAgressive( squadIDs, nSquads );
 		for(int i=0; i<nSquads; ++i)
         {
             for(std::vector<Entity>::iterator squad_it = m_entities.begin(); squad_it != m_entities.end(); ++squad_it)        
@@ -469,33 +467,6 @@ namespace Core
                 }
             }
         }
-		//
-		//medianPosition /= nSquads;
-
-		//for(int i=0; i<nSquads; ++i)
-        //{
-        //    for(std::vector<Entity>::iterator squad_it = m_entities.begin(); squad_it != m_entities.end(); ++squad_it)        
-        //    {
-		//		std::vector<Core::Entity> squad = Core::world.m_systemHandler.GetSystem<Core::GroupDataSystem>()->GetMembersInGroup(squadIDs[i]);
-		//		for(std::vector<Entity>::iterator it = squad.begin(); it != squad.end(); ++it)        
-		//		{
-		//			// check if alive...
-		//			Core::TargetingComponent* tc = WGETC<Core::TargetingComponent>(*it);
-		//			if( tc )
-		//			{
-		//				
-		//			}
-		//		}
-		//
-        //        //Core::SquadComponent* sqdc = WGETC<Core::SquadComponent>(*squad_it);
-        //        //if(sqdc->squadID == squadIDs[i])
-        //        //{
-		//		//	sqdc->squadGoal[0] = medianPosition.x;
-		//		//	sqdc->squadGoal[1] = medianPosition.y;	
-		//		//	sqdc->squadGoal[2] = medianPosition.z;	
-        //        //}
-        //    }
-        //}
     }
 
     std::vector<Core::SquadAbility> SquadSystem::GetPossibleAbilities( int squadId )
