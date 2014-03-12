@@ -118,7 +118,9 @@ namespace Core
 					Core::AnimationComponent* animc = WGETC<Core::AnimationComponent>(rioterEntities[i]);
 					if (animc)
 						Core::AnimationManager::PlayAnimation(rioterEntities[i], "die");
-
+                     
+                    AttributeComponent *ac = WGETC<AttributeComponent>(rioterEntities[i]);
+                    world.m_entityHandler.AddComponents<DeadUnitComponent>(rioterEntities[i], DeadUnitComponent(ac->rioter.groupID) );
 					world.m_entityHandler.RemoveComponents<UnitTypeComponent, MovementComponent, AttributeComponent, TargetingComponent, BoundingVolumeComponent, FlowfieldComponent>(rioterEntities[i]);
 				}
 
@@ -151,6 +153,9 @@ namespace Core
 					if (animc)
 						Core::AnimationManager::PlayAnimation(policeEntities[i], "die");
 
+
+                    AttributeComponent *ac = WGETC<AttributeComponent>(policeEntities[i]);
+                    world.m_entityHandler.AddComponents<DeadUnitComponent>(policeEntities[i], DeadUnitComponent(ac->police.squadID) );
 					world.m_entityHandler.RemoveComponents<UnitTypeComponent, MovementComponent, AttributeComponent, TargetingComponent, BoundingVolumeComponent, FlowfieldComponent>(policeEntities[i]);
 				}
 			}
