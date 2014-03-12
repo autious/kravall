@@ -133,7 +133,7 @@ function ObjectiveHandler:updateObjective( obj )
         
         local fail = true
         for i,o in pairs( self.objectives ) do
-            if o.state ~= "fail" or o.bonus then
+            if o.state ~= "fail" and not o.bonus then
                 fail = false  
             end
             has = true
