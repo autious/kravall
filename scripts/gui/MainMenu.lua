@@ -3,9 +3,11 @@ local GUI = require "gui/GUI"
 local Button = require "gui/component/Button"
 local Slider = require "gui/component/Slider"
 local Checkbox = require "gui/component/Checkbox"
-local MsgBox = require "gui/component/MessageBox"
+local Image = require "gui/component/Image"
+local TextSelectList = require "gui/component/TextSelectList"
 
 local CenterPlacer = require "gui/placement/CenterPlacer"
+local SimplePlacer = require "gui/placement/SimplePlacer"
 
 local toolTipHandler = require "gui/tooltip/ToolTipHandler"
 local createTT = require "gui/tooltip/ToolTip"
@@ -19,11 +21,6 @@ function MainMenu:new(o,menuState)
 	local offsetY = 180
 
     o.gui = GUI:new()
-	
-	o.msgBox = MsgBox:new( { buttons="OKCancel", onPrimaryClick=function() o.msgBox:setShow( false ) end,
-							message=[[MessageBox text. This text can be quite long actually. Let's see how it line breaks! 
-	Can it actually have line breaks in it? Apparently so!]] } )
-	o.msgBox:setShow( false )
 								  
     o.gui:addComponent( Button:new( {
 										matReleased = "assets/texture/ui/start-button-release_00.material",
@@ -56,20 +53,6 @@ function MainMenu:new(o,menuState)
 										matHover = "assets/texture/ui/exit-game-button-hover_00.material",
 										xoffset=offsetX,yoffset=offsetY,onClick = core.flagExit,
                                     } ) )
-									
-	o.gui:addComponent( Button:new( {
-										matReleased = "assets/texture/ui/start-button-release_00.material",
-										matPressed = "assets/texture/ui/start-button-press_00.material",
-										matHover = "assets/texture/ui/start-button-hover_00.material",
-										xoffset=offsetX, yoffset=offsetY, onClick =
-											function ()
-												if o.msgBox.show == true then
-													o.msgBox:setShow( false )
-												else
-													o.msgBox:setShow( true )
-												end
-											end
-                                  } ) )
 
     o.gui:addPlacementHandler( CenterPlacer )
 
@@ -79,7 +62,6 @@ function MainMenu:new(o,menuState)
 end
 
 function MainMenu:destroy()
-	self.msgBox:destroy()
 	toolTipHandler:deregister()
     self.gui:destroy() 
 end

@@ -21,14 +21,16 @@ function ScenarioMenu:new(o,menuState)
     --local scenarioLabel = TextLabel:new({ xoffset=-50, yoffset=250, anchor="NorthEast", label=""})
 
     local function onScenarioSelect( object )
-        descriptionBox:setText( object.description )         
-       -- scenarioLabel:setLabel( object.name )
+        descriptionBox:setText( object.description )    
         menuState.selectedScenario = object
         o.gui:constrict()
 
     end
 
-    local selectionList = TextSelectList:new({ anchor="NorthWest", yoffset=310, xoffset=300, elements=o.scenarios, onSelect = onScenarioSelect })
+    local selectionList = TextSelectList:new( { 
+												width=250, height=200, yoffset=310, xoffset=300, elements=o.scenarios, 
+												anchor="NorthWest", onSelect = onScenarioSelect 
+											} )
 
     o.gui:addComponent(Button:new({
                                     matReleased="assets/texture/ui/back-button-release.material",
