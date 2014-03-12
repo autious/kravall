@@ -293,6 +293,11 @@ namespace GFX
 		m_renderJobManager->AddRenderJob(bitmask, value);
 	}
 
+	void RenderCore::AddFilledRect(FilledRect r)
+	{
+		m_renderJobManager->AddFilledRect(r);
+	}
+
 	void RenderCore::DeleteMesh(unsigned long long id)
 	{
 		m_meshManager->DeleteMesh(id);
@@ -501,11 +506,12 @@ namespace GFX
 		// Draw the console
 		CT(m_consolePainter->Render(), "Console");
 
+		
+		m_boxPainter->Render(m_selectionBoxPosDim, m_selectionBoxColor, m_drawSelectionbox);
+
+
 		// Draw debug text
 		CT(m_textPainter->Render(m_windowWidth, m_windowHeight, renderInfo[5]), "Text");
-		
-		if( m_drawSelectionbox )
-			m_boxPainter->Render(m_selectionBoxPosDim, m_selectionBoxColor);
 
 		m_renderJobManager->Clear();
 		m_drawSelectionbox = false;
@@ -674,6 +680,7 @@ namespace GFX
 
 	int RenderCore::CreateSkeleton(int& out_skeletonID)
 	{
+		m_reloadAnimationData = true;
 		return m_animationManager->CreateSkeleton(out_skeletonID);
 	}
 
@@ -690,6 +697,7 @@ namespace GFX
 
 	int RenderCore::BindSkeletonToMesh(const unsigned int& meshID, const int& skeletonID)
 	{
+		m_reloadAnimationData = true;
 		return m_meshManager->BindSkeletonToMesh(meshID, skeletonID);
 	}
 

@@ -362,6 +362,8 @@ function PoliceSquadHandler:setAbility( ability )
 		    self:SetReticuleRender(false)
 		    self.AimingFunction = self.AttackGroup
         end
+	elseif ability == core.system.squad.abilities.Halt then	
+		core.orders.haltGroup( self.selectedSquads )
     else        
 		self.isAiming = false
 		self:SetReticuleRender(false)
@@ -866,12 +868,12 @@ function PoliceSquadHandler:update( delta )
         self:setAbility(core.system.squad.abilities.Sprint)
     end
 
-    if keyboard.isKeyDownOnce(keyboard.key.Kp_4) or keyboard.isKeyDownOnce(core.config.playerBindings.fleeAbility) then
-        self:setAbility(core.system.squad.abilities.Flee)
-    end
+    --if keyboard.isKeyDownOnce(keyboard.key.Kp_4) or keyboard.isKeyDownOnce(core.config.playerBindings.fleeAbility) then
+    --    self:setAbility(core.system.squad.abilities.Flee)
+    --end
 
-	if keyboard.isKeyDownOnce(core.config.playerBindings.haltOrder) then
-		core.orders.haltGroup( self.selectedSquads )
+	if keyboard.isKeyDownOnce(keyboard.key.Kp_4) or keyboard.isKeyDownOnce(core.config.playerBindings.haltOrder) then
+		self:setAbility(core.system.squad.abilities.Halt)
 	end
 	
 	

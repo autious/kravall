@@ -10,7 +10,7 @@ local tearGasPolice = (require "game_constants").tearGasPolice
 
 return function( scen )
     local T = {}
-	
+    
     scen.name = "Save the deserters!"
     scen.description =  [[Deserters and transhumans are equal, or so they say. The rebellion of the lower districts have sparked a revolution filled with violence, blood and tears. All in the name of freedom.
 
@@ -46,7 +46,7 @@ return function( scen )
                         abilities = {
                             abilities.Attack, 
                             abilities.Sprint, 
-                            abilities.Halt,
+                            abilities.Flee,
                         },
                         health = standardPolice.maxHealth, 
                         stamina = standardPolice.maxStamina, 
@@ -60,7 +60,7 @@ return function( scen )
                         abilities = {
                             abilities.Attack, 
                             abilities.Sprint, 
-                            abilities.Halt,
+                            abilities.Flee,
                         },
                         health = standardPolice.maxHealth, 
                         stamina = standardPolice.maxStamina, 
@@ -74,7 +74,7 @@ return function( scen )
                         abilities = {
                             abilities.Attack, 
                             abilities.Sprint, 
-                            abilities.Halt,
+                            abilities.Flee,
                         },
                         health = standardPolice.maxHealth, 
                         stamina = standardPolice.maxStamina, 
@@ -88,7 +88,7 @@ return function( scen )
                         abilities = {
                             abilities.Attack, 
                             abilities.Sprint, 
-                            abilities.Halt,
+                            abilities.Flee,
                         },
                         health = standardPolice.maxHealth, 
                         stamina = standardPolice.maxStamina, 
@@ -102,7 +102,7 @@ return function( scen )
                         abilities = {
                             abilities.Attack, 
                             abilities.Sprint, 
-                            abilities.Halt,
+                            abilities.Flee,
                         },
                         health = standardPolice.maxHealth, 
                         stamina = standardPolice.maxStamina, 
@@ -116,7 +116,7 @@ return function( scen )
                         abilities = {
                             abilities.Attack, 
                             abilities.Sprint, 
-                            abilities.Halt,
+                            abilities.Flee,
                         },
                         health = standardPolice.maxHealth, 
                         stamina = standardPolice.maxStamina, 
@@ -139,7 +139,7 @@ return function( scen )
                             abilities.Attack, 
                             abilities.Sprint, 
                             abilities.TearGas, 
-                            abilities.Halt,
+                            abilities.Flee,
                         },
                         health = tearGasPolice.maxHealth, 
                         stamina = tearGasPolice.maxStamina, 
@@ -153,7 +153,7 @@ return function( scen )
                         abilities = {
                             abilities.Attack, 
                             abilities.Sprint, 
-                            abilities.Halt,
+                            abilities.Flee,
                         },
                         health = tearGasPolice.maxHealth, 
                         stamina = tearGasPolice.maxStamina, 
@@ -167,7 +167,7 @@ return function( scen )
                         abilities = {
                             abilities.Attack, 
                             abilities.Sprint, 
-                            abilities.Halt,
+                            abilities.Flee,
                         },
                         health = standardPolice.maxHealth, 
                         stamina = standardPolice.maxStamina, 
@@ -181,7 +181,7 @@ return function( scen )
                         abilities = {
                             abilities.Attack, 
                             abilities.Sprint, 
-                            abilities.Halt,
+                            abilities.Flee,
                         },
                         health = standardPolice.maxHealth, 
                         stamina = standardPolice.maxStamina, 
@@ -203,31 +203,29 @@ return function( scen )
     local function getCurrentWaypoint()
         return waypoints["waypoint"..currentWaypoint]
     end
-	
+    
     -- Setup callbacks for gamemode
     scen:registerInitCallback( function() 
         scen.gamemode:init() 
         local plane = entity.get "plane"
-        plane(scen, 0, -1, 0, 900)
+        --plane(scen, 0, -1, 0, 900)
 
-        --scen.gamemode.camera:lookAt( core.glm.vec3.new( 50, 100, 10), core.glm.vec3.new( -60, 0, -50 ) )
         scen.gamemode.camera:addInterpolationPoint(scen.cameras.startcam.translation, scen.cameras.startcam.quaternion)
-        --scen.gamemode.camera:addInterpolationPoint(scen.cameras.devcam.translation, scen.cameras.devcam.quaternion)
+        scen.gamemode.camera:addInterpolationPoint(scen.cameras.devcam.translation, scen.cameras.devcam.quaternion)
         obj1 = scen.gamemode:createObjective()
         obj1.title = "At least one deserter must survive and reach the goal."
-		
-		Statistics.addObjectives( { obj1 } )
-		
+        
+        Statistics.addObjectives( { obj1 } )
+        
         -- range, graceDistance, damageToHealth, damageToMorale, damageToMoraleOnMiss, enemyRageIncrease, enemyPressureIncrease, staminaCost, timeWhenAnimationDealsDamage, animationName
-		--fists = core.weaponData.pushWeapon( 1.0, 0.75, 20, 0.2, 0.05, 3.2, 2.9, 0.05, 0.5, "punch" )
-		fists = core.weaponData.pushWeapon( 1.0, 0.75, 10, 0.05, 0.01, 3.2, 2.9, 0.05, 0.5, "punch" )
+        fists = core.weaponData.pushWeapon( 1.0, 0.75, 10, 0.05, 0.01, 3.2, 2.9, 0.05, 0.5, "punch" )
     end )
 
     scen:registerUpdateCallback( 
     function(delta) 
         scen.gamemode:update(delta) 
         if deserterGroup then
-			core.system.squad.enableOutline({deserterGroup}, (vec4{"#09FF00FF",2.0}):get())
+            core.system.squad.enableOutline({deserterGroup}, (vec4{"#09FF00FF",2.0}):get())
 
             local count = core.system.groups.getGroupMemberCount( deserterGroup)
             obj1.title = "At least one deserter must survive and reach the goal. " .. count .. " remain."
@@ -238,17 +236,17 @@ return function( scen )
     end )
 
     scen:registerTickCallback( function( )
-        if getCurrentWaypoint() and deserterGroup then 
+        if getCurrentWaypoint() and deserterGroup then
             local memberCount = core.system.groups.getGroupMemberCount( deserterGroup )
             if core.system.area.getAreaRioterCount( getCurrentWaypoint(), deserterGroup ) > math.max(memberCount/2 - 5,0) then
                 currentWaypoint = currentWaypoint + 1
                 if getCurrentWaypoint() then
                     print( "Set new goal to waypoint " .. currentWaypoint .. " at pos: ", core.glm.vec3.new( unpack( waypoint_positions["waypoint"..currentWaypoint] ) ))
                     core.system.groups.setGroupGoal( deserterGroup, unpack( waypoint_positions["waypoint"..currentWaypoint] ) )
-                end   
-            end 
+                end
+            end
         end
-    end)
+    end )
 
     scen:registerTickCallback( function()
         for i,v in  pairs( agitatorGroups ) do
@@ -257,8 +255,6 @@ return function( scen )
     end)
 
     scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
-    
-    -- Script goes here
 
     --Function for adding more spawnpoints.
     function T.registerSpawn(ent)
@@ -286,23 +282,23 @@ return function( scen )
     end
     
     -- Create rioter on area:
-	function T.createDeserter( ent, xsize, ysize )
-		local wpc = ent:get( core.componentType.WorldPositionComponent )
-		local ac = ent:get( core.componentType.AreaComponent )
-		verts = ac.vertices
+    function T.createDeserter( ent, xsize, ysize )
+        local wpc = ent:get( core.componentType.WorldPositionComponent )
+        local ac = ent:get( core.componentType.AreaComponent )
+        verts = ac.vertices
 
-		-- Make vertex positions from local space to world space
-		for i = 1, 8, 2 do
-			verts[i] = verts[i] + wpc.position[1]
-			verts[i + 1] = verts[i + 1] + wpc.position[3]
-		end
-	    local grp = core.system.groups.createGroup(1)
-		group( scen, ac.vertices, grp, {xsize, ysize}, fists, {0.9,0.3,0,1}, 1, 1,core.RioterAlignment.Pacifist )
+        -- Make vertex positions from local space to world space
+        for i = 1, 8, 2 do
+            verts[i] = verts[i] + wpc.position[1]
+            verts[i + 1] = verts[i + 1] + wpc.position[3]
+        end
+        local grp = core.system.groups.createGroup(1)
+        group( scen, ac.vertices, grp, {xsize, ysize}, fists, {0.9,0.3,0,1}, 1, 1,core.RioterAlignment.Pacifist )
         return grp
-	end
+    end
 
     -- Create rioter on area:
-	function T.createAgitators( ents, xsize, ysize )
+    function T.createAgitators( ents, xsize, ysize )
 
         local grp = core.system.groups.createGroup(2)
 
@@ -320,7 +316,26 @@ return function( scen )
         end
 
         return grp
-	end
+    end
+
+    -- Create rebel on area:
+    function T.createRebels( ent, xsize, ysize )
+
+        local grp = core.system.groups.createGroup(2)
+
+        local wpc = ent:get( core.componentType.WorldPositionComponent )
+        local ac = ent:get( core.componentType.AreaComponent )
+        verts = ac.vertices
+
+        -- Make vertex positions from local space to world space
+        for i = 1, 8, 2 do
+            verts[i] = verts[i] + wpc.position[1]
+            verts[i + 1] = verts[i + 1] + wpc.position[3]
+        end
+
+        group( scen, ac.vertices, grp, {xsize, ysize}, fists, nil, 1, 1, core.RioterAlignment.Anarchist, core.movementData.Jogging )
+
+    end
 
     --Hides objects when we enter main game state
     function T.hideOnMain(ent)
@@ -361,13 +376,16 @@ return function( scen )
         waypoint_positions[nc.name] = wpc.position
         print( "Registering waypoint: " .. nc.name )
     end
-
-    for i = 1,4 do
+    local spawnCounts = {
+        {10,10},
+        {22,22},
+    }
+    for i = 1,3 do
         T["registerAg"..i.."Spawn"] = function(ent) 
-		    local wpc = ent:get(core.componentType.WorldPositionComponent)
+            local wpc = ent:get(core.componentType.WorldPositionComponent)
             print( "Registering Ag"..i )
 
-		    local groupId = core.gameMetaData.registerEscapePoint( wpc.position[1], wpc.position[2], wpc.position[3] )
+            local groupId = core.gameMetaData.registerEscapePoint( wpc.position[1], wpc.position[2], wpc.position[3] )
 
             scen:registerTickCallback(function()
                 if ent:isValid() then
@@ -375,7 +393,7 @@ return function( scen )
 
                     for _,v in pairs( rioters ) do
                         local alignmentComponent = v:get( core.componentType.AttributeComponent )
-                        print( alignmentComponent.groupID )
+                        --print( alignmentComponent.groupID )
                         if alignmentComponent.groupID == groupId then
                             scen.asm:destroyEntity( v )
                         end  
@@ -394,15 +412,21 @@ return function( scen )
             local spawns = T["ag"..i.."spawn"]
     
             if #spawns > 0 and core.system.area.getAreaRioterCount( ent, deserterGroup ) > 0 then
-                table.insert( agitatorGroups, T.createAgitators( spawns, 10,10 ) ) 
+                table.insert( agitatorGroups, T.createAgitators( spawns, unpack( spawnCounts[i] )  ) ) 
                 T["ag"..i.."spawn"] = {}
             end
         end
     end
 
-    function T.checkAg2And4Enter( ent )
-        T.checkAg2Enter( ent )
-        T.checkAg4Enter( ent ) 
+    function T.spawnRebel( ent )
+        scen.gamemode:registerOnStateChange( function( stateName )
+            if stateName == "Main" then
+                print "Yolo Swaggins"
+                T.createRebels( ent, 5, 5 )
+                return false -- return false to indicate that we have served our purpose and wish no longer to be called.
+            end
+            return true
+        end)
     end
 
     function T.rotateY( ent, delta )
@@ -452,4 +476,3 @@ return function( scen )
 
     return T
 end
-
