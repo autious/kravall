@@ -38,11 +38,22 @@ namespace GFX
 	void RenderJobManager::Clear()
 	{
 		m_renderJobs.clear();
+		m_filledRects.clear();
+	}
+
+	void RenderJobManager::AddFilledRect(FilledRect r)
+	{
+		m_filledRects.push_back(r);
 	}
 
 	std::vector<RenderJobManager::RenderJob>& RenderJobManager::GetJobs()
 	{
 		return m_renderJobs;
+	}
+
+	std::vector<FilledRect>& RenderJobManager::GetFilledRects()
+	{
+		return m_filledRects;
 	}
 
 }
