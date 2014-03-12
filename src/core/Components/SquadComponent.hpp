@@ -27,7 +27,8 @@ namespace Core
         ARREST_GROUP,
         TEAR_GAS,
         TAZE,
-        BLITZ
+        BLITZ,
+		HALT,
     };
 
 	/*!

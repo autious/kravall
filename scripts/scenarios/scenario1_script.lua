@@ -46,7 +46,7 @@ return function( scen )
                         abilities = {
                             abilities.Attack, 
                             abilities.Sprint, 
-                            abilities.Flee,
+                            abilities.Halt,
                         },
                         health = standardPolice.maxHealth, 
                         stamina = standardPolice.maxStamina, 
@@ -60,7 +60,7 @@ return function( scen )
                         abilities = {
                             abilities.Attack, 
                             abilities.Sprint, 
-                            abilities.Flee,
+                            abilities.Halt,
                         },
                         health = standardPolice.maxHealth, 
                         stamina = standardPolice.maxStamina, 
@@ -74,7 +74,7 @@ return function( scen )
                         abilities = {
                             abilities.Attack, 
                             abilities.Sprint, 
-                            abilities.Flee,
+                            abilities.Halt,
                         },
                         health = standardPolice.maxHealth, 
                         stamina = standardPolice.maxStamina, 
@@ -88,7 +88,7 @@ return function( scen )
                         abilities = {
                             abilities.Attack, 
                             abilities.Sprint, 
-                            abilities.Flee,
+                            abilities.Halt,
                         },
                         health = standardPolice.maxHealth, 
                         stamina = standardPolice.maxStamina, 
@@ -102,7 +102,7 @@ return function( scen )
                         abilities = {
                             abilities.Attack, 
                             abilities.Sprint, 
-                            abilities.Flee,
+                            abilities.Halt,
                         },
                         health = standardPolice.maxHealth, 
                         stamina = standardPolice.maxStamina, 
@@ -116,7 +116,7 @@ return function( scen )
                         abilities = {
                             abilities.Attack, 
                             abilities.Sprint, 
-                            abilities.Flee,
+                            abilities.Halt,
                         },
                         health = standardPolice.maxHealth, 
                         stamina = standardPolice.maxStamina, 
@@ -139,7 +139,7 @@ return function( scen )
                             abilities.Attack, 
                             abilities.Sprint, 
                             abilities.TearGas, 
-                            abilities.Flee,
+                            abilities.Halt,
                         },
                         health = tearGasPolice.maxHealth, 
                         stamina = tearGasPolice.maxStamina, 
@@ -153,7 +153,7 @@ return function( scen )
                         abilities = {
                             abilities.Attack, 
                             abilities.Sprint, 
-                            abilities.Flee,
+                            abilities.Halt,
                         },
                         health = tearGasPolice.maxHealth, 
                         stamina = tearGasPolice.maxStamina, 
@@ -167,7 +167,7 @@ return function( scen )
                         abilities = {
                             abilities.Attack, 
                             abilities.Sprint, 
-                            abilities.Flee,
+                            abilities.Halt,
                         },
                         health = standardPolice.maxHealth, 
                         stamina = standardPolice.maxStamina, 
@@ -181,7 +181,7 @@ return function( scen )
                         abilities = {
                             abilities.Attack, 
                             abilities.Sprint, 
-                            abilities.Flee,
+                            abilities.Halt,
                         },
                         health = standardPolice.maxHealth, 
                         stamina = standardPolice.maxStamina, 
