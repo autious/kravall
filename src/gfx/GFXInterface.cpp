@@ -200,6 +200,20 @@ namespace GFX
 		Renderer().DrawSelectionbox(cspos, color);
 	}
 
+	void DrawFilledRect(GFXVec2 position, GFXVec2 dimensions, GFXColor color)
+	{
+		FilledRect r;
+		r.color = color;
+		r.position = glm::vec3(
+			position.x / float(Renderer().GetWindowWidth() / 2) - 1.0f,
+			1.0f - position.y / float(Renderer().GetWindowHeight() / 2), 0.0f);
+		r.dimensions = glm::vec3(
+			dimensions.x / float(Renderer().GetWindowWidth()) * 2,
+			dimensions.y / float(Renderer().GetWindowHeight()) * 2, 0.0f);
+
+		Renderer().AddFilledRect(r);
+	}
+
 	int GetScreenWidth()
 	{
 		return Renderer().GetWindowWidth();

@@ -5,14 +5,30 @@ return function(asm, posX, posY, posZ, group, gender, material, weaponType, outl
     alignment = alignment or core.RioterAlignment.Anarchist
 	mobility = mobility or core.movementData.Walking
     
+
+    local materials = 
+    {
+        "assets/texture/animated/rioter/rioter-good_00.material",
+        "assets/texture/animated/rioter/rioter-good_01.material",
+        "assets/texture/animated/rioter/rioter-good_02.material",
+    }
+
     if alignment == core.RioterAlignment.Anarchist then 
+    materials  =
+    {
+        "assets/texture/animated/rioter/rioter-bad_00.material",
+        "assets/texture/animated/rioter/rioter-bad_01.material",
+        "assets/texture/animated/rioter/rioter-bad_02.material",
+    }
        -- print( "ALIGNMENT: anarchist" )
     elseif alignment == core.RioterAlignment.Pacifist then
        -- print( "ALIGNMENT: pacifist" )
     end
 
-    local meshes = {"assets/model/animated/rioter/rioter-male_00.bgnome","assets/model/animated/rioter/rioter-female_00.bgnome" }
-    local materials = {"assets/texture/animated/rioter/rioter_00.material","assets/texture/animated/rioter/rioter_01.material","assets/texture/animated/rioter/rioter_02.material" }
+    local meshes = 
+    {"assets/model/animated/rioter/rioter-male_00.bgnome",
+     "assets/model/animated/rioter/rioter-female_00.bgnome" }
+
     gender = gender or (math.random(1,#meshes))
     material = material or (math.random(1,#materials))
 

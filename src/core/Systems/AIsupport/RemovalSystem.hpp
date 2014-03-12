@@ -27,6 +27,8 @@ namespace Core
 
 		void CreateBloodDecal(glm::vec3 position);
 
+		std::vector<Entity> m_bloodEntities;
+
 		inline float rand_FloatRange(float a, float b)
 		{
 			return ((b - a)*((float)rand() / RAND_MAX)) + a;
