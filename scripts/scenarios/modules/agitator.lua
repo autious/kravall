@@ -5,16 +5,23 @@ local vec4 = require( "utility" ).expandMixxedHexToVec4
 return function( scen, T )
     local agitatorGroups = {}
     local fists = core.weaponData.pushWeapon( 1.0, 0.75, 10, 0.05, 0.01, 3.2, 2.9, 0.05, 0.5, "punch" )
+    local initialSize = {10,5}
 
     scen:registerTickCallback( function()
         if T.getDeserterGroup then
-            for i,v in  pairs( agitatorGroups ) do
-                core.system.groups.setGroupGoal( v, core.system.groups.getGroupMedianPosition(T.getDeserterGroup()))
-            end     
+            if T.getDeserterGroup() then
+                for i,v in  pairs( agitatorGroups ) do
+                    core.system.groups.setGroupGoal( v, core.system.groups.getGroupMedianPosition(T.getDeserterGroup()))
+                end     
+            end
         else
             core.log.error("missing the deserter module")
         end
     end)
+
+    function T.getAgitatorGroups()
+        return agitatorGroups
+    end
 
     -- Create rioter on area:
     function T.createAgitators( ents, xsize, ysize )
@@ -35,6 +42,16 @@ return function( scen, T )
         end
 
         return grp
+    end
+
+    function T.spawnAgitatorsOnMain( ent )
+        scen.gamemode:registerOnStateChange( function( stateName )
+            if stateName == "Main" then
+                table.insert( agitatorGroups, T.createAgitators( {ent},unpack(initialSize) ) )
+                return false -- return false to indicate that we have served our purpose and wish no longer to be called.
+            end
+            return true
+        end)
     end
 
     for i = 1,9 do
