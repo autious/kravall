@@ -144,8 +144,7 @@ return function( scen )
         obj1 = scen.gamemode:createObjective()
         obj1.title = "At least one deserter must survive and reach the goal."
 
-        --obj2 = scen.gamemode:createObjective()
-        obj2 = {}
+        obj2 = scen.gamemode:createObjective()
         obj2.title = "(Bonus) Let all deserters reach the goal unharmed."
         obj2.bonus = true
 		
