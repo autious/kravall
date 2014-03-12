@@ -183,8 +183,8 @@ void Core::CollisionSystem2D::Update( float delta )
 							glm::normalize( otherPosition - myPosition ) );
 						if( dot > 0.3f )
 						{	
-							if( mvmc->speed > mvmc->desiredSpeed[ Core::MovementState::Movement_Walking ] * 0.8f )
-								mvmc->speed -= 18.85f * delta;
+							if( mvmc->speed > mvmc->desiredSpeed[ Core::MovementState::Movement_Walking ] )
+								mvmc->speed -= 17.5f * delta;
 
 							//mod = 0.75f;
 						}
