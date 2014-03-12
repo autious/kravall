@@ -14,7 +14,7 @@
 
 #define POLICE_GOAL_ARRIVAL_THRESHOLD 0.2f
 #define POLICE_CLOSE_GOAL_WALK_DISTANCE 1.8f
-
+#define EDGE_THRESHOLD 0.35f
 
 Core::PoliceGoalSystem::PoliceGoalSystem()
 	: BaseSystem( EntityHandler::GenerateAspect< WorldPositionComponent, MovementComponent, 
@@ -153,10 +153,10 @@ void Core::PoliceGoalSystem::Update( float delta )
 						glm::vec3 fromStartToObject = position - lineStart;
 						float distanceAlongLine = glm::dot( (lineEnd - lineStart) * instance->nodes[targetNode].corners[targetEdge].inverseLength, fromStartToObject );
 
-						if( instance->nodes[ targetNode ].corners[ targetEdge ].length < distanceAlongLine || distanceAlongLine < 0 )
+						if( instance->nodes[ targetNode ].corners[ targetEdge ].length - EDGE_THRESHOLD < distanceAlongLine || distanceAlongLine < EDGE_THRESHOLD )
 						{
 							// is outside edges...
-							if( distanceAlongLine < 0 )
+							if( distanceAlongLine < EDGE_THRESHOLD )
 								targetPosition = lineStart + glm::normalize( lineEnd - lineStart ) * 1.25f;
 							else 
 								targetPosition = lineEnd + glm::normalize( lineStart - lineEnd ) * 1.25f;
