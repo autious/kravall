@@ -157,10 +157,10 @@ function PrepInterface:new(o)
 	
 	o.unitPurchased = TextSelectList:new
 										{
-											width=217,
-											height=209,
+											width=216,
+											height=208,
 											xoffset=leftXOffset,
-											yoffset=19,
+											yoffset=20,
 											anchor="NorthWest", 
 											elements=o.createdSquads,
 											onSelect=o.onSelectCreatedSquad
