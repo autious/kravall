@@ -19,8 +19,6 @@ namespace Core
         {
             Core::AnimationComponent* ac = WGETC<Core::AnimationComponent>(*it);
 			Core::GraphicsComponent* gc = WGETC<Core::GraphicsComponent>(*it);
-			if (ac->playing)
-			{
 				unsigned int meshID = GFX::GetBitmaskValue(gc->bitmask, GFX::BITMASK::MESH_ID);
 				
 				// Get the number of frames in the current animation
@@ -36,7 +34,9 @@ namespace Core
 					float animationDuration = (animationFrameCount-1) / static_cast<float>(animationFramerate);
 
 					// Step forward the animation
-					ac->currentTime += delta * ac->speed;
+					if (ac->playing)
+						ac->currentTime += delta * ac->speed;
+
 					if (ac->currentTime > animationDuration)
 					{
 						
@@ -69,7 +69,6 @@ namespace Core
 					ac->currentFrame = offset + ac->currentFrame * bonesPerFrame;
 				}
 			}
-        }
     }
 
 }
