@@ -3,10 +3,16 @@
 
 #include <vector>
 #include <gfx/BitmaskDefinitions.hpp>
-
+#include <glm/glm.hpp>
 namespace GFX
 {
-
+	struct FilledRect
+	{
+		glm::vec3 position;
+		glm::vec3 dimensions;
+		glm::vec4 color;
+		float lineWidth;
+	};
 
 	class RenderJobManager
 	{
@@ -18,6 +24,8 @@ namespace GFX
 		void AddRenderJob(GFXBitmask mask, void* val);
 		void Clear();
 
+		void AddFilledRect(FilledRect r);
+
 		struct RenderJob
 		{
 			GFXBitmask bitmask;
@@ -25,11 +33,14 @@ namespace GFX
 		};
 
 		std::vector<RenderJob>& GetJobs();
+		std::vector<FilledRect>& GetFilledRects();
 
 	private:
 		friend int compare_ints(const void* a, const void* b);
 
 		std::vector<RenderJob> m_renderJobs;
+		std::vector<FilledRect> m_filledRects;
+
 	};
 }
 
