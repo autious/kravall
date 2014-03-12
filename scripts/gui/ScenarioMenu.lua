@@ -17,18 +17,24 @@ function ScenarioMenu:new(o,menuState)
 
     o.gui = GUI:new()
     
-    local descriptionBox = TextBox:new({anchor="East", yoffset=-180, body="", width=600, height=500})
+    local descriptionBox = TextBox:new( {anchor="NorthEast", yoffset=200, body="", width=600, height=500} )
+	local textYOffset = 220
     --local scenarioLabel = TextLabel:new({ xoffset=-50, yoffset=250, anchor="NorthEast", label=""})
 
     local function onScenarioSelect( object )
-        descriptionBox:setText( object.description )         
-       -- scenarioLabel:setLabel( object.name )
+        descriptionBox:setText( object.description ) 
+		local dimX, dimY = descriptionBox.text:getDim()
+		descriptionBox.yoffset = textYOffset - dimY
+		
         menuState.selectedScenario = object
         o.gui:constrict()
 
     end
 
-    local selectionList = TextSelectList:new({ anchor="NorthWest", yoffset=310, xoffset=300, elements=o.scenarios, onSelect = onScenarioSelect })
+    local selectionList = TextSelectList:new( { 
+												width=330, height=200, yoffset=textYOffset, xoffset=250, elements=o.scenarios, 
+												anchor="NorthWest", onSelect = onScenarioSelect 
+											} )
 
     o.gui:addComponent(Button:new({
                                     matReleased="assets/texture/ui/back-button-release.material",
