@@ -674,6 +674,7 @@ namespace GFX
 
 	int RenderCore::CreateSkeleton(int& out_skeletonID)
 	{
+		m_reloadAnimationData = true;
 		return m_animationManager->CreateSkeleton(out_skeletonID);
 	}
 
@@ -690,6 +691,7 @@ namespace GFX
 
 	int RenderCore::BindSkeletonToMesh(const unsigned int& meshID, const int& skeletonID)
 	{
+		m_reloadAnimationData = true;
 		return m_meshManager->BindSkeletonToMesh(meshID, skeletonID);
 	}
 
