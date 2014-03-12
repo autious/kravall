@@ -219,7 +219,7 @@ function C:update( dt )
 
             if mouse.isButtonDown( mouse.button.Middle ) then
                 
-                local tmp = self.quatRotation:rotate( (y-self.py) * 0.8 * delta , camera:getRight() )
+                local tmp = self.quatRotation:rotate( (y-self.py) * core.config.cameraRotationSpeed * delta , camera:getRight() )
                 local _,y,_,_ = (tmp:mat4Cast() * core.glm.vec4.new( 0,1,0,0 )):get()
 
                 if y > 0 then
@@ -228,23 +228,23 @@ function C:update( dt )
                     -- the idea is that we iteratively move the camera to en end, doing one pixel movement at a time.
                     local _,fy,_,_ = camera:getForward():get()
                     if fy < 0 then
-                        tmp = self.quatRotation:rotate( 1 * 0.8 * delta , camera:getRight() )
+                        tmp = self.quatRotation:rotate( 1 * core.config.cameraRotationSpeed * delta , camera:getRight() )
                         _,y,_,_ = (tmp:mat4Cast() * core.glm.vec4.new( 0,1,0,0 )):get()
 
                         while y > 0  do
                             self.quatRotation = tmp 
                             
-                            tmp = self.quatRotation:rotate( 1 * 0.8 * delta , camera:getRight() )
+                            tmp = self.quatRotation:rotate( 1 * core.config.cameraRotationSpeed * delta , camera:getRight() )
                             _,y,_,_ = (tmp:mat4Cast() * core.glm.vec4.new( 0,1,0,0 )):get()
                         end
                     else
-                        tmp = self.quatRotation:rotate( -1 * 0.8 * delta , camera:getRight() )
+                        tmp = self.quatRotation:rotate( -1 * core.config.cameraRotationSpeed * delta , camera:getRight() )
                         _,y,_,_ = (tmp:mat4Cast() * core.glm.vec4.new( 0,1,0,0 )):get()
 
                         while y > 0  do
                             self.quatRotation = tmp 
                             
-                            tmp = self.quatRotation:rotate( -1 * 0.8 * delta , camera:getRight() )
+                            tmp = self.quatRotation:rotate( -1 * core.config.cameraRotationSpeed * delta , camera:getRight() )
                             _,y,_,_ = (tmp:mat4Cast() * core.glm.vec4.new( 0,1,0,0 )):get()
                         end
                     end
@@ -255,7 +255,7 @@ function C:update( dt )
                     self.quatRotation = quat:new()
                 end
 
-                self.quatRotation = self.quatRotation:rotate( (x-self.px) * 0.8 * delta , vec3.new(0, 1, 0) )
+                self.quatRotation = self.quatRotation:rotate( (x-self.px) * core.config.cameraRotationSpeed * delta , vec3.new(0, 1, 0) )
             end 
 
             if self.mousePressLocation ~= nil then
