@@ -52,8 +52,9 @@ playerBindings =
     attackAbility = core.input.keyboard.key["R"],
     tearGasAbility = core.input.keyboard.key["F"],
     sprintAbility = core.input.keyboard.key["V"],
-    fleeAbility = core.input.keyboard.key["X"],
-
+    --fleeAbility = core.input.keyboard.key["Z"],
+	haltOrder = core.input.keyboard.key["X"],
+	
     lineFormation = core.input.keyboard.key["L"],
     circleFormation = core.input.keyboard.key["C"],
     halfCircleFormation = core.input.keyboard.key["H"],
@@ -61,8 +62,6 @@ playerBindings =
     rotateSquadSelection = core.input.keyboard.key.Tab, 
 
 	moodHighlight = core.input.keyboard.key["M"], 
-	
-	haltOrder = core.input.keyboard.key["Z"],
 }
 }
 

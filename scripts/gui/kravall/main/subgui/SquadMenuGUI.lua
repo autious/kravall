@@ -120,26 +120,26 @@ function SquadMenuGUI:new(o)
 													onExit=onExit,
 													toolTip=createTT:new( { handler=toolTipHandler, text="Sprint - 3" } )
 												} )
-    o.abilities[s_ability.Flee] = Checkbox:new( 
+    o.abilities[s_ability.Halt] = Checkbox:new( 
 												{  
 													doStateSwitchOnPress=false,
 													checked=false,
 													xoffset=xoffset-1,
 													yoffset=330,
-													matOpen="assets/texture/ui/grenade-unselected_00.material",
-													matSelected="assets/texture/ui/grenade-selected_00.material",
-													matHoverOpen="assets/texture/ui/grenade-hover_00.material",
-													matHoverSelected="assets/texture/ui/grenade-extra_00.material",
+													matOpen="assets/texture/ui/halt-unselected_00.material",
+													matSelected="assets/texture/ui/halt-selected_00.material",
+													matHoverOpen="assets/texture/ui/halt-hover_00.material",
+													matHoverSelected="assets/texture/ui/halt-extra_00.material",
 													onHover=onHoverAbility,
-													onClick= function(self) o.onAbilitySelect( s_ability.Flee ) end,
+													onClick= function(self) o.onAbilitySelect( s_ability.Halt ) end,
 													onExit=onExit,
-													toolTip=createTT:new( { handler=toolTipHandler, text="Flee - 4" } )
+													toolTip=createTT:new( { handler=toolTipHandler, text="Halt - 4" } )
 												} )
 						
 	o:addComponent( o.abilities[s_ability.Attack] )									
     o:addComponent( o.abilities[s_ability.TearGas] )
 	o:addComponent( o.abilities[s_ability.Sprint] )
-	o:addComponent( o.abilities[s_ability.Flee] )
+	o:addComponent( o.abilities[s_ability.Halt] )
 	
 	o.formations = {}
     o.formations[f_line]= Checkbox:new( 
