@@ -27,16 +27,16 @@ function ScrollBar:new(o)
 							{
 								xoffset=0, yoffset=0,
 								matReleased="assets/texture/ui/scrollbar-top-button-release.material",
-								matPressed="assets/texture/ui/scrollbar-top-button-release.material",
-								matHover="assets/texture/ui/scrollbar-top-button-release.material",
+								matPressed="assets/texture/ui/scrollbar-top-button-press.material",
+								matHover="assets/texture/ui/scrollbar-top-button-hover.material",
 								onClick=function() o:scrollUp() end
 							} )
 	o.bottomButton = Button:new (
 								{
 									xoffset=0, yoffset=200,
 									matReleased="assets/texture/ui/scrollbar-bottom-button-release.material",
-									matPressed="assets/texture/ui/scrollbar-bottom-button-release.material",
-									matHover="assets/texture/ui/scrollbar-bottom-button-release.material",
+									matPressed="assets/texture/ui/scrollbar-bottom-button-press.material",
+									matHover="assets/texture/ui/scrollbar-bottom-button-hover.material",
 									onClick=function() o:scrollDown() end
 								} )
 	o.bottomButton.yoffset = o.height - o.bottomButton.height - 1
