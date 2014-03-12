@@ -11,9 +11,13 @@ local tearGasPolice = (require "game_constants").tearGasPolice
 return function( scen )
     local T = {}
     
+    scen.name = "Introduction, Attack"
+    scen.description =  [[Use a shield squad to attack and destroy a group of agitators.]]
+
     -- Set game to start in prepmode
     scen.gamemode =  require "gamemodes/kravall":new(
     {
+        cashLimit = 200,
         initGamestate="Prep",
         weapons = 
         {
@@ -32,7 +36,7 @@ return function( scen )
                 {
 
                     {
-                        positionOffset = {-1,0,0},
+                        positionOffset = {-2,0,0},
                         weapon = "shield",
                         mesh = "assets/model/animated/police/cop/cop-shield_00.bgnome",
                         material = "assets/texture/animated/police/cop/cop-shield_00.material",
@@ -56,7 +60,7 @@ return function( scen )
                         morale = standardPolice.maxMorale, 
                     },
                     {
-                        positionOffset = {1,0,0},
+                        positionOffset = {2,0,0},
                         weapon = "shield",
                         mesh = "assets/model/animated/police/cop/cop-shield_00.bgnome",
                         material = "assets/texture/animated/police/cop/cop-shield_00.material",
@@ -68,7 +72,19 @@ return function( scen )
                         morale = standardPolice.maxMorale, 
                     },
                     {
-                        positionOffset = {0,0,1},
+                        positionOffset = {0,0,2},
+                        weapon = "shield",
+                        mesh = "assets/model/animated/police/cop/cop-shield_00.bgnome",
+                        material = "assets/texture/animated/police/cop/cop-shield_00.material",
+                        abilities = {
+                            abilities.Attack, 
+                        },
+                        health = standardPolice.maxHealth, 
+                        stamina = standardPolice.maxStamina, 
+                        morale = standardPolice.maxMorale, 
+                    },
+                    {
+                        positionOffset = {0,0,-2},
                         weapon = "shield",
                         mesh = "assets/model/animated/police/cop/cop-shield_00.bgnome",
                         material = "assets/texture/animated/police/cop/cop-shield_00.material",
