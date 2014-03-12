@@ -7,7 +7,7 @@ scen.description = "Default Description"
 
 scen.cameras = scen.cameras or {}
 
-local script = dofile "scripts/scenarios/introduction_00_script.lua"( scen )
+local script = dofile "scripts/scenarios/introduction_01_script.lua"( scen )
 
 function scen:load()
     local ambient = entities.get "ambientLight"
@@ -21,7 +21,7 @@ function scen:load()
     local decal = entities.get "decal"
     local ent
     
-    scen.asm:specific_content( core.contentmanager.load( core.loaders.NavigationMeshLoader, "scripts/scenarios/introduction_00.nav", function( value ) end, false ) )
+    scen.asm:specific_content( core.contentmanager.load( core.loaders.NavigationMeshLoader, "scripts/scenarios/introduction_01.nav", function( value ) end, false ) )
 
     
     local function genF( e, f )

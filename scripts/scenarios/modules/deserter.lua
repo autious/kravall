@@ -47,7 +47,10 @@ return function( scen, T )
     function T.spawnDesertersOnMain(ent)
         scen.gamemode:registerOnStateChange( function( stateName )
             if stateName == "Main" then
-                assert( waypoint_positions["waypoint1"], "Missing waypoint1, there is something wrong in blenders export, maybe you're not registering it?" )
+                if not waypoint_positions["waypoint1"] then
+                    core.log.warning( "Missing waypoint1, there is something wrong in blenders export, maybe you're not registering it? Deserters will not move after spawn." )
+                end
+
                 deserterGroup = T.createDeserter( ent,unpack(initialSize) ) 
                 return false -- return false to indicate that we have served our purpose and wish no longer to be called.
             end
