@@ -12,7 +12,7 @@ return function( scen )
     local T = {}
 	
     scen.name = "Introduction, Escort"
-    scen.description =  [[Escort the group of deserts to the end goal, bonus points of all deserts survive to the end.]]
+    scen.description =  [[Escort the group of deserts to the end goal using the shield squad, bonus points of all deserts survive to the end.]]
     
     -- Set game to start in prepmode
     scen.gamemode =  require "gamemodes/kravall":new(
@@ -92,44 +92,6 @@ return function( scen )
                     },
                 },
             },
-            {
-                name = "Teargas Squad",
-                description = "Can make people cry ='D",
-                cost = tearGasPolice.cost,
-                setup = 
-                {
-                    {
-                        positionOffset = {-2,0,0},
-                        weapon = "punch",
-                        mesh = "assets/model/animated/police/cop/cop-teargas_00.bgnome",
-                        material = "assets/texture/animated/police/cop/cop-teargas_00.material",
-                        abilities = {
-                            abilities.Attack, 
-                            abilities.Sprint, 
-                            abilities.TearGas, 
-                            abilities.Flee,
-                        },
-                        health = tearGasPolice.maxHealth, 
-                        stamina = tearGasPolice.maxStamina, 
-                        morale = tearGasPolice.maxMorale, 
-                    },
-                    {
-                        positionOffset = {2,0,0},
-                        weapon = "punch",
-                        mesh = "assets/model/animated/police/cop/cop-teargas_00.bgnome",
-                        material = "assets/texture/animated/police/cop/cop-teargas_00.material",
-                        abilities = {
-                            abilities.Attack, 
-                            abilities.Sprint, 
-                            abilities.TearGas, 
-                            abilities.Flee,
-                        },
-                        health = tearGasPolice.maxHealth, 
-                        stamina = tearGasPolice.maxStamina, 
-                        morale = tearGasPolice.maxMorale, 
-                    },
-                },
-            },
         }
     })
     local obj1
@@ -168,7 +130,6 @@ return function( scen )
 
     scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
 
-
     module( "agitator", scen, T ) 
     module( "deserter", scen, T ) 
     module( "onstate" , scen, T ) 
@@ -189,15 +150,11 @@ return function( scen )
             local rioters = core.system.area.getAreaRioters(ent)
             for _,v in pairs( rioters ) do
                 local alignmentComponent = v:get( core.componentType.AttributeComponent )
-                print( alignmentComponent.groupID )
                 if alignmentComponent.groupID == T.getDeserterGroup() then
                     scen.asm:destroyEntity( v )
                     rioterGoalCount = rioterGoalCount + 1
                 end  
             end
-
-            print( "in life:" .. count )
-            print( "in goal:" .. rioterGoalCount )
         end
     end
 
