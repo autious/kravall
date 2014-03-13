@@ -446,8 +446,12 @@ namespace GFX
 		\param gamma
 		*/
 		DLL_API void SetGamma(float gamma);
-		
 
+		/*!
+		Gets gamma
+		*/
+		DLL_API float GetGamma();
+		
 		/*!
 		Sets a setting to the specified value
 		\return Returns either GFX_SUCCESS or GFX_FAIL

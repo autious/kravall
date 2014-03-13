@@ -87,11 +87,16 @@ void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police, float del
 		case PoliceStance::Aggressive:
 			if (tc->target == INVALID_ENTITY)
 			{
-				if( sqc->targetGroup != std::numeric_limits<int>::max() )
-					tc->target = FindClosestTarget(wpc, 1 << UnitType::Rioter, -1, nullptr, sqc->targetGroup );
-				else
-					tc->target = FindClosestTarget(wpc, 1 << UnitType::Rioter, instance->flowfields[ sqc->squadID ].team, instance );
 				tc->attackTime = 0.0f;
+				if( sqc )
+				{
+					if( sqc->targetGroup != std::numeric_limits<int>::max() )
+					{
+						tc->target = FindClosestTarget(wpc, 1 << UnitType::Rioter, -1, nullptr, sqc->targetGroup );
+						break;
+					}
+				}
+				tc->target = FindClosestTarget(wpc, 1 << UnitType::Rioter, instance->flowfields[ sqc->squadID ].team, instance );
 			}
 			else
 			{

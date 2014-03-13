@@ -70,6 +70,8 @@ void Core::FlowfieldSystem::Update( float delta )
 
 			DEBUG_DRAW_FF_GOAL( GFX::Debug::DrawLine( position, navGoal, GFXColor( 1, 1, 0, 1 ), false )); 
 
+			glm::vec3 flowfieldDirection = glm::vec3(0.0f);
+
 			if( instance->flowfields[ groupID ].deadNodes[ ffc->node ] )
 			{
 				// calculate path out of police occupied node here
@@ -82,6 +84,7 @@ void Core::FlowfieldSystem::Update( float delta )
 				else
 				{
 					glm::vec3 newDir = glm::normalize( navGoal - position );
+					flowfieldDirection = newDir;
 					glm::vec3 currentDir = glm::vec3( mvmc->newDirection[0], mvmc->newDirection[1], mvmc->newDirection[2] ); 
 					Core::MovementComponent::SetDirection( mvmc, newDir.x, 0.0f, newDir.z );
 				}
@@ -115,13 +118,13 @@ void Core::FlowfieldSystem::Update( float delta )
 					targetPosition = instance->flowfields[groupID].list[ ffc->node ];
 				}
 				
-				glm::vec3 flowfieldDirection = glm::normalize( targetPosition - position );
+				flowfieldDirection = glm::normalize( targetPosition - position );
 
 				MovementComponent::SetDirection( mvmc, flowfieldDirection.x, 0, flowfieldDirection.z );
 			}
 
 			DEBUG_DRAW_FF_DIRECTION( 
-				GFX::Debug::DrawLine( position, position + glm::vec3( mvmc->newDirection[0], mvmc->newDirection[1], mvmc->newDirection[2] ), GFXColor( 1, 1, 0, 1 ), false ) );
+				GFX::Debug::DrawLine( position, position + glm::vec3( flowfieldDirection[0], flowfieldDirection[1], flowfieldDirection[2] ), GFXColor( 1, 1, 0, 1 ), false ) );
 			
 		}
 	}
