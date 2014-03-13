@@ -9,7 +9,11 @@ local input = require "input"
 local ent = require "entities"
 local squadInstance = ent.get "squadInstance"
 
-local Main = { name = "Main" }
+local Main = 
+            { 
+                name = "Main",
+                onRequestPause = function() core.log.error("missing function onRequestPause in Main") end,
+            }
 
 local function registerCallbacks(o)
     input.registerOnButton( o.onButton, "GAME" )
@@ -42,6 +46,7 @@ function Main:new(o)
 
     o.gui = KravallControl:new( 
     {
+        onRequestPause = o.onRequestPause,
         -- Called when the user is changing the formation from the gui.
         onFormationSelect = function( formation )
             o.policeHandler:setFormation( formation )

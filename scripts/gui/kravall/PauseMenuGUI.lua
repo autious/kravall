@@ -7,7 +7,7 @@ local SimplePlacer = require "gui/placement/SimplePlacer"
 
 local PauseMenuGUI = GUI:new
 { 
-    
+    onClickContinue = function() end 
 }
 
 function PauseMenuGUI:new(o)
@@ -18,7 +18,7 @@ function PauseMenuGUI:new(o)
 	
     o.panel:addComponent( Button:new{
 									xoffset=xOff, yoffset=15,
-									onClick = onClickReturn,
+									onClick = o.onClickContinue,
 									matReleased = "assets/texture/ui/continue-button-release.material",
 									matPressed = "assets/texture/ui/continue-button-press.material",
 									matHover = "assets/texture/ui/continue-button-hover.material",

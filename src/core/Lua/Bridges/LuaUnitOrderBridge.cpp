@@ -15,6 +15,8 @@ extern "C"
             int* squads = nullptr;
 			int targetGroup = -1;
 
+			Core::PoliceStance returnStance = Core::PoliceStance::Passive;
+
 			if(lua_istable(L, 1))
             {   
                 lua_pushnil(L);
@@ -55,7 +57,14 @@ extern "C"
 				for( int i = 0; i < nSquads; i++ )
 					squadSystem->SetSquadTargetGroup( squads[i], targetGroup );
 
-				squadSystem->RevertSquadStanceFromAgressive( squads, nSquads );
+				returnStance = squadSystem->RevertSquadStanceFromAgressive( squads, nSquads );
+
+				Core::PoliceStance* stance = (Core::PoliceStance*)lua_newuserdata( L, sizeof( Core::PoliceStance ) );
+				*stance = returnStance;        
+				luaL_newmetatable( L, POLICE_STANCE_META_TYPE );
+				lua_setmetatable( L, -2 );
+    
+				return 1;
 			}
 			else
 			{
@@ -63,14 +72,14 @@ extern "C"
 					squadSystem->SetSquadTargetGroup( squads[i], targetGroup );
 
 				squadSystem->SetSquadStance( squads, nSquads, Core::PoliceStance::Aggressive );
+				return 0;
 			}
-
-			return 0;
         }
         else
         {
             return luaL_error(L, "attackGroup( targetGroup, [SelectedGroups] )  expects 2 parameters");
         }
+		return 0;
     }
 
 	static int LuaHaltOrder(lua_State * L)

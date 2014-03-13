@@ -9,9 +9,11 @@ local mouse = core.input.mouse
 local keyboard = core.input.keyboard
 local key = keyboard.key
 local camera = require "rts_camera".new()
-camera:lookAt( core.glm.vec3.new( 0, 30, 50 ), core.glm.vec3.new( 0, 0, -50 ) )
 
+scen.name = "Legend of the Minecart"
+scen.description = "The minecart is lost in the evil cave of destruction. You need to survive the horrors of the depths. Try it and have fun!"
 
+function scen:load()
 -- Game Variables
 local currentLane = 2
 local lanePos = { -17, 0, 17} -- Precalculated positions for the lanes positions
@@ -27,7 +29,7 @@ local caveSegLength = 200 -- Length in units for a cave segment
 local cartResetSpeed = 150.0
 local cartMaxSpeed = 275.0
 local cartSpeed = cartResetSpeed -- Speed of the minecart
-local cartAcc = 0.2
+local cartAcc = 0.5
 
 local minecartY = 4
 
@@ -276,6 +278,7 @@ end
 local function Init()
 	core.camera.gameCamera:setView( camera:getView( ) )
 	core.camera.gameCamera:setProjection( camera:getProjection( ) )
+	camera:lookAt( core.glm.vec3.new( 0, 30, 50 ), core.glm.vec3.new( 0, 0, -50 ) )
 end
 scen:registerInitCallback( Init )
 
@@ -294,6 +297,10 @@ local function Update(delta)
 	keysPressed[2]	= keyboard.isKeyDown( key.Left )
 	keysPressed[3] 	= keyboard.isKeyDown( key.Right )
 	keysPressed[4] 	= keyboard.isKeyDown( key.Enter )
+	if(keyboard.isKeyDown( key.Escape )) then
+		openscenario("main_menu")
+		return
+	end
 	
 	for i=1,#keysPressed do
 		if keysPressed[i] == true then
@@ -418,5 +425,6 @@ local function Update(delta)
 	--camera:update(delta)
 end
 scen:registerUpdateCallback( Update )
+end
 
 return scen;
