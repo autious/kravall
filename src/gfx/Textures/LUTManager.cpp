@@ -73,6 +73,10 @@ namespace GFX
 		m_textureManager->Load3DTexture(id, 32, 32, 32, "assets/texture/Lut/coolnamelut.png");
 		m_LUTTextures.push_back(id);
 		m_LUTNames.push_back("coolnamelut");
+
+		m_textureManager->Load3DTexture(id, 32, 32, 32, "assets/texture/Lut/candyland.png");
+		m_LUTTextures.push_back(id);
+		m_LUTNames.push_back("candyland");
 	}
 
 	GLuint LUTManager::GetLUTHandle(std::string name)

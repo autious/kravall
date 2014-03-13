@@ -50,7 +50,7 @@ function SettingsMenu:new(o,menuState)
 	
 	local lutList = TextSelectList:new{
 	xoffset = 220, yoffset = 180, show = true, width = 200, height = 200, 
-	elements ={ {name = "Normal"},  {name = "Greyscale"}, {name= "Noir"}, {name = "Sepia"}, {name = "Darkness"}, {name = "Deuteranomaly"}, {name = "Inverted"}, {name = "Midnight"}},
+	elements ={ {name = "Normal"},  {name = "Greyscale"}, {name= "Noir"}, {name = "Sepia"}, {name = "Darkness"}, {name = "Deuteranomaly"}, {name = "Inverted"}, {name = "Midnight"}, {name = "Candyland"}},
 	onSelect = nil,
 	anchor = "NorthWest"}
 	lutList.onSelect = function() SettingsMenu:changeLut(lutList.activeObject) end
@@ -87,6 +87,8 @@ function SettingsMenu:changeLut(o)
 		core.gfx.setLUT("coolnamelut")
 	elseif o.name == "Midnight" then
 		core.gfx.setLUT("midnight")
+	elseif o.name == "Candyland" then
+		core.gfx.setLUT("candyland")
 	end
 end
 
