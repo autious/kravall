@@ -6,6 +6,16 @@ scen.name = "Default Scenario Name"
 scen.description = "Default Description"
 
 scen.cameras = scen.cameras or {}
+scen.cameras["startcam"] = {
+    view = core.glm.mat4.new(
+    0.9744874238967896, 0.18994389474391937, -0.11956403404474258, -0.0,
+    -7.450580596923828e-09, 0.5327167510986328, 0.8462936282157898, 0.0,
+    0.22444206476211548, -0.8247025012969971, 0.5191256999969482, -0.0,
+    -2.3199679851531982, 0.9466977119445801, -91.90171813964844, 1.0 ),
+    fov = 1.0471980571746826,
+    quaternion = core.glm.quat.new( 0.4802720844745636, 0.0988730788230896, 0.0545930378139019, 0.8698174953460693 ),
+    translation = core.glm.vec3.new( -8.907180786132812, 77.27152252197266, 49.00999450683594 )
+}
 
 local script = dofile "scripts/scenarios/introduction_00_script.lua"( scen )
 
@@ -108,9 +118,13 @@ function scen:load()
     ent = staticModel( scen, 0.0, 0.0, 0.26212096214294434, 0.0, 0.0, 0.0, 1.0, { 1.1197912693023682, 1.0406486988067627, 0.34208089113235474 }, "assets/model/static/street/whitebox/street_00.bgnome", "assets/texture/grey.material", "" )
 
     ent = decal( scen, -43.918487548828125, -3.1758460998535156, 0.8475474119186401, 0.0, 0.7071068286895752, 0.0, 0.7071068286895752, 8.05722427368164, 8.05722427368164, 8.05722427368164, "assets/texture/decal/left-arrow.material", "" )
+    scen:registerInitCallback( genF( ent, "hideOnMain" ) )
     ent = decal( scen, -17.714937210083008, -3.1758460998535156, 0.8475474119186401, 0.0, 0.7071068286895752, 0.0, 0.7071068286895752, 8.05722427368164, 8.05722427368164, 8.05722427368164, "assets/texture/decal/straight-arrow.material", "" )
+    scen:registerInitCallback( genF( ent, "hideOnMain" ) )
     ent = decal( scen, 8.488615036010742, -3.1758460998535156, 0.8475474119186401, 0.0, 0.7071068286895752, 0.0, 0.7071068286895752, 8.05722427368164, 8.05722427368164, 8.05722427368164, "assets/texture/decal/straight-arrow.material", "" )
+    scen:registerInitCallback( genF( ent, "hideOnMain" ) )
     ent = decal( scen, 34.692161560058594, -3.1758460998535156, 0.8475474119186401, 0.0, 0.7071068286895752, 0.0, 0.7071068286895752, 8.05722427368164, 8.05722427368164, 8.05722427368164, "assets/texture/decal/straight-arrow.material", "" )
+    scen:registerInitCallback( genF( ent, "hideOnMain" ) )
     ent = decal( scen, -49.161842346191406, -0.4405651390552521, 14.199278831481934, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, "assets/texture/decal/radioactive-goo-decal.material", "" )
     ent = decal( scen, 1.6675349473953247, -3.9210731983184814, -51.81586456298828, -1.5099580252808664e-07, 0.0, 0.0, 1.0, 8.363571166992188, 8.363571166992188, 8.363571166992188, "assets/texture/decal/agitator-warning.material", "" )
     scen:registerInitCallback( genF( ent, "hideOnMain" ) )

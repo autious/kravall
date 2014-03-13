@@ -913,6 +913,27 @@ extern "C"
 
         return 4;
     }
+
+    static int LuaQuatPitch( lua_State *L )
+    {
+        glm::quat *quat_first = luau_checkglmquat( L, 1 );
+        lua_pushnumber( L, glm::pitch( *quat_first ) );
+        return 1;
+    }
+
+    static int LuaQuatYaw( lua_State *L )
+    {
+        glm::quat *quat_first = luau_checkglmquat( L, 1 );
+        lua_pushnumber( L, glm::yaw( *quat_first ) );
+        return 1;
+    }
+
+    static int LuaQuatRoll( lua_State *L )
+    {
+        glm::quat *quat_first = luau_checkglmquat( L, 1 );
+        lua_pushnumber( L, glm::roll( *quat_first ) );
+        return 1;
+    }
 }
 
 namespace Core
@@ -1047,6 +1068,9 @@ namespace Core
                     luau_setfunction( L, "slerp", LuaQuatMix );
                     luau_setfunction( L, "mix", LuaQuatMix );
                     luau_setfunction( L, "get", LuaQuatGet );
+                    luau_setfunction( L, "pitch", LuaQuatPitch );
+                    luau_setfunction( L, "yaw", LuaQuatYaw );
+                    luau_setfunction( L, "roll", LuaQuatRoll );
 
                     luaL_newmetatable( L, GLMQUAT_META_TYPE );
                         lua_pushvalue( L, quat_table );

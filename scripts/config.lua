@@ -62,6 +62,7 @@ playerBindings =
     rotateSquadSelection = core.input.keyboard.key.Tab, 
 
 	moodHighlight = core.input.keyboard.key["M"], 
-}
+},
+cameraRotationSpeed = 0.4,
 }
 
