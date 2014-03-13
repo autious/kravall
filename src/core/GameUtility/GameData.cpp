@@ -64,7 +64,7 @@ namespace Core
 
 		float closest = std::numeric_limits<float>::max();
 		int index = -1;
-		for( int i = 0; i < m_validEscapePointGroups.size(); i++ )
+		for( unsigned int i = 0; i < m_validEscapePointGroups.size(); i++ )
 		{
 			float dist = instance->flowfields[ m_validEscapePointGroups[i] ].distanceToGoal[node];
 			dist < closest ? closest = dist, index = i : index = index ;
