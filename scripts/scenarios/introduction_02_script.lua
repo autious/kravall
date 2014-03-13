@@ -17,7 +17,7 @@ return function( scen )
     -- Set game to start in prepmode
     scen.gamemode =  require "gamemodes/kravall":new(
     {
-        cashLimit = 200,
+        cashLimit = 400,
         initGamestate="Prep",
         weapons = 
         {
