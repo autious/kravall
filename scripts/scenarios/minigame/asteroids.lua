@@ -2,15 +2,29 @@ local entities = require "entities"
 local scenario = require "scenario"
 local input = require "input" 
 local scen = scenario.new()
+local PauseMenuGUI = require "gui/kravall/PauseMenuGUI"
 
 local mouse = core.input.mouse
 local keyboard = core.input.keyboard
 local key = keyboard.key
 local camera = require "rts_camera".new()
-camera:lookAt( core.glm.vec3.new( 0, 200, 0 ), core.glm.vec3.new( 0, 0, 0 ) )
-core.camera.gameCamera:setView( camera:getView( ) )
-core.camera.gameCamera:setProjection( camera:getProjection( ) )
 
+
+-- Init function
+local function Init()
+	PauseMenuGUI:setShow(true)
+	core.camera.gameCamera:setView( camera:getView( ) )
+	core.camera.gameCamera:setProjection( camera:getProjection( ) )
+	camera:lookAt( core.glm.vec3.new( 0, 200, 0.01 ), core.glm.vec3.new( 0, 0, 0 ) )
+	core.gfx.setExposure(0.1)
+end
+scen:registerInitCallback( Init )
+
+local function Destroy()
+	core.gfx.setExposure(1)
+end
+
+scen:registerDestroyCallback( Destroy )
 
 --Spaceship
 local spaceship = scen:loadAssembly( 
@@ -38,59 +52,6 @@ local spaceship = scen:loadAssembly(
 	}
 }
 )
--- Directional light
---scen:loadAssembly( 
---{
---	{
---		type = core.componentType.LightComponent,
---		data =  { 
---					color = { 0.3, 0.3, 0.3 },
---					speccolor = { 0.1, 0.3, 1.0 },
---					intensity = 0.5,
---					type = core.gfx.objectTypes.Light,
---					lighttype = core.gfx.lightTypes.Dir
---				}
---	},
---	{
---		type = core.componentType.WorldPositionComponent,
---		data = { position = { 0, 0, 0 } }
---	},
---	{
---		type = core.componentType.ScaleComponent,
---		data = { scale = 1.0 } 
---	},
---	{
---		type = core.componentType.RotationComponent,
---		data = { rotation = { 2,-3,-1,0 } } -- Lights uses rotation component as a direction vector, not a quaternion
---	}
---} 
---)
--- Ambient light
---scen:loadAssembly( 
---{
---	{
---		type = core.componentType.LightComponent,
---		data =  { 
---					color = { 1.0, 1.0, 1.0 },
---					intensity = 0.01,
---					type = core.gfx.objectTypes.Light,
---					lighttype = core.gfx.lightTypes.Ambient
---				}
---	},
---	{
---		type = core.componentType.WorldPositionComponent,
---		data = { position = { 0, 0, 0 } }
---	},
---	{
---		type = core.componentType.ScaleComponent,
---		data = { scale = 1.0 }
---	},
---	{
---		type = core.componentType.RotationComponent,
---		data = { rotation = { 0,0,0,0 } }
---	}
---} 
---)
 --Plane
 scen:loadAssembly( 
 {
@@ -148,7 +109,7 @@ local thrustLight = scen:loadAssembly(
 		data =  { 
 					color = {1.0, 0.4, 0.0},
 					speccolor = {1.0, 0.4, 0.0},
-					intensity = 15.0,
+					intensity = 150.0,
 					spotangle = 3.14/4.0,
 					spotpenumbra = 0.1,
 					type = core.gfx.objectTypes.Light,
@@ -178,7 +139,7 @@ local function CreateBullet()
 			data =  { 
 						color = {0.3 + math.random()*0.7, 0.3 + math.random()*0.7,  0.3 + math.random()*0.7},
 						speccolor = {0.3 + math.random()*0.7, 0.3 + math.random()*0.7,  0.3 + math.random()*0.7},
-						intensity = 0.5,
+						intensity = 5.5,
 						spotangle = 0.0,
 						spotpenumbra = 0.0,
 						type = core.gfx.objectTypes.Light,
@@ -626,8 +587,6 @@ local function Move(delta)
 	core.draw.drawText( 300, 35, "LEVEL: "..level )
 	core.draw.drawText( 300, 55, "SCORE: "..score )
 	core.draw.drawText( 300, 75, "EXTRA LIFE: "..lives )
-	
-	
 	
 end
 
