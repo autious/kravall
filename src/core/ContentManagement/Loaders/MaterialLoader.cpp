@@ -52,7 +52,6 @@ namespace Core
         std::string glowTexture;
 		bool isDecal = false;
 
-        LOG_INFO << "Cache size: " <<  m_textureCache.size() << std::endl;
         if(ParseFile(assetName, shaderName, diffuseTexture, specularTexture, normalBlendTexture, glowTexture, isDecal))
         {
             data = new Core::MaterialData;
