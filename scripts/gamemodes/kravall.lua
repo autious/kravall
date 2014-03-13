@@ -216,12 +216,16 @@ function T:new(o)
 
     o.camera = Camera.new()
     o.onStateChangeFunctions = {}
+    o.beforeStateChangeFunctions = {}
     o.asm = ASM.loadPack({})
 
     return o
 end
 
 function T:setState( state )
+
+    self:triggerBeforeStateChange( state )
+
     if type( self.gamestate ) == "table" then
         self.gamestate:destroy()
     end
@@ -230,6 +234,7 @@ function T:setState( state )
         print( "State set to \"Main\"" )
         self.gamestate = Main:new( 
         { 
+            onRequestPause = function() self:togglePause() end,
             unitInstances = self.unitInstances, --definitions of the units placed
             activeWeaponList = self.activeWeaponList,
             camera = self.camera,
@@ -288,7 +293,7 @@ function T:togglePause()
         self.pauseGUI:destroy()
         self.pauseGUI = nil
     else
-        self.pauseGUI = PauseMenuGUI:new( { onClickReturn = function() self:togglePause() end } )
+        self.pauseGUI = PauseMenuGUI:new( { onClickContinue = function() self:togglePause() end } )
     end  
 end
 
@@ -347,8 +352,28 @@ function T:registerOnStateChange(f)
     self.onStateChangeFunctions[f] = true   
 end
 
+function T:registerBeforeStateChange(f)
+    self.beforeStateChangeFunctions[f] = true
+end
+
 function T:deregisterOnStateChange(f)
     self.onStateChangeFunctions[f] = nil
+end
+
+function T:deregisterBeforeStateChange(f)
+    self.beforeStateChangeFunctions[f] = nil
+end
+
+function T:triggerBeforeStateChange( stateName )
+    local deleteList = {}
+    for i,_ in pairs( self.beforeStateChangeFunctions ) do
+        deleteList[i] = i(stateName)
+    end
+
+    for i,v in pairs( deleteList ) do
+        --Keep or destroy based on return value
+        self.beforeStateChangeFunctions[i] = v or nil
+    end
 end
 
 function T:triggerOnStateChange( stateName )

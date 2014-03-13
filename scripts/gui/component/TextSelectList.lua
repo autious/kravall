@@ -40,14 +40,12 @@ function TextSelectList:new(o)
 													if o.startOffset > o.minScroll then
 														o.startOffset = o.startOffset - 1 
 														o:updateList()
-														print( o.startOffset )
 													end
 												end, 
 									onScrollDown=function()
 													if o.startOffset < o.maxScroll then
 														o.startOffset = o.startOffset + 1 
 														o:updateList()
-														print( o.startOffset )
 													end
 												end
 								} )
