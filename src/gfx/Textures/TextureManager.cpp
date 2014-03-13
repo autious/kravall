@@ -1,5 +1,6 @@
 #include "TextureManager.hpp"
 #include "Renderer/RenderSettings.hpp"
+#include <logger/Logger.hpp>
 
 namespace GFX
 {
@@ -154,7 +155,16 @@ namespace GFX
 		int w;
 		int h;
 		data = stbi_load(filepath, &w, &h, 0, 0);
-		Load3DTexture(id, width, height, depth, data);
+
+        if( data )
+        {
+		    Load3DTexture(id, width, height, depth, data);
+            stbi_image_free( data );
+        }
+        else
+        {
+            LOG_FATAL << "Unable to load LUT texture." << std::endl;
+        }
 	}
 
 	void TextureManager::DeleteTexture(unsigned long long int id)
