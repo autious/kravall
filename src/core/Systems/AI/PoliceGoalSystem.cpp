@@ -58,8 +58,8 @@ void Core::PoliceGoalSystem::Update( float delta )
 		return;
 
 	int head = 0;
-	Core::Entity* policeList = Core::world.m_frameHeap.NewPODArray<Core::Entity>( m_entities.size() );
-	if( policeList == nullptr )
+	Core::Entity* entityList = Core::world.m_frameHeap.NewPODArray<Core::Entity>( m_entities.size() );
+	if( entityList == nullptr )
 	{
 		LOG_FATAL << "not enough memory for police goal system!" << std::endl;
 		return;
@@ -68,9 +68,9 @@ void Core::PoliceGoalSystem::Update( float delta )
 	for( std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); it++ )
 	{
 		UnitTypeComponent* utc = WGETC<UnitTypeComponent>(*it);
-		if( utc->type != Core::UnitType::Police )
-			continue;
-		policeList[ head++ ] = *it;
+		Core::AttributeComponent* attribc = WGETC<Core::AttributeComponent>(*it);
+		if(( utc->type == Core::UnitType::Police || utc->type == Core::UnitType::Rioter) && attribc )
+			entityList[ head++ ] = *it;
 	}
 
 	int nrCores = Core::world.m_threadHandler.GetNrThreads();
@@ -87,19 +87,20 @@ void Core::PoliceGoalSystem::Update( float delta )
 
 		int memoryIndex = i;
 
-		Core::world.m_threadHandler.Enqueue( [ policeList, instance, startIndex, endIndex, memoryIndex ]()
+		Core::world.m_threadHandler.Enqueue( [ entityList, instance, startIndex, endIndex, memoryIndex ]()
 		{
 			for( int i = startIndex; i < endIndex; i++ )
 			{		
-				Core::Entity ent = policeList[ i ];
+				Core::Entity ent = entityList[ i ];
 
+				UnitTypeComponent* utc = WGETC<UnitTypeComponent>(ent);
 				Core::AttributeComponent* attribc = WGETC<Core::AttributeComponent>(ent);
-				int groupId = attribc->police.squadID;
+				int groupId = utc->type == UnitType::Police ? attribc->police.squadID : attribc->rioter.groupID;
 				if( groupId < 0 )
 					continue;
-		
+
 				Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>(ent);
-				if( mvmc->NavMeshGoalNodeIndex < 0 )
+				if( mvmc->NavMeshGoalNodeIndex < 0 || mvmc->goal[0] == std::numeric_limits<float>::max() )
 					continue;
 
 				Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(ent);
@@ -111,6 +112,16 @@ void Core::PoliceGoalSystem::Update( float delta )
 				bool move = true;
 
 				DEBUG_DRAW_GOAL( GFX::Debug::DrawLine( position, target, GFXColor( 1, 1, 0, 1 ), false ) );
+
+				if( utc->type == Core::UnitType::Rioter )
+				{
+					if( attribc->stamina > 30.0f )
+						mvmc->SetMovementState( Core::MovementState::Movement_Sprinting, Core::MovementStatePriority::MovementState_RioterGoalSystemPriority );
+
+					glm::vec3 direction = glm::normalize( target - position );
+					MovementComponent::SetDirection( mvmc, direction.x, 0.0f, direction.z );
+				}
+
 
 				if( !PathFinder::CheckLineVsNavMesh( position, target, 3.0f, ffc->node ) ) 
 				{
