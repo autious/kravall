@@ -9,7 +9,14 @@ namespace GFX
 
 	LUTManager::~LUTManager()
 	{
+		if (m_LUTTextures.size() > 0)
+		{
+			for (int i = 0; i < m_LUTTextures.size(); i++)
+				m_textureManager->DeleteTexture(m_LUTTextures[i]);
 
+			m_LUTTextures.clear();
+			m_LUTNames.clear();
+		}
 	}
 
 	void LUTManager::Initialize(TextureManager* textureManager)

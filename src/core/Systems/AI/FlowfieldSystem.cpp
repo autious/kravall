@@ -6,6 +6,7 @@
 #include <GameUtility/PathfindingUtility.hpp>
 
 
+#define EDGE_THRESHOLD 0.35f
 
 Core::FlowfieldSystem::FlowfieldSystem()
 	: BaseSystem( EntityHandler::GenerateAspect<
@@ -26,6 +27,7 @@ Core::FlowfieldSystem::FlowfieldSystem()
 #else
 #define DEBUG_DRAW_FF_DIRECTION( x ) ;
 #endif
+
 
 
 void Core::FlowfieldSystem::Update( float delta )
@@ -99,10 +101,10 @@ void Core::FlowfieldSystem::Update( float delta )
 				float distanceAlongLine = glm::dot( (lineEnd - lineStart) * instance->nodes[targetNode].corners[targetEdge].inverseLength, fromStartToObject );
 
 				glm::vec3 targetPosition;
-				if( instance->nodes[ targetNode ].corners[ targetEdge ].length < distanceAlongLine || distanceAlongLine < 0 )
+				if( instance->nodes[ targetNode ].corners[ targetEdge ].length - EDGE_THRESHOLD < distanceAlongLine || distanceAlongLine < EDGE_THRESHOLD )
 				{
 					// is outside edges...
-					if( distanceAlongLine < 0 )
+					if( distanceAlongLine < EDGE_THRESHOLD )
 						targetPosition = lineStart + glm::normalize( lineEnd - lineStart ) * 1.25f;
 					else 
 						targetPosition = lineEnd + glm::normalize( lineStart - lineEnd ) * 1.25f;

@@ -18,7 +18,8 @@ entityMemoryOutputComponents = { "WorldPositionComponent",
                                  "GraphicsComponent", 
                                  "NameComponent",
                                  "AreaComponent",
-                                 "AttributeComponent" },
+                                 "AttributeComponent",
+                                 "DeadUnitComponent" },
 showFramebuffers = 0,
 initCameraFieldOfView = 45.0,
 initCameraNearClipDistance = 1.0,
@@ -61,6 +62,7 @@ playerBindings =
     rotateSquadSelection = core.input.keyboard.key.Tab, 
 
 	moodHighlight = core.input.keyboard.key["M"], 
-}
+},
+cameraRotationSpeed = 0.4,
 }
 

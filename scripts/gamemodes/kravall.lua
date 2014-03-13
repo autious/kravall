@@ -19,31 +19,183 @@ local standardPolice = (require "game_constants").standardPolice
 
 local ASM = require "assembly_loader"
 
+local standardPolice = (require "game_constants").standardPolice
+local tearGasPolice = (require "game_constants").tearGasPolice
+
 local T = 
     { 
+        cashLimit = 1000,
         initGamestate = "Main",
         weapons = 
         {
-            punch = {1.0, 0.75, 20, 0.2, 0.05, 3.2, 2.9, 0.05, 0.5, "punch"}
+            -- range, graceDistance, damageToHealth, damageToMorale, damageToMoraleOnMiss, enemyRageIncrease, enemyPressureIncrease, staminaCost, timeWhenAnimationDealsDamage, animationName
+            punch = {1.0, 0.75, 20, 0.2, 0.05, 3.2, 2.9, 0.05, 0.5, "punch"},
+            shield = {
+                1.0,    -- range
+                0.75,   -- graceDiscance
+                40,     -- damageToHealth
+                0.0,    -- damageToMorale
+                0.0,    -- damageToMoraleOnMiss
+                4,      -- enemyRageIncrease
+                0.0,    -- enemyPressureIncrease
+                0.02,   -- staminaCost
+                0.3,    -- timeWhenAnimationDealsDamage
+                "punch" -- animationName
+            }
         },
         policeTypes =
         {
             {
-                name = "Common Squad",
-                cost = 100,
-                description = "Default",
+                name = "Shield Squad",
+                description = "Can beat the fuck out of you",
+                cost = standardPolice.cost,
+                setup = 
+                {
+
+                    {
+                        positionOffset = {2,0,0},
+                        weapon = "shield",
+                        mesh = "assets/model/animated/police/cop/cop-shield_00.bgnome",
+                        material = "assets/texture/animated/police/cop/cop-shield_00.material",
+                        abilities = {
+                            abilities.Attack, 
+                            abilities.Sprint, 
+                            abilities.Flee,
+                        },
+                        health = standardPolice.maxHealth, 
+                        stamina = standardPolice.maxStamina, 
+                        morale = standardPolice.maxMorale, 
+                    },
+                    {
+                        positionOffset = {0,0,0},
+                        weapon = "shield",
+                        mesh = "assets/model/animated/police/cop/cop-shield_00.bgnome",
+                        material = "assets/texture/animated/police/cop/cop-shield_00.material",
+                        abilities = {
+                            abilities.Attack, 
+                            abilities.Sprint, 
+                            abilities.Flee,
+                        },
+                        health = standardPolice.maxHealth, 
+                        stamina = standardPolice.maxStamina, 
+                        morale = standardPolice.maxMorale, 
+                    },
+                    {
+                        positionOffset = {1,0,0},
+                        weapon = "shield",
+                        mesh = "assets/model/animated/police/cop/cop-shield_00.bgnome",
+                        material = "assets/texture/animated/police/cop/cop-shield_00.material",
+                        abilities = {
+                            abilities.Attack, 
+                            abilities.Sprint, 
+                            abilities.Flee,
+                        },
+                        health = standardPolice.maxHealth, 
+                        stamina = standardPolice.maxStamina, 
+                        morale = standardPolice.maxMorale, 
+                    },
+                    {
+                        positionOffset = {0,0,1},
+                        weapon = "shield",
+                        mesh = "assets/model/animated/police/cop/cop-shield_00.bgnome",
+                        material = "assets/texture/animated/police/cop/cop-shield_00.material",
+                        abilities = {
+                            abilities.Attack, 
+                            abilities.Sprint, 
+                            abilities.Flee,
+                        },
+                        health = standardPolice.maxHealth, 
+                        stamina = standardPolice.maxStamina, 
+                        morale = standardPolice.maxMorale, 
+                    },
+                    {
+                        positionOffset = {0,0,-1},
+                        weapon = "shield",
+                        mesh = "assets/model/animated/police/cop/cop-shield_00.bgnome",
+                        material = "assets/texture/animated/police/cop/cop-shield_00.material",
+                        abilities = {
+                            abilities.Attack, 
+                            abilities.Sprint, 
+                            abilities.Flee,
+                        },
+                        health = standardPolice.maxHealth, 
+                        stamina = standardPolice.maxStamina, 
+                        morale = standardPolice.maxMorale, 
+                    },
+                    {
+                        positionOffset = {-1,0,0},
+                        weapon = "shield",
+                        mesh = "assets/model/animated/police/cop/cop-shield_00.bgnome",
+                        material = "assets/texture/animated/police/cop/cop-shield_00.material",
+                        abilities = {
+                            abilities.Attack, 
+                            abilities.Sprint, 
+                            abilities.Flee,
+                        },
+                        health = standardPolice.maxHealth, 
+                        stamina = standardPolice.maxStamina, 
+                        morale = standardPolice.maxMorale, 
+                    },
+                },
+            },
+            {
+                name = "Teargas Squad",
+                description = "Can make people cry ='D",
+                cost = tearGasPolice.cost,
                 setup = 
                 {
                     {
-                        positionOffset = {0,0,0},
+                        positionOffset = {-1,0,0},
                         weapon = "punch",
                         mesh = "assets/model/animated/police/cop/cop-teargas_00.bgnome",
                         material = "assets/texture/animated/police/cop/cop-teargas_00.material",
                         abilities = {
                             abilities.Attack, 
-                            abilities.ArrestGroup, 
                             abilities.Sprint, 
-                            abilities.Rout,
+                            abilities.TearGas, 
+                            abilities.Flee,
+                        },
+                        health = tearGasPolice.maxHealth, 
+                        stamina = tearGasPolice.maxStamina, 
+                        morale = tearGasPolice.maxMorale, 
+                    },
+                    {
+                        positionOffset = {0,0,1},
+                        weapon = "punch",
+                        mesh = "assets/model/animated/police/cop/cop-teargas_00.bgnome",
+                        material = "assets/texture/animated/police/cop/cop-teargas_00.material",
+                        abilities = {
+                            abilities.Attack, 
+                            abilities.Sprint, 
+                            abilities.Flee,
+                        },
+                        health = tearGasPolice.maxHealth, 
+                        stamina = tearGasPolice.maxStamina, 
+                        morale = tearGasPolice.maxMorale, 
+                    },
+                    {
+                        positionOffset = {1,0,0},
+                        weapon = "punch",
+                        mesh = "assets/model/animated/rioter/rioter-male_00.bgnome",
+                        material = "assets/texture/animated/police/cop/cop-light_00.material",
+                        abilities = {
+                            abilities.Attack, 
+                            abilities.Sprint, 
+                            abilities.Flee,
+                        },
+                        health = standardPolice.maxHealth, 
+                        stamina = standardPolice.maxStamina, 
+                        morale = standardPolice.maxMorale, 
+                    },
+                    {
+                        positionOffset = {0,0,-1},
+                        weapon = "punch",
+                        mesh = "assets/model/animated/rioter/rioter-male_00.bgnome",
+                        material = "assets/texture/animated/police/cop/cop-light_00.material",
+                        abilities = {
+                            abilities.Attack, 
+                            abilities.Sprint, 
+                            abilities.Flee,
                         },
                         health = standardPolice.maxHealth, 
                         stamina = standardPolice.maxStamina, 
@@ -89,6 +241,7 @@ function T:setState( state )
         print( "State set to \"Prep\"" )
         self.gamestate = Prep:new
         {
+            cashLimit = self.cashLimit,
             policeTypes = self.policeTypes,
             onFinished = function( unitInstances ) 
                 self.unitInstances = unitInstances
