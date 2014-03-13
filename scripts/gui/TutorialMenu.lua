@@ -191,7 +191,7 @@ function TutorialMenu:SetImage(id, o)
 		headline:setText([[Shared abilities]])
 	elseif id == 9 then
 		tutImage = Image:new { ignoreConstrict=true, mat="assets/texture/tutorial/overviewTut.material" }
-		tBox:setText([[THIS IS AN OVERVIEW DESCRIPTION]])
+		tBox:setText([[Pressing G or the Overview icon (eye in the lower left corner) will take you into overview mode. In overview mode, all rioters and police are highlighted. To exit overview mode, press G, the icon or right click where you want the camera to zoom to.]])
 		headline:setText([[Overview]])
 	elseif id == 10 then
 		tutImage = Image:new { ignoreConstrict=true, mat="assets/texture/tutorial/moodTut.material" }
@@ -207,7 +207,7 @@ function TutorialMenu:SetImage(id, o)
 		headline:setText([[Moods]])
 	elseif id == 11 then
 		tutImage = Image:new { ignoreConstrict=true, mat="assets/texture/tutorial/cameraTut.material" }
-		tBox:setText([[YOU CAN MOVE YOUR CAMERA HURR HURR DURR]])
+		tBox:setText([[Moving the camera is done by using WASD or the arrow keys. To rotate the camera, either hold Q or E. Alternatively, press and hold the scroll button and move your mouse to rotate the camera. To zoom in or out, use the scroll wheel. To raise the camera, press space. To lower the camera, press CTRL.]])
 		headline:setText([[Camera controls]])
 	elseif id == 12 then
 		tutImage = Image:new { ignoreConstrict=true, mat="assets/texture/tutorial/selectionTut.material" }
@@ -215,7 +215,9 @@ function TutorialMenu:SetImage(id, o)
 		
 		Right clicking the ground with squads (or a single squad) selected will make them move to that position.
 		
-		Left clicking on the ground with a squads (or a single squad) selected will deselect all the selected units.]])
+		Left clicking on the ground with a squads (or a single squad) selected will deselect all the selected units.
+		
+		Squads can be assigned to control groups by press CTRL + a number. The assigned groups can then quickly be accessed by pressing the corresponding number.]])
 		headline:setText([[Basic controls]])
 	elseif id == 13 then
 		tutImage = Image:new { ignoreConstrict=true, mat="assets/texture/tutorial/formationTut.material" }
@@ -235,7 +237,7 @@ function TutorialMenu:SetImage(id, o)
 	elseif id > 5 and id < 11 then
 		tBox.yoffset = 130
 	elseif id >= 11 then
-		tBox.yoffset= 370
+		tBox.yoffset= 290
 	else
 	end
 
