@@ -297,6 +297,10 @@ local function Update(delta)
 	keysPressed[2]	= keyboard.isKeyDown( key.Left )
 	keysPressed[3] 	= keyboard.isKeyDown( key.Right )
 	keysPressed[4] 	= keyboard.isKeyDown( key.Enter )
+	if(keyboard.isKeyDown( key.Escape )) then
+		openscenario("main_menu")
+		return
+	end
 	
 	for i=1,#keysPressed do
 		if keysPressed[i] == true then

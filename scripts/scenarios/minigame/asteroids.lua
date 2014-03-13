@@ -9,6 +9,8 @@ local keyboard = core.input.keyboard
 local key = keyboard.key
 local camera = require "rts_camera".new()
 
+scen.name = "Asteroids Arcade"
+scen.description = "This is a simple interpretation of the classic arcade game. Can you beat the highscore?"
 
 -- Init function
 local function Init()
@@ -378,6 +380,10 @@ local function Move(delta)
 	local leftTurn = keyboard.isKeyDown( key.Left )
 	local rightTurn = keyboard.isKeyDown( key.Right )
 	local shooting = keyboard.isKeyDown( key.Left_shift )
+	if(keyboard.isKeyDown( key.Escape )) then
+		openscenario("main_menu")
+		return
+	end
 	
 	local enterIsDown = false
 	if keyboard.isKeyDown( key.Enter ) then
