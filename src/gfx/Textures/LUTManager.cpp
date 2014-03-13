@@ -50,9 +50,9 @@ namespace GFX
 		m_LUTTextures.push_back(id);
 		m_LUTNames.push_back("blackandwhite");
 
-		m_textureManager->Load3DTexture(id, 32, 32, 32, "assets/texture/Lut/test.png");
+		m_textureManager->Load3DTexture(id, 32, 32, 32, "assets/texture/Lut/midnight.png");
 		m_LUTTextures.push_back(id);
-		m_LUTNames.push_back("test");
+		m_LUTNames.push_back("midnight");
 
 		m_textureManager->Load3DTexture(id, 32, 32, 32, "assets/texture/Lut/test3.png");
 		m_LUTTextures.push_back(id);
@@ -61,10 +61,18 @@ namespace GFX
 		m_textureManager->Load3DTexture(id, 32, 32, 32, "assets/texture/Lut/redtestLUT.png");
 		m_LUTTextures.push_back(id);
 		m_LUTNames.push_back("redtest");
-
+		
 		m_textureManager->Load3DTexture(id, 32, 32, 32, "assets/texture/Lut/invert.png");
 		m_LUTTextures.push_back(id);
 		m_LUTNames.push_back("invert");
+		
+		m_textureManager->Load3DTexture(id, 32, 32, 32, "assets/texture/Lut/deuteranomaly.png");
+		m_LUTTextures.push_back(id);
+		m_LUTNames.push_back("deuteranomaly");
+
+		m_textureManager->Load3DTexture(id, 32, 32, 32, "assets/texture/Lut/coolnamelut.png");
+		m_LUTTextures.push_back(id);
+		m_LUTNames.push_back("coolnamelut");
 	}
 
 	GLuint LUTManager::GetLUTHandle(std::string name)

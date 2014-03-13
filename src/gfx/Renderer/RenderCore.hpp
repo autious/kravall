@@ -171,6 +171,10 @@ namespace GFX
 
 		void SetExposure(float exposure);
 		void SetGamma(float gamma);
+		inline float GetGamma()
+		{
+			return m_gamma;
+		}
 		void SetWhitepoint(glm::vec3 whitePoint);
 
 		void DeleteMesh(unsigned long long id);
