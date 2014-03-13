@@ -40,8 +40,8 @@ boxSelectionGraceDistance = 0.5,
 numberOfSystemCoresToUse = 1,
 
 blockingOfNavMesh_Checktimer = 5,
-blockingOfNavMesh_StuckDistance = 5,
-blockingOfNavMesh_StuckTimerBeforeNewPath = 5,
+blockingOfNavMesh_StuckDistance = 3,
+blockingOfNavMesh_StuckTimerBeforeNewPath = 10,
 
 playerBindings = 
 {
