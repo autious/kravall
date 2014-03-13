@@ -10,7 +10,7 @@ initScreenHeight = 720,
 fullscreen = false,
 shadowQuality = 1, -- 0: off, 1: 2 cascade, 2: 4 cascade
 shadowResolution = 512, -- min 128, max 2048
-mipmapQuality = 2, -- 0: no mipmap, 1: mipmap, 2: anisotropic filtering
+mipmapQuality = 2, -- 0: no mipmap, 1: mipmap, 2: anisotropic filtering (max supported)
 showSystems = false,
 entityMemoryOutputLevel = "partial", -- full, short or partial
 -- List of components to render debug data for.
@@ -45,7 +45,7 @@ blockingOfNavMesh_StuckTimerBeforeNewPath = 5,
 playerBindings = 
 {
     aggressiveStance = core.input.keyboard.key["I"],
-    defensiveStance = core.input.keyboard.key["U"],
+    defensiveStance = core.input.keyboard.key["O"],
     passiveStance = core.input.keyboard.key["P"],
 
     attackAbility = core.input.keyboard.key["R"],
