@@ -20,17 +20,25 @@ namespace Core
 {
     MaterialLoader::MaterialLoader()
     {
-
+        LOG_DEBUG << "Created MaterialLoader" << std::endl;
     }
 
     MaterialLoader::~MaterialLoader()
     {
-        for(Core::MaterialVector::size_type i = 0; i < m_materials.size(); ++i)
+        
+        for(Core::MaterialVector::iterator it = m_materials.begin(); it != m_materials.end(); ++it)
         {
-            Destroy(static_cast<Core::AssetHandle>(m_materials[i]));
+            GFX::Content::DeleteMaterial((*it)->materialId);
+            delete (*it);
         }
 
-        assert(m_textureCache.size() == 0);
+        for(Core::TextureCacheVector::size_type i = 0; i < m_textureCache.size(); ++i)
+        {
+            Core::TextureData* texture = std::get<2>(m_textureCache[i]); 
+            GFX::Content::DeleteTexture(texture->textureId);
+            delete texture;
+        } 
+        
     }
 
     Core::AssetHandle MaterialLoader::Load(const char* assetName)
@@ -44,6 +52,7 @@ namespace Core
         std::string glowTexture;
 		bool isDecal = false;
 
+        LOG_INFO << "Cache size: " <<  m_textureCache.size() << std::endl;
         if(ParseFile(assetName, shaderName, diffuseTexture, specularTexture, normalBlendTexture, glowTexture, isDecal))
         {
             data = new Core::MaterialData;
@@ -90,7 +99,7 @@ namespace Core
                 assert(texture->textureId != 0);
             }
 
-			if (normalBlendTexture.size())
+			if(normalBlendTexture.size())
 			{
                 std::lock_guard<std::mutex> lock(m_cacheMutex);
 				textureHash = MurmurHash2(normalBlendTexture.c_str(), normalBlendTexture.size(), normalBlendTexture.size());
@@ -158,6 +167,7 @@ namespace Core
 
     Core::AssetHandle MaterialLoader::LoadAsync(const char* assetName)
     {
+
         Core::MaterialLoader::MaterialLoadingData* data = nullptr;
 
         std::string shaderName;
@@ -255,8 +265,6 @@ namespace Core
                 }
                 data->materialData->glowTexture = texture;
             }
-
-
         }
 
         return data;
@@ -270,8 +278,6 @@ namespace Core
         unsigned int shaderId = std::numeric_limits<decltype(shaderId)>::max();
         GFX::Content::GetShaderId(shaderId, loadingData->shaderName.c_str());
         GFX::Content::AttachShaderToMaterial(loadingData->materialData->materialId, shaderId);
-
-		bool isDecal = false;
 
         if(shaderId == std::numeric_limits<decltype(shaderId)>::max())
         {            
@@ -311,7 +317,9 @@ namespace Core
     void MaterialLoader::Destroy(const Core::AssetHandle handle)
     {   
         Core::MaterialData* data = static_cast<Core::MaterialData*>(handle);
+       
 
+        LOG_INFO << "Cache size: " <<  m_textureCache.size() << std::endl;
         for(Core::MaterialVector::iterator it = m_materials.begin(); it != m_materials.end(); ++it)
         {
             if((*it) == data)
@@ -323,27 +331,9 @@ namespace Core
 
         for(Core::TextureCacheVector::size_type i = 0; i < m_textureCache.size(); ++i)
         {
-            bool referenceFound = false;
             Core::TextureData* texture = std::get<2>(m_textureCache[i]);
 
             if(data->diffuseTexture == texture)
-            {
-                referenceFound = true;
-            }
-            else if(data->specularTexture == texture)
-            {
-                referenceFound = true;
-            }
-            else if(data->normalBlendTexture == texture)
-            {
-                referenceFound = true;
-            }
-            else if(data->glowTexture == texture)
-            {
-                referenceFound = true;
-            }
-
-            if(referenceFound)
             {
                 if(RemoveUserOfTexture(texture) == 0)
                 {
@@ -351,10 +341,52 @@ namespace Core
                     GFX::Content::DeleteTexture(texture->textureId);
                     delete texture;
                     --i;
+                    LOG_WARNING << "Removing Texture" << std::endl;
+                    continue;
+                }
+            }
+
+            if(data->specularTexture == texture)
+            {
+                if(RemoveUserOfTexture(texture) == 0)
+                {
+                    m_textureCache.erase(m_textureCache.begin()+i);
+                    GFX::Content::DeleteTexture(texture->textureId);
+                    delete texture;
+                    --i;
+                    LOG_WARNING << "Removing Texture" << std::endl;
+                    continue;
+                }
+            }
+
+            if(data->normalBlendTexture == texture)
+            {
+                if(RemoveUserOfTexture(texture) == 0)
+                {
+                    m_textureCache.erase(m_textureCache.begin()+i);
+                    GFX::Content::DeleteTexture(texture->textureId);
+                    delete texture;
+                    --i;
+                    LOG_WARNING << "Removing Texture" << std::endl;
+                    continue;
+                }
+            }
+
+            if(data->glowTexture == texture)
+            {
+                if(RemoveUserOfTexture(texture) == 0)
+                {
+                    m_textureCache.erase(m_textureCache.begin()+i);
+                    GFX::Content::DeleteTexture(texture->textureId);
+                    delete texture;
+                    --i;
+                    LOG_WARNING << "Removing Texture" << std::endl;
+                    continue;
                 }
             }
         }
 
+        GFX::Content::DeleteMaterial(data->materialId);
         delete data;
     }
 
@@ -485,20 +517,18 @@ namespace Core
 
     int MaterialLoader::AddUserOfTexture(const Core::TextureData* texture)
     {
-
         for(Core::TextureCacheVector::iterator it = m_textureCache.begin(); it != m_textureCache.end(); ++it)
         {
             if(std::get<2>(*it) == texture)
             {
-                LOG_DEBUG << "Texture with Id: " << texture->textureId << " now has: " << std::get<1>(*it) + 1 << " references" << std::endl;
-                return std::get<1>(*it) = std::get<1>(*it) + 1;
+                //LOG_WARNING << "Adding: Texture with Id: " << texture->textureId << " now has: " << std::get<1>(*it) + 1 << " references" << std::endl;
+                return (std::get<1>(*it) = std::get<1>(*it) + 1);
             }
         }
 
-        LOG_DEBUG << (void*)(texture) << std::endl;
-        LOG_FATAL << "Trying to increase user count of unexisting texture" << std::endl;
+        LOG_WARNING << "Trying to increase user count of unexisting texture" << std::endl;
         assert(false);
-        return 0;
+        return -1;
     }
 
     int MaterialLoader::RemoveUserOfTexture(const Core::TextureData* texture)
@@ -507,19 +537,18 @@ namespace Core
         {
             if(std::get<2>(*it) == texture)
             {
-                return std::get<1>(*it) = std::get<1>(*it) - 1;
+                //LOG_WARNING << "Remove: Texture with Id: " << texture->textureId << " now has: " << std::get<1>(*it) - 1 << " references" << std::endl;
+                return (std::get<1>(*it) = std::get<1>(*it) - 1);
             }
         }
 
-        LOG_FATAL << "Trying to reduce user count of unexisting texture" << std::endl;
+        LOG_WARNING << "Trying to reduce user count of unexisting texture" << std::endl;
         assert(false);
-        return 0;
+        return -1;
     }
 
     void MaterialLoader::AddTextureToCache(const unsigned int textureHash, Core::TextureData* texture)
     {
-        LOG_DEBUG << (void*)(texture) << std::endl;
-        LOG_DEBUG << "Adding new texture to cache" << std::endl;
         m_textureCache.push_back(std::make_tuple(textureHash, 1U, texture));
     }
 
@@ -529,6 +558,7 @@ namespace Core
         {
             if(std::get<0>(*it) == textureHash)
             {
+                LOG_WARNING << "Retrieving texture Id: " << std::get<2>(*it)->textureId << std::endl;
                 texture = std::get<2>(*it);
                 return true;
             }
