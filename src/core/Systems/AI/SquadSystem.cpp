@@ -328,8 +328,13 @@ namespace Core
         }
     }
 
-	void SquadSystem::RevertSquadStanceFromAgressive( int* squadIDs, int nSquads )
+	PoliceStance SquadSystem::RevertSquadStanceFromAgressive( int* squadIDs, int nSquads )
     {
+		PoliceStance stance = PoliceStance::Passive;
+		PoliceStance backup = PoliceStance::Passive;
+		bool set = false;
+		bool backupSet = false;
+
         for(int i=0; i<nSquads; ++i)
         {
             for(std::vector<Entity>::iterator squad_it = m_entities.begin(); squad_it != m_entities.end(); ++squad_it)        
@@ -338,10 +343,26 @@ namespace Core
                 if(sqdc->squadID == squadIDs[i])
                 {
 					if( sqdc->squadStance == Core::PoliceStance::Aggressive )
+					{
 						sqdc->squadStance = sqdc->prevSquadStance;
+						if( !set )
+						{
+							set = true;
+							stance = sqdc->squadStance;
+						}
+					}
+					else
+					{
+						if( !backupSet )
+						{
+							backupSet = true;
+							backup = sqdc->squadStance;
+						}
+					}
                 }
             }
         }
+		return set ? stance : backupSet ? backup : stance;
     }
 
     Core::Entity SquadSystem::GetSquadEntity(int squadID)
