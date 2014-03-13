@@ -126,12 +126,12 @@ void Core::NavMeshCollisionSystem::Update( float delta )
 					glm::vec3 lineEnd	= glm::vec3( verticies[ oo ], 0.0f, verticies[ oo + 1 ] );
 					glm::vec3 fromStartToObject = position - lineStart;
 
-					float* norm = instance->nodes[ collisionNode ].corners[ collisionCorner ].normal;
-					if( glm::dot( glm::vec3( norm[0], 0, norm[1] ), prevPos - instance->nodes[ collisionNode ].GetMidPoint( collisionCorner ) ) < 0 )
+					float* normal = instance->nodes[ collisionNode ].corners[ collisionCorner ].normal;
+					if( glm::dot( glm::vec3( normal[0], 0, normal[1] ), prevPos - instance->nodes[ collisionNode ].GetMidPoint( collisionCorner ) ) < 0 )
 						continue;
 
 					float distanceAlongLine = glm::dot( (lineEnd - lineStart) * instance->nodes[collisionNode].corners[collisionCorner].inverseLength, fromStartToObject );
-					if( instance->nodes[collisionNode].corners[collisionCorner].length < distanceAlongLine || distanceAlongLine < 0 )
+					if( (instance->nodes[collisionNode].corners[collisionCorner].length < distanceAlongLine || distanceAlongLine < 0) && collisionNode != ffc->node )
 						continue;
 
 					glm::vec3 cross = glm::normalize( glm::cross( (lineEnd - lineStart), glm::vec3( 0.0f, 1.0f, 0.0f ) ) );
@@ -143,8 +143,8 @@ void Core::NavMeshCollisionSystem::Update( float delta )
 					if( distanceToLine < ffc->distance )
 					{
 						ffc->distance = distanceToLine;
-						ffc->wallDirX = abs( cross.z ) < 0.7853981633f ? cross.x > 0 ? -1.0f : 1.0f : 0.0f;
-						ffc->wallDirZ = abs( cross.x ) < 0.7853981633f ? cross.z > 0 ? -1.0f : 1.0f : 0.0f;
+						ffc->wallDirX = abs( cross.z ) < 0.7853981633f ? cross.x > 0 ? -1 : 1 : 0;
+						ffc->wallDirZ = abs( cross.x ) < 0.7853981633f ? cross.z > 0 ? -1 : 1 : 0;
 					}
 				}
 			}	
