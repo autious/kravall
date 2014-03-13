@@ -4,6 +4,7 @@
 
 #include <gfx/GFXInterface.hpp>
 
+#define EDGE_THRESHOLD 0.23f
 
 Core::NavMeshCollisionSystem::NavMeshCollisionSystem()
 	: BaseSystem( EntityHandler::GenerateAspect<
@@ -131,12 +132,12 @@ void Core::NavMeshCollisionSystem::Update( float delta )
 						continue;
 
 					float distanceAlongLine = glm::dot( (lineEnd - lineStart) * instance->nodes[collisionNode].corners[collisionCorner].inverseLength, fromStartToObject );
-					if( (instance->nodes[collisionNode].corners[collisionCorner].length < distanceAlongLine || distanceAlongLine < 0) && collisionNode != ffc->node )
+					if( instance->nodes[collisionNode].corners[collisionCorner].length + EDGE_THRESHOLD < distanceAlongLine || distanceAlongLine < -EDGE_THRESHOLD )
 						continue;
 
 					glm::vec3 cross = glm::normalize( glm::cross( (lineEnd - lineStart), glm::vec3( 0.0f, 1.0f, 0.0f ) ) );
 					float distanceToLine = glm::dot( cross, fromStartToObject );
-				
+					
 					if( distanceToLine < sphere.radius )
 						position += cross * (sphere.radius - distanceToLine);
 
