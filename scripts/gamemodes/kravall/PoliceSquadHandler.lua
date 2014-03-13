@@ -553,7 +553,8 @@ end
 
 function PoliceSquadHandler:RevertAttackingStateOfSelected()
 	if #(self.selectedSquads) ~= 0 then
-		core.orders.attackGroup( self.selectedSquads, -1 )
+		local newStance = core.orders.attackGroup( self.selectedSquads, -1 )
+		self.setStance( self, newStance )
 	end
 end
 

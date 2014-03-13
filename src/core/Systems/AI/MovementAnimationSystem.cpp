@@ -6,7 +6,7 @@
 #include <Animation/AnimationManager.hpp>
 #include <GameUtility/GameData.hpp>
 
-// this value needs to be mirrored in the panicAnimationSystem, otherwise full recompile will be needed at change.
+// these values needs to be mirrored in the panicAnimationSystem, otherwise full recompile will be needed at change.
 #define GRACE_THRESHOLD 0.3f
 #define STILL_THRESHOLD 0.35f 
 
@@ -67,9 +67,18 @@ namespace Core
 			std::string idleAnimation = "idle";
 			Core::UnitTypeComponent* utc = WGETC<Core::UnitTypeComponent>( *it );
 			if( utc->type == Core::UnitType::Police )
+			{
 				if( attribc->police.stance == Core::PoliceStance::Defensive )
+				{
 					if(  Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle-defense" ) >= 0 )
 						idleAnimation = "idle-defense";
+				}
+				else if( attribc->police.stance == Core::PoliceStance::Aggressive )
+				{
+					if(  Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle-aggressive" ) >= 0 )
+						idleAnimation = "idle-aggressive";
+				}
+			}
 
 
 			bool hasAlteredAnimation = false;

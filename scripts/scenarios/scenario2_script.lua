@@ -5,8 +5,6 @@ local vec4 = require( "utility" ).expandMixxedHexToVec4
 
 --For the kravall defintions
 local abilities = core.system.squad.abilities
-local standardPolice = (require "game_constants").standardPolice
-local tearGasPolice = (require "game_constants").tearGasPolice
 
 return function( scen )
     local T = {}
@@ -22,177 +20,10 @@ return function( scen )
     scen.gamemode =  require "gamemodes/kravall":new(
     {
         initGamestate="Prep",
-        weapons = 
-        {
-            -- range, graceDistance, damageToHealth, damageToMorale, damageToMoraleOnMiss, enemyRageIncrease, enemyPressureIncrease, staminaCost, timeWhenAnimationDealsDamage, animationName
-            punch = {1.0, 0.75, 20, 0.2, 0.05, 3.2, 2.9, 0.05, 0.5, "punch"},
-            --shield = {1.0, 0.75, 20, 0.2, 0.05, 3.2, 2.9, 0.05, 0.5, "shield"},
-            shield = {1.0, 0.75, 40, 0.4, 0.05, 4, 2.0, 0.02, 0.3, "punch"}
-        },
-        policeTypes =
-        {
-            {
-                name = "Shield Squad",
-                description = "Can beat the fuck out of you",
-                cost = standardPolice.cost,
-                setup = 
-                {
-
-                    {
-                        positionOffset = {2,0,0},
-                        weapon = "shield",
-                        mesh = "assets/model/animated/police/cop/cop-shield_00.bgnome",
-                        material = "assets/texture/animated/police/cop/cop-shield_00.material",
-                        abilities = {
-                            abilities.Attack, 
-                            abilities.Sprint, 
-                            abilities.Flee,
-                        },
-                        health = standardPolice.maxHealth, 
-                        stamina = standardPolice.maxStamina, 
-                        morale = standardPolice.maxMorale, 
-                    },
-                    {
-                        positionOffset = {0,0,0},
-                        weapon = "shield",
-                        mesh = "assets/model/animated/police/cop/cop-shield_00.bgnome",
-                        material = "assets/texture/animated/police/cop/cop-shield_00.material",
-                        abilities = {
-                            abilities.Attack, 
-                            abilities.Sprint, 
-                            abilities.Flee,
-                        },
-                        health = standardPolice.maxHealth, 
-                        stamina = standardPolice.maxStamina, 
-                        morale = standardPolice.maxMorale, 
-                    },
-                    {
-                        positionOffset = {1,0,0},
-                        weapon = "shield",
-                        mesh = "assets/model/animated/police/cop/cop-shield_00.bgnome",
-                        material = "assets/texture/animated/police/cop/cop-shield_00.material",
-                        abilities = {
-                            abilities.Attack, 
-                            abilities.Sprint, 
-                            abilities.Flee,
-                        },
-                        health = standardPolice.maxHealth, 
-                        stamina = standardPolice.maxStamina, 
-                        morale = standardPolice.maxMorale, 
-                    },
-                    {
-                        positionOffset = {0,0,1},
-                        weapon = "shield",
-                        mesh = "assets/model/animated/police/cop/cop-shield_00.bgnome",
-                        material = "assets/texture/animated/police/cop/cop-shield_00.material",
-                        abilities = {
-                            abilities.Attack, 
-                            abilities.Sprint, 
-                            abilities.Flee,
-                        },
-                        health = standardPolice.maxHealth, 
-                        stamina = standardPolice.maxStamina, 
-                        morale = standardPolice.maxMorale, 
-                    },
-                    {
-                        positionOffset = {0,0,-1},
-                        weapon = "shield",
-                        mesh = "assets/model/animated/police/cop/cop-shield_00.bgnome",
-                        material = "assets/texture/animated/police/cop/cop-shield_00.material",
-                        abilities = {
-                            abilities.Attack, 
-                            abilities.Sprint, 
-                            abilities.Flee,
-                        },
-                        health = standardPolice.maxHealth, 
-                        stamina = standardPolice.maxStamina, 
-                        morale = standardPolice.maxMorale, 
-                    },
-                    {
-                        positionOffset = {-1,0,0},
-                        weapon = "shield",
-                        mesh = "assets/model/animated/police/cop/cop-shield_00.bgnome",
-                        material = "assets/texture/animated/police/cop/cop-shield_00.material",
-                        abilities = {
-                            abilities.Attack, 
-                            abilities.Sprint, 
-                            abilities.Flee,
-                        },
-                        health = standardPolice.maxHealth, 
-                        stamina = standardPolice.maxStamina, 
-                        morale = standardPolice.maxMorale, 
-                    },
-                },
-            },
-            {
-                name = "Teargas Squad",
-                description = "Can make people cry ='D",
-                cost = tearGasPolice.cost,
-                setup = 
-                {
-                    {
-                        positionOffset = {-1,0,0},
-                        weapon = "punch",
-                        mesh = "assets/model/animated/police/cop/cop-teargas_00.bgnome",
-                        material = "assets/texture/animated/police/cop/cop-teargas_00.material",
-                        abilities = {
-                            abilities.Attack, 
-                            abilities.Sprint, 
-                            abilities.TearGas, 
-                            abilities.Flee,
-                        },
-                        health = tearGasPolice.maxHealth, 
-                        stamina = tearGasPolice.maxStamina, 
-                        morale = tearGasPolice.maxMorale, 
-                    },
-                    {
-                        positionOffset = {0,0,1},
-                        weapon = "punch",
-                        mesh = "assets/model/animated/police/cop/cop-teargas_00.bgnome",
-                        material = "assets/texture/animated/police/cop/cop-teargas_00.material",
-                        abilities = {
-                            abilities.Attack, 
-                            abilities.Sprint, 
-                            abilities.Flee,
-                        },
-                        health = tearGasPolice.maxHealth, 
-                        stamina = tearGasPolice.maxStamina, 
-                        morale = tearGasPolice.maxMorale, 
-                    },
-                    {
-                        positionOffset = {1,0,0},
-                        weapon = "punch",
-                        mesh = "assets/model/animated/rioter/rioter-male_00.bgnome",
-                        material = "assets/texture/animated/police/cop/cop-light_00.material",
-                        abilities = {
-                            abilities.Attack, 
-                            abilities.Sprint, 
-                            abilities.Flee,
-                        },
-                        health = standardPolice.maxHealth, 
-                        stamina = standardPolice.maxStamina, 
-                        morale = standardPolice.maxMorale, 
-                    },
-                    {
-                        positionOffset = {0,0,-1},
-                        weapon = "punch",
-                        mesh = "assets/model/animated/rioter/rioter-male_00.bgnome",
-                        material = "assets/texture/animated/police/cop/cop-light_00.material",
-                        abilities = {
-                            abilities.Attack, 
-                            abilities.Sprint, 
-                            abilities.Flee,
-                        },
-                        health = standardPolice.maxHealth, 
-                        stamina = standardPolice.maxStamina, 
-                        morale = standardPolice.maxMorale, 
-                    },
-                },
-            },
-        }
     })
     local obj1
     local deserterGroup = nil
+    local rebelGroup = nil
     local waypoints = {}
     local waypoint_positions = {}
     local currentWaypoint = 0
@@ -213,10 +44,14 @@ return function( scen )
         scen.gamemode.camera:addInterpolationPoint(scen.cameras.startcam.translation, scen.cameras.startcam.quaternion)
         scen.gamemode.camera:addInterpolationPoint(scen.cameras.devcam.translation, scen.cameras.devcam.quaternion)
         obj1 = scen.gamemode:createObjective()
-        obj1.title = "At least one deserter must survive and reach the goal."
+        obj1.title = "At least one deserter must survive and reach the goal"
+
+        obj2 = scen.gamemode:createObjective()
+        obj2.title = "Optional: Beat down the rebel hideout"
+        obj2.bonus = true
         
-        Statistics.addObjectives( { obj1 } )
-        
+        Statistics.addObjectives( { obj1, obj2 } )
+
         -- range, graceDistance, damageToHealth, damageToMorale, damageToMoraleOnMiss, enemyRageIncrease, enemyPressureIncrease, staminaCost, timeWhenAnimationDealsDamage, animationName
         fists = core.weaponData.pushWeapon( 1.0, 0.75, 10, 0.05, 0.01, 3.2, 2.9, 0.05, 0.5, "punch" )
     end )
@@ -227,10 +62,18 @@ return function( scen )
         if deserterGroup then
             core.system.squad.enableOutline({deserterGroup}, (vec4{"#09FF00FF",2.0}):get())
 
-            local count = core.system.groups.getGroupMemberCount( deserterGroup)
-            obj1.title = "At least one deserter must survive and reach the goal. " .. count .. " remain."
+            local count = core.system.groups.getGroupMemberCount( deserterGroup )
+            obj1.title = "At least one deserter must reach the goal, " .. count .. " remain"
             if  count == 0 then
                 obj1.state = "fail"
+            end
+        end
+
+        if rebelGroup then
+            rebelCount = core.system.groups.getGroupMemberCount( rebelGroup )
+            obj2.title = "Optional: Beat down the rebel hideout, " .. rebelCount .. " rebels remain"
+            if rebelCount < 5 then
+                obj2.state = "success"
             end
         end
     end )
@@ -269,7 +112,6 @@ return function( scen )
                 assert( waypoint_positions["waypoint1"], "Missing waypoint1, there is something wrong in blenders export, maybe you're not registering it?" )
                 deserterGroup = T.createDeserter( ent,10,5 ) 
                 return false -- return false to indicate that we have served our purpose and wish no longer to be called.
-
             end
             return true
         end)
@@ -332,9 +174,9 @@ return function( scen )
             verts[i] = verts[i] + wpc.position[1]
             verts[i + 1] = verts[i + 1] + wpc.position[3]
         end
-
         group( scen, ac.vertices, grp, {xsize, ysize}, fists, nil, 1, 1, core.RioterAlignment.Anarchist, core.movementData.Jogging )
-
+        
+        return grp
     end
 
     --Hides objects when we enter main game state
@@ -421,8 +263,7 @@ return function( scen )
     function T.spawnRebel( ent )
         scen.gamemode:registerOnStateChange( function( stateName )
             if stateName == "Main" then
-                print "Yolo Swaggins"
-                T.createRebels( ent, 5, 5 )
+                rebelGroup = T.createRebels( ent, 5, 5 )
                 return false -- return false to indicate that we have served our purpose and wish no longer to be called.
             end
             return true
