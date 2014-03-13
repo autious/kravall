@@ -4,7 +4,7 @@
 
 #include <gfx/GFXInterface.hpp>
 
-#define EDGE_THRESHOLD 0.23f
+#define EDGE_THRESHOLD 0.14f
 
 Core::NavMeshCollisionSystem::NavMeshCollisionSystem()
 	: BaseSystem( EntityHandler::GenerateAspect<
