@@ -19,7 +19,6 @@ function TutorialMenu:new(o, menuState)
     o.gui = GUI:new()
 	tutGUI = GUI:new()
 
-	print("HURFDURF")
 	--back to main menu
     o.gui:addComponent(Button:new({
                                     matReleased = "assets/texture/ui/back-button-release.material",

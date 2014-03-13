@@ -34,6 +34,7 @@ namespace Core
         virtual void OnKeyEvent( const Core::KeyEvent &e );
 
         static const unsigned int HISTORY_LIMIT = 100;
+        static const unsigned int CONSOLE_LINE_LIMIT = 1000;
         static const char * HISTORY_FILE_NAME;		
 		/*!
 		Struct used for sending text to the console

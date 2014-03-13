@@ -352,6 +352,11 @@ namespace Core
 			l.text = lines[i];
 			m_console.push_back(l);
 		}
+
+        while( m_console.size() > CONSOLE_LINE_LIMIT )
+        {
+            m_console.erase( m_console.begin() );
+        }
 	}
 
 	void DebugConsole::Add()
