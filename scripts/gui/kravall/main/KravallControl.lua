@@ -56,7 +56,7 @@ function KravallControl:new(o)
 	------------------
 	local eventWidth = 220
 	local globalWidth = 60
-	local leftCornerHeight = 126
+	local leftCornerHeight = 159
 	o.leftCornerGUI = GUI:new( { width=eventWidth+globalWidth, height=leftCornerHeight, anchor="SouthWest" } )
 	
 	o.leftCornerGUI:addPlacementHandler( SimplePlacer )
@@ -70,7 +70,7 @@ function KravallControl:new(o)
     o.overviewButton = Checkbox:new(
                                 {
                                     checked = false,
-                                    xoffset=9,
+                                    xoffset=10,
                                     yoffset=19,
                                     matOpen="assets/texture/ui/overveiw-unselected_00.material",
                                     matSelected="assets/texture/ui/overveiw-selected_00.material",
@@ -83,14 +83,25 @@ function KravallControl:new(o)
 										
 	o.globalGUI:addComponent( Button:new (
 										{ 
-											xoffset=9,
+											xoffset=10,
 											yoffset=66,
 											matReleased="assets/texture/ui/circle-squads-unselected_00.material",
 											matPressed="assets/texture/ui/circle-squads-selected_00.material",
 											matHover="assets/texture/ui/circle-squads-hover_00.material",
 											onClick=o.onCycleSquads,
-											toolTip=createTT:new( { handler=toolTipHandler, text="Cycle through the police squads" } )
-										} ) )									
+											toolTip=createTT:new( { handler=toolTipHandler, text="Cycle through the police squads - X" } )
+										} ) )
+
+	o.globalGUI:addComponent( Button:new (
+										{ 
+											xoffset=10,
+											yoffset=111,
+											matReleased="assets/texture/ui/leave-unselected_00.material",
+											matPressed="assets/texture/ui/leave-selected_00.material",
+											matHover="assets/texture/ui/leave-hover_00.material",
+											--onClick=o.onCycleSquads, --TODO: Show Pause menu.
+											toolTip=createTT:new( { handler=toolTipHandler, text="Quit menu - ESC" } )
+										} ) )
 	
 	o.globalGUI:addComponent( Image:new( { mat="assets/texture/ui/non-contextual-abilities_00.material" } ) )
 	
