@@ -56,6 +56,15 @@ function SettingsMenu:new(o,menuState)
 	lutList.onSelect = function() SettingsMenu:changeLut(lutList.activeObject) end
 	o.gui:addComponent(lutList)
 	
+	o.gui:addComponent( TextLabel:new{xoffset=200, yoffset= 180,label="Gamma", anchor="NorthWest"} )
+	
+	local gammaSlider = Slider:new{
+	matReleased = "assets/texture/ui/slider-knob-release_01.material",
+	matPressed = "assets/texture/ui/slider-knob-press_01.material",
+	matHover = "assets/texture/ui/slider-knob-hover_01.material",
+	matBackground = "assets/texture/ui/slider-background_01.material",
+	a = (core.gfx.getGamma() - 0.2) / 4 , onChange = function( self, value) core.gfx.setGamma(0.2 + value * 4) end, anchor = "NorthWest", xoffset=200, yoffset= 180}
+	o.gui:addComponent(gammaSlider)
     o.gui:addPlacementHandler( AnchorPlacer )
 
     return o
