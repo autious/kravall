@@ -207,7 +207,7 @@ function TutorialMenu:SetImage(id, o)
 		headline:setText([[Moods]])
 	elseif id == 11 then
 		tutImage = Image:new { ignoreConstrict=true, mat="assets/texture/tutorial/cameraTut.material" }
-		tBox:setText([[Moving the camera is done by using WASD or the arrow keys. To rotate the camera, either hold Q or E. Alternatively, press and hold the scroll button and move your mouse to rotate the camera. To zoom in or out, use the scroll wheel. To raise the camera, press space. To lower the camera, press CTRL.]])
+		tBox:setText([[Moving the camera is done by using WASD or the arrow keys. To rotate the camera, either hold Q or E. Alternatively, press and hold the scroll button and move your mouse to rotate the camera. To zoom in or out, use the scroll wheel. To raise the camera, press space. To lower the camera, press and hold Z.]])
 		headline:setText([[Camera controls]])
 	elseif id == 12 then
 		tutImage = Image:new { ignoreConstrict=true, mat="assets/texture/tutorial/selectionTut.material" }
