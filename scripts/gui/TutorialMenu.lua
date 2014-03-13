@@ -28,9 +28,9 @@ function TutorialMenu:new(o, menuState)
 									
 	--basic gameplay tutorials
 	o.gui:addComponent(Button:new({
-                                  	matReleased = "assets/texture/ui/tutorial/basic-controls-release.material",
-									matPressed = "assets/texture/ui/tutorial/basic-controls-press.material",
-									matHover = "assets/texture/ui/tutorial/basic-controls-hover.material",
+                                  	matReleased = "assets/texture/ui/tutorial/basic-gameplay-release.material",
+									matPressed = "assets/texture/ui/tutorial/basic-gameplay-press.material",
+									matHover = "assets/texture/ui/tutorial/basic-gameplay-hover.material",
                                     anchor="NorthWest",xoffset=0,yoffset=0, onClick = function() if tutImage then tutImage:destroy() end TutorialMenu:AddButtons(o, 2) end }))
 
 	--prep screen tutorials
@@ -42,9 +42,9 @@ function TutorialMenu:new(o, menuState)
 	
 	--gameplay tutorials
 	o.gui:addComponent(Button:new({
-                                    matReleased = "assets/texture/ui/tutorial/gameplay-release.material",
-                                    matPressed = "assets/texture/ui/tutorial/gameplay-press.material",
-                                    matHover = "assets/texture/ui/tutorial/gameplay_hover.material",
+                                    matReleased = "assets/texture/ui/tutorial/advanced-gameplay-release.material",
+                                    matPressed = "assets/texture/ui/tutorial/advanced-gameplay-press.material",
+                                    matHover = "assets/texture/ui/tutorial/advanced-gameplay-hover.material",
                                     anchor="NorthWest",xoffset=0,yoffset=0, onClick = function() if tutImage then tutImage:destroy() end TutorialMenu:AddButtons(o, 1) end }))
 
 	--keybind image
@@ -143,7 +143,7 @@ function TutorialMenu:SetImage(id, o)
 		headline:setText([[Keybindings]])
 	elseif id == 1 then
 		tutImage = Image:new { ignoreConstrict=true, mat="assets/texture/tutorial/policeSpawnTut.material" }
-		tBox:setText([[The green squares with "SPAWN" written in them shows where it is possible to place your newly bought police.]])
+		tBox:setText([[The light blue squares with "SPAWN" written in them shows where it is possible to place your newly bought police.]])
 		headline:setText([[Police spawn]])
 	elseif id == 2 then
 		tutImage = Image:new { ignoreConstrict=true, mat="assets/texture/tutorial/buyingUnitsTut.material" }
@@ -159,7 +159,7 @@ function TutorialMenu:SetImage(id, o)
 		headline:setText([[Hostile spawn]])
 	elseif id == 4 then
 		tutImage = Image:new { ignoreConstrict=true, mat="assets/texture/tutorial/friendlySpawnTut.material" }
-		tBox:setText([[The yellow square with a heart marks the spawn point for friendly rioters that you must protect.]])
+		tBox:setText([[The green square with "START" marks the spawn point for friendly rioters that you must protect.]])
 		headline:setText([[Friendly spawn]])
 	elseif id == 5 then
 		tutImage = Image:new { ignoreConstrict=true, mat="assets/texture/tutorial/friendlyPathTut.material" }
@@ -177,15 +177,17 @@ function TutorialMenu:SetImage(id, o)
 		headline:setText([[Stances]])
 	elseif id == 7 then
 		tutImage = Image:new { ignoreConstrict=true, mat="assets/texture/tutorial/tearGasTut.material" }
-		tBox:setText([[ Tear gas is a targeted area of effect attack only available for tear gas police. Pressing it will active a reticule which shows the area affected by firing the tear gas. Left clicking while the reticule is active will fire. Firing consumes stamina.]])
+		tBox:setText([[ Tear gas is a targeted area of effect attack only available for tear gas police. Pressing it will active a reticule which shows the area affected by firing the tear gas. Left clicking while the reticule is active will fire. Firing consumes stamina. Tear gas will make rioters angry but also makes them flee the area of effect.]])
 		headline:setText([[Tear gas]])
 	elseif id == 8 then
 		tutImage = Image:new { ignoreConstrict=true, mat="assets/texture/tutorial/specialAbilityTut.material" }
 		tBox:setText([[When a squad (or several) is seleceted, all the available special abilities for the selected units will be shown in the middle panel of the squad interface.
 
-		Tear gas: Tear gas is a targeted area of effect attack only available for tear gas police. Pressing it will active a reticule which shows the area affected by firing the tear gas. Left clicking while the reticule is active will fire. Firing consumes stamina.
+		Attack: Pressing attack and then left clicking a rioter group will make all the selected squads attack that group.
+
+		Sprint: Pressing sprint will toggle sprinting on/off, making the unit sprint to their current target Sprinting consumes stamina.
 		
-		Sprint: Pressing sprint will toggle sprinting on/off, making the unit sprint to their current target Sprinting consumes stamina.]])
+		Halt: Pressing halt will make all selected squads stop at their current position.]])
 		headline:setText([[Shared abilities]])
 	elseif id == 9 then
 		tutImage = Image:new { ignoreConstrict=true, mat="assets/texture/tutorial/overviewTut.material" }
@@ -193,15 +195,15 @@ function TutorialMenu:SetImage(id, o)
 		headline:setText([[Overview]])
 	elseif id == 10 then
 		tutImage = Image:new { ignoreConstrict=true, mat="assets/texture/tutorial/moodTut.material" }
-		tBox:setText([[Depending on your actions, rioters will become angrier or calm themselves. This can be seen by hovering with your mouse over a rioter group, giving the group an outline where the color shows their mood.
+		tBox:setText([[Depending on your actions, rioters will become angrier or calm themselves. This can be seen by holding the M button, giving the group an outline where the color shows their mood.
 		
-		Blue: Neutral, this rioter is not angry or aggresive.
+		Light blue: Neutral, this rioter is not angry or aggresive.
 	
 		Orange: Agitated, this rioter is starting to get angry.
 	
 		Red: Angry, this rioter is angry and will attack any hostile rioters or police within sight.
 	
-		Pink: Broken, this rioter has been broken and will retreat, leaving the map.]])
+		White: Broken, this rioter has been broken and will retreat, leaving the map.]])
 		headline:setText([[Moods]])
 	elseif id == 11 then
 		tutImage = Image:new { ignoreConstrict=true, mat="assets/texture/tutorial/cameraTut.material" }
@@ -378,21 +380,21 @@ function TutorialMenu:AddButtons(tm, index)
 											anchor="NorthWest",xoffset = x,yoffset=y, onClick = function() TutorialMenu:SetImage(6, o) end })
 
 		mainGameTutButtons.tearGasButton = Button:new({
-											matReleased = "assets/texture/ui/tutorial/special-abilities-release.material",
-											matPressed = "assets/texture/ui/tutorial/special-abilities-press.material",
-											matHover = "assets/texture/ui/tutorial/special-abilities-hover.material",
+											matReleased = "assets/texture/ui/tutorial/teargas-release.material",
+											matPressed = "assets/texture/ui/tutorial/teargas-press.material",
+											matHover = "assets/texture/ui/tutorial/teargas-hover.material",
 											anchor="NorthWest",xoffset = x,yoffset=y, onClick = function() TutorialMenu:SetImage(7, o) end })
 
 		mainGameTutButtons.specialAbilitiesButton = Button:new({
-											matReleased = "assets/texture/ui/tutorial/special-abilities-release.material",
-											matPressed = "assets/texture/ui/tutorial/special-abilities-press.material",
-											matHover = "assets/texture/ui/tutorial/special-abilities-hover.material",
+											matReleased = "assets/texture/ui/tutorial/shared-abilities-release.material",
+											matPressed = "assets/texture/ui/tutorial/shared-abilities-press.material",
+											matHover = "assets/texture/ui/tutorial/shared-abilities-hover.material",
 											anchor="NorthWest",xoffset = x,yoffset=y, onClick = function() TutorialMenu:SetImage(8, o) end })
 
 		mainGameTutButtons.overviewButton = Button:new({
-											matReleased = "assets/texture/ui/tutorial/special-abilities-release.material",
-											matPressed = "assets/texture/ui/tutorial/special-abilities-press.material",
-											matHover = "assets/texture/ui/tutorial/special-abilities-hover.material",
+											matReleased = "assets/texture/ui/tutorial/overview-release.material",
+											matPressed = "assets/texture/ui/tutorial/overview-press.material",
+											matHover = "assets/texture/ui/tutorial/overview-hover.material",
 											anchor="NorthWest",xoffset = x,yoffset=y, onClick = function() TutorialMenu:SetImage(9, o) end })
 		
 		mainGameTutButtons.moodsButton = Button:new({
@@ -410,9 +412,9 @@ function TutorialMenu:AddButtons(tm, index)
 		TutorialMenu:SetImage(11)
 
 		mainGameTutButtons.cameraControlsButton = Button:new({
-										matReleased = "assets/texture/ui/tutorial/basic-controls-release.material",
-										matPressed = "assets/texture/ui/tutorial/basic-controls-press.material",
-										matHover = "assets/texture/ui/tutorial/basic-controls-hover.material",
+										matReleased = "assets/texture/ui/tutorial/camera-controls-release.material",
+										matPressed = "assets/texture/ui/tutorial/camera-controls-press.material",
+										matHover = "assets/texture/ui/tutorial/camera-controls-hover.material",
 										anchor="NorthWest",xoffset = x,yoffset=y, onClick = function() TutorialMenu:SetImage(11, o) end })
 
 
@@ -446,7 +448,7 @@ function TutorialMenu:AddButtons(tm, index)
 												matReleased = "assets/texture/ui/tutorial/next-release.material",
 												matPressed = "assets/texture/ui/tutorial/next-press.material",
 												matHover = "assets/texture/ui/tutorial/next-hover.material",
-												anchor="East",xoffset = 0,yoffset= -100, onClick = function() activeImage = (activeImage + 1) % 11 TutorialMenu:SetImage(activeImage, o) end })
+												anchor="East",xoffset = 0,yoffset= -100, onClick = function() activeImage = (activeImage + 1) % 15 TutorialMenu:SetImage(activeImage, o) end })
 	
 		tm.gui:addComponent(mainGameTutButtons.forward )
 
@@ -454,7 +456,7 @@ function TutorialMenu:AddButtons(tm, index)
 												matReleased = "assets/texture/ui/tutorial/prev-release.material",
 												matPressed = "assets/texture/ui/tutorial/prev-press.material",
 												matHover = "assets/texture/ui/tutorial/prev-hover.material",
-												anchor="East" ,xoffset = 0 ,yoffset= -100, onClick = function() activeImage = (activeImage - 1) % 11 TutorialMenu:SetImage(activeImage, o) end })
+												anchor="East" ,xoffset = 0 ,yoffset= -100, onClick = function() activeImage = (activeImage - 1) % 15 TutorialMenu:SetImage(activeImage, o) end })
 	
 		tm.gui:addComponent(mainGameTutButtons.back )
 	end
