@@ -160,6 +160,14 @@ return function( scen )
         end
     end
 
+    scen.gamemode:registerOnStateChange( function( stateName )
+        if stateName == "End" then
+            print("We have reached end game state")
+            return false -- return false to indicate that we have served our purpose and wish no longer to be called.
+        end
+        return true
+    end)
+
     return T
 end
 
