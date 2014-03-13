@@ -24,6 +24,7 @@
 #include <Components/EmitterComponent.hpp>
 #include <Components/MovementDataComponent.hpp>
 #include <Components/BloodComponent.hpp>
+#include <Components/DeadUnitComponent.hpp>
 
 /**********All systems after this line************/
 #include <Systems/EngineSupport/RenderingSystem.hpp>
@@ -55,6 +56,7 @@
 #include <Systems/EngineSupport/ParticleSystem.hpp>
 #include <Systems/AIsupport/BloodSystem.hpp>
 #include <Systems/AI/PanicAnimationSystem.hpp>
+#include <Systems/AIsupport/GroupDeadSystem.hpp>
 
 
 namespace Core
@@ -62,13 +64,13 @@ namespace Core
     typedef SystemHandlerTemplate<PriorityResetSystem, LightSystem, FlowfieldPositioningSystem, PoliceGoalSystem, CollisionSystem2D, 
 	NavMeshCollisionSystem, PickingSystem, TargetingSystem, AttackAnimationSystem, MovementAnimationSystem, AIDebugSystem, FlowfieldSystem, 
 	PanicAnimationSystem, RioterGoalSystem, RemovalSystem, BloodSystem, GroupDataSystem, GPUPFSystem, ParticleSystem, MovementSystem, NameSystem, 
-	AreaSystem, NavMeshBlockingSystem, MoodStateSystem, AnimationSystem, SquadSystem,  HoverTextSystem, RenderingSystem> SystemHandler;
+	AreaSystem, NavMeshBlockingSystem, MoodStateSystem, AnimationSystem, SquadSystem,  HoverTextSystem, RenderingSystem,GroupDeadSystem> SystemHandler;
 
     typedef EntityHandlerTemplate<SystemHandler, WorldPositionComponent, RotationComponent, ScaleComponent, 
 		GraphicsComponent, LightComponent, MovementComponent, UnitTypeComponent, AttributeComponent,
 		BoundingVolumeComponent, FlowfieldComponent, AreaComponent, NameComponent, AnimationComponent,
         SquadComponent, FormationComponent, TargetingComponent, HoverTextComponent, EmitterComponent, 
-		MovementDataComponent, BloodComponent> EntityHandler;
+		MovementDataComponent, BloodComponent, DeadUnitComponent> EntityHandler;
 }
 
 

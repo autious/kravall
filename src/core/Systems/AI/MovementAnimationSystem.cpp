@@ -68,7 +68,8 @@ namespace Core
 			Core::UnitTypeComponent* utc = WGETC<Core::UnitTypeComponent>( *it );
 			if( utc->type == Core::UnitType::Police )
 				if( attribc->police.stance == Core::PoliceStance::Defensive )
-					idleAnimation = "idle-defense";
+					if(  Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle-defense" ) >= 0 )
+						idleAnimation = "idle-defense";
 
 
 			bool hasAlteredAnimation = false;

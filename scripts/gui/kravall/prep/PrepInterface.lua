@@ -106,10 +106,11 @@ function PrepInterface:new(o)
 	o.unitsSubGUI:addComponent( o.shieldStatsSubGUI )
 	o.unitsSubGUI:addComponent( o.tgStatsSubGUI )
 	
-	o.unitsSubGUI:addComponent( Image:new( { mat="assets/texture/ui/aa-temp_prep_leftPanel.material" } ) )
 	o.unitsSubGUI:addComponent( TextLabel:new( { label="Available units", xoffset=leftXOffset, yoffset=9 } ) )
 	o.unitSelection = TextSelectList:new(
-										{ 
+										{
+											width=217,
+											height=135,
 											xoffset=leftXOffset,
 											yoffset=40,
 											elements=o.policeTypes,
@@ -132,6 +133,7 @@ function PrepInterface:new(o)
 											end
 										} )
 	o.unitsSubGUI:addComponent( o.unitSelection )	
+	o.unitsSubGUI:addComponent( Image:new( { mat="assets/texture/ui/aa-temp_prep_leftPanel.material" } ) )
 	
 	o.unitsSubGUI:addPlacementHandler( SimplePlacer )
 	o.gui:addComponent( o.unitsSubGUI )
@@ -154,7 +156,9 @@ function PrepInterface:new(o)
 	o.purchaseSubGUI:addComponent( TextLabel:new( { label="Bought units", anchor="NorthWest", xoffset=leftXOffset, yoffset=12 } ) )
 	
 	o.unitPurchased = TextSelectList:new
-										{ 
+										{
+											width=216,
+											height=208,
 											xoffset=leftXOffset,
 											yoffset=20,
 											anchor="NorthWest", 

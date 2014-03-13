@@ -24,6 +24,7 @@ local tearGasPolice = (require "game_constants").tearGasPolice
 
 local T = 
     { 
+        cashLimit = 1000,
         initGamestate = "Main",
         weapons = 
         {
@@ -240,6 +241,7 @@ function T:setState( state )
         print( "State set to \"Prep\"" )
         self.gamestate = Prep:new
         {
+            cashLimit = self.cashLimit,
             policeTypes = self.policeTypes,
             onFinished = function( unitInstances ) 
                 self.unitInstances = unitInstances
