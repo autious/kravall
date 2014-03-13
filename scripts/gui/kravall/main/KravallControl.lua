@@ -27,7 +27,8 @@ local KravallControl =
     onStanceSelect = function(stance) core.log.error("No handler set for onStanceChange in KravallControl.") end,
     onAbilitySelect = function(ability) end,
     onUseOverview = function() core.log.error("No function set for onUseOverview in KravallControl.") end,
-    onCycleSquads = function() core.log.error("No function set for onCycleSquads in KravallControl.") end
+    onCycleSquads = function() core.log.error("No function set for onCycleSquads in KravallControl.") end,
+    onRequestPause = function() core.log.error("No function set for onRequestPause in KravallControl.") end,
 }
                             
 function KravallControl:new(o)
@@ -99,7 +100,7 @@ function KravallControl:new(o)
 											matReleased="assets/texture/ui/leave-unselected_00.material",
 											matPressed="assets/texture/ui/leave-selected_00.material",
 											matHover="assets/texture/ui/leave-hover_00.material",
-											--onClick=o.onCycleSquads, --TODO: Show Pause menu.
+											onClick=o.onRequestPause,
 											toolTip=createTT:new( { handler=toolTipHandler, text="Quit menu - ESC" } )
 										} ) )
 	
