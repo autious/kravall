@@ -1,5 +1,6 @@
 local entity = require "entities"
-local Statistics = require "factories/Statistics"
+local Statistics = require "statistics/Statistics"
+local StatRow = require "statistics/StatisticsRow"
 local vec4 = require( "utility" ).expandMixxedHexToVec4
 local module = require( "module" )
 
@@ -13,6 +14,8 @@ return function( scen )
 	
     scen.name = "Introduction, Escort"
     scen.description =  [[Escort the group of deserts to the end goal using the shield squad, bonus points of all deserts survive to the end.]]
+	
+	Statistics.clear()
     
     -- Set game to start in prepmode
     scen.gamemode =  require "gamemodes/kravall":new(
@@ -110,7 +113,7 @@ return function( scen )
         obj2.title = "(Bonus) Let all deserters reach the goal unharmed."
         obj2.bonus = true
 		
-		Statistics.addObjectives( { obj1,obj2 } )
+		Statistics.addObjectives( { obj1, obj2 } )
 
         scen.gamemode.camera:addInterpolationPoint(scen.cameras.startcam.translation, scen.cameras.startcam.quaternion)
 		
@@ -118,9 +121,23 @@ return function( scen )
 		-- fists = core.weaponData.pushWeapon( 1.0, 0.75, 20, 0.2, 0.05, 3.2, 2.9, 0.05, 0.5, "punch" )
     end )
 
+	local hasCountedPolice = false
+	local startPoliceCount = 0
     scen:registerUpdateCallback( 
     function(delta) 
         scen.gamemode:update(delta) 
+		
+		if not hasCountedPolice then
+			if scen.gamemode.gamestate.policeHandler then
+				--print( "Number of police squads: " .. #scen.gamemode.gamestate.policeHandler.createdSquads )
+				for i=1, #( scen.gamemode.gamestate.policeHandler.createdSquads ) do
+					startPoliceCount = startPoliceCount + #scen.gamemode.gamestate.policeHandler.createdSquads[i].members
+				end
+				print( "Start - Number of police: " .. startPoliceCount )
+				hasCountedPolice = true
+			end
+		end
+		
         if T.getDeserterGroup() then
             local count = core.system.groups.getGroupMemberCount( T.getDeserterGroup() )
             obj1.title = "At least one deserter must survive and reach the goal. " .. count + rioterGoalCount .. " remain."
@@ -159,22 +176,44 @@ return function( scen )
             end
         end
     end
-
+    
     scen.gamemode:registerBeforeStateChange( function( stateName )
         if stateName == "End" then
+			if rioterGoalCount == T.getInitialDeserterCount() then
+                obj2.state = "success" 
+            end
+		
+			local totalPolice = 0;
+			if scen.gamemode.gamestate.policeHandler then
+				for i=1, #( scen.gamemode.gamestate.policeHandler.createdSquads ) do
+					totalPolice = totalPolice + #scen.gamemode.gamestate.policeHandler.createdSquads[i].members
+				end
+				print( "End - Number of police: " .. totalPolice )
+			end
+		
+			print( "Police killed: " .. startPoliceCount - totalPolice )
+			Statistics.addToCategory( "Units", StatRow:new( { title="Police Units Killed:", 
+								resultTitle="" .. (startPoliceCount-totalPolice) .. "/" .. totalPolice, maxResult=100, 
+								achievedResult=(totalPolice/startPoliceCount) * 100 } ) )
+								
+			Statistics.addToCategory( "Other", StatRow:new( {  } ) )
+			
+			--Statistics.setListOrder( { "Units", "Other" } )
+			--Statistics.prepare()
             print("We have reached before creation of end game state")
             return false -- return false to indicate that we have served our purpose and wish no longer to be called.
         end
         return true
     end)
 
-    scen.gamemode:registerOnStateChange( function( stateName )
-        if stateName == "End" then
-            print("We have reached end game state")
-            return false -- return false to indicate that we have served our purpose and wish no longer to be called.
-        end
-        return true
-    end)
+    scen.gamemode:registerOnStateChange( 
+		function( stateName )
+			if stateName == "End" then
+				print("We have reached end game state")
+				return false -- return false to indicate that we have served our purpose and wish no longer to be called.
+			end
+			return true
+		end)
 
     return T
 end

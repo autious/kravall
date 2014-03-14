@@ -1,5 +1,9 @@
 core.config = {
-locallySavedVars = {"fullscreen"}, --Variables to save into the users home folder.
+locallySavedVars = {"fullscreen","gamma","cameraForce"}, --Variables to save into the users home folder.
+gamma = 2.2,
+cameraForce = 5.0,
+maxCameraForce = 14,
+minCameraForce = 0.1,
 showSplash = false,
 vsync = 0,
 windowResizable = true,
