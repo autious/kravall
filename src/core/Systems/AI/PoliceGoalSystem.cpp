@@ -25,7 +25,7 @@ Core::PoliceGoalSystem::PoliceGoalSystem()
 
 //#define DRAW_GOAL_LINES
 //#define DRAW_DIRECTION_LINES
-//#define DRAW_NEXT_WAYPOINT
+#define DRAW_NEXT_WAYPOINT
 
 #ifdef DRAW_GOAL_LINES
 #define DEBUG_DRAW_GOAL( x ) x
@@ -134,6 +134,8 @@ void Core::PoliceGoalSystem::Update( float delta )
 						
 						glm::vec3 direction = glm::normalize( target - position );
 						MovementComponent::SetDirection( mvmc, direction.x, 0.0f, direction.z );
+
+						DEBUG_DRAW_WAYPOINT_LINE( GFX::Debug::DrawLine( position, position + direction * 2.0f, GFXColor( 0, 0, 1, 1 ), false ) );
 					}
 					else
 					{
@@ -177,6 +179,8 @@ void Core::PoliceGoalSystem::Update( float delta )
 							// is inside edges...
 							targetPosition = path.point;
 						}
+
+						DEBUG_DRAW_WAYPOINT_LINE( GFX::Debug::DrawLine( position, targetPosition, GFXColor( 0, 1, 0, 1 ), false ) );
 					}
 
 					glm::vec3 flowfieldDirection = glm::normalize( targetPosition - position );
