@@ -12,9 +12,9 @@ local Statistics =
 					playTime=0,
 					totalScore=0,
 					achievedScore=0,
-					guiWidth = 500,
+					guiWidth = 100,
 					offsetX = 0,
-					indentX = 30,
+					indentX = 15,
 					newSectionY = 50,
 					newLineY = 20,
 					objIndent = 100,
@@ -39,10 +39,8 @@ function Statistics.prepare()
 	for i,v in pairs( Statistics.categories ) do
 		if i ~= "objectives" then
 			for j,w in pairs( Statistics.categories[ i ] ) do
-				if w.achievedResult == w.achievedResult then -- protect against NaN
+				if w.achievedResult == w.achievedResult and w.maxResult == w.maxResult then -- protect against NaN
 					Statistics.achievedScore = Statistics.achievedScore + w.achievedResult
-				end
-				if w.maxResult == w.maxResult then -- protect against NaN
 					Statistics.totalScore = Statistics.totalScore + w.maxResult
 				end
 			end
@@ -52,15 +50,15 @@ function Statistics.prepare()
 	local percentage = Statistics.achievedScore / Statistics.totalScore
 	
 	if percentage <= 0.1 then
-		Statistics.rank = "1. (" .. Statistics.achievedScore .. "/" .. Statistics.totalScore .. ")" -- First-Time Player
+		Statistics.rank = "First-timer" --"1. (" .. Statistics.achievedScore .. "/" .. Statistics.totalScore .. ")"
 	elseif percentage <= 0.4 then
-		Statistics.rank = "2. (" .. Statistics.achievedScore .. "/" .. Statistics.totalScore .. ")" -- Beginner Player
+		Statistics.rank = "Beginner" --"2. (" .. Statistics.achievedScore .. "/" .. Statistics.totalScore .. ")"
 	elseif percentage <= 0.6 then
-		Statistics.rank = "3. (" .. Statistics.achievedScore .. "/" .. Statistics.totalScore .. ")" -- Play Tester
+		Statistics.rank = "Intermediate" --"3. (" .. Statistics.achievedScore .. "/" .. Statistics.totalScore .. ")"
 	elseif percentage <= 0.8 then
-		Statistics.rank = "4. (" .. Statistics.achievedScore .. "/" .. Statistics.totalScore .. ")" -- Developer
+		Statistics.rank = "Experienced" --"4. (" .. Statistics.achievedScore .. "/" .. Statistics.totalScore .. ")"
 	else
-		Statistics.rank = "5. (" .. Statistics.achievedScore .. "/" .. Statistics.totalScore .. ")"	-- Pro developer
+		Statistics.rank = "Professional" --"5. (" .. Statistics.achievedScore .. "/" .. Statistics.totalScore .. ")"
 	end
 end
 				
@@ -85,11 +83,14 @@ function Statistics.clear()
 end
 
 function Statistics.getAllAsSubGUI( xoffset, yoffset )	
+	xOffset = xOffset or 0
+	yOffset = yOffset or 0
+	
 	subGUI = GUI:new( {
-							width=Statistics.guiWidth, xoffset=xOffset, yoffset=yoffset
+							width=Statistics.guiWidth-xoffset*2, xoffset=xoffset, yoffset=yoffset
 					} )
 	local offsetY = 0
-	local currGUI = Statistics.getObjectivesAsSubGUI( xoffset, offsetY )
+	local currGUI = Statistics.getObjectivesAsSubGUI( 0, offsetY, subGUI.width )
 	
 	print( "Objectives gui height: " .. currGUI.height )
 	subGUI:addComponent( currGUI )
@@ -98,33 +99,40 @@ function Statistics.getAllAsSubGUI( xoffset, yoffset )
 	if #Statistics.listOrder == 0 then	
 		for i,v in pairs( Statistics.categories ) do
 			if i ~= "objectives" then
-				currGUI = Statistics.getCategoryAsSubGUI( i, xoffset, offsetY )
+				offsetY = offsetY + Statistics.newLineY 
+				currGUI = Statistics.getCategoryAsSubGUI( i, 0, offsetY, subGUI.width )
 				subGUI:addComponent( currGUI )
 				print( i .. " gui height: " .. currGUI.height )
-				offsetY = offsetY + currGUI.height + Statistics.newLineY
+				offsetY = offsetY + currGUI.height
 			end
 		end
 	else
 		for i,v in pairs( Statistics.listOrder ) do
 			if v ~= "objectives" then
-				currGUI = Statistics.getCategoryAsSubGUI( v, xoffset, offsetY )
+				offsetY = offsetY + Statistics.newLineY 
+				currGUI = Statistics.getCategoryAsSubGUI( v, 0, offsetY, subGUI.width )
 				subGUI:addComponent( currGUI )
-				offsetY = offsetY + currGUI.height + Statistics.newLineY
+				offsetY = offsetY + currGUI.height
 			end
 		end
 	end
-	subGUI.height = offsetY - yoffset
+	subGUI.height = offsetY
+	
 	subGUI:addPlacementHandler( SimplePlacer )
 	
 	return subGUI
 end
 
-function Statistics.getCategoryAsSubGUI( name, xOffset, yOffset )
+function Statistics.getCategoryAsSubGUI( name, xOffset, yOffset, guiWidth )
+	xOffset = xOffset or 0
+	yOffset = yOffset or 0
+	guiWidth = guiWidth or Statistics.guiWidth
+
 	if Statistics.categories[ name ] then
 		local subGUI = GUI:new( {
-									width=Statistics.guiWidth, xoffset=xOffset, yoffset=yOffset
+									width=guiWidth, xoffset=xOffset, yoffset=yOffset
 								} )
-	
+		
 		local offsetY = 0
 		subGUI:addComponent( TextLabel:new( { label=name, xoffset=offsetX, yoffset=offsetY } ) )
 		offsetY = offsetY + Statistics.newLineY
@@ -132,13 +140,13 @@ function Statistics.getCategoryAsSubGUI( name, xOffset, yOffset )
 		for i,v in pairs( Statistics.categories[ name ] ) do
 			local currStat = TextLabel:new( { label=v.resultTitle, yoffset=offsetY  } )
 			local dimX, dimY = currStat.text:getDim()
-			currStat.xoffset = subGUI.width - dimX - xOffset
+			currStat.xoffset = subGUI.width - dimX
 			subGUI:addComponent( currStat )
 			
 			local xOff = Statistics.offsetX+Statistics.indentX
 			currStat = TextBox:new( { 
 										body=v.title, xoffset=xOff, yoffset=offsetY,
-										width=Statistics.guiWidth - xOff - dimX, height=200
+										width=subGUI.width - xOff - dimX, height=200
 									} )
 			
 			dimX, dimY = currStat.text:getDim()
@@ -149,6 +157,7 @@ function Statistics.getCategoryAsSubGUI( name, xOffset, yOffset )
 		end
 		
 		subGUI.height = offsetY
+		
 		subGUI:addPlacementHandler( SimplePlacer )
 		
 		return subGUI
@@ -159,12 +168,13 @@ function Statistics.getCategoryAsSubGUI( name, xOffset, yOffset )
 	return nil
 end
 
-function Statistics.getObjectivesAsSubGUI( xOffset, yOffset )
+function Statistics.getObjectivesAsSubGUI( xOffset, yOffset, guiWidth )
 	xOffset = xOffset or 0
 	yOffset = yOffset or 0
+	guiWidth = guiWidth or Statistics.guiWidth
 	
 	objectivesGUI = GUI:new ( {
-									width=Statistics.guiWidth, xoffset=xOffset, yoffset=yOffset
+									width=guiWidth, xoffset=xOffset, yoffset=yOffset
 							} )
 							
 	local offsetY = 0
@@ -189,7 +199,7 @@ function Statistics.getObjectivesAsSubGUI( xOffset, yOffset )
 		local currObjective = TextBox:new( 
 										{ 
 											body=v.title, color=colour, xoffset=xOff, yoffset=offsetY,
-											width=Statistics.guiWidth-xOff, height=200
+											width=objectivesGUI.width-xOff, height=200
 										} )
 		local dimX, dimY = currObjective.text:getDim()
 		currObjective.yoffset = currObjective.yoffset - dimY

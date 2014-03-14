@@ -129,11 +129,9 @@ return function( scen )
 		
 		if not hasCountedPolice then
 			if scen.gamemode.gamestate.policeHandler then
-				--print( "Number of police squads: " .. #scen.gamemode.gamestate.policeHandler.createdSquads )
 				for i=1, #( scen.gamemode.gamestate.policeHandler.createdSquads ) do
 					startPoliceCount = startPoliceCount + #scen.gamemode.gamestate.policeHandler.createdSquads[i].members
 				end
-				print( "Start - Number of police: " .. startPoliceCount )
 				hasCountedPolice = true
 			end
 		end
@@ -188,18 +186,15 @@ return function( scen )
 				for i=1, #( scen.gamemode.gamestate.policeHandler.createdSquads ) do
 					totalPolice = totalPolice + #scen.gamemode.gamestate.policeHandler.createdSquads[i].members
 				end
-				print( "End - Number of police: " .. totalPolice )
 			end
 		
-			print( "Police killed: " .. startPoliceCount - totalPolice )
 			Statistics.addToCategory( "Units", StatRow:new( { title="Police Units Killed:", 
 								resultTitle="" .. (startPoliceCount-totalPolice) .. "/" .. totalPolice, maxResult=100, 
 								achievedResult=(totalPolice/startPoliceCount) * 100 } ) )
 								
 			Statistics.addToCategory( "Other", StatRow:new( {  } ) )
 			
-			--Statistics.setListOrder( { "Units", "Other" } )
-			--Statistics.prepare()
+			Statistics.setListOrder( { "Units", "Other" } )
             print("We have reached before creation of end game state")
             return false -- return false to indicate that we have served our purpose and wish no longer to be called.
         end

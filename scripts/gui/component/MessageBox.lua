@@ -29,17 +29,17 @@ function MessageBox:new(o)
     self.__index = self
     
 	o.gui = GUI:new( { } )
-	o.wrapperGUI = GUI:new( { width=360, height=186 } )
+	o.wrapperGUI = GUI:new( { width=360, height=181 } )
 	
-	o.wrapperGUI:addComponent( TextLabel:new( { label=o.title, xoffset=18, yoffset=-2, font="assets/font/toolTip.font" } ) )
+	o.wrapperGUI:addComponent( TextLabel:new( { label=o.title, xoffset=18, font="assets/font/toolTip.font" } ) )
 	--o.wrapperGUI:addComponent( TextLabel:new( { label="MessageBox text.", xoffset=20, yoffset=23, font="assets/font/toolTip.font" } ) )
 	
-	local message = TextBox:new( { body=o.message, xoffset=23, yoffset=18, width=323, height=105, font="assets/font/toolTip.font" } )
+	local message = TextBox:new( { body=o.message, xoffset=22, yoffset=22, width=323, height=105, font="assets/font/toolTip.font" } )
 	local dimX, dimY = message.text:getDim()
 		message.yoffset = message.yoffset - dimY	
 	o.wrapperGUI:addComponent( message )
 	
-	o.buttonGUI = GUI:new( { xoffset=17, yoffset=125, width=326, height=61 } )
+	o.buttonGUI = GUI:new( { xoffset=17, yoffset=120, width=328, height=61 } )
 	if o.buttons == "OKCancel" then
 		-- OK Button
 		o.buttonGUI:addComponent( Button:new (
@@ -52,7 +52,7 @@ function MessageBox:new(o)
 												} ) )
 		-- Cancel Button
 		o.buttonGUI:addComponent( Button:new (
-												{ 
+												{
 													anchor="East",
 													matReleased="assets/texture/ui/cancel-button-release.material",
 													matPressed="assets/texture/ui/cancel-button-press.material",
@@ -71,7 +71,7 @@ function MessageBox:new(o)
 												} ) )
 		-- No button
 		o.buttonGUI:addComponent( Button:new (
-												{ 
+												{
 													anchor="East",
 													matReleased="assets/texture/ui/no-button-release.material",
 													matPressed="assets/texture/ui/no-button-press.material",
