@@ -217,7 +217,6 @@ return function( scen )
 		end
 		local rot = { math.cos(redLightRotation2), 0, math.sin(redLightRotation2)}
 		entity:set( core.componentType.RotationComponent, {rotation=rot} )
-		print ("Hej")
 	end
 	
 	T.updateBlueLightFront = function ( entity, delta )
