@@ -2,8 +2,9 @@
 local StatisticsRow =	
 					{ 
 						title="Statistics title",
-						maxResult=-1,
-						achievedResult=-1
+						resultTitle="No Result",
+						maxResult=0,
+						achievedResult=0
 					}
 
 function StatisticsRow:new(o)
