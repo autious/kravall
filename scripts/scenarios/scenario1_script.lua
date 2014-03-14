@@ -11,7 +11,7 @@ local tearGasPolice = (require "game_constants").tearGasPolice
 return function( scen )
     local T = {}
 	
-    scen.name = "Save the deserters!"
+    scen.name = "Save the deserters! (Again!)"
     scen.description =  [[Deserters and transhumans are equal, or so they say. The rebellion of the lower districts have sparked a revolution filled with violence, blood and tears. All in the name of freedom.
 
     Not everyone can handle it. That is why some people abandon their cause to seek refuge at the transhuman embassy where they will be assimilated into transhuman society in exchange for valuable information regarding the rebels' hideouts.
