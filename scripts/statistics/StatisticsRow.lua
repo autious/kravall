@@ -2,6 +2,7 @@
 local StatisticsRow =	
 					{ 
 						title="Statistics title",
+						resultTitle="No Result",
 						maxResult=-1,
 						achievedResult=-1
 					}
