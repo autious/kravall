@@ -69,7 +69,7 @@ void Core::PoliceGoalSystem::Update( float delta )
 	{
 		UnitTypeComponent* utc = WGETC<UnitTypeComponent>(*it);
 		Core::AttributeComponent* attribc = WGETC<Core::AttributeComponent>(*it);
-		if(( utc->type == Core::UnitType::Police || utc->type == Core::UnitType::Rioter) && attribc == nullptr )
+		if(( utc->type == Core::UnitType::Police || utc->type == Core::UnitType::Rioter) && attribc != nullptr )
 			entityList[ head++ ] = *it;
 	}
 
