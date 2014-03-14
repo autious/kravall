@@ -1,16 +1,10 @@
 local GUI = require "gui/GUI"
 local Button = require "gui/component/Button"
 local Checkbox = require "gui/component/Checkbox"
---local Slider = require "gui/component/Slider"
---local TextSelectList = require "gui/component/TextSelectList"
 --local TextLabel = require "gui/component/TextLabel"
---local TextBox = require "gui/component/TextBox"
 local Image = require "gui/component/Image"
 
 local AnchorPlacer = require "gui/placement/AnchorPlacer"
---local EastPlacer = require "gui/placement/EastPlacer"
---local NorthPlacer = require "gui/placement/NorthPlacer"
---local WestPlacer = require "gui/placement/WestPlacer"
 local CenterPlacer = require "gui/placement/CenterPlacer"
 local SimplePlacer = require "gui/placement/SimplePlacer"
 
@@ -55,7 +49,7 @@ function KravallControl:new(o)
 	
 	o.gui:addComponent( o.statusGUI )
 	------------------
-	local eventWidth = 220
+	local eventWidth = 237
 	local globalWidth = 60
 	local leftCornerHeight = 159
 	o.leftCornerGUI = GUI:new( { width=eventWidth+globalWidth, height=leftCornerHeight, anchor="SouthWest" } )
@@ -109,12 +103,14 @@ function KravallControl:new(o)
 	o.globalGUI:addPlacementHandler( SimplePlacer )
 	o.leftCornerGUI:addComponent( o.globalGUI )
 	------------------
-    o.eventGUIPadder = GUI:new( {width=eventWidth,height=leftCornerHeight, xoffset=globalWidth} )
-	
-    o.eventGUI = EventListerGUI:new( {x=0,y=0, width=200, height=leftCornerHeight, anchor="SouthWest"} )
+    o.eventGUIPadder = GUI:new( {width=eventWidth, height=leftCornerHeight, xoffset=globalWidth} )
+	local xOff = 5
+    o.eventGUI = EventListerGUI:new( {x=0,y=0, xoffset=xOff, yoffset=12, width=globalWidth-eventWidth-xOff, height=leftCornerHeight - 18 } )
     o.eventGUIPadder:addComponent( o.eventGUI )
+	o.eventGUIPadder:addComponent( Image:new( { mat="assets/texture/ui/event-bar.material" } ) )
+	o.eventGUIPadder:addComponent( Image:new( { mat="assets/texture/ui/event-box-background.material" } ) )
 	
-	o.eventGUIPadder:addPlacementHandler( CenterPlacer )
+	o.eventGUIPadder:addPlacementHandler( SimplePlacer )
 	o.leftCornerGUI:addComponent( o.eventGUIPadder )
     ------------------
 	--o.overviewGUI = OverviewGUI:new( {        

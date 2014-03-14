@@ -26,7 +26,7 @@ function EndScreen:new(o)
     self.__index = self
 
 	local offsetX = 15
-	local offsetY = 0
+	local offsetY = Statistics.newLineY * 2
 	
 	Statistics.prepare()
 	
@@ -35,12 +35,7 @@ function EndScreen:new(o)
 	o.screenGUI = GUI:new( { width=623, height=689, anchor="Center" } )
 	o.inBoxGUI = GUI:new( { width=563, height=563, xoffset=30, yoffset=45, anchor="North" } )
 	
-	o.inBoxGUI:addComponent( TextLabel:new( { label="Rank: " .. Statistics.rank, xoffset=0, yoffset=0 } ) )
-	offsetY = offsetY + Statistics.newLineY 
-	
-	offsetY = offsetY + Statistics.newLineY
-	
-	Statistics.guiWidth = o.inBoxGUI.width-- - offsetX * 2
+	Statistics.guiWidth = o.inBoxGUI.width
 	
 	local subGUI = Statistics.getAllAsSubGUI( offsetX, offsetY )
 	o.inBoxGUI:addComponent( subGUI )
@@ -49,8 +44,10 @@ function EndScreen:new(o)
 	
 	if o.won then
 		o.inBoxGUI:addComponent( TextLabel:new( { label="Game is over, you won! :D", xoffset=offsetX, yoffset=offsetY } ) )
+		o.inBoxGUI:addComponent( TextLabel:new( { label="Rank: " .. Statistics.rank, xoffset=0, yoffset=0 } ) )
 	else
 		o.inBoxGUI:addComponent( TextLabel:new( { label="Game is over, you lost. Awwww :(", xoffset=offsetX, yoffset=offsetY } ) )
+		o.inBoxGUI:addComponent( TextLabel:new( { label="Rank: Erased", xoffset=0, yoffset=0 } ) )
 	end
 	
 	-- GUI background, buttons and title label

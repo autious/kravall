@@ -1,4 +1,6 @@
 local entity = require "entities"
+local Statistics = require "statistics/Statistics"
+local StatRow = require "statistics/StatisticsRow"
 local group = entity.get "group"
 local Statistics = require "statistics/Statistics"
 local vec4 = require( "utility" ).expandMixxedHexToVec4
@@ -16,6 +18,9 @@ return function( scen )
 
     A group of deserters are on their way to the embassy right now. Bands of rebels are certain to lie in wait for them and it is your job to protect the deserters until they reach the embassy. Keep them safe at any cost.]]
     
+    Statistics.clear()
+    local totalRioterCount = ( (10 * 10) * 2 ) + (17 * 18)
+
     -- Set game to start in prepmode
     scen.gamemode =  require "gamemodes/kravall":new(
     {
@@ -41,8 +46,10 @@ return function( scen )
         local plane = entity.get "plane"
         --plane(scen, 0, -1, 0, 900)
 
-        scen.gamemode.camera:addInterpolationPoint(scen.cameras.startcam.translation, scen.cameras.startcam.quaternion)
-        scen.gamemode.camera:addInterpolationPoint(scen.cameras.devcam.translation, scen.cameras.devcam.quaternion)
+        scen.gamemode.camera:addInterpolationPoint(scen.cameras.startcam_1.translation, scen.cameras.startcam_1.quaternion)
+        scen.gamemode.camera:addInterpolationPoint(scen.cameras.startcam_end.translation, scen.cameras.startcam_end.quaternion)
+        --scen.gamemode.camera:addInterpolationPoint(scen.cameras.devcam.translation, scen.cameras.devcam.quaternion)
+
         obj1 = scen.gamemode:createObjective()
         obj1.title = "At least one deserter must survive and reach the goal"
 
@@ -59,10 +66,23 @@ return function( scen )
         -- range, graceDistance, damageToHealth, damageToMorale, damageToMoraleOnMiss, enemyRageIncrease, enemyPressureIncrease, staminaCost, timeWhenAnimationDealsDamage, animationName
         fists = core.weaponData.pushWeapon( 1.0, 0.75, 10, 0.05, 0.01, 3.2, 2.9, 0.05, 0.5, "punch" )
     end )
+    
+    local hasCountedPolice = false
+    local startPoliceCount = 0
 
     scen:registerUpdateCallback( 
     function(delta) 
         scen.gamemode:update(delta) 
+
+        if not hasCountedPolice then
+            if scen.gamemode.gamestate.policeHandler then
+                for i=1, #( scen.gamemode.gamestate.policeHandler.createdSquads ) do
+                    startPoliceCount = startPoliceCount + #scen.gamemode.gamestate.policeHandler.createdSquads[i].members
+                end
+                hasCountedPolice = true
+            end
+        end
+
         if deserterGroup then
             core.system.squad.enableOutline({deserterGroup}, (vec4{"#09FF00FF",2.0}):get())
 
@@ -154,6 +174,40 @@ return function( scen )
     scen.gamemode:registerBeforeStateChange( function( stateName )
         if stateName == "End" then
             print("We have reached before creation of end game state")
+
+            local rioterCount = 0
+            local groupCount = core.system.groups.getNumberOfGroups()
+            for i=0, groupCount-1 do
+                local members = core.system.groups.getMembersInGroup(i)
+
+                if #members > 0 then
+                    local attrbComponent = members[1]:get(core.componentType.AttributeComponent)
+                    local utc = members[1]:get(core.componentType.UnitTypeComponent)
+                    if utc.unitType == core.UnitType.Rioter then
+                        print("MEMBERS: " .. #members)
+                        rioterCount = rioterCount + #members
+                    end
+                end
+            end
+            rioterCount = rioterCount
+                - core.system.groups.getGroupMemberCount( deserterGroup )
+                - core.system.groups.getGroupMemberCount( rebelGroup )
+
+            print("DESERTERS: " .. core.system.groups.getGroupMemberCount( deserterGroup ) )
+
+            local totalPolice = 0;
+            if scen.gamemode.gamestate.policeHandler then
+                for i=1, #( scen.gamemode.gamestate.policeHandler.createdSquads ) do
+                    totalPolice = totalPolice + #scen.gamemode.gamestate.policeHandler.createdSquads[i].members
+                end
+            end
+
+            Statistics.addToCategory( "Units", StatRow:new( { title="Police Units Killed:", 
+                                resultTitle="" .. (startPoliceCount-totalPolice) .. "/" .. startPoliceCount, maxResult=100, 
+                                achievedResult=(totalPolice/startPoliceCount) * 100 } ) )
+            Statistics.addToCategory( "Units", StatRow:new( { title="Enemy Rioter Casualties:", 
+                                resultTitle="" .. (totalRioterCount-rioterCount) .. "/" .. totalRioterCount, maxResult=0, 
+                                achievedResult=0 } ) )
 
             if T.objBeatdown() then
                 obj2.state = "success"
@@ -368,6 +422,50 @@ return function( scen )
         local newD = d * vec     
         
         ent:set( core.componentType.RotationComponent, { rotation = {newD:get()}})
+    end
+
+    local blueLightRotation1 = math.pi
+    local blueLightRotation2 = math.pi
+    local redLightRotation1 = 0
+    local redLightRotation2 = 0
+    
+    local rotSpeed = 3.33
+
+    T.updateRedLightFront = function ( entity, delta )
+        redLightRotation1 = redLightRotation1 + rotSpeed * delta
+        if redLightRotation1 > math.pi * 2 then
+            redLightRotation1 = 0.0
+        end
+        local rot = { math.cos(redLightRotation1), 0, math.sin(redLightRotation1)}
+        entity:set( core.componentType.RotationComponent, {rotation=rot} )
+    end
+    
+    T.updateRedLightBack = function ( entity, delta )
+        redLightRotation2 = redLightRotation2 + rotSpeed * delta
+        if redLightRotation2 > math.pi * 2 then
+            redLightRotation2 = 0.0
+        end
+        local rot = { math.cos(redLightRotation2), 0, math.sin(redLightRotation2)}
+        entity:set( core.componentType.RotationComponent, {rotation=rot} )
+    end
+    
+    T.updateBlueLightFront = function ( entity, delta )
+        blueLightRotation1 = blueLightRotation1 + rotSpeed * delta
+        if blueLightRotation1 > math.pi * 2 then
+            blueLightRotation1 = 0.0
+        end
+        local rot = { math.cos(blueLightRotation1), 0, math.sin(blueLightRotation1)}
+        entity:set( core.componentType.RotationComponent, {rotation=rot} )
+    end
+
+    T.updateBlueLightBack = function ( entity, delta )
+        blueLightRotation2 = blueLightRotation2 + rotSpeed * delta
+        
+        if blueLightRotation2 > math.pi * 2 then
+            blueLightRotation2 = 0.0
+        end
+        local rot = { math.cos(blueLightRotation2), 0, math.sin(blueLightRotation2)}
+        entity:set( core.componentType.RotationComponent, {rotation=rot} )
     end
 
     return T

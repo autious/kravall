@@ -7,8 +7,6 @@ function ToolTipHandler:update()
 	if self.toolTip ~= nil then
 		self.toolTip:update()
 	end
-	
-	
 end
 
 function ToolTipHandler:mouseMove(newX, newY) 
