@@ -127,7 +127,7 @@ function SquadMenuGUI:new(o)
 													xoffset=xoffset-1,
 													yoffset=330,
 													matOpen="assets/texture/ui/halt-unselected_00.material",
-													matSelected="assets/texture/ui/halt-selected_00.material",
+													matSelected="assets/texture/ui/halt-unselected_00.material",
 													matHoverOpen="assets/texture/ui/halt-hover_00.material",
 													matHoverSelected="assets/texture/ui/halt-extra_00.material",
 													onHover=onHoverAbility,
