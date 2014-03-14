@@ -12,8 +12,9 @@ function UnitStatGUI:new(o)
     
     --o.lifeGUI = GUI:new({ anchor="South", x=0,y=0, width=40, height=70})
     --o.lifeGUI:addPlacementHandler( require "gui/placement/SimplePlacer" )
-
-    local wrapperGUI = GUI:new{width=2,height=2, yoffset=-10, anchor="SouthWest"}
+	
+	local xOff = 12
+    local wrapperGUI = GUI:new{ width=2, height=2, yoffset=-10, anchor="SouthWest" }
 
     --o.labelUnitName =  TextLabel:new( { label="Police Unit", yoffset=0, font="assets/font/toolTip.font" })
     --o.labelUnitHealth = TextLabel:new( { label="Health: NaN", yoffset=18, font="assets/font/toolTip.font"  } )
@@ -22,11 +23,11 @@ function UnitStatGUI:new(o)
     --o.labelUnitStance = TextLabel:new( { label="Stance: NaN", yoffset=72, font="assets/font/toolTip.font" } )
     --o.labelUnitFormation = TextLabel:new( { label="Formation: NaN", yoffset=90, font="assets/font/toolTip.font"  } )
 	
-	o.labelUnitHealth = TextLabel:new( { label="Health: NaN", xoffset=5, yoffset=12, font="assets/font/toolTip.font"  } )
-    o.labelUnitMorale = TextLabel:new( { label="Morale: NaN", xoffset=5, yoffset=30, font="assets/font/toolTip.font"  } )
-    o.labelUnitStamina = TextLabel:new( { label="Stamina: NaN", xoffset=5, yoffset=30, font="assets/font/toolTip.font"  } )
-    o.labelUnitStance = TextLabel:new( { label="Stance: NaN", xoffset=5, yoffset=48, font="assets/font/toolTip.font" } )
-    o.labelUnitFormation = TextLabel:new( { label="Formation: NaN", xoffset=5, yoffset=66, font="assets/font/toolTip.font"  } )
+	o.labelUnitHealth = TextLabel:new( { label="Health: NaN", xoffset=xOff, yoffset=12, font="assets/font/toolTip.font"  } )
+    o.labelUnitMorale = TextLabel:new( { label="Morale: NaN", xoffset=xOff, yoffset=30, font="assets/font/toolTip.font"  } )
+    o.labelUnitStamina = TextLabel:new( { label="Stamina: NaN", xoffset=xOff, yoffset=30, font="assets/font/toolTip.font"  } )
+    o.labelUnitStance = TextLabel:new( { label="Stance: NaN", xoffset=xOff, yoffset=48, font="assets/font/toolTip.font" } )
+    o.labelUnitFormation = TextLabel:new( { label="Formation: NaN", xoffset=xOff, yoffset=66, font="assets/font/toolTip.font"  } )
 	o.labelUnitMorale:setShow( false )
 
     --wrapperGUI:addComponent( o.labelUnitName )

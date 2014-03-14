@@ -196,10 +196,10 @@ function C:update( dt )
                     direction = direction + xzRight 
                 end
                 if keyboard.isKeyDown( key.Q ) then
-                    self.quatRotation = self.quatRotation:rotate( -cameraRotationSpeed*delta , vec3.new(0, 1, 0) )
+                    self.quatRotation = self.quatRotation:rotate( - 10 * core.config.cameraRotationSpeed*delta , vec3.new(0, 1, 0) )
                 end
                 if keyboard.isKeyDown( key.E ) then
-                    self.quatRotation = self.quatRotation:rotate( cameraRotationSpeed*delta , vec3.new(0, 1, 0) )
+                    self.quatRotation = self.quatRotation:rotate(10* core.config.cameraRotationSpeed*delta, vec3.new(0, 1, 0) )
                 end
                 if keyboard.isKeyDown( key.Space ) then
                     direction = direction + vec3.new(0,1,0)
