@@ -24,6 +24,7 @@ function SettingsMenu:new(o,menuState)
                                     matHover = "assets/texture/ui/back-button-hover.material",
                                     anchor="SouthWest",xoffset=0,yoffset=0,
                                     onClick = function() 
+                                        core.saveHomeConfiguration() 
                                         menuState.goMain()
                                     end}))
         
@@ -59,12 +60,24 @@ function SettingsMenu:new(o,menuState)
 	o.gui:addComponent( TextLabel:new{xoffset=200, yoffset= 180,label="Gamma", anchor="NorthWest"} )
 	
 	local gammaSlider = Slider:new{
-	matReleased = "assets/texture/ui/slider-knob-release_01.material",
-	matPressed = "assets/texture/ui/slider-knob-press_01.material",
-	matHover = "assets/texture/ui/slider-knob-hover_01.material",
-	matBackground = "assets/texture/ui/slider-background_01.material",
-	a = (core.gfx.getGamma() - 0.2) / 4 , onChange = function( self, value) core.gfx.setGamma(0.2 + value * 4) end, anchor = "NorthWest", xoffset=200, yoffset= 180}
+	    a = (core.gfx.getGamma() - 0.2) / 4 , 
+        onChange = function( self, value) core.gfx.setGamma(0.2 + value * 4); core.config.gamma = core.gfx.getGamma() end, 
+        anchor = "NorthWest", 
+        xoffset=200, 
+        yoffset= 180
+    }
 	o.gui:addComponent(gammaSlider)
+
+	o.gui:addComponent( TextLabel:new{xoffset=200, yoffset= 180,label="Camera Force", anchor="NorthWest"} )
+	local cameraForceSlider = Slider:new{
+	    a = (core.config.cameraForce - core.config.minCameraForce)/core.config.maxCameraForce, 
+        onChange = function( self, value) core.config.cameraForce = value * (core.config.maxCameraForce-core.config.minCameraForce) + core.config.minCameraForce end, 
+        anchor = "NorthWest", 
+        xoffset=200, 
+        yoffset= 180
+    }
+    o.gui:addComponent(cameraForceSlider)
+
     o.gui:addPlacementHandler( AnchorPlacer )
 
     return o

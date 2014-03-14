@@ -111,6 +111,7 @@ GLFWwindow* init( int argc, char** argv )
 
 	if (GFX::Init(initScreenWidth,initScreenHeight) == GFX_FAIL)
 		return nullptr;
+    GFX::Settings::SetGamma( Core::world.m_config.GetDouble( "gamma", 2.2 ) );
 
     Core::world.m_contentManager.Load<Core::TTFLoader>(Core::world.m_config.GetString("consoleFont", "assets/font/ConsoleFont.font").c_str(), [](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
             {
@@ -174,8 +175,6 @@ void run( GLFWwindow * window )
     const int FPS_COUNTERS_SIZE = 20;
     double fpsCounters[FPS_COUNTERS_SIZE];
     int fpsCounterIndex = 0;
-
-    
 
 	while (!glfwWindowShouldClose(window) && killProgram == false)
 	{

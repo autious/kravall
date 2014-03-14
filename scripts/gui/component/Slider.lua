@@ -11,10 +11,10 @@ local Slider =
                     width =0,
                     height = 0,
                     show = true,
-                    matReleased = "assets/texture/ui/slider-knob-release_00.material",
-                    matPressed = "assets/texture/ui/slider-knob-press_00.material",
-                    matHover = "assets/texture/ui/slider-knob-hover_00.material",
-                    matBackground = "assets/texture/ui/slider-background_00.material",
+                    matReleased = "assets/texture/ui/slider-knob-release_01.material",
+                    matPressed = "assets/texture/ui/slider-knob-press_01.material",
+                    matHover = "assets/texture/ui/slider-knob-hover_01.material",
+                    matBackground = "assets/texture/ui/slider-background_01.material",
                     onChange = function ( self, value ) end
                 
                 }
