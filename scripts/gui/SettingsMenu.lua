@@ -108,8 +108,9 @@ function SettingsMenu:new(o,menuState)
     local shadowMapSliderSteps = {
             {name="Off", map=256, cascade=0},
             {name="Low", map=256, cascade=1},
-            {name=core.config.defaultQualityName, map=core.config.defaultShadowResolution, cascade=core.config.defaultShadowQuality},
-            {name="High", map=1024, cascade=2},
+            {name="Normal", map=512, cascade=1},
+            {name="High", map=512, cascade=2},
+            {name="Highest", map=1024, cascade=2},
             {name="Stefan",map=2048, cascade=2},
     }
 
