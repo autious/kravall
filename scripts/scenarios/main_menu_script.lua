@@ -196,8 +196,23 @@ return function( scen )
 	
 	end
 	
+	local videoTick = 0
 	T.videoBlinkLight = function ( entity, delta )
-	
+		videoTick = videoTick + delta
+		math.randomseed(videoTick)
+		local flicker = math.random()*(0.5+0.5*math.sin(2*math.sin(videoTick)))
+		if  flicker > 0.95 then
+			flicker = 0
+		elseif  flicker > 0.9 then
+			flicker = 0.1
+		else
+			flicker = 1
+		end
+		local baseIntensity = 1
+		local lc;
+		lc = entity:get(core.componentType.LightComponent)
+		lc.intensity = baseIntensity * flicker;
+		entity:set(core.componentType.LightComponent, lc)
 	end
 	
 	T.arrowBlinkSign = function ( entity, delta )
