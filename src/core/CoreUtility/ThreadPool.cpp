@@ -66,7 +66,7 @@ void Core::ThreadPool::Wait()
 	while( m_nrJobsInProgress != 0 && m_tasks.size() != 0 )
 	{
 		std::unique_lock<std::mutex> lock( m_waitMutex );
-		m_waitCondition.wait_for( lock, std::chrono::nanoseconds(10) );
+		m_waitCondition.wait_for( lock, std::chrono::microseconds(1) );
 	}
 }
 

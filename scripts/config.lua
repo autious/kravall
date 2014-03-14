@@ -41,7 +41,7 @@ consoleOutputLevel = "warning", -- debug, warning, error, fatal
 stickySelection = false,
 doubleClickDelay = 0.2,
 boxSelectionGraceDistance = 0.5,
-numberOfSystemCoresToUse = 1,
+numberOfSystemCoresToUse = 4,
 
 blockingOfNavMesh_Checktimer = 5,
 blockingOfNavMesh_StuckDistance = 3,
