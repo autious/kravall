@@ -192,6 +192,37 @@ return function( scen )
 	--		}, true)
 	end
 	
+	
+	T.initVideoBlinkLight = function ( entity, delta )
+	
+	end
+	
+	T.initArrowBlinkLight = function ( entity, delta )
+	
+	end
+	
+	
+	
+	T.videoBlinkSign = function ( entity, delta )
+	
+	end
+	
+	T.videoBlinkLight = function ( entity, delta )
+	
+	end
+	
+	T.arrowBlinkSign = function ( entity, delta )
+	
+	end
+	
+	T.arrowBlinkLight = function ( entity, delta )
+	
+	end
+	
+	
+	
+	
+	
 	local HCtval = 0.0
 	T.updateHovercraft = function( entity, delta )
 		
@@ -232,7 +263,7 @@ return function( scen )
 	local grp
     
    T.spawn = function(e)
-		grp = T.createDeserter( e, 100,2 )
+		grp = T.createDeserter( e, 300,2 )
    end
     
 	T.registerStart = function( entity )
