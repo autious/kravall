@@ -193,6 +193,53 @@ return function( scen )
 	end
 	
 	
+	
+	local blueLightRotation1 = math.pi
+	local blueLightRotation2 = math.pi
+	local redLightRotation1 = 0
+	local redLightRotation2 = 0
+	
+	local rotSpeed = 10.0
+	
+	T.updateRedLightFront = function ( entity, delta )
+		redLightRotation1 = redLightRotation1 + rotSpeed * delta
+		if redLightRotation1 > math.pi * 2 then
+			redLightRotation1 = 0.0
+		end
+		local rot = { math.cos(redLightRotation1), 0, math.sin(redLightRotation1)}
+		entity:set( core.componentType.RotationComponent, {rotation=rot} )
+	end
+	
+	T.updateRedLightBack = function ( entity, delta )
+		redLightRotation2 = redLightRotation2 + rotSpeed * delta
+		if redLightRotation2 > math.pi * 2 then
+			redLightRotation2 = 0.0
+		end
+		local rot = { math.cos(redLightRotation2), 0, math.sin(redLightRotation2)}
+		entity:set( core.componentType.RotationComponent, {rotation=rot} )
+		print ("Hej")
+	end
+	
+	T.updateBlueLightFront = function ( entity, delta )
+		blueLightRotation1 = blueLightRotation1 + rotSpeed * delta
+		if blueLightRotation1 > math.pi * 2 then
+			blueLightRotation1 = 0.0
+		end
+		local rot = { math.cos(blueLightRotation1), 0, math.sin(blueLightRotation1)}
+		entity:set( core.componentType.RotationComponent, {rotation=rot} )
+	end
+
+	T.updateBlueLightBack = function ( entity, delta )
+		blueLightRotation2 = blueLightRotation2 + rotSpeed * delta
+		
+		if blueLightRotation2 > math.pi * 2 then
+			blueLightRotation2 = 0.0
+		end
+		local rot = { math.cos(blueLightRotation2), 0, math.sin(blueLightRotation2)}
+		entity:set( core.componentType.RotationComponent, {rotation=rot} )
+	end
+	
+	
 	local videoBaseIntensity = 1
 	T.initVideoBlinkLight = function ( entity, delta )
 		videoBaseIntensity = entity:get(core.componentType.LightComponent).intensity
