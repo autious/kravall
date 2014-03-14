@@ -722,37 +722,14 @@ function PoliceSquadHandler:CycleSquad()
     end
 
     if #(self.createdSquads) > 0 then
-        if #(self.selectedSquads) > 0 then
+        for i=1, #(self.createdSquads) do
+            if #(self.createdSquads[self.cycleSquad].members) > 0 then
+                break
+            end                
 
-            for i=1, #(self.createdSquads) do
-                local found = false
-
-                for _,v in pairs(self.selectedSquads) do
-                    if v == self.createdSquads[self.cycleSquad].groupId or #(self.createdSquads[self.cycleSquad].members) > 0 then
-                        found = true
-                    end 
-                end       
-
-                if found then
-                    self.cycleSquad = self.cycleSquad + 1
-
-                    if self.cycleSquad > #(self.createdSquads) then
-                        self.cycleSquad = 1
-                    end
-                else
-                    break
-                end
-            end
-        else
-            for i=1, #(self.createdSquads) do
-                if #(self.createdSquads[self.cycleSquad].members) > 0 then
-                    break
-                end                
-
-                self.cycleSquad = self.cycleSquad + 1
-                if self.cycleSquad > #(self.createdSquads) then
-                    self.cycleSquad = 1
-                end
+            self.cycleSquad = self.cycleSquad + 1
+            if self.cycleSquad > #(self.createdSquads) then
+                self.cycleSquad = 1
             end
         end
     end
@@ -903,9 +880,6 @@ function PoliceSquadHandler:update( delta )
     end
 
     if self.takeInput then
-        if keyboard.isKeyDownOnce(keyboard.key.X) then --or keyboard.isKeyDownOnce(core.config.playerBindings.attackAbility) then
-            self:CycleSquad()
-        end
 
         --Abilities
         if self.isAiming and self.rightClicked then
