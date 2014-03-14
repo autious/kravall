@@ -1,10 +1,8 @@
 core.config = {
-locallySavedVars = {"fullscreen","gamma","cameraForce","lut"}, --Variables to save into the users home folder.
+locallySavedVars = {"fullscreen","gamma","cameraForce","lut","cameraRotationSpeed"}, --Variables to save into the users home folder.
 lut = "identity",
+defaultGamma = 2.2,
 gamma = 2.2,
-cameraForce = 5.0,
-maxCameraForce = 14,
-minCameraForce = 0.1,
 showSplash = false,
 vsync = 0,
 windowResizable = true,
@@ -13,6 +11,7 @@ windowResizable = true,
 initScreenWidth = 1280,
 initScreenHeight = 720,
 fullscreen = false,
+defaultFullscreen = false,
 shadowQuality = 1, -- 0: off, 1: 2 cascade, 2: 4 cascade
 shadowResolution = 512, -- min 128, max 2048
 mipmapQuality = 2, -- 0: no mipmap, 1: mipmap, 2: anisotropic filtering (max supported)
@@ -69,5 +68,12 @@ playerBindings =
 	moodHighlight = core.input.keyboard.key["M"], 
 },
 cameraRotationSpeed = 0.4,
+defaultCameraRotationSpeed = 0.4, -- should be same as rotation speed.
+maxCameraRotationSpeed = 1.0,
+minCameraRotationSpeed = 0.05,
+cameraForce = 5.0,
+defaultCameraForce = 5.0, --should be same as camera force.
+maxCameraForce = 14,
+minCameraForce = 0.1,
 }
 
