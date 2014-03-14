@@ -1,5 +1,6 @@
 core.config = {
-locallySavedVars = {"fullscreen","gamma","cameraForce"}, --Variables to save into the users home folder.
+locallySavedVars = {"fullscreen","gamma","cameraForce","lut"}, --Variables to save into the users home folder.
+lut = "identity",
 gamma = 2.2,
 cameraForce = 5.0,
 maxCameraForce = 14,

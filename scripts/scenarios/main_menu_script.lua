@@ -283,17 +283,9 @@ return function( scen )
 		gc = entity:get(core.componentType.GraphicsComponent)
 		
 		if flicker == 1 then
-			asdf = core.contentmanager.load(core.loaders.MaterialLoader, "assets/texture/static/props/neon_signs.material", 
-			function(handle)
-				gc.material = handle
-			end,
-			false)
+            gc.material = signOnMaterial
 		else
-			asdf = core.contentmanager.load(core.loaders.MaterialLoader, "assets/texture/static/props/neon_signs_broken.material", 
-			function(handle)
-				gc.material = handle
-			end,
-			false)
+            gc.material = signOffMaterial
 		end
 		
 		entity:set(core.componentType.GraphicsComponent, gc)
