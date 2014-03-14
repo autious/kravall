@@ -27,6 +27,6 @@ void main()
 
     float depth = FragmentIn.Position.z / FragmentIn.Position.w;
     float sampleDepth = texture2D(gDepthBuffer, gl_FragCoord.xy / depthBufferSize ).w;
-    diffuseRT.xyz = min(vec3(1.0f, 1.0f, 1.0f), pow(diffuse.xyz, vec3(gGamma))) * diffuse.a;
-    diffuseRT.a = diffuse.a;
+    diffuseRT.xyz = min(vec3(1.0f, 1.0f, 1.0f), pow(diffuse.xyz, vec3(gGamma))) * (min(1.5f, (FragmentIn.life-0.15f) ) / 1.5f) * diffuse.a;
+    diffuseRT.a = (min(1.5f, (FragmentIn.life-0.15f) ) / 1.5f) * diffuse.a;
 }
