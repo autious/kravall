@@ -84,39 +84,36 @@ function Statistics.clear()
 	Statistics.categories = {}
 end
 
-function Statistics.getAllAsSubGUI( xoffset, yoffset )
+function Statistics.getAllAsSubGUI( xoffset, yoffset )	
 	subGUI = GUI:new( {
-							width=Statistics.guiWidth, xoffset=xOffset, yoffset=yOffset
+							width=Statistics.guiWidth, xoffset=xOffset, yoffset=yoffset
 					} )
-	local currGUI = Statistics.getObjectivesAsSubGUI( xoffset, yoffset )
+	local offsetY = 0
+	local currGUI = Statistics.getObjectivesAsSubGUI( xoffset, offsetY )
 	
 	print( "Objectives gui height: " .. currGUI.height )
 	subGUI:addComponent( currGUI )
-	yoffset = yoffset + currGUI.height
+	offsetY = currGUI.height
 	
 	if #Statistics.listOrder == 0 then	
 		for i,v in pairs( Statistics.categories ) do
 			if i ~= "objectives" then
-				yoffset = yoffset + Statistics.newLineY
-				
-				currGUI = Statistics.getCategoryAsSubGUI( i, xoffset, yoffset )
+				currGUI = Statistics.getCategoryAsSubGUI( i, xoffset, offsetY )
 				subGUI:addComponent( currGUI )
 				print( i .. " gui height: " .. currGUI.height )
-				yoffset = yoffset + currGUI.height
+				offsetY = offsetY + currGUI.height + Statistics.newLineY
 			end
 		end
 	else
 		for i,v in pairs( Statistics.listOrder ) do
 			if v ~= "objectives" then
-				yoffset = yoffset + Statistics.newLineY
-				
-				currGUI = Statistics.getCategoryAsSubGUI( v, xoffset, yoffset )
+				currGUI = Statistics.getCategoryAsSubGUI( v, xoffset, offsetY )
 				subGUI:addComponent( currGUI )
-				yoffset = yoffset + currGUI.height
+				offsetY = offsetY + currGUI.height + Statistics.newLineY
 			end
 		end
 	end
-	subGUI.height = yoffset
+	subGUI.height = offsetY - yoffset
 	subGUI:addPlacementHandler( SimplePlacer )
 	
 	return subGUI

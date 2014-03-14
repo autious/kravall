@@ -38,7 +38,7 @@ function EndScreen:new(o)
 	o.inBoxGUI:addComponent( TextLabel:new( { label="Rank: " .. Statistics.rank, xoffset=offsetX, yoffset=0 } ) )
 	offsetY = offsetY + Statistics.newLineY 
 	
-	--offsetY = offsetY + Statistics.newLineY
+	offsetY = offsetY + Statistics.newLineY
 	
 	Statistics.guiWidth = o.inBoxGUI.width - offsetX * 2
 	
@@ -64,26 +64,26 @@ function EndScreen:new(o)
 	offsetY = offsetY + subGUI.height
 	print( "All subGUI height: " .. subGUI.height .. ", new offsetY: " .. offsetY )
 	
-	if o.won then
-		o.inBoxGUI:addComponent( TextLabel:new( { label="Game is over, you won! :D", xoffset=offsetX, yoffset=offsetY } ) )
-	else
-		o.inBoxGUI:addComponent( TextLabel:new( { label="Game is over, you lost. Awwww :(", xoffset=offsetX, yoffset=offsetY } ) )
-	end
+	--if o.won then
+	--	o.inBoxGUI:addComponent( TextLabel:new( { label="Game is over, you won! :D", xoffset=offsetX, yoffset=offsetY } ) )
+	--else
+	--	o.inBoxGUI:addComponent( TextLabel:new( { label="Game is over, you lost. Awwww :(", xoffset=offsetX, yoffset=offsetY } ) )
+	--end
 	
 	-- GUI background, buttons and title label
 	o.inBoxGUI:addPlacementHandler( SimplePlacer )
 	
 	o.screenGUI:addComponent( o.inBoxGUI )
 	
-	local label = TextLabel:new( { label="GAME SUMMARY", yoffset=18 } )
+	local label = TextLabel:new( { label="GAME SUMMARY", yoffset=8 } )
 	local dimX, dimY = label.text:getDim()
 	label.xoffset = ( o.screenGUI.width - dimX ) * 0.5
 	o.screenGUI:addComponent( label )
 	
 	o.screenGUI:addComponent( Button:new (
 										{ 
-											xoffset=20,
-											yoffset=429,
+											xoffset=35,
+											yoffset=624,
 											matReleased="assets/texture/ui/restart-button-release.material",
 											matPressed="assets/texture/ui/restart-button-press.material",
 											matHover="assets/texture/ui/restart-button-hover.material",
@@ -91,8 +91,8 @@ function EndScreen:new(o)
 										} ) )	
 	o.screenGUI:addComponent( Button:new (
 										{ 
-											xoffset=260,
-											yoffset=429,
+											xoffset=384,
+											yoffset=624,
 											matReleased="assets/texture/ui/menu-button-release.material",
 											matPressed="assets/texture/ui/menu-button-press.material",
 											matHover="assets/texture/ui/menu-button-hover.material",

@@ -3,8 +3,8 @@ local StatisticsRow =
 					{ 
 						title="Statistics title",
 						resultTitle="No Result",
-						maxResult=-1,
-						achievedResult=-1
+						maxResult=0,
+						achievedResult=0
 					}
 
 function StatisticsRow:new(o)
