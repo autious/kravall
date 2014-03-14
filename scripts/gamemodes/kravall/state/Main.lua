@@ -167,9 +167,7 @@ function Main:update(delta)
 
     self.gui:update(delta)
 
-    if self.overviewHandler.inOverview == false then
-        self.policeHandler:update(delta)
-    end
+    self.policeHandler:update(delta)
    
     self.overviewHandler:update(delta)
     self.moveMarker:update( delta )
@@ -178,6 +176,7 @@ end
 
 function Main:enterOverview()
     self.camera.inOverview = true
+    self.policeHandler.takeInput = false
     self.cameraPosition = self.camera.position
     self.cameraRotation = self.camera.quatRotation
     self.cameraBackward = core.camera.gameCamera:getForward() * (-1)
@@ -187,6 +186,7 @@ end
 
 function Main:exitOverview(target)
     self.camera.inOverview = false
+    self.policeHandler.takeInput = true
     local camPos = {self.cameraPosition:get()}
     local alpha = math.acos(core.glm.vec3.dot(self.cameraBackward, core.glm.vec3.new(0, 1, 0)))
     local angle = (math.pi/2) - alpha

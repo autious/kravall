@@ -69,7 +69,7 @@ void Core::PoliceGoalSystem::Update( float delta )
 	{
 		UnitTypeComponent* utc = WGETC<UnitTypeComponent>(*it);
 		Core::AttributeComponent* attribc = WGETC<Core::AttributeComponent>(*it);
-		if(( utc->type == Core::UnitType::Police || utc->type == Core::UnitType::Rioter) && attribc )
+		if(( utc->type == Core::UnitType::Police || utc->type == Core::UnitType::Rioter) && attribc == nullptr )
 			entityList[ head++ ] = *it;
 	}
 
@@ -83,7 +83,7 @@ void Core::PoliceGoalSystem::Update( float delta )
 		if( endIndex > head )
 			endIndex = head;
 		if( startIndex > head )
-			startIndex = head;
+			break;
 
 		int memoryIndex = i;
 
@@ -95,6 +95,13 @@ void Core::PoliceGoalSystem::Update( float delta )
 
 				UnitTypeComponent* utc = WGETC<UnitTypeComponent>(ent);
 				Core::AttributeComponent* attribc = WGETC<Core::AttributeComponent>(ent);
+				if( attribc == nullptr || utc == nullptr )
+				{
+					std::cout << "Fatal error in policeGoalSystem, ent " << ent << " has no attributeComponemnt. Start index is " << startIndex << ", endIndex is " << endIndex << std::endl;
+					LOG_FATAL << "Fatal error in policeGoalSystem, ent " << ent << " has no attributeComponemnt. Start index is " << startIndex << ", endIndex is " << endIndex << std::endl;
+					continue;
+				}
+
 				int groupId = utc->type == UnitType::Police ? attribc->police.squadID : attribc->rioter.groupID;
 				if( groupId < 0 )
 					continue;
