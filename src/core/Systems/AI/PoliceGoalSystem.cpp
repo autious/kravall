@@ -14,7 +14,7 @@
 
 #define POLICE_GOAL_ARRIVAL_THRESHOLD 0.2f
 #define POLICE_CLOSE_GOAL_WALK_DISTANCE 1.8f
-#define EDGE_THRESHOLD 0.35f
+#define EDGE_THRESHOLD 0.75f
 
 Core::PoliceGoalSystem::PoliceGoalSystem()
 	: BaseSystem( EntityHandler::GenerateAspect< WorldPositionComponent, MovementComponent, 
@@ -25,7 +25,7 @@ Core::PoliceGoalSystem::PoliceGoalSystem()
 
 //#define DRAW_GOAL_LINES
 //#define DRAW_DIRECTION_LINES
-#define DRAW_NEXT_WAYPOINT
+//#define DRAW_NEXT_WAYPOINT
 
 #ifdef DRAW_GOAL_LINES
 #define DEBUG_DRAW_GOAL( x ) x
@@ -135,7 +135,7 @@ void Core::PoliceGoalSystem::Update( float delta )
 						glm::vec3 direction = glm::normalize( target - position );
 						MovementComponent::SetDirection( mvmc, direction.x, 0.0f, direction.z );
 
-						DEBUG_DRAW_WAYPOINT_LINE( GFX::Debug::DrawLine( position, position + direction * 2.0f, GFXColor( 0, 0, 1, 1 ), false ) );
+						DEBUG_DRAW_WAYPOINT_LINE( GFX::Debug::DrawLine( position, target, GFXColor( 0, 0, 1, 1 ), false ) );
 					}
 					else
 					{
@@ -186,7 +186,7 @@ void Core::PoliceGoalSystem::Update( float delta )
 					glm::vec3 flowfieldDirection = glm::normalize( targetPosition - position );
 					MovementComponent::SetDirection( mvmc, flowfieldDirection.x, 0, flowfieldDirection.z );
 
-					DEBUG_DRAW_DIRECTION( GFX::Debug::DrawLine( position, position + flowfieldDirection * 2.0f, GFXColor( 1, 1, 0, 1 ), false ) );
+					DEBUG_DRAW_DIRECTION( GFX::Debug::DrawLine( position, flowfieldDirection * 2.0f, GFXColor( 1, 1, 0, 1 ), false ) );
 				}
 
 				if( !move )
