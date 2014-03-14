@@ -192,6 +192,17 @@ return function( scen )
 	--		}, true)
 	end
 	
+	
+	T.initVideoBlinkLight = function ( entity, delta )
+	
+	end
+	
+	T.initArrowBlinkLight = function ( entity, delta )
+	
+	end
+	
+	
+	
 	T.videoBlinkSign = function ( entity, delta )
 	
 	end
