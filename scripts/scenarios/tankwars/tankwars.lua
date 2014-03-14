@@ -240,6 +240,41 @@ for i=0,n do
 		)
 	end
 end
+
+
+local nnn = 30
+for i=0,nnn do
+	for j=0,nnn do
+		
+		local tmpRot = math.random()
+		scen:loadAssembly( 
+		{
+			{
+				type = core.componentType.WorldPositionComponent,
+				data = { position = { (i - nnn / 2) * 15 + math.random() * 10, 0, (j - nnn / 2) * 15 + math.random() * 10} }
+			},
+			{
+				type = core.componentType.GraphicsComponent,
+				data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
+				load = { 
+							mesh = { core.loaders.GnomeLoader, "assets/model/tankwars/spruce_00.bgnome", false },
+							material = { core.loaders.MaterialLoader, "assets/texture/tankwars/tree/spruce_00.material", false }
+					   }
+			},
+			{
+				type = core.componentType.ScaleComponent,
+				data = { scale = 0.5 }
+			},
+			{
+				type = core.componentType.RotationComponent,
+				data = { rotation = { 0, math.sin(tmpRot), 0, math.cos(tmpRot) } }
+			}
+		}
+		)
+	end
+end
+
+
 for kk=0,10 do
 scen:loadAssembly( 
 {
