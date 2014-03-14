@@ -203,8 +203,32 @@ return function( scen )
 		arrowBaseIntensity = entity:get(core.componentType.LightComponent).intensity
 	end
 	
-	local asdf
+	local signOn
+    local signOff
+
+    local signOnMaterial
+    local signOffMaterial
+
 	
+    scen:registerInitCallback( function()
+        signOn = core.contentmanager.load(core.loaders.MaterialLoader, "assets/texture/static/props/neon_signs.material", 
+        function(handle)
+            signOnMaterial = handle
+        end,
+        false)
+
+        signOff = core.contentmanager.load(core.loaders.MaterialLoader, "assets/texture/static/props/neon_signs_broken.material", 
+        function(handle)
+            signOffMaterial = handle
+        end,
+        false)
+    end)
+
+    scen:registerDestroyCallback( function()
+        signOn:free()
+        signOff:free()
+    end)
+
 	local videoTick = 0
 	T.videoBlinkSign = function ( entity, delta )
 		videoTick = videoTick + delta
@@ -221,21 +245,12 @@ return function( scen )
 		gc = entity:get(core.componentType.GraphicsComponent)
 		
 		if flicker == 1 then
-			asdf = core.contentmanager.load(core.loaders.MaterialLoader, "assets/texture/static/props/neon_signs.material", 
-			function(handle)
-				gc.material = handle
-			end,
-			false)
+            gc.material = signOnMaterial
 		else
-			asdf = core.contentmanager.load(core.loaders.MaterialLoader, "assets/texture/static/props/neon_signs_broken.material", 
-			function(handle)
-				gc.material = handle
-			end,
-			false)
+            gc.material = signOffMaterial
 		end
 		
 		entity:set(core.componentType.GraphicsComponent, gc)
-		
 	end
 	
 	T.videoBlinkLight = function ( entity, delta )
@@ -268,17 +283,9 @@ return function( scen )
 		gc = entity:get(core.componentType.GraphicsComponent)
 		
 		if flicker == 1 then
-			asdf = core.contentmanager.load(core.loaders.MaterialLoader, "assets/texture/static/props/neon_signs.material", 
-			function(handle)
-				gc.material = handle
-			end,
-			false)
+            gc.material = signOnMaterial
 		else
-			asdf = core.contentmanager.load(core.loaders.MaterialLoader, "assets/texture/static/props/neon_signs_broken.material", 
-			function(handle)
-				gc.material = handle
-			end,
-			false)
+            gc.material = signOffMaterial
 		end
 		
 		entity:set(core.componentType.GraphicsComponent, gc)

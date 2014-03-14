@@ -39,6 +39,7 @@ function PrepInterface:new(o)
 	
 	o.msgBox = MsgBox:new( { 
 								buttons="YesNo",
+								title="Do you want to continue?",
 								message=[[You still have money left in your account.
 								
 								Are you sure you want to continue?]],

@@ -14,7 +14,7 @@
 
 #define POLICE_GOAL_ARRIVAL_THRESHOLD 0.2f
 #define POLICE_CLOSE_GOAL_WALK_DISTANCE 1.8f
-#define EDGE_THRESHOLD 0.35f
+#define EDGE_THRESHOLD 0.75f
 
 Core::PoliceGoalSystem::PoliceGoalSystem()
 	: BaseSystem( EntityHandler::GenerateAspect< WorldPositionComponent, MovementComponent, 
@@ -58,8 +58,8 @@ void Core::PoliceGoalSystem::Update( float delta )
 		return;
 
 	int head = 0;
-	Core::Entity* policeList = Core::world.m_frameHeap.NewPODArray<Core::Entity>( m_entities.size() );
-	if( policeList == nullptr )
+	Core::Entity* entityList = Core::world.m_frameHeap.NewPODArray<Core::Entity>( m_entities.size() );
+	if( entityList == nullptr )
 	{
 		LOG_FATAL << "not enough memory for police goal system!" << std::endl;
 		return;
@@ -68,9 +68,9 @@ void Core::PoliceGoalSystem::Update( float delta )
 	for( std::vector<Entity>::iterator it = m_entities.begin(); it != m_entities.end(); it++ )
 	{
 		UnitTypeComponent* utc = WGETC<UnitTypeComponent>(*it);
-		if( utc->type != Core::UnitType::Police )
-			continue;
-		policeList[ head++ ] = *it;
+		Core::AttributeComponent* attribc = WGETC<Core::AttributeComponent>(*it);
+		if(( utc->type == Core::UnitType::Police || utc->type == Core::UnitType::Rioter) && attribc == nullptr )
+			entityList[ head++ ] = *it;
 	}
 
 	int nrCores = Core::world.m_threadHandler.GetNrThreads();
@@ -83,23 +83,31 @@ void Core::PoliceGoalSystem::Update( float delta )
 		if( endIndex > head )
 			endIndex = head;
 		if( startIndex > head )
-			startIndex = head;
+			break;
 
 		int memoryIndex = i;
 
-		Core::world.m_threadHandler.Enqueue( [ policeList, instance, startIndex, endIndex, memoryIndex ]()
+		Core::world.m_threadHandler.Enqueue( [ entityList, instance, startIndex, endIndex, memoryIndex ]()
 		{
 			for( int i = startIndex; i < endIndex; i++ )
 			{		
-				Core::Entity ent = policeList[ i ];
+				Core::Entity ent = entityList[ i ];
 
+				UnitTypeComponent* utc = WGETC<UnitTypeComponent>(ent);
 				Core::AttributeComponent* attribc = WGETC<Core::AttributeComponent>(ent);
-				int groupId = attribc->police.squadID;
+				if( attribc == nullptr || utc == nullptr )
+				{
+					std::cout << "Fatal error in policeGoalSystem, ent " << ent << " has no attributeComponemnt. Start index is " << startIndex << ", endIndex is " << endIndex << std::endl;
+					LOG_FATAL << "Fatal error in policeGoalSystem, ent " << ent << " has no attributeComponemnt. Start index is " << startIndex << ", endIndex is " << endIndex << std::endl;
+					continue;
+				}
+
+				int groupId = utc->type == UnitType::Police ? attribc->police.squadID : attribc->rioter.groupID;
 				if( groupId < 0 )
 					continue;
-		
+
 				Core::MovementComponent* mvmc = WGETC<Core::MovementComponent>(ent);
-				if( mvmc->NavMeshGoalNodeIndex < 0 )
+				if( mvmc->NavMeshGoalNodeIndex < 0 || mvmc->goal[0] == std::numeric_limits<float>::max() )
 					continue;
 
 				Core::WorldPositionComponent* wpc = WGETC<Core::WorldPositionComponent>(ent);
@@ -112,6 +120,16 @@ void Core::PoliceGoalSystem::Update( float delta )
 
 				DEBUG_DRAW_GOAL( GFX::Debug::DrawLine( position, target, GFXColor( 1, 1, 0, 1 ), false ) );
 
+				if( utc->type == Core::UnitType::Rioter )
+				{
+					if( attribc->stamina > 30.0f )
+						mvmc->SetMovementState( Core::MovementState::Movement_Sprinting, Core::MovementStatePriority::MovementState_RioterGoalSystemPriority );
+
+					glm::vec3 direction = glm::normalize( target - position );
+					MovementComponent::SetDirection( mvmc, direction.x, 0.0f, direction.z );
+				}
+
+
 				if( !PathFinder::CheckLineVsNavMesh( position, target, 3.0f, ffc->node ) ) 
 				{
 					glm::vec2 deltaVector = glm::vec2(target.x, target.z ) - glm::vec2( wpc->position[0], wpc->position[2] );
@@ -123,6 +141,8 @@ void Core::PoliceGoalSystem::Update( float delta )
 						
 						glm::vec3 direction = glm::normalize( target - position );
 						MovementComponent::SetDirection( mvmc, direction.x, 0.0f, direction.z );
+
+						DEBUG_DRAW_WAYPOINT_LINE( GFX::Debug::DrawLine( position, target, GFXColor( 0, 0, 1, 1 ), false ) );
 					}
 					else
 					{
@@ -166,12 +186,14 @@ void Core::PoliceGoalSystem::Update( float delta )
 							// is inside edges...
 							targetPosition = path.point;
 						}
+
+						DEBUG_DRAW_WAYPOINT_LINE( GFX::Debug::DrawLine( position, targetPosition, GFXColor( 0, 1, 0, 1 ), false ) );
 					}
 
 					glm::vec3 flowfieldDirection = glm::normalize( targetPosition - position );
 					MovementComponent::SetDirection( mvmc, flowfieldDirection.x, 0, flowfieldDirection.z );
 
-					DEBUG_DRAW_DIRECTION( GFX::Debug::DrawLine( position, position + flowfieldDirection * 2.0f, GFXColor( 1, 1, 0, 1 ), false ) );
+					DEBUG_DRAW_DIRECTION( GFX::Debug::DrawLine( position, flowfieldDirection * 2.0f, GFXColor( 1, 1, 0, 1 ), false ) );
 				}
 
 				if( !move )

@@ -51,7 +51,18 @@ function SettingsMenu:new(o,menuState)
 	
 	local lutList = TextSelectList:new{
 	xoffset = 220, yoffset = 180, show = true, width = 200, height = 200, 
-	elements ={ {name = "Normal"},  {name = "Greyscale"}, {name= "Noir"}, {name = "Sepia"}, {name = "Darkness"}, {name = "Deuteranomaly"}, {name = "Inverted"}, {name = "Midnight"}, {name = "Candyland"}},
+	elements =
+    { 
+        {name = "Normal", data="identity"},  
+        {name = "Greyscale", data="blackandwhite"}, 
+        {name= "Noir", data="redtest"}, 
+        {name = "Sepia", data="sepia"}, 
+        {name = "Darkness", data="coolnamelut"}, 
+        {name = "Deuteranomaly", data="deuteranomaly"}, 
+        {name = "Inverted", data="invert"}, 
+        {name = "Midnight", data="midnight"}, 
+        {name = "Candyland", data="candyland"}
+    },
 	onSelect = nil,
 	anchor = "NorthWest"}
 	lutList.onSelect = function() SettingsMenu:changeLut(lutList.activeObject) end
@@ -84,6 +95,7 @@ function SettingsMenu:new(o,menuState)
 end
 
 function SettingsMenu:changeLut(o)
+    --[[
 	if o.name == "Noir" then
 		core.gfx.setLUT("redtest")
 	elseif o.name == "Inverted" then
@@ -103,6 +115,9 @@ function SettingsMenu:changeLut(o)
 	elseif o.name == "Candyland" then
 		core.gfx.setLUT("candyland")
 	end
+    ]]--
+    core.gfx.setLUT(o.data)
+    core.config.lut = o.data
 end
 
 function SettingsMenu:destroy()
