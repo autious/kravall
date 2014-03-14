@@ -4,6 +4,7 @@
 #include <tuple>
 #include <vector>
 #include <string>
+#include <mutex>
 
 #include <ContentManagement/AssetStructs/MaterialData.hpp>
 #include <ContentManagement/AssetStructs/TextureData.hpp>
@@ -47,10 +48,13 @@ namespace Core
 
         int AddUserOfTexture(const Core::TextureData* texture);
         int RemoveUserOfTexture(const Core::TextureData* texture);
+        void AddTextureToCache(const unsigned int textureHash, Core::TextureData* texture);
         bool GetTextureCacheStatus(const unsigned int textureHash, Core::TextureData* &texture);
 
         Core::MaterialVector m_materials;
         Core::TextureCacheVector m_textureCache;
+
+        std::mutex m_cacheMutex;
     };
 }
 

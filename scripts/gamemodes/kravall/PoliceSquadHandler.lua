@@ -841,7 +841,9 @@ function PoliceSquadHandler:update( delta )
 
     updateSquads()
 
-
+	if keyboard.isKeyDownOnce(keyboard.key.X) then --or keyboard.isKeyDownOnce(core.config.playerBindings.attackAbility) then
+        self:CycleSquad()
+	end
 
     --Abilities
     if self.isAiming and self.rightClicked then

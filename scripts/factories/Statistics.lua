@@ -18,22 +18,30 @@ local Statistics =
 					objIndent = 100
                 }
 
-function Statistics.addObjectives( rows )
-	Statistics.categories[ "objectives" ] = rows
-	print( "Adding objectives..." )
-	for i,v in pairs( Statistics.categories[ "objectives" ] ) do
-		print ( i .. ": " .. v.title )
-	end
+function Statistics.addObjective( objective )
+	table.insert( Statistics.categories[ "objectives" ], objective )
+end				
+				
+function Statistics.addObjectives( allObjectives )
+	Statistics.categories[ "objectives" ] = allObjectives
 end
 
-function Statistics.addCategory( name, rows )
-	Statistics.categories[ name ] = rows
+function Statistics.addToCategory( name, row )
+	if not Statistics.categories[ name ] then
+		Statistics.categories[ name ] = {}
+	end
+	
+	table.insert( Statistics.categories[ name ], row )
 end
 
 function Statistics.clear()
+	for i,v in pairs( Statistics.categories ) do
+		for j,w in pairs( v ) do
+			w:destroy()
+		end
+	end
+
 	Statistics.categories = {}
-	
-	Statistics.text:destroy()
 end
 
 function Statistics.getCategoryAsSubGUI( name )
