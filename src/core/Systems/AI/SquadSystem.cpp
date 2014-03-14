@@ -14,7 +14,7 @@
 
 
 
-#define DRAW_GOAL_FROM_SQUAD_SYSTEM
+//#define DRAW_GOAL_FROM_SQUAD_SYSTEM
 #ifdef DRAW_GOAL_FROM_SQUAD_SYSTEM
 #define DEBUG_DRAW_GOAL( willDo ) willDo
 #else
