@@ -340,6 +340,11 @@ namespace GFX
 			Renderer().SetGamma(gamma);
 		}
 
+		float GetGamma()
+		{
+			return Renderer().GetGamma();
+		}
+
 		unsigned int GetAnimationFramerate()
 		{
 			return Renderer().GetAnimationFramerate();

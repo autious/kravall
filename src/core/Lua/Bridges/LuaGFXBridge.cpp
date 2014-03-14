@@ -54,10 +54,23 @@ extern "C"
 		return 1;
 	}
 
+	static int LuaGetGamma(lua_State* L)
+	{
+		lua_pushnumber(L, GFX::Settings::GetGamma());
+		return 1;
+	}
+
 	static int LuaSetGamma(lua_State* L)
 	{
 		float gamma = luaL_checknumber(L, 1);
 		GFX::Settings::SetGamma(gamma);
+		return 1;
+	}
+
+	static int LuaSetLUT(lua_State* L)
+	{
+		std::string lut = luaL_checkstring(L, 1);
+		GFX::ColorSettings::SetLUT(lut.c_str());
 		return 1;
 	}
 
@@ -134,8 +147,10 @@ Core::LuaGFXBridge::LuaGFXBridge( lua_State * L )
         int gfxTable = lua_gettop( L );
 
 			luau_setfunction(L, "setGamma", LuaSetGamma);
+			luau_setfunction(L, "getGamma", LuaGetGamma);
 			luau_setfunction(L, "setExposure", LuaSetExposure);
 			luau_setfunction(L, "setWhitepoint", LuaSetWhitepoint);
+			luau_setfunction(L, "setLUT", LuaSetLUT);
 
             lua_pushstring( L, "objectTypes" );
             lua_newtable( L ); //objectTypes table

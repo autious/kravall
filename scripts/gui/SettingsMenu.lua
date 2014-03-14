@@ -44,9 +44,52 @@ function SettingsMenu:new(o,menuState)
 
     o.gui:addComponent( TextLabel:new{xoffset=200, yoffset= 125,label="Options", anchor="NorthWest"} )
     o.gui:addComponent( o.fullscreenGUI  )
+	
+	
+    o.gui:addComponent( TextLabel:new{xoffset=200, yoffset= 180,label="Color grading", anchor="NorthWest"} )
+	
+	local lutList = TextSelectList:new{
+	xoffset = 220, yoffset = 180, show = true, width = 200, height = 200, 
+	elements ={ {name = "Normal"},  {name = "Greyscale"}, {name= "Noir"}, {name = "Sepia"}, {name = "Darkness"}, {name = "Deuteranomaly"}, {name = "Inverted"}, {name = "Midnight"}, {name = "Candyland"}},
+	onSelect = nil,
+	anchor = "NorthWest"}
+	lutList.onSelect = function() SettingsMenu:changeLut(lutList.activeObject) end
+	o.gui:addComponent(lutList)
+	
+	o.gui:addComponent( TextLabel:new{xoffset=200, yoffset= 180,label="Gamma", anchor="NorthWest"} )
+	
+	local gammaSlider = Slider:new{
+	matReleased = "assets/texture/ui/slider-knob-release_01.material",
+	matPressed = "assets/texture/ui/slider-knob-press_01.material",
+	matHover = "assets/texture/ui/slider-knob-hover_01.material",
+	matBackground = "assets/texture/ui/slider-background_01.material",
+	a = (core.gfx.getGamma() - 0.2) / 4 , onChange = function( self, value) core.gfx.setGamma(0.2 + value * 4) end, anchor = "NorthWest", xoffset=200, yoffset= 180}
+	o.gui:addComponent(gammaSlider)
     o.gui:addPlacementHandler( AnchorPlacer )
 
     return o
+end
+
+function SettingsMenu:changeLut(o)
+	if o.name == "Noir" then
+		core.gfx.setLUT("redtest")
+	elseif o.name == "Inverted" then
+		core.gfx.setLUT("invert")
+	elseif o.name == "Normal" then
+		core.gfx.setLUT("identity")
+	elseif o.name == "Sepia" then
+		core.gfx.setLUT("sepia")
+	elseif o.name == "Greyscale" then
+		core.gfx.setLUT("blackandwhite")
+	elseif o.name == "Deuteranomaly" then
+		core.gfx.setLUT("deuteranomaly")
+	elseif o.name == "Darkness" then
+		core.gfx.setLUT("coolnamelut")
+	elseif o.name == "Midnight" then
+		core.gfx.setLUT("midnight")
+	elseif o.name == "Candyland" then
+		core.gfx.setLUT("candyland")
+	end
 end
 
 function SettingsMenu:destroy()

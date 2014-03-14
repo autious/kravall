@@ -49,8 +49,12 @@ return function( scen )
         obj2 = scen.gamemode:createObjective()
         obj2.title = "Optional: Beat down the rebel hideout"
         obj2.bonus = true
+
+        obj3 = scen.gamemode:createObjective()
+        obj3.title = "Optional: Don't let more than 5 deserters die"
+        obj3.bonus = true
         
-        Statistics.addObjectives( { obj1, obj2 } )
+        Statistics.addObjectives( { obj1, obj2, obj3 } )
 
         -- range, graceDistance, damageToHealth, damageToMorale, damageToMoraleOnMiss, enemyRageIncrease, enemyPressureIncrease, staminaCost, timeWhenAnimationDealsDamage, animationName
         fists = core.weaponData.pushWeapon( 1.0, 0.75, 10, 0.05, 0.01, 3.2, 2.9, 0.05, 0.5, "punch" )
@@ -69,12 +73,12 @@ return function( scen )
             end
         end
 
-        if rebelGroup then
-            rebelCount = core.system.groups.getGroupMemberCount( rebelGroup )
-            obj2.title = "Optional: Beat down the rebel hideout, " .. rebelCount .. " rebels remain"
-            if rebelCount < 5 then
-                obj2.state = "success"
-            end
+        if T.objBeatdown() then
+            obj2.state = "success"
+        end
+
+        if T.objCasualties() then
+            obj3.state = "fail"
         end
     end )
 
@@ -99,6 +103,36 @@ return function( scen )
 
     scen:registerDestroyCallback( function() scen.gamemode:destroy() end )
 
+    -- Rebel beatdown objective check
+    function T.objBeatdown()
+        if rebelGroup then
+            rebelCount = core.system.groups.getGroupMemberCount( rebelGroup )
+            obj2.title = "Optional: Beat down the rebel hideout, " .. rebelCount .. " rebels remain"
+            if rebelCount < 5 then
+                return true
+            else
+                return false
+            end
+        else
+            return false
+        end
+    end
+
+    -- Low casualties objective check
+    function T.objCasualties()
+        if deserterGroup then
+            deserterCount = core.system.groups.getGroupMemberCount( deserterGroup )
+            obj3.title = "Optional: Don't let more than 5 deserters die, current deaths: " .. 50 - deserterCount
+            if deserterCount < 45 then
+                return false
+            else
+                return true
+            end
+        else
+            return false
+        end
+    end
+
     --Function for adding more spawnpoints.
     function T.registerSpawn(ent)
         print( "Registering spawn point" )
@@ -116,6 +150,27 @@ return function( scen )
             return true
         end)
     end
+
+    scen.gamemode:registerBeforeStateChange( function( stateName )
+        if stateName == "End" then
+            print("We have reached before creation of end game state")
+
+            if T.objBeatdown() then
+                obj2.state = "success"
+            else
+                obj2.state = "fail"
+            end
+
+            if T.objCasualties() then
+                obj3.state = "success"
+            else
+                obj3.state = "fail"
+            end
+
+            return false -- return false to indicate that we have served our purpose and wish no longer to be called.
+        end
+        return true
+    end)
 
     function T.winOnRioterInside( ent )
         if core.system.area.getAreaRioterCount(ent,deserterGroup) > 0 then
@@ -220,7 +275,7 @@ return function( scen )
     end
     local spawnCounts = {
         {10,10},
-        {22,22},
+        {17,18},
     }
     for i = 1,3 do
         T["registerAg"..i.."Spawn"] = function(ent) 
