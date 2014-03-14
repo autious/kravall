@@ -35,40 +35,23 @@ function EndScreen:new(o)
 	o.screenGUI = GUI:new( { width=623, height=689, anchor="Center" } )
 	o.inBoxGUI = GUI:new( { width=563, height=563, xoffset=30, yoffset=45, anchor="North" } )
 	
-	o.inBoxGUI:addComponent( TextLabel:new( { label="Rank: " .. Statistics.rank, xoffset=offsetX, yoffset=0 } ) )
+	o.inBoxGUI:addComponent( TextLabel:new( { label="Rank: " .. Statistics.rank, xoffset=0, yoffset=0 } ) )
 	offsetY = offsetY + Statistics.newLineY 
 	
 	offsetY = offsetY + Statistics.newLineY
 	
-	Statistics.guiWidth = o.inBoxGUI.width - offsetX * 2
+	Statistics.guiWidth = o.inBoxGUI.width-- - offsetX * 2
 	
-	--local objGUI = Statistics.getObjectivesAsSubGUI( offsetX, offsetY )
-	--o.inBoxGUI:addComponent( objGUI )
-	--
-	--offsetY = offsetY + objGUI.height + Statistics.newLineY
-	--
-	--local subGUI = Statistics.getCategoryAsSubGUI( "Units", offsetX, offsetY )
-	--o.inBoxGUI:addComponent( subGUI )
-	--
-	--offsetY = offsetY + subGUI.height + Statistics.newLineY
-	--
-	--subGUI = Statistics.getCategoryAsSubGUI( "Other", offsetX, offsetY )
-	--o.inBoxGUI:addComponent( subGUI )
-	--
-	--offsetY = offsetY + subGUI.height + Statistics.newLineY
-	
-	print( "offsetY: " .. offsetY )
 	local subGUI = Statistics.getAllAsSubGUI( offsetX, offsetY )
 	o.inBoxGUI:addComponent( subGUI )
 	
-	offsetY = offsetY + subGUI.height
-	print( "All subGUI height: " .. subGUI.height .. ", new offsetY: " .. offsetY )
+	offsetY = offsetY + subGUI.height  + Statistics.newLineY
 	
-	--if o.won then
-	--	o.inBoxGUI:addComponent( TextLabel:new( { label="Game is over, you won! :D", xoffset=offsetX, yoffset=offsetY } ) )
-	--else
-	--	o.inBoxGUI:addComponent( TextLabel:new( { label="Game is over, you lost. Awwww :(", xoffset=offsetX, yoffset=offsetY } ) )
-	--end
+	if o.won then
+		o.inBoxGUI:addComponent( TextLabel:new( { label="Game is over, you won! :D", xoffset=offsetX, yoffset=offsetY } ) )
+	else
+		o.inBoxGUI:addComponent( TextLabel:new( { label="Game is over, you lost. Awwww :(", xoffset=offsetX, yoffset=offsetY } ) )
+	end
 	
 	-- GUI background, buttons and title label
 	o.inBoxGUI:addPlacementHandler( SimplePlacer )
@@ -99,7 +82,7 @@ function EndScreen:new(o)
 											onClick=function() openscenario( "main_menu" ) end
 										} ) )	
 	o.screenGUI:addComponent( Image:new( { mat="assets/texture/ui/end-game-screen.material" } ) )
-	
+
 	o.screenGUI:addPlacementHandler( SimplePlacer )
 	o.gui:addComponent( o.screenGUI )
 	o.gui:addPlacementHandler( AnchorPlacer )
