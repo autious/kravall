@@ -177,6 +177,7 @@ function Main:update(delta)
 end
 
 function Main:enterOverview()
+    self.camera.inOverview = true
     self.cameraPosition = self.camera.position
     self.cameraRotation = self.camera.quatRotation
     self.cameraBackward = core.camera.gameCamera:getForward() * (-1)
@@ -185,6 +186,7 @@ function Main:enterOverview()
 end
 
 function Main:exitOverview(target)
+    self.camera.inOverview = false
     local camPos = {self.cameraPosition:get()}
     local alpha = math.acos(core.glm.vec3.dot(self.cameraBackward, core.glm.vec3.new(0, 1, 0)))
     local angle = (math.pi/2) - alpha

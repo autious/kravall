@@ -1,5 +1,5 @@
 local entity = require "entities"
-local Statistics = require "factories/Statistics"
+local Statistics = require "statistics/Statistics"
 local vec4 = require( "utility" ).expandMixxedHexToVec4
 local module = require( "module" )
 

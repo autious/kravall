@@ -193,30 +193,117 @@ return function( scen )
 	end
 	
 	
+	local videoBaseIntensity = 1
 	T.initVideoBlinkLight = function ( entity, delta )
-	
+		videoBaseIntensity = entity:get(core.componentType.LightComponent).intensity
 	end
 	
+	local arrowBaseIntensity
 	T.initArrowBlinkLight = function ( entity, delta )
-	
+		arrowBaseIntensity = entity:get(core.componentType.LightComponent).intensity
 	end
 	
+	local signOn
+    local signOff
+
+    local signOnMaterial
+    local signOffMaterial
+
 	
-	
+    scen:registerInitCallback( function()
+        signOn = core.contentmanager.load(core.loaders.MaterialLoader, "assets/texture/static/props/neon_signs.material", 
+        function(handle)
+            signOnMaterial = handle
+        end,
+        false)
+
+        signOff = core.contentmanager.load(core.loaders.MaterialLoader, "assets/texture/static/props/neon_signs_broken.material", 
+        function(handle)
+            signOffMaterial = handle
+        end,
+        false)
+    end)
+
+    scen:registerDestroyCallback( function()
+        signOn:free()
+        signOff:free()
+    end)
+
+	local videoTick = 0
 	T.videoBlinkSign = function ( entity, delta )
-	
+		videoTick = videoTick + delta
+		math.randomseed(videoTick)
+		local flicker = math.random()*(0.5+0.5*math.sin(2*math.sin(videoTick)))
+		if  flicker > 0.95 then
+			flicker = 1
+		elseif  flicker > 0.9 then
+			flicker = 0.1
+		else
+			flicker = 0
+		end
+		local gc;
+		gc = entity:get(core.componentType.GraphicsComponent)
+		
+		if flicker == 1 then
+            gc.material = signOnMaterial
+		else
+            gc.material = signOffMaterial
+		end
+		
+		entity:set(core.componentType.GraphicsComponent, gc)
 	end
 	
 	T.videoBlinkLight = function ( entity, delta )
-	
+		math.randomseed(videoTick)
+		local flicker = math.random()*(0.5+0.5*math.sin(2*math.sin(videoTick)))
+		if  flicker > 0.95 then
+			flicker = 1
+		elseif  flicker > 0.9 then
+			flicker = 0.1
+		else
+			flicker = 0
+		end
+		local lc;
+		lc = entity:get(core.componentType.LightComponent)
+		lc.intensity = videoBaseIntensity * flicker;
+		entity:set(core.componentType.LightComponent, lc)
 	end
 	
+	local arrowTick = 0
 	T.arrowBlinkSign = function ( entity, delta )
-	
+		arrowTick = arrowTick + delta
+		math.randomseed(arrowTick)
+		local flicker = (0.5+0.5*math.sin(arrowTick*2))
+		if  flicker > 0.5 then
+			flicker = 0
+		else
+			flicker = 1
+		end
+		local gc;
+		gc = entity:get(core.componentType.GraphicsComponent)
+		
+		if flicker == 1 then
+            gc.material = signOnMaterial
+		else
+            gc.material = signOffMaterial
+		end
+		
+		entity:set(core.componentType.GraphicsComponent, gc)
 	end
 	
 	T.arrowBlinkLight = function ( entity, delta )
-	
+		math.randomseed(arrowTick)
+		local flicker = (0.5+0.5*math.sin(arrowTick*2))
+		if  flicker > 0.5 then
+			flicker = 0
+		else
+			flicker = 1
+		end
+		
+		local lc;
+		lc = entity:get(core.componentType.LightComponent)
+		lc.intensity = arrowBaseIntensity * flicker;
+		entity:set(core.componentType.LightComponent, lc)
 	end
 	
 	
@@ -283,10 +370,12 @@ return function( scen )
 			core.system.groups.setGroupGoal( grp, unpack( endPosition ) )
 		end
 		
+        local x,y,z = unpack(startPosition)
+        local newPosition = {x,y,(math.random(1,100)/100.0-0.5)*10+z}
 		local rioters = core.system.area.getAreaRioters( entity )
 		
 		for i,v in  pairs( rioters ) do
-			v:set( core.componentType.WorldPositionComponent, {position=startPosition} )
+			v:set( core.componentType.WorldPositionComponent, {position=newPosition} )
 			v:set( core.componentType.FlowfieldComponent, {node=-1} )
 		end
 	end
