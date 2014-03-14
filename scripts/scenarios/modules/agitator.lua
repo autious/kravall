@@ -67,7 +67,7 @@ return function( scen, T )
 
                     for _,v in pairs( rioters ) do
                         local alignmentComponent = v:get( core.componentType.AttributeComponent )
-                        print( alignmentComponent.groupID )
+                        --print( alignmentComponent.groupID )
                         if alignmentComponent.groupID == groupId then
                             scen.asm:destroyEntity( v )
                         end  
