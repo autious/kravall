@@ -70,7 +70,7 @@ function TutorialMenu:new(o, menuState)
 end
 
 function TutorialMenu:DestroyButtons(o)
-	if mainGameTutButtons.policeSpawnButton then
+if mainGameTutButtons.policeSpawnButton then
 		o.gui:removeComponent(mainGameTutButtons.policeSpawnButton)
 		o.gui:removeComponent(mainGameTutButtons.buyInstruct)
 		o.gui:removeComponent(mainGameTutButtons.hostileSpawn)
@@ -100,27 +100,48 @@ function TutorialMenu:DestroyButtons(o)
 	end
 
 	if mainGameTutButtons.moodsButton then
-		
-		o.gui:removeComponent(mainGameTutButtons.objectivesButton)
-		o.gui:removeComponent(mainGameTutButtons.selectingPoliceButton)
-		o.gui:removeComponent(mainGameTutButtons.formationsButton)
+		o.gui:removeComponent(mainGameTutButtons.tearGasButton)
 		o.gui:removeComponent(mainGameTutButtons.stancesButton)
 		o.gui:removeComponent(mainGameTutButtons.specialAbilitiesButton)
 		o.gui:removeComponent(mainGameTutButtons.moodsButton)
+		o.gui:removeComponent(mainGameTutButtons.overviewButton)
 
-		mainGameTutButtons.objectivesButton:destroy()
-		mainGameTutButtons.selectingPoliceButton:destroy()
-		mainGameTutButtons.formationsButton:destroy()
+		mainGameTutButtons.tearGasButton:destroy()
 		mainGameTutButtons.stancesButton:destroy()
 		mainGameTutButtons.specialAbilitiesButton:destroy()
 		mainGameTutButtons.moodsButton:destroy()
+		mainGameTutButtons.overviewButton:destroy()
 
-		mainGameTutButtons.objectivesButton = nil
-		mainGameTutButtons.selectingPoliceButton = nil
+		mainGameTutButtons.tearGasButton = nil
 		mainGameTutButtons.specialAbilitiesButton = nil
 		mainGameTutButtons.stancesButton = nil
-		mainGameTutButtons.escortPath = nil
 		mainGameTutButtons.moodsButton = nil
+		mainGameTutButtons.overviewButton = nil
+
+		o.gui:removeComponent(mainGameTutButtons.forward)
+		mainGameTutButtons.forward:destroy()
+		mainGameTutButtons.forward = nil
+
+		o.gui:removeComponent(mainGameTutButtons.back)
+		mainGameTutButtons.back:destroy()
+		mainGameTutButtons.back = nil
+	end
+
+	if mainGameTutButtons.selectingPoliceButton then
+		o.gui:removeComponent(mainGameTutButtons.cameraControlsButton)
+		o.gui:removeComponent(mainGameTutButtons.selectingPoliceButton)
+		o.gui:removeComponent(mainGameTutButtons.formationsButton)
+		o.gui:removeComponent(mainGameTutButtons.objectivesButton)
+
+		mainGameTutButtons.cameraControlsButton:destroy()
+		mainGameTutButtons.selectingPoliceButton:destroy()
+		mainGameTutButtons.formationsButton:destroy()
+		mainGameTutButtons.objectivesButton:destroy()
+
+		mainGameTutButtons.cameraControlsButton = nil
+		mainGameTutButtons.selectingPoliceButton = nil
+		mainGameTutButtons.formationsButton = nil
+		mainGameTutButtons.objectivesButton = nil
 
 		o.gui:removeComponent(mainGameTutButtons.forward)
 		mainGameTutButtons.forward:destroy()
@@ -207,7 +228,7 @@ function TutorialMenu:SetImage(id, o)
 		headline:setText([[Moods]])
 	elseif id == 11 then
 		tutImage = Image:new { ignoreConstrict=true, mat="assets/texture/tutorial/cameraTut.material" }
-		tBox:setText([[Moving the camera is done by using WASD or the arrow keys. To rotate the camera, either hold Q or E. Alternatively, press and hold the scroll button and move your mouse to rotate the camera. To zoom in or out, use the scroll wheel. To raise the camera, press space. To lower the camera, press CTRL.]])
+		tBox:setText([[Moving the camera is done by using WASD or the arrow keys. To rotate the camera, either hold Q or E. Alternatively, press and hold the scroll button and move your mouse to rotate the camera. To zoom in or out, use the scroll wheel. To raise the camera, press space. To lower the camera, press and hold Z.]])
 		headline:setText([[Camera controls]])
 	elseif id == 12 then
 		tutImage = Image:new { ignoreConstrict=true, mat="assets/texture/tutorial/selectionTut.material" }
@@ -286,8 +307,6 @@ function TutorialMenu:AddButtons(tm, index)
 		tm.gui:removeComponent(mainGameTutButtons.moodsButton)
 		tm.gui:removeComponent(mainGameTutButtons.overviewButton)
 
-		
-
 		mainGameTutButtons.tearGasButton:destroy()
 		mainGameTutButtons.stancesButton:destroy()
 		mainGameTutButtons.specialAbilitiesButton:destroy()
@@ -333,6 +352,7 @@ function TutorialMenu:AddButtons(tm, index)
 		mainGameTutButtons.back:destroy()
 		mainGameTutButtons.back = nil
 	end
+
 		
 	if index == 0 then
 		TutorialMenu:SetImage(1)
