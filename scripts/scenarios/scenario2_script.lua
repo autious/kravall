@@ -46,8 +46,10 @@ return function( scen )
         local plane = entity.get "plane"
         --plane(scen, 0, -1, 0, 900)
 
-        scen.gamemode.camera:addInterpolationPoint(scen.cameras.startcam.translation, scen.cameras.startcam.quaternion)
-        scen.gamemode.camera:addInterpolationPoint(scen.cameras.devcam.translation, scen.cameras.devcam.quaternion)
+        scen.gamemode.camera:addInterpolationPoint(scen.cameras.startcam_1.translation, scen.cameras.startcam_1.quaternion)
+        scen.gamemode.camera:addInterpolationPoint(scen.cameras.startcam_end.translation, scen.cameras.startcam_end.quaternion)
+        --scen.gamemode.camera:addInterpolationPoint(scen.cameras.devcam.translation, scen.cameras.devcam.quaternion)
+
         obj1 = scen.gamemode:createObjective()
         obj1.title = "At least one deserter must survive and reach the goal"
 
@@ -201,11 +203,11 @@ return function( scen )
             end
 
             Statistics.addToCategory( "Units", StatRow:new( { title="Police Units Killed:", 
-                                resultTitle="" .. (startPoliceCount-totalPolice) .. "/" .. totalPolice, maxResult=100, 
+                                resultTitle="" .. (startPoliceCount-totalPolice) .. "/" .. startPoliceCount, maxResult=100, 
                                 achievedResult=(totalPolice/startPoliceCount) * 100 } ) )
-            Statistics.addToCategory( "Units", StatRow:new( { title="Enemy Rioters Killed:", 
-                                resultTitle="" .. (totalRioterCount-rioterCount) .. "/" .. totalRioterCount, maxResult=totalRioterCount, 
-                                achievedResult=(rioterCount/totalRioterCount) * totalRioterCount } ) )
+            Statistics.addToCategory( "Units", StatRow:new( { title="Enemy Rioter Casualties:", 
+                                resultTitle="" .. (totalRioterCount-rioterCount) .. "/" .. totalRioterCount, maxResult=0, 
+                                achievedResult=0 } ) )
 
             if T.objBeatdown() then
                 obj2.state = "success"
