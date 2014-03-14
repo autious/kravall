@@ -1,5 +1,10 @@
 core.config = {
-locallySavedVars = {"fullscreen"}, --Variables to save into the users home folder.
+locallySavedVars = {"fullscreen","gamma","cameraForce","lut"}, --Variables to save into the users home folder.
+lut = "identity",
+gamma = 2.2,
+cameraForce = 5.0,
+maxCameraForce = 14,
+minCameraForce = 0.1,
 showSplash = false,
 vsync = 0,
 windowResizable = true,
@@ -37,7 +42,7 @@ consoleOutputLevel = "warning", -- debug, warning, error, fatal
 stickySelection = false,
 doubleClickDelay = 0.2,
 boxSelectionGraceDistance = 0.5,
-numberOfSystemCoresToUse = 1,
+numberOfSystemCoresToUse = 4,
 
 blockingOfNavMesh_Checktimer = 5,
 blockingOfNavMesh_StuckDistance = 3,

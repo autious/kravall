@@ -112,6 +112,7 @@ function errorHandler( errorMessage )
 end
 
 function print( ... )
+    --core.log.info:print(debug.traceback())
     core.log.info:print( ... )
 end
 

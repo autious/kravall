@@ -888,7 +888,7 @@ function PoliceSquadHandler:update( delta )
         local sqdc = squadEntity:get(core.componentType.SquadComponent)
         for _,member in pairs(squad.members) do
             local attrbc = member.entity:get(core.componentType.AttributeComponent)
-            if member.isSprinting == true then
+            if member.isSprinting == true and sqdc.squadGoal[1] < math.pow(2, 32) then
                 local remainingStamina = attrbc.stamina - sprinting.sprintingStaminaCost * delta
                 if remainingStamina > 0 then
                     local wpc = member.entity:get(core.componentType.WorldPositionComponent)
@@ -904,11 +904,11 @@ function PoliceSquadHandler:update( delta )
                         member.entity:set(core.componentType.MovementComponent, {state = core.movementData.Sprinting}, true)
                     else
                         member.entity:set(core.componentType.MovementComponent, {state = core.movementData.Jogging}, true)
-                        member.isSprinting = nil
+                        member.isSprinting = false
                     end
                 else
                     remainingStamina = 0
-                    member.isSprinting = nil
+                    member.isSprinting = false
                     member.entity:set(core.componentType.MovementComponent, {state = core.movementData.Jogging}, true)
                 end
                 member.entity:set(core.componentType.AttributeComponent, {stamina = remainingStamina}, true)
@@ -918,6 +918,7 @@ function PoliceSquadHandler:update( delta )
                 if remainingStamina > member.maximumStamina then
                     remainingStamina = member.maximumStamina
                 end
+                member.isSprinting = false
                 --These functions are expensive, should be optimized
                 member.entity:set(core.componentType.MovementComponent, {state = core.movementData.Jogging}, true)
                 member.entity:set(core.componentType.AttributeComponent, {stamina = remainingStamina}, true)
