@@ -1,10 +1,21 @@
 core.config = {
-locallySavedVars = {"fullscreen","gamma","cameraForce","lut","cameraRotationSpeed"}, --Variables to save into the users home folder.
+locallySavedVars = {"fullscreen",
+                    "gamma",
+                    "cameraForce",
+                    "lut",
+                    "cameraRotationSpeed",
+                    "shadowResolution",
+                    "shadowQualityName",
+                    "shadowQuality",
+                    "mipmapQuality",
+    }, --Variables to save into the users home folder.
 lut = "identity",
 defaultGamma = 2.2,
 gamma = 2.2,
 showSplash = false,
 vsync = 0,
+shadowQualityName = "Normal",
+defaultQualityName = "Normal",
 windowResizable = true,
 --initScreenWidth = 2048,
 --initScreenHeight = 1152,
@@ -13,8 +24,11 @@ initScreenHeight = 720,
 fullscreen = false,
 defaultFullscreen = false,
 shadowQuality = 1, -- 0: off, 1: 2 cascade, 2: 4 cascade
+defaultShadowQuality = 1, -- 0: off, 1: 2 cascade, 2: 4 cascade
 shadowResolution = 512, -- min 128, max 2048
-mipmapQuality = 2, -- 0: no mipmap, 1: mipmap, 2: anisotropic filtering (max supported)
+defaultShadowResolution = 512,
+mipmapQuality = 0, -- 0: no mipmap, 1: mipmap, 2: anisotropic filtering (max supported)
+defaultMipmapQuality = 0, -- 0: no mipmap, 1: mipmap, 2: anisotropic filtering (max supported)
 showSystems = false,
 entityMemoryOutputLevel = "partial", -- full, short or partial
 -- List of components to render debug data for.
