@@ -642,7 +642,6 @@ function PoliceSquadHandler:UseTearGas(usingEntity, x, y, z, rangeToTarget)
 
             abilityEntity.update = function(o, delta)
                 if o.life <= 0 then
-                    print "Removing Smoke"
                     o.entity:destroy()
                     local newAbilityEntities = {}
                     for i=1, #(self.abilityEntities) do
@@ -722,37 +721,14 @@ function PoliceSquadHandler:CycleSquad()
     end
 
     if #(self.createdSquads) > 0 then
-        if #(self.selectedSquads) > 0 then
+        for i=1, #(self.createdSquads) do
+            if #(self.createdSquads[self.cycleSquad].members) > 0 then
+                break
+            end                
 
-            for i=1, #(self.createdSquads) do
-                local found = false
-
-                for _,v in pairs(self.selectedSquads) do
-                    if v == self.createdSquads[self.cycleSquad].groupId or #(self.createdSquads[self.cycleSquad].members) > 0 then
-                        found = true
-                    end 
-                end       
-
-                if found then
-                    self.cycleSquad = self.cycleSquad + 1
-
-                    if self.cycleSquad > #(self.createdSquads) then
-                        self.cycleSquad = 1
-                    end
-                else
-                    break
-                end
-            end
-        else
-            for i=1, #(self.createdSquads) do
-                if #(self.createdSquads[self.cycleSquad].members) > 0 then
-                    break
-                end                
-
-                self.cycleSquad = self.cycleSquad + 1
-                if self.cycleSquad > #(self.createdSquads) then
-                    self.cycleSquad = 1
-                end
+            self.cycleSquad = self.cycleSquad + 1
+            if self.cycleSquad > #(self.createdSquads) then
+                self.cycleSquad = 1
             end
         end
     end
@@ -903,9 +879,6 @@ function PoliceSquadHandler:update( delta )
     end
 
     if self.takeInput then
-        if keyboard.isKeyDownOnce(keyboard.key.X) then --or keyboard.isKeyDownOnce(core.config.playerBindings.attackAbility) then
-            self:CycleSquad()
-        end
 
         --Abilities
         if self.isAiming and self.rightClicked then
@@ -963,9 +936,11 @@ function PoliceSquadHandler:update( delta )
                     local squad = self:getSquad(attributeComponent.squadID)
 
                     local deltaTime = (clickTime - self.lastClickTime)
-                    print( deltaTime)
                     if deltaTime < core.config.doubleClickDelay and self.lastClickedType == squad.type then
                         --Double click same unit type, select all units of same type
+                        local squadEntity = s_squad.getSquadEntity(attributeComponent.squadID)
+                        local squadComponent = squadEntity:get(core.componentType.SquadComponent)
+
                         local selectedSquads = {}
                         for _,v in pairs(self.createdSquads) do
                             if v.type == squad.type then
@@ -975,6 +950,7 @@ function PoliceSquadHandler:update( delta )
 
                         self:DeselectAllSquads()
                         self:addSquadsToSelection(selectedSquads)                    
+                        self:setFormation( squadComponent.squadFormation )
                     else
                         local squadEntity = s_squad.getSquadEntity(attributeComponent.squadID)
                         local squadComponent = squadEntity:get(core.componentType.SquadComponent)
@@ -1010,11 +986,12 @@ function PoliceSquadHandler:update( delta )
                             self:setFormation( s_squad.formations.NoFormation )
                         end
 
-                        -- Called so that we set the gui squad button to current selection.
-                        -- (Or to nothing if current selection has mixxed stances)
-                        self:setStance( self:evaluateStanceForGroups( self.selectedSquads ) )
-                        applySelectionOutline( self.selectedSquads )
                     end
+
+                    -- Called so that we set the gui squad button to current selection.
+                    -- (Or to nothing if current selection has mixxed stances)
+                    self:setStance( self:evaluateStanceForGroups( self.selectedSquads ) )
+                    applySelectionOutline( self.selectedSquads )
                     self.lastClickedType = squad.type
                 end
             elseif not keyboard.isKeyDown(keyboard.key.Left_shift) and not core.config.stickySelection and not self.isClick then

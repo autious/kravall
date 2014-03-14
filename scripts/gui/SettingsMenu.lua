@@ -22,7 +22,7 @@ function SettingsMenu:new(o,menuState)
                                     matReleased = "assets/texture/ui/back-button-release.material",
                                     matPressed = "assets/texture/ui/back-button-press.material",
                                     matHover = "assets/texture/ui/back-button-hover.material",
-                                    anchor="SouthWest",xoffset=0,yoffset=0,
+                                    anchor="SouthWest",xoffset=15, yoffset=-15,
                                     onClick = function() 
                                         core.saveHomeConfiguration() 
                                         menuState.goMain()
@@ -79,15 +79,45 @@ function SettingsMenu:new(o,menuState)
     }
 	o.gui:addComponent(gammaSlider)
 
-	o.gui:addComponent( TextLabel:new{xoffset=200, yoffset= 180,label="Camera Force", anchor="NorthWest"} )
+    local forceSpanSize = core.config.maxCameraForce - core.config.minCameraForce
+
+	o.gui:addComponent( TextLabel:new{xoffset=200, yoffset= 180,label="Camera Speed", anchor="NorthWest"} )
 	local cameraForceSlider = Slider:new{
-	    a = (core.config.cameraForce - core.config.minCameraForce)/core.config.maxCameraForce, 
-        onChange = function( self, value) core.config.cameraForce = value * (core.config.maxCameraForce-core.config.minCameraForce) + core.config.minCameraForce end, 
+	    a = (core.config.cameraForce - core.config.minCameraForce)/forceSpanSize,
+        onChange = function( self, value) core.config.cameraForce = value * forceSpanSize + core.config.minCameraForce end, 
         anchor = "NorthWest", 
         xoffset=200, 
         yoffset= 180
     }
     o.gui:addComponent(cameraForceSlider)
+
+    local spanSize = core.config.maxCameraRotationSpeed - core.config.minCameraRotationSpeed
+
+	o.gui:addComponent( TextLabel:new{xoffset=200, yoffset= 180,label="Camera Rotation", anchor="NorthWest"} )
+	local cameraRotationSlider = Slider:new{
+	    a = (core.config.cameraRotationSpeed - core.config.minCameraRotationSpeed)/spanSize,
+        onChange = function( self, value ) core.config.cameraRotationSpeed = value * spanSize + core.config.minCameraRotationSpeed end, 
+        anchor = "NorthWest", 
+        xoffset=200, 
+        yoffset= 180
+    }
+    o.gui:addComponent(cameraRotationSlider)
+
+    o.gui:addComponent(Button:new({
+                                    matReleased = "assets/texture/ui/default-button-release.material",
+                                    matPressed = "assets/texture/ui/default-button-press.material",
+                                    matHover = "assets/texture/ui/default-button-hover.material",
+                                    anchor="SouthEast",xoffset=-15, yoffset=-15,
+                                    onClick = function() 
+                                        core.config.gamma = core.config.defaultGamma
+                                        core.gfx.setGamma(core.config.gamma)
+                                        core.config.cameraForce = core.config.defaultCameraForce  
+                                        core.config.cameraRotationSpeed = core.config.defaultCameraRotationSpeed
+                                        core.config.fullscreen = core.config.defaultFullscreen
+                                        o:changeLut({data="identity"})              
+                                        menuState.goSettings()
+                                    end}))
+        
 
     o.gui:addPlacementHandler( AnchorPlacer )
 
@@ -95,6 +125,7 @@ function SettingsMenu:new(o,menuState)
 end
 
 function SettingsMenu:changeLut(o)
+
     --[[
 	if o.name == "Noir" then
 		core.gfx.setLUT("redtest")
@@ -116,6 +147,7 @@ function SettingsMenu:changeLut(o)
 		core.gfx.setLUT("candyland")
 	end
     ]]--
+
     core.gfx.setLUT(o.data)
     core.config.lut = o.data
 end

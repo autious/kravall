@@ -77,7 +77,7 @@ return function( scen )
             obj2.state = "success"
         end
 
-        if T.objCasualties() then
+        if not T.objCasualties() then
             obj3.state = "fail"
         end
     end )
@@ -129,7 +129,7 @@ return function( scen )
                 return true
             end
         else
-            return false
+            return true
         end
     end
 

@@ -16,7 +16,7 @@ return function( scen )
     scen.description =  [[Escort the group of deserts to the end goal using the shield squad, bonus points of all deserts survive to the end.]]
 	
 	Statistics.clear()
-    
+    local totalRioterCount = 200
     -- Set game to start in prepmode
     scen.gamemode =  require "gamemodes/kravall":new(
     {
@@ -123,6 +123,7 @@ return function( scen )
 
 	local hasCountedPolice = false
 	local startPoliceCount = 0
+	local startRioterCount = 0
     scen:registerUpdateCallback( 
     function(delta) 
         scen.gamemode:update(delta) 
@@ -187,14 +188,29 @@ return function( scen )
 					totalPolice = totalPolice + #scen.gamemode.gamestate.policeHandler.createdSquads[i].members
 				end
 			end
+			
+			local rioterCount = 0
+			local groupCount = core.system.groups.getNumberOfGroups()
+			for i=0, groupCount-1 do
+					local members = core.system.groups.getMembersInGroup(i)
+
+					if #members > 0 then
+							local attrbComponent = members[1]:get(core.componentType.AttributeComponent)
+							local utc = members[1]:get(core.componentType.UnitTypeComponent)
+							if utc.unitType == core.UnitType.Rioter then
+									 rioterCount = rioterCount + #members
+							end
+					end
+			end
+			print( "End - number of rioters: " .. rioterCount )
 		
 			Statistics.addToCategory( "Units", StatRow:new( { title="Police Units Killed:", 
 								resultTitle="" .. (startPoliceCount-totalPolice) .. "/" .. totalPolice, maxResult=100, 
 								achievedResult=(totalPolice/startPoliceCount) * 100 } ) )
+			Statistics.addToCategory( "Units", StatRow:new( { title="Enemy Rioters Killed:", 
+								resultTitle="" .. (totalRioterCount-rioterCount) .. "/" .. totalRioterCount, maxResult=200, 
+								achievedResult=(rioterCount/totalRioterCount) * 200 } ) )
 								
-			Statistics.addToCategory( "Other", StatRow:new( {  } ) )
-			
-			Statistics.setListOrder( { "Units", "Other" } )
             print("We have reached before creation of end game state")
             return false -- return false to indicate that we have served our purpose and wish no longer to be called.
         end

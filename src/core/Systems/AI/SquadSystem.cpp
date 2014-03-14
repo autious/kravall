@@ -12,6 +12,15 @@
 #define FORMATION_ROW_SPACING 2.0f
 #define ALLOW_MOVE_IN_FORMATION false
 
+
+
+//#define DRAW_GOAL_FROM_SQUAD_SYSTEM
+#ifdef DRAW_GOAL_FROM_SQUAD_SYSTEM
+#define DEBUG_DRAW_GOAL( willDo ) willDo
+#else
+#define DEBUG_DRAW_GOAL( wontDo ) ;
+#endif
+
 namespace Core
 {
     SquadSystem::SquadSystem() : Core::BaseSystem(Core::EntityHandler::GenerateAspect<Core::SquadComponent>(), 0ULL)
@@ -21,6 +30,13 @@ namespace Core
 
     void SquadSystem::SetSquadGoal(int* squadIDs, int nSquads, glm::vec3 target)
     {
+		Core::NavigationMesh* instance = Core::GetNavigationMesh();
+		if( !instance )
+			return;
+		
+		if( !instance->CheckPointInsideNavigationMesh( target ) )
+			return;
+
         for(int i=0; i<nSquads; ++i)
         {
             for(std::vector<Entity>::iterator squad_it = m_entities.begin(); squad_it != m_entities.end(); ++squad_it)        
@@ -47,23 +63,6 @@ namespace Core
         {
             std::vector<Core::Entity> squad = Core::world.m_systemHandler.GetSystem<Core::GroupDataSystem>()->GetMembersInGroup(squadIDs[i]);
             units.insert(units.end(), squad.begin(), squad.end());
-        }
-
-        //Set Squads forward direction and formation
-        glm::vec3 squadForward = glm::normalize(glm::cross(startPos-endPos, glm::vec3(0.0f, 1.0f, 0.0f)));
-
-        for(std::vector<Entity>::iterator squad_it = m_entities.begin(); squad_it != m_entities.end(); ++squad_it)        
-        {
-            Core::SquadComponent* sqdc = WGETC<Core::SquadComponent>(*squad_it);         
-            for(int i=0; i<nSquads; ++i)
-            {
-                if(sqdc->squadID == squadIDs[i])
-                {
-                    sqdc->squadTargetForward[0] = squadForward.x;
-                    sqdc->squadTargetForward[1] = squadForward.z;
-                    sqdc->squadFormation = formation;
-                }
-            }
         }
 
         int membersInGroup = units.size();        
@@ -174,6 +173,23 @@ namespace Core
             
                 break;
             
+        }
+
+		//Set Squads forward direction and formation
+        glm::vec3 squadForward = glm::normalize(glm::cross(startPos-endPos, glm::vec3(0.0f, 1.0f, 0.0f)));
+
+        for(std::vector<Entity>::iterator squad_it = m_entities.begin(); squad_it != m_entities.end(); ++squad_it)        
+        {
+            Core::SquadComponent* sqdc = WGETC<Core::SquadComponent>(*squad_it);         
+            for(int i=0; i<nSquads; ++i)
+            {
+                if(sqdc->squadID == squadIDs[i])
+                {
+                    sqdc->squadTargetForward[0] = squadForward.x;
+                    sqdc->squadTargetForward[1] = squadForward.z;
+                    sqdc->squadFormation = formation;
+                }
+            }
         }
     }
 
@@ -679,6 +695,8 @@ namespace Core
 
 						formationPosition.y = 0.0f;
 						mc->SetGoal(formationPosition, goalNode, Core::MovementGoalPriority::FormationGoalPriority);
+
+						DEBUG_DRAW_GOAL( GFX::Debug::DrawLine( glm::vec3( wpc->position[0], wpc->position[1], wpc->position[2] ), formationPosition, GFXColor( 1, 1, 0, 1 ), false ) );
 					}
 				}
 

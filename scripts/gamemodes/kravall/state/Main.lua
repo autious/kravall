@@ -168,7 +168,11 @@ function Main:update(delta)
     self.gui:update(delta)
 
     self.policeHandler:update(delta)
-   
+     
+    if core.input.keyboard.isKeyDownOnce(core.input.keyboard.key.X) then --or keyboard.isKeyDownOnce(core.config.playerBindings.attackAbility) then
+        self.gui.onCycleSquads()
+    end
+
     self.overviewHandler:update(delta)
     self.moveMarker:update( delta )
 

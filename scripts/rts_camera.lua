@@ -19,7 +19,6 @@ function C.new( )
     self.forwardVelocity = 0
     self.quatRotation = quat.new()
     self.accelerationFactor = 5
-    self.acceleration = 3.0
     self.deaccelerationFactor = 3.5
     self.mousePressLocation = nil
     self.movementSpeed = 0
@@ -197,10 +196,10 @@ function C:update( dt )
                     direction = direction + xzRight 
                 end
                 if keyboard.isKeyDown( key.Q ) then
-                    self.quatRotation = self.quatRotation:rotate( -3.5*delta , vec3.new(0, 1, 0) )
+                    self.quatRotation = self.quatRotation:rotate( -cameraRotationSpeed*delta , vec3.new(0, 1, 0) )
                 end
                 if keyboard.isKeyDown( key.E ) then
-                    self.quatRotation = self.quatRotation:rotate( 3.5*delta , vec3.new(0, 1, 0) )
+                    self.quatRotation = self.quatRotation:rotate( cameraRotationSoeed*delta , vec3.new(0, 1, 0) )
                 end
                 if keyboard.isKeyDown( key.Space ) then
                     direction = direction + vec3.new(0,1,0)
@@ -209,7 +208,7 @@ function C:update( dt )
                 end
                 
                 if direction:length() > 0 then
-                    local force = self.acceleration - 0.1984 * self.movementSpeed * self.movementSpeed 
+                    local force = core.config.cameraForce - 0.1984 * self.movementSpeed * self.movementSpeed 
                     force = math.max(force, 0)
                     self.movementSpeed = self.movementSpeed + force * delta
                     direction:normalize()
