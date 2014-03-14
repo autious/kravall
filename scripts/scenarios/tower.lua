@@ -184,45 +184,6 @@ scen.asm:loadAssembly(
 	}
 }
 )
---for i=1,10 do
---local scl = 2
---scen.asm:loadAssembly( 
---{
---	{
---		type = core.componentType.WorldPositionComponent,
---		data = { position = { 10*math.sin(2*math.pi*i*0.1), scl/2, 10*math.cos(2*math.pi*i*0.1) } }
---	},
---	{
---		type = core.componentType.GraphicsComponent,
---		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry,layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
---		load = { 
---					mesh = { core.loaders.GnomeLoader, "assets/sphere.bgnome", false },
---					material = { core.loaders.MaterialLoader, "assets/material/light_test.material", false }
---			   }
---	},
---	{
---		type = core.componentType.AnimationComponent,
---		data = { 
---			animationID = 0,
---			queuedAnimationID = 0,
---			currentTime = 0.0,
---			loop = false,
---			playing = false,
---			speed = 1.0,
---			currentFrame = 0
---		}
---	},
---	{
---		type = core.componentType.ScaleComponent,
---		data = { scale = scl }
---	},
---	{
---		type = core.componentType.RotationComponent,
---		data = { rotation = { 0, 0, 0, 1 }}
---	}
---}
---)
---end
 -- Dirlight
 light = scen.asm:loadAssembly( 
 {
@@ -231,7 +192,7 @@ light = scen.asm:loadAssembly(
 		data =  { 
 					color = { 1, 1, 1 },
 					speccolor = { 1, 1, 1},
-					intensity = 0.8,
+					intensity = 0.1,
 					spotangle = 3.14/4.0,
 					spotpenumbra = 0.03,
 					type = core.gfx.objectTypes.Light,
@@ -282,23 +243,23 @@ light = scen.asm:loadAssembly(
 } 
 )
 
-scen:loadAssembly( 
+pointLight = scen:loadAssembly( 
 {
 	{
 		type = core.componentType.LightComponent,
 		data =  { 
-					color = { 1, 0, 0 },
-					speccolor = { 1, 0, 0 },
-					intensity = 15.0,
+					color = { 1, 1, 0.8 },
+					speccolor = { 1, 1, 0.8 },
+					intensity = 10.0,
 					spotangle = 3.14/3.0,
 					spotpenumbra = 0.5,
 					type = core.gfx.objectTypes.Light,
-					lighttype = core.gfx.lightTypes.Spot
+					lighttype = core.gfx.lightTypes.Point
 				}
 	},
 	{
 		type = core.componentType.WorldPositionComponent,
-		data = { position = { 10, 2, 0 } }
+		data = { position = { 10, 5, 0 } }
 	},
 	{
 		type = core.componentType.ScaleComponent,
@@ -339,10 +300,13 @@ spotlight = scen:loadAssembly(
 } 
 )
 local rot = 10
+local tick = 0
+local baseIntensity = pointLight:get(core.componentType.LightComponent).intensity
 local x = 200
 local y = 300
 local offs = 0.0
 local function Update(delta)
+	tick = tick + delta
 	if keyboard.isKeyDown( key.R ) then
 		rot = rot + delta;
 	end
@@ -373,6 +337,19 @@ local function Update(delta)
 	rc.rotation = { math.cos(rot), math.sin(rot), 0, 0 }
 	spotlight:set(core.componentType.RotationComponent, rc)
 	
+	local flicker = math.random()*(0.5+0.5*math.sin(2*math.sin(tick)))
+	if  flicker > 0.95 then
+		flicker = 0
+	elseif  flicker > 0.9 then
+		flicker = 0.1
+	else
+		flicker = 1
+	end
+	
+	local lc;
+    lc = pointLight:get(core.componentType.LightComponent)
+	lc.intensity = baseIntensity * flicker;
+	pointLight:set(core.componentType.LightComponent, lc)
 	
 	--core.draw.drawTextbox( 100, 100, 100, 300, 0, "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890" )
 	--core.draw.drawRectangle( 100, 100, 100, 300, false )
