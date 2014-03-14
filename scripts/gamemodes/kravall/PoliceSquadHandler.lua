@@ -563,18 +563,21 @@ function PoliceSquadHandler:UseTearGas(usingEntity, x, y, z, rangeToTarget)
     usingEntity:set(core.componentType.AttributeComponent, {stamina = (attributeComponent.stamina - tearGas.tearGasStaminaCost)}, true)
 
     local wpc = usingEntity:get(core.componentType.WorldPositionComponent)        
-    local projectileSpeed = 40
-    local velocities = {(core.glm.vec3.normalize(core.glm.vec3.new(x - wpc.position[1], 0, z - wpc.position[3])) * projectileSpeed):get()}
+    local projectileSpeed = 25
+    local launchAngle = (math.asin((9.82*rangeToTarget) / (projectileSpeed * projectileSpeed)) / 2)
+    local vel_y = math.sin(launchAngle) * projectileSpeed
+
+    local vel_xz = {(core.glm.vec3.normalize(core.glm.vec3.new(x - wpc.position[1], 0, z - wpc.position[3])) * (math.cos(launchAngle) * projectileSpeed)):get()}
 
     local t = (rangeToTarget * 0.5 / projectileSpeed)
 
     local smokeTrailEntity = {
         targetDistance = rangeToTarget,
         traveledDistance = 0,
-        speed = projectileSpeed,
-        v_x = velocities[1],
-        v_y = 9.82 * t, 
-        v_z = velocities[3],
+        speed = math.cos(launchAngle) * projectileSpeed,
+        v_x = vel_xz[1],
+        v_y = vel_y, 
+        v_z = vel_xz[3],
     }    
 
     smokeTrailEntity.entity = core.entity.create(core.componentType.EmitterComponent
@@ -584,13 +587,13 @@ function PoliceSquadHandler:UseTearGas(usingEntity, x, y, z, rangeToTarget)
     smokeTrailEntity.entity:set(core.componentType.EmitterComponent, {
             rate = 400,
             offset = {0, 0, 0},
-            life = 0.7,
-            lifeVariance = 0.25,
-            lifeReduction = 0.8,
+            life = 1.0,
+            lifeVariance = 0.50,
+            lifeReduction = 0.4,
             lifeReductionVariance = 0,
             velocity = {0, 0, 1.5},
-            velocityVariance = {0, 0, 0.5},
-            acceleration = {0, 2, 0},
+            velocityVariance = {0.5, 0.5, 0.5},
+            acceleration = {0, -0.5, 0},
             coneDirection = {0, 1, 0},
             coneAngle = 180,
             coneAngleVariance = 0,
