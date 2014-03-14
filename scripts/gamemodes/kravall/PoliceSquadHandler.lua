@@ -642,7 +642,6 @@ function PoliceSquadHandler:UseTearGas(usingEntity, x, y, z, rangeToTarget)
 
             abilityEntity.update = function(o, delta)
                 if o.life <= 0 then
-                    print "Removing Smoke"
                     o.entity:destroy()
                     local newAbilityEntities = {}
                     for i=1, #(self.abilityEntities) do
@@ -937,9 +936,11 @@ function PoliceSquadHandler:update( delta )
                     local squad = self:getSquad(attributeComponent.squadID)
 
                     local deltaTime = (clickTime - self.lastClickTime)
-                    print( deltaTime)
                     if deltaTime < core.config.doubleClickDelay and self.lastClickedType == squad.type then
                         --Double click same unit type, select all units of same type
+                        local squadEntity = s_squad.getSquadEntity(attributeComponent.squadID)
+                        local squadComponent = squadEntity:get(core.componentType.SquadComponent)
+
                         local selectedSquads = {}
                         for _,v in pairs(self.createdSquads) do
                             if v.type == squad.type then
@@ -949,6 +950,7 @@ function PoliceSquadHandler:update( delta )
 
                         self:DeselectAllSquads()
                         self:addSquadsToSelection(selectedSquads)                    
+                        self:setFormation( squadComponent.squadFormation )
                     else
                         local squadEntity = s_squad.getSquadEntity(attributeComponent.squadID)
                         local squadComponent = squadEntity:get(core.componentType.SquadComponent)
@@ -984,11 +986,12 @@ function PoliceSquadHandler:update( delta )
                             self:setFormation( s_squad.formations.NoFormation )
                         end
 
-                        -- Called so that we set the gui squad button to current selection.
-                        -- (Or to nothing if current selection has mixxed stances)
-                        self:setStance( self:evaluateStanceForGroups( self.selectedSquads ) )
-                        applySelectionOutline( self.selectedSquads )
                     end
+
+                    -- Called so that we set the gui squad button to current selection.
+                    -- (Or to nothing if current selection has mixxed stances)
+                    self:setStance( self:evaluateStanceForGroups( self.selectedSquads ) )
+                    applySelectionOutline( self.selectedSquads )
                     self.lastClickedType = squad.type
                 end
             elseif not keyboard.isKeyDown(keyboard.key.Left_shift) and not core.config.stickySelection and not self.isClick then
