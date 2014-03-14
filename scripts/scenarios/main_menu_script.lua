@@ -283,10 +283,12 @@ return function( scen )
 			core.system.groups.setGroupGoal( grp, unpack( endPosition ) )
 		end
 		
+        local x,y,z = unpack(startPosition)
+        local newPosition = {x,y,(math.random(1,100)/100.0-0.5)*10+z}
 		local rioters = core.system.area.getAreaRioters( entity )
 		
 		for i,v in  pairs( rioters ) do
-			v:set( core.componentType.WorldPositionComponent, {position=startPosition} )
+			v:set( core.componentType.WorldPositionComponent, {position=newPosition} )
 			v:set( core.componentType.FlowfieldComponent, {node=-1} )
 		end
 	end
