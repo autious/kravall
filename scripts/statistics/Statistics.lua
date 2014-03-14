@@ -50,15 +50,15 @@ function Statistics.prepare()
 	local percentage = Statistics.achievedScore / Statistics.totalScore
 	
 	if percentage <= 0.1 then
-		Statistics.rank = "First-timer" --"1. (" .. Statistics.achievedScore .. "/" .. Statistics.totalScore .. ")"
+		Statistics.rank = "Intern" --"1. (" .. Statistics.achievedScore .. "/" .. Statistics.totalScore .. ")"
 	elseif percentage <= 0.4 then
-		Statistics.rank = "Beginner" --"2. (" .. Statistics.achievedScore .. "/" .. Statistics.totalScore .. ")"
+		Statistics.rank = "Promising trainee" --"2. (" .. Statistics.achievedScore .. "/" .. Statistics.totalScore .. ")"
 	elseif percentage <= 0.6 then
-		Statistics.rank = "Intermediate" --"3. (" .. Statistics.achievedScore .. "/" .. Statistics.totalScore .. ")"
+		Statistics.rank = "Upgraded civil servant" --"3. (" .. Statistics.achievedScore .. "/" .. Statistics.totalScore .. ")"
 	elseif percentage <= 0.8 then
-		Statistics.rank = "Experienced" --"4. (" .. Statistics.achievedScore .. "/" .. Statistics.totalScore .. ")"
+		Statistics.rank = "Augmented police chief" --"4. (" .. Statistics.achievedScore .. "/" .. Statistics.totalScore .. ")"
 	else
-		Statistics.rank = "Professional" --"5. (" .. Statistics.achievedScore .. "/" .. Statistics.totalScore .. ")"
+		Statistics.rank = "Transhuman" --"5. (" .. Statistics.achievedScore .. "/" .. Statistics.totalScore .. ")"
 	end
 end
 				

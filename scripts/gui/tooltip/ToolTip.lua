@@ -31,10 +31,6 @@ function ToolTip:update()
 	--core.draw.drawRectangle(float, float, float, float, bool)
 	
 	core.draw.drawRectangle( self.x, self.y, self.width, self.height, true, 0.66, 0.66, 0.66, 0.75 )
-	
-	if core.input.keyboard.isKeyDown( core.input.keyboard.key.L ) then
-		self.handler:deregister()
-	end
 end
 
 function ToolTip:setShow( flag )
