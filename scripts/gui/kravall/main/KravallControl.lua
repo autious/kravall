@@ -44,7 +44,7 @@ function KravallControl:new(o)
 	o.squadMenuGUI:setShow( false )
 	
     ------------------
-    o.statusGUI = UnitStatGUI:new( { show = false, width=185, height=110 } )
+    o.statusGUI = UnitStatGUI:new( { show = false, width=200, height=110 } )
 	o.statusGUI:setShow( false )
 	
 	o.gui:addComponent( o.statusGUI )
