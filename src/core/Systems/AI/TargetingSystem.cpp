@@ -118,7 +118,8 @@ void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police, float del
 			if (tc->target != INVALID_ENTITY)
 			{
 				TargetingComponent* tcTarget = WGETC<Core::TargetingComponent>(tc->target);
-				TargetingComponent::StopAttacking(police, *tcTarget);
+				if( tcTarget )
+					TargetingComponent::StopAttacking(police, *tcTarget);
 			}			
 
 			tc->target = INVALID_ENTITY;
@@ -288,7 +289,8 @@ Core::Entity Core::TargetingSystem::FindClosestAttacker(Core::TargetingComponent
 		for (int i = 0; i < originTC->numberOfAttackers; ++i)
 		{
 			Core::WorldPositionComponent* twpc = WGETC<Core::WorldPositionComponent>(originTC->attackers[i]);
-			if (twpc == nullptr)
+			Core::TargetingComponent* tc = WGETC<Core::TargetingComponent>(originTC->attackers[i]);
+			if (tc == nullptr)
 				continue;
 
 			float dx = twpc->position[0] - originWPC->position[0];

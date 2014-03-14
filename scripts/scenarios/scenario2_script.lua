@@ -1,6 +1,6 @@
 local entity = require "entities"
 local group = entity.get "group"
-local Statistics = require "factories/Statistics"
+local Statistics = require "statistics/Statistics"
 local vec4 = require( "utility" ).expandMixxedHexToVec4
 
 --For the kravall defintions
@@ -77,7 +77,7 @@ return function( scen )
             obj2.state = "success"
         end
 
-        if T.objCasualties() then
+        if not T.objCasualties() then
             obj3.state = "fail"
         end
     end )
@@ -129,7 +129,7 @@ return function( scen )
                 return true
             end
         else
-            return false
+            return true
         end
     end
 

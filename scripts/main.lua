@@ -154,12 +154,12 @@ function core.saveHomeConfiguration()
                     else
                         configFile:write( "false" )
                     end
-
-                    configFile:write( ",\n" )
                 else
                     core.log.error( "Unable to save parameter: " .. v .. " there is no writer for type")
-                    configFile:write("nil,\n")
+                    configFile:write("nil")
                 end
+
+                configFile:write( ",\n" )
             end
             configFile:write("}\n")
 
