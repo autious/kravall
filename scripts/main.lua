@@ -38,13 +38,6 @@ function core.update( delta )
         current_scenario:update( delta )
     end
 	
-	if core.input.keyboard.isKeyDown( core.input.keyboard.key.K ) then
-		toolTipHandler:register( createTT:new({
-										handler=toolTipHandler
-								   })
-					 )
-	end
-	
 	toolTipHandler:update()
 end
 
