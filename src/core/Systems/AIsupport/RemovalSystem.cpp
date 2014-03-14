@@ -3,7 +3,7 @@
 
 #include <Animation/AnimationManager.hpp>
 
-#define BLEED_LIMIT 50
+#define BLEED_LIMIT 50.0f
 
 namespace Core
 {
@@ -187,7 +187,7 @@ namespace Core
 		gc.outlineColor[0] = 0.0f;
 		gc.outlineColor[1] = rand_FloatRange(0.05f, 0.2f);
 		gc.outlineColor[2] = 0.0f;
-		gc.outlineColor[3] = 0.0f;
+		gc.outlineColor[3] = 1.0f;
 
 		WorldPositionComponent wpc;
 		wpc.position[0] = position.x;
@@ -203,6 +203,7 @@ namespace Core
 		bc.scaleSpeed[0] = 0.4f;
 		bc.scaleSpeed[1] = 0.4f;
 		bc.maxSize = rand_FloatRange(1.0f, 2.5f);
+        bc.expand = true;
 
 		m_bloodEntities.push_back(Core::world.m_entityHandler.CreateEntity(gc, wpc, rc, sc, bc));
 	}
