@@ -232,7 +232,7 @@ return function( scen )
 	local grp
     
    T.spawn = function(e)
-		grp = T.createDeserter( e, 100,2 )
+		grp = T.createDeserter( e, 300,2 )
    end
     
 	T.registerStart = function( entity )
