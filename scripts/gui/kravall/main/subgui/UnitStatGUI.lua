@@ -92,7 +92,7 @@ function UnitStatGUI:setStamina( stamina )
 end
 
 function UnitStatGUI:setName( name )
-	print( name )
+	--print( name )
     --self.labelUnitName:setLabel( name )
 end
 
