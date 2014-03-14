@@ -6,26 +6,6 @@ scen.name = "Default Scenario Name"
 scen.description = "Default Description"
 
 scen.cameras = scen.cameras or {}
-scen.cameras["startcam_3"] = {
-    view = core.glm.mat4.new(
-    1.0, -3.014803837686486e-07, -2.0695742932730354e-06, -0.0,
-    2.0695742932730354e-06, -7.2759411828826615e-09, 1.0, 0.0,
-    -3.0148041219035804e-07, -1.0, -7.275317237542822e-09, 0.0,
-    118.09264373779297, -78.82831573486328, -406.65777587890625, 1.0 ),
-    fov = 1.0471980571746826,
-    quaternion = core.glm.quat.new( 0.7071068286895752, 6.251156605685537e-07, -8.382945679841214e-07, 0.7071068286895752 ),
-    translation = core.glm.vec3.new( -118.093505859375, 406.65753173828125, -78.82827758789062 )
-}
-scen.cameras["startcam_2"] = {
-    view = core.glm.mat4.new(
-    1.0, 6.167668686885008e-08, 8.951259928835498e-07, -0.0,
-    -8.951259928835498e-07, 1.257282544742111e-08, 1.0, 0.0,
-    6.167667265799537e-08, -1.0, 1.2572880514483131e-08, -0.0,
-    -73.90476989746094, -0.11531707644462585, -406.7386474609375, 1.0 ),
-    fov = 1.0471980571746826,
-    quaternion = core.glm.quat.new( 0.7071068286895752, -2.946688653082674e-07, 3.3828084156084515e-07, 0.7071068286895752 ),
-    translation = core.glm.vec3.new( 73.90513610839844, 406.73858642578125, -0.11530740559101105 )
-}
 scen.cameras["startcam_end"] = {
     view = core.glm.mat4.new(
     0.9847272038459778, 0.08236458152532578, -0.15339000523090363, -0.0,
@@ -217,7 +197,7 @@ function scen:load()
     scen:registerInitCallback( genF( ent, "destroyOnMain" ) )
     ent = pointLight( scen, 73.23313903808594, -0.6894364356994629, -42.10883331298828, 1.0, 0.0, 0.030466079711914062, 50.0, 100.0, "" )
     scen:registerInitCallback( genF( ent, "destroyOnMain" ) )
-    ent = pointLight( scen, 131.5911865234375, -0.6894369125366211, 22.334304809570312, 1.0, 0.0, 0.030466079711914062, 50.0, 100.0, "" )
+    ent = pointLight( scen, -96.80685424804688, -0.6894369125366211, -143.97950744628906, 1.0, 0.0, 0.030466079711914062, 50.0, 100.0, "" )
     scen:registerInitCallback( genF( ent, "destroyOnMain" ) )
     ent = pointLight( scen, -163.5183563232422, -0.6894354820251465, -65.01280975341797, 0.2632944583892822, 1.0, 0.18230676651000977, 50.0, 100.0, "" )
     scen:registerInitCallback( genF( ent, "destroyOnMain" ) )
@@ -233,8 +213,6 @@ function scen:load()
     scen:registerInitCallback( genF( ent, "destroyOnMain" ) )
     ent = spotLight( scen, -107.10585021972656, 14.115742683410645, 26.179861068725586, 2.9028662140717643e-08, -0.9813463687896729, -0.19224813580513, 0.6878746747970581, 0.8960461616516113, 1.0, 0.6108654737472534, 0.12217309656997166, 29.10000228881836, 100.0, "" )
     ent = spotLight( scen, -108.22252655029297, 14.115742683410645, 9.145405769348145, 3.361373046573135e-08, -0.9813463687896729, 0.1922481209039688, 0.6878746747970581, 0.8960461616516113, 1.0, 0.6108654737472534, 0.12217309656997166, 29.10000228881836, 100.0, "" )
-    ent = spotLight( scen, -27.90732765197754, 14.115742683410645, 86.77227020263672, 3.361373046573135e-08, -0.9813463687896729, 0.1922481209039688, 0.6878746747970581, 0.8960461616516113, 1.0, 0.6108654737472534, 0.12217309656997166, 29.10000228881836, 100.0, "" )
-    ent = spotLight( scen, -27.899118423461914, 14.115742683410645, 105.4667739868164, 2.9028662140717643e-08, -0.9813463687896729, -0.19224813580513, 0.6878746747970581, 0.8960461616516113, 1.0, 0.6108654737472534, 0.12217309656997166, 29.10000228881836, 100.0, "" )
     ent = spotLight( scen, -26.924434661865234, 14.115742683410645, -79.68783569335938, 0.1922481507062912, -0.9813463687896729, 1.4514331958537241e-08, 0.6878746747970581, 0.8960461616516113, 1.0, 0.6108654737472534, 0.12217309656997166, 29.10000228881836, 100.0, "" )
     ent = spotLight( scen, -8.229930877685547, 14.115742683410645, -79.696044921875, -0.19224813580513, -0.9813463687896729, 2.2925361609082984e-09, 0.6878746747970581, 0.8960461616516113, 1.0, 0.6108654737472534, 0.12217309656997166, 29.10000228881836, 100.0, "" )
     ent = spotLight( scen, -105.5494384765625, 13.109456062316895, -122.59779357910156, 0.1922481507062912, -0.9813463687896729, 1.4514331958537241e-08, 0.6878746747970581, 0.8960461616516113, 1.0, 0.6108654737472534, 0.12217309656997166, 29.10000228881836, 300.0, "" )
@@ -322,11 +300,9 @@ function scen:load()
     ent = spotLight( scen, 47.76215744018555, 42.71601486206055, 7.242940902709961, 0.0, -1.0, -0.0, 0.6819503903388977, 0.8249461650848389, 1.0, 0.7801628112792969, 0.39008140563964844, 20.900001525878906, 15.0, "" )
     ent = spotLight( scen, 44.475650787353516, 42.71601486206055, 7.242940902709961, 0.0, -1.0, -0.0, 0.6819503903388977, 0.8249461650848389, 1.0, 0.7801628112792969, 0.39008140563964844, 20.900001525878906, 15.0, "" )
     ent = spotLight( scen, 41.29733657836914, 42.71601486206055, 7.242940902709961, 0.0, -1.0, -0.0, 0.6819503903388977, 0.8249461650848389, 1.0, 0.7801628112792969, 0.39008140563964844, 20.900001525878906, 15.0, "" )
-    ent = spotLight( scen, 73.67936706542969, 9.923784255981445, 57.633872985839844, 0.0, -1.0, -0.0, 1.0, 0.9345882534980774, 0.8104977607727051, 1.291543960571289, 0.6457719802856445, 19.0, 200.0, "" )
     ent = spotLight( scen, 73.67936706542969, 9.923784255981445, -24.60376739501953, 0.0, -1.0, -0.0, 1.0, 0.9345882534980774, 0.8104977607727051, 1.291543960571289, 0.6457719802856445, 19.0, 200.0, "" )
     ent = spotLight( scen, 73.67936706542969, 9.923784255981445, -1.4940261840820312, 0.0, -1.0, -0.0, 1.0, 0.9345882534980774, 0.8104977607727051, 1.291543960571289, 0.6457719802856445, 19.0, 200.0, "" )
     ent = spotLight( scen, 73.67936706542969, 9.923784255981445, -47.66181945800781, 0.0, -1.0, -0.0, 1.0, 0.9345882534980774, 0.8104977607727051, 1.291543960571289, 0.6457719802856445, 19.0, 200.0, "" )
-    ent = spotLight( scen, -16.16152572631836, 9.923784255981445, 81.46721649169922, 0.0, -1.0, -0.0, 1.0, 0.9345882534980774, 0.8104977607727051, 1.291543960571289, 0.6457719802856445, 19.0, 200.0, "" )
     ent = spotLight( scen, -16.16152572631836, 9.923784255981445, 58.35747528076172, 0.0, -1.0, -0.0, 1.0, 0.9345882534980774, 0.8104977607727051, 1.291543960571289, 0.6457719802856445, 19.0, 200.0, "" )
     ent = spotLight( scen, -18.521270751953125, 9.923784255981445, -32.6612548828125, 0.0, -1.0, -0.0, 1.0, 0.9345882534980774, 0.8104977607727051, 1.291543960571289, 0.6457719802856445, 19.0, 200.0, "" )
     ent = spotLight( scen, -18.521270751953125, 9.923784255981445, -9.551513671875, 0.0, -1.0, -0.0, 1.0, 0.9345882534980774, 0.8104977607727051, 1.291543960571289, 0.6457719802856445, 19.0, 200.0, "" )
@@ -342,8 +318,6 @@ function scen:load()
     ent = spotLight( scen, -53.026214599609375, 9.923800468444824, -66.999755859375, 0.0, -1.0, -0.0, 1.0, 0.9345882534980774, 0.8104977607727051, 1.291543960571289, 0.6457719802856445, 19.0, 200.0, "" )
     ent = spotLight( scen, -29.44854736328125, 9.923800468444824, -66.999755859375, 0.0, -1.0, -0.0, 1.0, 0.9345882534980774, 0.8104977607727051, 1.291543960571289, 0.6457719802856445, 19.0, 200.0, "" )
     ent = spotLight( scen, -6.3387908935546875, 9.923800468444824, -66.999755859375, 0.0, -1.0, -0.0, 1.0, 0.9345882534980774, 0.8104977607727051, 1.291543960571289, 0.6457719802856445, 19.0, 200.0, "" )
-    ent = spotLight( scen, -28.659019470214844, 9.923800468444824, 95.58597564697266, 0.0, -1.0, -0.0, 1.0, 0.9345882534980774, 0.8104977607727051, 1.291543960571289, 0.6457719802856445, 19.0, 200.0, "" )
-    ent = spotLight( scen, -5.549262046813965, 9.923800468444824, 95.58597564697266, 0.0, -1.0, -0.0, 1.0, 0.9345882534980774, 0.8104977607727051, 1.291543960571289, 0.6457719802856445, 19.0, 200.0, "" )
     ent = spotLight( scen, -109.40107727050781, 9.923800468444824, 18.590068817138672, 0.0, -1.0, -0.0, 1.0, 0.9345882534980774, 0.8104977607727051, 1.291543960571289, 0.6457719802856445, 19.0, 200.0, "" )
     ent = spotLight( scen, -76.02482604980469, 9.923800468444824, 18.590068817138672, 0.0, -1.0, -0.0, 1.0, 0.9345882534980774, 0.8104977607727051, 1.291543960571289, 0.6457719802856445, 19.0, 200.0, "" )
     ent = spotLight( scen, 10.827007293701172, 9.923800468444824, 18.590068817138672, 0.0, -1.0, -0.0, 1.0, 0.9345882534980774, 0.8104977607727051, 1.291543960571289, 0.6457719802856445, 19.0, 200.0, "" )
@@ -559,8 +533,6 @@ function scen:load()
     ent = staticModel( scen, -108.39633178710938, -0.20753145217895508, 22.155080795288086, 0.0, -0.7071068286895752, 0.0, 0.7071068286895752, { 1.0, 1.0, 1.0 }, "assets/model/static/props/scaffold-stairs-top_00.bgnome", "assets/texture/static/props/metal-floor-diffuse-64_00.material", "" )
     ent = staticModel( scen, -107.11407470703125, 12.38673210144043, 27.7185115814209, 0.0, 1.0, 0.0, 7.549790126404332e-08, { 3.719550848007202, 3.719550848007202, 3.719550848007202 }, "assets/model/static/props/lamp-0_00.bgnome", "assets/texture/static/building/lamp_00.material", "" )
     ent = staticModel( scen, -108.21430206298828, 12.38673210144043, 7.606755256652832, 0.0, 8.742277657347586e-08, 0.0, 1.0, { 3.719550848007202, 3.719550848007202, 3.719550848007202 }, "assets/model/static/props/lamp-0_00.bgnome", "assets/texture/static/building/lamp_00.material", "" )
-    ent = staticModel( scen, -27.89910316467285, 12.38673210144043, 85.2336196899414, 0.0, 8.742277657347586e-08, 0.0, 1.0, { 3.719550848007202, 3.719550848007202, 3.719550848007202 }, "assets/model/static/props/lamp-0_00.bgnome", "assets/texture/static/building/lamp_00.material", "" )
-    ent = staticModel( scen, -27.9073429107666, 12.38673210144043, 107.00542449951172, 0.0, 1.0, 0.0, 7.549790126404332e-08, { 3.719550848007202, 3.719550848007202, 3.719550848007202 }, "assets/model/static/props/lamp-0_00.bgnome", "assets/texture/static/building/lamp_00.material", "" )
     ent = staticModel( scen, -29.189599990844727, -0.20753145217895508, 99.08576202392578, 0.0, -0.7071068286895752, 0.0, 0.7071068286895752, { 1.0, 1.0, 1.0 }, "assets/model/static/props/scaffold-stairs-top_00.bgnome", "assets/texture/static/props/metal-floor-diffuse-64_00.material", "" )
     ent = staticModel( scen, -27.363962173461914, 3.4332275390625e-05, 103.26920318603516, 0.0, 1.0, 0.0, 7.549790126404332e-08, { 1.0, 1.0, 1.0 }, "assets/model/static/props/scaffold-top_00.bgnome", "assets/texture/static/props/metal-floor-diffuse-64_00.material", "" )
     ent = staticModel( scen, -29.135950088500977, 3.4332275390625e-05, 89.07599639892578, 0.0, 0.7071068286895752, 0.0, 0.7071068286895752, { 1.0, 1.0, 1.0 }, "assets/model/static/props/scaffold-top_00.bgnome", "assets/texture/static/props/metal-floor-diffuse-64_00.material", "" )
@@ -1194,11 +1166,9 @@ function scen:load()
     ent = staticModel( scen, 25.972335815429688, 20.434906005859375, 27.972719192504883, 0.0, 0.0, 0.0, 1.0, { 1.0, 1.0, 1.0 }, "assets/model/static/props/neon-frame_00.bgnome", "assets/texture/static/building/metal-black_00.material", "" )
     ent = staticModel( scen, 46.10007858276367, 35.81011962890625, 5.51762580871582, 0.0, 1.0, 0.0, -7.549790126404332e-08, { 1.0, 1.0, 1.0 }, "assets/model/static/props/billboard-picture_00.bgnome", "assets/texture/static/props/billboard_00.material", "" )
     ent = staticModel( scen, 46.10007858276367, 35.81011962890625, 5.51762580871582, 0.0, 1.0, 0.0, -7.549790126404332e-08, { 1.0, 1.0, 1.0 }, "assets/model/static/props/billboard-frame_00.bgnome", "assets/texture/static/props/rust-32_00.material", "" )
-    ent = staticModel( scen, 73.67936706542969, 9.76585578918457, 57.633872985839844, 0.0, 0.0, 0.0, 1.0, { 1.0, 1.0, 1.0 }, "assets/model/static/props/hanging-street-light-short_00.bgnome", "assets/texture/static/props/hanging-street-light_00.material", "" )
     ent = staticModel( scen, 73.67936706542969, 9.76585578918457, -24.60376739501953, 0.0, 0.0, 0.0, 1.0, { 1.0, 1.0, 1.0 }, "assets/model/static/props/hanging-street-light-short_00.bgnome", "assets/texture/static/props/hanging-street-light_00.material", "" )
     ent = staticModel( scen, 73.67936706542969, 9.76585578918457, -1.4940261840820312, 0.0, 0.0, 0.0, 1.0, { 1.0, 1.0, 1.0 }, "assets/model/static/props/hanging-street-light-short_00.bgnome", "assets/texture/static/props/hanging-street-light_00.material", "" )
     ent = staticModel( scen, 73.67936706542969, 9.76585578918457, -47.66181945800781, 0.0, 0.0, 0.0, 1.0, { 1.0, 1.0, 1.0 }, "assets/model/static/props/hanging-street-light-short_00.bgnome", "assets/texture/static/props/hanging-street-light_00.material", "" )
-    ent = staticModel( scen, -16.16152572631836, 9.76585578918457, 81.46721649169922, 0.0, 0.0, 0.0, 1.0, { 1.0, 1.0, 1.0 }, "assets/model/static/props/hanging-street-light-short_00.bgnome", "assets/texture/static/props/hanging-street-light_00.material", "" )
     ent = staticModel( scen, -16.16152572631836, 9.76585578918457, 58.35747528076172, 0.0, 0.0, 0.0, 1.0, { 1.0, 1.0, 1.0 }, "assets/model/static/props/hanging-street-light-short_00.bgnome", "assets/texture/static/props/hanging-street-light_00.material", "" )
     ent = staticModel( scen, -18.521270751953125, 9.76585578918457, -32.6612548828125, 0.0, 0.0, 0.0, 1.0, { 1.0, 1.0, 1.0 }, "assets/model/static/props/hanging-street-light-short_00.bgnome", "assets/texture/static/props/hanging-street-light_00.material", "" )
     ent = staticModel( scen, -18.521270751953125, 9.76585578918457, -9.551513671875, 0.0, 0.0, 0.0, 1.0, { 1.0, 1.0, 1.0 }, "assets/model/static/props/hanging-street-light-short_00.bgnome", "assets/texture/static/props/hanging-street-light_00.material", "" )
@@ -1216,17 +1186,12 @@ function scen:load()
     ent = staticModel( scen, -53.026214599609375, 9.76587200164795, -66.999755859375, 0.0, -0.7071068286895752, 0.0, 0.7071068286895752, { 1.0, 1.0, 1.0 }, "assets/model/static/props/hanging-street-light-short_00.bgnome", "assets/texture/static/props/hanging-street-light_00.material", "" )
     ent = staticModel( scen, -29.44854736328125, 9.76587200164795, -66.999755859375, 0.0, -0.7071068286895752, 0.0, 0.7071068286895752, { 1.0, 1.0, 1.0 }, "assets/model/static/props/hanging-street-light-short_00.bgnome", "assets/texture/static/props/hanging-street-light_00.material", "" )
     ent = staticModel( scen, -6.3387908935546875, 9.76587200164795, -66.999755859375, 0.0, -0.7071068286895752, 0.0, 0.7071068286895752, { 1.0, 1.0, 1.0 }, "assets/model/static/props/hanging-street-light-short_00.bgnome", "assets/texture/static/props/hanging-street-light_00.material", "" )
-    ent = staticModel( scen, -28.659019470214844, 9.76587200164795, 95.58597564697266, 0.0, -0.7071068286895752, 0.0, 0.7071068286895752, { 1.0, 1.0, 1.0 }, "assets/model/static/props/hanging-street-light-short_00.bgnome", "assets/texture/static/props/hanging-street-light_00.material", "" )
-    ent = staticModel( scen, -5.549262046813965, 9.76587200164795, 95.58597564697266, 0.0, -0.7071068286895752, 0.0, 0.7071068286895752, { 1.0, 1.0, 1.0 }, "assets/model/static/props/hanging-street-light-short_00.bgnome", "assets/texture/static/props/hanging-street-light_00.material", "" )
-    ent = staticModel( scen, 173.12374877929688, 9.76587200164795, 18.590068817138672, 0.0, -0.7071068286895752, 0.0, 0.7071068286895752, { 1.0, 1.0, 1.0 }, "assets/model/static/props/hanging-street-light-short_00.bgnome", "assets/texture/static/props/hanging-street-light_00.material", "" )
     ent = staticModel( scen, -109.40107727050781, 9.76587200164795, 18.590068817138672, 0.0, -0.7071068286895752, 0.0, 0.7071068286895752, { 1.0, 1.0, 1.0 }, "assets/model/static/props/hanging-street-light-short_00.bgnome", "assets/texture/static/props/hanging-street-light_00.material", "" )
     ent = staticModel( scen, -53.838157653808594, 9.76587200164795, 18.590068817138672, 0.0, -0.7071068286895752, 0.0, 0.7071068286895752, { 1.0, 1.0, 1.0 }, "assets/model/static/props/hanging-street-light-short_00.bgnome", "assets/texture/static/props/hanging-street-light_00.material", "" )
     ent = staticModel( scen, -76.02482604980469, 9.76587200164795, 18.590068817138672, 0.0, -0.7071068286895752, 0.0, 0.7071068286895752, { 1.0, 1.0, 1.0 }, "assets/model/static/props/hanging-street-light-short_00.bgnome", "assets/texture/static/props/hanging-street-light_00.material", "" )
     ent = staticModel( scen, 10.827007293701172, 9.76587200164795, 18.590068817138672, 0.0, -0.7071068286895752, 0.0, 0.7071068286895752, { 1.0, 1.0, 1.0 }, "assets/model/static/props/hanging-street-light-short_00.bgnome", "assets/texture/static/props/hanging-street-light_00.material", "" )
     ent = staticModel( scen, 33.60623550415039, 9.550145149230957, 18.590068817138672, 0.0, -0.7071068286895752, 0.0, 0.7071068286895752, { 1.0, 1.0, 1.0 }, "assets/model/static/props/hanging-street-light-short_00.bgnome", "assets/texture/static/props/hanging-street-light_00.material", "" )
     ent = staticModel( scen, 55.79290008544922, 9.76587200164795, 18.590068817138672, 0.0, -0.7071068286895752, 0.0, 0.7071068286895752, { 1.0, 1.0, 1.0 }, "assets/model/static/props/hanging-street-light-short_00.bgnome", "assets/texture/static/props/hanging-street-light_00.material", "" )
-    ent = staticModel( scen, 150.0139923095703, 9.76587200164795, 18.590068817138672, 0.0, -0.7071068286895752, 0.0, 0.7071068286895752, { 1.0, 1.0, 1.0 }, "assets/model/static/props/hanging-street-light-short_00.bgnome", "assets/texture/static/props/hanging-street-light_00.material", "" )
-    ent = staticModel( scen, 196.1818084716797, 9.76587200164795, 18.590068817138672, 0.0, -0.7071068286895752, 0.0, 0.7071068286895752, { 1.0, 1.0, 1.0 }, "assets/model/static/props/hanging-street-light-short_00.bgnome", "assets/texture/static/props/hanging-street-light_00.material", "" )
     ent = staticModel( scen, 0.0, 0.0, -0.0, 0.0, 0.0, 0.0, 1.0, { 1.0, 1.0, 1.0 }, "assets/model/static/street/scenario1-square_00.bgnome", "assets/texture/static/street/asphalt_00.material", "" )
     ent = staticModel( scen, 0.0, 0.0, -0.0, 0.0, 0.0, 0.0, 1.0, { 1.0, 1.0, 1.0 }, "assets/model/static/street/scenario1-grounds_00.bgnome", "assets/texture/static/street/asphalt_00.material", "" )
     ent = staticModel( scen, 59.539215087890625, 0.0788719654083252, 133.93003845214844, 0.0, 0.7071068286895752, 0.0, 0.7071068286895752, { 1.0, 1.0, 1.0 }, "assets/model/static/building/apartment/s01-h/0-corners_00.bgnome", "assets/texture/static/building/apartment/s01-h/0-corners_00.material", "" )
@@ -1515,6 +1480,9 @@ function scen:load()
     ent = staticModel( scen, -196.2729034423828, 2.703104019165039, -70.51913452148438, 0.0, 0.7071067094802856, 0.0, 0.70710688829422, { 1.0, 1.0, 1.0 }, "assets/model/static/props/double-door_00.bgnome", "assets/texture/static/props/door_00.material", "" )
     ent = staticModel( scen, -196.2729034423828, 2.704007148742676, -61.304046630859375, 0.0, 0.7071067094802856, 0.0, 0.70710688829422, { 1.0, 1.0, 1.0 }, "assets/model/static/props/double-door_00.bgnome", "assets/texture/static/props/door_00.material", "" )
 
+    ent = decal( scen, 32.36900329589844, 41.314109802246094, 68.35667419433594, 3.774894707930798e-08, 1.0, 5.960464477539063e-08, 7.549790126404332e-08, 34.09126281738281, 0.17727907001972198, 34.383544921875, "assets/texture/decal/widewall-neon-diffuse_00.material", "" )
+    ent = decal( scen, -68.76956939697266, 46.56817626953125, -8.247661590576172, 0.0, 0.0, 0.0, 1.0, 33.36641311645508, 0.2990886867046356, 31.475439071655273, "assets/texture/decal/widewall-neon-diffuse_01.material", "" )
+    ent = decal( scen, 9.318397521972656, 34.50014877319336, -40.42972946166992, -1.545430627913902e-08, 0.7071068286895752, 6.883940528723542e-08, 0.7071068286895752, 21.096162796020508, 0.17727907001972198, 24.423908233642578, "assets/texture/decal/widewall-neon-diffuse_00.material", "" )
     ent = decal( scen, -163.4958953857422, 1.019984483718872e-05, -64.89287567138672, 0.0, 0.0, 0.0, 1.0, 26.442140579223633, 0.5834813714027405, 26.442140579223633, "assets/texture/decal/goal.material", "" )
     scen:registerInitCallback( genF( ent, "hideOnMain" ) )
     ent = decal( scen, -96.83289337158203, 0.0788719654083252, -143.81614685058594, 0.0, 0.0, 0.0, 1.0, 11.931214332580566, 1.1362284421920776, 11.931214332580566, "assets/texture/decal/agitator-warning.material", "" )
