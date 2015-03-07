@@ -158,7 +158,7 @@ namespace Core
 
             if(roww + glyphSlot->bitmap.width + 1 >= GFX::FontData::ATLAS_MAX_WIDTH)
             {
-                data->atlasWidth = std::max(static_cast<int>(data->atlasWidth), roww);
+                data->atlasWidth = std::max<int>(static_cast<int>(data->atlasWidth), roww);
                 data->atlasHeight += rowh;
                 roww = 0;
                 rowh = 0;
@@ -174,10 +174,10 @@ namespace Core
             data->characters[i].bitMapTop = static_cast<float>(glyphSlot->bitmap_top);
 
             roww += glyphSlot->bitmap.width + 1;
-            rowh = std::max(rowh, glyphSlot->bitmap.rows);
+            rowh = std::max<int>(rowh, glyphSlot->bitmap.rows);
         }
         
-        data->atlasWidth = std::max(static_cast<int>(data->atlasWidth), roww);
+        data->atlasWidth = std::max<int>(static_cast<int>(data->atlasWidth), roww);
         data->atlasHeight += rowh;
 
         roww = 0;
@@ -200,7 +200,7 @@ namespace Core
             data->characters[i].uvOffSetX = offSetX / static_cast<float>(data->atlasWidth);
             data->characters[i].uvOffSetY = offSetY / static_cast<float>(data->atlasHeight);
 
-            rowh = std::max(rowh, glyphSlot->bitmap.rows);
+            rowh = std::max<int>(rowh, glyphSlot->bitmap.rows);
             offSetX += glyphSlot->bitmap.width + 1;
         }
 
@@ -244,7 +244,7 @@ namespace Core
                     glyphSlot->bitmap.width, glyphSlot->bitmap.rows, GL_RED, GL_UNSIGNED_BYTE,
                     glyphSlot->bitmap.buffer);
 
-            rowh = std::max(rowh, glyphSlot->bitmap.rows);
+            rowh = std::max<int>(rowh, glyphSlot->bitmap.rows);
             offSetX += glyphSlot->bitmap.width + 1;
         }
 
