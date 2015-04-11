@@ -4,6 +4,7 @@
 
 #include <gfx/GFXInterface.hpp>
 
+#define EDGE_THRESHOLD 0.14f
 
 Core::NavMeshCollisionSystem::NavMeshCollisionSystem()
 	: BaseSystem( EntityHandler::GenerateAspect<
@@ -12,14 +13,18 @@ Core::NavMeshCollisionSystem::NavMeshCollisionSystem()
 }
 
 //#define Draw_DEBUG_LINES_TO_SHOW_COLLIDING_EDGES
-
-
 #ifdef Draw_DEBUG_LINES_TO_SHOW_COLLIDING_EDGES
 #define DEBUG_ELIGABLE_EDGES_FOR_COLLISION( x ) x
 #else
 #define DEBUG_ELIGABLE_EDGES_FOR_COLLISION( x ) ;
 #endif
 
+//#define Draw_DEBUG_LINES_TO_SHOW_PF_EDGE_VECTOR
+#ifdef Draw_DEBUG_LINES_TO_SHOW_PF_EDGE_VECTOR
+#define DEBUG_PF_EDGE_VECTOR( x ) x
+#else
+#define DEBUG_PF_EDGE_VECTOR( x ) ;
+#endif
 
 
 void Core::NavMeshCollisionSystem::Update( float delta )
@@ -55,7 +60,7 @@ void Core::NavMeshCollisionSystem::Update( float delta )
 			for( int i = 0; i < 4; i++ )
 			{
 				// check for last corner of triangle
-				if( instance->nodes[ffc->node].corners[i].linksTo < -1.5f || instance->nodes[ ffc->node ].corners[i].cornerConnectsToNode[0] < 0 )
+				if( instance->nodes[ffc->node].corners[i].linksTo < -1.5f || instance->nodes[ ffc->node ].corners[i].cornerConnectsToNode[0] == ffc->node )
 					continue;
 
 				int ii = i * 2;
@@ -74,24 +79,18 @@ void Core::NavMeshCollisionSystem::Update( float delta )
 			// check vs line
 			int nrEdges = instance->nodes[ffc->node].corners[3].length < 0 ? 3 : 4;
 
-			bool okCollision = false;
 			// check vs. own node lines first...
+			DEBUG_ELIGABLE_EDGES_FOR_COLLISION( 
 			for( int i = 0; i < nrEdges; i++ )
 			{
-				DEBUG_ELIGABLE_EDGES_FOR_COLLISION( 
 				for( int pp = 0; pp < 2; pp++ )
 				{
-
 					int collisionNode = instance->nodes[ffc->node].corners[i].cornerConnectsToNode[pp];
 					int collisionCorner = instance->nodes[ffc->node].corners[i].cornerConnectsToCorner[pp];
 
 					if( collisionNode < 0 || instance->nodes[collisionNode].corners[collisionCorner].linksTo >= 0 )
 						continue;
-
-					// debug
-					glm::vec3 LineToCollide = instance->nodes[collisionNode].GetMidPoint( collisionCorner );
 					
-					// debug
 					float* points = instance->nodes[ffc->node].points;
 					glm::vec3 temp = glm::vec3(0.0f);
 					int nrLines = instance->nodes[ ffc->node ].corners[3].length < 0 ? 3 : 4;
@@ -100,83 +99,61 @@ void Core::NavMeshCollisionSystem::Update( float delta )
 					temp /= nrLines;
 
 					GFX::Debug::DrawLine( LineToCollide, temp, GFXColor( 1, 0.2f, 1, 1 ), false );
-				} );
-
-				
-				
-				int collisionNode = ffc->node;
-				int collisionCorner = i;
-
-				if( collisionNode < 0 )
-					continue;
-
-				int ii = collisionCorner * 2;
-				int oo = (ii + 2) % 8;	
-
-				// define lines...
-				float* verticies = instance->nodes[collisionNode].points;
-				glm::vec3 lineStart = glm::vec3( verticies[ ii ], 0.0f, verticies[ ii + 1 ] );
-				glm::vec3 lineEnd	= glm::vec3( verticies[ oo ], 0.0f, verticies[ oo + 1 ] );
-				glm::vec3 fromStartToObject = position - lineStart;
-
-				float distanceAlongLine = glm::dot( (lineEnd - lineStart) * instance->nodes[collisionNode].corners[collisionCorner].inverseLength, fromStartToObject );
-				if( instance->nodes[collisionNode].corners[collisionCorner].length < distanceAlongLine || distanceAlongLine < 0 )
-					continue;
-
-				glm::vec3 cross = glm::normalize( glm::cross( (lineEnd - lineStart), glm::vec3( 0.0f, 1.0f, 0.0f ) ) );
-				float distanceToLine = glm::dot( cross, fromStartToObject );
-				
-				if( instance->nodes[collisionNode].corners[collisionCorner].linksTo >= 0 && distanceToLine < 0 )
-				{
-					okCollision = true;
 				}
-				else if( distanceToLine < sphere.radius && instance->nodes[collisionNode].corners[collisionCorner].linksTo < 0 )
-				{
-					position += cross * (sphere.radius - distanceToLine);
-				}
+			} );
 
-				if( distanceToLine < ffc->distance )
-				{
-					ffc->distance = distanceToLine;
-					ffc->wallDirX = abs( cross.z ) < 0.7853981633f ? cross.x > 0 ? -1.0f : 1.0f : 0.0f;
-					ffc->wallDirZ = abs( cross.x ) < 0.7853981633f ? cross.z > 0 ? 1.0f : -1.0f : 0.0f;
-				}
-			}
 
-			// check vs. adjacent lines as well...
-			if( !instance->CheckPointInsideNode( position, ffc->node ) && !okCollision )
-			{
-				for( int i = 0; i < nrEdges; i++ )
-				{				
-					for( int pp = 0; pp < 2; pp++ )
+
+
+			Core::MovementDataComponent* mdr = WGETC<Core::MovementDataComponent>(*it);
+			glm::vec3 prevPos = glm::vec3( mdr->prevPos[0], mdr->prevPos[1], mdr->prevPos[2] );
+
+			for( int i = 0; i < nrEdges; i++ )
+			{				
+				for( int pp = 0; pp < 2; pp++ )
+				{
+					int collisionNode = instance->nodes[ffc->node].corners[i].cornerConnectsToNode[pp];
+					int collisionCorner = instance->nodes[ffc->node].corners[i].cornerConnectsToCorner[pp];
+
+					if( collisionNode < 0 || instance->nodes[collisionNode].corners[collisionCorner].linksTo >= 0 )
+						continue;
+
+					int ii = collisionCorner * 2;
+					int oo = (ii + 2) % 8;	
+
+					// define lines...
+					float* verticies = instance->nodes[collisionNode].points;
+					glm::vec3 lineStart = glm::vec3( verticies[ ii ], 0.0f, verticies[ ii + 1 ] );
+					glm::vec3 lineEnd	= glm::vec3( verticies[ oo ], 0.0f, verticies[ oo + 1 ] );
+					glm::vec3 fromStartToObject = position - lineStart;
+
+					float* normal = instance->nodes[ collisionNode ].corners[ collisionCorner ].normal;
+					if( glm::dot( glm::vec3( normal[0], 0, normal[1] ), prevPos - instance->nodes[ collisionNode ].GetMidPoint( collisionCorner ) ) < 0 )
+						continue;
+
+					float distanceAlongLine = glm::dot( (lineEnd - lineStart) * instance->nodes[collisionNode].corners[collisionCorner].inverseLength, fromStartToObject );
+					if( instance->nodes[collisionNode].corners[collisionCorner].length + EDGE_THRESHOLD < distanceAlongLine || distanceAlongLine < -EDGE_THRESHOLD )
+						continue;
+
+					glm::vec3 cross = glm::normalize( glm::cross( (lineEnd - lineStart), glm::vec3( 0.0f, 1.0f, 0.0f ) ) );
+					float distanceToLine = glm::dot( cross, fromStartToObject );
+					
+					if( distanceToLine < sphere.radius )
+						position += cross * (sphere.radius - distanceToLine);
+
+					if( distanceToLine < ffc->distance )
 					{
-						int collisionNode = instance->nodes[ffc->node].corners[i].cornerConnectsToNode[pp];
-						int collisionCorner = instance->nodes[ffc->node].corners[i].cornerConnectsToCorner[pp];
-
-						if( collisionNode < 0 || instance->nodes[collisionNode].corners[collisionCorner].linksTo >= 0 )
-							continue;
-
-						int ii = collisionCorner * 2;
-						int oo = (ii + 2) % 8;	
-
-						// define lines...
-						float* verticies = instance->nodes[collisionNode].points;
-						glm::vec3 lineStart = glm::vec3( verticies[ ii ], 0.0f, verticies[ ii + 1 ] );
-						glm::vec3 lineEnd	= glm::vec3( verticies[ oo ], 0.0f, verticies[ oo + 1 ] );
-						glm::vec3 fromStartToObject = position - lineStart;
-
-						float distanceAlongLine = glm::dot( (lineEnd - lineStart) * instance->nodes[collisionNode].corners[collisionCorner].inverseLength, fromStartToObject );
-						if( instance->nodes[collisionNode].corners[collisionCorner].length < distanceAlongLine || distanceAlongLine < 0 )
-							continue;
-
-						glm::vec3 cross = glm::normalize( glm::cross( (lineEnd - lineStart), glm::vec3( 0.0f, 1.0f, 0.0f ) ) );
-						float distanceToLine = glm::dot( cross, fromStartToObject );
-				
-						if( distanceToLine < sphere.radius )
-							position += cross * (sphere.radius - distanceToLine);
+						ffc->distance = distanceToLine;
+						ffc->wallDirX = abs( cross.z ) < 0.7853981633f ? cross.x > 0 ? -1 : 1 : 0;
+						ffc->wallDirZ = abs( cross.x ) < 0.7853981633f ? cross.z > 0 ? -1 : 1 : 0;
 					}
 				}
-			}
+			}	
+
+			DEBUG_PF_EDGE_VECTOR( 
+				glm::vec3 temp = glm::vec3( ffc->wallDirX, 0, ffc->wallDirZ ); 
+				GFX::Debug::DrawLine( position, position + temp * 2.0f, GFXColor( 1, 1, 0, 1 ), false ); 
+				);
 
 			// pf utility...
 			#define WallCurDeclineVal 1.0f

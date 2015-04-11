@@ -1,7 +1,7 @@
 #include "AnimationManagerGFX.hpp"
 
 #include <cstring>
-
+#include <iostream>
 AnimationManagerGFX::AnimationManagerGFX()
 {
 	glGenBuffers(1, &m_animationBuffer);
@@ -27,16 +27,18 @@ int AnimationManagerGFX::CreateSkeleton(int& out_skeletonID)
 int AnimationManagerGFX::DeleteSkeleton(const int& skeletonID)
 {
 	if (m_skeletons.find(skeletonID) != m_skeletons.end())
-	{
-		int animationCount = m_skeletons[skeletonID]->GetAnimationCount();
-		for (int i = 0; i < animationCount; i++)
+	{	
+		int numAnimations = m_skeletons[skeletonID]->GetAnimationCount();
+		for (int i = 0; i < numAnimations; i++)
 		{
 			unsigned int numFrames;
 			unsigned int bonesPerFrame;
 			unsigned int animationOffset;
-			m_skeletons[skeletonID]->GetInfo(i, numFrames, bonesPerFrame, animationOffset);
-			unsigned int totalOffset = animationOffset;
-			m_animations.erase(m_animations.begin() + animationOffset, m_animations.begin() + numFrames * bonesPerFrame + animationOffset);
+			m_skeletons[skeletonID]->GetInfo(0, numFrames, bonesPerFrame, animationOffset);
+			m_skeletons[skeletonID]->RemoveAnimation(0);
+
+			unsigned int deletedLength = numFrames * bonesPerFrame;
+			m_animations.erase(m_animations.begin() + animationOffset, m_animations.begin() + animationOffset + deletedLength);
 
 			// Rearrange animations and rebind skeletons
 			for (auto it = m_skeletons.begin(); it != m_skeletons.end(); it++)
@@ -47,28 +49,28 @@ int AnimationManagerGFX::DeleteSkeleton(const int& skeletonID)
 					unsigned int i_numFrames;
 					unsigned int i_bonesPerFrame;
 					unsigned int i_animationOffset;
-					skeleton->GetInfo(animationID, i_numFrames, i_bonesPerFrame, i_animationOffset);
-					unsigned int i_animationLength = i_numFrames * i_bonesPerFrame;
 
-					if (i_animationOffset > animationOffset)
+					if (skeleton->GetInfo(animationID, i_numFrames, i_bonesPerFrame, i_animationOffset) == GFX_SUCCESS && i_animationOffset > animationOffset)
 					{
-						skeleton->UpdateInfo(animationID, totalOffset, i_numFrames, i_bonesPerFrame);
-						totalOffset += i_animationLength;
+						skeleton->UpdateInfo(animationID, i_animationOffset - deletedLength, i_numFrames, i_bonesPerFrame);
 					}
 				}
 			}
 		}
 
-
 		delete m_skeletons[skeletonID];
 		m_skeletons.erase(skeletonID);
+		m_idCounter--;
+		std::cout << m_skeletons.size() << " " << m_animations.size() << "\n";
 
 
 
 		return GFX_SUCCESS;
 	}
 	else
+	{
 		return GFX_FAIL;
+	}
 }
 
 int AnimationManagerGFX::AddAnimationToSkeleton(const int& skeletonID, glm::mat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame)

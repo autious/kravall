@@ -1,6 +1,8 @@
 local GUI = require "gui/GUI"
 local Checkbox = require "gui/component/Checkbox"
 local TextLabel = require "gui/component/TextLabel"
+local Image = require "gui/component/Image"
+
 local SimplePlacer = require "gui/placement/SimplePlacer"
 
 local UnitStatGUI = GUI:new{x=0,y=0, width=300, height=120, anchor="SouthEast"}
@@ -10,22 +12,33 @@ function UnitStatGUI:new(o)
     
     --o.lifeGUI = GUI:new({ anchor="South", x=0,y=0, width=40, height=70})
     --o.lifeGUI:addPlacementHandler( require "gui/placement/SimplePlacer" )
+	
+	local xOff = 12
+    local wrapperGUI = GUI:new{ width=2, height=2, yoffset=-10, anchor="SouthWest" }
 
-    local wrapperGUI = GUI:new{width=2,height=2, yoffset=-10, anchor="SouthWest"}
+    --o.labelUnitName =  TextLabel:new( { label="Police Unit", yoffset=0, font="assets/font/toolTip.font" })
+    --o.labelUnitHealth = TextLabel:new( { label="Health: NaN", yoffset=18, font="assets/font/toolTip.font"  } )
+    --o.labelUnitMorale = TextLabel:new( { label="Morale: NaN", yoffset=36, font="assets/font/toolTip.font"  } )
+    --o.labelUnitStamina = TextLabel:new( { label="Stamina: NaN", yoffset=54, font="assets/font/toolTip.font"  } )
+    --o.labelUnitStance = TextLabel:new( { label="Stance: NaN", yoffset=72, font="assets/font/toolTip.font" } )
+    --o.labelUnitFormation = TextLabel:new( { label="Formation: NaN", yoffset=90, font="assets/font/toolTip.font"  } )
+	
+	o.labelUnitHealth = TextLabel:new( { label="Health: NaN", xoffset=xOff, yoffset=12, font="assets/font/toolTip.font"  } )
+    o.labelUnitMorale = TextLabel:new( { label="Morale: NaN", xoffset=xOff, yoffset=30, font="assets/font/toolTip.font"  } )
+    o.labelUnitStamina = TextLabel:new( { label="Stamina: NaN", xoffset=xOff, yoffset=30, font="assets/font/toolTip.font"  } )
+    o.labelUnitStance = TextLabel:new( { label="Stance: NaN", xoffset=xOff, yoffset=48, font="assets/font/toolTip.font" } )
+    o.labelUnitFormation = TextLabel:new( { label="Formation: NaN", xoffset=xOff, yoffset=66, font="assets/font/toolTip.font"  } )
+	o.labelUnitMorale:setShow( false )
 
-    o.labelUnitName =  TextLabel:new( { label="Police Unit", yoffset=0, font="assets/font/toolTip.font" })
-    o.labelUnitHealth = TextLabel:new( { label="Health: NaN", yoffset=18, font="assets/font/toolTip.font"  } )
-    o.labelUnitMorale = TextLabel:new( { label="Morale: NaN", yoffset=36, font="assets/font/toolTip.font"  } )
-    o.labelUnitStamina = TextLabel:new( { label="Stamina: NaN", yoffset=54, font="assets/font/toolTip.font"  } )
-    o.labelUnitStance = TextLabel:new( { label="Stance: NaN", yoffset=72, font="assets/font/toolTip.font" } )
-    o.labelUnitFormation = TextLabel:new( { label="Formation: NaN", yoffset=90, font="assets/font/toolTip.font"  } )
-
-    wrapperGUI:addComponent( o.labelUnitName )
+    --wrapperGUI:addComponent( o.labelUnitName )
     wrapperGUI:addComponent( o.labelUnitHealth )
-    wrapperGUI:addComponent( o.labelUnitMorale )
+    --wrapperGUI:addComponent( o.labelUnitMorale )
     wrapperGUI:addComponent( o.labelUnitStamina )
     wrapperGUI:addComponent( o.labelUnitStance )
     wrapperGUI:addComponent( o.labelUnitFormation )
+	
+	wrapperGUI:addComponent( Image:new( { mat="assets/texture/ui/status-bar.material" } ) )
+	wrapperGUI:addComponent( Image:new( { mat="assets/texture/ui/status-box-background.material" } ) )
 	
 	wrapperGUI:addPlacementHandler( SimplePlacer )
 	wrapperGUI:setShow( false )
@@ -79,7 +92,8 @@ function UnitStatGUI:setStamina( stamina )
 end
 
 function UnitStatGUI:setName( name )
-    self.labelUnitName:setLabel( name )
+	--print( name )
+    --self.labelUnitName:setLabel( name )
 end
 
 function UnitStatGUI:update(delta)

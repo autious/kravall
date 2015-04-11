@@ -19,13 +19,19 @@ function TutorialMenu:new(o, menuState)
     o.gui = GUI:new()
 	tutGUI = GUI:new()
 
-
 	--back to main menu
     o.gui:addComponent(Button:new({
                                     matReleased = "assets/texture/ui/back-button-release.material",
                                     matPressed = "assets/texture/ui/back-button-press.material",
                                     matHover = "assets/texture/ui/back-button-hover.material",
-                                    anchor="SouthWest",xoffset=0,yoffset=0, onClick = function() if tutImage then tutImage:destroy() end  menuState.goMain() end }))
+                                    anchor="SouthWest",xoffset=0,yoffset=0, onClick = function() if tutImage then tutImage:destroy() end TutorialMenu:DestroyButtons(o) menuState.goMain() end }))
+									
+	--basic gameplay tutorials
+	o.gui:addComponent(Button:new({
+                                  	matReleased = "assets/texture/ui/tutorial/basic-gameplay-release.material",
+									matPressed = "assets/texture/ui/tutorial/basic-gameplay-press.material",
+									matHover = "assets/texture/ui/tutorial/basic-gameplay-hover.material",
+                                    anchor="NorthWest",xoffset=0,yoffset=0, onClick = function() if tutImage then tutImage:destroy() end TutorialMenu:AddButtons(o, 2) end }))
 
 	--prep screen tutorials
 	o.gui:addComponent(Button:new({
@@ -36,9 +42,9 @@ function TutorialMenu:new(o, menuState)
 	
 	--gameplay tutorials
 	o.gui:addComponent(Button:new({
-                                    matReleased = "assets/texture/ui/tutorial/gameplay-release.material",
-                                    matPressed = "assets/texture/ui/tutorial/gameplay-press.material",
-                                    matHover = "assets/texture/ui/tutorial/gameplay_hover.material",
+                                    matReleased = "assets/texture/ui/tutorial/advanced-gameplay-release.material",
+                                    matPressed = "assets/texture/ui/tutorial/advanced-gameplay-press.material",
+                                    matHover = "assets/texture/ui/tutorial/advanced-gameplay-hover.material",
                                     anchor="NorthWest",xoffset=0,yoffset=0, onClick = function() if tutImage then tutImage:destroy() end TutorialMenu:AddButtons(o, 1) end }))
 
 	--keybind image
@@ -49,8 +55,8 @@ function TutorialMenu:new(o, menuState)
                                     anchor="NorthWest",xoffset=0,yoffset=0, onClick = function()  if tutImage then tutImage:destroy() end TutorialMenu:AddButtons(o, -1) TutorialMenu:SetImage(0, o) end }))
 
 	
-	tBox = TextBox:new({ignoreConstrict = true, body=[[]], width=600, height=900, xoffset = 500, yoffset= 350, anchor="CenterHorizontal"})
-	headline = TextBox:new({ body=[[]], width=200, height=100, xoffset = 500, yoffset= -190, anchor="NorthWest"})
+	tBox = TextBox:new({ignoreConstrict = true, body=[[]], width=700, height=900, xoffset = 500, yoffset= 350, anchor="CenterHorizontal"})
+	headline = TextBox:new({ body=[[]], width=200, height=100, xoffset = 500, yoffset= -250, anchor="NorthWest"})
 	o.gui:addComponent(tBox)
 	o.gui:addComponent(headline)
 
@@ -61,6 +67,90 @@ function TutorialMenu:new(o, menuState)
     setmetatable( o, self )
     self.__index = self
     return o
+end
+
+function TutorialMenu:DestroyButtons(o)
+if mainGameTutButtons.policeSpawnButton then
+		o.gui:removeComponent(mainGameTutButtons.policeSpawnButton)
+		o.gui:removeComponent(mainGameTutButtons.buyInstruct)
+		o.gui:removeComponent(mainGameTutButtons.hostileSpawn)
+		o.gui:removeComponent(mainGameTutButtons.friendlySpawn)
+		o.gui:removeComponent(mainGameTutButtons.escortPath)
+		
+		mainGameTutButtons.policeSpawnButton:destroy()
+		mainGameTutButtons.buyInstruct:destroy()
+		mainGameTutButtons.hostileSpawn:destroy()
+		mainGameTutButtons.friendlySpawn:destroy()
+		mainGameTutButtons.escortPath:destroy()
+		
+		mainGameTutButtons.policeSpawnButton = nil
+		mainGameTutButtons.buyInstruct = nil
+		mainGameTutButtons.hostileSpawn = nil
+		mainGameTutButtons.friendlySpawn = nil
+		mainGameTutButtons.escortPath = nil
+
+		o.gui:removeComponent(mainGameTutButtons.forward)
+		mainGameTutButtons.forward:destroy()
+		mainGameTutButtons.forward = nil
+
+		o.gui:removeComponent(mainGameTutButtons.back)
+		mainGameTutButtons.back:destroy()
+		mainGameTutButtons.back = nil
+		
+	end
+
+	if mainGameTutButtons.moodsButton then
+		o.gui:removeComponent(mainGameTutButtons.tearGasButton)
+		o.gui:removeComponent(mainGameTutButtons.stancesButton)
+		o.gui:removeComponent(mainGameTutButtons.specialAbilitiesButton)
+		o.gui:removeComponent(mainGameTutButtons.moodsButton)
+		o.gui:removeComponent(mainGameTutButtons.overviewButton)
+
+		mainGameTutButtons.tearGasButton:destroy()
+		mainGameTutButtons.stancesButton:destroy()
+		mainGameTutButtons.specialAbilitiesButton:destroy()
+		mainGameTutButtons.moodsButton:destroy()
+		mainGameTutButtons.overviewButton:destroy()
+
+		mainGameTutButtons.tearGasButton = nil
+		mainGameTutButtons.specialAbilitiesButton = nil
+		mainGameTutButtons.stancesButton = nil
+		mainGameTutButtons.moodsButton = nil
+		mainGameTutButtons.overviewButton = nil
+
+		o.gui:removeComponent(mainGameTutButtons.forward)
+		mainGameTutButtons.forward:destroy()
+		mainGameTutButtons.forward = nil
+
+		o.gui:removeComponent(mainGameTutButtons.back)
+		mainGameTutButtons.back:destroy()
+		mainGameTutButtons.back = nil
+	end
+
+	if mainGameTutButtons.selectingPoliceButton then
+		o.gui:removeComponent(mainGameTutButtons.cameraControlsButton)
+		o.gui:removeComponent(mainGameTutButtons.selectingPoliceButton)
+		o.gui:removeComponent(mainGameTutButtons.formationsButton)
+		o.gui:removeComponent(mainGameTutButtons.objectivesButton)
+
+		mainGameTutButtons.cameraControlsButton:destroy()
+		mainGameTutButtons.selectingPoliceButton:destroy()
+		mainGameTutButtons.formationsButton:destroy()
+		mainGameTutButtons.objectivesButton:destroy()
+
+		mainGameTutButtons.cameraControlsButton = nil
+		mainGameTutButtons.selectingPoliceButton = nil
+		mainGameTutButtons.formationsButton = nil
+		mainGameTutButtons.objectivesButton = nil
+
+		o.gui:removeComponent(mainGameTutButtons.forward)
+		mainGameTutButtons.forward:destroy()
+		mainGameTutButtons.forward = nil
+
+		o.gui:removeComponent(mainGameTutButtons.back)
+		mainGameTutButtons.back:destroy()
+		mainGameTutButtons.back = nil
+	end
 end
 
 function TutorialMenu:SetImage(id, o)
@@ -74,7 +164,7 @@ function TutorialMenu:SetImage(id, o)
 		headline:setText([[Keybindings]])
 	elseif id == 1 then
 		tutImage = Image:new { ignoreConstrict=true, mat="assets/texture/tutorial/policeSpawnTut.material" }
-		tBox:setText([[The green squares with "SPAWN" written in them shows where it is possible to place your newly bought police.]])
+		tBox:setText([[The light blue squares with "SPAWN" written in them shows where it is possible to place your newly bought police.]])
 		headline:setText([[Police spawn]])
 	elseif id == 2 then
 		tutImage = Image:new { ignoreConstrict=true, mat="assets/texture/tutorial/buyingUnitsTut.material" }
@@ -90,31 +180,13 @@ function TutorialMenu:SetImage(id, o)
 		headline:setText([[Hostile spawn]])
 	elseif id == 4 then
 		tutImage = Image:new { ignoreConstrict=true, mat="assets/texture/tutorial/friendlySpawnTut.material" }
-		tBox:setText([[The yellow square with a heart marks the spawn point for friendly rioters that you must protect.]])
+		tBox:setText([[The green square with "START" marks the spawn point for friendly rioters that you must protect.]])
 		headline:setText([[Friendly spawn]])
 	elseif id == 5 then
 		tutImage = Image:new { ignoreConstrict=true, mat="assets/texture/tutorial/friendlyPathTut.material" }
 		tBox:setText([[The green arrows indicate the path which the friendly rioters will move along as long as they are not disturbed.]])
 		headline:setText([[Escort path]])
 	elseif id == 6 then
-		tutImage = Image:new { ignoreConstrict=true, mat="assets/texture/tutorial/objectivesTut.material" }
-		tBox:setText([[The top left corner shows the objectives for the current level. Every objective which is not marked with "Optional" needs to be fulfilled to complete the level. Completing optional objectives may however grant bonuses such as more police units or less rioters spawning.]])
-		headline:setText([[Objectives]])
-	elseif id == 7 then
-		tutImage = Image:new { ignoreConstrict=true, mat="assets/texture/tutorial/selectionTut.material" }
-		tBox:setText([[Selecting units is done by either left clicking a unit or left clicking and holding to drag a selection box. Every squad within the box will be selected.
-		
-		Right clicking the ground with squads (or a single squad) selected will make them move to that position.
-		
-		Left clicking on the ground with a squads (or a single squad) selected will deselect all the selected units.]])
-		headline:setText([[Basic controls]])
-	elseif id == 8 then
-		tutImage = Image:new { ignoreConstrict=true, mat="assets/texture/tutorial/formationTut.material" }
-		tBox:setText([[With one or more units selected, right click and drag to place all the selected units in formation. The direction which you drag the mouse will impact the direction of the formation. Every unit's position is indicated by a green circle on the ground.
-		
-		Three different formations are available; line, semi-circle and circle formation. They can be find on the bottom right of the squad interface. Toggling the formation toggles it for all the selected units.]])
-		headline:setText([[Formations]])
-	elseif id == 9 then
 		tutImage = Image:new { ignoreConstrict=true, mat="assets/texture/tutorial/stanceTut.material" }
 		tBox:setText([[There are three different stances available. With one or more units selected, left click either of the three icons in the top right corner to toggle the stance for all the selected units.
 		
@@ -124,45 +196,80 @@ function TutorialMenu:SetImage(id, o)
 		
 		Green man: Passive stance, selecting this stance will make your units completely passive, ignoring any attacks or passing rioters.]])
 		headline:setText([[Stances]])
-	elseif id == 10 then
+	elseif id == 7 then
+		tutImage = Image:new { ignoreConstrict=true, mat="assets/texture/tutorial/tearGasTut.material" }
+		tBox:setText([[ Tear gas is a targeted area of effect attack only available for tear gas police. Pressing it will active a reticule which shows the area affected by firing the tear gas. Left clicking while the reticule is active will fire. Firing consumes stamina. Tear gas will make rioters angry but also makes them flee the area of effect.]])
+		headline:setText([[Tear gas]])
+	elseif id == 8 then
 		tutImage = Image:new { ignoreConstrict=true, mat="assets/texture/tutorial/specialAbilityTut.material" }
 		tBox:setText([[When a squad (or several) is seleceted, all the available special abilities for the selected units will be shown in the middle panel of the squad interface.
-		
-		Attack: Attack is an ability which targets an entire group of rioters. After pressing attack, hovering over a rioter will highlight the group which your selected units will attack. Left clicking while hovering over the group will execute the attack.
-		
-		Tear gas: Tear gas is a targeted area of effect attack only available for tear gas police. Pressing it will active a reticule which shows the area affected by firing the tear gas. Left clicking while the reticule is active will fire. Firing consumes stamina.
-		
+
+		Attack: Pressing attack and then left clicking a rioter group will make all the selected squads attack that group.
+
 		Sprint: Pressing sprint will toggle sprinting on/off, making the unit sprint to their current target Sprinting consumes stamina.
 		
-		Flee: Pressing flee will make all the selected units run back to their spawn point to recover.]])
-		headline:setText([[Special abilities]])
-	elseif id == 11 then
+		Halt: Pressing halt will make all selected squads stop at their current position.]])
+		headline:setText([[Shared abilities]])
+	elseif id == 9 then
+		tutImage = Image:new { ignoreConstrict=true, mat="assets/texture/tutorial/overviewTut.material" }
+		tBox:setText([[Pressing G or the Overview icon (eye in the lower left corner) will take you into overview mode. In overview mode, all rioters and police are highlighted. To exit overview mode, press G, the icon or right click where you want the camera to zoom to.]])
+		headline:setText([[Overview]])
+	elseif id == 10 then
 		tutImage = Image:new { ignoreConstrict=true, mat="assets/texture/tutorial/moodTut.material" }
-		tBox:setText([[Depending on your actions, rioters will become angrier or calm themselves. This can be seen by hovering with your mouse over a rioter group, giving the group an outline where the color shows their mood.
+		tBox:setText([[Depending on your actions, rioters will become angrier or calm themselves. This can be seen by holding the M button, giving the group an outline where the color shows their mood.
 		
-		Blue: Neutral, this rioter is not angry or aggresive.
-
+		Light blue: Neutral, this rioter is not angry or aggresive.
+	
 		Orange: Agitated, this rioter is starting to get angry.
-
+	
 		Red: Angry, this rioter is angry and will attack any hostile rioters or police within sight.
-
-		Pink: Broken, this rioter has been broken and will retreat, leaving the map.]])
+	
+		White: Broken, this rioter has been broken and will retreat, leaving the map.]])
 		headline:setText([[Moods]])
+	elseif id == 11 then
+		tutImage = Image:new { ignoreConstrict=true, mat="assets/texture/tutorial/cameraTut.material" }
+		tBox:setText([[Moving the camera is done by using WASD or the arrow keys. To rotate the camera, either hold Q or E. Alternatively, press and hold the scroll button and move your mouse to rotate the camera. To zoom in or out, use the scroll wheel. To raise the camera, press space. To lower the camera, press and hold Z.]])
+		headline:setText([[Camera controls]])
+	elseif id == 12 then
+		tutImage = Image:new { ignoreConstrict=true, mat="assets/texture/tutorial/selectionTut.material" }
+		tBox:setText([[Selecting units is done by either left clicking a unit or left clicking and holding to drag a selection box. Every squad within the box will be selected.
+		
+		Right clicking the ground with squads (or a single squad) selected will make them move to that position.
+		
+		Left clicking on the ground with a squads (or a single squad) selected will deselect all the selected units.
+		
+		Squads can be assigned to control groups by press CTRL + a number. The assigned groups can then quickly be accessed by pressing the corresponding number.]])
+		headline:setText([[Basic controls]])
+	elseif id == 13 then
+		tutImage = Image:new { ignoreConstrict=true, mat="assets/texture/tutorial/formationTut.material" }
+		tBox:setText([[With one or more units selected, right click and drag to place all the selected units in formation. The direction which you drag the mouse will impact the direction of the formation. Every unit's position is indicated by a green circle on the ground.
+		
+		Three different formations are available; line, semi-circle and circle formation. They can be find on the bottom right of the squad interface. Toggling the formation toggles it for all the selected units.]])
+		headline:setText([[Formations]])
+	elseif id == 14 then
+		tutImage = Image:new { ignoreConstrict=true, mat="assets/texture/tutorial/objectivesTut.material" }
+		tBox:setText([[The top left corner shows the objectives for the current level. Every objective which is not marked with "Optional" needs to be fulfilled to complete the level. Completing optional objectives may however grant bonuses such as more police units or less rioters spawning.]])
+		headline:setText([[Objectives]])
 	end 
-	activeImage = id
 
-	if id > 5 then
-		tBox.yoffset = 290
-	else
+	activeImage = id
+	if id >= 1 and id <= 5 then
 		tBox.yoffset= 350
+	elseif id > 5 and id < 11 then
+		tBox.yoffset = 130
+	elseif id >= 11 then
+		tBox.yoffset= 290
+	else
 	end
 
-	tutImage:setPosition(500, 30)
+	if tutImage then
+		tutImage:setPosition(500, 30)
+	end
 end
 
 function TutorialMenu:AddButtons(tm, index)
 	local x = 200
-	local y = -285
+	local y = -342.5
 
 	if mainGameTutButtons.policeSpawnButton then
 		tm.gui:removeComponent(mainGameTutButtons.policeSpawnButton)
@@ -194,27 +301,23 @@ function TutorialMenu:AddButtons(tm, index)
 	end
 
 	if mainGameTutButtons.moodsButton then
-		
-		tm.gui:removeComponent(mainGameTutButtons.objectivesButton)
-		tm.gui:removeComponent(mainGameTutButtons.selectingPoliceButton)
-		tm.gui:removeComponent(mainGameTutButtons.formationsButton)
+		tm.gui:removeComponent(mainGameTutButtons.tearGasButton)
 		tm.gui:removeComponent(mainGameTutButtons.stancesButton)
 		tm.gui:removeComponent(mainGameTutButtons.specialAbilitiesButton)
 		tm.gui:removeComponent(mainGameTutButtons.moodsButton)
+		tm.gui:removeComponent(mainGameTutButtons.overviewButton)
 
-		mainGameTutButtons.objectivesButton:destroy()
-		mainGameTutButtons.selectingPoliceButton:destroy()
-		mainGameTutButtons.formationsButton:destroy()
+		mainGameTutButtons.tearGasButton:destroy()
 		mainGameTutButtons.stancesButton:destroy()
 		mainGameTutButtons.specialAbilitiesButton:destroy()
 		mainGameTutButtons.moodsButton:destroy()
+		mainGameTutButtons.overviewButton:destroy()
 
-		mainGameTutButtons.objectivesButton = nil
-		mainGameTutButtons.selectingPoliceButton = nil
+		mainGameTutButtons.tearGasButton = nil
 		mainGameTutButtons.specialAbilitiesButton = nil
 		mainGameTutButtons.stancesButton = nil
-		mainGameTutButtons.escortPath = nil
 		mainGameTutButtons.moodsButton = nil
+		mainGameTutButtons.overviewButton = nil
 
 		tm.gui:removeComponent(mainGameTutButtons.forward)
 		mainGameTutButtons.forward:destroy()
@@ -224,6 +327,32 @@ function TutorialMenu:AddButtons(tm, index)
 		mainGameTutButtons.back:destroy()
 		mainGameTutButtons.back = nil
 	end
+
+	if mainGameTutButtons.selectingPoliceButton then
+		tm.gui:removeComponent(mainGameTutButtons.cameraControlsButton)
+		tm.gui:removeComponent(mainGameTutButtons.selectingPoliceButton)
+		tm.gui:removeComponent(mainGameTutButtons.formationsButton)
+		tm.gui:removeComponent(mainGameTutButtons.objectivesButton)
+
+		mainGameTutButtons.cameraControlsButton:destroy()
+		mainGameTutButtons.selectingPoliceButton:destroy()
+		mainGameTutButtons.formationsButton:destroy()
+		mainGameTutButtons.objectivesButton:destroy()
+
+		mainGameTutButtons.cameraControlsButton = nil
+		mainGameTutButtons.selectingPoliceButton = nil
+		mainGameTutButtons.formationsButton = nil
+		mainGameTutButtons.objectivesButton = nil
+
+		tm.gui:removeComponent(mainGameTutButtons.forward)
+		mainGameTutButtons.forward:destroy()
+		mainGameTutButtons.forward = nil
+
+		tm.gui:removeComponent(mainGameTutButtons.back)
+		mainGameTutButtons.back:destroy()
+		mainGameTutButtons.back = nil
+	end
+
 		
 	if index == 0 then
 		TutorialMenu:SetImage(1)
@@ -259,64 +388,89 @@ function TutorialMenu:AddButtons(tm, index)
 											anchor="NorthWest",xoffset = x,yoffset=y, onClick = function() TutorialMenu:SetImage(5, o) end })
 	
 		tm.gui:addComponent(mainGameTutButtons.policeSpawnButton)
-		tm.gui:addComponent(mainGameTutButtons.buyInstruct)
 		tm.gui:addComponent(mainGameTutButtons.hostileSpawn)
 		tm.gui:addComponent(mainGameTutButtons.friendlySpawn)
 		tm.gui:addComponent(mainGameTutButtons.escortPath)
-
+		tm.gui:addComponent(mainGameTutButtons.buyInstruct)
 	elseif index == 1 then
 		TutorialMenu:SetImage(6)
-
-		mainGameTutButtons.objectivesButton = Button:new({
-											matReleased = "assets/texture/ui/tutorial/objective-release.material",
-											matPressed = "assets/texture/ui/tutorial/objective-press.material",
-											matHover = "assets/texture/ui/tutorial/objective-hover.material",
-											anchor="NorthWest",xoffset = x,yoffset=y, onClick = function() TutorialMenu:SetImage(6, o) end })
-
-		mainGameTutButtons.selectingPoliceButton = Button:new({
-											matReleased = "assets/texture/ui/tutorial/basic-controls-release.material",
-											matPressed = "assets/texture/ui/tutorial/basic-controls-press.material",
-											matHover = "assets/texture/ui/tutorial/basic-controls-hover.material",
-											anchor="NorthWest",xoffset = x,yoffset=y, onClick = function() TutorialMenu:SetImage(7, o) end })
-
-		mainGameTutButtons.formationsButton = Button:new({
-											matReleased = "assets/texture/ui/tutorial/formation-release.material",
-											matPressed = "assets/texture/ui/tutorial/formation-press.material",
-											matHover = "assets/texture/ui/tutorial/formation-hover.material",
-											anchor="NorthWest",xoffset = x,yoffset=y, onClick = function() TutorialMenu:SetImage(8, o) end })
 
 		mainGameTutButtons.stancesButton = Button:new({
 											matReleased = "assets/texture/ui/tutorial/stances-release.material",
 											matPressed = "assets/texture/ui/tutorial/stances-press.material",
 											matHover = "assets/texture/ui/tutorial/stances-hover.material",
-											anchor="NorthWest",xoffset = x,yoffset=y, onClick = function() TutorialMenu:SetImage(9, o) end })
+											anchor="NorthWest",xoffset = x,yoffset=y, onClick = function() TutorialMenu:SetImage(6, o) end })
+
+		mainGameTutButtons.tearGasButton = Button:new({
+											matReleased = "assets/texture/ui/tutorial/teargas-release.material",
+											matPressed = "assets/texture/ui/tutorial/teargas-press.material",
+											matHover = "assets/texture/ui/tutorial/teargas-hover.material",
+											anchor="NorthWest",xoffset = x,yoffset=y, onClick = function() TutorialMenu:SetImage(7, o) end })
 
 		mainGameTutButtons.specialAbilitiesButton = Button:new({
-											matReleased = "assets/texture/ui/tutorial/special-abilities-release.material",
-											matPressed = "assets/texture/ui/tutorial/special-abilities-press.material",
-											matHover = "assets/texture/ui/tutorial/special-abilities-hover.material",
-											anchor="NorthWest",xoffset = x,yoffset=y, onClick = function() TutorialMenu:SetImage(10, o) end })
+											matReleased = "assets/texture/ui/tutorial/shared-abilities-release.material",
+											matPressed = "assets/texture/ui/tutorial/shared-abilities-press.material",
+											matHover = "assets/texture/ui/tutorial/shared-abilities-hover.material",
+											anchor="NorthWest",xoffset = x,yoffset=y, onClick = function() TutorialMenu:SetImage(8, o) end })
+
+		mainGameTutButtons.overviewButton = Button:new({
+											matReleased = "assets/texture/ui/tutorial/overview-release.material",
+											matPressed = "assets/texture/ui/tutorial/overview-press.material",
+											matHover = "assets/texture/ui/tutorial/overview-hover.material",
+											anchor="NorthWest",xoffset = x,yoffset=y, onClick = function() TutorialMenu:SetImage(9, o) end })
 		
 		mainGameTutButtons.moodsButton = Button:new({
 											matReleased = "assets/texture/ui/tutorial/moods-release.material",
 											matPressed = "assets/texture/ui/tutorial/moods-press.material",
 											matHover = "assets/texture/ui/tutorial/moods-hover.material",
-											anchor="NorthWest",xoffset = x,yoffset=y, onClick = function() TutorialMenu:SetImage(11, o) end })
+											anchor="NorthWest",xoffset = x,yoffset=y, onClick = function() TutorialMenu:SetImage(10, o) end })
+		
+		tm.gui:addComponent(mainGameTutButtons.stancesButton)
+		tm.gui:addComponent(mainGameTutButtons.tearGasButton)
+		tm.gui:addComponent(mainGameTutButtons.specialAbilitiesButton)
+		tm.gui:addComponent(mainGameTutButtons.overviewButton)
+		tm.gui:addComponent(mainGameTutButtons.moodsButton)
+	elseif index == 2 then
+		TutorialMenu:SetImage(11)
 
-		tm.gui:addComponent(mainGameTutButtons.objectivesButton)
+		mainGameTutButtons.cameraControlsButton = Button:new({
+										matReleased = "assets/texture/ui/tutorial/camera-controls-release.material",
+										matPressed = "assets/texture/ui/tutorial/camera-controls-press.material",
+										matHover = "assets/texture/ui/tutorial/camera-controls-hover.material",
+										anchor="NorthWest",xoffset = x,yoffset=y, onClick = function() TutorialMenu:SetImage(11, o) end })
+
+
+		mainGameTutButtons.selectingPoliceButton = Button:new({
+										matReleased = "assets/texture/ui/tutorial/basic-controls-release.material",
+										matPressed = "assets/texture/ui/tutorial/basic-controls-press.material",
+										matHover = "assets/texture/ui/tutorial/basic-controls-hover.material",
+										anchor="NorthWest",xoffset = x,yoffset=y, onClick = function() TutorialMenu:SetImage(12, o) end })
+
+		
+		mainGameTutButtons.formationsButton = Button:new({
+										matReleased = "assets/texture/ui/tutorial/formation-release.material",
+										matPressed = "assets/texture/ui/tutorial/formation-press.material",
+										matHover = "assets/texture/ui/tutorial/formation-hover.material",
+										anchor="NorthWest",xoffset = x,yoffset=y, onClick = function() TutorialMenu:SetImage(13, o) end })
+
+		mainGameTutButtons.objectivesButton = Button:new({
+											matReleased = "assets/texture/ui/tutorial/objective-release.material",
+											matPressed = "assets/texture/ui/tutorial/objective-press.material",
+											matHover = "assets/texture/ui/tutorial/objective-hover.material",
+											anchor="NorthWest",xoffset = x,yoffset=y, onClick = function() TutorialMenu:SetImage(14, o) end })
+
+		tm.gui:addComponent(mainGameTutButtons.cameraControlsButton)
 		tm.gui:addComponent(mainGameTutButtons.selectingPoliceButton)
 		tm.gui:addComponent(mainGameTutButtons.formationsButton)
-		tm.gui:addComponent(mainGameTutButtons.stancesButton)
-		tm.gui:addComponent(mainGameTutButtons.specialAbilitiesButton)
-		tm.gui:addComponent(mainGameTutButtons.moodsButton)
+		tm.gui:addComponent(mainGameTutButtons.objectivesButton)
 	end
 
-	if index == 0 or index == 1 then
+	if index == 0 or index == 1  or index == 2 then
 		mainGameTutButtons.forward = Button:new({
 												matReleased = "assets/texture/ui/tutorial/next-release.material",
 												matPressed = "assets/texture/ui/tutorial/next-press.material",
 												matHover = "assets/texture/ui/tutorial/next-hover.material",
-												anchor="East",xoffset = 0,yoffset= -100, onClick = function() activeImage = (activeImage + 1) % 11 TutorialMenu:SetImage(activeImage, o) end })
+												anchor="East",xoffset = 0,yoffset= -100, onClick = function() activeImage = (activeImage + 1) % 15 TutorialMenu:SetImage(activeImage, o) end })
 	
 		tm.gui:addComponent(mainGameTutButtons.forward )
 
@@ -324,7 +478,7 @@ function TutorialMenu:AddButtons(tm, index)
 												matReleased = "assets/texture/ui/tutorial/prev-release.material",
 												matPressed = "assets/texture/ui/tutorial/prev-press.material",
 												matHover = "assets/texture/ui/tutorial/prev-hover.material",
-												anchor="East" ,xoffset = 0 ,yoffset= -100, onClick = function() activeImage = (activeImage - 1) % 11 TutorialMenu:SetImage(activeImage, o) end })
+												anchor="East" ,xoffset = 0 ,yoffset= -100, onClick = function() activeImage = (activeImage - 1) % 15 TutorialMenu:SetImage(activeImage, o) end })
 	
 		tm.gui:addComponent(mainGameTutButtons.back )
 	end
@@ -334,6 +488,9 @@ function TutorialMenu:update(delta)
 end
 
 function TutorialMenu:destroy()
+
+
+
     self.gui:destroy() 
 end
 

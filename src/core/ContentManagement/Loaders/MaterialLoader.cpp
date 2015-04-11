@@ -20,17 +20,25 @@ namespace Core
 {
     MaterialLoader::MaterialLoader()
     {
-
+        LOG_DEBUG << "Created MaterialLoader" << std::endl;
     }
 
     MaterialLoader::~MaterialLoader()
     {
-        for(Core::MaterialVector::size_type i = 0; i < m_materials.size(); ++i)
+        
+        for(Core::MaterialVector::iterator it = m_materials.begin(); it != m_materials.end(); ++it)
         {
-            Destroy(static_cast<Core::AssetHandle>(m_materials[i]));
+            GFX::Content::DeleteMaterial((*it)->materialId);
+            delete (*it);
         }
 
-        assert(m_textureCache.size() == 0);
+        for(Core::TextureCacheVector::size_type i = 0; i < m_textureCache.size(); ++i)
+        {
+            Core::TextureData* texture = std::get<2>(m_textureCache[i]); 
+            GFX::Content::DeleteTexture(texture->textureId);
+            delete texture;
+        } 
+        
     }
 
     Core::AssetHandle MaterialLoader::Load(const char* assetName)
@@ -48,6 +56,10 @@ namespace Core
         {
             data = new Core::MaterialData;
             Core::TextureData* texture = nullptr;
+            data->diffuseTexture = nullptr;
+            data->specularTexture = nullptr;
+            data->normalBlendTexture = nullptr;
+            data->glowTexture = nullptr;
 
             GFX::Content::CreateMaterial(data->materialId);
             unsigned int shaderId = std::numeric_limits<decltype(shaderId)>::max();
@@ -72,50 +84,83 @@ namespace Core
 
             if(diffuseTexture.size())
             {
+                std::lock_guard<std::mutex> lock(m_cacheMutex);
                 textureHash = MurmurHash2(diffuseTexture.c_str(), diffuseTexture.size(), diffuseTexture.size());
                 if(!GetTextureCacheStatus(textureHash, texture))
                 {
                     texture = new Core::TextureData;
 					BufferTextureData(LoadTextureData(diffuseTexture.c_str(), texture), texture, isDecal);
-                    AddTextureToMaterial(data->materialId, texture->textureId);
+                    AddTextureToCache(textureHash, texture);
                 }
+                else
+                {
+                    AddUserOfTexture(texture);
+                }
+
+                AddTextureToMaterial(data->materialId, texture->textureId);
                 data->diffuseTexture = texture;
+                assert(texture->textureId != 0);
             }
 
-			if (normalBlendTexture.size())
+			if(normalBlendTexture.size())
 			{
+                std::lock_guard<std::mutex> lock(m_cacheMutex);
 				textureHash = MurmurHash2(normalBlendTexture.c_str(), normalBlendTexture.size(), normalBlendTexture.size());
 				if (!GetTextureCacheStatus(textureHash, texture))
 				{
 					texture = new Core::TextureData;
 					BufferTextureData(LoadTextureData(normalBlendTexture.c_str(), texture), texture, isDecal);
-					AddTextureToMaterial(data->materialId, texture->textureId);
+                    AddTextureToCache(textureHash, texture);
 				}
+                else
+                {
+                    AddUserOfTexture(texture);
+                }
+
+			    AddTextureToMaterial(data->materialId, texture->textureId);
 				data->normalBlendTexture = texture;
-			}
+                assert(texture->textureId != 0);			
+            }
 
             if(specularTexture.size())
             {
+                std::lock_guard<std::mutex> lock(m_cacheMutex);
                 textureHash = MurmurHash2(specularTexture.c_str(), specularTexture.size(), specularTexture.size());
                 if(!GetTextureCacheStatus(textureHash, texture))
                 {
                     texture = new Core::TextureData;
 					BufferTextureData(LoadTextureData(specularTexture.c_str(), texture), texture, isDecal);
-                    AddTextureToMaterial(data->materialId, texture->textureId);
+                    AddTextureToCache(textureHash, texture);
                 }
+                else
+                {
+                    AddUserOfTexture(texture);
+                }
+
+                AddTextureToMaterial(data->materialId, texture->textureId);
                 data->specularTexture = texture;
+                assert(texture->textureId != 0);
             }
           
+
             if(glowTexture.size())
             {
+                std::lock_guard<std::mutex> lock(m_cacheMutex);
                 textureHash = MurmurHash2(glowTexture.c_str(), glowTexture.size(), glowTexture.size());
                 if(!GetTextureCacheStatus(textureHash, texture))
                 {
                     texture = new Core::TextureData;
 					BufferTextureData(LoadTextureData(glowTexture.c_str(), texture), texture, isDecal);
-                    AddTextureToMaterial(data->materialId, texture->textureId);
+                    AddTextureToCache(textureHash, texture);
                 }
+                else
+                {
+                    AddUserOfTexture(texture);
+                }
+
+                AddTextureToMaterial(data->materialId, texture->textureId);
                 data->glowTexture = texture;
+                assert(texture->textureId != 0);
             }
 
             m_materials.push_back(data);
@@ -126,6 +171,7 @@ namespace Core
 
     Core::AssetHandle MaterialLoader::LoadAsync(const char* assetName)
     {
+
         Core::MaterialLoader::MaterialLoadingData* data = nullptr;
 
         std::string shaderName;
@@ -158,49 +204,72 @@ namespace Core
 
             if(diffuseTexture.size())
             {
+                std::lock_guard<std::mutex> lock(m_cacheMutex);
                 textureHash = MurmurHash2(diffuseTexture.c_str(), diffuseTexture.size(), diffuseTexture.size());
                 if(!GetTextureCacheStatus(textureHash, texture))
                 {
                     texture = new Core::TextureData;
                     data->diffuseData = LoadTextureData(diffuseTexture.c_str(), texture);
+                    AddTextureToCache(textureHash, texture);
+                }
+                else
+                {
+                    AddUserOfTexture(texture);
                 }
                 data->materialData->diffuseTexture = texture;
             }
 
-            if(specularTexture.size())
-            {
-                textureHash = MurmurHash2(specularTexture.c_str(), specularTexture.size(), specularTexture.size());
-                if(!GetTextureCacheStatus(textureHash, texture))
-                {
-                    texture = new Core::TextureData;
-                    data->specularData = LoadTextureData(specularTexture.c_str(), texture);
-                }
-                data->materialData->specularTexture = texture;
-            }
-
             if(normalBlendTexture.size())
             {
+                std::lock_guard<std::mutex> lock(m_cacheMutex);
                 textureHash = MurmurHash2(normalBlendTexture.c_str(), normalBlendTexture.size(), normalBlendTexture.size());
                 if(!GetTextureCacheStatus(textureHash, texture))
                 {
                     texture = new Core::TextureData;
                     data->normalBlendData = LoadTextureData(normalBlendTexture.c_str(), texture);
+                    AddTextureToCache(textureHash, texture);
+                }
+                else
+                {
+                    AddUserOfTexture(texture);
                 }
                 data->materialData->normalBlendTexture = texture;
             }
 
+            if(specularTexture.size())
+            {
+                std::lock_guard<std::mutex> lock(m_cacheMutex);
+                textureHash = MurmurHash2(specularTexture.c_str(), specularTexture.size(), specularTexture.size());
+                if(!GetTextureCacheStatus(textureHash, texture))
+                {
+                    texture = new Core::TextureData;
+                    data->specularData = LoadTextureData(specularTexture.c_str(), texture);
+                    AddTextureToCache(textureHash, texture);
+                }
+                else
+                {
+                    AddUserOfTexture(texture);
+                }
+                data->materialData->specularTexture = texture;
+            }
+
+
             if(glowTexture.size())
             {
+                std::lock_guard<std::mutex> lock(m_cacheMutex);
                 textureHash = MurmurHash2(glowTexture.c_str(), glowTexture.size(), glowTexture.size());
                 if(!GetTextureCacheStatus(textureHash, texture))
                 {
                     texture = new Core::TextureData;
                     data->glowData = LoadTextureData(glowTexture.c_str(), texture);
+                    AddTextureToCache(textureHash, texture);
+                }
+                else
+                {
+                    AddUserOfTexture(texture);
                 }
                 data->materialData->glowTexture = texture;
             }
-
-
         }
 
         return data;
@@ -215,8 +284,6 @@ namespace Core
         GFX::Content::GetShaderId(shaderId, loadingData->shaderName.c_str());
         GFX::Content::AttachShaderToMaterial(loadingData->materialData->materialId, shaderId);
 
-		bool isDecal = false;
-
         if(shaderId == std::numeric_limits<decltype(shaderId)>::max())
         {            
             LOG_WARNING << "Failed to retrieve shader with name: " << loadingData->shaderName << std::endl;
@@ -224,21 +291,25 @@ namespace Core
 
         if(loadingData->materialData->diffuseTexture)
         {
+            std::lock_guard<std::mutex> lock(m_cacheMutex);
 			BufferTextureData(loadingData->diffuseData, loadingData->materialData->diffuseTexture, loadingData->materialData->isDecal);
             AddTextureToMaterial(loadingData->materialData->materialId, loadingData->materialData->diffuseTexture->textureId);
         }
         if(loadingData->materialData->specularTexture)
         {
+            std::lock_guard<std::mutex> lock(m_cacheMutex);
 			BufferTextureData(loadingData->specularData, loadingData->materialData->specularTexture, loadingData->materialData->isDecal);
             AddTextureToMaterial(loadingData->materialData->materialId, loadingData->materialData->specularTexture->textureId);
         }
         if(loadingData->materialData->normalBlendTexture)
         {
+            std::lock_guard<std::mutex> lock(m_cacheMutex);
 			BufferTextureData(loadingData->normalBlendData, loadingData->materialData->normalBlendTexture, loadingData->materialData->isDecal);
             AddTextureToMaterial(loadingData->materialData->materialId, loadingData->materialData->normalBlendTexture->textureId);
         }
         if(loadingData->materialData->glowTexture)
         {
+            std::lock_guard<std::mutex> lock(m_cacheMutex);
 			BufferTextureData(loadingData->glowData, loadingData->materialData->glowTexture, loadingData->materialData->isDecal);
             AddTextureToMaterial(loadingData->materialData->materialId, loadingData->materialData->glowTexture->textureId);
         }
@@ -251,7 +322,7 @@ namespace Core
     void MaterialLoader::Destroy(const Core::AssetHandle handle)
     {   
         Core::MaterialData* data = static_cast<Core::MaterialData*>(handle);
-
+       
         for(Core::MaterialVector::iterator it = m_materials.begin(); it != m_materials.end(); ++it)
         {
             if((*it) == data)
@@ -263,27 +334,42 @@ namespace Core
 
         for(Core::TextureCacheVector::size_type i = 0; i < m_textureCache.size(); ++i)
         {
-            bool referenceFound = false;
             Core::TextureData* texture = std::get<2>(m_textureCache[i]);
 
             if(data->diffuseTexture == texture)
             {
-                referenceFound = true;
-            }
-            else if(data->specularTexture == texture)
-            {
-                referenceFound = true;
-            }
-            else if(data->normalBlendTexture == texture)
-            {
-                referenceFound = true;
-            }
-            else if(data->glowTexture == texture)
-            {
-                referenceFound = true;
+                if(RemoveUserOfTexture(texture) == 0)
+                {
+                    m_textureCache.erase(m_textureCache.begin()+i);
+                    GFX::Content::DeleteTexture(texture->textureId);
+                    delete texture;
+                    --i;
+                }
             }
 
-            if(referenceFound)
+            if(data->normalBlendTexture == texture)
+            {
+                if(RemoveUserOfTexture(texture) == 0)
+                {
+                    m_textureCache.erase(m_textureCache.begin()+i);
+                    GFX::Content::DeleteTexture(texture->textureId);
+                    delete texture;
+                    --i;
+                }
+            }
+
+            if(data->specularTexture == texture)
+            {
+                if(RemoveUserOfTexture(texture) == 0)
+                {
+                    m_textureCache.erase(m_textureCache.begin()+i);
+                    GFX::Content::DeleteTexture(texture->textureId);
+                    delete texture;
+                    --i;
+                }
+            }
+
+            if(data->glowTexture == texture)
             {
                 if(RemoveUserOfTexture(texture) == 0)
                 {
@@ -295,6 +381,7 @@ namespace Core
             }
         }
 
+        GFX::Content::DeleteMaterial(data->materialId);
         delete data;
     }
 
@@ -425,18 +512,17 @@ namespace Core
 
     int MaterialLoader::AddUserOfTexture(const Core::TextureData* texture)
     {
-
         for(Core::TextureCacheVector::iterator it = m_textureCache.begin(); it != m_textureCache.end(); ++it)
         {
             if(std::get<2>(*it) == texture)
             {
-                return std::get<1>(*it) = std::get<1>(*it) + 1;
+                return (std::get<1>(*it) = std::get<1>(*it) + 1);
             }
         }
 
-        LOG_FATAL << "Trying to increase user count of unexisting texture" << std::endl;
+        LOG_WARNING << "Trying to increase user count of unexisting texture" << std::endl;
         assert(false);
-        return 0;
+        return -1;
     }
 
     int MaterialLoader::RemoveUserOfTexture(const Core::TextureData* texture)
@@ -445,16 +531,21 @@ namespace Core
         {
             if(std::get<2>(*it) == texture)
             {
-                return std::get<1>(*it) = std::get<1>(*it) - 1;
+                return (std::get<1>(*it) = std::get<1>(*it) - 1);
             }
         }
 
-        LOG_FATAL << "Trying to reduce user count of unexisting texture" << std::endl;
+        LOG_WARNING << "Trying to reduce user count of unexisting texture with value: " << texture << " and Id: " << texture->textureId << std::endl;
         assert(false);
-        return 0;
+        return -1;
     }
 
-    bool MaterialLoader::GetTextureCacheStatus(const unsigned int textureHash, Core::TextureData* &texture)
+    void MaterialLoader::AddTextureToCache(const unsigned int textureHash, Core::TextureData* texture)
+    {
+        m_textureCache.push_back(std::make_tuple(textureHash, 1U, texture));
+    }
+
+    bool MaterialLoader::GetTextureCacheStatus(const unsigned int textureHash, Core::TextureData* &texture)    
     {
         for(Core::TextureCacheVector::iterator it = m_textureCache.begin(); it != m_textureCache.end(); ++it)
         {

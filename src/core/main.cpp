@@ -36,6 +36,7 @@
 #include <Input/InputManager.hpp>
 
 #include <gfx/BitmaskDefinitions.hpp>
+#include <gfx/GFXSettings.hpp>
 
 static bool killProgram = false;
 
@@ -92,8 +93,26 @@ GLFWwindow* init( int argc, char** argv )
 
 	Core::world.InitWorld();
 
+	// Set gfx settings
+	// Set shadow quality
+	int sq = Core::world.m_config.GetInt( "shadowQuality", 1 );
+	sq = (sq == 0) ? GFX::GFX_SHADOWS_DISABLED : ((sq == 1) ? GFX::GFX_SHADOWS_VARIANCE_2C : ((sq == 2) ? GFX::GFX_SHADOWS_VARIANCE_4C : GFX::GFX_SHADOWS_VARIANCE_2C));
+	GFX::Settings::SetConfiguration(GFX::GFX_SHADOW_QUALITY, sq);
+	
+	// Set shadow resolution
+	int sr = Core::world.m_config.GetInt( "shadowResolution", 512 );
+	sr = std::max( 128, std::min(sr, 2048) );
+	GFX::Settings::SetConfiguration(GFX::GFX_SHADOW_RESOLUTION, sr);
+
+	// Set mipmap quality
+	int mmq = Core::world.m_config.GetInt("mipmapQuality", 1);
+	mmq = (mmq == 0) ? GFX::GFX_MIPMAPS_OFF : ((mmq == 1) ? GFX::GFX_MIPMAPS_ON : ((mmq == 2) ? GFX::GFX_MIPMAPS_AF : GFX::GFX_MIPMAPS_ON));
+	GFX::Settings::SetConfiguration(GFX::GFX_MIPMAPS, mmq);
+
 	if (GFX::Init(initScreenWidth,initScreenHeight) == GFX_FAIL)
 		return nullptr;
+    GFX::Settings::SetGamma( Core::world.m_config.GetDouble( "gamma", 2.2 ) );
+    GFX::ColorSettings::SetLUT( Core::world.m_config.GetString( "lut", "identity" ).c_str() );
 
     Core::world.m_contentManager.Load<Core::TTFLoader>(Core::world.m_config.GetString("consoleFont", "assets/font/ConsoleFont.font").c_str(), [](Core::BaseAssetLoader* baseLoader, Core::AssetHandle handle)
             {
@@ -157,8 +176,6 @@ void run( GLFWwindow * window )
     const int FPS_COUNTERS_SIZE = 20;
     double fpsCounters[FPS_COUNTERS_SIZE];
     int fpsCounterIndex = 0;
-
-    
 
 	while (!glfwWindowShouldClose(window) && killProgram == false)
 	{

@@ -7,6 +7,7 @@ local TextSelectList = require "gui/component/TextSelectList"
 local TextLabel = require "gui/component/TextLabel"
 local TextBox = require "gui/component/TextBox"
 local Image = require "gui/component/Image"
+local MsgBox = require "gui/component/MessageBox"
 
 local AnchorPlacer = require "gui/placement/AnchorPlacer"
 local EastPlacer = require "gui/placement/EastPlacer"
@@ -23,9 +24,9 @@ local Util = require "gui/placement/util"
 local PrepInterface = 
 {
     policeTypes = {},
-    onSelectCurrentSquad = function(squadDef) end,
+    onSelectCurrentSquad = function( squadDef ) end,
     onFinished = function() end,
-    onSelectCreatedSquad = function (squadInstance) end,
+    onSelectCreatedSquad = function ( squadInstance ) end,
     onRemoveSelected = function() end
 }
 
@@ -36,14 +37,26 @@ function PrepInterface:new(o)
 
 	local leftXOffset = 15
 	
+	o.msgBox = MsgBox:new( { 
+								buttons="YesNo",
+								title="Do you want to continue?",
+								message=[[You still have money left in your account.
+								
+								Are you sure you want to continue?]],
+								onPrimaryClick=o.onFinished, onSecondaryClick=function() end
+							} )
+	o.msgBox:setShow( false )
+	
+	o.cashLeft = 0;
+	
     o.gui = GUI:new()
 	o.gui:addComponent( TextLabel:new( { label="Select units to purchase and assign them to a spawning position", anchor="North" } ) )
 	
 	-- Cash Sub-GUI
 	o.cashSubGUI = GUI:new { width=240, height=30, anchor="NorthWest" }
 	
-	o.cashSubGUI:addComponent( TextLabel:new( { label="Cash:", anchor="NorthWest", xoffset=leftXOffset, yoffset=-3 } ) )
-	o.cashLabel = TextLabel:new( { label="$" .. o.cashLimit, anchor="NorthEast", xoffset=-leftXOffset-2, yoffset=-3 } )
+	o.cashSubGUI:addComponent( TextLabel:new( { label="Cash:", anchor="NorthWest", xoffset=leftXOffset, yoffset=1 } ) )
+	o.cashLabel = TextLabel:new( { label="$" .. o.cashLimit, anchor="NorthEast", xoffset=-leftXOffset-2, yoffset=1 } )
 	o.cashSubGUI:addComponent( o.cashLabel )
 	o.cashSubGUI:addComponent( Image:new( { mat="assets/texture/ui/aa-temp_prep_cashPanel.material", ignoreConstrict=true, anchor="NorthWest" } ) )
 	
@@ -51,7 +64,7 @@ function PrepInterface:new(o)
 	o.gui:addComponent( o.cashSubGUI )
 	
 	--Shield Unit Stats Sub-GUI
-	o.shieldStatsSubGUI = GUI:new{ width=210, height=118, xoffset=leftXOffset-6, yoffset=192 }
+	o.shieldStatsSubGUI = GUI:new{ width=210, height=118, xoffset=leftXOffset-5, yoffset=196 }
 	
 	o.shieldStatsSubGUI:addComponent( Image:new( { mat="assets/texture/ui/aa-temp_prep_shieldPolice.material" } ) )
 	o.shieldStatsSubGUI:addComponent( TextLabel:new( { label="Cost: $" .. standardPolice.cost, font="assets/font/toolTip.font", 
@@ -70,7 +83,7 @@ function PrepInterface:new(o)
 	o.shieldStatsSubGUI:addPlacementHandler( SimplePlacer )
 	
 	--Teargas Unit Stats Sub-GUI
-	o.tgStatsSubGUI = GUI:new{ width=210, height=118, xoffset=leftXOffset-6, yoffset=192 }
+	o.tgStatsSubGUI = GUI:new{ width=210, height=118, xoffset=leftXOffset-5, yoffset=196 }
 	
 	o.tgStatsSubGUI:addComponent( Image:new( { mat="assets/texture/ui/aa-temp_prep_tearGasPolice.material" } ) )
 	o.tgStatsSubGUI:addComponent( TextLabel:new( { label="Cost: $" .. tearGasPolice.cost, font="assets/font/toolTip.font", 
@@ -89,17 +102,18 @@ function PrepInterface:new(o)
 	o.tgStatsSubGUI:addPlacementHandler( SimplePlacer )
 
 	-- Units Sub-GUI
-	o.unitsSubGUI = GUI:new{ width=240, height=330, anchor="SouthWest" }
+	o.unitsSubGUI = GUI:new{ width=240, height=330, yoffset=5 }
 	
 	o.unitsSubGUI:addComponent( o.shieldStatsSubGUI )
 	o.unitsSubGUI:addComponent( o.tgStatsSubGUI )
 	
-	o.unitsSubGUI:addComponent( Image:new( { mat="assets/texture/ui/aa-temp_prep_leftPanel.material" } ) )
 	o.unitsSubGUI:addComponent( TextLabel:new( { label="Available units", xoffset=leftXOffset, yoffset=9 } ) )
 	o.unitSelection = TextSelectList:new(
-										{ 
+										{
+											width=217,
+											height=135,
 											xoffset=leftXOffset,
-											yoffset=40,
+											yoffset=42,
 											elements=o.policeTypes,
 											onSelect = function( squadDef )
 												if squadDef then
@@ -120,17 +134,17 @@ function PrepInterface:new(o)
 											end
 										} )
 	o.unitsSubGUI:addComponent( o.unitSelection )	
+	--o.unitsSubGUI:addComponent( Image:new( { mat="assets/texture/ui/aa-temp_prep_leftPanel.material" } ) )
 	
 	o.unitsSubGUI:addPlacementHandler( SimplePlacer )
-	o.gui:addComponent( o.unitsSubGUI )
 	
 	-- Purchased Units Sub-GUI
-	o.purchaseSubGUI = GUI:new{ width=240, height=322, anchor="SouthWest" }
+	o.purchaseSubGUI = GUI:new{ width=240, height=322, yoffset=350 }
 	
 	o.purchaseSubGUI:addComponent( Button:new
 											{ 
 												xoffset=-5,
-												yoffset=-10,
+												yoffset=-12,
 												anchor="South",
 												matReleased="assets/texture/ui/remove-button-release.material",
 												matPressed="assets/texture/ui/remove-button-press.material",
@@ -138,13 +152,15 @@ function PrepInterface:new(o)
 												onClick=o.onRemoveSelected,
 											} )
 	
-	o.purchaseSubGUI:addComponent( Image:new( { mat="assets/texture/ui/aa-temp_prep_buyPanel.material", ignoreConstrict=true } ) )
+	--o.purchaseSubGUI:addComponent( Image:new( { mat="assets/texture/ui/aa-temp_prep_buyPanel.material", ignoreConstrict=true } ) )
 	o.purchaseSubGUI:addComponent( TextLabel:new( { label="Bought units", anchor="NorthWest", xoffset=leftXOffset, yoffset=12 } ) )
 	
 	o.unitPurchased = TextSelectList:new
-										{ 
+										{
+											width=216,
+											height=208,
 											xoffset=leftXOffset,
-											yoffset=20,
+											yoffset=18,
 											anchor="NorthWest", 
 											elements=o.createdSquads,
 											onSelect=o.onSelectCreatedSquad
@@ -152,14 +168,32 @@ function PrepInterface:new(o)
 	o.purchaseSubGUI:addComponent( o.unitPurchased )
 	
 	o.purchaseSubGUI:addPlacementHandler( AnchorPlacer )
-	o.gui:addComponent( o.purchaseSubGUI )
 	
-	o.gui:addComponent( Button:new	{ 
-										anchor = "SouthEast", xoffset=-66, yoffset=-11, onClick = o.onFinished,
+	o.panelSubGUI = GUI:new{ width=240, height=673, anchor="SouthWest" }
+	
+	o.panelSubGUI:addComponent( o.unitsSubGUI )
+	o.panelSubGUI:addComponent( o.purchaseSubGUI )
+	o.panelSubGUI:addPlacementHandler( SimplePlacer )
+	
+	o.panelSubGUI:addComponent( Image:new( { mat="assets/texture/ui/prep-panel.material" } ) )
+	o.gui:addComponent( o.panelSubGUI )
+	
+    o.goButton = Button:new	{ 
+										anchor="SouthEast", xoffset=-66, yoffset=-11, enabled=false,
+										onClick=function() 
+													if o.cashLeft == 0 then
+														o.onFinished()
+													else
+														o.msgBox:setShow( true ) 
+													end
+												end,										
 										matReleased="assets/texture/ui/go-button-release.material",
 										matPressed="assets/texture/ui/go-button-press.material",
 										matHover="assets/texture/ui/go-button-hover.material",
-									} )
+										matDisable="assets/texture/ui/go-button-disable.material",
+									}
+	
+	o.gui:addComponent( o.goButton )
 											
 	o.gui:addPlacementHandler( AnchorPlacer )
 
@@ -167,6 +201,10 @@ function PrepInterface:new(o)
 	o.tgStatsSubGUI:setShow( false )
 	
     return o
+end
+
+function PrepInterface:enableGo( flag )
+    self.goButton:setEnabled( flag )
 end
 
 function PrepInterface:setSelected( squad )
@@ -178,7 +216,8 @@ function PrepInterface:setBoughtSelected( instance )
 end
 
 function PrepInterface:setRemainingMoney( value )
-    self.cashLabel:setLabel( "$" .. value )
+	self.cashLeft = value
+    self.cashLabel:setLabel( "$" .. self.cashLeft )
 end
 
 function PrepInterface:updatePurchasedList()
@@ -186,6 +225,7 @@ function PrepInterface:updatePurchasedList()
 end
 
 function PrepInterface:destroy()
+	self.msgBox:destroy()
     self.gui:destroy()  
     self.gui = nil
 end

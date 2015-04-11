@@ -44,6 +44,8 @@ local TextLabel = require "gui/component/TextLabel"
 
 local input = require "input"
 
+local QuickGroupHandler = require "gamemodes/kravall/QuickGroupHandler"
+
 function PoliceSquadHandler:onButton(button, action, mods, consumed)
     if action == core.input.action.Press then
         --Only allow press if UI element hasn't been pressed
@@ -69,6 +71,9 @@ function PoliceSquadHandler:new(o)
     o = o or {}
     setmetatable( o, self )
     self.__index = self
+
+    --For overview mode interaction
+    o.takeInput = true
 
     o.groupsSelectedByBox = {}
     o.previousGroupSelectedByBox = {}
@@ -102,10 +107,21 @@ function PoliceSquadHandler:new(o)
     -- Used for cycling squads
     o.cycleSquad = 1
 
+    o.quickGroupHandler = QuickGroupHandler:new{
+        onSelectGroup = function( groupList )
+            o:setSquadSelection( groupList )
+        end,
+        onAddGroup = function( groupList )
+            o:addSquadsToSelection( groupList )
+        end,
+    }
+
     return o
 end
 
 function PoliceSquadHandler:destroy()
+    self.quickGroupHandler:destroy()
+
     for _,v in pairs(self.abilityEntities) do
         v.entity:destroy()
     end 
@@ -136,21 +152,38 @@ end
 -- list of squads, nil is not allowed, instead to
 -- deselect use an empty list
 function PoliceSquadHandler:addSquadsToSelection( squads )
+    local newSquadList = {}
+    for _,sel in pairs( self.selectedSquads ) do
+        table.insert( newSquadList, sel )
+    end
+
     for _,v in pairs( squads ) do
-        self.selectedSquads[#(self.selectedSquads)+1] = v
+        local exists = false
+        for _,sel in pairs( self.selectedSquads ) do
+            if sel == v then
+                exists = true
+            end
+        end
+        
+        if exists == false then
+            table.insert( newSquadList, v )
+        end
     end    
 
-    self:setSquadSelection( self.selectedSquads )
-    self:setUsableAbilities( self.selectedSquads )
+    self:setSquadSelection( newSquadList )
 end
 
 function PoliceSquadHandler:setSquadSelection( squads )
     self.selectedSquads = squads     
     self.onSelectedSquadsChange( squads )
 
+    self:setUsableAbilities( self.selectedSquads )
+
     if #(self.selectedSquads) > 0 then
         self.onSelectedUnitInformationChange( self:evaluateSquadInformation( self.selectedSquads[1] ))
     end
+
+    self.quickGroupHandler:setSquadSelection( self.selectedSquads )
 end
 
 function PoliceSquadHandler:setSquadPrimary( squad )
@@ -220,7 +253,7 @@ function PoliceSquadHandler:evaluateUsableAbilities()
 
     local abilities = {}
     local aggregatedAbilities = {}
-    for i=1, #self.selectedSquads do
+    for i=1, #(self.selectedSquads) do
         local squad = self:getSquad(self.selectedSquads[i])
         for _,member in pairs(squad.members) do
             abilities[member] = member.getAbilities()
@@ -307,35 +340,39 @@ function PoliceSquadHandler:setStance( stance )
 end
 
 function PoliceSquadHandler:setAbility( ability )
-    self.onAbilityChange( ability )
-    if ability == core.system.squad.abilities.TearGas then
-        self.isAiming = true
-        self:SetReticuleRender(true)
-        self.AimingFunction = self.AimTearGas
-    elseif ability == core.system.squad.abilities.Sprint then
-        if self:CanUseAbility(ability) then
+    if self.takeInput then
+        self.onAbilityChange( ability )
+        if ability == core.system.squad.abilities.TearGas then
+            self.isAiming = true
+            self:SetReticuleRender(true)
+            self.AimingFunction = self.AimTearGas
+        elseif ability == core.system.squad.abilities.Sprint then
+            if self:CanUseAbility(ability) then
+                self.isAiming = false
+                self:SetReticuleRender(false)
+                self.AimingFunction = nil
+                self:UseSprint() 
+            end
+        elseif ability == core.system.squad.abilities.Flee then
+            if self:CanUseAbility(ability) then
+                self.isAiming = false
+                self:SetReticuleRender(false)
+                self.AimingFunction = nil
+                self:UseFlee() 
+            end
+        elseif ability == core.system.squad.abilities.Attack then
+            if self:CanUseAbility(ability) then
+                self.isAiming = true
+                self:SetReticuleRender(false)
+                self.AimingFunction = self.AttackGroup
+            end
+        elseif ability == core.system.squad.abilities.Halt then	
+            core.orders.haltGroup( self.selectedSquads )
+        else        
             self.isAiming = false
             self:SetReticuleRender(false)
             self.AimingFunction = nil
-            self:UseSprint() 
         end
-    elseif ability == core.system.squad.abilities.Flee then
-        if self:CanUseAbility(ability) then
-            self.isAiming = false
-            self:SetReticuleRender(false)
-            self.AimingFunction = nil
-            self:UseFlee() 
-        end
-	elseif ability == core.system.squad.abilities.Attack then
-        if self:CanUseAbility(ability) then
-		    self.isAiming = true
-		    self:SetReticuleRender(false)
-		    self.AimingFunction = self.AttackGroup
-        end
-    else        
-		self.isAiming = false
-		self:SetReticuleRender(false)
-		self.AimingFunction = nil
     end
 end
 
@@ -391,7 +428,8 @@ function PoliceSquadHandler:AimTearGas()
         for i=1, #abilities do
             if abilities[i] == core.system.squad.abilities.TearGas then
                 local wpc = member.entity:get(core.componentType.WorldPositionComponent)
-                if math.sqrt(((wpc.position[1]-x) * (wpc.position[1]-x)) + ((wpc.position[2]-y) * (wpc.position[2]-y)) + ((wpc.position[3]-z) * (wpc.position[3]-z))) < tearGas.tearGasRange then
+                local rangeToTarget = math.sqrt(((wpc.position[1]-x) * (wpc.position[1]-x)) + ((wpc.position[2]-y) * (wpc.position[2]-y)) + ((wpc.position[3]-z) * (wpc.position[3]-z))) 
+                if rangeToTarget < tearGas.tearGasRange then
 
                     if inRange == false then 
                         inRange = true 
@@ -403,7 +441,7 @@ function PoliceSquadHandler:AimTearGas()
                             --Consume click to avoid deselecting squads
                             self.leftClicked = false
                             self.leftPressed = false
-                            self:UseTearGas(member.entity, x, y, z) 
+                            self:UseTearGas(member.entity, x, y, z, rangeToTarget) 
 
                             if not keyboard.isKeyDown(keyboard.key.Left_shift) then
                                 self:setAbility(nil)
@@ -439,43 +477,44 @@ function PoliceSquadHandler:AimTearGas()
     end
 end
 
+local moodOutline = 0
+local rioterGroupIds = {}
 function PoliceSquadHandler:HighlightMood()
 
-	--if #self.selectedSquads == 0 then
-	--	--self.isAiming = false
-	--	--self:SetReticuleRender(false)
-	--	--self.AimingFunction = nil
-	--	--
-	--	--self.rightClicked = false
-	--	--self.rightPressed = false
-	--	
-	--	return
-	--end
+	if not  keyboard.isKeyDown(core.config.playerBindings.moodHighlight) then
 
-	local mouseX, mouseY = mouse.getPosition()
-    local aspct = core.entity.generateAspect( core.componentType.AttributeComponent, core.componentType.UnitTypeComponent, core.componentType.BoundingVolumeComponent )
-    local selectedEntity = core.system.picking.getHitEntity(mouseX, mouseY, aspct )
+		if moodOutline == 1 then
+			moodOutline = 0
+			core.system.squad.disableOutline(rioterGroupIds)
+			for k,v in pairs(rioterGroupIds) do rioterGroupIds[k]=nil end
 
-	if selectedEntity then
-		local unitTypeComponent = selectedEntity:get(core.componentType.UnitTypeComponent);
-		local attributeComponent = selectedEntity:get(core.componentType.AttributeComponent);
+		end
+		return;
+	end
 
-		if attributeComponent and unitTypeComponent then           
-			if unitTypeComponent.unitType == core.UnitType.Rioter then
-				s_squad.enableMoodOutline( { attributeComponent.groupID } )
-				self.outlinedRioterGroups = attributeComponent.groupID;
-			end			
-		end		
-	elseif self.leftClicked then
-		for k,v in pairs(self.selectedSquads) do self.selectedSquads[k]=nil end
-		self.leftClicked = true
-		self.leftPressed = true
-	end	
-
+	if moodOutline == 0 then
+		local groupCount = core.system.groups.getNumberOfGroups()
+	
+		for i=0, groupCount-1 do 
+			local members = core.system.groups.getMembersInGroup(i)
+       
+			if #members > 0 then
+				local attrbComponent = members[1]:get(core.componentType.AttributeComponent)
+				local utc = members[1]:get(core.componentType.UnitTypeComponent)
+				if utc.unitType == core.UnitType.Rioter then
+					 core.system.squad.enableMoodOutline({attrbComponent.groupID})
+					 table.insert(rioterGroupIds, attrbComponent.groupID)
+				end
+			end
+		end
+		moodOutline = 1
+	end
+	
+	
 end
 
 function PoliceSquadHandler:AttackGroup()
-	if #self.selectedSquads == 0 or self.rightClicked then
+	if #(self.selectedSquads) == 0 or self.rightClicked then
 	    self:setAbility(nil)	
 		self.rightClicked = false
 		self.rightPressed = false
@@ -518,48 +557,126 @@ function PoliceSquadHandler:AttackGroup()
 end
 
 function PoliceSquadHandler:RevertAttackingStateOfSelected()
-	if #self.selectedSquads ~= 0 then
-		core.orders.attackGroup( self.selectedSquads, -1 )
+	if #(self.selectedSquads) ~= 0 then
+		local newStance = core.orders.attackGroup( self.selectedSquads, -1 )
+		self.setStance( self, newStance )
 	end
 end
 
-function PoliceSquadHandler:UseTearGas(entity, x, y, z)
-    local attributeComponent = entity:get(core.componentType.AttributeComponent)
-    entity:set(core.componentType.AttributeComponent, {stamina = (attributeComponent.stamina - tearGas.tearGasStaminaCost)}, true)
-    local pairTable = {}                
-    local entity = core.entity.create(core.componentType.EmitterComponent
-                                        , core.componentType.WorldPositionComponent
-                                        , core.componentType.MovementComponent
-										, core.componentType.MovementDataComponent
-                                        , core.componentType.RotationComponent
-                                        , core.componentType.UnitTypeComponent
-                                        , core.componentType.AttributeComponent
-                                        , core.componentType.FlowfieldComponent)
+function PoliceSquadHandler:UseTearGas(usingEntity, x, y, z, rangeToTarget)
+    local attributeComponent = usingEntity:get(core.componentType.AttributeComponent)
+    usingEntity:set(core.componentType.AttributeComponent, {stamina = (attributeComponent.stamina - tearGas.tearGasStaminaCost)}, true)
 
-    entity:set(core.componentType.AttributeComponent, {pfObjectType = core.PFObjectType.TearGas}, true)
-    entity:set(core.componentType.UnitTypeComponent, {unitType = core.UnitType.Object}, true)
-    entity:set(core.componentType.WorldPositionComponent, {position = {x, y, z}})
-    entity:set(core.componentType.EmitterComponent, {
-            rate = 100,
-            offset = {0, -2, 0},
-            life = 3,
-            lifeVariance = 0.5,
-            lifeReduction = 1.5,
+    local wpc = usingEntity:get(core.componentType.WorldPositionComponent)        
+    local projectileSpeed = 25
+    local launchAngle = (math.asin((9.82*rangeToTarget) / (projectileSpeed * projectileSpeed)) / 2)
+    local vel_y = math.sin(launchAngle) * projectileSpeed
+
+    local vel_xz = {(core.glm.vec3.normalize(core.glm.vec3.new(x - wpc.position[1], 0, z - wpc.position[3])) * (math.cos(launchAngle) * projectileSpeed)):get()}
+
+    local t = (rangeToTarget * 0.5 / projectileSpeed)
+
+    local smokeTrailEntity = {
+        targetDistance = rangeToTarget,
+        traveledDistance = 0,
+        speed = math.cos(launchAngle) * projectileSpeed,
+        v_x = vel_xz[1],
+        v_y = vel_y, 
+        v_z = vel_xz[3],
+    }    
+
+    smokeTrailEntity.entity = core.entity.create(core.componentType.EmitterComponent
+                                        , core.componentType.WorldPositionComponent)
+
+    smokeTrailEntity.entity:set(core.componentType.WorldPositionComponent, {position = {wpc.position[1], wpc.position[2] + 1.5, wpc.position[3]}})
+    smokeTrailEntity.entity:set(core.componentType.EmitterComponent, {
+            rate = 400,
+            offset = {0, 0, 0},
+            life = 1.0,
+            lifeVariance = 0.50,
+            lifeReduction = 0.4,
             lifeReductionVariance = 0,
-            velocity = {0, 0, 3},
-            velocityVariance = {0, 0, 4},
-            acceleration = {0, 2, 0},
+            velocity = {0, 0, 1.5},
+            velocityVariance = {0.5, 0.5, 0.5},
+            acceleration = {0, -0.5, 0},
             coneDirection = {0, 1, 0},
-            coneAngle = 60,
-            coneAngleVariance = 30,
+            coneAngle = 180,
+            coneAngleVariance = 0,
             type = core.system.particle.emitters.Cone,
-            handle = self.particleDefinitions["TearGas"]
+            handle = self.particleDefinitions["GrenadeTrail"]
             }, true)
 
-    pairTable.entity = entity
-    pairTable.timer = tearGas.tearGasDuration 
+    smokeTrailEntity.update = function(o, delta)        
+        if o.traveledDistance >= o.targetDistance then
+            local abilityEntity = {life = 10}
+            local wpc = o.entity:get(core.componentType.WorldPositionComponent)
 
-    self.abilityEntities[#(self.abilityEntities) + 1] = pairTable
+            abilityEntity.entity = core.entity.create(core.componentType.EmitterComponent
+                                                , core.componentType.WorldPositionComponent
+                                                , core.componentType.MovementComponent
+                                                , core.componentType.MovementDataComponent
+                                                , core.componentType.RotationComponent
+                                                , core.componentType.UnitTypeComponent
+                                                , core.componentType.AttributeComponent
+                                                , core.componentType.FlowfieldComponent)
+
+            abilityEntity.entity:set(core.componentType.AttributeComponent, {pfObjectType = core.PFObjectType.TearGas}, true)
+            abilityEntity.entity:set(core.componentType.UnitTypeComponent, {unitType = core.UnitType.Object}, true)
+            abilityEntity.entity:set(core.componentType.WorldPositionComponent, {position = {wpc.position[1], wpc.position[2], wpc.position[3]}})
+            abilityEntity.entity:set(core.componentType.EmitterComponent, {
+                    rate = 100,
+                    offset = {0, -2, 0},
+                    life = 3,
+                    lifeVariance = 0.5,
+                    lifeReduction = 1.5,
+                    lifeReductionVariance = 0,
+                    velocity = {0, 0, 2.5},
+                    velocityVariance = {0, 0, 4},
+                    acceleration = {0, 2, 0},
+                    coneDirection = {0, 1, 0},
+                    coneAngle = 60,
+                    coneAngleVariance = 30,
+                    type = core.system.particle.emitters.Cone,
+                    handle = self.particleDefinitions["TearGas"]
+                    }, true)
+
+            abilityEntity.update = function(o, delta)
+                if o.life <= 0 then
+                    o.entity:destroy()
+                    local newAbilityEntities = {}
+                    for i=1, #(self.abilityEntities) do
+                        if self.abilityEntities[i] ~= o then
+                            table.insert(newAbilityEntities, self.abilityEntities[i])
+                        end    
+                    end
+                    self.abilityEntities = newAbilityEntities
+                else
+                    o.life = o.life - delta
+                end
+
+            end
+
+            self.abilityEntities[#(self.abilityEntities) + 1] = abilityEntity
+            
+            o.entity:destroy()
+            local newAbilityEntities = {}
+            for i=1, #(self.abilityEntities) do
+                if self.abilityEntities[i] ~= o then
+                    table.insert(newAbilityEntities, self.abilityEntities[i])
+                end    
+            end
+            self.abilityEntities = newAbilityEntities
+        else
+            o.traveledDistance = o.traveledDistance + o.speed * delta
+            o.v_y = o.v_y - 9.82 * delta
+
+            local wpc = o.entity:get(core.componentType.WorldPositionComponent)
+            o.entity:set(core.componentType.WorldPositionComponent, {position = {wpc.position[1] + o.v_x * delta, wpc.position[2] + o.v_y * delta, wpc.position[3] + o.v_z * delta}})           
+        end
+    end
+    
+
+    self.abilityEntities[#(self.abilityEntities) + 1] = smokeTrailEntity
 end
 
 function PoliceSquadHandler:UseSprint()
@@ -604,37 +721,14 @@ function PoliceSquadHandler:CycleSquad()
     end
 
     if #(self.createdSquads) > 0 then
-        if #(self.selectedSquads) > 0 then
+        for i=1, #(self.createdSquads) do
+            if #(self.createdSquads[self.cycleSquad].members) > 0 then
+                break
+            end                
 
-            for i=1, #(self.createdSquads) do
-                local found = false
-
-                for _,v in pairs(self.selectedSquads) do
-                    if v == self.createdSquads[self.cycleSquad].groupId or #(self.createdSquads[self.cycleSquad].members) > 0 then
-                        found = true
-                    end 
-                end       
-
-                if found then
-                    self.cycleSquad = self.cycleSquad + 1
-
-                    if self.cycleSquad > #(self.createdSquads) then
-                        self.cycleSquad = 1
-                    end
-                else
-                    break
-                end
-            end
-        else
-            for i=1, #(self.createdSquads) do
-                if #(self.createdSquads[self.cycleSquad].members) > 0 then
-                    break
-                end                
-
-                self.cycleSquad = self.cycleSquad + 1
-                if self.cycleSquad > #(self.createdSquads) then
-                    self.cycleSquad = 1
-                end
+            self.cycleSquad = self.cycleSquad + 1
+            if self.cycleSquad > #(self.createdSquads) then
+                self.cycleSquad = 1
             end
         end
     end
@@ -730,46 +824,7 @@ function PoliceSquadHandler:update( delta )
 
 
     updateSquads()
-
-
-
-    --Abilities
-    if self.isAiming and self.rightClicked then
-        self:setAbility(nil)
-        --Consume event to prevent setting goals
-        self.rightClicked = false
-        self.rightPressed = false
-    end
-
-    local i = 1
-    while i <= #(self.abilityEntities) do
-        local e = self.abilityEntities[i]
-        self.abilityEntities[i].timer = self.abilityEntities[i].timer - delta
-        if self.abilityEntities[i].timer <= 0 then
-            self.abilityEntities[i].entity:destroy()
-            table.remove(self.abilityEntities, i)
-        else
-            i=i+1
-        end
-    end
-
-	if keyboard.isKeyDownOnce(keyboard.key.Kp_1) or keyboard.isKeyDownOnce(keyboard.key[1]) then
-        self:setAbility(core.system.squad.abilities.Attack)
-	end
-
-    if keyboard.isKeyDownOnce(keyboard.key.Kp_2) or keyboard.isKeyDownOnce(keyboard.key[2]) then
-        self:setAbility(core.system.squad.abilities.TearGas)
-    end	
-
-    if keyboard.isKeyDownOnce(keyboard.key.Kp_3) or keyboard.isKeyDownOnce(keyboard.key[3]) then
-        self:setAbility(core.system.squad.abilities.Sprint)
-    end
-
-    if keyboard.isKeyDownOnce(keyboard.key.Kp_4) or keyboard.isKeyDownOnce(keyboard.key[4]) then
-        self:setAbility(core.system.squad.abilities.Flee)
-    end
-
-
+	
     --Ability: Sprint
     -- This block is expensive (~2ms) should be put in a c-system
     for _,squad in pairs(self.createdSquads) do
@@ -778,7 +833,7 @@ function PoliceSquadHandler:update( delta )
         local sqdc = squadEntity:get(core.componentType.SquadComponent)
         for _,member in pairs(squad.members) do
             local attrbc = member.entity:get(core.componentType.AttributeComponent)
-            if member.isSprinting == true then
+            if member.isSprinting == true and sqdc.squadGoal[1] < math.pow(2, 32) then
                 local remainingStamina = attrbc.stamina - sprinting.sprintingStaminaCost * delta
                 if remainingStamina > 0 then
                     local wpc = member.entity:get(core.componentType.WorldPositionComponent)
@@ -794,11 +849,11 @@ function PoliceSquadHandler:update( delta )
                         member.entity:set(core.componentType.MovementComponent, {state = core.movementData.Sprinting}, true)
                     else
                         member.entity:set(core.componentType.MovementComponent, {state = core.movementData.Jogging}, true)
-                        member.isSprinting = nil
+                        member.isSprinting = false
                     end
                 else
                     remainingStamina = 0
-                    member.isSprinting = nil
+                    member.isSprinting = false
                     member.entity:set(core.componentType.MovementComponent, {state = core.movementData.Jogging}, true)
                 end
                 member.entity:set(core.componentType.AttributeComponent, {stamina = remainingStamina}, true)
@@ -808,6 +863,7 @@ function PoliceSquadHandler:update( delta )
                 if remainingStamina > member.maximumStamina then
                     remainingStamina = member.maximumStamina
                 end
+                member.isSprinting = false
                 --These functions are expensive, should be optimized
                 member.entity:set(core.componentType.MovementComponent, {state = core.movementData.Jogging}, true)
                 member.entity:set(core.componentType.AttributeComponent, {stamina = remainingStamina}, true)
@@ -815,230 +871,268 @@ function PoliceSquadHandler:update( delta )
         end
     end
 
-    if self.isAiming == true then
-        self:AimingFunction()
-	else
-		self:HighlightMood()
-    end   
-
-    if keyboard.isKeyDownOnce(keyboard.key.Tab) and #(self.selectedSquads) > 0 then        
-        local firstSquad = self.selectedSquads[1]
-        table.remove(self.selectedSquads, 1)
-        table.insert(self.selectedSquads, firstSquad)
+    -- Update entities related to abilities
+    local i = 1
+    while i <= #(self.abilityEntities) do
+        self.abilityEntities[i]:update(delta)
+        i=i+1
     end
 
-    --Formations
-    --Click Selection
-    if self.leftClicked then               
+    if self.takeInput then
 
-        local clickTime = os.clock()
-		self.boxStartX, self.boxStartY = mouse.getPosition()
+        --Abilities
+        if self.isAiming and self.rightClicked then
+            self:setAbility(nil)
+            --Consume event to prevent setting goals
+            self.rightClicked = false
+            self.rightPressed = false
+        end
 
-        local aspct = core.entity.generateAspect( core.componentType.AttributeComponent, core.componentType.UnitTypeComponent, core.componentType.BoundingVolumeComponent )
-        local selectedEntity = core.system.picking.getHitEntity(self.boxStartX, self.boxStartY, aspct )
 
-        if selectedEntity then
-            local unitTypeComponent = selectedEntity:get(core.componentType.UnitTypeComponent);
-            local attributeComponent = selectedEntity:get(core.componentType.AttributeComponent);            
+        if keyboard.isKeyDownOnce(keyboard.key.Kp_1) or keyboard.isKeyDownOnce(core.config.playerBindings.attackAbility) then
+            self:setAbility(core.system.squad.abilities.Attack)
+        end
 
-            --Selected normal police unit
-            if unitTypeComponent.unitType == core.UnitType.Police then
-                local squad = self:getSquad(attributeComponent.squadID)
+        if keyboard.isKeyDownOnce(keyboard.key.Kp_2) or keyboard.isKeyDownOnce(core.config.playerBindings.tearGasAbility) then
+            self:setAbility(core.system.squad.abilities.TearGas)
+        end	
 
-                local deltaTime = (clickTime - self.lastClickTime)
-                print( deltaTime)
-                if deltaTime < core.config.doubleClickDelay and self.lastClickedType == squad.type then
-                    --Double click same unit type, select all units of same type
-                    local selectedSquads = {}
-                    for _,v in pairs(self.createdSquads) do
-                        if v.type == squad.type then
-                            table.insert(selectedSquads, v.groupId)
-                        end
-                    end
+        if keyboard.isKeyDownOnce(keyboard.key.Kp_3) or keyboard.isKeyDownOnce(core.config.playerBindings.sprintAbility) then
+            self:setAbility(core.system.squad.abilities.Sprint)
+        end
 
-                    self:DeselectAllSquads()
-                    self:addSquadsToSelection(selectedSquads)                    
-                else
-                    local squadEntity = s_squad.getSquadEntity(attributeComponent.squadID)
-                    local squadComponent = squadEntity:get(core.componentType.SquadComponent)
+        if keyboard.isKeyDownOnce(keyboard.key.Kp_4) or keyboard.isKeyDownOnce(core.config.playerBindings.haltOrder) then
+            self:setAbility(core.system.squad.abilities.Halt)
+        end
 
-                    --Append units
-                    if keyboard.isKeyDown(keyboard.key.Left_shift) then
-                        local found = false
+        if self.isAiming == true then
+            self:AimingFunction()
+        else
+            self:HighlightMood()
+        end   
 
-                        for i=1, #(self.selectedSquads) do
-                            if self.selectedSquads[i] == attributeComponent.squadID then
-                                found = true
+        if keyboard.isKeyDownOnce(core.config.playerBindings.rotateSquadSelection) and #(self.selectedSquads) > 0 then        
+            local firstSquad = self.selectedSquads[1]
+            table.remove(self.selectedSquads, 1)
+            table.insert(self.selectedSquads, firstSquad)
+        end
+
+        --Formations
+        --Click Selection
+        if self.leftClicked then               
+
+            local clickTime = os.clock()
+            self.boxStartX, self.boxStartY = mouse.getPosition()
+
+            local aspct = core.entity.generateAspect( core.componentType.AttributeComponent, core.componentType.UnitTypeComponent, core.componentType.BoundingVolumeComponent )
+            local selectedEntity = core.system.picking.getHitEntity(self.boxStartX, self.boxStartY, aspct )
+
+            if selectedEntity then
+                local unitTypeComponent = selectedEntity:get(core.componentType.UnitTypeComponent);
+                local attributeComponent = selectedEntity:get(core.componentType.AttributeComponent);            
+
+                --Selected normal police unit
+                if unitTypeComponent.unitType == core.UnitType.Police then
+                    local squad = self:getSquad(attributeComponent.squadID)
+
+                    local deltaTime = (clickTime - self.lastClickTime)
+                    if deltaTime < core.config.doubleClickDelay and self.lastClickedType == squad.type then
+                        --Double click same unit type, select all units of same type
+                        local squadEntity = s_squad.getSquadEntity(attributeComponent.squadID)
+                        local squadComponent = squadEntity:get(core.componentType.SquadComponent)
+
+                        local selectedSquads = {}
+                        for _,v in pairs(self.createdSquads) do
+                            if v.type == squad.type then
+                                table.insert(selectedSquads, v.groupId)
                             end
                         end
 
-                        if not found then
-                            self:addSquadsToSelection( {attributeComponent.squadID} )
-                            -- New selection, take formation and put in gui
-                            if #(self.selectedSquads) == 1 then
-                                self:setFormation( squadComponent.squadFormation )
-                            end
-                        else
-                            self:setSquadPrimary( attributeComponent.squadID ) 
-                        end
-
-
-                    else --Select new group of units
                         self:DeselectAllSquads()
-                        self:addSquadsToSelection( {attributeComponent.squadID} )
+                        self:addSquadsToSelection(selectedSquads)                    
                         self:setFormation( squadComponent.squadFormation )
-                    end
+                    else
+                        local squadEntity = s_squad.getSquadEntity(attributeComponent.squadID)
+                        local squadComponent = squadEntity:get(core.componentType.SquadComponent)
 
-                    if squadComponent.squadFormation ~= self.selectedFormation then
-                        self:setFormation( s_squad.formations.NoFormation )
+                        --Append units
+                        if keyboard.isKeyDown(keyboard.key.Left_shift) then
+                            local found = false
+
+                            for i=1, #(self.selectedSquads) do
+                                if self.selectedSquads[i] == attributeComponent.squadID then
+                                    found = true
+                                end
+                            end
+
+                            if not found then
+                                self:addSquadsToSelection( {attributeComponent.squadID} )
+                                -- New selection, take formation and put in gui
+                                if #(self.selectedSquads) == 1 then
+                                    self:setFormation( squadComponent.squadFormation )
+                                end
+                            else
+                                self:setSquadPrimary( attributeComponent.squadID ) 
+                            end
+
+
+                        else --Select new group of units
+                            self:DeselectAllSquads()
+                            self:addSquadsToSelection( {attributeComponent.squadID} )
+                            self:setFormation( squadComponent.squadFormation )
+                        end
+
+                        if squadComponent.squadFormation ~= self.selectedFormation then
+                            self:setFormation( s_squad.formations.NoFormation )
+                        end
+
                     end
 
                     -- Called so that we set the gui squad button to current selection.
                     -- (Or to nothing if current selection has mixxed stances)
                     self:setStance( self:evaluateStanceForGroups( self.selectedSquads ) )
                     applySelectionOutline( self.selectedSquads )
+                    self.lastClickedType = squad.type
                 end
-                self.lastClickedType = squad.type
+            elseif not keyboard.isKeyDown(keyboard.key.Left_shift) and not core.config.stickySelection and not self.isClick then
+                self:DeselectAllSquads()
             end
-		elseif not keyboard.isKeyDown(keyboard.key.Left_shift) and not core.config.stickySelection and not self.isClick then
-			self:DeselectAllSquads()
+
+            self.lastClickTime = clickTime
+            if self.isClick == true then
+                self.isClick = false
+            end
+        elseif self.leftPressed then
+            self.boxEndX, self.boxEndY = mouse.getPosition()
+            self.groupsSelectedByBox = core.system.picking.getPoliceGroupsInsideBox( self.boxStartX, self.boxStartY, self.boxEndX, self.boxEndY, core.config.boxSelectionGraceDistance )
+            
+            if self.previousGroupsSelectedByBox and #(self.previousGroupsSelectedByBox) > 0 then
+                s_squad.disableOutline(self.previousGroupsSelectedByBox)
+            end
+
+            if self.groupsSelectedByBox and #(self.groupsSelectedByBox) >= 1 then
+                applyBoxOutline( self.groupsSelectedByBox )
+            end
+
+            self.previousGroupsSelectedByBox = self.groupsSelectedByBox
+
+        elseif self.rightClicked then
+            if #(self.selectedSquads) > 0 then
+                self.isClick = true
+                local mouseX, mouseY = mouse.getPosition()
+                self.clickStartX, self.clickStartY, self.clickStartZ = core.system.picking.getGroundHit(mouseX, mouseY);
+            end   
+        elseif self.rightPressed then        
+            if #(self.selectedSquads) > 0 and self.clickStartX and self.clickStartY and self.clickStartZ and self.isClick then
+                local mouseX, mouseY = mouse.getPosition()
+                local dragX, dragY, dragZ = core.system.picking.getGroundHit(mouseX, mouseY)    
+
+                s_squad.previewSquadFormation(self.selectedSquads, self.selectedFormation, self.clickStartX, self.clickStartY, self.clickStartZ, dragX, dragY, dragZ)
+            end
+        elseif mouse.isButtonUp(mouse.button.Right) then
+            if #(self.selectedSquads) > 0 and self.clickStartX and self.clickStartY and self.clickStartZ and self.isClick then
+                local mouseX, mouseY = mouse.getPosition()
+                self.clickEndX, self.clickEndY, self.clickEndZ = core.system.picking.getGroundHit(mouseX, mouseY)    
+                s_squad.setSquadFormation(self.selectedSquads, self.selectedFormation, self.clickStartX, self.clickStartY, self.clickStartZ, self.clickEndX, self.clickEndY, self.clickEndZ)
+                if self.clickEndX and self.clickEndY and self.clickEndZ and self.selectedFormation ~= s_squad.formations.CircleFormation then
+                    s_squad.setSquadGoal(self.selectedSquads, (self.clickStartX + self.clickEndX) / 2, (self.clickStartY + self.clickEndY) / 2, (self.clickStartZ + self.clickEndZ) / 2)
+                    self:RevertAttackingStateOfSelected()
+                else                
+                    --Tell other systems that we are telling things to move.
+                    s_squad.setSquadGoal(self.selectedSquads, self.clickStartX, self.clickStartY, self.clickStartZ)
+                    self:RevertAttackingStateOfSelected()
+                end
+
+                local clickPos = core.glm.vec3.new(core.system.picking.getGroundHit(  mouseX, mouseY ))
+
+                local clickStart = core.glm.vec3.new( self.clickStartX, self.clickStartY, self.clickStartZ )
+                local clickEnd = core.glm.vec3.new( self.clickEndX, self.clickEndY, self.clickEndZ )
+                --Event that create move marker
+                local clickDiff = clickEnd - clickStart 
+                if clickDiff:dot(clickDiff) < 10.0 then
+                    self.onMoveToPosition( self.selectedSquads, clickPos, core.system.picking.getIsInsideNavigationMesh(clickPos) )
+                end
+
+
+                self.clickStartX, self.clickStartY, self.clickStartZ = nil, nil, nil
+                self.isClick = false
+            end
         end
 
-        self.lastClickTime = clickTime
-        if self.isClick == true then
-            self.isClick = false
+        --Formation selection
+        if keyboard.isKeyDown(core.config.playerBindings.halfCircleFormation) then
+            self:setFormation( s_squad.formations.HalfCircleFormation )
+        elseif keyboard.isKeyDown(core.config.playerBindings.circleFormation) then
+            self:setFormation( s_squad.formations.CircleFormation )
+        elseif keyboard.isKeyDown(core.config.playerBindings.lineFormation) then
+            self:setFormation( s_squad.formations.LineFormation)
         end
-	elseif self.leftPressed then
-		self.boxEndX, self.boxEndY = mouse.getPosition()
-		self.groupsSelectedByBox = core.system.picking.getPoliceGroupsInsideBox( self.boxStartX, self.boxStartY, self.boxEndX, self.boxEndY, core.config.boxSelectionGraceDistance )
+
+        --Stances
+        if keyboard.isKeyDown(core.config.playerBindings.aggressiveStance)  then        
+            if #(self.selectedSquads) > 0 then
+                self:setStance( core.PoliceStance.Aggressive )
+            end   
+        elseif keyboard.isKeyDown(core.config.playerBindings.defensiveStance) then
+            if #(self.selectedSquads) > 0 then
+                self:setStance( core.PoliceStance.Defensive )
+            end   
+        elseif keyboard.isKeyDown(core.config.playerBindings.passiveStance) then
+            if #(self.selectedSquads) > 0 then
+                self:setStance( core.PoliceStance.Passive )
+            end
+        end
         
-        if self.previousGroupsSelectedByBox and #(self.previousGroupsSelectedByBox) > 0 then
-            s_squad.disableOutline(self.previousGroupsSelectedByBox)
-        end
+        -- box select
+        if self.boxStartX and self.boxStartY and self.boxEndX and self.boxEndY and not self.leftPressed then
+            if self.boxStartX ~= self.boxEndX and self.boxStartY ~= self.boxEndY then
+                if not keyboard.isKeyDown(keyboard.key.Left_shift) then
+                    self:DeselectAllSquads()
+                end
+                if self.groupsSelectedByBox then
 
-        if self.groupsSelectedByBox and #(self.groupsSelectedByBox) >= 1 then
-            applyBoxOutline( self.groupsSelectedByBox )
-        end
-
-        self.previousGroupsSelectedByBox = self.groupsSelectedByBox
-
-    elseif self.rightClicked then
-        if #(self.selectedSquads) > 0 then
-            self.isClick = true
-            local mouseX, mouseY = mouse.getPosition()
-            self.clickStartX, self.clickStartY, self.clickStartZ = core.system.picking.getGroundHit(mouseX, mouseY);
-        end   
-    elseif self.rightPressed then        
-        if #(self.selectedSquads) > 0 and self.clickStartX and self.clickStartY and self.clickStartZ and self.isClick then
-            local mouseX, mouseY = mouse.getPosition()
-            local dragX, dragY, dragZ = core.system.picking.getGroundHit(mouseX, mouseY)    
-
-            s_squad.previewSquadFormation(self.selectedSquads, self.selectedFormation, self.clickStartX, self.clickStartY, self.clickStartZ, dragX, dragY, dragZ)
-        end
-    elseif mouse.isButtonUp(mouse.button.Right) then
-        if #(self.selectedSquads) > 0 and self.clickStartX and self.clickStartY and self.clickStartZ and self.isClick then
-            local mouseX, mouseY = mouse.getPosition()
-            self.clickEndX, self.clickEndY, self.clickEndZ = core.system.picking.getGroundHit(mouseX, mouseY)    
-            s_squad.setSquadFormation(self.selectedSquads, self.selectedFormation, self.clickStartX, self.clickStartY, self.clickStartZ, self.clickEndX, self.clickEndY, self.clickEndZ)
-            if self.clickEndX and self.clickEndY and self.clickEndZ and self.selectedFormation ~= s_squad.formations.CircleFormation then
-	            s_squad.setSquadGoal(self.selectedSquads, (self.clickStartX + self.clickEndX) / 2, (self.clickStartY + self.clickEndY) / 2, (self.clickStartZ + self.clickEndZ) / 2)
-				self:RevertAttackingStateOfSelected()
-            else                
-                --Tell other systems that we are telling things to move.
-                s_squad.setSquadGoal(self.selectedSquads, self.clickStartX, self.clickStartY, self.clickStartZ)
-				self:RevertAttackingStateOfSelected()
-            end
-
-            local clickPos = core.glm.vec3.new(core.system.picking.getGroundHit(  mouseX, mouseY ))
-
-            local clickStart = core.glm.vec3.new( self.clickStartX, self.clickStartY, self.clickStartZ )
-            local clickEnd = core.glm.vec3.new( self.clickEndX, self.clickEndY, self.clickEndZ )
-            --Event that create move marker
-            local clickDiff = clickEnd - clickStart 
-            if clickDiff:dot(clickDiff) < 10.0 then
-                self.onMoveToPosition( self.selectedSquads, clickPos, core.system.picking.getIsInsideNavigationMesh(clickPos) )
-            end
-
-
-            self.clickStartX, self.clickStartY, self.clickStartZ = nil, nil, nil
-            self.isClick = false
-        end
-    end
-
-    --Formation selection
-    if keyboard.isKeyDown(keyboard.key.H) then
-        self:setFormation( s_squad.formations.HalfCircleFormation )
-    elseif keyboard.isKeyDown(keyboard.key.C) then
-        self:setFormation( s_squad.formations.CircleFormation )
-    elseif keyboard.isKeyDown(keyboard.key.L) then
-        self:setFormation( s_squad.formations.LineFormation)
-    end
-
-    --Stances
-    if keyboard.isKeyDown(keyboard.key.I)  then        
-        if #(self.selectedSquads) > 0 then
-            self:setStance( core.PoliceStance.Aggressive )
-        end   
-    elseif keyboard.isKeyDown(keyboard.key.O) then
-        if #(self.selectedSquads) > 0 then
-            self:setStance( core.PoliceStance.Defensive )
-        end   
-    elseif keyboard.isKeyDown(keyboard.key.P) then
-        if #(self.selectedSquads) > 0 then
-            self:setStance( core.PoliceStance.Passive )
-        end
-    end
-	
-	-- box select
-	if self.boxStartX and self.boxStartY and self.boxEndX and self.boxEndY and not self.leftPressed then
-		if self.boxStartX ~= self.boxEndX and self.boxStartY ~= self.boxEndY then
-			if not keyboard.isKeyDown(keyboard.key.Left_shift) then
-				self:DeselectAllSquads()
-			end
-			if self.groupsSelectedByBox then
-
-				for p = 1, #(self.groupsSelectedByBox) do
-					local found = false
-					for i=1, #(self.selectedSquads) do
-						if self.selectedSquads[i] == self.groupsSelectedByBox[p] then
-							found = true
-						end
-					end
-					
-					if not found then                            
-                        local squadEntity = s_squad.getSquadEntity(self.groupsSelectedByBox[p])
-                        local squadComponent = squadEntity:get(core.componentType.SquadComponent)
-
-						self:addSquadsToSelection( {self.groupsSelectedByBox[p]} )
-                        if #(self.selectedSquads) == 1 then
-                            self:setFormation( squadComponent.squadFormation )
+                    for p = 1, #(self.groupsSelectedByBox) do
+                        local found = false
+                        for i=1, #(self.selectedSquads) do
+                            if self.selectedSquads[i] == self.groupsSelectedByBox[p] then
+                                found = true
+                            end
                         end
+                        
+                        if not found then                            
+                            local squadEntity = s_squad.getSquadEntity(self.groupsSelectedByBox[p])
+                            local squadComponent = squadEntity:get(core.componentType.SquadComponent)
 
-                        if self.selectedFormation ~= squadComponent.squadFormation then
-                            self:setFormation(s_squad.formations.NoFormation)
-                        end
-					end			
+                            self:addSquadsToSelection( {self.groupsSelectedByBox[p]} )
+                            if #(self.selectedSquads) == 1 then
+                                self:setFormation( squadComponent.squadFormation )
+                            end
 
-                    -- Called so that we set the gui squad button to current selection.
-                    -- (Or to nothing if current selection has mixxed stances)
-                    self:setStance( self:evaluateStanceForGroups( self.selectedSquads ) )
-				end
-				self.groupsSelectedByBox = {}
-			elseif not core.config.stickySelection and not keyboard.isKeyDown(keyboard.key.Left_shift) then
-				self:DeselectAllSquads()
-			end
-		end
-		self.boxStartX, self.boxStartY, self.boxEndX, self.boxEndY = nil, nil, nil, nil
-	end
-    
-    if self.selectedSquads and #(self.selectedSquads) >= 1 then
-        applySelectionOutline(self.selectedSquads)
+                            if self.selectedFormation ~= squadComponent.squadFormation then
+                                self:setFormation(s_squad.formations.NoFormation)
+                            end
+                        end			
+
+                        -- Called so that we set the gui squad button to current selection.
+                        -- (Or to nothing if current selection has mixxed stances)
+                        self:setStance( self:evaluateStanceForGroups( self.selectedSquads ) )
+                    end
+                    self.groupsSelectedByBox = {}
+                elseif not core.config.stickySelection and not keyboard.isKeyDown(keyboard.key.Left_shift) then
+                    self:DeselectAllSquads()
+                end
+            end
+            self.boxStartX, self.boxStartY, self.boxEndX, self.boxEndY = nil, nil, nil, nil
+        end
+        
+        if self.selectedSquads and #(self.selectedSquads) >= 1 then
+            applySelectionOutline(self.selectedSquads)
+        end
+        self:updateSquadDamageStatus( delta )
+
+        self.leftClicked = false
+        self.rightClicked = false
     end
-    self:updateSquadDamageStatus( delta )
-
-    self.leftClicked = false
-    self.rightClicked = false
-
     -- Update the data each frame, should probably be changed to only update
     -- when relevant. TODO: Fix aforementioned thing
     if #(self.selectedSquads) > 0 then

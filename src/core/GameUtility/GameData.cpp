@@ -47,10 +47,9 @@ namespace Core
 		
 		m_reqisteredEscapePointGroups.push_back( escapeGroup );
 
-		if( !instance->CalculateFlowfieldForGroup( point, escapeGroup ) )
-			return -1;
+		if( instance->CalculateFlowfieldForGroup( point, escapeGroup ) )
+			m_validEscapePointGroups.push_back( escapeGroup );
 
-		m_validEscapePointGroups.push_back( escapeGroup );
 		return escapeGroup;
 	}
 	
@@ -65,7 +64,7 @@ namespace Core
 
 		float closest = std::numeric_limits<float>::max();
 		int index = -1;
-		for( int i = 0; i < m_validEscapePointGroups.size(); i++ )
+		for( unsigned int i = 0; i < m_validEscapePointGroups.size(); i++ )
 		{
 			float dist = instance->flowfields[ m_validEscapePointGroups[i] ].distanceToGoal[node];
 			dist < closest ? closest = dist, index = i : index = index ;

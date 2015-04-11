@@ -3,6 +3,7 @@ local O =
     onObjectiveChange = function() end,
     title = "Default Title",
     active = true,
+    bonus = false,
     state = "",
 }
 
@@ -19,7 +20,7 @@ function O:__index( key )
 end
 
 function O:__newindex( key, value )
-    if key == "title" or key == "state" or key == "active" then
+    if key == "title" or key == "state" or key == "active" or key == "bonus" then
         rawset( self, "i_" .. key, value )
         rawget( self,"onObjectiveChange" )(self)
     else

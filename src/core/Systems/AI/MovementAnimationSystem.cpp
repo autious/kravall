@@ -6,7 +6,7 @@
 #include <Animation/AnimationManager.hpp>
 #include <GameUtility/GameData.hpp>
 
-// this value needs to be mirrored in the panicAnimationSystem, otherwise full recompile will be needed at change.
+// these values needs to be mirrored in the panicAnimationSystem, otherwise full recompile will be needed at change.
 #define GRACE_THRESHOLD 0.3f
 #define STILL_THRESHOLD 0.35f 
 
@@ -17,7 +17,7 @@
 namespace Core
 {
     MovementAnimationSystem::MovementAnimationSystem() : BaseSystem(EntityHandler::GenerateAspect<
-		TargetingComponent, Core::GraphicsComponent, Core::AnimationComponent, Core::MovementComponent,
+		TargetingComponent, Core::GraphicsComponent, Core::AnimationComponent, Core::MovementComponent, Core::UnitTypeComponent,
 		Core::AttributeComponent, Core::MovementDataComponent, Core::WorldPositionComponent, GraphicsComponent>(), 0ULL)
     {
     }
@@ -34,6 +34,7 @@ namespace Core
 			Core::GraphicsComponent* grc		= WGETC<Core::GraphicsComponent>(*it);
 			Core::MovementDataComponent *mdc	= WGETC<Core::MovementDataComponent>( *it );
 			Core::MovementComponent *mvmc		= WGETC<Core::MovementComponent>( *it );
+			Core::AttributeComponent *attribc	= WGETC<Core::AttributeComponent>( *it );
 
 			ac->playTime += delta;
 
@@ -61,6 +62,25 @@ namespace Core
 				mdc->movedThisFrame = true;
 			mdc->frameSpeed = frameSpeed;
 
+
+			// set idle-animation...
+			std::string idleAnimation = "idle";
+			Core::UnitTypeComponent* utc = WGETC<Core::UnitTypeComponent>( *it );
+			if( utc->type == Core::UnitType::Police )
+			{
+				if( attribc->police.stance == Core::PoliceStance::Defensive )
+				{
+					if(  Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle-defense" ) >= 0 )
+						idleAnimation = "idle-defense";
+				}
+				else if( attribc->police.stance == Core::PoliceStance::Aggressive )
+				{
+					if(  Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle-aggressive" ) >= 0 )
+						idleAnimation = "idle-aggressive";
+				}
+			}
+
+
 			bool hasAlteredAnimation = false;
 			bool hasChangedAnimation = false;
 			ac->loop = false;
@@ -68,7 +88,7 @@ namespace Core
 			{
 				// if moving faster than jogging but not already playing running animation or if not playing any animation...
 				if( frameSpeed > joggingSpeed + GRACE_THRESHOLD &&
-					(( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle" )
+					(( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), idleAnimation )
 					== ac->animationID && ac->playTime > IDLE_MINIMUM_TIME )
 					|| !ac->playing ))
 				{
@@ -82,7 +102,7 @@ namespace Core
 				
 				// if moving faster than walking but not already playing joggin animation or if not playing any animation...
 				else if( frameSpeed > walkingSpeed + GRACE_THRESHOLD &&
-					(( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle" ) 
+					(( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), idleAnimation ) 
 					== ac->animationID && ac->playTime > IDLE_MINIMUM_TIME )
 					|| !ac->playing ))
 				{
@@ -96,7 +116,7 @@ namespace Core
 
 				// if moving but not running and not already playing walk-animation or if not playing any animation
 				else if( frameSpeed > STILL_THRESHOLD &&  
-					(( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle" )
+					(( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), idleAnimation )
 					== ac->animationID && ac->playTime > IDLE_MINIMUM_TIME )
 					|| !ac->playing ))
 				{
@@ -108,18 +128,19 @@ namespace Core
 					Core::AnimationManager::PlayAnimation( *it, "walk-straight" ); // walking
 				}
 
+
 				// if not moving and not already playing idle-animation or if not playing any animation
-				else if( ((Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle" )
+				else if( ((Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), idleAnimation )
 					!= ac->animationID && ac->playTime > MINIMUM_MOVEMENT_ANIMATION_TIME )
 					|| !ac->playing) && 
 					frameSpeed < STILL_THRESHOLD )
 				{
-					if( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), "idle" ) != ac->animationID )
+					if( Core::AnimationManager::GetAnimationID( GFX::GetBitmaskValue( grc->bitmask, GFX::BITMASK::MESH_ID ), idleAnimation ) != ac->animationID )
 						hasChangedAnimation = true;
 
 					ac->speed = 1.0f;
 					hasAlteredAnimation = true;
-					Core::AnimationManager::PlayAnimation( *it, "idle" ); // still
+					Core::AnimationManager::PlayAnimation( *it, idleAnimation ); // still
 				}
 
 				// try to make animations less unified

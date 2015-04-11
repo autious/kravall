@@ -1,4 +1,6 @@
 #include "TextureManager.hpp"
+#include "Renderer/RenderSettings.hpp"
+#include <logger/Logger.hpp>
 
 namespace GFX
 {
@@ -28,8 +30,16 @@ namespace GFX
 		}
 		else
 		{
-			LoadTexture(id, data, GL_TEXTURE_2D, GL_RGBA, GL_RGBA, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR,
-				GL_REPEAT, GL_REPEAT, width, height);
+			if (RenderSettings::settings[GFX_MIPMAPS] == GFX_MIPMAPS_OFF)
+			{
+				LoadTexture(id, data, GL_TEXTURE_2D, GL_RGBA, GL_RGBA, GL_LINEAR, GL_LINEAR,
+					GL_REPEAT, GL_REPEAT, width, height);
+			}
+			else
+			{
+				LoadTexture(id, data, GL_TEXTURE_2D, GL_RGBA, GL_RGBA, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR,
+					GL_REPEAT, GL_REPEAT, width, height);
+			}
 		}
 	}
 		
@@ -40,8 +50,6 @@ namespace GFX
 		int width, int height)
 	{
 
-		GLfloat maxAniso = 0.0f;
-		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAniso);
 
 		GLuint textureHandle;
 		glGenTextures(1, &textureHandle);
@@ -52,10 +60,20 @@ namespace GFX
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapS);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapT);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAniso);
+		
+		if (RenderSettings::settings[GFX_MIPMAPS] == GFX_MIPMAPS_AF)
+		{
+			GLfloat maxAniso = 0.0f;
+			glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAniso);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAniso);
+		}
 
 		glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
+
+		if (RenderSettings::settings[GFX_MIPMAPS] == GFX_MIPMAPS_ON || RenderSettings::settings[GFX_MIPMAPS] == GFX_MIPMAPS_AF)
+		{
+			glGenerateMipmap(GL_TEXTURE_2D);
+		}
 
 		TextureData texture;
 		texture.id = static_cast<unsigned int>(m_idCounter);
@@ -137,7 +155,16 @@ namespace GFX
 		int w;
 		int h;
 		data = stbi_load(filepath, &w, &h, 0, 0);
-		Load3DTexture(id, width, height, depth, data);
+
+        if( data )
+        {
+		    Load3DTexture(id, width, height, depth, data);
+            stbi_image_free( data );
+        }
+        else
+        {
+            LOG_FATAL << "Unable to load LUT texture." << std::endl;
+        }
 	}
 
 	void TextureManager::DeleteTexture(unsigned long long int id)

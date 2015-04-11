@@ -6,12 +6,29 @@
 #include <GameUtility/PathfindingUtility.hpp>
 
 
+#define EDGE_THRESHOLD 0.35f
 
 Core::FlowfieldSystem::FlowfieldSystem()
 	: BaseSystem( EntityHandler::GenerateAspect<
 		WorldPositionComponent, UnitTypeComponent, AttributeComponent, FlowfieldComponent >(), 0ULL )
 {
 }
+
+//#define DRAW_FF_GOAL
+#ifdef DRAW_FF_GOAL
+#define DEBUG_DRAW_FF_GOAL( x ) x
+#else
+#define DEBUG_DRAW_FF_GOAL( x ) ;
+#endif
+
+//#define DRAW_FF_DIRECTION
+#ifdef DRAW_FF_DIRECTION
+#define DEBUG_DRAW_FF_DIRECTION( x ) x
+#else
+#define DEBUG_DRAW_FF_DIRECTION( x ) ;
+#endif
+
+
 
 void Core::FlowfieldSystem::Update( float delta )
 {
@@ -51,6 +68,10 @@ void Core::FlowfieldSystem::Update( float delta )
 			float* navMeshGoal = instance->flowfields[ attribc->rioter.groupID ].goal;
 			glm::vec3 navGoal = glm::vec3( navMeshGoal[0], 0.0f, navMeshGoal[1] );
 
+			DEBUG_DRAW_FF_GOAL( GFX::Debug::DrawLine( position, navGoal, GFXColor( 1, 1, 0, 1 ), false )); 
+
+			glm::vec3 flowfieldDirection = glm::vec3(0.0f);
+
 			if( instance->flowfields[ groupID ].deadNodes[ ffc->node ] )
 			{
 				// calculate path out of police occupied node here
@@ -63,6 +84,7 @@ void Core::FlowfieldSystem::Update( float delta )
 				else
 				{
 					glm::vec3 newDir = glm::normalize( navGoal - position );
+					flowfieldDirection = newDir;
 					glm::vec3 currentDir = glm::vec3( mvmc->newDirection[0], mvmc->newDirection[1], mvmc->newDirection[2] ); 
 					Core::MovementComponent::SetDirection( mvmc, newDir.x, 0.0f, newDir.z );
 				}
@@ -82,10 +104,10 @@ void Core::FlowfieldSystem::Update( float delta )
 				float distanceAlongLine = glm::dot( (lineEnd - lineStart) * instance->nodes[targetNode].corners[targetEdge].inverseLength, fromStartToObject );
 
 				glm::vec3 targetPosition;
-				if( instance->nodes[ targetNode ].corners[ targetEdge ].length < distanceAlongLine || distanceAlongLine < 0 )
+				if( instance->nodes[ targetNode ].corners[ targetEdge ].length - EDGE_THRESHOLD < distanceAlongLine || distanceAlongLine < EDGE_THRESHOLD )
 				{
 					// is outside edges...
-					if( distanceAlongLine < 0 )
+					if( distanceAlongLine < EDGE_THRESHOLD )
 						targetPosition = lineStart + glm::normalize( lineEnd - lineStart ) * 1.25f;
 					else 
 						targetPosition = lineEnd + glm::normalize( lineStart - lineEnd ) * 1.25f;
@@ -96,26 +118,29 @@ void Core::FlowfieldSystem::Update( float delta )
 					targetPosition = instance->flowfields[groupID].list[ ffc->node ];
 				}
 				
-				glm::vec3 flowfieldDirection = glm::normalize( targetPosition - position );
+				flowfieldDirection = glm::normalize( targetPosition - position );
 
 				MovementComponent::SetDirection( mvmc, flowfieldDirection.x, 0, flowfieldDirection.z );
 			}
+
+			DEBUG_DRAW_FF_DIRECTION( 
+				GFX::Debug::DrawLine( position, position + glm::vec3( flowfieldDirection[0], flowfieldDirection[1], flowfieldDirection[2] ), GFXColor( 1, 1, 0, 1 ), false ) );
+			
 		}
 	}
 }
 
 
 //#define DRAW_LINE_TO_POLICE
-
-
 #ifdef DRAW_LINE_TO_POLICE
 #define DRAW_POLICE_LINE( x ) x
 #else
 #define DRAW_POLICE_LINE( x ) ;
 #endif
 
-#define SQR_SEARCH_DISTANCE 250
 
+
+#define SQR_SEARCH_DISTANCE 250
 void Core::FlowfieldSystem::CalculatePathInDeadNode( Core::Entity rioter, int group )
 {
 	glm::vec3 toPolice = glm::vec3( 0.0f );

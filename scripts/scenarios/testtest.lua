@@ -58,27 +58,33 @@ return function( scen )
 	--====================== MAIN FUNCTIONS ======================--
 	
 	function Killzone()
-		local rGroup2 = core.system.groups.createGroup( 2 );
-		local centerPoint2 = { -0, 0, 0 }
-		local side = math.sqrt( 800 )
-		for i = -side/2, side/2 do
-			for p = -side/2, side/2 do
-				rioter( scen, p * 1.5 + centerPoint2[1], 0  + centerPoint2[2], i * 1.5  + centerPoint2[3], 
-				rGroup2, nil, nil, fists, nil, 100, 100, core.RioterAlignment.Anarchist, core.movementData.Jogging )
-			end
-		end
-		core.system.groups.setGroupGoal(rGroup2, -250, 0, 60)		
-		
-		local rGroup3 = core.system.groups.createGroup( 1 );
-		local centerPoint3 = { -210, 0, 60 }
+		local rGroup2 = core.system.groups.createGroup( 5 );
+		local centerPoint2 = { -30, 0, 0 }
 		local side = math.sqrt( 300 )
 		for i = -side/2, side/2 do
 			for p = -side/2, side/2 do
-				--rioter( scen, p * 1.5 + centerPoint3[1], 0  + centerPoint3[2], i * 1.5  + centerPoint3[3], 
-				--rGroup3, nil, nil, fists, nil, 100, 100, core.RioterAlignment.Anarchist, core.movementData.Jogging )
+				--rioter( scen, p * 1.5 + centerPoint2[1], 0  + centerPoint2[2], i * 1.5  + centerPoint2[3], 
+				--rGroup2, nil, nil, fists, nil, 100, 100, core.RioterAlignment.Anarchist, core.movementData.Jogging )
 			end
 		end
-		core.system.groups.setGroupGoal(rGroup3, 50, 0, 0)		
+		core.system.groups.setGroupGoal(rGroup2, 120, 0, 0)	
+		
+		local rGroup3 = core.system.groups.createGroup( 1 );
+		local centerPoint3 = { 30, 0, 0 }
+		local side = math.sqrt( 10 )
+		for i = -side/2, side/2 do
+			for p = -side/2, side/2 do
+				rioter( scen, p * 1.5 + centerPoint3[1], 0  + centerPoint3[2], i * 1.5  + centerPoint3[3], 
+				rGroup3, nil, nil, fists, nil, 100, 100, core.RioterAlignment.Anarchist, core.movementData.Jogging )
+			end
+		end
+		core.system.groups.setGroupGoal(rGroup3, -30, 0, 0)	
+		
+		for i = 0, 2 do
+			scen.gamemode:addSquad( tearGasSquad( scen, -0, 0, 0, 0, fists ))
+		end
+		
+		
 	end
 	
 	
@@ -98,7 +104,6 @@ return function( scen )
 		
 		
 		
-		local sqads = {}	
 		for i = 0, 1 do
 			scen.gamemode:addSquad( policeSquad( scen, -45, 0, 0, 0, fists ))
 		end
@@ -109,10 +114,10 @@ return function( scen )
 	
 	function T.makeASquadYo()
 		local fists = core.weaponData.pushWeapon( 1.0, 0.75, 20, 0.2, 0.05, 3.2, 2.9, 0.05, 0.5, "punch" )
-		core.gameMetaData.registerEscapePoint( 50, 0, 0 )
+		--core.gameMetaData.registerEscapePoint( 50, 0, 0 )
 
-		Killzone()
-		--NavMeshBlockTest()		
+		--Killzone()
+		NavMeshBlockTest()		
 		
 		
 	end

@@ -9,8 +9,9 @@ local keyboard = core.input.keyboard
 local key = keyboard.key
 
 
-local camera = require "rts_camera".new()
---camera:lookAt( core.glm.vec3.new( 0, 0, 0 ), core.glm.vec3.new( 0, 0, 0 ) )
+local camera = require "/scenarios/tankwars/topdown_camera".new()
+camera:lookAt( core.glm.vec3.new( 0.0, 50.0, 0.0 ), core.glm.vec3.new( 0.0, 0.0, 0.0 ) )
+
 
 local function Init()
 	core.camera.gameCamera:setView( camera:getView( ) )
@@ -142,43 +143,43 @@ local playerTank = scen:loadAssembly(
 		type = core.componentType.ScaleComponent,
 		data = { scale = 1.0 }
 	},
-	{
-		type = core.componentType.UnitTypeComponent,
-		data = { unitType = core.UnitType.Rioter }
-	},
+	--{
+	--	type = core.componentType.UnitTypeComponent,
+	--	data = { unitType = core.UnitType.Rioter }
+	--},
 	{
 		type = core.componentType.MovementComponent,
 		data = { direction = { 0, 0, 0 }, newDirection = { 0, 0, 0 }, speed = 1.5, 
 		desiredSpeed = 1.5, goal = false }
 		,ignoreHard = true
 	},
-	{
-		type = core.componentType.BoundingVolumeComponent,
-		data = { sphereOffset = { 0, 0, 0 }, sphereRadius = 5.0, pickingRadius = 0.0, 
-				collisionModel = core.BoundingVolumeCollisionModel.DynamicResolution, 
-				type = core.BoundingVolumeType.SphereBoundingType }
-	},
-	{
-		type = core.componentType.AttributeComponent,
-		data = { health = 100, stamina = 100, morale = 2.0, 
-			   alignment = core.RioterAlignment.Anarchist, rage = 0, pressure = 0, groupID = playerGroup, stanceRioter = core.RioterStance.Normal}
-		,
-		ignoreHard = true
-	},
+	--{
+	--	type = core.componentType.BoundingVolumeComponent,
+	--	data = { sphereOffset = { 0, 0, 0 }, sphereRadius = 5.0, pickingRadius = 0.0, 
+	--			collisionModel = core.BoundingVolumeCollisionModel.DynamicResolution, 
+	--			type = core.BoundingVolumeType.SphereBoundingType }
+	--},
+	--{
+	--	type = core.componentType.AttributeComponent,
+	--	data = { health = 100, stamina = 100, morale = 2.0, 
+	--		   alignment = core.RioterAlignment.Anarchist, rage = 0, pressure = 0, groupID = playerGroup, stanceRioter = core.RioterStance.Normal}
+	--	,
+	--	ignoreHard = true
+	--},
 	{
 		type = core.componentType.RotationComponent,
 		--data = { rotation = { 0, 1*math.sin( -3.14/4 ), 0, math.cos( -3.14/4 ) } }
 		data = { rotation = { 0, 0, 0, 1 } }
 	},
-	{
-		type = core.componentType.FlowfieldComponent,
-		data = { node = -1 }
-	},
-	{
-		type = core.componentType.TargetingComponent,
-		data = { weapon = -1 },
-		ignoreHard = true
-	}
+	--{
+	--	type = core.componentType.FlowfieldComponent,
+	--	data = { node = -1 }
+	--},
+	--{
+	--	type = core.componentType.TargetingComponent,
+	--	data = { weapon = -1 },
+	--	ignoreHard = true
+	--}
 }
 )
 
@@ -473,22 +474,22 @@ local function CreateEnemyTankBody(position, group)
 		type = core.componentType.WorldPositionComponent,
 		data = { position = { position[1], 0, position[2] } }
 	},
-	{
-		type = core.componentType.UnitTypeComponent,
-		data = { unitType = core.UnitType.Rioter }
-	},
-	{
-		type = core.componentType.MovementComponent,
-		data = { direction = { 0, 0, 0 }, newDirection = { 0, 0, 0 }, speed = 5.0, 
-		desiredSpeed = { 5.0, 5.0, 5.0, 5.0 }, goal = false }
-		,ignoreHard = true
-	},
-	{
-		type = core.componentType.BoundingVolumeComponent,
-		data = { sphereOffset = { 0, 0, 0 }, sphereRadius = 3.0, pickingRadius = 0.0,
-				collisionModel = core.BoundingVolumeCollisionModel.DynamicResolution, 
-				type = core.BoundingVolumeType.SphereBoundingType }
-	},
+	--{
+	--	type = core.componentType.UnitTypeComponent,
+	--	data = { unitType = core.UnitType.Rioter }
+	--},
+	--{
+	--	type = core.componentType.MovementComponent,
+	--	data = { direction = { 0, 0, 0 }, newDirection = { 0, 0, 0 }, speed = 5.0, 
+	--	desiredSpeed = { 5.0, 5.0, 5.0, 5.0 }, goal = false }
+	--	,ignoreHard = true
+	--},
+	--{
+	--	type = core.componentType.BoundingVolumeComponent,
+	--	data = { sphereOffset = { 0, 0, 0 }, sphereRadius = 3.0, pickingRadius = 0.0,
+	--			collisionModel = core.BoundingVolumeCollisionModel.DynamicResolution, 
+	--			type = core.BoundingVolumeType.SphereBoundingType }
+	--},
 	{
 		type = core.componentType.GraphicsComponent,
 		data = { mesh = 0, material = 0, type = core.gfx.objectTypes.OpaqueGeometry, layer = core.gfx.layerTypes.MeshLayer, outlineColor = {0, 0, 1, 1}, render = true },
@@ -497,26 +498,26 @@ local function CreateEnemyTankBody(position, group)
 					material = { core.loaders.MaterialLoader, "assets/texture/tankwars/leopard-body.material", false }
 			   }
 	},
-	{
-		type = core.componentType.AttributeComponent,
-		data = { health = 100, stamina = 100, morale = 2.0, 
-			   alignment = core.RioterAlignment.Anarchist, rage = 0, pressure = 0, groupID = group, stanceRioter = core.RioterStance.Normal}
-		,
-		ignoreHard = true
-	},
-	{
-		type = core.componentType.TargetingComponent,
-		data = { weapon = -1 },
-		ignoreHard = true
-	},
+	--{
+	--	type = core.componentType.AttributeComponent,
+	--	data = { health = 100, stamina = 100, morale = 2.0, 
+	--		   alignment = core.RioterAlignment.Anarchist, rage = 0, pressure = 0, groupID = group, stanceRioter = core.RioterStance.Normal}
+	--	,
+	--	ignoreHard = true
+	--},
+	--{
+	--	type = core.componentType.TargetingComponent,
+	--	data = { weapon = -1 },
+	--	ignoreHard = true
+	--},
 	{
 		type = core.componentType.ScaleComponent,
 		data = { scale = 1.0 }
 	},
-	{
-		type = core.componentType.FlowfieldComponent,
-		data = { node = -1 }
-	},
+	--{
+	--	type = core.componentType.FlowfieldComponent,
+	--	data = { node = -1 }
+	--},
 	{
 		type = core.componentType.RotationComponent,
 		data = { rotation = { 0, 0, 0, 1 } }
@@ -644,7 +645,7 @@ local enemyTankTurrets = {}
 local tankGroups
 
 local function InitEnemyTanks(n)
-	tankGroups = tankGroups or core.system.groups.createGroup();
+	--tankGroups = tankGroups or core.system.groups.createGroup();
 	local minSpawn = 20
 	local maxSpawn = (boundX + boundY) / 2 - minSpawn
 	for i=1,n do
@@ -953,19 +954,31 @@ local function UpdateMissiles(delta)
 			--rotQuat = core.glm.quat.new( 0,0,0,1 )
 			
 			
-			local axis = { 0.0, 0.0, 0.0 }
+			local axis = { 0.0, math.sin(missiles[i].direction), math.sin(missiles[i].directionUp) }
 			
+			
+			
+			local lenght = math.sqrt( axis[1] * axis[1] + axis[2] * axis[2] + axis[3] * axis[3] )
+			
+			axis[1] = axis[1] / lenght
+			axis[2] = axis[2] / lenght
+			axis[3] = axis[3] / lenght
 			
 			--local missileRot = missiles[i].entity:get(core.componentType.RotationComponent)
-			local rotQuat = { math.sin(missiles[i].directionUp * 0.5) , 0, 0, math.cos(missiles[i].directionUp * 0.5 )}
+			
+			
+			
+			local rotQuat = { axis[1] * math.sin(0.0),  axis[2] * math.sin(0.0),  axis[3] * math.sin(0.0), math.cos(0.0) }
+			
+			
 --local rotQuat = { 0, math.sin(missiles[i].direction * 0.5), 0, math.cos(missiles[i].direction * 0.5 )}
-			local rotQuattt = { 0, 0, 0, 1}
+			--local rotQuattt = { 0, 0, 0, 1}
 
 
-			local rotttttt = {	(rotQuat[2]*rotQuattt[3] - rotQuat[3]*rotQuattt[2] + rotQuat[1]*rotQuattt[4] + rotQuat[4]*rotQuattt[1]),
-								(rotQuat[3]*rotQuattt[1] - rotQuat[1]*rotQuattt[3] + rotQuat[2]*rotQuattt[4] + rotQuat[4]*rotQuattt[2]),
-								(rotQuat[1]*rotQuattt[2] - rotQuat[2]*rotQuattt[1] + rotQuat[3]*rotQuattt[4] + rotQuat[4]*rotQuattt[3]),
-								(rotQuat[4]*rotQuattt[4] - rotQuat[1]*rotQuattt[1] - rotQuat[2]*rotQuattt[2] - rotQuat[3]*rotQuattt[3]) }
+			--local rotttttt = {	(rotQuat[2]*rotQuattt[3] - rotQuat[3]*rotQuattt[2] + rotQuat[1]*rotQuattt[4] + rotQuat[4]*rotQuattt[1]),
+			--					(rotQuat[3]*rotQuattt[1] - rotQuat[1]*rotQuattt[3] + rotQuat[2]*rotQuattt[4] + rotQuat[4]*rotQuattt[2]),
+			--					(rotQuat[1]*rotQuattt[2] - rotQuat[2]*rotQuattt[1] + rotQuat[3]*rotQuattt[4] + rotQuat[4]*rotQuattt[3]),
+			--					(rotQuat[4]*rotQuattt[4] - rotQuat[1]*rotQuattt[1] - rotQuat[2]*rotQuattt[2] - rotQuat[3]*rotQuattt[3]) }
 
 			--rotQuat = rotQuat * rotQuattt
 			--core.glm.quat.rotate(rotQuat, missiles[i].direction, core.glm.vec3.new(0,1,0))
@@ -979,12 +992,12 @@ local function UpdateMissiles(delta)
 			--					x()*rhs.y() - y()*rhs.x() + z()*rhs.w() + w()*rhs.z(),
 			--					w()*rhs.w() - x()*rhs.x() - y()*rhs.y() - z()*rhs.z());
 				
-			local missileRot = missiles[i].entity:get(core.componentType.RotationComponent)
-			missileRot.rotation[1] = rotttttt[1]
-			missileRot.rotation[2] = rotttttt[2]
-			missileRot.rotation[3] = rotttttt[3]
-			missileRot.rotation[4] = rotttttt[4]
-			missiles[i].entity:set(core.componentType.RotationComponent, missileRot)
+			--local missileRot = missiles[i].entity:get(core.componentType.RotationComponent)
+			--missileRot.rotation[1] = rott[1]
+			--missileRot.rotation[2] = rotttttt[2]
+			--missileRot.rotation[3] = rotttttt[3]
+			--missileRot.rotation[4] = rotttttt[4]
+			missiles[i].entity:set(core.componentType.RotationComponent, {rotation = rotQuat})
 					
 			i = i + 1
 		end
@@ -1070,7 +1083,7 @@ end
 local function UpdateEnemyTanks(delta)
 	local playerPos = playerTank:get(core.componentType.WorldPositionComponent).position
 	
-	core.system.groups.setGroupGoal(tankGroups, playerPos[1], playerPos[2], playerPos[3] )
+	--core.system.groups.setGroupGoal(tankGroups, playerPos[1], playerPos[2], playerPos[3] )
 	
 	local i = 1
 	while i <= #enemyTanks do
@@ -1399,8 +1412,8 @@ end
 
 
 local function UpdateCamera()
-	local tankPos = playerTank:get(core.componentType.WorldPositionComponent)
-	camera:lookAt( core.glm.vec3.new( tankPos.position[1], -50, tankPos.position[3] ), core.glm.vec3.new( tankPos.position[1], 0, tankPos.position[3] ))
+	local tankPos = playerTank:get(core.componentType.WorldPositionComponent).position
+	camera:lookAt( core.glm.vec3.new( tankPos[1], 50.0, tankPos[3] ), core.glm.vec3.new( tankPos[1], 0.0, tankPos[3] ))
 	core.camera.gameCamera:setView( camera:getView( ) )
 end
 
@@ -1456,7 +1469,7 @@ function Update(delta)
 	if alive then
 		UpdatePlayerTank(delta)
 		UpdateEnemyTanks(delta)
-		--UpdateCamera()
+		UpdateCamera()
 	end
 	
 	UpdateBullets(delta)
@@ -1528,7 +1541,7 @@ function Update(delta)
 	--	mythingPos.position[3] =  mythingPos.position[3] + 100  * dt
 	--end
 
-	camera:update(delta)
+	--camera:update(delta)
 end
 
 scen:registerUpdateCallback( Update )

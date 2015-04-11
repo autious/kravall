@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <logger/Logger.hpp>
+#include <GameUtility/PathfindingUtility.hpp>
 
 #define EDGE_HEAT_DENSITY_THREASHOLD_FOR_BLOCKING 5.0f
 
@@ -39,9 +40,7 @@ namespace Core
 		// reset group metadata...
 		flowfields[group].goal[ 0 ] = std::numeric_limits<float>::max();
 		flowfields[group].goal[ 1 ] = std::numeric_limits<float>::max();
-		//std::memset( flowfields[group].list, 0, nrNodes * sizeof( glm::vec3 ) );
-		std::memset( flowfields[group].deadNodes, 0x1, nrNodes * sizeof( bool) );
-
+		std::memset( flowfields[group].deadNodes, 1, nrNodes * sizeof( bool ) );
 
 		// find out what node we want to go to...
 		int node = -1;
@@ -60,8 +59,10 @@ namespace Core
 		flowfields[group].goal[ 0 ] = point.x;
 		flowfields[group].goal[ 1 ] = point.z;
 
-
 		std::vector< TraversalData > prioList;
+
+		if( flowfields[ group ].blocked[ node ] < EDGE_HEAT_DENSITY_THREASHOLD_FOR_BLOCKING )
+			flowfields[group].deadNodes[ node ] = false;
 
 		// rig first node...		
 		for( int i = 0; i < 4; i++ )
@@ -172,6 +173,7 @@ namespace Core
 				}
 			}
 
+			// I've used this too often to remove it :)
 			if( prioList[0].node == 4 )
 				int pp = 0;
 				
@@ -352,6 +354,9 @@ namespace Core
 
 	Core::PathData Core::NavigationMesh::CalculateShortPath( int ownNode, glm::vec3 ownPosition, int otherNode, glm::vec3 otherPosition, int memoryInstance )
 	{
+		if( !PathFinder::CheckLineVsNavMesh( ownPosition, otherPosition, 1.0f, ownNode ) )
+			return PathData( -1, -1, otherPosition );
+
 		std::vector< AStarData > prioList;
 
 		// init memory...
@@ -417,20 +422,9 @@ namespace Core
 						return false; 
 					} );
 
-					int o = 0;
-
 					return PathData( otherNode, prioList[0].entryEdge, positions[0] );
 				}
 
-				//if(  )
-				//glm::vec3 otherMid = nodes[ prioList[0].node ].GetMidPoint( prioList[0].entryEdge );
-				//
-				//// distance to the next node
-				//float dist = glm::distance( otherMid, mid );
-				//prioList.push_back( 
-				//				AStarData( current.corners[i].linksTo, current.corners[i].linksToEdge, prioList[0].node, 
-				//				dist + prioList[0].entryDistance,
-				//				glm::distance( mid, ownPosition ) ));
 				break;
 			}
 			
@@ -448,13 +442,13 @@ namespace Core
 				this should probobly be altered to use the calculated entry point from previous nodes ... ? 
 				parent entry node is no longer always in the middle.
 			*/
-			glm::vec3 mid;			
-			int tt = prioList[0].entryEdge * 2;
-			int qq = ( tt + 2 ) % 8;
-			glm::vec3 lineStart = glm::vec3( current.points[ tt ], 0.0f, current.points[ tt + 1 ] );
-			glm::vec3 lineEnd	= glm::vec3( current.points[ qq ], 0.0f, current.points[ qq + 1 ] );
-			mid = lineStart + (( lineEnd - lineStart ) * 0.5f );				
-
+			//glm::vec3 mid;
+			//int tt = prioList[0].entryEdge * 2;
+			//int qq = ( tt + 2 ) % 8;
+			//glm::vec3 lineStart = glm::vec3( current.points[ tt ], 0.0f, current.points[ tt + 1 ] );
+			//glm::vec3 lineEnd	= glm::vec3( current.points[ qq ], 0.0f, current.points[ qq + 1 ] );
+			//mid = lineStart + (( lineEnd - lineStart ) * 0.5f );
+			glm::vec3 mid = prioList[0].parentNode < 0 ? current.GetMidPoint( prioList[0].entryEdge ) : points[memoryInstance][ prioList[0].parentNode ];
 
 			if( !visited[memoryInstance][ prioList[0].node ] )
 			{
@@ -550,8 +544,12 @@ namespace Core
 				if( glm::distance(A, posFromParent) < glm::distance( B, posFromParent ) ) 
 					return true; 
 				return false; 
-			} );
+			});
+
+			if( !PathFinder::CheckLineVsNavMesh( ownPosition, positions[0], 1.0f, ownNode ) )
+				return PathData( -1, -1, positions[0] );
 			
+
 			points[memoryInstance][ prioList[0].node ] = positions[0];
 			tempField[memoryInstance]->list[ prioList[0].node ] = points[memoryInstance][ prioList[0].parentNode ];
 			tempField[memoryInstance]->edges[ prioList[0].node ] = prioList[0].entryEdge;

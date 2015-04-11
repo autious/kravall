@@ -11,6 +11,7 @@ namespace GFX
 
 	PostProcessingPainter::~PostProcessingPainter()
 	{
+		delete(m_LUTManager);
 	}
 
 	void PostProcessingPainter::Initialize(GLuint FBO, GLuint dummyVAO, int screenWidth, int screenHeight, BlurPainter* blurPainter, FBOTexture* specular, FBOTexture* glow)

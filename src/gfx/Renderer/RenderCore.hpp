@@ -164,12 +164,17 @@ namespace GFX
 		void Delete();
 
 		void AddRenderJob(GFXBitmask bitmask, void* value);
+		void AddFilledRect(FilledRect r);
 
 		void SetLUT(std::string LUT);
 		void ReloadLUT();
 
 		void SetExposure(float exposure);
 		void SetGamma(float gamma);
+		inline float GetGamma()
+		{
+			return m_gamma;
+		}
 		void SetWhitepoint(glm::vec3 whitePoint);
 
 		void DeleteMesh(unsigned long long id);
@@ -184,15 +189,19 @@ namespace GFX
 		void RemoveTextureFromMaterial(const unsigned long long int& materialID, const unsigned long long int& textureID);
 		int GetShaderId(unsigned int& shaderId, const char* shaderName);
 		int SetShaderToMaterial(const unsigned long long int& materialID, const unsigned int& shaderID);
+
 		int CreateSkeleton(int& out_skeletonID);
 		int DeleteSkeleton(const int& skeletonID);
 		int GetSkeletonID(const unsigned int& meshID);
 		int BindSkeletonToMesh(const unsigned int& meshID, const int& skeletonID);
 		int AddAnimationToSkeleton(const int& skeletonID, glm::mat4x4* frames, const unsigned int& numFrames, const unsigned int& numBonesPerFrame);
 		int GetAnimationInfo(const int& skeletonID, const int& animationID, unsigned int& out_frameCount, unsigned int& out_bonesPerFrame, unsigned int& out_animationOffset);
+
 		void CreateParticleBuffer(unsigned int& bufferId, unsigned int particleCount);
 		void DeleteParticleBuffer(unsigned int bufferId);
 		void BufferParticleData(unsigned int bufferId, GFX::Particle* data);
+
+		void AddRectRenderJob(DebugRect r);
 
 		/*!
 		Sets the font used for rendering SubSystem statistics.

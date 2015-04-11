@@ -94,7 +94,17 @@ namespace GFX
 	\param color The color of the selectionbox
 	*/
 	DLL_API void DrawSelectionbox(const glm::vec4& posDim, const GFXColor& color );
-	
+
+	/*!
+	Draws a rectangle on the screen.
+	\param position The screen space position for the top left corner
+	\param dimensions Rectangle dimensions
+	\param solid If true, the rectangle will be filled, else only outlines will be shown
+	\param color Color of the rectangle
+	*/
+	DLL_API void DrawFilledRect(GFXVec2 position, GFXVec2 dimensions, GFXColor color);
+
+
 	/*!
 	Issues a draw  text command to the graphics engine.
 	\param position Position of the starting letter
@@ -436,19 +446,23 @@ namespace GFX
 		\param gamma
 		*/
 		DLL_API void SetGamma(float gamma);
-		
 
+		/*!
+		Gets gamma
+		*/
+		DLL_API float GetGamma();
+		
 		/*!
 		Sets a setting to the specified value
 		\return Returns either GFX_SUCCESS or GFX_FAIL
 		*/
-		int SetConfiguration(const int setting, const int value);
+		DLL_API int SetConfiguration(const int setting, const int value);
 
 		/*!
 		Gets the value of a setting
 		\return Returns either GFX_SUCCESS or GFX_FAIL
 		*/
-		int GetConfiguration(const int setting, int& out_value);
+		DLL_API int GetConfiguration(const int setting, int& out_value);
 
 
 		/*!

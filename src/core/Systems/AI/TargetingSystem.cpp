@@ -87,11 +87,16 @@ void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police, float del
 		case PoliceStance::Aggressive:
 			if (tc->target == INVALID_ENTITY)
 			{
-				if( sqc->targetGroup != std::numeric_limits<int>::max() )
-					tc->target = FindClosestTarget(wpc, 1 << UnitType::Rioter, -1, nullptr, sqc->targetGroup );
-				else
-					tc->target = FindClosestTarget(wpc, 1 << UnitType::Rioter, instance->flowfields[ sqc->squadID ].team, instance );
 				tc->attackTime = 0.0f;
+				if( sqc )
+				{
+					if( sqc->targetGroup != std::numeric_limits<int>::max() )
+					{
+						tc->target = FindClosestTarget(wpc, 1 << UnitType::Rioter, -1, nullptr, sqc->targetGroup );
+						break;
+					}
+				}
+				tc->target = FindClosestTarget(wpc, 1 << UnitType::Rioter, instance->flowfields[ sqc->squadID ].team, instance );
 			}
 			else
 			{
@@ -113,7 +118,8 @@ void Core::TargetingSystem::HandlePoliceTargeting(Core::Entity police, float del
 			if (tc->target != INVALID_ENTITY)
 			{
 				TargetingComponent* tcTarget = WGETC<Core::TargetingComponent>(tc->target);
-				TargetingComponent::StopAttacking(police, *tcTarget);
+				if( tcTarget )
+					TargetingComponent::StopAttacking(police, *tcTarget);
 			}			
 
 			tc->target = INVALID_ENTITY;
@@ -190,6 +196,7 @@ Core::Entity Core::TargetingSystem::FindClosestTarget(Core::WorldPositionCompone
 {
 	float minDist = std::numeric_limits<float>::max();
 	Entity minDistEntity = INVALID_ENTITY;
+
 	for (std::vector<Entity>::iterator it = m_entities.begin();	it != m_entities.end();	it++)
 	{
 		Core::UnitTypeComponent* utc = WGETC<Core::UnitTypeComponent>(*it);
@@ -201,6 +208,10 @@ Core::Entity Core::TargetingSystem::FindClosestTarget(Core::WorldPositionCompone
 			Core::AttributeComponent* attribc = WGETC<Core::AttributeComponent>(*it);
 			int group = utc->type == Core::UnitType::Police ? attribc->police.squadID : attribc->rioter.groupID;
 			if( instance->flowfields[ group ].team == ownTeam )
+				continue;
+
+			Core::AttributeComponent* ac = WGETC<Core::AttributeComponent>( *it );
+			if( utc->type == Rioter && ac->rioter.stance == Core::RioterStance::Retreating )
 				continue;
 		}
 
@@ -278,6 +289,9 @@ Core::Entity Core::TargetingSystem::FindClosestAttacker(Core::TargetingComponent
 		for (int i = 0; i < originTC->numberOfAttackers; ++i)
 		{
 			Core::WorldPositionComponent* twpc = WGETC<Core::WorldPositionComponent>(originTC->attackers[i]);
+			Core::TargetingComponent* tc = WGETC<Core::TargetingComponent>(originTC->attackers[i]);
+			if (tc == nullptr)
+				continue;
 
 			float dx = twpc->position[0] - originWPC->position[0];
 			float dy = twpc->position[1] - originWPC->position[1];

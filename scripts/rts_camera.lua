@@ -14,13 +14,12 @@ local key = keyboard.key
 
 function C.new( )
     local self = {}
-    self.position = vec3.new( 0,0,0 )
+    self.position = vec3.new( 0,10,0 )
     self.previousInterpolationPoint = self.position
     self.forwardVelocity = 0
     self.quatRotation = quat.new()
-    self.accelerationFactor = 1
-    self.acceleration = 1.0
-    self.deaccelerationFactor = 0.5
+    self.accelerationFactor = 5
+    self.deaccelerationFactor = 3.5
     self.mousePressLocation = nil
     self.movementSpeed = 0
     self.interpolationSpeed = 10
@@ -28,6 +27,7 @@ function C.new( )
     self.interpolationPoints = {}
     self.previousInterpolationPoint = {position = self.position, rotation = self.quatRotation}
 
+    self.inOverview = false
     self.width = core.config.initScreenWidth
     self.height = core.config.initScreenHeight
     self.infocus = true
@@ -48,17 +48,19 @@ function C.new( )
     window.registerWindowFocusCallback( focus )
 
     local function onscroll( x, y )
-        local forward = camera:getForward()
-        --self.position = self.position + forward * y * 0.5;
+        if not self.inOverview then
+            local forward = camera:getForward()
+            --self.position = self.position + forward * y * 0.5;
 
-        self.forwardVelocity = self.forwardVelocity + y * self.accelerationFactor;
+            self.forwardVelocity = self.forwardVelocity + y * self.accelerationFactor;
 
-        if self.forwardVelocity > 0 and not self.cantGoForward then
-            self.cantGoBack = false
-        elseif self.forwardVelocity < 0 and not self.cantGoBack then
-            self.cantGoForward = false
-        else
-            self.forwardVelocity = 0
+            if self.forwardVelocity > 0 and not self.cantGoForward then
+                self.cantGoBack = false
+            elseif self.forwardVelocity < 0 and not self.cantGoBack then
+                self.cantGoForward = false
+            else
+                self.forwardVelocity = 0
+            end
         end
     end
 
@@ -179,113 +181,173 @@ function C:update( dt )
                 end                
             end
 
-        else 
-            if keyboard.isKeyDown( key.W ) or keyboard.isKeyDown(key.Up )then
-                direction = direction + xzForward
-            end
-            if keyboard.isKeyDown( key.S ) or keyboard.isKeyDown(key.Down )then
-                direction = direction - xzForward
-            end
-            if keyboard.isKeyDown( key.A ) or keyboard.isKeyDown(key.Left )then
-                direction = direction - xzRight
-            end
-            if keyboard.isKeyDown( key.D ) or keyboard.isKeyDown(key.Right )then
-                direction = direction + xzRight 
-            end
-            if keyboard.isKeyDown( key.Q ) then
-                self.quatRotation = self.quatRotation:rotate( -3.5*delta , vec3.new(0, 1, 0) )
-            end
-            if keyboard.isKeyDown( key.E ) then
-                self.quatRotation = self.quatRotation:rotate( 3.5*delta , vec3.new(0, 1, 0) )
-            end
-            if keyboard.isKeyDown( key.Space ) then
-                direction = direction + vec3.new(0,1,0)
-            end
-            if keyboard.isKeyDown( key.Left_control ) then
-                direction = direction - vec3.new(0,1,0) 
-            end
-            
-            if direction:length() > 0 then
-                local force = self.acceleration - 0.1984 * self.movementSpeed * self.movementSpeed 
-                force = math.max(force, 0)
-                self.movementSpeed = self.movementSpeed + force * delta
-                direction:normalize()
-            else
-                self.movementSpeed = 0
-            end
-
-            self.position = self.position + direction * delta * self.movementSpeed
-            
-            local x,y = mouse.getPosition()
-
-            if mouse.isButtonDown( mouse.button.Middle ) then
-                self.quatRotation = self.quatRotation:rotate( (y-self.py) * 0.3 , camera:getRight() )
-                self.quatRotation = self.quatRotation:rotate( (x-self.px) * 0.3 , vec3.new(0, 1, 0) )
-            end 
-
-            if self.mousePressLocation ~= nil then
-                self.position = self.position + xzRight * (x-self.mousePressLocation.x) * 0.01 * delta
-                self.position = self.position - xzUp * (y-self.mousePressLocation.y) * 0.01 * delta
-                if mouse.isButtonDown( mouse.button[5] ) == false then
-                    self.mousePressLocation = nil
+        else
+            if not self.inOverview then            
+                if keyboard.isKeyDown( key.W ) or keyboard.isKeyDown(key.Up )then
+                    direction = direction + xzForward
                 end
-            else
-                if mouse.isButtonDown( mouse.button[5] ) then
-                    self.mousePressLocation = {x=x,y=y}
+                if keyboard.isKeyDown( key.S ) or keyboard.isKeyDown(key.Down )then
+                    direction = direction - xzForward
                 end
-            end
+                if keyboard.isKeyDown( key.A ) or keyboard.isKeyDown(key.Left )then
+                    direction = direction - xzRight
+                end
+                if keyboard.isKeyDown( key.D ) or keyboard.isKeyDown(key.Right )then
+                    direction = direction + xzRight 
+                end
+                if keyboard.isKeyDown( key.Q ) then
+                    self.quatRotation = self.quatRotation:rotate( - 10 * core.config.cameraRotationSpeed*delta , vec3.new(0, 1, 0) )
+                end
+                if keyboard.isKeyDown( key.E ) then
+                    self.quatRotation = self.quatRotation:rotate(10* core.config.cameraRotationSpeed*delta, vec3.new(0, 1, 0) )
+                end
+                if keyboard.isKeyDown( key.Space ) then
+                    direction = direction + vec3.new(0,1,0)
+                elseif keyboard.isKeyDown(key.Z) then
+                    direction = direction - vec3.new(0,1,0)
+                end
+                
+                if direction:length() > 0 then
+                    local force = core.config.cameraForce - 0.1984 * self.movementSpeed * self.movementSpeed 
+                    force = math.max(force, 0)
+                    self.movementSpeed = self.movementSpeed + force * delta
+                    direction:normalize()
+                else
+                    self.movementSpeed = 0
+                end
 
-            
-            self.position = self.position + forward * self.forwardVelocity * delta;
-        
-            if self.forwardVelocity > 0 then
-                self.forwardVelocity = self.forwardVelocity - self.deaccelerationFactor * delta;
-                if self.forwardVelocity < 0 then
-                    self.forwardVelocity = 0
+                self.position = self.position + direction * delta * self.movementSpeed
+                
+                local x,y = mouse.getPosition()
+
+                if mouse.isButtonDown( mouse.button.Middle ) then
+                    
+                    local tmp = self.quatRotation:rotate( (y-self.py) * core.config.cameraRotationSpeed * delta , camera:getRight() )
+                    local _,y,_,_ = (tmp:mat4Cast() * core.glm.vec4.new( 0,1,0,0 )):get()
+
+                    if y > 0 then
+                        self.quatRotation = tmp 
+                    else -- the following is  BEAUTIFUL hack to prevent the camera from jumping when it hits the limi.
+                        -- the idea is that we iteratively move the camera to en end, doing one pixel movement at a time.
+                        local _,fy,_,_ = camera:getForward():get()
+                        if fy < 0 then
+                            tmp = self.quatRotation:rotate( 1 * core.config.cameraRotationSpeed * delta , camera:getRight() )
+                            _,y,_,_ = (tmp:mat4Cast() * core.glm.vec4.new( 0,1,0,0 )):get()
+
+                            while y > 0  do
+                                self.quatRotation = tmp 
+                                
+                                tmp = self.quatRotation:rotate( 1 * core.config.cameraRotationSpeed * delta , camera:getRight() )
+                                _,y,_,_ = (tmp:mat4Cast() * core.glm.vec4.new( 0,1,0,0 )):get()
+                            end
+                        else
+                            tmp = self.quatRotation:rotate( -1 * core.config.cameraRotationSpeed * delta , camera:getRight() )
+                            _,y,_,_ = (tmp:mat4Cast() * core.glm.vec4.new( 0,1,0,0 )):get()
+
+                            while y > 0  do
+                                self.quatRotation = tmp 
+                                
+                                tmp = self.quatRotation:rotate( -1 * core.config.cameraRotationSpeed * delta , camera:getRight() )
+                                _,y,_,_ = (tmp:mat4Cast() * core.glm.vec4.new( 0,1,0,0 )):get()
+                            end
+                        end
+                    end
+
+                    local _,y,_,_ = (self.quatRotation:mat4Cast() * core.glm.vec4.new( 0,1,0,0 )):get()
+                    if y < 0 then
+                        self.quatRotation = quat:new()
+                    end
+
+                    self.quatRotation = self.quatRotation:rotate( (x-self.px) * core.config.cameraRotationSpeed * delta , vec3.new(0, 1, 0) )
+                end 
+
+                if self.mousePressLocation ~= nil then
+                    self.position = self.position + xzRight * (x - self.mousePressLocation.x) * 0.01 * delta
+                    self.position = self.position - xzUp * (y - self.mousePressLocation.y) * 0.01 * delta
+                    if mouse.isButtonDown( mouse.button[5] ) == false then
+                        self.mousePressLocation = nil
+                    end
+                else
+                    if mouse.isButtonDown( mouse.button[5] ) then
+                        self.mousePressLocation = {x=x,y=y}
+                    end
                 end
-            elseif self.forwardVelocity < 0 then
-                self.forwardVelocity = self.forwardVelocity + self.deaccelerationFactor * delta;
+
+                self.position = self.position + forward * self.forwardVelocity * delta;
+            
                 if self.forwardVelocity > 0 then
-                    self.forwardVelocity = 0
+                    self.forwardVelocity = self.forwardVelocity - self.deaccelerationFactor * delta;
+                    if self.forwardVelocity < 0 then
+                        self.forwardVelocity = 0
+                    end
+                elseif self.forwardVelocity < 0 then
+                    self.forwardVelocity = self.forwardVelocity + self.deaccelerationFactor * delta;
+                    if self.forwardVelocity > 0 then
+                        self.forwardVelocity = 0
+                    end
                 end
-            end
-            
-            if x < 20 then 
-                self.position = self.position - xzRight  * core.config.cameraScrollingSpeed * delta
-            end
-            if self.width-x < 20 then
-                self.position = self.position + xzRight  * core.config.cameraScrollingSpeed * delta
-            end
-            if y < 20 then
-                self.position = self.position + xzUp * core.config.cameraScrollingSpeed * delta
-            end
-            if self.height-y < 20 then
-                self.position = self.position - xzUp * core.config.cameraScrollingSpeed * delta
-            end
+                
+                if x < 20 then 
+                    self.position = self.position - xzRight  * core.config.cameraScrollingSpeed * delta
+                end
+                if self.width-x < 20 then
+                    self.position = self.position + xzRight  * core.config.cameraScrollingSpeed * delta
+                end
+                if y < 20 then
+                    self.position = self.position + xzUp * core.config.cameraScrollingSpeed * delta
+                end
+                if self.height-y < 20 then
+                    self.position = self.position - xzUp * core.config.cameraScrollingSpeed * delta
+                end
 
-            self.px = x
-            self.py = y
-            
-            local px,py,pz = self.position:get()
+                self.px = x
+                self.py = y
+                
+                local px,py,pz = self.position:get()
 
-            if py > 500 then
-                px,py,pz = prevPosition:get()
-                self.forwardVelocity = 0
-                self.cantGoBack = true
-            elseif py < 10 then
-                px,py,pz = prevPosition:get()
-                self.forwardVelocity = 0
-                self.cantGoForward = true
+                if py > 250 then
+                    px,py,pz = prevPosition:get()
+                    self.forwardVelocity = 0
+                    self.cantGoBack = true
+                elseif py < 10 then
+                    px,py,pz = prevPosition:get()
+                    self.forwardVelocity = 0
+                    self.cantGoForward = true
+                end
+
+                if self.cantGoForward and self.cantGoBackward then
+                    py = 20 
+                    self.cantGoForward = false
+                    self.cantGoBackward = false
+                end
+
+                self.position = vec3.new( px,py,pz )
+
+            else            
+                if keyboard.isKeyDown( key.W ) or keyboard.isKeyDown(key.Up )then
+                    direction = direction - core.glm.vec3.new(0, 0, 1)
+                end
+                if keyboard.isKeyDown( key.S ) or keyboard.isKeyDown(key.Down )then
+                    direction = direction + core.glm.vec3.new(0, 0, 1)
+                end
+                if keyboard.isKeyDown( key.A ) or keyboard.isKeyDown(key.Left )then
+                    direction = direction - core.glm.vec3.new(1, 0, 0)
+                end
+                if keyboard.isKeyDown( key.D ) or keyboard.isKeyDown(key.Right )then
+                    direction = direction + core.glm.vec3.new(1, 0, 0) 
+                end
+
+                if direction:length() > 0 then
+                    local force = core.config.cameraForce - 0.1984 * self.movementSpeed * self.movementSpeed 
+                    force = math.max(force, 0)
+                    self.movementSpeed = self.movementSpeed + force * delta
+                    direction:normalize()
+                else
+                    self.movementSpeed = 0
+                end
+
+                self.position = self.position + direction * delta * self.movementSpeed
             end
-
-            if self.cantGoForward and self.cantGoBackward then
-                py = 20 
-                self.cantGoForward = false
-                self.cantGoBackward = false
-            end
-
-            self.position = vec3.new( px,py,pz )
-
             self.previousInterpolationPoint = {position = self.position, rotation = self.quatRotation}
         end
         

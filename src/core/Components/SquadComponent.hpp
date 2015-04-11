@@ -27,7 +27,8 @@ namespace Core
         ARREST_GROUP,
         TEAR_GAS,
         TAZE,
-        BLITZ
+        BLITZ,
+		HALT,
     };
 
 	/*!
@@ -51,7 +52,6 @@ namespace Core
 		int squadStamina = 0;
 		float squadMorale = 0.0f;
 		int targetGroup = std::numeric_limits<int>::max();
-
 
 		inline static const char* GetName()
 		{

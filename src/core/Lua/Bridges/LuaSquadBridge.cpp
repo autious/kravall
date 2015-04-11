@@ -557,6 +557,10 @@ namespace Core
                         *ability = Core::SquadAbility::BLITZ;
                         lua_setfield( L, -2, "Blitz" );
 
+						ability = LuaUNewSquadAbility(L);
+                        *ability = Core::SquadAbility::HALT;
+                        lua_setfield(L, -2, "Halt" );
+
                     lua_setfield(L, -2, "abilities");
                 lua_setfield(L, -2, "squad");
         lua_pop(L, 2);

@@ -1,6 +1,7 @@
 local entity = require "entities"
 local group = entity.get "group"
-local Statistics = require "factories/Statistics"
+local Statistics = require "statistics/Statistics"
+local vec4 = require( "utility" ).expandMixxedHexToVec4
 
 --For the kravall defintions
 local abilities = core.system.squad.abilities
@@ -10,7 +11,7 @@ local tearGasPolice = (require "game_constants").tearGasPolice
 return function( scen )
     local T = {}
 	
-    scen.name = "Save the deserters!"
+    scen.name = "Save the deserters! (Again!)"
     scen.description =  [[Deserters and transhumans are equal, or so they say. The rebellion of the lower districts have sparked a revolution filled with violence, blood and tears. All in the name of freedom.
 
     Not everyone can handle it. That is why some people abandon their cause to seek refuge at the transhuman embassy where they will be assimilated into transhuman society in exchange for valuable information regarding the rebels' hideouts.
@@ -20,175 +21,7 @@ return function( scen )
     -- Set game to start in prepmode
     scen.gamemode =  require "gamemodes/kravall":new(
     {
-        initGamestate="Prep",
-        weapons = 
-        {
-            -- range, graceDistance, damageToHealth, damageToMorale, damageToMoraleOnMiss, enemyRageIncrease, enemyPressureIncrease, staminaCost, timeWhenAnimationDealsDamage, animationName
-            punch = {1.0, 0.75, 20, 0.2, 0.05, 3.2, 2.9, 0.05, 0.5, "punch"},
-            --shield = {1.0, 0.75, 20, 0.2, 0.05, 3.2, 2.9, 0.05, 0.5, "shield"},
-            shield = {1.0, 0.75, 40, 0.4, 0.05, 4, 2.0, 0.02, 0.3, "punch"}
-        },
-        policeTypes =
-        {
-            {
-                name = "Shield Squad",
-                description = "Can beat the fuck out of you",
-                cost = standardPolice.cost,
-                setup = 
-                {
-
-                    {
-                        positionOffset = {2,0,0},
-                        weapon = "shield",
-                        mesh = "assets/model/animated/police/cop/cop-shield_00.bgnome",
-                        material = "assets/texture/animated/police/cop/cop-shield_00.material",
-                        abilities = {
-                            abilities.Attack, 
-                            abilities.Sprint, 
-                            abilities.Flee,
-                        },
-                        health = standardPolice.maxHealth, 
-                        stamina = standardPolice.maxStamina, 
-                        morale = standardPolice.maxMorale, 
-                    },
-                    {
-                        positionOffset = {0,0,0},
-                        weapon = "shield",
-                        mesh = "assets/model/animated/police/cop/cop-shield_00.bgnome",
-                        material = "assets/texture/animated/police/cop/cop-shield_00.material",
-                        abilities = {
-                            abilities.Attack, 
-                            abilities.Sprint, 
-                            abilities.Flee,
-                        },
-                        health = standardPolice.maxHealth, 
-                        stamina = standardPolice.maxStamina, 
-                        morale = standardPolice.maxMorale, 
-                    },
-                    {
-                        positionOffset = {1,0,0},
-                        weapon = "shield",
-                        mesh = "assets/model/animated/police/cop/cop-shield_00.bgnome",
-                        material = "assets/texture/animated/police/cop/cop-shield_00.material",
-                        abilities = {
-                            abilities.Attack, 
-                            abilities.Sprint, 
-                            abilities.Flee,
-                        },
-                        health = standardPolice.maxHealth, 
-                        stamina = standardPolice.maxStamina, 
-                        morale = standardPolice.maxMorale, 
-                    },
-                    {
-                        positionOffset = {0,0,1},
-                        weapon = "shield",
-                        mesh = "assets/model/animated/police/cop/cop-shield_00.bgnome",
-                        material = "assets/texture/animated/police/cop/cop-shield_00.material",
-                        abilities = {
-                            abilities.Attack, 
-                            abilities.Sprint, 
-                            abilities.Flee,
-                        },
-                        health = standardPolice.maxHealth, 
-                        stamina = standardPolice.maxStamina, 
-                        morale = standardPolice.maxMorale, 
-                    },
-                    {
-                        positionOffset = {0,0,-1},
-                        weapon = "shield",
-                        mesh = "assets/model/animated/police/cop/cop-shield_00.bgnome",
-                        material = "assets/texture/animated/police/cop/cop-shield_00.material",
-                        abilities = {
-                            abilities.Attack, 
-                            abilities.Sprint, 
-                            abilities.Flee,
-                        },
-                        health = standardPolice.maxHealth, 
-                        stamina = standardPolice.maxStamina, 
-                        morale = standardPolice.maxMorale, 
-                    },
-                    {
-                        positionOffset = {-1,0,0},
-                        weapon = "shield",
-                        mesh = "assets/model/animated/police/cop/cop-shield_00.bgnome",
-                        material = "assets/texture/animated/police/cop/cop-shield_00.material",
-                        abilities = {
-                            abilities.Attack, 
-                            abilities.Sprint, 
-                            abilities.Flee,
-                        },
-                        health = standardPolice.maxHealth, 
-                        stamina = standardPolice.maxStamina, 
-                        morale = standardPolice.maxMorale, 
-                    },
-                },
-            },
-            {
-                name = "Teargas Squad",
-                description = "Can make people cry ='D",
-                cost = tearGasPolice.cost,
-                setup = 
-                {
-                    {
-                        positionOffset = {-1,0,0},
-                        weapon = "punch",
-                        mesh = "assets/model/animated/police/cop/cop-teargas_00.bgnome",
-                        material = "assets/texture/animated/police/cop/cop-teargas_00.material",
-                        abilities = {
-                            abilities.Attack, 
-                            abilities.Sprint, 
-                            abilities.TearGas, 
-                            abilities.Flee,
-                        },
-                        health = tearGasPolice.maxHealth, 
-                        stamina = tearGasPolice.maxStamina, 
-                        morale = tearGasPolice.maxMorale, 
-                    },
-                    {
-                        positionOffset = {0,0,1},
-                        weapon = "punch",
-                        mesh = "assets/model/animated/police/cop/cop-teargas_00.bgnome",
-                        material = "assets/texture/animated/police/cop/cop-teargas_00.material",
-                        abilities = {
-                            abilities.Attack, 
-                            abilities.Sprint, 
-                            abilities.Flee,
-                        },
-                        health = tearGasPolice.maxHealth, 
-                        stamina = tearGasPolice.maxStamina, 
-                        morale = tearGasPolice.maxMorale, 
-                    },
-                    {
-                        positionOffset = {1,0,0},
-                        weapon = "punch",
-                        mesh = "assets/model/animated/rioter/rioter-male_00.bgnome",
-                        material = "assets/texture/animated/police/cop/cop-light_00.material",
-                        abilities = {
-                            abilities.Attack, 
-                            abilities.Sprint, 
-                            abilities.Flee,
-                        },
-                        health = standardPolice.maxHealth, 
-                        stamina = standardPolice.maxStamina, 
-                        morale = standardPolice.maxMorale, 
-                    },
-                    {
-                        positionOffset = {0,0,-1},
-                        weapon = "punch",
-                        mesh = "assets/model/animated/rioter/rioter-male_00.bgnome",
-                        material = "assets/texture/animated/police/cop/cop-light_00.material",
-                        abilities = {
-                            abilities.Attack, 
-                            abilities.Sprint, 
-                            abilities.Flee,
-                        },
-                        health = standardPolice.maxHealth, 
-                        stamina = standardPolice.maxStamina, 
-                        morale = standardPolice.maxMorale, 
-                    },
-                },
-            },
-        }
+        initGamestate="Prep"
     })
     local obj1
     local deserterGroup = nil
@@ -226,7 +59,9 @@ return function( scen )
     function(delta) 
         scen.gamemode:update(delta) 
         if deserterGroup then
-            local count = core.system.groups.getGroupMemberCount( deserterGroup )
+			core.system.squad.enableOutline({deserterGroup}, (vec4{"#09FF00FF",2.0}):get())
+
+            local count = core.system.groups.getGroupMemberCount( deserterGroup)
             obj1.title = "At least one deserter must survive and reach the goal. " .. count .. " remain."
             if  count == 0 then
                 obj1.state = "fail"
@@ -240,7 +75,7 @@ return function( scen )
             if core.system.area.getAreaRioterCount( getCurrentWaypoint(), deserterGroup ) > math.max(memberCount/2 - 5,0) then
                 currentWaypoint = currentWaypoint + 1
                 if getCurrentWaypoint() then
-                    print( "Set new goal!" )
+                    print( "Set new goal to waypoint " .. currentWaypoint .. " at pos: ", core.glm.vec3.new( unpack( waypoint_positions["waypoint"..currentWaypoint] ) ))
                     core.system.groups.setGroupGoal( deserterGroup, unpack( waypoint_positions["waypoint"..currentWaypoint] ) )
                 end   
             end 
@@ -359,64 +194,42 @@ return function( scen )
         print( "Registering waypoint: " .. nc.name )
     end
 
-    local ag1Spawns = {}
-    function T.checkAg1Enter( ent )
-        if #ag1Spawns > 0 and core.system.area.getAreaRioterCount( ent, deserterGroup ) > 0 then
-            table.insert( agitatorGroups, T.createAgitators( ag1Spawns, 10,10 ) ) 
-            ag1Spawns = {}
+    for i = 1,4 do
+        T["registerAg"..i.."Spawn"] = function(ent) 
+		    local wpc = ent:get(core.componentType.WorldPositionComponent)
+            print( "Registering Ag"..i )
+
+		    local groupId = core.gameMetaData.registerEscapePoint( wpc.position[1], wpc.position[2], wpc.position[3] )
+
+            scen:registerTickCallback(function()
+                if ent:isValid() then
+                    local rioters = core.system.area.getAreaRioters(ent)
+
+                    for _,v in pairs( rioters ) do
+                        local alignmentComponent = v:get( core.componentType.AttributeComponent )
+                        --print( alignmentComponent.groupID )
+                        if alignmentComponent.groupID == groupId then
+                            scen.asm:destroyEntity( v )
+                        end  
+                    end
+                end    
+            end)
+
+            if T["ag"..i.."spawn"] == nil then
+                T["ag"..i.."spawn"] = {}
+            end
+    
+            table.insert( T["ag"..i.."spawn"], ent )
         end
-    end
 
-    function T.registerAg1Spawn( ent )
-        print( "Registering Ag1" )
-		local wpc = ent:get(core.componentType.WorldPositionComponent)
-		core.gameMetaData.registerEscapePoint( wpc.position[1], wpc.position[2], wpc.position[3] )
-        table.insert( ag1Spawns, ent )
-    end
-
-    local ag2Spawns = {}
-    function T.checkAg2Enter( ent )
-        if #ag2Spawns > 0 and core.system.area.getAreaRioterCount( ent, deserterGroup ) > 0 then
-            table.insert( agitatorGroups, T.createAgitators( ag2Spawns, 10,10 ) ) 
-            ag2Spawns = {}
+        T["checkAg"..i.. "Enter"] = function( ent )
+            local spawns = T["ag"..i.."spawn"]
+    
+            if #spawns > 0 and core.system.area.getAreaRioterCount( ent, deserterGroup ) > 0 then
+                table.insert( agitatorGroups, T.createAgitators( spawns, 10,10 ) ) 
+                T["ag"..i.."spawn"] = {}
+            end
         end
-    end
-
-    function T.registerAg2Spawn( ent )
-        print( "Registering Ag2" )
-		local wpc = ent:get(core.componentType.WorldPositionComponent)
-		core.gameMetaData.registerEscapePoint( wpc.position[1], wpc.position[2], wpc.position[3] )
-        table.insert( ag2Spawns, ent )
-    end
-
-    local ag3Spawns = {}
-    function T.checkAg3Enter( ent )
-        if #ag3Spawns > 0 and core.system.area.getAreaRioterCount( ent, deserterGroup ) > 0 then
-            table.insert( agitatorGroups, T.createAgitators( ag3Spawns, 10,10 ) ) 
-            ag3Spawns = {}
-        end
-    end
-
-    function T.registerAg3Spawn( ent )
-        print( "Registering Ag3" )
-		local wpc = ent:get(core.componentType.WorldPositionComponent)
-		core.gameMetaData.registerEscapePoint( wpc.position[1], wpc.position[2], wpc.position[3] )
-        table.insert(ag3Spawns, ent )
-    end
-
-    local ag4Spawns = {}
-    function T.checkAg4Enter( ent )
-        if #ag4Spawns > 0 and core.system.area.getAreaRioterCount( ent, deserterGroup ) > 0 then
-            table.insert( agitatorGroups, T.createAgitators( ag4Spawns, 10,10 ) ) 
-            ag4Spawns = {}
-        end
-    end
-
-    function T.registerAg4Spawn( ent )
-        print( "Registering Ag4" )
-		local wpc = ent:get(core.componentType.WorldPositionComponent)
-		core.gameMetaData.registerEscapePoint( wpc.position[1], wpc.position[2], wpc.position[3] )
-        table.insert(ag4Spawns, ent )
     end
 
     function T.checkAg2And4Enter( ent )
@@ -454,7 +267,6 @@ return function( scen )
         ent:set( core.componentType.RotationComponent, { rotation = {qrot:get()}})
     end
 
-
     function T.rotateYLight( ent, delta )
 
         local r = ent:get(core.componentType.RotationComponent).rotation
@@ -472,3 +284,4 @@ return function( scen )
 
     return T
 end
+

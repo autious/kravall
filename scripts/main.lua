@@ -38,13 +38,6 @@ function core.update( delta )
         current_scenario:update( delta )
     end
 	
-	if core.input.keyboard.isKeyDown( core.input.keyboard.key.K ) then
-		toolTipHandler:register( createTT:new({
-										handler=toolTipHandler
-								   })
-					 )
-	end
-	
 	toolTipHandler:update()
 end
 
@@ -154,12 +147,12 @@ function core.saveHomeConfiguration()
                     else
                         configFile:write( "false" )
                     end
-
-                    configFile:write( ",\n" )
                 else
                     core.log.error( "Unable to save parameter: " .. v .. " there is no writer for type")
-                    configFile:write("nil,\n")
+                    configFile:write("nil")
                 end
+
+                configFile:write( ",\n" )
             end
             configFile:write("}\n")
 

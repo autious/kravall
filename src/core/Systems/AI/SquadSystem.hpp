@@ -63,14 +63,20 @@ namespace Core
 			Will revert the squads to their SquadComponent->prevSquadStance.
 			\param squadIDs Pointer to an array of squad IDs.
             \param nSqauds The number of elements in array sent in to squadIDs.
+			\returns the new stance for the first squad that is set.
 		*/
-		void RevertSquadStanceFromAgressive( int* squadIDs, int nSquads );
+		PoliceStance RevertSquadStanceFromAgressive( int* squadIDs, int nSquads );
 
         void EnableOutline(int* squadIDs, int nSqauds, const glm::vec4& Color);
 
 		void EnableOutlineMoods(int* squadIDs, int nSquads);
 
         void DisableOutline(int* squadIDs, int nSqauds);
+
+		/*!
+			Will revert group stance if aggresive and set formation goal to current position.
+		*/
+		void StopGroup(int* squadIDs, int nSqauds);
 
         std::vector<int> GetAllSquads( );
         std::vector<Entity> GetAllSquadEntities();

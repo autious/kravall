@@ -64,6 +64,11 @@ namespace GFX
 
 		m_drawSelectionbox = false;
 		m_enableDebug = true;
+
+		// Set default settings
+		RenderSettings::settings[GFX_SHADOW_QUALITY] = GFX_SHADOWS_VARIANCE_2C; // TODO: Implement basic shadow mapping as low res option
+		RenderSettings::settings[GFX_SHADOW_RESOLUTION] = 512;
+		RenderSettings::settings[GFX_MIPMAPS] = GFX_MIPMAPS_ON;
 	}
 
 	RenderCore::~RenderCore()
@@ -133,9 +138,6 @@ namespace GFX
 		m_windowHeight = 0;
 		totalRenderInfo = { 0, 0 };
 		
-		// Set default settings
-		RenderSettings::settings[GFX_SHADOW_QUALITY] = GFX_SHADOWS_VARIANCE_4C; // TODO: Implement basic shadow mapping as low res option
-		RenderSettings::settings[GFX_SHADOW_RESOLUTION] = 512;
 
 		m_normalDepth = new FBOTexture();
 		m_diffuse = new FBOTexture();
@@ -291,6 +293,11 @@ namespace GFX
 		m_renderJobManager->AddRenderJob(bitmask, value);
 	}
 
+	void RenderCore::AddFilledRect(FilledRect r)
+	{
+		m_renderJobManager->AddFilledRect(r);
+	}
+
 	void RenderCore::DeleteMesh(unsigned long long id)
 	{
 		m_meshManager->DeleteMesh(id);
@@ -428,6 +435,7 @@ namespace GFX
 		// Reload animations data if changed
 		if (m_reloadAnimationData)
 		{
+			std::cout << "Reloading animations...\n";
 			m_animationManager->BindBufferData();
 			m_reloadAnimationData = false;
 		}
@@ -498,11 +506,12 @@ namespace GFX
 		// Draw the console
 		CT(m_consolePainter->Render(), "Console");
 
+		
+		m_boxPainter->Render(m_selectionBoxPosDim, m_selectionBoxColor, m_drawSelectionbox);
+
+
 		// Draw debug text
 		CT(m_textPainter->Render(m_windowWidth, m_windowHeight, renderInfo[5]), "Text");
-		
-		if( m_drawSelectionbox )
-			m_boxPainter->Render(m_selectionBoxPosDim, m_selectionBoxColor);
 
 		m_renderJobManager->Clear();
 		m_drawSelectionbox = false;
@@ -671,11 +680,13 @@ namespace GFX
 
 	int RenderCore::CreateSkeleton(int& out_skeletonID)
 	{
+		m_reloadAnimationData = true;
 		return m_animationManager->CreateSkeleton(out_skeletonID);
 	}
 
 	int RenderCore::DeleteSkeleton(const int& skeletonID)
 	{
+		m_reloadAnimationData = true;
 		return m_animationManager->DeleteSkeleton(skeletonID);
 	}
 
@@ -686,6 +697,7 @@ namespace GFX
 
 	int RenderCore::BindSkeletonToMesh(const unsigned int& meshID, const int& skeletonID)
 	{
+		m_reloadAnimationData = true;
 		return m_meshManager->BindSkeletonToMesh(meshID, skeletonID);
 	}
 

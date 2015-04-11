@@ -39,7 +39,7 @@ namespace GFX
 		/*!
 		Main console rendering loop
 		*/
-        void Render( glm::vec4& posdim, glm::vec4& color );
+        void Render( glm::vec4& posdim, glm::vec4& color, bool renderMe );
 
 	private:
 
@@ -47,6 +47,10 @@ namespace GFX
 		GLuint m_colorUniform;
         GLuint m_viewMatrixUniform;
         GLuint m_projectionMatrixUniform;
+
+		GLuint m_rectPosUniform;
+		GLuint m_rectDimUniform;
+		GLuint m_rectColorUniform;
 
 		RenderJobManager* m_renderJobManager;
 		MeshManager* m_meshManager;
