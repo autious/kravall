@@ -1,4 +1,18 @@
-This is a readed me edit
+Kravall is a game produced by a team of 11 students at Blekinge Institute of Technology BTH/BTI in 2014.
+This is the source for the game, it will not run without additional assets, this is mainly posted 
+for posterity and curiousity regarding the source.
 
-Read this before you start putting crap into folders.
-http://kronosept.comproj.bth.se:5001/Riot_Folder_Structure_Specification
+For more information see http://www.youtube.com/watch?v=_DuY93gE6kY#t=29, http://kravall.autious.net and http://autious.net
+
+The game is built using the following technologies
+
+GLFW2
+OpenGL 4.x (using compute shaders)
+Lua 5.1
+stb_png
+stb_vorbis
+
+The game was developed on the following platforms
+
+Windows 7
+Debian Linux Wheezy
